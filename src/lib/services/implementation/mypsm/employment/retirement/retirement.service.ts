@@ -14,14 +14,14 @@ export class RetirementApplicationServices {
     static async getOriginalRetirementDetail() {
         try {
             let url: Input = 'employment/retirement/voluntary/retirement_date';
- 
+
             const response: Response = await http
                 .get(url)
                 .json();
 
- 
+
             const result = CommonResponseConvert.fromResponse(response);
- 
+
             if (result.status == 'success') {
                 return result;
             } else {
@@ -36,15 +36,15 @@ export class RetirementApplicationServices {
     static async getRetirementVoluntaryApplicationDetail(param: RetirementVoluntaryApplicationDetailRequestDTO) {
         try {
             let url: Input = 'employment/retirement/voluntary/view';
- 
-            const response:Response = await http
+
+            const response: Response = await http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
- 
+
             const result = CommonResponseConvert.fromResponse(response);
- 
+
             if (result.status == 'success') {
                 return result;
             } else {
@@ -59,17 +59,17 @@ export class RetirementApplicationServices {
     static async addRetirementVoluntaryDetail(param: RetirementVoluntaryDetail) {
         try {
             let url: Input = 'employment/retirement/voluntary/add';
- 
+
             const promiseResponse: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
- 
+
             const response = await getPromiseToast(promiseResponse);
- 
+
             const result = CommonResponseConvert.fromResponse(response);
- 
+
             if (result.status == 'success') {
                 await invalidateAll();
                 return result;
@@ -85,17 +85,17 @@ export class RetirementApplicationServices {
     static async addRetirementVoluntaryCertification(param: RetirementEndorsement) {
         try {
             let url: Input = 'employment/retirement/voluntary/certification';
- 
+
             const promiseResponse: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
- 
+
             const response = await getPromiseToast(promiseResponse);
- 
+
             const result = CommonResponseConvert.fromResponse(response);
- 
+
             if (result.status == 'success') {
                 await invalidateAll();
                 return result;
@@ -107,21 +107,21 @@ export class RetirementApplicationServices {
         }
     }
 
-     //  voluntary confirmation certification
-     static async addRetirementVoluntaryConfirmation(param: RetirementEndorsement) {
+    //  voluntary confirmation certification
+    static async addRetirementVoluntaryConfirmation(param: RetirementEndorsement) {
         try {
             let url: Input = 'employment/retirement/voluntary/confirmation';
- 
+
             const promiseResponse: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
- 
+
             const response = await getPromiseToast(promiseResponse);
- 
+
             const result = CommonResponseConvert.fromResponse(response);
- 
+
             if (result.status == 'success') {
                 await invalidateAll();
                 return result;
@@ -133,21 +133,21 @@ export class RetirementApplicationServices {
         }
     }
 
-     //  voluntary retirement supportApprover
-     static async addRetirementVoluntarySupportApprover(param: RetirementEndorserDetail) {
+    //  voluntary retirement supportApprover
+    static async addRetirementVoluntarySupportApprover(param: RetirementEndorserDetail) {
         try {
             let url: Input = 'employment/retirement/voluntary/supporter_approver';
- 
+
             const promiseResponse: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
- 
+
             const response = await getPromiseToast(promiseResponse);
- 
+
             const result = CommonResponseConvert.fromResponse(response);
- 
+
             if (result.status == 'success') {
                 await invalidateAll();
                 return result;
@@ -159,21 +159,21 @@ export class RetirementApplicationServices {
         }
     }
 
-      //  firstSupporter confirmation certification
-      static async addFirstSupporterVoluntary(param: RetirementEndorsement) {
+    //  firstSupporter confirmation certification
+    static async addFirstSupporterVoluntary(param: RetirementEndorsement) {
         try {
             let url: Input = 'employment/retirement/voluntary/first_supporter';
- 
+
             const promiseResponse: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
- 
+
             const response = await getPromiseToast(promiseResponse);
- 
+
             const result = CommonResponseConvert.fromResponse(response);
- 
+
             if (result.status == 'success') {
                 await invalidateAll();
                 return result;
@@ -185,21 +185,21 @@ export class RetirementApplicationServices {
         }
     }
 
-      //  secondSupporter confirmation certification
-      static async addSecondSupporterVoluntary(param: RetirementEndorsement) {
+    //  secondSupporter confirmation certification
+    static async addSecondSupporterVoluntary(param: RetirementEndorsement) {
         try {
             let url: Input = 'employment/retirement/voluntary/second_supporter';
- 
+
             const promiseResponse: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
- 
+
             const response = await getPromiseToast(promiseResponse);
- 
+
             const result = CommonResponseConvert.fromResponse(response);
- 
+
             if (result.status == 'success') {
                 await invalidateAll();
                 return result;
@@ -211,21 +211,21 @@ export class RetirementApplicationServices {
         }
     }
 
-       //  approval confirmation certification
-       static async addRetirementApproval(param: RetirementEndorsement) {
+    //  approval confirmation certification
+    static async addRetirementApproval(param: RetirementEndorsement) {
         try {
             let url: Input = 'employment/retirement/voluntary/appointed_approval';
- 
+
             const promiseResponse: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
- 
+
             const response = await getPromiseToast(promiseResponse);
- 
+
             const result = CommonResponseConvert.fromResponse(response);
- 
+
             if (result.status == 'success') {
                 await invalidateAll();
                 return result;
@@ -237,21 +237,21 @@ export class RetirementApplicationServices {
         }
     }
 
-       //  secretaryApproval confirmation certification
-       static async addRetirementSecretaryApproval(param: RetirementEndorsement) {
+    //  secretaryApproval confirmation certification
+    static async addRetirementSecretaryApproval(param: RetirementEndorsement) {
         try {
             let url: Input = 'employment/retirement/voluntary/secretary_approval';
- 
+
             const promiseResponse: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
- 
+
             const response = await getPromiseToast(promiseResponse);
- 
+
             const result = CommonResponseConvert.fromResponse(response);
- 
+
             if (result.status == 'success') {
                 await invalidateAll();
                 return result;
@@ -263,21 +263,21 @@ export class RetirementApplicationServices {
         }
     }
 
-     //  documentCertification confirmation certification
-     static async addRetirementDocumentCertification(param: RetirementEndorsement) {
+    //  documentCertification confirmation certification
+    static async addRetirementDocumentCertification(param: RetirementEndorsement) {
         try {
             let url: Input = 'employment/retirement/voluntary/document_certification';
- 
+
             const promiseResponse: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
- 
+
             const response = await getPromiseToast(promiseResponse);
- 
+
             const result = CommonResponseConvert.fromResponse(response);
- 
+
             if (result.status == 'success') {
                 await invalidateAll();
                 return result;
@@ -289,21 +289,21 @@ export class RetirementApplicationServices {
         }
     }
 
-      //  letterCertification confirmation certification
-      static async addRetirementLetterCertification(param: RetirementEndorsement) {
+    //  letterCertification confirmation certification
+    static async addRetirementLetterCertification(param: RetirementEndorsement) {
         try {
             let url: Input = 'employment/retirement/voluntary/document_certification';
- 
+
             const promiseResponse: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
- 
+
             const response = await getPromiseToast(promiseResponse);
- 
+
             const result = CommonResponseConvert.fromResponse(response);
- 
+
             if (result.status == 'success') {
                 await invalidateAll();
                 return result;
@@ -322,15 +322,15 @@ export class RetirementApplicationServices {
     static async getRetirementForcedApplicationDetail(param: RetirementForcedApplicationDetailRequestDTO) {
         try {
             let url: Input = 'employment/retirement/force/view';
- 
-            const response:Response = await http
+
+            const response: Response = await http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
- 
+
             const result = CommonResponseConvert.fromResponse(response);
- 
+
             if (result.status == 'success') {
                 return result;
             } else {
@@ -341,106 +341,232 @@ export class RetirementApplicationServices {
         }
     }
 
-        //  forced retirement certification
-        static async addRetirementforcedCertification(param: RetirementForcedEndorsement) {
-            try {
-                let url: Input = 'employment/retirement/force/certification';
-     
-                const promiseResponse: Promise<Response> = http
-                    .post(url, {
-                        body: JSON.stringify(param),
-                    })
-                    .json();
-     
-                const response = await getPromiseToast(promiseResponse);
-     
-                const result = CommonResponseConvert.fromResponse(response);
-     
-                if (result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
-            } catch (error) {
+    //  forced retirement certification
+    static async addRetirementforcedCertification(param: RetirementForcedEndorsement) {
+        try {
+            let url: Input = 'employment/retirement/force/certification';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await getPromiseToast(promiseResponse);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
                 return CommonResponseConstant.httpError;
             }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
         }
-              //  forced retirement confirm
-              static async addRetirementforcedConfirmation(param: RetirementForcedEndorsement) {
-                try {
-                    let url: Input = 'employment/retirement/force/confirmation';
-         
-                    const promiseResponse: Promise<Response> = http
-                        .post(url, {
-                            body: JSON.stringify(param),
-                        })
-                        .json();
-         
-                    const response = await getPromiseToast(promiseResponse);
-         
-                    const result = CommonResponseConvert.fromResponse(response);
-         
-                    if (result.status == 'success') {
-                        await invalidateAll();
-                        return result;
-                    } else {
-                        return CommonResponseConstant.httpError;
-                    }
-                } catch (error) {
-                    return CommonResponseConstant.httpError;
-                }
+    }
+    //  forced retirement confirm
+    static async addRetirementforcedConfirmation(param: RetirementForcedEndorsement) {
+        try {
+            let url: Input = 'employment/retirement/force/confirmation';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await getPromiseToast(promiseResponse);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
             }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
-                    //  forced retirement Document
-                    static async addRetirementforcedDocument(param: RetirementForcedEndorsement) {
-                        try {
-                            let url: Input = 'employment/retirement/force/documents_certification';
-                 
-                            const promiseResponse: Promise<Response> = http
-                                .post(url, {
-                                    body: JSON.stringify(param),
-                                })
-                                .json();
-                 
-                            const response = await getPromiseToast(promiseResponse);
-                 
-                            const result = CommonResponseConvert.fromResponse(response);
-                 
-                            if (result.status == 'success') {
-                                await invalidateAll();
-                                return result;
-                            } else {
-                                return CommonResponseConstant.httpError;
-                            }
-                        } catch (error) {
-                            return CommonResponseConstant.httpError;
-                        }
-                    }
+    //  forced retirement Document
+    static async addRetirementforcedDocument(param: RetirementForcedEndorsement) {
+        try {
+            let url: Input = 'employment/retirement/force/documents_certification';
 
-                        //  forced retirement Letter
-                        static async addRetirementforcedLetter(param: RetirementForcedEndorsement) {
-                            try {
-                                let url: Input = 'employment/retirement/force/letter_certification';
-                     
-                                const promiseResponse: Promise<Response> = http
-                                    .post(url, {
-                                        body: JSON.stringify(param),
-                                    })
-                                    .json();
-                     
-                                const response = await getPromiseToast(promiseResponse);
-                     
-                                const result = CommonResponseConvert.fromResponse(response);
-                     
-                                if (result.status == 'success') {
-                                    await invalidateAll();
-                                    return result;
-                                } else {
-                                    return CommonResponseConstant.httpError;
-                                }
-                            } catch (error) {
-                                return CommonResponseConstant.httpError;
-                            }
-                        }
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await getPromiseToast(promiseResponse);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //  forced retirement Letter
+    static async addRetirementforcedLetter(param: RetirementForcedEndorsement) {
+        try {
+            let url: Input = 'employment/retirement/force/letter_certification';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await getPromiseToast(promiseResponse);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+      //  Unspecify retirement application detail
+      static async addRetirementUnspecifyDetail(param: RetirementVoluntaryDetail) {
+        try {
+            let url: Input = 'employment/retirement/unspecify/add';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await getPromiseToast(promiseResponse);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //  Unspecify retirement Choosen List 
+    static async addRetirementUnspecifyChoosenList(param: RetirementVoluntaryDetail) {
+        try {
+            let url: Input = 'employment/retirement/unspecify/chosen_list';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await getPromiseToast(promiseResponse);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //  Unspecify retirement Choosen Update 
+    static async addRetirementUnspecifyChoosenUpdate(param: RetirementVoluntaryDetail) {
+        try {
+            let url: Input = 'employment/retirement/unspecify/update';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await getPromiseToast(promiseResponse);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+      //  Unspecify retirement Document Certification 
+      static async addRetirementUnspecifyDocumentCertification(param: RetirementVoluntaryDetail) {
+        try {
+            let url: Input = 'employment/retirement/unspecify/document_certification';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await getPromiseToast(promiseResponse);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+     //  unspecify retirement application detail
+     static async getRetirementVoluntaryUnspecifyDetail(param: RetirementVoluntaryApplicationDetailRequestDTO) {
+        try {
+            let url: Input = 'employment/retirement/unspecify/view';
+
+            const response: Response = await http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    
 }

@@ -92,7 +92,7 @@
     <TextIconButton
     label="Tambah Rekod"
     onClick={() => {
-        goto('./perjawatan/tambah-rekod');
+        goto('/perjawatan/PTB-dan-KWAP/butiran/'+ rowData.id);
     }}
 >
     <SvgPlus />
@@ -104,7 +104,7 @@
 <section
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-    {#if currentRoleCode === urusetia}
+    
         <CustomTab>
             
             <CustomTabContent
@@ -149,5 +149,5 @@
             </CustomTabContent>
         </CustomTab>
    
-    {/if}
+    
 </section>

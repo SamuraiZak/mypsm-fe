@@ -112,3 +112,41 @@ export interface RetirementOthersDetailDTO {
     groupId: number;
     employeeList: number[];
 }
+
+export interface RetirementOthersChoosenDetailDTO {
+    groupId: number;
+    employeeList: number[];
+}
+
+export interface RetirementOthersUpdateListlDTO {
+    updateList: UpdateList[];
+}
+
+export interface UpdateList {
+    groupID:            number;
+    employeeID:         number;
+    employeeNumber:     string;
+    employeeName:       string;
+    identityCardNumber: string;
+    retirementTypeID:   number;
+    retirementDate:     Date;
+}
+
+export interface RetirementOthersDocumentCertificationlDTO {
+    updateList: UpdateList[];
+}
+export interface UpdateList {
+    groupID:    number;
+    employeeID: number;
+    remark:     string;
+    status:     boolean;
+}
+
+
+export interface RetirementOthersApplicationDetail {
+    RetirementOthersDetailDTO: RetirementVoluntaryDetailDTO | null;
+    RetirementOthersChoosenDetailDTO: RetirementEndorsementDTO | null;
+    RetirementOthersUpdateListlDTO: RetirementEndorsementDTO | null;
+    RetirementOthersDocumentCertificationlDTO: RetirementEndorserDetail | null;
+
+}
