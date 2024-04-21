@@ -13,7 +13,6 @@ import type { loanDetail } from '$lib/dto/mypsm/pinjaman/loan-detail.dto';
 import type { OfferedLoan } from '$lib/dto/mypsm/pinjaman/offered-loan-detail.dto';
 import type { PersonalDetail } from '$lib/dto/mypsm/pinjaman/personal-detail.dto';
 import type { SecondSchedule } from '$lib/dto/mypsm/pinjaman/second-schedule.dto';
-import type { suppliers } from '$lib/dto/mypsm/pinjaman/supplier-detail.dto';
 import type { CandidatePersonalResponseDTO } from '$lib/dto/mypsm/profile/personal-detail.dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import { _firstSchedule, _loanDetail, _offerLoan, _personalDetail, _secondSchedule, _supplier, _vehicleDetail, _vehicleFirstSchedule } from '$lib/schemas/mypsm/loan/loan-application';
