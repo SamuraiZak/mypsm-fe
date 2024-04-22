@@ -1,3 +1,4 @@
+import type { DocumentDTO } from '$lib/dto/core/document/document.dto';
 import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 
 export interface LeaveEntitlementDTO {
@@ -238,6 +239,31 @@ export interface LeaveStudyDetailsDTO {
     reason: string;
 }
 
+// replacement leave
+export interface LeaveReplacementDetailsDTO {
+    leaveId?: number;
+    leaveTypeCode: string;
+    reason: string;
+    substituteName: string;
+    substituteIC: string;
+    startDate: string;
+    startHalfDayOption: boolean;
+    startHalfDayType: string;
+    endDate: string;
+    endHalfDayOption: boolean;
+    endHalfDayType: string;
+    durationDays: number;
+    latestLeaveTakenDate: string;
+    currentYearLeaveCount: number;
+    replacementType: string;
+    dutyDate: string;
+    dutyStartTime: string;
+    dutyEndTime: string;
+    dutyDurationTime: string;
+    dutyLocation: string;
+    dutyDescription: string;
+}
+
 export interface LeaveApplicationDetailDTO {
     applicationDetail?: any | null;
     headOfDirectorFeedback?: LeaveEndorsmentDTO | null;
@@ -356,4 +382,71 @@ export interface GCREndorsementDTO {
     id: number;
     status: boolean;
     remark: string;
+    isReadonly: boolean;
+}
+
+export interface GCRWithdrawalHistoryDTO {
+    id: number;
+    name: string;
+    identityCard: string;
+    dataType: string;
+    requesteDate: string;
+    status: string;
+    remark: string;
+}
+
+export interface GCRWithdrawalHistoryFilterDTO {
+    dataType: number;
+    name: string | null;
+    identityCard: string | null;
+    status: string | null;
+}
+
+export interface GCRWithdrawalDocumentDetailDTO {
+    id: number;
+    identityDocument: DocumentDTO;
+    withdrawalDocument: DocumentDTO;
+}
+
+export interface GCRWithdrawalCalculationDTO {
+    id: number;
+    totalPayment: number;
+}
+
+export interface GCREmployeeDetailDTO {
+    name: string;
+    identityDocumentNumber: string;
+    employeeNumber: string;
+    grade: string;
+    scheme: string;
+    placement: string;
+    startDate: string;
+}
+
+export interface GCRWithdrawalDetailDTO {
+    totalGCR: number;
+    minimumGCR: boolean;
+    employmentLength: boolean;
+    ageRequirement: boolean;
+    firstTimeWithdrawal: boolean;
+}
+
+export interface GCRWithdrawalDetailAddDTO {
+    employeeID: number;
+    withdrawalType: number;
+}
+
+export interface GCRWithdrawalApplicationDetailDTO {
+    employeeDetail: GCREmployeeDetailDTO | null;
+    gcrDetail: GCRWithdrawalDetailDTO | null;
+    document: GCRWithdrawalDocumentDetailDTO | null;
+    director: GCREndorsementDTO | null;
+    secretary: GCREndorsementDTO | null;
+    integrity: GCREndorsementDTO | null;
+    chiefDirector: GCREndorsementDTO | null;
+    calculation: GCRWithdrawalCalculationDTO | null;
+}
+
+export interface LeaveEmployeeDetailDTO {
+    employeeId: number;
 }
