@@ -88,6 +88,16 @@ export const getErrorToast = async (message?: string) => {
     }
 };
 
+export const getEmptyDataToast = async (message?: string) => {
+    if (message !== undefined) {
+        toast.error(message, {
+            style: 'background: #333; color: #fff;',
+        });
+    } else {
+        toast.error('Sila pilih sekurang-kurangnya 1 pilihan.');
+    }
+};
+
 export const getInsufficientFileToast = async (message?: string) => {
     if (message !== undefined) {
         toast.error(message, {
