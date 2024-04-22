@@ -103,23 +103,54 @@ export interface TransferCommonPostponeResultDTO {
 //  SELF
 // =========================================================
 export interface TransferSelfHistoryDTO {
-    id:                     number;
-    employeeNumber:         string;
-    empooyeeName:           string;
+    id: number;
+    employeeNumber: string;
+    empooyeeName: string;
     identityDocumentNumber: string;
-    transferType:           string;
-    applicationDate:        null;
-    status:                 null;
-    result:                 string;
+    transferType: string;
+    applicationDate: null;
+    status: null;
+    result: string;
 }
 
-export interface TransferSelfHistoryFilterDTO{
-
-}
+export interface TransferSelfHistoryFilterDTO {}
 
 export interface TransferSelfDetailDTO {
-    transferType:   string;
-    firstChoiceId:  number;
+    id: number;
+    transferType: string;
+    firstChoiceId: number;
     secondChoiceId: number;
 }
 
+export interface TransferSelfReasonDTO {
+    id: number;
+    reasonId: number;
+    explanation: string;
+    company?: string;
+    distance?: number;
+    date?: string;
+}
+
+export interface TransferSelfReasonPartnerDetailDTO {
+    distance: number;
+    company: string;
+    date: string;
+}
+
+export interface TransferSelfApplicationDetailDTO {
+    status: string | null;
+    applicationDetail: TransferSelfDetailDTO | null;
+    reason: TransferSelfReasonDTO | null;
+    confirmation: TransferCommonEndorsementDTO | null;
+    transferDocument: TransferDocumentAddDTO | null;
+    firstDirector: TransferCommonEndorsementDTO | null;
+    secondDirector: TransferCommonEndorsementDTO | null;
+    meetingDetail: TransferCommonMeetingDTO | null;
+    postponeDetail: TransferCommonPostponeApplicationDTO | null;
+    postponeDocument: TransferDocumentAddDTO | null;
+    postponeResult: TransferCommonPostponeResultDTO | null;
+    postponeApproval: TransferCommonEndorsementDTO | null;
+    endorserDetail: TransferCommonEndorserDetailDTO | null;
+    supporterFeedback: TransferCommonEndorsementDTO | null;
+    approverFeedback: TransferCommonEndorsementDTO | null;
+}
