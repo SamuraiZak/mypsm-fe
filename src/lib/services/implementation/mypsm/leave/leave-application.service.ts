@@ -13,6 +13,7 @@ import type {
     LeaveDeliveryDetailsDTO,
     LeaveEndorserDetailsDTO,
     LeaveEndorsmentDTO,
+    LeaveReplacementDetailsDTO,
     LeaveStudyDetailsDTO,
     LeaveUnrecordedDetailsDTO,
 } from '$lib/dto/mypsm/leave/leave.dto';
@@ -104,6 +105,32 @@ export class LeaveApplicationServices {
 
     // study leave
     static async addStudyLeave(param: LeaveStudyDetailsDTO) {
+        try {
+            let url: Input = 'leave/add';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await getPromiseToast(promiseResponse);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // study leave
+    static async addReplacementLeave(param: LeaveReplacementDetailsDTO) {
         try {
             let url: Input = 'leave/add';
 
