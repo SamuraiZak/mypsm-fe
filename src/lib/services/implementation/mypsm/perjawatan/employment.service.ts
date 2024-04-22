@@ -629,15 +629,11 @@ export class EmploymentServices {
     static async createCurrentCandidateDocuments<T>(param: T) {
         try {
             const url: Input = 'employment/new_hire/document/add';
-
+            console.log(param);
             // get the promise response
             const promiseRes: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
-                    headers: {
-                        Accept: 'multipart/form-data',
-                        'Content-type': 'multipart/form-data;',
-                    },
                 })
                 .json();
 
