@@ -331,6 +331,9 @@ const schemeLookup: DropdownDTO[] =
             offerLoanDetail = offerLoanDetailResponse.data?.details as OfferedLoan;
 
             offerLoanForm.data = offerLoanDetail;
+            let tempString: string;
+            tempString = (offerLoanForm.data.loanType).split("_").map((word) => word.charAt(0).toUpperCase()+word.slice(1)).join(' ')
+            offerLoanForm.data.loanType = tempString;
         }
     }
 

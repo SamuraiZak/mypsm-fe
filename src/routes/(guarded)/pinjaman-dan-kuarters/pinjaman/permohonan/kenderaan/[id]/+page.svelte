@@ -592,7 +592,7 @@
         <StepperContentHeader title="Dokumen Sokongan yang Berkaitan"
             >
             <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} />
-                {#if data.props.userMode == 'urusetia' }
+                {#if data.props.userMode == 'kakitangan' }
             <TextIconButton
                 label="Muat Naik"
                 icon="check"
@@ -749,11 +749,13 @@
             </div></StepperContentBody
         >
     </StepperContent>
+    {#if data.props.userMode == 'urusetia' || data.props.userMode == 'pelulus' || data.props.userMode == 'ketua Seksyen'}
     <StepperContent>
         <StepperContentHeader title="Kemaskini Maklumat Pinjaman"
         >
         <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} /></StepperContentHeader>
-            <CustomTab>
+            <CustomTab
+            id=schedule>
                 <CustomTabContent title="Jadual Pertama">
                     <!-- {#if currEmpLoanRec[0].typeOfLoan == 'Kenderaan'} -->
                     <ContentHeader
@@ -959,6 +961,7 @@
 
 
     </StepperContent>
+    {/if}
 
     <StepperContent>
         <StepperContentHeader title="Muat Turun Surat Tawaran"
@@ -999,7 +1002,7 @@
     <StepperContent>
         <StepperContentHeader title="Muat Naik Surat Perjanjian">
             <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} /> 
-                {#if data.props.userMode == 'urusetia' }
+                {#if data.props.userMode == 'kakitangan' }
             <TextIconButton
                 label="Muat Naik"
                 icon="check"
@@ -1124,7 +1127,6 @@
                             </form>
                         </div>
 
-                        <!-- ------------------------------------------------------------------------------------------------------ -->
                     </CustomTabContent>
                     <CustomTabContent title="Maklumat Kelulusan dan Tawaran">
                         <ContentHeader
@@ -1255,7 +1257,7 @@
         <StepperContentHeader title="Muat Turun Resit dan Invois"
             >
             <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} />
-                {#if data.props.userMode == 'urusetia' }
+                {#if data.props.userMode == 'kakitangan' }
                 <TextIconButton
                 label="Muat Naik"
                 icon="check"
