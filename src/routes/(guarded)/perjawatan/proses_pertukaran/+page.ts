@@ -5,6 +5,8 @@ import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto
 import type {
     TransferCommonHistoryDTO,
     TransferCommonHistoryFilterDTO,
+    TransferSelfHistoryDTO,
+    TransferSelfHistoryFilterDTO,
 } from '$lib/dto/mypsm/employment/transfer/transfer.dto';
 import { TransferApplicationServices } from '$lib/services/implementation/mypsm/employment/transfer/transfer.service';
 
@@ -34,6 +36,29 @@ export async function load() {
         default:
             userMode = 'employee';
             break;
+    }
+
+    // get self application history list
+    let selfApplicationList: TransferSelfHistoryDTO[] = [];
+
+    let selfApplicationListFilter: TransferSelfHistoryFilterDTO = {};
+
+    let selfApplicationListRequest: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: selfApplicationListFilter,
+    };
+
+    let selfApplicationListResponse: CommonResponseDTO =
+        await TransferApplicationServices.getSelfTransferHistory(
+            selfApplicationListRequest,
+        );
+
+    if (selfApplicationListResponse.status == 'success') {
+        selfApplicationList = selfApplicationListResponse.data
+            ?.dataList as TransferSelfHistoryDTO[];
     }
 
     // get director application history list
@@ -100,6 +125,12 @@ export async function load() {
         props: {
             currentRoleCode,
             userMode,
+        },
+        self: {
+            selfApplicationList,
+            selfApplicationListFilter,
+            selfApplicationListRequest,
+            selfApplicationListResponse,
         },
         director: {
             directorApplicationList,

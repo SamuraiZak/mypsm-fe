@@ -16,6 +16,35 @@
 
     let selectedData: any;
 
+    // self application table
+    let selfApplicationTable: TableSettingDTO = {
+        param: data.self.selfApplicationListRequest,
+        meta: data.self.selfApplicationListResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data:
+            data.self.selfApplicationListResponse.data?.dataList ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['id', 'employeeNumber', 'applicationType'],
+        dictionary: [],
+        url: 'employment/self_transfer/list',
+        id: 'selfApplicationTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: data.props.userMode == 'employee',
+        },
+    };
+
     let directorApplicationTable: TableSettingDTO = {
         param: data.director.directorApplicationListRequest,
         meta: data.director.directorApplicationListResponse.data?.meta ?? {
@@ -138,7 +167,7 @@
                 <div class="h-fit w-full">
                     <DataTable
                         title="Senarai Permohonan Pertukaran"
-                        bind:tableData={directorApplicationTable}
+                        bind:tableData={selfApplicationTable}
                         bind:passData={selectedData}
                         addActions={() => {
                             addApplication();
@@ -150,7 +179,7 @@
                         <FilterWrapper slot="filter">
                             <FilterNumberField
                                 label="Tahun"
-                                bind:inputValue={directorApplicationTable.param
+                                bind:inputValue={selfApplicationTable.param
                                     .filter.year}
                             ></FilterNumberField>
                         </FilterWrapper>
