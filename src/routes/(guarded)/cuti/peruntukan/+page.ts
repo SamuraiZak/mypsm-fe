@@ -15,7 +15,7 @@ export async function load() {
 
     const leaveEntitlementFilter: LeaveEntitlementFilterDTO = {
         year: currentYear,
-        employeeID: null,
+        employeeId: null,
         identityCard: null,
         employeeNo: null,
         name: null,

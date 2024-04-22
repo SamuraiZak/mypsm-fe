@@ -13,8 +13,9 @@ export const TransferCommonMeetingSchema = z.object({
     id: z.number(),
     name: z.string(),
     date: z.string(),
-    result: z.string(),
+    result: z.boolean(),
     placementId: z.number(),
+    programmeId: z.number(),
     effectiveDate: z.string(),
     referenceNo: z.string(),
     referenceDate: z.string(),
@@ -58,3 +59,34 @@ export const TransferCommonEndorserDetailSchema = z.object({
 export type TransferCommonEndorserDetail = z.infer<
     typeof TransferCommonEndorserDetailSchema
 >;
+
+// ================================================
+// SELF
+// ================================================
+// application detail
+export const TransferSelfDetailSchema = z.object({
+    transferType: z.string(),
+    firstChoiceId: z.number(),
+    secondChoiceId: z.number(),
+});
+export type TransferSelfDetail = z.infer<typeof TransferSelfDetailSchema>;
+
+// optional detail
+export const TransferSelfReasonPartnerDetailSchema = z.object({
+    distance: z.number(),
+    company: z.string(),
+    date: z.string(),
+});
+export type TransferSelfReasonPartnerDetail = z.infer<
+    typeof TransferSelfReasonPartnerDetailSchema
+>;
+
+export const TransferSelfReasonSchema = z.object({
+    id: z.number(),
+    reasonId: z.number(),
+    explanation: z.string(),
+    distance: z.number().nullish(),
+    company: z.string().nullish(),
+    date: z.string().nullish(),
+});
+export type TransferSelfReason = z.infer<typeof TransferSelfReasonSchema>;

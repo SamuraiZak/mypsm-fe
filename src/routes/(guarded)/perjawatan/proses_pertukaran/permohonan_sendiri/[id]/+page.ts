@@ -1,32 +1,39 @@
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
-import { TransferTypeConstant } from '$lib/constants/core/transfer.constant.js';
+import {
+    TransferReasonConstant,
+    TransferStatusConstant,
+} from '$lib/constants/core/transfer.constant';
 import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
-import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto.js';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import type {
     TransferApplicationDetailRequestDTO,
     TransferCommonApplicationDetailDTO,
+    TransferDocumentDTO,
+    TransferSelfApplicationDetailDTO,
 } from '$lib/dto/mypsm/employment/transfer/transfer.dto';
 import { LookupHelper } from '$lib/helpers/core/lookup.helper';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
-    TransferCommonDetailSchema,
     TransferCommonEndorsementSchema,
     TransferCommonEndorserDetailSchema,
     TransferCommonMeetingSchema,
     TransferCommonPostponeApplicationSchema,
     TransferCommonPostponeResultSchema,
-    type TransferCommonDetail,
+    TransferSelfDetailSchema,
+    TransferSelfReasonSchema,
     type TransferCommonEndorsement,
     type TransferCommonEndorserDetail,
     type TransferCommonMeeting,
     type TransferCommonPostponeApplication,
     type TransferCommonPostponeResult,
+    type TransferSelfDetail,
+    type TransferSelfReason,
 } from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
-import { TransferApplicationServices } from '$lib/services/implementation/mypsm/employment/transfer/transfer.service.js';
+import { TransferApplicationServices } from '$lib/services/implementation/mypsm/employment/transfer/transfer.service';
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -47,10 +54,6 @@ export async function load({ params }) {
     // set default mode
     let userMode: string = 'employee';
 
-    let currentApplicationType =
-        TransferTypeConstant.list.find((item) => item.code == params.type)
-            ?.code ?? TransferTypeConstant.director.code;
-
     switch (currentRoleCode) {
         case UserRoleConstant.kakitangan.code:
             userMode = 'employee';
@@ -63,19 +66,45 @@ export async function load({ params }) {
             break;
         case UserRoleConstant.urusSetiaPerjawatan.code:
             userMode = 'secretary';
-            currentApplicationType =
-                TransferTypeConstant.management.description;
             break;
-
+        case UserRoleConstant.pelulus.code:
+            userMode = 'approver';
+            break;
+        case UserRoleConstant.penyokong.code:
+            userMode = 'supporter';
+            break;
         default:
             userMode = 'employee';
             break;
     }
 
+    // =====================================================
+    // FORMS
+    // =====================================================
     // create forms
     // application details form
     const applicationDetailForm = await superValidate(
-        zod(TransferCommonDetailSchema),
+        zod(TransferSelfDetailSchema),
+    );
+
+    // reason form
+    const employeeReasonForm = await superValidate(
+        zod(TransferSelfReasonSchema),
+    );
+
+    // employee confirmation form
+    const employeeConfirmationForm = await superValidate(
+        zod(TransferCommonEndorsementSchema),
+    );
+
+    // first director feedback form
+    const firstDirectorFeedbackForm = await superValidate(
+        zod(TransferCommonEndorsementSchema),
+    );
+
+    // second director feedback form
+    const secondDirectorFeedbackForm = await superValidate(
+        zod(TransferCommonEndorsementSchema),
     );
 
     // meeting form
@@ -112,17 +141,23 @@ export async function load({ params }) {
         zod(TransferCommonEndorsementSchema),
     );
 
-    // set default application detail
-    let currentApplicationDetail: TransferCommonApplicationDetailDTO = {
+    // =====================================================
+    // GET APPLICATION DETAILS
+    // =====================================================
+    let currentApplicationDetail: TransferSelfApplicationDetailDTO = {
         status: null,
         applicationDetail: null,
-        meeting: null,
+        reason: null,
+        confirmation: null,
+        transferDocument: null,
+        firstDirector: null,
+        secondDirector: null,
+        meetingDetail: null,
         postponeDetail: null,
         postponeDocument: null,
         postponeResult: null,
         postponeApproval: null,
-        transferDocument: null,
-        endorserDetails: null,
+        endorserDetail: null,
         supporterFeedback: null,
         approverFeedback: null,
     };
@@ -134,26 +169,57 @@ export async function load({ params }) {
             };
 
         const currentApplicationDetailResponse: CommonResponseDTO =
-            await TransferApplicationServices.getCommonApplicationDetail(
+            await TransferApplicationServices.getSelfTransferApplicationDetail(
                 currentApplicationDetailRequest,
             );
 
         if (currentApplicationDetailResponse.status == 'success') {
+            // assign the current application detail to the vairable
             currentApplicationDetail = currentApplicationDetailResponse.data
-                ?.details as TransferCommonApplicationDetailDTO;
+                ?.details as TransferSelfApplicationDetailDTO;
 
             // application detail
             if (currentApplicationDetail.applicationDetail !== null) {
                 applicationDetailForm.data =
                     currentApplicationDetail.applicationDetail;
 
-                currentApplicationType =
-                    currentApplicationDetail.applicationDetail.applicationType;
+                currentApplicationId =
+                    currentApplicationDetail.applicationDetail?.id;
+            }
+
+            // reason
+            if (currentApplicationDetail.reason !== null) {
+                employeeReasonForm.data = currentApplicationDetail.reason;
+            } else {
+                employeeReasonForm.data.id = currentApplicationId;
+            }
+
+            // employee confirmation
+            if (currentApplicationDetail.confirmation !== null) {
+                employeeConfirmationForm.data =
+                    currentApplicationDetail.confirmation;
+            } else {
+                employeeConfirmationForm.data.id = currentApplicationId;
+            }
+            // first director feedback
+            if (currentApplicationDetail.firstDirector !== null) {
+                firstDirectorFeedbackForm.data =
+                    currentApplicationDetail.firstDirector;
+            } else {
+                firstDirectorFeedbackForm.data.id = currentApplicationId;
+            }
+
+            // second director feedback
+            if (currentApplicationDetail.secondDirector !== null) {
+                secondDirectorFeedbackForm.data =
+                    currentApplicationDetail.secondDirector;
+            } else {
+                secondDirectorFeedbackForm.data.id = currentApplicationId;
             }
 
             // meeting result
-            if (currentApplicationDetail.meeting !== null) {
-                meetingResultForm.data = currentApplicationDetail.meeting;
+            if (currentApplicationDetail.meetingDetail !== null) {
+                meetingResultForm.data = currentApplicationDetail.meetingDetail;
             } else {
                 meetingResultForm.data.id = currentApplicationId;
             }
@@ -183,9 +249,9 @@ export async function load({ params }) {
             }
 
             // endorser detail
-            if (currentApplicationDetail.endorserDetails !== null) {
+            if (currentApplicationDetail.endorserDetail !== null) {
                 endorserDetailForm.data =
-                    currentApplicationDetail.endorserDetails;
+                    currentApplicationDetail.endorserDetail;
             } else {
                 endorserDetailForm.data.id = currentApplicationId;
             }
@@ -206,12 +272,12 @@ export async function load({ params }) {
                 approverFeedbackForm.data.id = currentApplicationId;
             }
         }
-    } else {
-        applicationDetailForm.data.applicationType = currentApplicationType;
     }
 
-    // enums
-    // get list of unrecorded leave type
+    // =====================================================
+    // GET APPLICATION DETAILS
+    // =====================================================
+    // get list of placement
     let placementList: LookupDTO[] = [];
 
     const unrecordedLeaveTypeResponse: CommonResponseDTO =
@@ -228,6 +294,23 @@ export async function load({ params }) {
 
     const placementListDropdown: DropdownDTO[] =
         LookupHelper.toDropdownProperId(placementList);
+
+    // get list of programme
+    let programmeList: LookupDTO[] = [];
+
+    const programmeListResponse: CommonResponseDTO =
+        await LookupServices.getProgrammeEnums();
+
+    if (programmeListResponse.status == 'success') {
+        programmeList = programmeListResponse.data?.dataList as LookupDTO[];
+    }
+
+    programmeList = programmeList
+        .slice()
+        .sort((a, b) => a.description.localeCompare(b.description));
+
+    const programmeListDropdown: DropdownDTO[] =
+        LookupHelper.toDropdownProperId(programmeList);
 
     // endorser list
     const endorserRequest: CommonListRequestDTO = {
@@ -251,6 +334,12 @@ export async function load({ params }) {
     const endorserDropdown: DropdownDTO[] =
         LookupServices.setSelectOptionSupporterAndApproverKP(endorserResponse);
 
+    // reason list
+    let reasonList: LookupDTO[] = TransferReasonConstant.list;
+
+    let reasonDropdown: DropdownDTO[] =
+        LookupHelper.toDropdownProperId(reasonList);
+
     // employee list
     const employeeRequest: CommonListRequestDTO = {
         pageNum: 1,
@@ -273,19 +362,60 @@ export async function load({ params }) {
     const employeeDropdown: DropdownDTO[] =
         LookupServices.setSelectOptionSupporterAndApproverKP(employeeResponse);
 
+    let meetingResultOption: DropdownDTO[] = [
+        {
+            value: true,
+            name: 'Lulus',
+        },
+        {
+            value: false,
+            name: 'Tidak Lulus',
+        },
+    ];
+
+    let endorsementDropdown: DropdownDTO[] = [
+        {
+            value: true,
+            name: 'Ya',
+        },
+        {
+            value: false,
+            name: 'Tidak',
+        },
+    ];
+
+    let transferTypeDropdown: DropdownDTO[] = [
+        {
+            value: 'Pertukaran Dalam Ibu Pejabat / Negeri / Wilayah',
+            name: 'Pertukaran Dalam Ibu Pejabat / Negeri / Wilayah',
+        },
+        {
+            value: 'Pertukaran Luar Ibu Pejabat / Negeri / Wilayah',
+            name: 'Pertukaran Luar Ibu Pejabat / Negeri / Wilayah',
+        },
+    ];
+
     return {
         props: {
-            userMode,
-            currentRoleCode,
             currentApplicationId,
             currentApplicationDetail,
-            currentApplicationType,
+            currentRoleCode,
+            userMode,
             placementListDropdown,
             endorserDropdown,
+            endorsementDropdown,
             employeeDropdown,
+            programmeListDropdown,
+            meetingResultOption,
+            reasonDropdown,
+            transferTypeDropdown,
         },
         forms: {
             applicationDetailForm,
+            employeeReasonForm,
+            employeeConfirmationForm,
+            firstDirectorFeedbackForm,
+            secondDirectorFeedbackForm,
             meetingResultForm,
             postponeApplicationForm,
             postponeResultForm,
@@ -298,13 +428,96 @@ export async function load({ params }) {
 }
 
 export async function _submitApplicationDetailForm(
-    formData: TransferCommonDetail,
+    formData: TransferSelfDetail,
 ) {
-    const form = await superValidate(formData, zod(TransferCommonDetailSchema));
+    const form = await superValidate(formData, zod(TransferSelfDetailSchema));
 
     if (form.valid) {
         const response =
-            await TransferApplicationServices.addCommonDetail(formData);
+            await TransferApplicationServices.addSelfTransferDetail(formData);
+
+        return { response };
+    } else {
+        getErrorToast('Sila semak semula maklumat anda.');
+        error(400, { message: '' });
+    }
+}
+
+export async function _submitReasonForm(formData: TransferSelfReason) {
+    console.log("before submit" + formData.id)
+    const form = await superValidate(formData, zod(TransferSelfReasonSchema));
+
+    if (form.valid) {
+        const response =
+            await TransferApplicationServices.addSelfTransferReason(formData);
+
+        return { response };
+    } else {
+        getErrorToast('Sila semak semula maklumat anda.');
+        error(400, { message: '' });
+    }
+}
+
+// submit transfer document
+
+// submit confirmation form
+export async function _submitConfirmationForm(
+    formData: TransferCommonEndorsement,
+) {
+    const form = await superValidate(
+        formData,
+        zod(TransferCommonEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response =
+            await TransferApplicationServices.addSelfTransferConfirmation(
+                formData,
+            );
+
+        return { response };
+    } else {
+        getErrorToast('Sila semak semula maklumat anda.');
+        error(400, { message: '' });
+    }
+}
+
+// submit first director feedback form
+export async function _submitFirstDirectorFeedbackForm(
+    formData: TransferCommonEndorsement,
+) {
+    const form = await superValidate(
+        formData,
+        zod(TransferCommonEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response =
+            await TransferApplicationServices.addSelfTransferFirstDirectorApproval(
+                formData,
+            );
+
+        return { response };
+    } else {
+        getErrorToast('Sila semak semula maklumat anda.');
+        error(400, { message: '' });
+    }
+}
+
+// submit Second director feedback form
+export async function _submitSecondDirectorFeedbackForm(
+    formData: TransferCommonEndorsement,
+) {
+    const form = await superValidate(
+        formData,
+        zod(TransferCommonEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response =
+            await TransferApplicationServices.addSelfTransferSecondDirectorApproval(
+                formData,
+            );
 
         return { response };
     } else {
@@ -323,7 +536,7 @@ export async function _submitMeetingResultForm(
 
     if (form.valid) {
         const response =
-            await TransferApplicationServices.addCommonMeeting(formData);
+            await TransferApplicationServices.addSelfTransferMeeting(formData);
 
         return { response };
     } else {
@@ -342,7 +555,7 @@ export async function _submitPostponeApplicationForm(
 
     if (form.valid) {
         const response =
-            await TransferApplicationServices.addCommonPostponeApplication(
+            await TransferApplicationServices.addSelfTransferPostponeApplication(
                 formData,
             );
 
@@ -363,7 +576,9 @@ export async function _submitPostponeResultForm(
 
     if (form.valid) {
         const response =
-            await TransferApplicationServices.addCommonPostponeResult(formData);
+            await TransferApplicationServices.addSelfTransferPostponeResult(
+                formData,
+            );
 
         return { response };
     } else {
@@ -382,7 +597,7 @@ export async function _submitPostponeApprovalForm(
 
     if (form.valid) {
         const response =
-            await TransferApplicationServices.addCommonPostponeApproval(
+            await TransferApplicationServices.addSelfTransferPostponeApproval(
                 formData,
             );
 
@@ -403,7 +618,9 @@ export async function _submitEndorserDetailForm(
 
     if (form.valid) {
         const response =
-            await TransferApplicationServices.addCommonEndorserDetail(formData);
+            await TransferApplicationServices.addSelfTransferEndorserDetail(
+                formData,
+            );
 
         return { response };
     } else {
@@ -422,7 +639,7 @@ export async function _submitSupporterFeedbackForm(
 
     if (form.valid) {
         const response =
-            await TransferApplicationServices.addCommonSupporterFeedback(
+            await TransferApplicationServices.addSelfTransferSupporterFeedback(
                 formData,
             );
 
@@ -443,7 +660,7 @@ export async function _submitApproverFeedbackForm(
 
     if (form.valid) {
         const response =
-            await TransferApplicationServices.addCommonApproverFeedback(
+            await TransferApplicationServices.addSelfTransferApproverFeedback(
                 formData,
             );
 
@@ -452,4 +669,68 @@ export async function _submitApproverFeedbackForm(
         getErrorToast('Sila semak semula maklumat anda.');
         error(400, { message: '' });
     }
+}
+
+export const _submitDocument = async (formData: string) => {
+    const response: CommonResponseDTO =
+        await TransferApplicationServices.uploadCommonTransferDocument(
+            formData,
+        );
+
+    return { response };
+};
+
+export const _submitPostponeDocument = async (formData: string) => {
+    const response: CommonResponseDTO =
+        await TransferApplicationServices.uploadCommonPostponeDocument(
+            formData,
+        );
+
+    return { response };
+};
+
+export function _convertToBase64(file: File): Promise<TransferDocumentDTO> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            const base64String = event.target?.result as string;
+            const fileName = file.name;
+            const fileObject: TransferDocumentDTO = {
+                name: fileName,
+                base64: base64String,
+            };
+
+            resolve(fileObject);
+        };
+
+        reader.onerror = (error) => {
+            reject(error);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+export function _prepDocumentUpload(
+    fileList: FileList,
+): Promise<TransferDocumentDTO[]> {
+    return new Promise((resolve, reject) => {
+        const fileArray: File[] = Array.from(fileList);
+
+        const filesPromiseArray: Promise<TransferDocumentDTO>[] = [];
+
+        fileArray.forEach((file) => {
+            const filePromise = _convertToBase64(file);
+
+            filesPromiseArray.push(filePromise);
+        });
+
+        Promise.all(filesPromiseArray)
+            .then((files) => {
+                resolve(files);
+            })
+            .catch((error) => {
+                reject(error);
+            });
+    });
 }

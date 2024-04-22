@@ -139,3 +139,35 @@ export const LeaveStudyDetailsSchema = z.object({
     endHalfDayType: z.string(),
     reason: z.string(),
 });
+
+export const LeaveEntitlementDetailSchema = z.object({
+    entitlement: z.number(),
+    carryForward: z.number(),
+    balance: z.number(),
+    leaveEntitlementTypeId: z.number(),
+    used: z.number(),
+});
+export type LeaveEntitlementDetail = z.infer<typeof LeaveEntitlementDetailSchema>;
+
+export const LeaveEntitlementEditDtoSchema = z.object({
+    employeeId: z.number(),
+    year: z.number(),
+    replacementAnnual: LeaveEntitlementDetailSchema,
+    alternateUntracked: LeaveEntitlementDetailSchema,
+    halfPay: LeaveEntitlementDetailSchema,
+    withoutPay: LeaveEntitlementDetailSchema,
+    maternity: LeaveEntitlementDetailSchema,
+    paternity: LeaveEntitlementDetailSchema,
+    remoteReligious: LeaveEntitlementDetailSchema,
+    quarantine: LeaveEntitlementDetailSchema,
+    unpaidChildCare: LeaveEntitlementDetailSchema,
+    extraCourse: LeaveEntitlementDetailSchema,
+    officeAbsent: LeaveEntitlementDetailSchema,
+    extendedSick: LeaveEntitlementDetailSchema,
+    unpaidPair: LeaveEntitlementDetailSchema,
+    cancer: LeaveEntitlementDetailSchema,
+    tibi: LeaveEntitlementDetailSchema,
+});
+export type LeaveEntitlementEditDto = z.infer<
+    typeof LeaveEntitlementEditDtoSchema
+>;

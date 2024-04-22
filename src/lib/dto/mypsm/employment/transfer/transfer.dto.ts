@@ -1,13 +1,19 @@
-export interface TranserDocumentDTO {
+// =========================================================
+//  SHARED
+// =========================================================
+export interface TransferDocumentDTO {
     name: string;
     base64: string;
 }
 
 export interface TransferDocumentAddDTO {
     id: number;
-    documents: TranserDocumentDTO[];
+    documents: TransferDocumentDTO[];
 }
 
+// =========================================================
+//  COMMON
+// =========================================================
 export interface TransferCommonEndorsementDTO {
     id: number;
     status: boolean;
@@ -71,8 +77,9 @@ export interface TransferCommonMeetingDTO {
     id: number;
     name: string;
     date: string;
-    result: string;
+    result: boolean;
     placementId: number;
+    programmeId: number;
     effectiveDate: string;
     referenceNo: string;
     referenceDate: string;
@@ -90,4 +97,60 @@ export interface TransferCommonPostponeResultDTO {
     id: number;
     finalEffectiveDate: string;
     approverIC: string;
+}
+
+// =========================================================
+//  SELF
+// =========================================================
+export interface TransferSelfHistoryDTO {
+    id: number;
+    employeeNumber: string;
+    empooyeeName: string;
+    identityDocumentNumber: string;
+    transferType: string;
+    applicationDate: null;
+    status: null;
+    result: string;
+}
+
+export interface TransferSelfHistoryFilterDTO {}
+
+export interface TransferSelfDetailDTO {
+    id: number;
+    transferType: string;
+    firstChoiceId: number;
+    secondChoiceId: number;
+}
+
+export interface TransferSelfReasonDTO {
+    id: number;
+    reasonId: number;
+    explanation: string;
+    company?: string;
+    distance?: number;
+    date?: string;
+}
+
+export interface TransferSelfReasonPartnerDetailDTO {
+    distance: number;
+    company: string;
+    date: string;
+}
+
+export interface TransferSelfApplicationDetailDTO {
+    status: string | null;
+    applicationDetail: TransferSelfDetailDTO | null;
+    reason: TransferSelfReasonDTO | null;
+    confirmation: TransferCommonEndorsementDTO | null;
+    transferDocument: TransferDocumentAddDTO | null;
+    firstDirector: TransferCommonEndorsementDTO | null;
+    secondDirector: TransferCommonEndorsementDTO | null;
+    meetingDetail: TransferCommonMeetingDTO | null;
+    postponeDetail: TransferCommonPostponeApplicationDTO | null;
+    postponeDocument: TransferDocumentAddDTO | null;
+    postponeResult: TransferCommonPostponeResultDTO | null;
+    postponeApproval: TransferCommonEndorsementDTO | null;
+    endorserDetail: TransferCommonEndorserDetailDTO | null;
+    supporterFeedback: TransferCommonEndorsementDTO | null;
+    approverFeedback: TransferCommonEndorsementDTO | null;
 }

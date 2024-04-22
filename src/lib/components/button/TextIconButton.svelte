@@ -11,6 +11,7 @@
     import SvgDocument from '$lib/assets/svg/SvgDocument.svelte';
     import SvgInfoSolid from '$lib/assets/svg/SvgInfoSolid.svelte';
     import SvgManifyingGlass from '$lib/assets/svg/SvgManifyingGlass.svelte';
+    import SvgReload from '$lib/assets/svg/SvgReload.svelte';
 
     export let form: string = '';
     export let type: string = 'primary' || 'danger' || 'neutral';
@@ -65,6 +66,8 @@
                 <SvgInfoSolid size="20" />
             {:else if icon == 'search'}
                 <SvgManifyingGlass size="20" />
+            {:else if icon == 'reset'}
+                <SvgReload size="12" />
             {:else}
                 <slot />
             {/if}
