@@ -2,6 +2,12 @@
 //================== Confirmation Info Schema ==============
 //==========================================================
 
+import {
+    booleanSchema,
+    codeSchema,
+    dateStringSchema,
+    shortTextSchema,
+} from '$lib/schemas/common/schema-type';
 import { z } from 'zod';
 
 //==========================================================
@@ -22,9 +28,9 @@ export const _confirmationListSchema = z.object({
 
 export const _confirmationApprovalSchema = z.object({
     id: z.number(),
-    name: z.null().optional(),
-    remark: z.null(),
-    status: z.null(),
+    name: z.string().optional(),
+    remark: shortTextSchema,
+    status: booleanSchema,
 });
 
 export const _confirmationDiciplinarySchema = z.object({
@@ -85,18 +91,26 @@ export const _confirmationServiceSchema = z.object({
 });
 
 export const _confirmationMeetingResultSchema = z.object({
-    meetingDate: z.string(),
-    meetingCount: z.string(),
-    meetingName: z.string(),
-    meetingResult: z.boolean(),
+    meetingName: codeSchema,
+    meetingDate: dateStringSchema,
+    meetingRemark: shortTextSchema,
+    meetingResult: booleanSchema,
+    isReadonly: z.boolean().readonly(),
 });
+
+export const _updateConfirmationMeetingResultSchema =
+    _confirmationMeetingResultSchema.omit({ isReadonly: true }).extend({
+        id: z.number().readonly(),
+    });
 
 export const _confirmationFullDetailSchema = z.object({
     personalDetail: _confirmationPersonalDetailSchema,
     service: _confirmationServiceSchema,
     examination: _confirmationExaminationSchema,
     diciplinary: _confirmationDiciplinarySchema,
+    secretary: _confirmationApprovalSchema,
+    division: _confirmationApprovalSchema,
     integrity: _confirmationApprovalSchema,
     audit: _confirmationApprovalSchema,
-    division: _confirmationApprovalSchema,
+    meeting: _confirmationMeetingResultSchema,
 });
