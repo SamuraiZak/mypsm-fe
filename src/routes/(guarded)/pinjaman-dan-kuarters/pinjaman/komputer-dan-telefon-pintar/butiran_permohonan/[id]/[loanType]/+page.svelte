@@ -516,6 +516,7 @@
                     id="maxLoan"
                     label={'Had Permohonan'}
                     bind:val={$loanInfoForm.maxLoan}
+
                 ></CustomTextField>
                 <CustomTextField
                     id="requestedLoan"
