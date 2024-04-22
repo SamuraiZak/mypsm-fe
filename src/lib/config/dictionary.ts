@@ -531,6 +531,11 @@ const dictionary: { [key: string]: string } = {
     fromDate: "Dari",
     toDate: "Hingga",
 
+    //pemangkuan
+    candidateCount: "Jumlah Calon",
+    actingType: "Jenis Pemangkuan",
 
+    //kenaikan pangkat
+    promotionType: "Jenis Kenaikan Pangkat",
 
 };
