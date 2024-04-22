@@ -37,7 +37,7 @@ export const _personalInfoSchema = z
         mobileNo: shortTextSchema,
         housing: shortTextSchema,
         houseLoan: shortTextSchema,
-        isExPoliceOrSoldier: booleanSchema,
+        isExPolice: shortTextSchema,
 
     },
     );

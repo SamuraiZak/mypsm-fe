@@ -1,8 +1,10 @@
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
 import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
-import type { ptbKwapApplicationDetail, ptbKwapApplicationDetailRequestDTO } from "$lib/dto/mypsm/employment/ptb-dan-kwap/ptb-kwap-dto";
+import type { PTBIDRequestBodyDTO } from "$lib/dto/mypsm/employment/ptb-dan-kwap/id-request.dto";
+import type { PersonalDetailDTO, ptbKwapApplicationDetail, ptbKwapApplicationDetailRequestDTO } from "$lib/dto/mypsm/employment/ptb-dan-kwap/ptb-kwap-dto";
 import { _PTBPensionInfoSchema, _approveInfoSchema, _personalInfoSchema, _rolesRelatedEditSchema, _salaryInfoSchema, _serviceInfoSchema, _supporterInfoSchema } from "$lib/schemas/mypsm/employment/PTB-KWAP/schema";
+import { PTBKWAPServices } from "$lib/services/implementation/mypsm/PTB-KWAP/PTB.service";
 import { superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 
@@ -71,24 +73,39 @@ export async function load({ params }) {
     // GET APPLICATION DATA
     // ============================================
 
-    // set default application detail
-    let currentApplicationDetail: ptbKwapApplicationDetail = {
-        personalDetail:null,
-        serviceDetail:null,
-        salaryDetail:null,
-        pensionDetail:null,
-        supportDetail:null,
-        approveDetail:null,
-    }
+   // ===============
+    // personal Detail
+    // ===============
+    let personalDetail: PersonalDetailDTO | null = null;
 
     if (currentApplicationId !== 0) {
-
-        const applicationDetailRequest: ptbKwapApplicationDetailRequestDTO = {
-            id: currentApplicationId,
+        // if application exist
+        let personalDetailRequestBody: PTBIDRequestBodyDTO = {
+            id: currentApplicationId
         }
 
-        // fetch the application detail
+        const personalDetailResponse: CommonResponseDTO =
+            await PTBKWAPServices.getPTBKWAPPersonalDetails(personalDetailRequestBody);
 
+        if (personalDetailResponse.status == 'success') {
+            personalDetail = personalDetailResponse.data?.details as PersonalDetailDTO;
+
+            personalDetailForm.data = personalDetail;
+        }
+    }else{
+        // if application is new
+        let personalDetailRequestBody: PTBIDRequestBodyDTO = {
+            id: currentApplicationId
+        }
+
+        const personalDetailResponse: CommonResponseDTO =
+            await PTBKWAPServices.getPTBKWAPPersonalDetails();
+
+        if (personalDetailResponse.status == 'success') {
+            personalDetail = personalDetailResponse.data?.details as PersonalDetailDTO;
+
+            personalDetailForm.data = personalDetail;
+        }
     }
    
 }

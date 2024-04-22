@@ -8,7 +8,7 @@ import {
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import { commonIdRequestDTOConvert, type commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import type { ptbPensionRequestDTO } from '$lib/dto/mypsm/employment/PTB-KWAP/add-ptb-kwap-service-detail.dto';
-import type { PTBIDRequestBody } from '$lib/dto/mypsm/employment/ptb-dan-kwap/id-request.dto';
+import type { PTBIDRequestBodyDTO } from '$lib/dto/mypsm/employment/ptb-dan-kwap/id-request.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
@@ -51,13 +51,13 @@ export class PTBKWAPServices {
     // ============ Personal Detail ==============
     // ===========================================
 
-    static async getPTBKWAPPersonalDetails(param: commonIdRequestDTO) {
+    static async getPTBKWAPPersonalDetails(param: PTBIDRequestBodyDTO) {
         try {
             let url: Input = 'employment/pension_detail/personal_details/get';
 
             const response: Response = await http
                 .post(url, {
-                    body: commonIdRequestDTOConvert.toJson(param),
+                    body: JSON.stringify(param),
                 })
                 .json();
 
@@ -78,7 +78,7 @@ export class PTBKWAPServices {
     // ===========================================
 
     static async getPTBKWAPServiceDetails(
-        param: PTBIDRequestBody,
+        param: PTBIDRequestBodyDTO,
     ) {
 
         try {
@@ -86,7 +86,7 @@ export class PTBKWAPServices {
 
             const response: Response = await http
                 .post(url, {
-                    body: commonIdRequestDTOConvert.toJson(param),
+                    body: JSON.stringify(param),
                 })
                 .json();
 
@@ -107,7 +107,7 @@ export class PTBKWAPServices {
     // ===========================================
 
     static async getPTBKWAPpensionDetails(
-        param: PTBIDRequestBody,
+        param: PTBIDRequestBodyDTO,
     ) {
 
         try {
@@ -115,7 +115,7 @@ export class PTBKWAPServices {
 
             const response: Response = await http
                 .post(url, {
-                    body: commonIdRequestDTOConvert.toJson(param),
+                    body: JSON.stringify(param),
                 })
                 .json();
 
@@ -136,7 +136,7 @@ export class PTBKWAPServices {
     // ===========================================
 
     static async getPTBKWAPSalaryDetails(
-        param: PTBIDRequestBody,
+        param: PTBIDRequestBodyDTO,
     ) {
 
         try {
@@ -144,7 +144,7 @@ export class PTBKWAPServices {
 
             const response: Response = await http
                 .post(url, {
-                    body: commonIdRequestDTOConvert.toJson(param),
+                    body: JSON.stringify(param),
                 })
                 .json();
 
@@ -165,7 +165,7 @@ export class PTBKWAPServices {
     // ===========================================
 
     static async getPTBKWAPRolesRelated(
-        param: PTBIDRequestBody,
+        param: PTBIDRequestBodyDTO,
     ) {
 
         try {
@@ -173,7 +173,7 @@ export class PTBKWAPServices {
 
             const response: Response = await http
                 .post(url, {
-                    body: commonIdRequestDTOConvert.toJson(param),
+                    body: JSON.stringify(param),
                 })
                 .json();
 
@@ -194,14 +194,14 @@ export class PTBKWAPServices {
     // ===========================================
 
     static async getPTBKWAPSupport(
-        param: PTBIDRequestBody,
+        param: PTBIDRequestBodyDTO,
     ) {
         try {
             let url: Input = 'employment/pension_detail/supports/get';
 
             const response: Response = await http
                 .post(url, {
-                    body: commonIdRequestDTOConvert.toJson(param),
+                    body: JSON.stringify(param),
                 })
                 .json();
 
@@ -222,7 +222,7 @@ export class PTBKWAPServices {
     // ===========================================
 
     static async getPTBKWAPApprove(
-        param: PTBIDRequestBody,
+        param: PTBIDRequestBodyDTO,
     ) {
 
         try {
@@ -230,7 +230,7 @@ export class PTBKWAPServices {
 
             const response: Response = await http
                 .post(url, {
-                    body: commonIdRequestDTOConvert.toJson(param),
+                    body: JSON.stringify(param),
                 })
                 .json();
 
