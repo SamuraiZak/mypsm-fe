@@ -54,3 +54,8 @@ export const kgtSpecialRaiseType: DropdownDTO [] = [
     { value: 'specialByGrossPay', name: 'Peratusan Daripada Jumlah Gaji Pokok' },
     { value: 'KGT', name: 'Peratusan Daripada KGT' },
 ]
+
+export const successOption: DropdownDTO[] = [
+    { value: 'Berjaya', name: 'Berjaya' },
+    { value: 'Tidak Berjaya', name: 'Tidak Berjaya' },
+];
