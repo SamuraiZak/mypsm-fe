@@ -369,10 +369,11 @@
     } = superForm(data.newHireDocumentForm, {
         SPA: true,
         invalidateAll: false,
+        resetForm: false,
         taintedMessage: false,
         validators: zod(_uploadDocumentsSchema),
         onSubmit() {
-            _submitDocumentForm(data.newHireId, $documentForm.document);
+            _submitDocumentForm($documentForm.document);
         },
     });
 

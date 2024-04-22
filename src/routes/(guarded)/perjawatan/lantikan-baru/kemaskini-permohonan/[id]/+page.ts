@@ -221,8 +221,8 @@ export async function load({ params }) {
     const employeeLookup: DropdownDTO[] = (
         response.data?.dataList as CommonEmployeeDTO[]
     ).map((data) => ({
-        value: data.employeeNumber,
-        name: data.employeeNumber,
+        value: Number(data.employeeNumber),
+        name: String(data.employeeNumber),
     }));
 
     // ============================================================
@@ -838,7 +838,7 @@ export const _submitSecretarySetApproverForm = async (formData: object) => {
     return { response };
 };
 
-export const _submitDocumentForm = async (id: number, files: File[]) => {
+export const _submitDocumentForm = async (files: File[]) => {
     const documentData = new FormData();
 
     // check file size validation
@@ -848,7 +848,7 @@ export const _submitDocumentForm = async (id: number, files: File[]) => {
 
     const form = await superValidate(documentData, zod(_uploadDocumentsSchema));
 
-    if (!form.valid || id === undefined) {
+    if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
@@ -857,14 +857,12 @@ export const _submitDocumentForm = async (id: number, files: File[]) => {
     const base64String = await _fileToBase64String(files[0]);
 
     const requestBody: {
-        id: number;
         document?: DocumentBase64RequestDTO | undefined;
     } = {
         document: {
             base64: base64String,
             name: files[0].name,
         },
-        id: id,
     };
 
     const response: CommonResponseDTO =
