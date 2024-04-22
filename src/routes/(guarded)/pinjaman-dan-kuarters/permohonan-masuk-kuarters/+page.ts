@@ -37,14 +37,3 @@ export const load = async () => {
         form,
     }
 }
-
-export const _applyQuarters = async () => {
-    const response: CommonResponseDTO =
-        await QuartersServices.addMovingInApplication();
-
-    if (response.status == "success") {
-        return { response }
-    } else {
-        new Error('Failed to create new application.')
-    }
-}
