@@ -5,7 +5,7 @@ import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto
 import type { MedicalClinicEmployeeAllocationClaimList } from "$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-allocation-list.dto";
 import type { MedicalClinicEmployeeGetAllocationList } from "$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-get-allocation.dto";
 import type { MedicalClinicEmployeePaymentList } from "$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-payments-list.dto";
-import type { ClinicAllocation } from "$lib/dto/mypsm/perubatan/tuntutan-klinik/clinic-allocation.dto";
+import type { ClinicAllocation, CurrentYearAllocation } from "$lib/dto/mypsm/perubatan/tuntutan-klinik/clinic-allocation.dto";
 import { _editAllocations } from "$lib/schemas/mypsm/medical/medical-schema";
 import { MedicalServices } from "$lib/services/implementation/mypsm/perubatan/medical.service";
 import { zod } from "sveltekit-superforms/adapters";
@@ -37,6 +37,9 @@ export const load = async () => {
         remainingAllocation: 0,
         newAllocation: 0,
     }
+    let currentYear: CurrentYearAllocation = {
+        year: Number(new Date().getFullYear())
+    }
 
     const allocationForm = await superValidate(zod(_editAllocations))
 
@@ -54,7 +57,7 @@ export const load = async () => {
         employeePaymentListResponse.data?.dataList as MedicalClinicEmployeePaymentList[];
     if (currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code) {
         const clinicPanelAllocationResponse: CommonResponseDTO =
-            await MedicalServices.getClinicPanelAllocations();
+            await MedicalServices.getClinicPanelAllocations(currentYear);
         clinicPanelAllocations =
             clinicPanelAllocationResponse.data?.details as ClinicAllocation;
         allocationForm.data = clinicPanelAllocations
@@ -88,7 +91,7 @@ export const _submit = async (formData: ClinicAllocation) => {
     const form = await superValidate(formData, zod(_editAllocations));
 
     if (form.valid) {
-        const { year, ...tempObj } = form.data;
+        const { remainingAllocation, ...tempObj } = form.data;
 
         const response: CommonResponseDTO =
             await MedicalServices.editAllocations(tempObj as ClinicAllocation)
