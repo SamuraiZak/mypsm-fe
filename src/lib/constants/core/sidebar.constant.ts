@@ -306,8 +306,8 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Penempatan Tanggung Kerja',
-                            path: '/perjawatan/penamatan-tanggung-kerja',
+                            name: 'Tanggung Kerja',
+                            path: '/perjawatan/tanggung-kerja',
                         },
                     ],
                 },
@@ -610,8 +610,12 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Permohonan Kuarters',
+                            name: 'Permohonan Masuk Kuarters',
                             path: '/pinjaman-dan-kuarters/permohonan-masuk-kuarters',
+                        },
+                        {
+                            name: 'Permohonan Keluar Kuarters',
+                            path: '/pinjaman-dan-kuarters/permohonan-keluar-kuarters',
                         },
                     ],
                 },
@@ -661,7 +665,7 @@ export class SidebarConstant {
                             path: '/perjawatan/pertukaran',
                         },
                         {
-                            name: 'tanggung Kerja',
+                            name: 'Tanggung Kerja',
                             path: '/perjawatan/tanggung-kerja',
                         },
                     ],
@@ -707,6 +711,10 @@ export class SidebarConstant {
                         {
                             name: 'Permohonan Kuarters',
                             path: '/pinjaman-dan-kuarters/permohonan-masuk-kuarters',
+                        },
+                        {
+                            name: 'Permohonan Keluar Kuarters',
+                            path: '/pinjaman-dan-kuarters/permohonan-keluar-kuarters',
                         },
                     ],
                 },
