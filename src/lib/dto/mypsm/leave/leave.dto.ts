@@ -11,7 +11,7 @@ export interface LeaveEntitlementDTO {
 
 export interface LeaveEntitlementFilterDTO {
     year?: number | null;
-    employeeID?: string | null;
+    employeeId?: number | null;
     identityCard?: string | null;
     employeeNo?: string | null;
     name?: string | null;
@@ -140,7 +140,7 @@ export interface LeaveViewHalfPayDTO {
 // Revamps
 // ===========================================================
 
-export interface LeaveApplicationDetailRequestDTO{
+export interface LeaveApplicationDetailRequestDTO {
     leaveId: number;
     leaveTypeCode: string;
 }
@@ -175,7 +175,7 @@ export interface LeaveDocumentAddDTO {
     base64: string;
 }
 
-export interface LeaveDocumentUploadDTO{
+export interface LeaveDocumentUploadDTO {
     leaveId: number;
     documents: LeaveDocumentAddDTO[];
 }
@@ -263,4 +263,97 @@ export interface LeaveApplicationProcessDTO {
     managementFeedback: boolean;
     meeting: boolean;
     document: boolean;
+}
+
+export interface LeaveEntitlementEditDTO {
+    employeeId: number;
+    year: number;
+    replacementAnnual: LeaveEntitlementDetailDTO;
+    alternateUntracked: LeaveEntitlementDetailDTO;
+    halfPay: LeaveEntitlementDetailDTO;
+    withoutPay: LeaveEntitlementDetailDTO;
+    maternity: LeaveEntitlementDetailDTO;
+    paternity: LeaveEntitlementDetailDTO;
+    remoteReligious: LeaveEntitlementDetailDTO;
+    quarantine: LeaveEntitlementDetailDTO;
+    unpaidChildCare: LeaveEntitlementDetailDTO;
+    extraCourse: LeaveEntitlementDetailDTO;
+    officeAbsent: LeaveEntitlementDetailDTO;
+    extendedSick: LeaveEntitlementDetailDTO;
+    unpaidPair: LeaveEntitlementDetailDTO;
+    cancer: LeaveEntitlementDetailDTO;
+    tibi: LeaveEntitlementDetailDTO;
+}
+
+export interface LeaveEntitlementDetailDTO {
+    entitlement: number;
+    carryForward: number;
+    balance: number;
+    leaveEntitlementTypeID: number;
+    used: number;
+}
+
+// ===============================================
+// GCR
+// ===============================================
+
+export interface GCRAccumulationHistoryDTO {
+    id: number;
+    name: string;
+    identityCardNo: string;
+    totalAnnual: number;
+    balance: number;
+    collectedGCR: number;
+    requesteDate: string;
+    status: string;
+    remark: string;
+}
+
+export interface GCRAccumulationHistoryFilterDTO {
+    name: string | null;
+    identityCard: string | null;
+    employeeNo: string | null;
+    status: string | null;
+}
+
+export interface GCRAccumulationApplicationDetailDTO {
+    personalDetail: GCRAccumulationPersonalDetailDTO | null;
+    accumulation: GCRAccumulationDetailDTO | null;
+    lead: GCREndorsementDTO | null;
+    director: GCREndorsementDTO | null;
+    secretary: GCREndorsementDTO | null;
+}
+
+export interface GCRAccumulationDetailDTO {
+    id?: number;
+    year: number;
+    annualLeave: number;
+    annualBalance: number;
+    gcr: number;
+    currentCollected: number;
+    carryForward: number;
+}
+
+export interface GCRAccumulationPersonalDetailDTO {
+    name: string;
+    identityDocumentNumber: string;
+    employeeNumber: string;
+    grade: string;
+    scheme: string;
+    placement: string;
+    startDate: string;
+}
+
+export interface GCRAccumulationAddDetailDTO {
+    collectedGCR: number;
+}
+
+export interface GCRAccumulationDetailRequestDTO {
+    id: number | null;
+}
+
+export interface GCREndorsementDTO {
+    id: number;
+    status: boolean;
+    remark: string;
 }
