@@ -62,9 +62,9 @@ export class SidebarConstant {
                             path: '/cuti/permohonan',
                         },
                         {
-                            name: 'HRMIS',
-                            path: '/cuti/HRMIS',
-                        },
+                            name: 'Pengumpulan GCR',
+                            path: '/cuti/pengumpulan_GCR'
+                        }
                     ],
                 },
                 {
@@ -318,6 +318,10 @@ export class SidebarConstant {
                         {
                             name: 'Peruntukan',
                             path: '/cuti/peruntukan',
+                        },
+                        {
+                            name: 'Pengumpulan GCR',
+                            path: '/cuti/pengumpulan_GCR',
                         },
                     ],
                 },
@@ -580,6 +584,10 @@ export class SidebarConstant {
                             name: 'Permohonan',
                             path: '/cuti/permohonan',
                         },
+                        {
+                            name: 'Pengumpulan GCR',
+                            path: '/cuti/pengumpulan_GCR',
+                        },
                     ],
                 },
                 {
@@ -674,6 +682,10 @@ export class SidebarConstant {
                         {
                             name: 'Permohonan',
                             path: '/cuti/permohonan',
+                        },
+                        {
+                            name: 'Pengumpulan GCR',
+                            path: '/cuti/pengumpulan_GCR',
                         },
                     ],
                 },
@@ -1253,12 +1265,16 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Peruntukan',
-                            path: '/cuti/peruntukan',
+                            path: '/cuti/peruntukan_cuti_kakitangan',
                         },
                         {
                             name: 'Permohonan',
                             path: '/cuti/permohonan',
                         },
+                        {
+                            name: 'Pengumpulan GCR',
+                            path: '/cuti/pengumpulan_GCR'
+                        }
                     ],
                 },
                 {
