@@ -1,7 +1,7 @@
 export interface InterimCommonApproval {
     interimId: number;
     status: boolean;
-    remark: string;
+    remark: string | null;
 }
 
 // Converts JSON strings to/from your types

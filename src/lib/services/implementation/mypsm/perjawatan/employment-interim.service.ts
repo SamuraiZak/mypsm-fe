@@ -6,9 +6,10 @@ import { CommonResponseConstant } from "$lib/constants/core/common-response.cons
 import { getPromiseToast } from "$lib/helpers/core/toast.helper";
 import { invalidateAll } from "$app/navigation";
 import { EmployeeInterimApplicationDetailRequestDTOConvert, type EmployeeInterimApplicationDetailRequestDTO } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-employee-application-detail-request.dto";
-import type { InterimApplicationDetailDTO } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-application-detail-response.dto";
+import { InterimChecklistConvert, type InterimChecklist } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-application-detail-response.dto";
 import type { InterimApplicationResponse } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-application-response.dto";
 import { InterimCommonApprovalConvert, type InterimCommonApproval } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-common-approval.dto";
+import { TerminationSuppAppConvert, type TerminationSuppApp } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-termination.dto";
 
 
 export class EmploymentInterimServices {
@@ -202,6 +203,203 @@ export class EmploymentInterimServices {
 
             if (result.status == 'success') {
                 invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //add interim checklist
+    static async addChecklist(param: InterimChecklist) {
+        try {
+            let url: Input = 'employment/interim/application/checklist';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: InterimChecklistConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //add interim approver approval
+    static async addInterimApproverApproval(param: InterimCommonApproval) {
+        try {
+            let url: Input = 'employment/interim/application/approval';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: InterimCommonApprovalConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // ============================================================
+    // Termination @ Penamatan Tanggung Kerja
+    // ============================================================
+    static async getTerminationList(param: CommonListRequestDTO) {
+        try {
+            const url: Input = 'employment/interim/termination/list'
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    // get all related data
+    static async getTerminationDetail(param: EmployeeInterimApplicationDetailRequestDTO) {
+        try {
+            const url: Input = 'employment/interim/termination/view'
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: EmployeeInterimApplicationDetailRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //add termination secretary approval
+    static async addTerminationSecretaryApproval(param: InterimCommonApproval) {
+        try {
+            let url: Input = 'employment/interim/termination/verification';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: InterimCommonApprovalConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //add termination secretary approval
+    static async addTerminationSuppApp(param: TerminationSuppApp) {
+        try {
+            let url: Input = 'employment/interim/termination/supporter_approver';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: TerminationSuppAppConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //add termination supporter approval
+    static async addTerminationSupporterApproval(param: InterimCommonApproval) {
+        try {
+            let url: Input = 'employment/interim/termination/support';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: InterimCommonApprovalConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //add termination Approver approval
+    static async addTerminationApproverApproval(param: InterimCommonApproval) {
+        try {
+            let url: Input = 'employment/interim/termination/approval';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: InterimCommonApprovalConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll()
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
