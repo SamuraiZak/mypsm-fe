@@ -659,6 +659,213 @@
             </div>
         </StepperContentBody>
     </StepperContent>
+
+    <StepperContent>
+        <StepperContentHeader title="Kemaskini Maklumat Pinjaman"
+        ></StepperContentHeader>
+        <CustomTab>
+        <CustomTabContent title="Jadual Pertama">
+            <ContentHeader
+                title="Masukkan Maklumat dan Perihal Kenderaan"
+            >
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    form="vehicleFirstSchedule"
+                ></TextIconButton>
+            </ContentHeader>
+            <form
+                id="vehicleFirstSchedule"
+                method="POST"
+                use:vehicleFirstScheduleEnhance
+                class="flex w-full flex-col gap-2"
+            >
+                <CustomTextField
+                    disabled={noturusetia}
+                    id="engineNumber"
+                    label="No. Enjin"
+                    bind:val={$vehicleFirstScheduleForm.engineNumber}
+                />
+                <CustomTextField
+                    disabled={noturusetia}
+                    id="chassisNumber"
+                    label="No. Casis"
+                    bind:val={$vehicleFirstScheduleForm.chassisNumber}
+                />
+                <CustomTextField
+                    disabled={noturusetia}
+                    id="countryOrigin"
+                    label="Buatan"
+                    bind:val={$vehicleFirstScheduleForm.countryOrigin}
+                />
+                <CustomTextField
+                    disabled={noturusetia}
+                    id="brandModel"
+                    label="Nama Model"
+                    bind:val={$vehicleFirstScheduleForm.brandModel}
+                />
+                <CustomTextField
+                    disabled={noturusetia}
+                    id="engineHP"
+                    label="Kuasa Enjin"
+                    bind:val={$vehicleFirstScheduleForm.engineHP}
+                />
+                <CustomTextField
+                    disabled={noturusetia}
+                    id="fuelType"
+                    label="Bahan Bakar"
+                    bind:val={$vehicleFirstScheduleForm.fuelType}
+                />
+                <CustomTextField
+                    disabled={noturusetia}
+                    id="class"
+                    label="Kelas Kegunaan"
+                    bind:val={$vehicleFirstScheduleForm.class}
+                />
+                <CustomTextField
+                    disabled={noturusetia}
+                    id="bodyType"
+                    label="Jenis Badan"
+                    bind:val={$vehicleFirstScheduleForm.bodyType}
+                />
+
+                <CustomTextField
+                    disabled={noturusetia}
+                    id="makeYear"
+                    label="Tahun Dibuat"
+                    bind:val={$vehicleFirstScheduleForm.makeYear}
+                />
+                <ContentHeader
+                    title="Masukkan Butiran Penjualan/Tuan Asal"
+                ></ContentHeader>
+                <div
+                    class="flex w-full flex-col items-start justify-start gap-2.5"
+                >
+                    <CustomTextField
+                    disabled={noturusetia}
+                        id="previousOwner"
+                        label="Nama"
+                        bind:val={$vehicleFirstScheduleForm.previousOwner}
+                    />
+                    <CustomTextField
+                    disabled={noturusetia}
+                        id="previousOwnerIC"
+                        label="No. K/P"
+                        bind:val={$vehicleFirstScheduleForm.previousOwnerIC}
+                    />
+                    <CustomTextField
+                    disabled={noturusetia}
+                        id="address"
+                        label="Alamat"
+                        bind:val={$vehicleFirstScheduleForm.address}
+                    />
+                </div>
+            </form>
+            <ContentHeader title="Masukkan Harga Belian Kenderaan">
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    form="firstScheduleDetail"
+                ></TextIconButton>
+            </ContentHeader>
+
+            <form
+                id="firstScheduleDetail"
+                method="POST"
+                use:firstScheduleEnhance
+                class="flex w-full flex-col gap-2"
+            >
+                <div
+                    class="flex w-full flex-col items-start justify-start gap-2.5"
+                >
+                    <CustomTextField
+                        disabled={noturusetia}
+                        id="purchasePrice"
+                        label="Jumlah Harga Belian (RM)"
+                        bind:val={$firstScheduleForm.purchasePrice}
+                    />
+                    <CustomTextField
+                        disabled={noturusetia}
+                        id="balancePayment"
+                        label="Bayaran Baki (RM)"
+                        bind:val={$firstScheduleForm.balancePayment}
+                    />
+                    <CustomTextField
+                        disabled={noturusetia}
+                        id="govFund"
+                        label="Amaun Pembiayaan Kerajaan (RM)"
+                        bind:val={$firstScheduleForm.govFund}
+                    />
+                </div>
+            </form>
+        </CustomTabContent>
+        <CustomTabContent title="Jadual Kedua">
+            <!-- {#if currEmpLoanRec[0].typeOfLoan == 'Kenderaan'} -->
+            <ContentHeader
+                title="Masukkan Maklumat Harga Jualan (RM)"
+            >
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    form="secondScheduleDetail"
+                ></TextIconButton>
+            </ContentHeader>
+            <div
+                class="flex w-full flex-col items-start justify-start gap-2.5"
+            >
+                <form
+                    id="secondScheduleDetail"
+                    method="POST"
+                    use:secondScheduleEnhance
+                    class="flex w-full flex-col gap-2"
+                >
+                    <CustomTextField
+                        disabled={noturusetia}
+                        id="sellingPrice"
+                        label="Jumlah Harga Belian (RM)"
+                        bind:val={$secondScheduleForm.sellingPrice}
+                    ></CustomTextField>
+
+                    <CustomTextField
+                        disabled={noturusetia}
+                        id="sellingBalance"
+                        label="Bayaran Baki (RM)"
+                        bind:val={$secondScheduleForm.sellingBalance}
+                    ></CustomTextField>
+
+                    <CustomTextField
+                        disabled={noturusetia}
+                        id="govFund"
+                        label="Amaun Pembiayaan dan Keuntungan Kerajaan (RM)"
+                        bind:val={$secondScheduleForm.govFund}
+                    ></CustomTextField>
+
+                    <ContentHeader
+                        title="Masukkan Amaun dan Tempoh Bayaran Balik Harga Jualan"
+                    ></ContentHeader>
+                    <div
+                        class="flex w-full flex-col items-start justify-start gap-2.5"
+                    >
+                        <CustomTextField
+                            disabled={noturusetia}
+                            id="installment"
+                            label="Amaun Bulanan (RM)"
+                            bind:val={$secondScheduleForm.installment}
+                        ></CustomTextField>
+
+                        <CustomTextField
+                            disabled={noturusetia}
+                            id="paymentPeriod"
+                            label={'Tempoh Pembayaran'}
+                            bind:val={$secondScheduleForm.paymentPeriod}
+                        ></CustomTextField>
+                    </div>
+                </form>
+            </div>
+        </CustomTabContent>
+    </CustomTab>
+    </StepperContent>
+
     <StepperContent>
         <StepperContentHeader title="Tetapan Pelulus"></StepperContentHeader>
         <StepperContentBody>
@@ -696,7 +903,7 @@
             <div
                 class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
             >
-                <ContentHeader title="Keputusan Dari Penyokong">
+                <ContentHeader title="Keputusan Dari Ketua Seksyen">
                     <TextIconButton
                         type="primary"
                         label="Simpan"
@@ -963,212 +1170,13 @@
                                 <CustomTextField
                                     disabled={noturusetia}
                                     id="paymentPeriod"
-                                    label="Tempoh"
+                                    label="Tempoh (Bulan)"
                                     bind:val={$approvalAndOfferDetailForm.paymentPeriod}
                                 ></CustomTextField>
                             </form>
                         </div>
                     </CustomTabContent>
-                    <CustomTabContent title="Jadual Pertama">
-                        <!-- {#if currEmpLoanRec[0].typeOfLoan == 'Kenderaan'} -->
-                        <ContentHeader
-                            title="Masukkan Maklumat dan Perihal Kenderaan"
-                        >
-                            <TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                form="vehicleFirstSchedule"
-                            ></TextIconButton>
-                        </ContentHeader>
-                        <form
-                            id="vehicleFirstSchedule"
-                            method="POST"
-                            use:vehicleFirstScheduleEnhance
-                            class="flex w-full flex-col gap-2"
-                        >
-                            <CustomTextField
-                                disabled={noturusetia}
-                                id="engineNumber"
-                                label="No. Enjin"
-                                bind:val={$vehicleFirstScheduleForm.engineNumber}
-                            />
-                            <CustomTextField
-                                disabled={noturusetia}
-                                id="chassisNumber"
-                                label="No. Casis"
-                                bind:val={$vehicleFirstScheduleForm.chassisNumber}
-                            />
-                            <CustomTextField
-                                disabled={noturusetia}
-                                id="countryOrigin"
-                                label="Buatan"
-                                bind:val={$vehicleFirstScheduleForm.countryOrigin}
-                            />
-                            <CustomTextField
-                                disabled={noturusetia}
-                                id="brandModel"
-                                label="Nama Model"
-                                bind:val={$vehicleFirstScheduleForm.brandModel}
-                            />
-                            <CustomTextField
-                                disabled={noturusetia}
-                                id="engineHP"
-                                label="Kuasa Enjin"
-                                bind:val={$vehicleFirstScheduleForm.engineHP}
-                            />
-                            <CustomTextField
-                                disabled={noturusetia}
-                                id="fuelType"
-                                label="Bahan Bakar"
-                                bind:val={$vehicleFirstScheduleForm.fuelType}
-                            />
-                            <CustomTextField
-                                disabled={noturusetia}
-                                id="class"
-                                label="Kelas Kegunaan"
-                                bind:val={$vehicleFirstScheduleForm.class}
-                            />
-                            <CustomTextField
-                                disabled={noturusetia}
-                                id="bodyType"
-                                label="Jenis Badan"
-                                bind:val={$vehicleFirstScheduleForm.bodyType}
-                            />
-
-                            <CustomTextField
-                                disabled={noturusetia}
-                                id="makeYear"
-                                label="Tahun Dibuat"
-                                bind:val={$vehicleFirstScheduleForm.makeYear}
-                            />
-                            <ContentHeader
-                                title="Masukkan Butiran Penjualan/Tuan Asal"
-                            ></ContentHeader>
-                            <div
-                                class="flex w-full flex-col items-start justify-start gap-2.5"
-                            >
-                                <CustomTextField
-                                disabled={noturusetia}
-                                    id="previousOwner"
-                                    label="Nama"
-                                    bind:val={$vehicleFirstScheduleForm.previousOwner}
-                                />
-                                <CustomTextField
-                                disabled={noturusetia}
-                                    id="previousOwnerIC"
-                                    label="No. K/P"
-                                    bind:val={$vehicleFirstScheduleForm.previousOwnerIC}
-                                />
-                                <CustomTextField
-                                disabled={noturusetia}
-                                    id="address"
-                                    label="Alamat"
-                                    bind:val={$vehicleFirstScheduleForm.address}
-                                />
-                            </div>
-                        </form>
-                        <ContentHeader title="Masukkan Harga Belian Kenderaan">
-                            <TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                form="firstScheduleDetail"
-                            ></TextIconButton>
-                        </ContentHeader>
-
-                        <form
-                            id="firstScheduleDetail"
-                            method="POST"
-                            use:firstScheduleEnhance
-                            class="flex w-full flex-col gap-2"
-                        >
-                            <div
-                                class="flex w-full flex-col items-start justify-start gap-2.5"
-                            >
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="purchasePrice"
-                                    label="Jumlah Harga Belian (RM)"
-                                    bind:val={$firstScheduleForm.purchasePrice}
-                                />
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="balancePayment"
-                                    label="Bayaran Baki (RM)"
-                                    bind:val={$firstScheduleForm.balancePayment}
-                                />
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="govFund"
-                                    label="Amaun Pembiayaan Kerajaan (RM)"
-                                    bind:val={$firstScheduleForm.govFund}
-                                />
-                            </div>
-                        </form>
-                    </CustomTabContent>
-                    <CustomTabContent title="Jadual Kedua">
-                        <!-- {#if currEmpLoanRec[0].typeOfLoan == 'Kenderaan'} -->
-                        <ContentHeader
-                            title="Masukkan Maklumat Harga Jualan (RM)"
-                        >
-                            <TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                form="secondScheduleDetail"
-                            ></TextIconButton>
-                        </ContentHeader>
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2.5"
-                        >
-                            <form
-                                id="secondScheduleDetail"
-                                method="POST"
-                                use:secondScheduleEnhance
-                                class="flex w-full flex-col gap-2"
-                            >
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="sellingPrice"
-                                    label="Jumlah Harga Belian (RM)"
-                                    bind:val={$secondScheduleForm.sellingPrice}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="sellingBalance"
-                                    label="Bayaran Baki (RM)"
-                                    bind:val={$secondScheduleForm.sellingBalance}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="govFund"
-                                    label="Amaun Pembiayaan dan Keuntungan Kerajaan (RM)"
-                                    bind:val={$secondScheduleForm.govFund}
-                                ></CustomTextField>
-
-                                <ContentHeader
-                                    title="Masukkan Amaun dan Tempoh Bayaran Balik Harga Jualan"
-                                ></ContentHeader>
-                                <div
-                                    class="flex w-full flex-col items-start justify-start gap-2.5"
-                                >
-                                    <CustomTextField
-                                        disabled={noturusetia}
-                                        id="installment"
-                                        label="Amaun Bulanan (RM)"
-                                        bind:val={$secondScheduleForm.installment}
-                                    ></CustomTextField>
-
-                                    <CustomTextField
-                                        disabled={noturusetia}
-                                        id="paymentPeriod"
-                                        label={'Tempoh Pembayaran'}
-                                        bind:val={$secondScheduleForm.paymentPeriod}
-                                    ></CustomTextField>
-                                </div>
-                            </form>
-                        </div>
-                    </CustomTabContent>
+                   
                 </CustomTab>
             </StepperContentBody>
         </StepperContent>

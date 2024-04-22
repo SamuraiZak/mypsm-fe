@@ -150,3 +150,16 @@ export interface RetirementOthersApplicationDetail {
     RetirementOthersDocumentCertificationlDTO: RetirementEndorserDetail | null;
 
 }
+
+export interface RetirementRequestDTO{
+    id: number;
+}
+
+export interface RetirementUnspecifyChosenDTO {
+    groupId:            number;
+    employeeId:         number;
+    employeeNumber:     string;
+    employeeName:       string;
+    identityCardNumber: string;
+    retirementDate:     string;
+}

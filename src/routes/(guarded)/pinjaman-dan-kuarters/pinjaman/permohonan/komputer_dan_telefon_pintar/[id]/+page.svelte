@@ -552,6 +552,7 @@
                     class="flex w-full flex-col gap-2"
                 >
                     <CustomTextField
+                    disabled={noturusetia}
                         id="maxLoan"
                         label={'Had Permohonan'}
                         bind:val={$loanInfoForm.maxLoan}
@@ -581,12 +582,13 @@
                     label="Kembali"
                     onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
                 />
-
+                {#if data.props.userMode == 'urusetia' }
                 <TextIconButton
                     label="Muat Naik"
                     icon="check"
                     onClick={() => uploadDocument()}
-                /></StepperContentHeader
+                />
+                {/if}</StepperContentHeader
             >
             <StepperContentBody>
                 <form
@@ -745,6 +747,156 @@
                 </div></StepperContentBody
             >
         </StepperContent>
+        <Stepper>
+            <StepperContentHeader title="Kemaskini Maklumat Pinjaman"
+        >
+        <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} /></StepperContentHeader>
+            <CustomTab>
+                <CustomTabContent title="Jadual Pertama">
+                    <ContentHeader title="Masukkan Maklumat Pembekal">
+                        <TextIconButton
+                            label="Tambah Pembekal"
+                            icon="add"
+                            type="neutral"
+                            onClick={() => (openModal = true)}
+                        />
+                        <TextIconButton
+                            type="primary"
+                            label="Simpan"
+                            form="supplierForm"
+                        ></TextIconButton>
+                    </ContentHeader>
+
+                    <form
+                        id="supplierForm"
+                        method="POST"
+                        use:supplierEnhance
+                        class="flex w-full flex-col gap-2"
+                    >
+                        <div
+                            class="flex w-full flex-col items-start justify-start gap-2.5"
+                        >
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                            >
+                                {#if $supplierForm.suppliers.length < 1}
+                                    <div
+                                        class="flex w-full flex-col gap-10 px-3"
+                                    >
+                                        <Alert color="blue">
+                                            <p>
+                                                <span
+                                                    class="font-medium"
+                                                    >Tiada Maklumat!</span
+                                                >
+                                                Sila tambah tuntutan terlebih
+                                                dahulu.
+                                            </p>
+                                        </Alert>
+                                    </div>
+                                {:else}
+                                    {#each $supplierForm.suppliers as supplier, i}
+                                        <div
+                                            class="flex w-full flex-col justify-start gap-2.5 rounded-md border border-ios-activeColors-activeBlue-light p-3"
+                                        >
+                                            <div
+                                                class="flex w-full items-center justify-start gap-2.5 pb-1 text-sm font-semibold text-ios-labelColors-link-light"
+                                            >
+                                                <span>
+                                                    Tuntutan {i + 1}
+                                                </span>
+                                                <TextIconButton
+                                                    label=""
+                                                    icon="delete"
+                                                    type="danger"
+                                                    onClick={() =>
+                                                        removeSupplier(
+                                                            i,
+                                                        )}
+                                                />
+                                            </div>
+                                            <CustomTextField
+                                                label="Nama Pembekal"
+                                                id="name{i}"
+                                                disabled
+                                                val={supplier.name}
+                                            />
+                                            <CustomTextField
+                                                label="Alamat Pembekal"
+                                                id="address{i}"
+                                                disabled
+                                                val={supplier.address}
+                                            />
+                                        </div>
+                                    {/each}
+                                {/if}
+                            </div>
+                        </div>
+                    </form>
+                </CustomTabContent>
+                <CustomTabContent title="Jadual Kedua">
+                    <ContentHeader
+                        title="Masukkan Maklumat Harga Jualan (RM)"
+                    >
+                        <TextIconButton
+                            type="primary"
+                            label="Simpan"
+                            form="secondScheduleDetail"
+                        ></TextIconButton>
+                    </ContentHeader>
+                    <div
+                        class="flex w-full flex-col items-start justify-start gap-2.5"
+                    >
+                        <form
+                            id="secondScheduleDetail"
+                            method="POST"
+                            use:secondScheduleEnhance
+                            class="flex w-full flex-col gap-2"
+                        >
+                            <CustomTextField
+                                id="sellingPrice"
+                                label="Jumlah Harga Belian (RM)"
+                                bind:val={$secondScheduleForm.sellingPrice}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                id="sellingBalance"
+                                label="Bayaran Baki (RM)"
+                                bind:val={$secondScheduleForm.sellingBalance}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                id="govFund"
+                                label="Amaun Pembiayaan dan Keuntungan Kerajaan (RM)"
+                                bind:val={$secondScheduleForm.govFund}
+                            ></CustomTextField>
+
+                            <ContentHeader
+                                title="Masukkan Amaun dan Tempoh Bayaran Balik Harga Jualan"
+                            ></ContentHeader>
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2.5"
+                            >
+                                <CustomTextField
+                                    id="installment"
+                                    label="Amaun Bulanan (RM)"
+                                    bind:val={$secondScheduleForm.installment}
+                                ></CustomTextField>
+
+                                <CustomTextField
+                                    id="paymentPeriod"
+                                    label={'Tempoh Pembayaran'}
+                                    bind:val={$secondScheduleForm.paymentPeriod}
+                                ></CustomTextField>
+                            </div>
+                        </form>
+                    </div>
+                </CustomTabContent>
+
+            </CustomTab>
+
+
+        </Stepper>
 
         <StepperContent>
             <StepperContentHeader title="Muat Turun Surat Tawaran">
@@ -794,12 +946,13 @@
                     label="Kembali"
                     onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
                 />
-
+                {#if data.props.userMode == 'urusetia' }
                 <TextIconButton
                     label="Muat Naik"
                     icon="check"
                     onClick={() => uploadAgreementDocument()}
-                /></StepperContentHeader
+                />
+                {/if}</StepperContentHeader
             >
             <StepperContentBody>
                 <form
@@ -1000,146 +1153,7 @@
                                 </form>
                             </div>
                         </CustomTabContent>
-                        <CustomTabContent title="Jadual Pertama">
-                            <ContentHeader title="Masukkan Maklumat Pembekal">
-                                <TextIconButton
-                                    label="Tambah Pembekal"
-                                    icon="add"
-                                    type="neutral"
-                                    onClick={() => (openModal = true)}
-                                />
-                                <TextIconButton
-                                    type="primary"
-                                    label="Simpan"
-                                    form="supplierForm"
-                                ></TextIconButton>
-                            </ContentHeader>
-
-                            <form
-                                id="supplierForm"
-                                method="POST"
-                                use:supplierEnhance
-                                class="flex w-full flex-col gap-2"
-                            >
-                                <div
-                                    class="flex w-full flex-col items-start justify-start gap-2.5"
-                                >
-                                    <div
-                                        class="flex w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-                                    >
-                                        {#if $supplierForm.suppliers.length < 1}
-                                            <div
-                                                class="flex w-full flex-col gap-10 px-3"
-                                            >
-                                                <Alert color="blue">
-                                                    <p>
-                                                        <span
-                                                            class="font-medium"
-                                                            >Tiada Maklumat!</span
-                                                        >
-                                                        Sila tambah tuntutan terlebih
-                                                        dahulu.
-                                                    </p>
-                                                </Alert>
-                                            </div>
-                                        {:else}
-                                            {#each $supplierForm.suppliers as supplier, i}
-                                                <div
-                                                    class="flex w-full flex-col justify-start gap-2.5 rounded-md border border-ios-activeColors-activeBlue-light p-3"
-                                                >
-                                                    <div
-                                                        class="flex w-full items-center justify-start gap-2.5 pb-1 text-sm font-semibold text-ios-labelColors-link-light"
-                                                    >
-                                                        <span>
-                                                            Tuntutan {i + 1}
-                                                        </span>
-                                                        <TextIconButton
-                                                            label=""
-                                                            icon="delete"
-                                                            type="danger"
-                                                            onClick={() =>
-                                                                removeSupplier(
-                                                                    i,
-                                                                )}
-                                                        />
-                                                    </div>
-                                                    <CustomTextField
-                                                        label="Nama Pembekal"
-                                                        id="name{i}"
-                                                        disabled
-                                                        val={supplier.name}
-                                                    />
-                                                    <CustomTextField
-                                                        label="Alamat Pembekal"
-                                                        id="address{i}"
-                                                        disabled
-                                                        val={supplier.address}
-                                                    />
-                                                </div>
-                                            {/each}
-                                        {/if}
-                                    </div>
-                                </div>
-                            </form>
-                        </CustomTabContent>
-                        <CustomTabContent title="Jadual Kedua">
-                            <ContentHeader
-                                title="Masukkan Maklumat Harga Jualan (RM)"
-                            >
-                                <TextIconButton
-                                    type="primary"
-                                    label="Simpan"
-                                    form="secondScheduleDetail"
-                                ></TextIconButton>
-                            </ContentHeader>
-                            <div
-                                class="flex w-full flex-col items-start justify-start gap-2.5"
-                            >
-                                <form
-                                    id="secondScheduleDetail"
-                                    method="POST"
-                                    use:secondScheduleEnhance
-                                    class="flex w-full flex-col gap-2"
-                                >
-                                    <CustomTextField
-                                        id="sellingPrice"
-                                        label="Jumlah Harga Belian (RM)"
-                                        bind:val={$secondScheduleForm.sellingPrice}
-                                    ></CustomTextField>
-
-                                    <CustomTextField
-                                        id="sellingBalance"
-                                        label="Bayaran Baki (RM)"
-                                        bind:val={$secondScheduleForm.sellingBalance}
-                                    ></CustomTextField>
-
-                                    <CustomTextField
-                                        id="govFund"
-                                        label="Amaun Pembiayaan dan Keuntungan Kerajaan (RM)"
-                                        bind:val={$secondScheduleForm.govFund}
-                                    ></CustomTextField>
-
-                                    <ContentHeader
-                                        title="Masukkan Amaun dan Tempoh Bayaran Balik Harga Jualan"
-                                    ></ContentHeader>
-                                    <div
-                                        class="flex w-full flex-col items-start justify-start gap-2.5"
-                                    >
-                                        <CustomTextField
-                                            id="installment"
-                                            label="Amaun Bulanan (RM)"
-                                            bind:val={$secondScheduleForm.installment}
-                                        ></CustomTextField>
-
-                                        <CustomTextField
-                                            id="paymentPeriod"
-                                            label={'Tempoh Pembayaran'}
-                                            bind:val={$secondScheduleForm.paymentPeriod}
-                                        ></CustomTextField>
-                                    </div>
-                                </form>
-                            </div>
-                        </CustomTabContent>
+                       
                     </CustomTab>
                 </StepperContentBody>
             </StepperContent>
@@ -1193,12 +1207,13 @@
                     label="Kembali"
                     onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
                 />
-
+                {#if data.props.userMode == 'urusetia' }
                 <TextIconButton
                     label="Muat Naik"
                     icon="check"
                     onClick={() => uploadPayment()}
-                /></StepperContentHeader
+                />
+                {/if}</StepperContentHeader
             >
             <StepperContentBody>
                 <form

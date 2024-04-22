@@ -1,5 +1,5 @@
+
 export interface UnspecifyAddDetailDTO {
-    groupId:      number;
     employeeList: number[];
 }
 

@@ -53,7 +53,7 @@
     if (data.props.userMode == 'pelulus') {
         notpelulus = false;
     }
-
+ 
     if (data.props.userMode == 'ketua Seksyen') {
         notketuaSeksyen = false;
     }
@@ -653,7 +653,7 @@
             <div
                 class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
             >
-                <ContentHeader title="Keputusan Dari Penyokong">
+                <ContentHeader title="Keputusan Dari Ketua Seksyen">
                     <TextIconButton
                         type="primary"
                         label="Simpan"
@@ -908,7 +908,7 @@
                                 ></CustomTextField>
                                 <CustomTextField
                                     id="paymentPeriod"
-                                    label="Tempoh"
+                                    label="Tempoh (Bulan)"
                                     bind:val={$approvalAndOfferDetailForm.paymentPeriod}
                                 ></CustomTextField>
                             </form>

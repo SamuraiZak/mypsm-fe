@@ -1,8 +1,10 @@
 import { invalidateAll } from "$app/navigation";
 import { CommonResponseConstant } from "$lib/constants/core/common-response.constant";
+import { CommonListRequestConvert, type CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
 import { CommonResponseConvert } from "$lib/dto/core/common/common-response.dto";
 import type { RetirementForcedApplicationDetailRequestDTO } from "$lib/dto/mypsm/employment/retirement/retirement-force.dto";
-import type { RetirementEndorserDetail, RetirementVoluntaryApplicationDetailRequestDTO } from "$lib/dto/mypsm/employment/retirement/retirement.dto";
+import { UnspecifyAddDetailDTOConvert, type UnspecifyAddDetailDTO } from "$lib/dto/mypsm/employment/retirement/retirement-unspecify-add-detail.dto";
+import type { RetirementEndorserDetail, RetirementRequestDTO, RetirementVoluntaryApplicationDetailRequestDTO } from "$lib/dto/mypsm/employment/retirement/retirement.dto";
 import { getPromiseToast } from "$lib/helpers/core/toast.helper";
 import type { RetirementEndorsement, RetirementForcedEndorsement, RetirementVoluntaryDetail } from "$lib/schemas/mypsm/employment/retirement/retirement.schema";
 import http from "$lib/services/implementation/service-provider.service";
@@ -495,31 +497,6 @@ export class RetirementApplicationServices {
             return CommonResponseConstant.httpError;
         }
     }
-    //  Unspecify retirement Choosen Update 
-    static async addRetirementUnspecifyChoosenUpdate(param: RetirementVoluntaryDetail) {
-        try {
-            let url: Input = 'employment/retirement/unspecify/update';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                await invalidateAll();
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
       //  Unspecify retirement Document Certification 
       static async addRetirementUnspecifyDocumentCertification(param: RetirementVoluntaryDetail) {
         try {
@@ -569,4 +546,75 @@ export class RetirementApplicationServices {
         }
     }
     
+
+    //get employee list
+    static async getUnspecifyEmployeeList(param: CommonListRequestDTO) {
+        try {
+            let url: Input = 'employment/retirement/unspecify/list_employee';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //  Unspecify retirement Choosen add 
+    static async addRetirementUnspecify(param: UnspecifyAddDetailDTO) {
+        try {
+            let url: Input = 'employment/retirement/unspecify/add';
+
+            const response: Response = await http
+                .post(url, {
+                    body: UnspecifyAddDetailDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get unspecify retirement chosen list
+    //  Unspecify retirement Choosen add 
+    static async getUnspecifyRetirementChosenList(param: RetirementRequestDTO) {
+        try {
+            let url: Input = 'employment/retirement/unspecify/chosen_list';
+
+            const response: Response = await http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
 }

@@ -19,8 +19,17 @@ a<script lang="ts">
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import CustomBanner from '$lib/components/banner/CustomBanner.svelte';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
+    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type { DataList } from '$lib/dto/mypsm/employment/retirement/retirement-employee-list.dto';
+    import { _submitAddUnspecify, _updateTable } from './+page';
+    import CustomTable from '$lib/components/table/CustomTable.svelte';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import { _addListSchema } from '$lib/schemas/mypsm/employment/retirement/retirement.schema';
+    import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
 
     export let selectedFiles: any = [];
+    export let data: PageData;
+    
    
 
     let target: any;
@@ -29,34 +38,6 @@ a<script lang="ts">
     onMount(() => {
         target = document.getElementById('fileInput');
     });
-
-    // function handleOnChange() {
-    //     texthidden = true;
-    //     const files = target.files;
-    //     if (files) {
-    //         for (let i = 0; i < files.length; i++) {
-    //             selectedFiles.push(files[i]);
-    //         }
-    //     }
-
-    //     fileSelectionList.set(selectedFiles);
-    // }
-
-    // function handleDelete(index: number) {
-    //     selectedFiles.splice(index, 1);
-    //     fileSelectionList.set(selectedFiles);
-    // }
-
-    // const options: RadioOption[] = [
-    //     {
-    //         value: 'sah',
-    //         label: 'Sah',
-    //     },
-    //     {
-    //         value: 'tidakSah',
-    //         label: 'Tidak Sah',
-    //     },
-    // ];
 
     const retirementConfirmationForm = async (event: Event) => {
         let uploadedFiles = selectedFiles;
@@ -73,40 +54,82 @@ a<script lang="ts">
             }),
         });
 
-        // try {
-        //     const result = exampleFormSchema.parse(exampleFormData);
-        //     if (result) {
-        //         errorData = [];
-        //         toast.success('Berjaya disimpan!', {
-        //             style: 'background: #333; color: #fff;',
-        //         });
-
-        //         const id = crypto.randomUUID().toString();
-        //         const validatedExamFormData = { ...exampleFormData, id };
-        //         console.log(
-        //             'REQUEST BODY: ',
-        //             JSON.stringify(validatedExamFormData),
-        //         );
-        //     }
-        // } catch (err: unknown) {
-        //     if (err instanceof ZodError) {
-        //         const { fieldErrors: errors } = err.flatten();
-        //         errorData = errors;
-        //         console.log('ERROR!', err.flatten());
-        //         toast.error(
-        //             'Sila pastikan maklumat adalah lengkap dengan tepat.',
-        //             {
-        //                 style: 'background: #333; color: #fff;',
-        //             },
-        //         );
-        //     }
-        // }
+       
     };
 
     //Retirement Verification
    
     //Update Application Delivery Information
    
+
+    let employeeListTable: TableDTO = {
+        param: data.employeeListParam,
+        meta: data.employeeListResponse.data?.meta ?? {
+            pageSize: 5,
+            pageNum: 1,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.employeeList ?? [],
+        selectedData: [] as DataList[],
+        hiddenData: ['employeeId'],
+    };
+
+    let selectedEmployeeTable: TableDTO = {
+        param: {},
+        meta: {
+            pageSize: 5,
+            pageNum: 1,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: employeeListTable.selectedData ?? [],
+        hiddenData: ['employeeId'],
+    };
+
+    async function _search() {
+        _updateTable(employeeListTable.param).then((value) => {
+            employeeListTable.data = value.props.response.data?.dataList ?? [];
+            employeeListTable.meta = value.props.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            employeeListTable.param.pageSize = value.props.param.pageSize;
+            employeeListTable.param.pageNum = value.props.param.pageNum;
+            employeeListTable.hiddenData = ['employeeId'];
+        });
+    }
+
+    $: selectedEmployeeTable.data =
+        (employeeListTable.selectedData as DataList[]) ?? [];
+
+
+        const {
+        form: addRetirementUnspecifyForm,
+        errors: addRetirementUnspecifyError,
+        enhance: addRetirementUnspecifyEnhance,
+    } = superForm(data.addNewUnspecifyListForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'addContractPersonalDetailForm',
+        invalidateAll: true,
+        validators: zod(_addListSchema),
+        onSubmit() {
+            const tempChosenEmployee: DataList[] =
+                selectedEmployeeTable.data as DataList[];
+                tempChosenEmployee.forEach((val)=>(
+                    $addRetirementUnspecifyForm.employeeList.push(val.id)
+                ))
+            ;
+            if($addRetirementUnspecifyForm.employeeList.length > 0){
+                _submitAddUnspecify($addRetirementUnspecifyForm);
+            } else {
+                alert("Senarai Kakitangan Yang Dipilih Tidak Boleh Kosong.")
+            }
+        },
+    });
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
@@ -124,49 +147,47 @@ a<script lang="ts">
 <Stepper>
     <StepperContent>
         <StepperContentHeader title="Pilih Kakitangan untuk Persaraan Lain-lain"
-        ></StepperContentHeader>
+        > <TextIconButton
+        label="Simpan"
+        type="primary"
+        form="addRetirementUnspecifyForm"
+    /></StepperContentHeader>
         <StepperContentBody
             ><div
+                class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
+            >
+          
+                <p class="text-sm font-bold">Senarai Kakitangan</p>
+                <div
+                    class="flex h-fit w-full flex-col items-center justify-start"
+                >
+
+                <CustomTable
+                title="Pilih Kakitangan untuk Persaraan Lain-lain"
+                onUpdate={_search}
+                bind:tableData={employeeListTable}
+                enableAdd
+            />
+                    
+                </div>
+            </div>
+            <div
                 class="flex w-full flex-col gap-2 border-b border-bdr-primary pb-5"
             >
                 <p class="text-sm font-bold">Senarai Kakitangan</p>
                 <div
                     class="flex h-fit w-full flex-col items-center justify-start"
                 >
-                    <!-- <DynamicTable
-                        withRowSelection
-                        selectAdd
-                        tableItems={pilihKakitanganUntukPersaraanLainLainSenaraiKakitangan}
-                        withActions
-                        actionOptions={['detail']}
-                        detailActions={() => {
-                            goto(
-                                '/pilih-kakitangan-untuk-persaraan-lain-lain-senarai-kakitangan',
-                            );
-                        }}
-                    ></DynamicTable> -->
-                    table
+
+                <CustomTable
+                title="Pilih Kakitangan Yang Dipilih"
+                bind:tableData={selectedEmployeeTable}
+              
+            />
+                    
                 </div>
             </div>
-            <div class="flex w-full flex-col gap-2">
-                <p class="text-sm font-bold">Senarai Kakitangan Yang Dipilih</p>
-                <div
-                    class="flex h-fit w-full flex-col items-center justify-start"
-                >
-                    <!-- <DynamicTable
-                        withRowSelection
-                        tableItems={pilihKakitanganUntukPersaraanLainLainSenaraiKakitangan}
-                        withActions
-                        actionOptions={['detail']}
-                        detailActions={() => {
-                            goto(
-                                '/pilih-kakitangan-untuk-persaraan-lain-lain-senarai-kakitangan',
-                            );
-                        }}
-                    ></DynamicTable> -->
-                    table
-                </div>
-            </div></StepperContentBody
+            </StepperContentBody
         >
     </StepperContent>
     <StepperContent>
@@ -180,15 +201,10 @@ a<script lang="ts">
                 <div
                     class="flex h-fit w-full flex-col items-center justify-start"
                 >
-                    <!-- <DynamicTable
-                        tableItems={masukkanButiranPersaraan}
-                        withActions
-                        actionOptions={['detail']}
-                        detailActions={() => {
-                            goto('');
-                        }}
-                    ></DynamicTable> -->
-                    table
+
+                
+            
+                   
                 </div>
             </div></StepperContentBody
         >

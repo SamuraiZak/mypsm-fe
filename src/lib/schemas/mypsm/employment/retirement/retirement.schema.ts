@@ -54,6 +54,10 @@ export type RetirementForcedEndorsement = z.infer<
 // ======================================================
 // UNSPECIFY
 // ======================================================
+export const _addListSchema = z.object({
+    employeeList:z.number().array()
+});
+
 
 export const UpdateListSchema = z.object({
     groupId: z.number(),

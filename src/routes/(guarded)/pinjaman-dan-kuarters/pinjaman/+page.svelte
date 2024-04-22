@@ -117,7 +117,7 @@
                 />
             </FilterCard>
             <CustomTable
-                title="Senarai Permohonan yang "
+                title="Senarai Permohonan"
                 enableDetail
                 bind:passData={rowData}
                 bind:tableData={employeeLoantable}
