@@ -110,9 +110,17 @@ export const dateStringSchema = z.coerce
     .string({ required_error: 'Tarikh tidak boleh kosong' })
     .refine((value) => (value === 'null' ? null : value));
 
-export const requiredDateStringSchema = z.coerce.string({
-    required_error: 'Pastikan tarikh adalah betul.',
-});
+export const requiredDateStringSchema = z.coerce
+    .string({
+        required_error: 'Pastikan tarikh adalah betul.',
+    })
+    .min(1, { message: 'Tarikh tidak boleh kosong' });
+
+export const numberToStringSchema = z.coerce
+    .string({
+        required_error: 'Pastikan tarikh adalah betul.',
+    })
+    .min(1, { message: 'Tarikh tidak boleh kosong' });
 
 export const numberSchem0 = z.coerce.number({
     required_error: 'Medan ini hendaklah diisi.',

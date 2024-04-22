@@ -4,7 +4,7 @@ import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-requ
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
-import { ConfirmationServices } from '$lib/services/implementation/mypsm/employment/confirmation-in-service/confirmation.service';
+import { NewOfferServices } from '$lib/services/implementation/mypsm/employment/new-offer/new-offer.service';
 
 export const load = async () => {
     const currentRoleCode = localStorage.getItem(
@@ -28,57 +28,28 @@ export const load = async () => {
     const isUnitDirectorRole =
         currentRoleCode === RoleConstant.pengarahBahagian.code;
 
-    let confirmationInServiceListResponse: CommonResponseDTO = {};
+    const isSupporterRole = currentRoleCode === RoleConstant.penyokong.code;
+
+    const isApproverRole = currentRoleCode === RoleConstant.pelulus.code;
+
+    let newOfferMeetingListResponse: CommonResponseDTO = {};
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: 'id',
+        orderBy: 'meetingId',
         orderType: 1,
         filter: {
-            dataType: 0, // 0:semua | 1:Lebih 3 tahun | 2: Rasionalisasi (kurang 3 tahun)
-            employeeNumber: null, //string | null | undefined;
-            name: null,
-            identityCard: null,
-            status: null, // status code from lookup | null | undefined;
-        },
-    };
-
-    const exceedsThreeYearsParam: CommonListRequestDTO = {
-        pageNum: 1,
-        pageSize: 5,
-        orderBy: 'id',
-        orderType: 1,
-        filter: {
-            dataType: 1, // 0:semua | 1:Lebih 3 tahun | 2: Rasionalisasi (kurang 3 tahun)
-            employeeNumber: null, //string | null | undefined;
-            name: null,
-            identityCard: null,
-            status: null, // status code from lookup | null | undefined;
-        },
-    };
-
-    const rationalisationParam: CommonListRequestDTO = {
-        pageNum: 1,
-        pageSize: 5,
-        orderBy: 'id',
-        orderType: 1,
-        filter: {
-            dataType: 2, // 0:semua | 1:Lebih 3 tahun | 2: Rasionalisasi (kurang 3 tahun)
-            employeeNumber: null, //string | null | undefined;
-            name: null,
-            identityCard: null,
+            meetingName: null, //string | null | undefined;
+            meetingDate: null,
             status: null, // status code from lookup | null | undefined;
         },
     };
 
     // List
-    if (!isEmploymentSecretaryRole) {
-        confirmationInServiceListResponse =
-            await ConfirmationServices.getConfirmationList(param);
-    } else if (!isAuditDirectorRole) {
-        confirmationInServiceListResponse =
-            await ConfirmationServices.getConfirmationList(param);
+    if (isEmploymentSecretaryRole) {
+        newOfferMeetingListResponse =
+            await NewOfferServices.getNewOfferMeetingList(param);
     }
 
     // ==========================================================================
@@ -96,7 +67,7 @@ export const load = async () => {
         param,
         currentRoleCode,
         responses: {
-            confirmationInServiceListResponse,
+            newOfferMeetingListResponse,
         },
         selectionOptions: {
             statusLookup,
@@ -108,6 +79,8 @@ export const load = async () => {
             isEmploymentSecretaryRole,
             isAuditDirectorRole,
             isIntegrityDirectorRole,
+            isSupporterRole,
+            isApproverRole,
         },
     };
 };
