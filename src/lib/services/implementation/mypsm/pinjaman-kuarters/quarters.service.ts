@@ -8,15 +8,15 @@ import {
     CommonListRequestConvert,
     type CommonListRequestDTO,
 } from '$lib/dto/core/common/common-list-request.dto';
-import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
+import { CommonResponseConvert, type CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import { commonIdRequestDTOConvert, type commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import { QuartersAddConfirmationConvert, type QuartersAddConfirmation } from '$lib/dto/mypsm/pinjaman/kuarters/application-confirmation.dto';
 import { OutsiderFamilyConvert, type OutsiderFamily } from '$lib/dto/mypsm/pinjaman/kuarters/application-partner-detail.dto';
 import { QuartersPersonalDetailConvert, type QuartersPersonalDetail } from '$lib/dto/mypsm/pinjaman/kuarters/application-personal-detail.dto';
 import { OutsiderServiceDetailDetailConvert, type OutsiderServiceDetail } from '$lib/dto/mypsm/pinjaman/kuarters/application-service-detail.dto';
+import { movingOutSetDirectorConvert, type MovingOutSetDirector } from '$lib/dto/mypsm/pinjaman/kuarters/moving-out-set-director.dto';
 import { MoveOutConvert, type MoveOutQuarters } from '$lib/dto/mypsm/pinjaman/kuarters/moving-out.dto';
 import { OutsiderIdConvert, type OutsiderId } from '$lib/dto/mypsm/pinjaman/kuarters/outsider-id.dto';
-import { OutsiderPersonalDetailConvert, type OutsiderPersonalDetail } from '$lib/dto/mypsm/pinjaman/kuarters/outsider-personal-detail.dto';
 import { QuarterCommonApprovalConvert, type QuarterCommonApproval } from '$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto';
 import { QuarterDetailsConvert, type QuarterDetails } from '$lib/dto/mypsm/pinjaman/kuarters/quarter-details.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
@@ -59,11 +59,79 @@ export class QuartersServices {
             const promiseRes: Promise<Response> = http.post(url).json();
 
             // await toast for resolved or rejected state
-            // const response: Response = await getPromiseToast(promiseRes);
-            const response: Response = await promiseRes;
+            const response: Response = await getPromiseToast(promiseRes);
+            // const response: Response = await promiseRes;
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //add move out for employee
+    static async addMovingOutEmployee(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'quarter/moving_out/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //add move out for outsider
+    static async addMovingOutForOutsider(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'quarter/outsider/moving_out/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    
+    // get employee before register personal detail
+    static async getEmployeePersonalDetail() {
+        try {
+            const url: Input = 'quarter/moving_out/personal_detail';
+
+            const response: Response = await http.get(url, {}).json();
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
                 return result;
@@ -663,6 +731,99 @@ export class QuartersServices {
             return CommonResponseConstant.httpError;
         }
     }
+    //add moving out director
+    static async addMovingOutDirector(param: MovingOutSetDirector) {
+        try {
+            let url: Input = 'quarter/moving_out/director/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: movingOutSetDirectorConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //get moving out director
+    static async getMovingOutDirector(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'quarter/moving_out/director/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+//add mmoving out director approval
+static async addMovingOutDirectorApproval(param: QuarterCommonApproval) {
+    try {
+        let url: Input = 'quarter/moving_out/director_approval/add';
+
+        const promiseRes: Promise<Response> = http
+            .post(url, {
+                body: QuarterCommonApprovalConvert.toJson(param),
+            })
+            .json();
+
+        const response: Response = await getPromiseToast(promiseRes);
+        const result = CommonResponseConvert.fromResponse(response);
+
+        if (result.status == 'success') {
+            invalidateAll()
+            return result;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } catch (error) {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+//get mmoving out director approval
+static async getMovingOutDirectorApproval(param: commonIdRequestDTO) {
+    try {
+        let url: Input = 'quarter/moving_out/director_approval/get';
+
+        const response: Response = await http
+            .post(url, {
+                body: commonIdRequestDTOConvert.toJson(param),
+            })
+            .json();
+
+        const result = CommonResponseConvert.fromResponse(response);
+
+        if (result.status == 'success') {
+            return result;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } catch (error) {
+        return CommonResponseConstant.httpError;
+    }
+}
 
     //================================================
     // Outsider Application
