@@ -4,67 +4,76 @@
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
-    import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type {
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
-    import { _updateActingEmployeeListTable, _updateTable } from './+page';
     import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
     import { EmploymentActingServices } from '$lib/services/implementation/mypsm/perjawatan/employment-acting.service';
     import type { AddChosenActingEmployeeDTO } from '$lib/dto/mypsm/employment/acting/add-chosen-acting-employee.dto';
     import { error } from '@sveltejs/kit';
     import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
+    import DataTable from '$lib/components/table/DataTable.svelte';
+    import { Toaster } from 'svelte-french-toast';
     export let data: PageData;
 
-    let param: CommonListRequestDTO = data.param;
-    let table: TableDTO = {
-        param: param,
+    let addActingTable: TableSettingDTO = {
+        param: data.param,
         meta: data.actingEmployeeListResponse.data?.meta ?? {
-            pageSize: 5,
+            pageSize: 1,
             pageNum: 1,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
-        data:
-            data.actingTypes == '1-54'
-                ? data.actingEmployeeList
-                : data.dataList2 ?? [],
-        hiddenData: ['employeeId', 'homeAddress'],
+        data: data.actingEmployeeList,
         selectedData: [],
+        exportData: [],
+        hiddenColumn: ['employeeId', 'homeAddress'],
+        dictionary: [],
+        url: 'employment/acting/employee_lists/list',
+        id: 'addActingTable',
+        option: {
+            checkbox: true,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
     };
-    
-    async function _searchActingEmployeeList() {
-        _updateActingEmployeeListTable(table.param).then((value) => {
-            table.data = value.response.data?.dataList ?? [];
-            table.meta = value.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            table.param.pageSize = table.meta.pageSize;
-            table.param.pageNum = table.meta.pageNum;
-        });
-    }
 
-    // table for selected employee for acting
-    let selectedEmployeeTable: TableDTO = {
-        param: param,
-        meta: table.meta ?? {
-            pageSize: 5,
+    let selectedEmployeeTable: TableSettingDTO = {
+        param: data.param,
+        meta: addActingTable.meta ?? {
+            pageSize: 1,
             pageNum: 1,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
-        data: table.selectedData ?? [],
-        hiddenData: ['employeeId', 'homeAddress'],
+        data: addActingTable.selectedData ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['employeeId', 'homeAddress'],
+        dictionary: [],
+        url: "",
+        id: 'selectedEmployeeTable',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
     };
-   
-    $: selectedEmployeeTable.data = table.selectedData ?? [];
+
+    $: selectedEmployeeTable.data = addActingTable.selectedData ?? [];
 
     const addChosenEmployeeToActing = async () => {
-        const employeeArray = selectedEmployeeTable.data;
-
         let tempEmployeeIdList: number[] = [];
 
         selectedEmployeeTable.data.forEach((element) => {
@@ -76,21 +85,23 @@
             actingType: data.actingTypes,
             employeeIds: tempEmployeeIdList,
         };
-        console.log(tempChosenEmpployee)
         if (selectedEmployeeTable.data.length < 1) {
             alert('Senarai calon pemangkuan tidak boleh kosong.');
             error(400, { message: 'No ID Selected!' });
         }
         const response: CommonResponseDTO =
-            await EmploymentActingServices.addChosenActingEmployee(tempChosenEmpployee)
-        
-        if(response.status == 'success'){
-            console.log('berjaya')
-            setTimeout(() => goto('/perjawatan/pemangkuan/butiran-' + data.actingTypes), 1500);
-        }
+            await EmploymentActingServices.addChosenActingEmployee(
+                tempChosenEmpployee,
+            );
 
-        console.log(response)
-        return { response }
+        if (response.status == 'success') {
+            setTimeout(
+                () =>
+                    goto('/perjawatan/pemangkuan/butiran/'+response.data?.details.batchId+'-'+ data.actingTypes),
+                1000,
+            );
+        }
+        return { response };
     };
 </script>
 
@@ -106,7 +117,7 @@
             type="neutral"
             label="Batal"
             onClick={() => {
-                goto('./');
+                goto('/perjawatan/pemangkuan');
             }}
         />
         <TextIconButton
@@ -114,12 +125,7 @@
             label="Seterusnya"
             type="primary"
             onClick={() => {
-                // if (selectedEmployeeTable.data.length < 1) {
-                //     alert('Senarai calon pemangkuan tidak boleh kosong.');
-                // } else {
-                //     goto('/perjawatan/pemangkuan/butiran-' + data.actingTypes);
-                // }
-                addChosenEmployeeToActing()
+                addChosenEmployeeToActing();
             }}
         />
     </ContentHeader>
@@ -141,29 +147,29 @@
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                <!-- Table here -->
-                <CustomTable
-                    title=""
-                    onUpdate={_searchActingEmployeeList}
-                    bind:tableData={table}
-                    enableAdd={true}
-                ></CustomTable>
+                <div class="h-fit w-full p-3">
+                    <DataTable
+                        title="Senarai Kakitangan"
+                        bind:tableData={addActingTable}
+                    ></DataTable>
+                </div>
             </div>
         </CustomTabContent>
 
         <!-- Senarai Kakitangan Yang Dipilih -->
         <CustomTabContent title="Senarai Kakitangan Yang Dipilih">
-            <ContentHeader
-                title="Senarai calon yang dipilih untuk dipangku."
-                borderClass="border-none"
-            />
             <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
-            >
-                <!-- Table here -->
-                <CustomTable title="" bind:tableData={selectedEmployeeTable}
-                ></CustomTable>
+            class="flex max-h-full w-full flex-col items-start justify-start"
+        >
+            <div class="h-fit w-full p-3">
+                <DataTable
+                    title="Senarai calon yang dipilih untuk dipangku."
+                    bind:tableData={selectedEmployeeTable}
+                ></DataTable>
             </div>
+        </div>
         </CustomTabContent>
     </CustomTab>
 </section>
+
+<Toaster/>

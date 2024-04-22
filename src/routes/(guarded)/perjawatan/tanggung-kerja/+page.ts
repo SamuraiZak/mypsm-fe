@@ -10,7 +10,9 @@ import { EmploymentInterimServices } from "$lib/services/implementation/mypsm/pe
 export const load = async () => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
     let employeeInterimApplicationResponse: CommonResponseDTO = {};
+    let employeeInterimTerminationListResponse: CommonResponseDTO = {};
     let employeeInterimApplicationList: EmployeeInterimApplicationListResponseDTO[] = [];
+    let employeeInterimTerminationList: EmployeeInterimApplicationListResponseDTO[] = [];
 
     const employeeApplicationFilter: EmployeeInterimApplicationFilter = {
         employeeNumber: null,
@@ -31,8 +33,8 @@ export const load = async () => {
     const param = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: 'id',
+        orderType: 1,
         filter: employeeApplicationFilter,
     };
 
@@ -45,10 +47,20 @@ export const load = async () => {
         }
     }
     else {
-        employeeInterimApplicationResponse =
-            await EmploymentInterimServices.getApplicationList(employeeApplicationParam);
-        if (employeeInterimApplicationResponse.status == "success") {
-            employeeInterimApplicationList = employeeInterimApplicationResponse.data?.dataList as EmployeeInterimApplicationListResponseDTO[];
+        if (currentRoleCode !== UserRoleConstant.ketuaSeksyen.code) {
+            employeeInterimApplicationResponse =
+                await EmploymentInterimServices.getApplicationList(param);
+            if (employeeInterimApplicationResponse.status == "success") {
+                employeeInterimApplicationList = employeeInterimApplicationResponse.data?.dataList as EmployeeInterimApplicationListResponseDTO[];
+            }
+        }
+
+        if (currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code || currentRoleCode == UserRoleConstant.ketuaSeksyen.code) {
+            employeeInterimTerminationListResponse =
+                await EmploymentInterimServices.getTerminationList(param);
+            employeeInterimTerminationList =
+                employeeInterimTerminationListResponse.data?.dataList as EmployeeInterimApplicationListResponseDTO[];
+
         }
     }
     return {
@@ -57,5 +69,7 @@ export const load = async () => {
         employeeInterimApplicationList,
         param,
         currentRoleCode,
+        employeeInterimTerminationListResponse,
+        employeeInterimTerminationList,
     }
 }

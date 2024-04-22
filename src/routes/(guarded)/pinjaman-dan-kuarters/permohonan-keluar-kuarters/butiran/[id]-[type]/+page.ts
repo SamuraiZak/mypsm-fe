@@ -8,17 +8,18 @@ import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.
 import type { commonIdRequestDTO } from "$lib/dto/core/common/id-request.dto"
 import { QuartersServices } from "$lib/services/implementation/mypsm/pinjaman-kuarters/quarters.service"
 import type { QuartersPersonalDetail } from "$lib/dto/mypsm/pinjaman/kuarters/application-personal-detail.dto"
-import type { QuartersServiceDetail } from "$lib/dto/mypsm/pinjaman/kuarters/application-service-detail.dto"
-import type { QuartersPartnerDetail } from "$lib/dto/mypsm/pinjaman/kuarters/application-partner-detail.dto"
+import type { OutsiderServiceDetail, QuartersServiceDetail } from "$lib/dto/mypsm/pinjaman/kuarters/application-service-detail.dto"
+import type { OutsiderFamily, QuartersPartnerDetail } from "$lib/dto/mypsm/pinjaman/kuarters/application-partner-detail.dto"
 import type { QuarterDetails } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-details.dto"
 import { superValidate } from "sveltekit-superforms"
 import { zod } from "sveltekit-superforms/adapters"
-import { _addConfirmationSchema, _moveOutQuarter, _quarterCommonApproval } from "$lib/schemas/mypsm/quarters/quarters-schema.js"
+import { _addConfirmationSchema, _moveOutQuarter, _quarterCommonApproval, _setDirector } from "$lib/schemas/mypsm/quarters/quarters-schema.js"
 import type { MoveOutQuarters } from "$lib/dto/mypsm/pinjaman/kuarters/moving-out.dto.js"
 import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-document-request.dto"
 import type { QuartersGetDocument } from "$lib/dto/mypsm/pinjaman/kuarters/application-get-document.dto"
 import type { QuarterCommonApproval } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto"
 import type { QuartersAddConfirmation } from "$lib/dto/mypsm/pinjaman/kuarters/application-confirmation.dto"
+import type { MovingOutSetDirector } from "$lib/dto/mypsm/pinjaman/kuarters/moving-out-set-director.dto.js"
 
 export const load = async ({ params }) => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
@@ -26,58 +27,99 @@ export const load = async ({ params }) => {
     let currentId: commonIdRequestDTO = {
         id: Number(params.id)
     }
+    let applicationType: string = params.type;
     let personalDetail = {} as QuartersPersonalDetail;
     let serviceDetail = {} as QuartersServiceDetail;
     let partnerDetail = {} as QuartersPartnerDetail;
     let confirmationStatus = {} as QuartersAddConfirmation;
-    let quarterDocuments = {} as QuartersGetDocument;
+    let quarterDocuments: QuartersGetDocument = {
+        id: 0,
+        document: [],
+    };
     let secretaryApproval = {} as QuarterCommonApproval;
     let quarterDetails = {} as QuarterDetails;
     let movingOutDate = {} as MoveOutQuarters;
-    // let directorApproval = {} as QuarterCommonApproval;
-    // let eligibilityDetail = {} as QuartersEligibilityDetail;
+    let outsiderFamily = {} as OutsiderFamily;
+    let outsiderService = {} as OutsiderServiceDetail;
     let quartersDeclarationLetter: string = getBorangAkuanKuarters()
     let quartersMovingOutCheckingLetter: string = getBorangPemeriksaanKuarters()
-    const personalDetailResponse: CommonResponseDTO =
-        await QuartersServices.getOutPersonalDetail(currentId);
-    personalDetail =
-        personalDetailResponse.data?.details as QuartersPersonalDetail;
-    const serviceDetailResponse: CommonResponseDTO =
-        await QuartersServices.getApplicationServiceDetail(currentId);
-    serviceDetail =
-        serviceDetailResponse.data?.details as QuartersServiceDetail;
-    const partnerDetailResponse: CommonResponseDTO =
-        await QuartersServices.getApplicationPartnerDetail(currentId);
-    partnerDetail =
-        partnerDetailResponse.data?.details as QuartersPartnerDetail;
-    const quarterDetailsResponse: CommonResponseDTO =
-        await QuartersServices.getApplicationQuarterDetails(currentId);
-    quarterDetails =
-        quarterDetailsResponse.data?.details as QuarterDetails;
+
+    const setDirectorForm = await superValidate(zod(_setDirector));
+    const directorApprovalForm = await superValidate(zod(_quarterCommonApproval), { errors: false });
+
+
+    if (applicationType == "kakitangan") {
+        const personalDetailResponse: CommonResponseDTO =
+            await QuartersServices.getOutPersonalDetail(currentId);
+        personalDetail =
+            personalDetailResponse.data?.details as QuartersPersonalDetail;
+        const serviceDetailResponse: CommonResponseDTO =
+            await QuartersServices.getApplicationServiceDetail(currentId);
+        serviceDetail =
+            serviceDetailResponse.data?.details as QuartersServiceDetail;
+        const partnerDetailResponse: CommonResponseDTO =
+            await QuartersServices.getApplicationPartnerDetail(currentId);
+        partnerDetail =
+            partnerDetailResponse.data?.details as QuartersPartnerDetail;
+        const confirmationStatusResponse: CommonResponseDTO =
+            await QuartersServices.getMovingOutConfirmationDetail(currentId);
+        confirmationStatus =
+            confirmationStatusResponse.data?.details as QuartersAddConfirmation;
+        const secretaryApprovalResponse: CommonResponseDTO =
+            await QuartersServices.getMovingOutSecretaryApproval(currentId);
+        secretaryApproval =
+            secretaryApprovalResponse.data?.details as QuarterCommonApproval;
+    } else if (applicationType == "luar") {
+        const personalDetailResponse: CommonResponseDTO =
+            await QuartersServices.getOutsiderPersonalDetail(currentId);
+        personalDetail =
+            personalDetailResponse.data?.details as QuartersPersonalDetail;
+        const outsiderPartnerResponse: CommonResponseDTO =
+            await QuartersServices.getOutsiderPartnerDetail(currentId);
+        outsiderFamily = outsiderPartnerResponse.data?.details as OutsiderFamily
+        const outsiderServiceResponse: CommonResponseDTO =
+            await QuartersServices.getOutsiderServiceDetail(currentId);
+        outsiderService = outsiderServiceResponse.data?.details as OutsiderServiceDetail;
+
+        const secretaryApprovalResponse: CommonResponseDTO =
+            await QuartersServices.getMovingOutSecretaryApproval(currentId);
+        secretaryApproval =
+            secretaryApprovalResponse.data?.details as QuarterCommonApproval;
+    }
     const movingOutDateResponse: CommonResponseDTO =
         await QuartersServices.getEmployeeMoveOut(currentId);
     movingOutDate =
         movingOutDateResponse.data?.details as MoveOutQuarters;
+    const quarterDetailsResponse: CommonResponseDTO =
+        await QuartersServices.getApplicationQuarterDetails(currentId);
+    quarterDetails =
+        quarterDetailsResponse.data?.details as QuarterDetails;
     const quarterDocumentsResponse: CommonResponseDTO =
         await QuartersServices.getMovingOutDocuments(currentId);
-    quarterDocuments =
-        quarterDocumentsResponse.data?.details as QuartersGetDocument;
-    const confirmationStatusResponse: CommonResponseDTO =
-        await QuartersServices.getMovingOutConfirmationDetail(currentId);
-    confirmationStatus =
-        confirmationStatusResponse.data?.details as QuartersAddConfirmation;
-    const secretaryApprovalResponse: CommonResponseDTO =
-        await QuartersServices.getMovingOutSecretaryApproval(currentId);
-    secretaryApproval =
-        secretaryApprovalResponse.data?.details as QuarterCommonApproval;
+    if (quarterDocumentsResponse.data?.details.document !== null) {
+        quarterDocuments =
+            quarterDocumentsResponse.data?.details as QuartersGetDocument;
+    }
+    const getDirector: CommonResponseDTO =
+        await QuartersServices.getMovingOutDirector(currentId);
+    if (getDirector.status == "success") {
+        setDirectorForm.data = getDirector.data?.details as MovingOutSetDirector
+    }
 
+    const directorApprovalResponse: CommonResponseDTO =
+        await QuartersServices.getMovingOutDirectorApproval(currentId);
+    if (directorApprovalResponse.status == "success") {
+        directorApprovalForm.data = directorApprovalResponse.data?.details as QuarterCommonApproval;
+    }
 
     const moveOutForm = await superValidate(movingOutDate, zod(_moveOutQuarter), { errors: false })
-    const confirmationForm = await superValidate(confirmationStatus, zod(_addConfirmationSchema), {errors: false});
+    const moveOutSecretaryForm = await superValidate(movingOutDate, zod(_moveOutQuarter), { errors: false })
+    const confirmationForm = await superValidate(confirmationStatus, zod(_addConfirmationSchema), { errors: false });
     const secretaryApprovalForm = await superValidate(secretaryApproval, zod(_quarterCommonApproval), { errors: false });
 
     return {
         currentRoleCode,
+        applicationType,
         currentId,
         lookup,
         movingOutDate,
@@ -92,12 +134,16 @@ export const load = async ({ params }) => {
         confirmationForm,
         secretaryApprovalForm,
         secretaryApproval,
+        outsiderFamily,
+        outsiderService,
+        moveOutSecretaryForm,
+        setDirectorForm,
+        directorApprovalForm,
     }
 }
 
 export const _submitMoveOutForm = async (formData: MoveOutQuarters) => {
     const form = await superValidate(formData, zod(_moveOutQuarter));
-
     if (form.valid) {
         const { quarterDetails, ...tempObj } = form.data;
         const response: CommonResponseDTO =
@@ -131,6 +177,28 @@ export const _submitSecretaryApprovalForm = async (formData: QuarterCommonApprov
     if (form.valid) {
         const response: CommonResponseDTO =
             await QuartersServices.addMovingOutSecretaryApproval(form.data as QuarterCommonApproval)
+
+        return { response }
+    }
+}
+
+export const _submitSetDirectorForm = async (formData: MovingOutSetDirector) => {
+    const form = await superValidate(formData, zod(_setDirector));
+
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await QuartersServices.addMovingOutDirector(form.data as MovingOutSetDirector)
+
+        return { response }
+    }
+}
+
+export const _submitDirectorApprovalForm = async (formData: QuarterCommonApproval) => {
+    const form = await superValidate(formData, zod(_quarterCommonApproval));
+
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await QuartersServices.addMovingOutDirectorApproval(form.data as QuarterCommonApproval)
 
         return { response }
     }

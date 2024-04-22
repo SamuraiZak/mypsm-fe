@@ -4,93 +4,123 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto.js';
-    import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+    import type {
+        TableDTO,
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
-    import { _update154sTable, _updateFlexi41Table, _updateTable } from './+page';
     import { goto } from '$app/navigation';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
+    import DataTable from '$lib/components/table/DataTable.svelte';
+    import type { ActingCommonList } from '$lib/dto/mypsm/employment/acting/acting-common-list.dto';
     export let data: PageData;
-    let rowData: any;
-    // Role Code
-    let employeeRoleCode: string = UserRoleConstant.kakitangan.code;
-    let secretaryRoleCode: string = UserRoleConstant.urusSetiaPerjawatan.code;
-    let supporterRoleCode: string = UserRoleConstant.penyokong.code;
-    let approverRoleCode: string = UserRoleConstant.pelulus.code;
-    let stateDirectorRoleCode: string = UserRoleConstant.pengarahNegeri.code;
-    let depDirectorRoleCode: string = UserRoleConstant.pengarahBahagian.code;
+
+    let rowData = {} as ActingCommonList;
 
     let gradeOptions: IntDropdownOption[] = [
         {
             value: 'Gred 1-54',
             name: 'Gred 1-54',
-            href: './pemangkuan/baru-1-54',
+            href: '/perjawatan/pemangkuan/baru/1-54',
         },
         {
             value: 'Gred Flexi 41',
             name: 'Gred Flexi 41',
-            href: './pemangkuan/baru-flexi_41',
+            href: '/perjawatan/pemangkuan/baru/Flexi 41',
         },
         {
             value: 'Gred Utama',
             name: 'Gred Utama',
-            href: './pemangkuan/butiran-gred_utama',
+            href: '/perjawatan/pemangkuan/baru/Utama',
         },
     ];
 
-    let param: CommonListRequestDTO = data.param;
     // gred 154 table
-    let tableList154s: TableDTO = {
-        param: param,
-        meta: {
+    let tableList154s: TableSettingDTO = {
+        param: data.param,
+        meta: data.tableList154Response.data?.meta ?? {
+            pageSize: 1,
             pageNum: 1,
-            pageSize: 5,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
         data: data.tableList154 ?? [],
-    }
-    
-    async function _search154List() {
-        _update154sTable(tableList154s.param).then((value) => {
-            tableList154s.data = value.response.data?.dataList ?? [];
-            tableList154s.meta = value.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            tableList154s.param.pageSize = tableList154s.meta.pageSize;
-            tableList154s.param.pageNum = tableList154s.meta.pageNum;
-        })
-    }
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['batchId'],
+        dictionary: [],
+        url: 'employment/acting/154s/list',
+        id: 'tableList154s',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
+    };
+
     // gred flexi 41 table
-    let tableListFlexi41s: TableDTO = {
-        param: param,
-        meta: {
+    let tableListFlexi41s: TableSettingDTO = {
+        param: data.param,
+        meta: data.tableListFlexiResponse.data?.meta ?? {
+            pageSize: 1,
             pageNum: 1,
-            pageSize: 5,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
         data: data.tableListFlexi41 ?? [],
-    }
-    async function _searchFlexi41List() {
-        _updateFlexi41Table(tableListFlexi41s.param).then((value) => {
-            tableListFlexi41s.data = value.response.data?.dataList ?? [];
-            tableListFlexi41s.meta = value.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            tableListFlexi41s.param.pageSize = tableListFlexi41s.meta.pageSize;
-            tableListFlexi41s.param.pageNum = tableListFlexi41s.meta.pageNum;
-        })
-    }
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['batchId'],
+        dictionary: [],
+        url: 'employment/acting/flexi41s/list',
+        id: 'tableListFlexi41s',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
+    };
+
+    // main table
+    let tableListMain: TableSettingDTO = {
+        param: data.param,
+        meta: data.tableListMainResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.tableListMain ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['batchId'],
+        dictionary: [],
+        url: 'employment/acting/mains/list',
+        id: 'tableListMain',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
+    };
 
     let table: TableDTO = {
-        param: param,
+        param: data.param,
         meta: {
             pageSize: 5,
             pageNum: 1,
@@ -99,24 +129,11 @@
         },
         data: data.dataList ?? [],
     };
-    async function _search() {
-        _updateTable(table.param).then((value) => {
-            table.data = value.response?.dataList ?? [];
-            table.meta = value.response?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            table.param.pageSize = table.meta.pageSize;
-            table.param.pageNum = table.meta.pageNum;
-        });
-    }
 </script>
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    {#if data.currentRoleCode === secretaryRoleCode}
+    {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code}
         <ContentHeader title="Pemangkuan">
             <TextIconButton
                 options={gradeOptions}
@@ -135,59 +152,66 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
-    {#if data.currentRoleCode === secretaryRoleCode}
+    {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code || data.currentRoleCode === UserRoleConstant.pelulus.code ||data.currentRoleCode === UserRoleConstant.penyokong.code}
         <CustomTab>
             <!-- Gred 1-54 -->
             <CustomTabContent title="Gred 1-54">
-                <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
-                >
-                    <CustomTable
-                    title="Senarai rekod pemangkuan bagi Gred 1-54"
-                        onUpdate={_search154List}
-                        enableDetail
-                        detailActions={() => goto('./pemangkuan/butiran-1-54-'+rowData.batchId)}
+                <div class="h h-fit w-full p-3">
+                    <DataTable
+                        title="Rekod Pemangkuan Gred 1-54"
+                        bind:tableData={tableList154s}
                         bind:passData={rowData}
-                        bind:tableData={tableList154s}  
-                    ></CustomTable>
+                        detailActions={() => {
+                            goto(
+                                '/perjawatan/pemangkuan/butiran/' +
+                                    rowData.batchId +
+                                    '-' +
+                                    rowData.actingType,
+                            );
+                        }}
+                    ></DataTable>
                 </div>
             </CustomTabContent>
 
             <!-- Gred Flexi 41 -->
             <CustomTabContent title="Gred Flexi 41">
-                <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
-                >
-                    <!-- Table Here -->
-                    <CustomTable
-                    title="Senarai rekod pemangkuan bagi Gred Flexi 41"
-                        onUpdate={_searchFlexi41List}
-                        enableDetail
-                        detailActions={() =>
-                            goto('./pemangkuan/butiran-flexi_41')}
-                        bind:tableData={tableList154s}
-                    ></CustomTable>
+                <div class="h h-fit w-full p-3">
+                    <DataTable
+                        title="Rekod Pemangkuan Flexi 41"
+                        bind:tableData={tableListFlexi41s}
+                        bind:passData={rowData}
+                        detailActions={() => {
+                            goto(
+                                '/perjawatan/pemangkuan/butiran/' +
+                                    rowData.batchId +
+                                    '-' +
+                                    rowData.actingType,
+                            );
+                        }}
+                    ></DataTable>
                 </div>
             </CustomTabContent>
 
             <!-- Gred Utama -->
             <CustomTabContent title="Gred Utama">
-                <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
-                >
-                    <!-- Table Here -->
-                    <CustomTable
-                    title="Senarai rekod pemangkuan bagi Gred Utama"
-                        onUpdate={_search}
-                        enableDetail
-                        detailActions={() =>
-                            goto('./pemangkuan/butiran-gred_utama')}
-                        bind:tableData={tableList154s}
-                    ></CustomTable>
+                <div class="h h-fit w-full p-3">
+                    <DataTable
+                        title="Rekod Pemangkuan Gred Utama"
+                        bind:tableData={tableListMain}
+                        bind:passData={rowData}
+                        detailActions={() => {
+                            goto(
+                                '/perjawatan/pemangkuan/butiran/' +
+                                    rowData.batchId +
+                                    '-' +
+                                    rowData.actingType,
+                            );
+                        }}
+                    ></DataTable>
                 </div>
             </CustomTabContent>
         </CustomTab>
-    {:else if data.currentRoleCode === employeeRoleCode}
+    {:else if data.currentRoleCode === UserRoleConstant.kakitangan.code}
         <div
             class="flex max-h-full w-full flex-col items-start justify-start px-2.5"
         >
@@ -199,11 +223,10 @@
                 title=""
                 enableDetail
                 detailActions={() => goto('./pemangkuan/butiran-rekod')}
-                onUpdate={_search}
                 tableData={table}
             ></CustomTable>
         </div>
-    <!-- {:else if data.currentRoleCode === approverRoleCode}
+        <!-- {:else if data.currentRoleCode === approverRoleCode}
         <CustomTab>
             <CustomTabContent title="Permohonan Penangguhan/Pindaan Penempatan">
                 <ContentHeader
@@ -241,7 +264,7 @@
                 </div>
             </CustomTabContent>
         </CustomTab> -->
-    {:else if data.currentRoleCode === supporterRoleCode || stateDirectorRoleCode || depDirectorRoleCode}
+    {:else if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code || UserRoleConstant.pengarahBahagian.code || UserRoleConstant.pengarahNegeri.code}
         <CustomTab>
             <!-- Gred 1-54 -->
             <CustomTabContent title="Gred 1-54">
@@ -254,7 +277,6 @@
                 >
                     <CustomTable
                         title=""
-                        onUpdate={_search}
                         enableDetail
                         detailActions={() => goto('./pemangkuan/butiran-1_54')}
                         bind:tableData={table}
@@ -274,7 +296,6 @@
                     <!-- Table Here -->
                     <CustomTable
                         title=""
-                        onUpdate={_search}
                         enableDetail
                         detailActions={() =>
                             goto('./pemangkuan/butiran-flexi_41')}
@@ -283,29 +304,6 @@
                 </div>
             </CustomTabContent>
 
-            <!-- pengarah bahagian/negeri should not view this particular tab -->
-            <!-- Gred Utama -->
-            {#if data.currentRoleCode === supporterRoleCode || data.currentRoleCode === approverRoleCode}
-                <CustomTabContent title="Gred Utama">
-                    <ContentHeader
-                        borderClass="border-none"
-                        title="Senarai rekod pemangkuan bagi Gred Utama"
-                    ></ContentHeader>
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start"
-                    >
-                        <!-- Table Here -->
-                        <CustomTable
-                            title=""
-                            onUpdate={_search}
-                            enableDetail
-                            detailActions={() =>
-                                goto('./pemangkuan/butiran-gred_utama')}
-                            bind:tableData={table}
-                        ></CustomTable>
-                    </div>
-                </CustomTabContent>
-            {/if}
         </CustomTab>
     {/if}
 </section>

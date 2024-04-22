@@ -3,7 +3,7 @@ export interface EmployeeInterimApplicationListResponseDTO {
     employeeNumber:  string;
     name:            string;
     icNumber:        string;
-    applicationDate: string;
+    applicationDate?: string;
     startDate:       string;
     endDate:         string;
     status:          string | null;

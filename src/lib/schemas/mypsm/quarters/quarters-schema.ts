@@ -85,3 +85,8 @@ export const _outsiderService = z.object({
     ITP: numberSchema.nullable().default(0),
     COLA: numberSchema.nullable().default(0),
 })
+
+export const _setDirector = z.object({
+    id: z.number(),
+    directorApproverId: numberSchema,
+})

@@ -8,8 +8,11 @@
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
-    import { _updateTable } from './+page';
+    import type {
+        TableDTO,
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
+    import { _submitAddNewPromotion } from './+page';
     import type { PageData } from './$types';
     export let data: PageData;
     import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
@@ -19,6 +22,12 @@
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
+    import DataTable from '$lib/components/table/DataTable.svelte';
+    import type { PromotionCommonEmployee } from '$lib/dto/mypsm/employment/promotion/promotion-common-employee.dto';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import { _addNewPromotion } from '$lib/schemas/mypsm/employment/promotion/promotion-schemas';
+    import { Toaster } from 'svelte-french-toast';
 
     let currentRoleCode: string | null;
     let employeeRoleCode: string = UserRoleConstant.kakitangan.code;
@@ -43,6 +52,127 @@
     }
 
     let openDetail: boolean = false;
+
+    let employeeListTable: TableSettingDTO = {
+        param: data.param,
+        meta: data.employeeListResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.employeeList,
+        selectedData: [] as PromotionCommonEmployee[],
+        exportData: [],
+        hiddenColumn: ['employeeId'],
+        dictionary: [],
+        url: 'employment/promotion/employee_lists/list',
+        id: 'employeeListTable',
+        option: {
+            checkbox: true,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
+    };
+
+    let selectedEmployeeList: TableSettingDTO = {
+        param: data.param,
+        meta: employeeListTable.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: employeeListTable.selectedData,
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['employeeId'],
+        dictionary: [],
+        url: '',
+        id: 'selectedEmployeeList',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
+    };
+
+    $: selectedEmployeeList.data = employeeListTable.selectedData ?? [];
+
+    const {
+        form: addnewPromotionForm,
+        errors: addnewPromotionError,
+        enhance: addnewPromotionEnhance,
+    } = superForm(data.addnewPromotionForm, {
+        SPA: true,
+        resetForm: false,
+        dataType: 'json',
+        invalidateAll: true,
+        id: 'addnewPromotionForm',
+        validators: zod(_addNewPromotion),
+        onSubmit() {
+            let tempGroupId: number;
+            let tempObj: PromotionCommonEmployee[] =
+                selectedEmployeeList.data as PromotionCommonEmployee[];
+            tempObj.forEach((val) => {
+                $addnewPromotionForm.employeeIds.push(val.employeeId);
+            });
+            $addnewPromotionForm.promotionType = data.promotionType;
+            _submitAddNewPromotion($addnewPromotionForm)
+                .then((res) => {
+                    if (res?.response.status == 'success') {
+                        tempGroupId = res.response.data?.details.groupId;
+                    }
+                })
+                .finally(() => {
+                    goto(
+                        '/perjawatan/kenaikan-pangkat/butiran/' +
+                            tempGroupId +
+                            '-' +
+                            data.promotionType,
+                    );
+                });
+        },
+    });
+
+    let certificationTable: TableSettingDTO = {
+        param: data.commonParam,
+        meta: data.certificationListResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.certificationList,
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: [],
+        dictionary: [],
+        url: 'employment/promotion/certifications/list',
+        id: 'certificationTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
+    };
+
+    // to be remove
     let param: CommonListRequestDTO = data.param;
     let table: TableDTO = {
         param: param,
@@ -54,17 +184,6 @@
         },
         data: data.dataList ?? [],
         selectedData: [],
-    };
-
-    let selectedStaffTable: TableDTO = {
-        param: param,
-        meta: {
-            pageSize: 5,
-            pageNum: 1,
-            totalData: 4,
-            totalPage: 1,
-        },
-        data: [],
     };
 
     let statusPerakuan: TableDTO = {
@@ -122,21 +241,6 @@
         data: data.dataList6 ?? [],
     };
 
-    async function _search() {
-        _updateTable(table.param).then((value) => {
-            table.data = value.response?.dataList ?? [];
-            table.meta = value.response?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            table.param.pageSize = table.meta.pageSize;
-            table.param.pageNum = table.meta.pageNum;
-        });
-    }
-    $: selectedStaffTable.data = table.selectedData ?? [];
-
     let dropdownOptions: DropdownDTO[] = [
         {
             name: 'Kim Jong Kook',
@@ -181,70 +285,59 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
-    <Stepper bind:activeIndex={stepperIndex} dataId="ID Kumpulan #77699">
+    <Stepper bind:activeIndex={stepperIndex}>
         {#if currentRoleCode !== depDirectorRoleCode && currentRoleCode !== stateDirectorRoleCode && currentRoleCode !== employeeRoleCode}
             {#if currentRoleCode === secretaryRoleCode}
                 <StepperContent>
                     <StepperContentHeader title="Pemilihan Kakitangan">
                         <TextIconButton
                             type="primary"
-                            label="Seterusnya"
-                            icon="next"
-                            onClick={() => goNext()}
+                            label="Tambah"
+                            icon="add"
+                            form="addnewPromotionForm"
                         />
                     </StepperContentHeader>
-                    <StepperContentBody paddingClass="py-2.5">
-                        <div
-                            class="flex w-full flex-col justify-start gap-2.5 border-b px-2.5 pb-5"
+                    <StepperContentBody>
+                        <form
+                            class="flex w-full flex-col gap-2.5 p-3 pb-10"
+                            id="addnewPromotionForm"
+                            method="POST"
+                            use:addnewPromotionEnhance
                         >
-                            <ContentHeader
-                                title="Senarai Kakitangan"
-                                borderClass="border-none"
-                            />
-                            <CustomTable
-                                enableAdd
-                                onUpdate={_search}
-                                bind:tableData={table}
-                            />
-                        </div>
-                        <div
-                            class="flex w-full flex-col justify-start gap-2.5 px-2.5 pb-10"
-                        >
-                            <ContentHeader
-                                title="Senarai Kakitangan yang Dipilih"
-                                borderClass="border-none"
-                            />
-                            <CustomTable bind:tableData={selectedStaffTable} />
-                        </div>
+                            <div class="flex w-full">
+                                <div class="h-fit w-full">
+                                    <DataTable
+                                        title="Senarai Kakitangan"
+                                        bind:tableData={employeeListTable}
+                                    ></DataTable>
+                                </div>
+                            </div>
+                            <div class="flex w-full">
+                                <div class="h-fit w-full">
+                                    <DataTable
+                                        title="Senarai Kakitangan Yang Dipilih"
+                                        bind:tableData={selectedEmployeeList}
+                                    ></DataTable>
+                                </div>
+                            </div>
+                        </form>
                     </StepperContentBody>
                 </StepperContent>
 
                 <StepperContent>
                     <StepperContentHeader
                         title="Senarai Kakitangan Yang Dipilih"
-                    >
-                        <TextIconButton
-                            type="netural"
-                            label="Kembali"
-                            icon="previous"
-                            onClick={() => goPrevious()}
-                        />
-                        <TextIconButton
-                            type="primary"
-                            label="Seterusnya"
-                            icon="next"
-                            onClick={() => goNext()}
-                        />
-                    </StepperContentHeader>
+                    ></StepperContentHeader>
                     <StepperContentBody>
                         <div
-                            class="flex w-full flex-col justify-start gap-2.5 px-2.5 pb-5"
+                            class="flex w-full flex-col justify-start gap-2.5 pb-10"
                         >
-                            <ContentHeader
-                                title="Senarai Kakitangan"
-                                borderClass="border-none"
-                            />
-                            <CustomTable bind:tableData={selectedStaffTable} />
+                            <div class="h-fit w-full">
+                                <DataTable
+                                    title=""
+                                    bind:tableData={certificationTable}
+                                ></DataTable>
+                            </div>
                         </div>
                     </StepperContentBody>
                 </StepperContent>
@@ -272,11 +365,16 @@
                         class="flex w-full flex-col justify-start gap-2.5 px-2.5"
                     >
                         {#if currentRoleCode === secretaryRoleCode}
-                            <ContentHeader
-                                title="Senarai Kakitangan"
-                                borderClass="border-none"
-                            />
-                            <CustomTable bind:tableData={statusPerakuan} />
+                            <div
+                                class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                            >
+                                <div class="h-fit w-full">
+                                    <DataTable
+                                        title=""
+                                        bind:tableData={certificationTable}
+                                    ></DataTable>
+                                </div>
+                            </div>
                         {:else if currentRoleCode === supporterRoleCode || currentRoleCode === approverRoleCode}
                             <ContentHeader
                                 title="Urus Setia Integriti"
@@ -404,15 +502,17 @@
                 </StepperContentHeader>
                 <StepperContentBody>
                     {#if !openDetail && currentRoleCode === secretaryRoleCode}
-                        <ContentHeader
-                            title="Senarai Kakitangan Yang Dipilih"
-                            borderClass="border-none"
-                        />
-                        <CustomTable
-                            bind:tableData={statusPerakuan}
-                            enableDetail
-                            detailActions={() => (openDetail = true)}
-                        />
+                        <div
+                                class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                            >
+                                <div class="h-fit w-full">
+                                    <DataTable
+                                        title="Senarai Kakitangan Terpilih"
+                                        bind:tableData={certificationTable}
+                                        detailActions={() => {}}
+                                    ></DataTable>
+                                </div>
+                            </div>
                     {:else}
                         <form
                             class="flex w-full flex-col justify-start gap-2.5 pb-10"
@@ -1118,3 +1218,4 @@
         {/if}
     </Stepper>
 </section>
+<Toaster />

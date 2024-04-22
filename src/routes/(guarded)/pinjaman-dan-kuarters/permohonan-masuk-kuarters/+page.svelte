@@ -3,20 +3,17 @@
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
-    import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type { MovingInKuarters } from '$lib/dto/mypsm/pinjaman/kuarters/moving-in-list.dto';
     import type { PageData } from './$types';
-    import { _applyQuarters } from './+page';
     import { _outsiderApplication } from '$lib/schemas/mypsm/quarters/quarters-schema';
     import { Toaster } from 'svelte-french-toast';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     export let data: PageData;
 
     let rowData: MovingInKuarters;
-    let applicationModal: boolean = false;
     let quartersTable: TableSettingDTO = {
         param: data.param,
         meta: data.quartersListResponse.data?.meta ?? {
@@ -64,18 +61,12 @@
                     if (
                         data.currentRoleCode == UserRoleConstant.kakitangan.code
                     ) {
-                        const res = await _applyQuarters();
-
-                        if (res?.response.status == 'success') {
-                            goto(
-                                './permohonan-masuk-kuarters/butiran/' +
-                                    res.response.data?.details.id +
-                                    '-' +
-                                    'kakitangan',
-                            );
-                        } else {
-                            alert('Gagal. Sila cuba sekali lagi.');
-                        }
+                        goto(
+                            './permohonan-masuk-kuarters/butiran/' +
+                                undefined+
+                                '-' +
+                                'kakitangan',
+                        );
                     } else if (
                         data.currentRoleCode ==
                         UserRoleConstant.urusSetiaPeringkatNegeri.code

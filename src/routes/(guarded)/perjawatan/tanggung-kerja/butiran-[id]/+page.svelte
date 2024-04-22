@@ -10,7 +10,7 @@
     import { goto } from '$app/navigation';
     import type { PageData } from './$types';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
-    import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
+    import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
     import {
         _addInterimApprovalSchema,
         _addNewInterimApplicationSchema,
@@ -18,6 +18,8 @@
     import { Toaster } from 'svelte-french-toast';
     import {
         _fileToBase64Object,
+        _submitApproverForm,
+        _submitChecklistForm,
         _submitDirectorForm,
         _submitInterimDocument,
         _submitSkippingForm,
@@ -27,22 +29,28 @@
     import { zod } from 'sveltekit-superforms/adapters';
     import { superForm } from 'sveltekit-superforms/client';
     import { Checkbox } from 'flowbite-svelte';
-    import { existOptions } from '$lib/constants/core/radio-option-constants';
-    import CustomRadioField from '$lib/components/inputs/radio-field/CustomRadioField.svelte';
+    import {
+        approveOptions,
+        supportOptions,
+    } from '$lib/constants/core/radio-option-constants';
 
     export let data: PageData;
 
     let submitSkip: boolean = false;
     let submitDocument: boolean = false;
     let submitDirector: boolean = false;
+    let submitChecklist: boolean = false;
+    let submitApprover: boolean = false;
     let files: FileList;
 
-    if (data.interimApplicationDetail.download.document.length > 0) {
+    if (data.uploadedDocuments.document.length > 0) {
         submitDocument = true;
     }
-
-    if (data.interimApplicationDetail.skipping?.remark !== null) {
-        submitSkip = true;
+    if (data.interimSupportDetail.name !== '') {
+        submitDirector = true;
+    }
+    if (data.interimApprovalDetail.name !== '') {
+        submitApprover = true;
     }
 
     function uploadDocument() {
@@ -50,12 +58,18 @@
             alert('Dokumen sokongan tidak boleh kosong.');
         } else {
             _fileToBase64Object(files)
-                .then((result) => {
+                .then(async (result) => {
                     let interimDocuments: InterimUploadDocuments = {
                         interimId: data.interimId.interimId,
                         documents: result,
                     };
-                    _submitInterimDocument(JSON.stringify(interimDocuments));
+                    const response = await _submitInterimDocument(
+                        JSON.stringify(interimDocuments),
+                    );
+
+                    if (response.response.status == 'success') {
+                        submitDocument = true;
+                    }
                 })
                 .catch((error) => {
                     console.log(error);
@@ -78,13 +92,18 @@
         validators: zod(_addInterimApprovalSchema),
         async onSubmit() {
             $skippingForm.interimId = data.interimId.interimId;
+            if (!$skippingForm.status) {
+                $skippingForm.remark = null;
+            }
             const res = await _submitSkippingForm($skippingForm);
             if (res?.response.status == 'success') {
                 submitSkip = true;
             }
         },
     });
-
+    if ($skippingForm.remark !== '') {
+        submitSkip = true;
+    }
     const {
         form: directorForm,
         errors: directorError,
@@ -106,11 +125,54 @@
             }
         },
     });
+    const {
+        form: checklistForm,
+        errors: checklistError,
+        enhance: checklistEnhance,
+    } = superForm(data.checklistForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        taintedMessage: false,
+        resetForm: false,
+        id: 'checklistForm',
+        validators: zod(_addInterimApprovalSchema),
+        async onSubmit() {
+            $checklistForm.interimId = data.interimId.interimId;
+            const res = await _submitChecklistForm($checklistForm);
+            if (res?.response.status == 'success') {
+                submitChecklist = true;
+            }
+        },
+    });
+    if ($checklistForm.checker !== undefined) {
+        submitChecklist = true;
+    }
+    const {
+        form: approverForm,
+        errors: approverError,
+        enhance: approverEnhance,
+    } = superForm(data.approverForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        taintedMessage: false,
+        resetForm: false,
+        id: 'approverForm',
+        validators: zod(_addInterimApprovalSchema),
+        async onSubmit() {
+            $approverForm.interimId = data.interimId.interimId;
+            const res = await _submitApproverForm($approverForm);
+            if (res?.response.status == 'success') {
+                submitApprover = true;
+            }
+        },
+    });
 </script>
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Pemangkuan">
+    <ContentHeader title="Tanggung Kerja">
         <TextIconButton
             icon="cancel"
             type="neutral"
@@ -320,70 +382,67 @@
                 {#if !submitDocument && data.currentRoleCode == UserRoleConstant.kakitangan.code}
                     <TextIconButton
                         label="Muat Naik"
-                        icon="check"
+                        icon="add"
                         onClick={() => uploadDocument()}
                     />
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <form
+                <div
                     class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
                 >
-                    <div
-                        class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
-                    >
-                        <span>Fail-fail yang dimuat naik:</span>
-                        <span
-                            >Carta Organisasi (Kedudukan Pegawai dan Jawatan
-                            yang Ditanggung Kerja)</span
-                        >
-                        <span>Salinan Surat Arahan Penagguhan Kerja</span>
-                        <span>Maklumat Cuti Yang Terkini</span>
-                        <span
-                            >Senarai Tugas Jawatan Ditanggung Kerja dan Pegawai
-                            Menanggung Kerja</span
-                        >
-                    </div>
-                    <div
-                        class="flex h-fit w-full flex-col justify-center gap-2"
-                    >
-                        <input
-                            class="rounded-md bg-ios-systemColors-systemFill-light"
-                            accept=".pdf"
-                            type="file"
-                            multiple
-                            bind:files
-                        />
-                    </div>
-
-                    <DownloadAttachment fileName="Carta Organisasi" />
-                    <DownloadAttachment
-                        fileName="Salinan Surat Arahan Penangguhan Kerja"
-                    />
-                    <DownloadAttachment fileName="Maklumat Cuti Terkini" />
-                    <DownloadAttachment fileName="Senarai Tugas" />
-                    <div
-                        class="flex w-full flex-col justify-start gap-2.5 px-2"
-                    >
+                    {#if data.uploadedDocuments.document.length < 1}
                         <ContentHeader
-                            title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan Kontrak"
+                            title="Tindakan: Muat naik dokumen-dokumen yang diperlukan."
                             borderClass="border-none"
                         />
-                        <span
-                            class="text-sm text-ios-labelColors-secondaryLabel-light"
-                            >Borang-borang yang telah dimuat naik oleh
-                            kakitangan:</span
+                        <div
+                            class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
                         >
-                        {#each data.interimApplicationDetail.download.document as docs}
-                            <a
-                                href={docs.document}
-                                download={docs.name}
-                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                >{docs.name}</a
+                            <span>Fail-fail yang perlu dimuat naik:</span>
+                            <span
+                                >1. Carta Organisasi (Kedudukan Pegawai dan
+                                Jawatan yang Ditanggung Kerja)</span
                             >
-                        {/each}
-                    </div>
-                </form>
+                            <span>2. Salinan Surat Arahan Penagguhan Kerja</span
+                            >
+                            <span>3. Maklumat Cuti Yang Terkini</span>
+                            <span
+                                >4. Senarai Tugas Jawatan Ditanggung Kerja dan
+                                Pegawai Menanggung Kerja</span
+                            >
+                        </div>
+                        <div class="flex w-full flex-col gap-2">
+                            <CustomFileField
+                                label="Dokumen Sokongan"
+                                id="employeeClaimDocument"
+                                bind:files
+                            ></CustomFileField>
+                        </div>
+                    {:else}
+                        <div
+                            class="flex w-full flex-col justify-start gap-2.5 px-2"
+                        >
+                            <ContentHeader
+                                title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan Kontrak"
+                                borderClass="border-none"
+                            />
+                            <span
+                                class="text-sm text-ios-labelColors-secondaryLabel-light"
+                                >Borang-borang yang telah dimuat naik oleh
+                                kakitangan:</span
+                            >
+                            {#each data.uploadedDocuments.document as docs}
+                                <a
+                                    href={docs.document}
+                                    download={docs.name}
+                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                    >{docs.name}</a
+                                >
+                            {/each}
+                        </div>
+                    {/if}
+                </div>
             </StepperContentBody>
         </StepperContent>
 
@@ -426,12 +485,11 @@
         </StepperContent>
 
         {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code}
-            <!-- Pengarah Bahagian/Negeri can only view this -->
             <StepperContent>
                 <StepperContentHeader
                     title="Sokongan dari Pengarah Bahagian/Negeri"
                 >
-                    {#if !submitDirector}
+                    {#if !submitDirector && data.currentRoleCode == UserRoleConstant.pengarahBahagian.code && data.currentRoleCode == UserRoleConstant.pengarahNegeri.code}
                         <TextIconButton
                             label="Simpan"
                             icon="check"
@@ -440,111 +498,539 @@
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
+                    <ContentHeader
+                        title="Ulasan Keputusan Daripada Pengarah Bahagian/Negeri"
+                        borderClass="border-none"
+                    />
+                    {#if data.interimSupportDetail.name == ''}
+                        <form
+                            class="flex w-full flex-col justify-start gap-2.5"
+                            method="POST"
+                            id="directorForm"
+                            use:directorEnhance
+                        >
+                            <CustomTextField
+                                label="Tindakan/Ulasan"
+                                disabled={submitDirector}
+                                id="remark"
+                                bind:val={$directorForm.remark}
+                                errors={$directorError.remark}
+                            />
+                            <CustomRadioBoolean
+                                label="Keputusan"
+                                disabled={submitDirector}
+                                options={supportOptions}
+                                id="status"
+                                bind:val={$directorForm.status}
+                                errors={$directorError.status}
+                            />
+                        </form>
+                    {:else}
+                        <div class="flex w-full flex-col gap-2.5 p-3">
+                            <CustomTextField
+                                label="Nama"
+                                disabled
+                                id="name"
+                                bind:val={data.interimSupportDetail.name}
+                            />
+                            <CustomTextField
+                                label="Ulasan"
+                                disabled
+                                id="remark"
+                                bind:val={data.interimSupportDetail.remark}
+                            />
+                            <CustomTextField
+                                label="Keputusan"
+                                disabled
+                                id="status"
+                                bind:val={data.interimSupportDetail.status}
+                            />
+                        </div>
+                    {/if}
+                </StepperContentBody>
+            </StepperContent>
+
+            <StepperContent>
+                <StepperContentHeader
+                    title="Senarai Semak Permohonan Penangguhan/Pindaan Penempatan Kerja"
+                >
+                    {#if !submitChecklist && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                        <TextIconButton
+                            label="Simpan"
+                            icon="check"
+                            form="checklistForm"
+                        />
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
                     <form
-                        class="flex w-full flex-col justify-start gap-2.5"
+                        class="flex w-full flex-col items-start justify-start gap-4 p-3 pb-10"
                         method="POST"
-                        id="directorForm"
-                        use:directorEnhance
+                        use:checklistEnhance
+                        id="checklistForm"
                     >
-                        <ContentHeader
-                            title="Ulasan Keputusan Daripada Pengarah Bahagian/Negeri"
-                            borderClass="border-none"
-                        />
-                        <CustomTextField
-                            label="Tindakan/Ulasan"
-                            disabled={submitDirector}
-                            id="remark"
-                            type="text"
-                            bind:val={$directorForm.remark}
-                            errors={$directorError.remark}
-                        />
-                        <CustomRadioBoolean
-                            label="Pelangkauan Dari Segi Kekananan"
-                            disabled={submitDirector}
-                            id="status"
-                            bind:val={$directorForm.status}
-                            errors={$directorError.status}
-                        />
+                        <table
+                            class="table max-h-full w-full table-auto border-collapse"
+                        >
+                            <thead class="sticky top-0 z-[1]">
+                                <tr
+                                    class="h-7 min-h-7 border bg-ios-systemColors-quaternarySystemFill-light"
+                                >
+                                    {#each data.lookup.columnLabel as col, i}
+                                        <th
+                                            class="h-full {i == 0
+                                                ? 'w-[70%]'
+                                                : 'w-[15%]'} border px-2.5"
+                                        >
+                                            <div
+                                                class="flex h-full flex-row items-center justify-center"
+                                            >
+                                                <span
+                                                    class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    {col.name}
+                                                </span>
+                                            </div>
+                                        </th>
+                                    {/each}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="p-none gap-none h-10 border">
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <span
+                                                >Surat permohonan dari Bahagian</span
+                                            >
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <Checkbox
+                                                disabled={submitChecklist}
+                                                bind:checked={$checklistForm.applicationLetterStatus}
+                                            />
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <Checkbox
+                                                disabled={submitChecklist}
+                                                bind:checked={$checklistForm.applicationLetterCheck}
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="p-none gap-none h-10 border">
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <span
+                                                >Borang Perakuan Penanggungan
+                                                Kerja</span
+                                            >
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <Checkbox
+                                                disabled={submitChecklist}
+                                                bind:checked={$checklistForm.certifiedFormStatus}
+                                            />
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <Checkbox
+                                                disabled={submitChecklist}
+                                                bind:checked={$checklistForm.certifiedFormCheck}
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="p-none gap-none h-10 border">
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <span
+                                                >Carta Organisasi yang disahkan
+                                                dan jelas menandakan kedudukan:</span
+                                            >
+                                            <span class="text-[10px] italic"
+                                                >Nota: Pegawai yang menanggung
+                                                dan jawatan yang ditanggung.</span
+                                            >
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <Checkbox
+                                                disabled={submitChecklist}
+                                                bind:checked={$checklistForm.organisationalChartStatus}
+                                            />
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <Checkbox
+                                                disabled={submitChecklist}
+                                                bind:checked={$checklistForm.organisationalChartCheck}
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="p-none gap-none h-10 border">
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <span>Deskripsi Tugas (JD)</span>
+                                            <span class="text-[10px] italic"
+                                                >Nota: Pegawai yang menanggung
+                                                dan jawatan yang ditanggung.</span
+                                            >
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <Checkbox
+                                                disabled={submitChecklist}
+                                                bind:checked={$checklistForm.jobDescriptionStatus}
+                                            />
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <Checkbox
+                                                disabled={submitChecklist}
+                                                bind:checked={$checklistForm.jobDescriptionCheck}
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="p-none gap-none h-10 border">
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <span
+                                                >Surat Arahan Penanggungan Kerja</span
+                                            >
+                                            <span class="text-[10px] italic"
+                                                >Nota: Tarikh Surat Arahan
+                                                hendaklah sebelum atau pada
+                                                tarikh Penangguhan Kerja</span
+                                            >
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <Checkbox
+                                                disabled={submitChecklist}
+                                                bind:checked={$checklistForm.orderLetterStatus}
+                                            />
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <Checkbox
+                                                disabled={submitChecklist}
+                                                bind:checked={$checklistForm.orderLetterCheck}
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="p-none gap-none h-10 border">
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-fit flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <span
+                                                >Kenyataan cuti untuk 28 hari
+                                                (perakuan pertama)/14 hari
+                                                pertama (pelanjutan) pegawai
+                                                yang menanggung kerja</span
+                                            >
+                                            <span class="text-[10px] italic"
+                                                >Nota: Hendaklah dijana melalui
+                                                Aplikasi HRMIS</span
+                                            >
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <Checkbox
+                                                disabled={submitChecklist}
+                                                bind:checked={$checklistForm.leaveStatementStatus}
+                                            />
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <Checkbox
+                                                disabled={submitChecklist}
+                                                bind:checked={$checklistForm.leaveStatementCheck}
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="p-none gap-none h-fit border">
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-fit flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <span
+                                                >Salinan dokumen sokongan
+                                                berkaitan</span
+                                            >
+                                            <span class="text-[10px] italic"
+                                                >1. Sijil Cuti Sakit</span
+                                            >
+                                            <span class="text-[10px] italic"
+                                                >2. Surat Pertukaran Pegawai</span
+                                            >
+                                            <span class="text-[10px] italic"
+                                                >3. Surat Pemangkuan Pegawai</span
+                                            >
+                                            <span class="text-[10px] italic"
+                                                >4. Surat Kelulusan (Cuti Haji,
+                                                Cuti Bersalin, Cuti Barah, Cuti
+                                                Belajar, Cuti Tanpa Gaji)</span
+                                            >
+                                            <span class="text-[10px] italic"
+                                                >5. Borang Perancangan Cuti bagi
+                                                Pegawai yang mengambil Cuti
+                                                Rehat Sebelum Bersara</span
+                                            >
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <Checkbox
+                                                disabled={submitChecklist}
+                                                bind:checked={$checklistForm.documentListStatus}
+                                            />
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <Checkbox
+                                                disabled={submitChecklist}
+                                                bind:checked={$checklistForm.documentListCheck}
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="p-none gap-none h-10 border">
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-fit flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <span
+                                                >Justifikasi (sekiranya ada)
+                                                bagi permohonan longgar syarat</span
+                                            >
+                                            <span class="text-[10px] italic"
+                                                >1. Pelangkauan melebihi 2 gred</span
+                                            >
+                                            <span class="text-[10px] italic"
+                                                >2. Lokasi berlainan dan
+                                                melebihi lingkuangan 25KM</span
+                                            >
+                                            <span class="text-[10px] italic"
+                                                >3. Kelayakan, Kemahiran atau
+                                                Syarat Khas (Berlainan Skim)</span
+                                            >
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-fit items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <Checkbox
+                                                disabled={submitChecklist}
+                                                bind:checked={$checklistForm.justificationStatus}
+                                            />
+                                        </div>
+                                    </td>
+                                    <td
+                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                    >
+                                        <div
+                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                            <Checkbox
+                                                disabled={submitChecklist}
+                                                bind:checked={$checklistForm.justificationCheck}
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="gap2-.5 flex flex-col">
+                            <CustomSelectField
+                                label="Disediakan Oleh"
+                                id="preparer"
+                                disabled={submitChecklist}
+                                options={data.lookup.supporterApproverLookup}
+                                bind:val={$checklistForm.preparer}
+                                errors={$checklistError.preparer}
+                            />
+                            <CustomSelectField
+                                label="Disemak Oleh"
+                                id="checker"
+                                disabled={submitChecklist}
+                                options={data.lookup.supporterApproverLookup}
+                                bind:val={$checklistForm.checker}
+                                errors={$checklistError.checker}
+                            />
+                        </div>
                     </form>
                 </StepperContentBody>
             </StepperContent>
-            {#if data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code && data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code}
-                <StepperContent>
-                    <StepperContentHeader
-                        title="Senarai Semak Permohonan Penangguhan/Pindaan Penempatan Kerja"
-                    ></StepperContentHeader>
-                    <StepperContentBody>
-                        <form
-                            class="flex w-full flex-col items-start justify-start gap-2.5 px-2 pb-10"
-                        >
-                            <div
-                                class="flex w-full flex-col justify-start gap-2.5 rounded-md border p-4 md:w-1/2"
-                            >
-                                <!-- <div class="flex w-full flex-col justify-start"> -->
-                                <div
-                                    class="flex w-full flex-row justify-between items-center gap-2.5"
-                                >
-                                    <span
-                                        class="text-base font-semibold text-ios-labelColors-secondaryLabel-light"
-                                        >1. Surat Permohonan dari Bahagian
-                                    </span>
-                                    <Checkbox>Semakan Urus Setia</Checkbox>
-                                    <Checkbox>Semakan Urus Setia</Checkbox>
-                                </div>
-                                <!-- </div> -->
-                            </div>
-                            <div
-                                class="flex w-full flex-col justify-start gap-2.5 rounded-md border p-4 md:w-1/2"
-                            >
-                                <!-- <div class="flex w-full flex-col justify-start"> -->
-                                <div
-                                    class="flex w-full flex-row justify-between items-center gap-2.5"
-                                >
-                                    <span
-                                        class="text-base font-semibold text-ios-labelColors-secondaryLabel-light"
-                                        >2. Borang Perakuan Penanggungan Kerja
-                                    </span>
-                                    <Checkbox>Semakan Urus Setia</Checkbox>
-                                    <Checkbox>Semakan Urus Setia</Checkbox>
-                                </div>
-                                <!-- </div> -->
-                            </div>
-                        </form>
-                    </StepperContentBody>
-                </StepperContent>
 
-                {#if data.currentRoleCode === UserRoleConstant.pengarahKhidmatPengurusan.code}
-                    <StepperContent>
-                        <StepperContentHeader
-                            title="Kelulusan Permohonan Tanggung Kerja"
-                        >
-                            <TextIconButton
-                                label="Simpan"
-                                icon="check"
-                                form=""
+            <StepperContent>
+                <StepperContentHeader
+                    title="Kelulusan Permohonan Tanggung Kerja"
+                >
+                    {#if !submitApprover && data.currentRoleCode == UserRoleConstant.pengarahKhidmatPengurusan.code}
+                        <TextIconButton
+                            label="Simpan"
+                            icon="check"
+                            form="approverForm"
+                        />
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <ContentHeader
+                        title="Ulasan Keputusan daripada Pengarah Khidmat Pengurusan"
+                        borderClass="border-none"
+                    />
+                    <form
+                        class="flex w-full flex-col justify-start gap-2.5 p-3"
+                        id="approverForm"
+                        method="POST"
+                        use:approverEnhance
+                    >
+                        {#if data.interimApprovalDetail.name == ''}
+                            <CustomTextField
+                                label="Tindakan/Ulasan"
+                                disabled={submitApprover}
+                                id="remark"
+                                bind:val={$approverForm.remark}
+                                errors={$approverError.remark}
                             />
-                        </StepperContentHeader>
-                        <StepperContentBody>
-                            <form
-                                class="flex w-full flex-col justify-start gap-2.5 pb-10"
-                            >
-                                <ContentHeader
-                                    title="Ulasan Keputusan daripada Pengarah Khidmat Pengurusan"
-                                    borderClass="border-none"
-                                />
-                                <CustomTextField
-                                    label="Tindakan/Ulasan"
-                                    disabled
-                                    id="managementServiceDirectorRemark"
-                                    type="text"
-                                    val="-"
-                                />
-                                <span>radio here sokong@tidak sokong</span>
-                            </form>
-                        </StepperContentBody>
-                    </StepperContent>
-                {/if}
-            {/if}
+                            <CustomRadioBoolean
+                                label="Keputusan"
+                                id="status"
+                                disabled={submitApprover}
+                                options={approveOptions}
+                                bind:val={$approverForm.status}
+                            />
+                        {:else}
+                            <CustomTextField
+                                label="Nama"
+                                disabled
+                                id="name"
+                                bind:val={data.interimApprovalDetail.name}
+                            />
+                            <CustomTextField
+                                label="Ulasan"
+                                disabled
+                                id="remark"
+                                bind:val={data.interimApprovalDetail.remark}
+                            />
+                            <CustomTextField
+                                label="Keputusan"
+                                disabled
+                                id="statusDescription"
+                                bind:val={data.interimApprovalDetail
+                                    .statusDescription}
+                            />
+                        {/if}
+                    </form>
+                </StepperContentBody>
+            </StepperContent>
         {/if}
     </Stepper>
 </section>

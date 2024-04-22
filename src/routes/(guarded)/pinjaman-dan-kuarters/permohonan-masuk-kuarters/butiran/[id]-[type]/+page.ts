@@ -20,6 +20,7 @@ import type { QuarterDetails } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-de
 import type { OutsiderPersonalDetail } from "$lib/dto/mypsm/pinjaman/kuarters/outsider-personal-detail.dto"
 import type { OutsiderId } from "$lib/dto/mypsm/pinjaman/kuarters/outsider-id.dto"
 import { goto } from "$app/navigation"
+import { UserRoleConstant } from "$lib/constants/core/user-role.constant.js"
 
 export const load = async ({ params }) => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
@@ -41,17 +42,25 @@ export const load = async ({ params }) => {
     let quarterDetails = {} as QuarterDetails;
     let directorApproval = {} as QuarterCommonApproval;
     let eligibilityDetail = {} as QuartersEligibilityDetail;
-
+    let isFirstApplication: boolean = false;
+    //employee
+    const confirmationForm = await superValidate(zod(_addConfirmationSchema), { errors: false });
+    const secretaryApprovalForm = await superValidate(zod(_quarterCommonApproval), { errors: false });
+    const quarterDetailForm = await superValidate(zod(_addQuarterDetails), { errors: false });
+    const directorApprovalForm = await superValidate(zod(_quarterCommonApproval), { errors: false });
     //outsider
     const personalDetailForm = await superValidate(zod(_outsiderApplication));
     const outsiderFamily = await superValidate(zod(_outsiderFamily));
     const outsiderServiceForm = await superValidate(zod(_outsiderService));
 
-    if (params.id !== "undefined" && params.type == "kakitangan") {
+    if (params.id !== "undefined" && applicationType == "kakitangan") {
         const personalDetailResponse: CommonResponseDTO =
             await QuartersServices.getApplicationPersonalDetail(currentId);
         personalDetail =
             personalDetailResponse.data?.details as QuartersPersonalDetail;
+        if(personalDetailResponse.status == "success"){
+            personalDetailForm.data = personalDetail
+        }
         const serviceDetailResponse: CommonResponseDTO =
             await QuartersServices.getApplicationServiceDetail(currentId);
         serviceDetail =
@@ -64,28 +73,43 @@ export const load = async ({ params }) => {
             await QuartersServices.getApplicationConfirmationDetail(currentId);
         confirmationStatus =
             confirmationStatusResponse.data?.details as QuartersAddConfirmation;
+        if (confirmationStatusResponse.status == "success") {
+            confirmationForm.data = confirmationStatus;
+        }
         const quarterDocumentsResponse: CommonResponseDTO =
             await QuartersServices.getApplicationDocuments(currentId);
-        quarterDocuments =
-            quarterDocumentsResponse.data?.details as QuartersGetDocument;
+        if (quarterDocumentsResponse.data?.details.document !== null) {
+            quarterDocuments =
+                quarterDocumentsResponse.data?.details as QuartersGetDocument;
+        }
+
         const secretaryApprovalResponse: CommonResponseDTO =
             await QuartersServices.getApplicationSecretaryApproval(currentId);
         secretaryApproval =
             secretaryApprovalResponse.data?.details as QuarterCommonApproval;
+        if (secretaryApprovalResponse.status == "success") {
+            secretaryApprovalForm.data = secretaryApproval
+        }
         const quarterDetailsResponse: CommonResponseDTO =
             await QuartersServices.getApplicationQuarterDetails(currentId);
         quarterDetails =
             quarterDetailsResponse.data?.details as QuarterDetails;
+        if (quarterDetailsResponse.status == "success") {
+            quarterDetailForm.data = quarterDetails;
+        }
         const directorApprovalResponse: CommonResponseDTO =
             await QuartersServices.getApplicationDirectorApproval(currentId);
         directorApproval =
             directorApprovalResponse.data?.details as QuarterCommonApproval;
+        if (directorApprovalResponse.status == "success") {
+            directorApprovalForm.data = directorApproval;
+        }
         const eligibilityDetailResponse: CommonResponseDTO =
             await QuartersServices.getEligibility(currentId);
         eligibilityDetail =
             eligibilityDetailResponse.data?.details as QuartersEligibilityDetail;
 
-    } else if (params.id !== "undefined" && params.type == "luar") {
+    } else if (params.id !== "undefined" && applicationType == "luar") {
         const personalDetailResponse: CommonResponseDTO =
             await QuartersServices.getOutsiderPersonalDetail(currentId);
         personalDetail =
@@ -110,30 +134,36 @@ export const load = async ({ params }) => {
             await QuartersServices.getApplicationSecretaryApproval(currentId);
         secretaryApproval =
             secretaryApprovalResponse.data?.details as QuarterCommonApproval;
+        if(secretaryApprovalResponse.status == "success"){
+            secretaryApprovalForm.data = secretaryApproval;
+        }
         const quarterDetailsResponse: CommonResponseDTO =
             await QuartersServices.getApplicationQuarterDetails(currentId);
         quarterDetails =
             quarterDetailsResponse.data?.details as QuarterDetails;
+        if(quarterDetailsResponse.status == "success"){
+            quarterDetailForm.data = quarterDetails;
+        }
         const directorApprovalResponse: CommonResponseDTO =
             await QuartersServices.getApplicationDirectorApproval(currentId);
         directorApproval =
             directorApprovalResponse.data?.details as QuarterCommonApproval;
-        const eligibilityDetailResponse: CommonResponseDTO =
-            await QuartersServices.getEligibility(currentId);
-        eligibilityDetail =
-            eligibilityDetailResponse.data?.details as QuartersEligibilityDetail;
+        if(directorApprovalResponse.status == "success"){
+            directorApprovalForm.data = directorApproval;
+        }
 
+    } else if (params.id == "undefined" && currentRoleCode == UserRoleConstant.kakitangan.code) {
+        isFirstApplication = true;
+        const response: CommonResponseDTO =
+            await QuartersServices.getEmployeePersonalDetail()
+        personalDetailForm.data = response.data?.details as QuartersPersonalDetail;
     }
-    //employee
-    const confirmationForm = await superValidate(confirmationStatus, zod(_addConfirmationSchema), { errors: false });
-    const secretaryApprovalForm = await superValidate(secretaryApproval, zod(_quarterCommonApproval), { errors: false });
-    const quarterDetailForm = await superValidate(quarterDetails, zod(_addQuarterDetails), { errors: false });
-    const directorApprovalForm = await superValidate(directorApproval, zod(_quarterCommonApproval), { errors: false });
+
     let quartersOfferLetter: string = getSuratTawaranKuarters();
-    console.log(quarterDocuments)
     return {
         currentRoleCode,
         lookup,
+        isFirstApplication,
         currentId,
         personalDetail,
         serviceDetail,
@@ -153,6 +183,48 @@ export const load = async ({ params }) => {
         personalDetailForm,
         outsiderFamily,
         outsiderServiceForm,
+    }
+}
+
+
+export const _applyQuarters = async () => {
+    const response: CommonResponseDTO =
+        await QuartersServices.addMovingInApplication();
+
+    if (response.status == "success") {
+        goto('/pinjaman-dan-kuarters/permohonan-masuk-kuarters')
+    } else {
+        throw new Error('Failed to create new application.')
+    }
+}
+export const _applyMoveoutQuarters = async (form: commonIdRequestDTO) => {
+    const response: CommonResponseDTO =
+        await QuartersServices.addMovingOutEmployee(form);
+
+    if (response.status == "success") {
+        setTimeout(() => goto(
+            '/pinjaman-dan-kuarters/permohonan-keluar-kuarters/butiran/' +
+            response.data?.details.id +
+            '-' +
+            'kakitangan',
+        ), 1000)
+    } else {
+        throw new Error('Failed to create new application.')
+    }
+}
+export const _applyMoveoutQuartersForOutsiders = async (form: commonIdRequestDTO) => {
+    const response: CommonResponseDTO =
+        await QuartersServices.addMovingOutForOutsider(form);
+
+    if (response.status == "success") {
+        setTimeout(() => goto(
+            '/pinjaman-dan-kuarters/permohonan-keluar-kuarters/butiran/' +
+            response.data?.details.id +
+            '-' +
+            'luar',
+        ), 1000)
+    } else {
+        throw new Error('Failed to create new application.')
     }
 }
 
@@ -188,9 +260,8 @@ export const _submitQuarterDetailsForm = async (formData: QuarterDetails) => {
     const form = await superValidate(formData, zod(_addQuarterDetails));
 
     if (form.valid) {
-        const { email, rentRate, deposit, billDeposit, ...tempObj } = form.data
         const response: CommonResponseDTO =
-            await QuartersServices.addApplicationQuarterDetails(tempObj as QuarterDetails)
+            await QuartersServices.addApplicationQuarterDetails(form.data as QuarterDetails)
 
         return { response }
     }
@@ -207,19 +278,6 @@ export const _submitDirectorApprovalForm = async (formData: QuarterCommonApprova
 }
 
 // ======================================== Outsider Registration
-// export const _submitOutsiderApplicationForm = async (formData: QuartersPersonalDetail) => {
-//     const form = await superValidate(formData, zod(_outsiderApplication));
-//     if (form.valid) {
-//         // const response: CommonResponseDTO =
-//         //     await QuartersServices.addOutsiderPersonalDetail(form.data as QuartersPersonalDetail)
-//         // return { response }
-//         let getId: number = 0;
-//         addOutsider(form.data).then((result) => {return getId = result})
-
-//         // return { getId }
-//     }
-// }
-
 export const _submitOutsiderFamilyForm = async (formData: OutsiderFamily) => {
     const form = await superValidate(formData, zod(_outsiderFamily));
     if (form.valid) {

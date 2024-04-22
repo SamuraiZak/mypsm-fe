@@ -4,59 +4,101 @@
 import {
     booleanSchema,
     codeSchema,
-    dateSchema,
-    longTextSchema,
-    maxDateSchema,
-    minDateSchema,
-    numberIdSchema,
     numberSchema,
     shortTextSchema,
 } from '$lib/schemas/common/schema-type';
 import { z } from 'zod';
+const stringToMinDate = z.string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' }).refine((val) => {
+    const convertedStringToDate = new Date(val);
+    const currentDate = new Date();
+    return convertedStringToDate > currentDate;
+}, { message: "Tarikh tidak boleh kurang dari tarikh semasa." })
+
+const stringToMaxDate = z.string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' }).refine((val) => {
+    const convertedStringToDate = new Date(val);
+    const currentDate = new Date();
+    return convertedStringToDate < currentDate;
+}, { message: "Tarikh tidak boleh lebih dari tarikh semasa." })
 
 // ========================
 // ============= Urus Setia 
 // ========================
 
 //Second stepper schema
-export const _verifyMeetingResultDetailSchema = z.object({
-    integritySecretaryName: codeSchema,
-    directorName: codeSchema,
+export const _updateChosenCandidate = z.object({
+    actingIds: z.number().array(),
+    secretaryName: shortTextSchema,
+    directorName: shortTextSchema,
 })
 
 //3rd stepper schema
 export const _updateMeetingDetailSchema = z.object({
-    meetingName: codeSchema,
-    meetingDate: minDateSchema,
-    grade: numberIdSchema,
-    position: numberIdSchema,
-    interviewDate: minDateSchema,
-    meetingTime: shortTextSchema,
-    state: numberIdSchema,
-    interviewCenter: numberIdSchema,
+    batchId: z.number(),
+    grade: shortTextSchema,
+    position: shortTextSchema,
+    meetingName: shortTextSchema,
+    meetingDate: stringToMinDate,
+    state: shortTextSchema,
+    placement: shortTextSchema,
+    interviewDate: stringToMinDate,
+    interviewTime: shortTextSchema,
 })
 
-//
-export const _updateMeetingResultSchema = z.object({
-    totalMark: shortTextSchema.nullable().default(""),
-    interviewDate: minDateSchema.nullable(),
-    interviewCenter: codeSchema.nullable().default(""),
-    panelName: codeSchema.nullable().default(""),
+export const _updateMeetingResult = z.object({
+    marks: numberSchema,
+    actingIds: z.number().array(),
+})
+
+export const _updatePromotionDetail = z.object({
+    batchId: z.number(),
+    actingPosition: shortTextSchema,
+    actingGrade: z.string().min(1, {message: "Ruangan ini tidak boleh kosong."}),
+    meetingName: shortTextSchema,
+    meetingDate: stringToMinDate,
 })
 
 export const _updatePromotionMeetingResultSchema = z.object({
-    promotionMeetingResult: shortTextSchema,
+    id: z.number(),
+    meetingResult: shortTextSchema.default("Tidak Berjaya"),
+})
+
+export const _updatePlacementMeeting = z.object({
+    batchId: z.number(),
+    meetingName: shortTextSchema,
+    meetingDate: stringToMaxDate,
 })
 
 export const _updateEmployeePlacementMeetingResultSchema = z.object({
+    id: z.number(),
+    meetingResult: shortTextSchema,
     newPlacement: shortTextSchema,
-    newDirector: codeSchema,
-    reportingDate: minDateSchema,
+    newDirector: shortTextSchema,
+    reportDate: stringToMinDate,
 })
+
+export const _updateActingResultSchema = z.object({
+    id: z.number().optional(),
+    actingId: z.number().optional(),
+    actingResult: shortTextSchema,
+    actingPosition: shortTextSchema,
+    actingGrade: z.string().min(1, {message: "Ruangan ini tidak boleh kosong."}),
+    newPlacement: shortTextSchema,
+    reportDate: stringToMinDate,
+    supporterName: shortTextSchema.optional(),
+    approverName: shortTextSchema.optional(),
+})
+
+
+
+
+
+
+
+
 
 export const _updatePlacementAmendmentApplicationResultSchema = z.object({
     placementAmendmentResult: codeSchema.nullable().default(""),
-    approvedNewReportingDate: minDateSchema.nullable(),
+    approvedNewReportingDate: stringToMinDate.nullable(),
     approvedRequestedPlacementAmendment: codeSchema.nullable().default(""),
     originalPlacementDate: codeSchema.nullable().default(""),
     placementRequestedAmendmentDate: codeSchema.nullable().default(""),
@@ -64,42 +106,24 @@ export const _updatePlacementAmendmentApplicationResultSchema = z.object({
     approverName: codeSchema.nullable().default(""),
 })
 
-export const _updateActingResultSchema = z.object({
-    actingResult: codeSchema,
-    actingPosition: codeSchema,
-    reportingDate: minDateSchema,
-    newPlacement: codeSchema,
-    actingGrade: codeSchema,
-    supporterId: codeSchema,
-    approverId: codeSchema,
+export const _actingApprovalSchema = z.object({
+    id: z.number(),
+    remark: shortTextSchema,
+    status: booleanSchema,
 })
 
-export const _directorResultSchema = z.object({
-    directorRemark: shortTextSchema,
-    directorResult: booleanSchema,
-})
-
-export const _supporterResultSchema = z.object({
-    supporterRemark: shortTextSchema,
-    supporterResult: booleanSchema,
-})
-
-export const _approverResultSchema = z.object({
-    approverRemark: shortTextSchema,
-    approverResult: booleanSchema,
-})
 
 // =============== gred utama validation 
 export const _mainUpdatePromotionMeetingResultSchema = z.object({
-    meetingName: codeSchema,
-    meetingDate: minDateSchema,
-    actingPosition: codeSchema,
-    actingGrade: codeSchema,
-    placement: codeSchema,
-    reportingDate: minDateSchema,
-    referenceNameLetter: codeSchema,
-    letterDate: minDateSchema,
-    letterTitle: shortTextSchema,
+    batchId: z.number(),
+    actingPosition: shortTextSchema,
+    actingGrade: shortTextSchema,
+    placement: shortTextSchema,
+    meetingName: shortTextSchema,
+    referenceTitle: shortTextSchema,
+    referenceNo: shortTextSchema,
+    referenceDate: stringToMinDate,
+    reportDate: stringToMinDate,
 })
 
 export const _mainUpdatePromotionMeetingResultDetailSchema = z.object({
@@ -110,7 +134,7 @@ export const _mainUpdateActingEmployeeDetailSchema = z.object({
     actingPosition: codeSchema,
     actingGrade: codeSchema,
     newPlacement: codeSchema,
-    reportingDate: minDateSchema,
+    reportingDate: stringToMinDate,
     supporterName: codeSchema,
     approverName: codeSchema,
 })

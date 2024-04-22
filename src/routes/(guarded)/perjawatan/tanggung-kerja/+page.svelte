@@ -3,17 +3,12 @@
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { PageData } from './$types';
     import { goto } from '$app/navigation';
-    import type {
-        TableDTO,
-        TableSettingDTO,
-    } from '$lib/dto/core/table/table.dto';
-    import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
-    import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
+    import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import FilterDateField from '$lib/components/table/filter/FilterDateField.svelte';
     import type { EmployeeInterimApplicationListResponseDTO } from '$lib/dto/mypsm/employment/tanggung-kerja/interim-employee-application-list-response.dto';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
@@ -21,9 +16,12 @@
 
     let rowData = {} as EmployeeInterimApplicationListResponseDTO;
 
-    //Employees' POV: Table for application list
+    //Table for application list
     let employeeApplicationTable: TableSettingDTO = {
-        param: data.employeeApplicationParam,
+        param:
+            data.currentRoleCode == UserRoleConstant.kakitangan.code
+                ? data.employeeApplicationParam
+                : data.param,
         meta: data.employeeInterimApplicationResponse.data?.meta ?? {
             pageSize: 1,
             pageNum: 1,
@@ -45,6 +43,33 @@
                 ? 'employment/interim/application/list_employee'
                 : 'employment/interim/application/list',
         id: 'employeeApplicationTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
+    };
+    //Termination table
+    let terminationTable: TableSettingDTO = {
+        param: data.param,
+        meta: data.employeeInterimTerminationListResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.employeeInterimTerminationList ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['id'],
+        dictionary: [],
+        url: 'employment/interim/termination/list',
+        id: 'terminationTable',
         option: {
             checkbox: false,
             detail: true,
@@ -79,8 +104,10 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
-    {#if data.currentRoleCode === UserRoleConstant.kakitangan.code || data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code}
+    {#if data.currentRoleCode === UserRoleConstant.kakitangan.code || data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code || data.currentRoleCode == UserRoleConstant.ketuaSeksyen.code}
         <CustomTab>
+            
+            {#if data.currentRoleCode !== UserRoleConstant.ketuaSeksyen.code}
             <CustomTabContent title="Permohonan Tanggung Kerja">
                 <div class="h h-fit w-full">
                     <DataTable
@@ -100,36 +127,67 @@
                                 bind:inputValue={employeeApplicationTable.param
                                     .filter.name}
                             ></FilterTextField>
+                            <FilterTextField
+                                label="No. Pekerja"
+                                bind:inputValue={employeeApplicationTable.param
+                                    .filter.employeeNumber}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="No. Kad Pengenalan"
+                                bind:inputValue={employeeApplicationTable.param
+                                    .filter.identityCardNumber}
+                            ></FilterTextField>
+                            <FilterDateField
+                                label="Tarikh Permohonan"
+                                bind:inputValue={employeeApplicationTable.param
+                                    .filter.applicationDate}
+                            ></FilterDateField>
                         </FilterWrapper>
                     </DataTable>
                 </div>
             </CustomTabContent>
-
+            {/if}
             <CustomTabContent title="Penamatan Tanggung Kerja">
-                <div class="flex w-full flex-col justify-start gap-2.5 p-3">
-                    <!-- <CustomTable
-                        title="Sejarah Tanggung Kerja"
-                        bind:tableData={tamatTanggungKerjaTable}
-                    /> -->
+                <div class="h h-fit w-full">
+                    <DataTable
+                        title="Senarai Kakitangan"
+                        bind:tableData={terminationTable}
+                        bind:passData={rowData}
+                        detailActions={() => {
+                            goto(
+                                '/perjawatan/tanggung-kerja/penamatan/' +
+                                    rowData.id,
+                            );
+                        }}
+                    >
+                        <FilterWrapper slot="filter">
+                            <FilterTextField
+                                label="Nama"
+                                bind:inputValue={employeeApplicationTable.param
+                                    .filter.name}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="No. Pekerja"
+                                bind:inputValue={employeeApplicationTable.param
+                                    .filter.employeeNumber}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="No. Kad Pengenalan"
+                                bind:inputValue={employeeApplicationTable.param
+                                    .filter.identityCardNumber}
+                            ></FilterTextField>
+                            <FilterDateField
+                                label="Tarikh Permohonan"
+                                bind:inputValue={employeeApplicationTable.param
+                                    .filter.applicationDate}
+                            ></FilterDateField>
+                        </FilterWrapper>
+                    </DataTable>
                 </div>
             </CustomTabContent>
         </CustomTab>
     {:else if data.currentRoleCode === UserRoleConstant.pengarahBahagian.code || data.currentRoleCode === UserRoleConstant.pengarahNegeri.code || data.currentRoleCode === UserRoleConstant.pengarahKhidmatPengurusan.code}
         <div class="flex w-full flex-col items-start justify-start gap-2.5 p-3">
-            <!-- <FilterCard>
-                <FilterTextField
-                    bind:inputValue={table.param.filter.grade}
-                    label="No. Pekerja"
-                ></FilterTextField>
-                <FilterTextField
-                    bind:inputValue={table.param.filter.position}
-                    label="Nama"
-                ></FilterTextField>
-                <FilterTextField
-                    bind:inputValue={table.param.filter.name}
-                    label="No. Kad Pengenalan"
-                ></FilterTextField>
-            </FilterCard> -->
             <div class="h h-fit w-full">
                 <DataTable
                     title="Senarai Permohonan Tanggung Kerja"
@@ -147,6 +205,21 @@
                             bind:inputValue={employeeApplicationTable.param
                                 .filter.name}
                         ></FilterTextField>
+                        <FilterTextField
+                            label="No. Pekerja"
+                            bind:inputValue={employeeApplicationTable.param
+                                .filter.employeeNumber}
+                        ></FilterTextField>
+                        <FilterTextField
+                            label="No. Kad Pengenalan"
+                            bind:inputValue={employeeApplicationTable.param
+                                .filter.identityCardNumber}
+                        ></FilterTextField>
+                        <FilterDateField
+                            label="Tarikh Permohonan"
+                            bind:inputValue={employeeApplicationTable.param
+                                .filter.applicationDate}
+                        ></FilterDateField>
                     </FilterWrapper>
                 </DataTable>
             </div>

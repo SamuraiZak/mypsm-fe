@@ -5,6 +5,7 @@ export interface InterimApplicationDetailDTO {
     download:                  InterimDownload;
     skipping:                  InterimSkipping;
     support:                   InterimSupport;
+    approval:                  InterimSupport;
     verification:              InterimSupport;
     checklist:                 InterimChecklist;
 }
@@ -70,7 +71,8 @@ export interface InterimSkipping {
 export interface InterimSupport {
     name:              string;
     remark:            string;
-    status:            string;
+    status?:            string;
+    statusCode?:            string;
     statusDescription: string;
 }
 
@@ -93,6 +95,15 @@ export class InterimApplicationDetailDTOConvert {
     }
 
     public static toJson(value: InterimApplicationDetailDTO): string {
+        return JSON.stringify(value);
+    }
+}
+export class InterimChecklistConvert {
+    public static fromJson(json: string): InterimChecklist {
+        return JSON.parse(json);
+    }
+
+    public static toJson(value: InterimChecklist): string {
         return JSON.stringify(value);
     }
 }

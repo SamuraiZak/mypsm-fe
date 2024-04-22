@@ -35,7 +35,42 @@ export const _addNewInterimApplicationSchema = z.object({
 export const _addInterimApprovalSchema = z.object({
     interimId: numberSchema,
     status: booleanSchema,
-    remark: z.string(),
+    remark: shortTextSchema.nullable(),
     name: z.string().optional(),
     statusDescription: z.string().optional(),
+})
+
+export const _checklistSchema = z.object ({
+    interimId:                 z.number(),
+    preparer:                  shortTextSchema,
+    checker:                   shortTextSchema,
+    applicationLetterStatus:   booleanSchema,
+    certifiedFormStatus:       booleanSchema,
+    organisationalChartStatus: booleanSchema,
+    jobDescriptionStatus:      booleanSchema,
+    orderLetterStatus:         booleanSchema,
+    leaveStatementStatus:      booleanSchema,
+    documentListStatus:        booleanSchema,
+    justificationStatus:       booleanSchema,
+    applicationLetterCheck:    booleanSchema,
+    certifiedFormCheck:        booleanSchema,
+    organisationalChartCheck:  booleanSchema,
+    jobDescriptionCheck:       booleanSchema,
+    orderLetterCheck:          booleanSchema,
+    leaveStatementCheck:       booleanSchema,
+    documentListCheck:         booleanSchema,
+    justificationCheck:        booleanSchema,
+})
+
+export const _terminationCommonApproval = z.object({
+    interimId: z.number(),
+    name: z.string().optional().default(""),
+    remark: shortTextSchema.nullable().default(""),
+    status: booleanSchema,
+})
+
+export const _terminationSuppApp = z.object({
+    interimId: z.number(),
+    supporter: shortTextSchema.default(""),
+    approver: shortTextSchema.default(""),
 })

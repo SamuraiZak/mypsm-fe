@@ -7,6 +7,7 @@
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type { MovingInKuarters } from '$lib/dto/mypsm/pinjaman/kuarters/moving-in-list.dto';
     import type { PageData } from './$types';
@@ -67,11 +68,37 @@
             bind:tableData={quartersTable}
             bind:passData={rowData}
             detailActions={() => {
-                goto(
-                    '/pinjaman-dan-kuarters/permohonan-keluar-kuarters/butiran/' +
-                        rowData.id,
-                );
+                if (rowData.employeeNumber !== null) {
+                    goto(
+                        '/pinjaman-dan-kuarters/permohonan-keluar-kuarters/butiran/' +
+                            rowData.id +
+                            '-' +
+                            'kakitangan',
+                    );
+                } else {
+                    goto(
+                        '/pinjaman-dan-kuarters/permohonan-keluar-kuarters/butiran/' +
+                            rowData.id +
+                            '-' +
+                            'luar',
+                    );
+                }
             }}
-        />
+            ><FilterWrapper slot="filter">
+                <FilterTextField
+                    label="Nama Pemohon"
+                    bind:inputValue={quartersTable.param.filter.employeeName}
+                />
+                <FilterTextField
+                    label="No. Pekerja"
+                    bind:inputValue={quartersTable.param.filter.employeeNumber}
+                />
+                <FilterTextField
+                    label="No. Kad Pengenalan"
+                    bind:inputValue={quartersTable.param.filter
+                        .identityDocumentNumber}
+                />
+            </FilterWrapper></DataTable
+        >
     </div>
 </section>

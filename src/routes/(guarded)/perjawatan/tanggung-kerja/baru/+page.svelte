@@ -113,6 +113,7 @@
                         id="referenceNumber"
                         label="Nombor Butiran Anggaran Belanjawan Mengurus/Waran Penjawatan"
                         type="text"
+                        placeholder="Contoh: Bekalan 12"
                         bind:val={$addNewInterimApplicationForm.referenceNumber}
                         errors={$addNewInterimApplicationError.referenceNumber}
                     />

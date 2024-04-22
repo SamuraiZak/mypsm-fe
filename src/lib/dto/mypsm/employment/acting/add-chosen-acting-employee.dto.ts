@@ -13,3 +13,20 @@ export class AddChosenActingEmployeeDTOConvert {
         return JSON.stringify(value);
     }
 }
+
+export interface UpdateChosenEmployee {
+    actingIds:     number[];
+    secretaryName: string;
+    directorName:  string;
+}
+
+// Converts JSON strings to/from your types
+export class UpdateChosenEmployeeConvert {
+    public static fromJson(json: string): UpdateChosenEmployee {
+        return JSON.parse(json);
+    }
+
+    public static toJson(value: UpdateChosenEmployee): string {
+        return JSON.stringify(value);
+    }
+}
