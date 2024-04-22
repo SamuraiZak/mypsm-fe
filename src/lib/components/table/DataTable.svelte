@@ -27,6 +27,8 @@
     import LoadingOverlay from '../loading-overlay/LoadingOverlay.svelte';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import TextIconButton from '../button/TextIconButton.svelte';
+    import SvgEmptyBox from '$lib/assets/svg/SvgEmptyBox.svelte';
+    import { Span } from 'flowbite-svelte';
 
     // =====================================================================
     // Variables
@@ -384,307 +386,330 @@
         <div
             class="flex h-fit {maxheight} w-full flex-col items-center justify-start overflow-auto"
         >
-            <table class="table h-fit w-full table-auto">
-                <thead class="sticky top-0 z-[1]">
-                    <!-- table head row starts -->
-
-                    <tr
-                        class="h-10 min-h-10 w-full bg-ios-basic-extraLightBackgroundGray"
+            {#if tableData.data.length == 0}
+                <div
+                    class="flex  h-60 min-h-60 w-full flex-col items-center justify-center bg-ios-basic-white"
+                >
+                    <span class=" text-ios-labelColors-secondaryLabel-light">
+                        <SvgEmptyBox size="30"></SvgEmptyBox>
+                    </span>
+                    <span
+                        class=" text-base text-ios-labelColors-secondaryLabel-light"
                     >
-                        {#if tableData.option.checkbox}
-                            <th class="h-full w-10 border-r px-2.5">
+                        Tiada Data
+                    </span>
+                </div>
+            {:else}
+                <table class="table h-fit w-full table-auto">
+                    <thead class="sticky top-0 z-[1]">
+                        <!-- table head row starts -->
+
+                        <tr
+                            class="h-10 min-h-10 w-full bg-ios-basic-extraLightBackgroundGray"
+                        >
+                            {#if tableData.option.checkbox}
+                                <th class="h-full w-10 border-r px-2.5">
+                                    <div
+                                        class="flex h-full flex-row items-center justify-center"
+                                    >
+                                        <span
+                                            class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                                        >
+                                        </span>
+                                    </div>
+                                </th>
+                            {/if}
+                            <th
+                                class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
+                            >
                                 <div
                                     class="flex h-full flex-row items-center justify-center"
                                 >
                                     <span
                                         class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
                                     >
+                                        Bil.
                                     </span>
                                 </div>
                             </th>
-                        {/if}
-                        <th
-                            class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
-                        >
-                            <div
-                                class="flex h-full flex-row items-center justify-center"
-                            >
-                                <span
-                                    class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
-                                >
-                                    Bil.
-                                </span>
-                            </div>
-                        </th>
-                        {#if tableData.data.length > 0}
-                            {#each Object.keys(tableData.data[0]) as columnHeading}
-                                {#if !tableData.hiddenColumn?.includes(columnHeading)}
-                                    <!-- return column header -->
+                            {#if tableData.data.length > 0}
+                                {#each Object.keys(tableData.data[0]) as columnHeading}
+                                    {#if !tableData.hiddenColumn?.includes(columnHeading)}
+                                        <!-- return column header -->
+                                        <th
+                                            on:click={() => {
+                                                // alert(Object.values({ columnHeading }));
+                                                handleSort(
+                                                    Object.values({
+                                                        columnHeading,
+                                                    }).toString(),
+                                                );
+                                            }}
+                                            class="h-full cursor-pointer border-r border-ios-labelColors-separator-light px-2.5"
+                                        >
+                                            <div
+                                                class="flex h-full flex-row items-center justify-between"
+                                            >
+                                                <span
+                                                    class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    {translator(columnHeading)}
+                                                </span>
+                                                <div
+                                                    class="flex h-full max-h-full w-10 flex-col items-center justify-center gap-0"
+                                                >
+                                                    <div
+                                                        class="select-none {tableData
+                                                            .param.orderBy ==
+                                                        Object.values({
+                                                            columnHeading,
+                                                        }).toString()
+                                                            ? ' text-ios-labelColors-label-light'
+                                                            : ' text-ios-labelColors-tertiaryLabel-light'}"
+                                                    >
+                                                        {#if tableData.param.orderType == 0 && tableData.param.orderBy == Object.values( { columnHeading }, ).toString()}
+                                                            <SvgSortUp size="18"
+                                                            ></SvgSortUp>
+                                                        {:else}
+                                                            <SvgSortDown
+                                                                size="18"
+                                                            ></SvgSortDown>
+                                                        {/if}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    {/if}
+                                {/each}
+
+                                <!-- actions -->
+
+                                {#if tableData.option.detail}
                                     <th
-                                        on:click={() => {
-                                            // alert(Object.values({ columnHeading }));
-                                            handleSort(
-                                                Object.values({
-                                                    columnHeading,
-                                                }).toString(),
-                                            );
-                                        }}
-                                        class="h-full cursor-pointer border-r border-ios-labelColors-separator-light px-2.5"
+                                        class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
                                     >
                                         <div
-                                            class="flex h-full flex-row items-center justify-between"
+                                            class="flex h-full flex-row items-center justify-center"
                                         >
                                             <span
                                                 class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
                                             >
-                                                {translator(columnHeading)}
                                             </span>
-                                            <div
-                                                class="flex h-full max-h-full w-10 flex-col items-center justify-center gap-0"
-                                            >
-                                                <div
-                                                    class="select-none {tableData
-                                                        .param.orderBy ==
-                                                    Object.values({
-                                                        columnHeading,
-                                                    }).toString()
-                                                        ? ' text-ios-labelColors-label-light'
-                                                        : ' text-ios-labelColors-tertiaryLabel-light'}"
-                                                >
-                                                    {#if tableData.param.orderType == 0 && tableData.param.orderBy == Object.values( { columnHeading }, ).toString()}
-                                                        <SvgSortUp size="18"
-                                                        ></SvgSortUp>
-                                                    {:else}
-                                                        <SvgSortDown size="18"
-                                                        ></SvgSortDown>
-                                                    {/if}
-                                                </div>
-                                            </div>
                                         </div>
                                     </th>
                                 {/if}
-                            {/each}
-
-                            <!-- actions -->
-
-                            {#if tableData.option.detail}
-                                <th
-                                    class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
-                                >
-                                    <div
-                                        class="flex h-full flex-row items-center justify-center"
+                                {#if tableData.option.select}
+                                    <th
+                                        class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
                                     >
-                                        <span
-                                            class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                                        <div
+                                            class="flex h-full flex-row items-center justify-center"
                                         >
-                                        </span>
-                                    </div>
-                                </th>
-                            {/if}
-                            {#if tableData.option.select}
-                                <th
-                                    class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
-                                >
-                                    <div
-                                        class="flex h-full flex-row items-center justify-center"
-                                    >
-                                        <span
-                                            class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                        </span>
-                                    </div>
-                                </th>
-                            {/if}
-                            {#if tableData.option.edit}
-                                <th
-                                    class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
-                                >
-                                    <div
-                                        class="flex h-full flex-row items-center justify-center"
-                                    >
-                                        <span
-                                            class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                        </span>
-                                    </div>
-                                </th>
-                            {/if}
-                        {:else}
-                            <th>
-                                <span
-                                    class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
-                                >
-                                    Tiada Rekod
-                                </span>
-                            </th>
-                        {/if}
-                        <!-- loop for each of the data key -->
-                    </tr>
-
-                    <tr>
-                        <th
-                            class="h-[1px] bg-ios-labelColors-separator-light p-0"
-                            colspan="15"
-                        ></th>
-                    </tr>
-
-                    <!-- table head row ends -->
-                </thead>
-                <tbody>
-                    <!-- loop trough all entries -->
-                    {#each Object.values(tableData.data) as row, index}
-                        <tr
-                            class=" h-10 bg-ios-backgroundColors-systemBackground-light hover:bg-ios-systemColors-systemGrey6-light {index +
-                                1 ==
-                            tableData.data.length
-                                ? ''
-                                : 'border-b'}"
-                        >
-                            {#if tableData.option.checkbox}
-                                <td class="h-full border-r px-2.5 text-center">
-                                    <div
-                                        class="flex h-full flex-row items-center justify-center"
-                                    >
-                                        {#if compareObject(row)}
-                                            <IconButton
-                                                onClick={() => {
-                                                    passData = row;
-                                                    handleAddSelectedData(row);
-                                                }}
+                                            <span
+                                                class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
                                             >
-                                                <span
-                                                    class=" text-ios-systemColors-systemRed-light"
-                                                >
-                                                    <SvgMinusCircle
-                                                    ></SvgMinusCircle>
-                                                </span>
-                                            </IconButton>
-                                        {:else}
-                                            <IconButton
-                                                onClick={() => {
-                                                    passData = row;
-                                                    handleAddSelectedData(row);
-                                                }}
+                                            </span>
+                                        </div>
+                                    </th>
+                                {/if}
+                                {#if tableData.option.edit}
+                                    <th
+                                        class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
+                                    >
+                                        <div
+                                            class="flex h-full flex-row items-center justify-center"
+                                        >
+                                            <span
+                                                class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
                                             >
-                                                <span
-                                                    class="text-ios-activeColors-activeBlue-light"
-                                                >
-                                                    <SvgAddCircle
-                                                    ></SvgAddCircle>
-                                                </span>
-                                            </IconButton>
-                                        {/if}
-                                    </div>
-                                </td>
+                                            </span>
+                                        </div>
+                                    </th>
+                                {/if}
+                            {:else}
+                                <th>
+                                    <span
+                                        class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                                    >
+                                        Tiada Rekod
+                                    </span>
+                                </th>
                             {/if}
-                            <td
-                                class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
+                            <!-- loop for each of the data key -->
+                        </tr>
+
+                        <tr>
+                            <th
+                                class="h-[1px] bg-ios-labelColors-separator-light p-0"
+                                colspan="15"
+                            ></th>
+                        </tr>
+
+                        <!-- table head row ends -->
+                    </thead>
+                    <tbody>
+                        <!-- loop trough all entries -->
+                        {#each Object.values(tableData.data) as row, index}
+                            <tr
+                                class=" h-10 bg-ios-backgroundColors-systemBackground-light hover:bg-ios-systemColors-systemGrey6-light {index +
+                                    1 ==
+                                tableData.data.length
+                                    ? ''
+                                    : 'border-b'}"
                             >
-                                <span
-                                    class="relative text-center align-middle text-sm font-normal"
-                                >
-                                    {index +
-                                        1 +
-                                        (tableData.meta.pageNum - 1) *
-                                            tableData.meta.pageSize}
-                                </span>
-                            </td>
-                            <!-- loop through each property -->
-                            {#each Object.keys(row) as key}
-                                {#if !TableHelper.isHidden(tableData.hiddenColumn ?? [], key)}
+                                {#if tableData.option.checkbox}
                                     <td
-                                        class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-start"
+                                        class="h-full border-r px-2.5 text-center"
                                     >
-                                        <span
-                                            class="relative text-start align-middle text-sm font-normal text-ios-labelColors-label-light"
+                                        <div
+                                            class="flex h-full flex-row items-center justify-center"
                                         >
-                                            {#if TableHelper.getKey(row, key) == null}
-                                                Tiada Maklumat
-                                            {:else if TableHelper.getKey(row, key) !== ''}
-                                                {#if typeof TableHelper.getKey(row, key) == 'string'}
-                                                    {TextAppearanceHelper.toProper(
-                                                        TableHelper.getKey(
+                                            {#if compareObject(row)}
+                                                <IconButton
+                                                    onClick={() => {
+                                                        passData = row;
+                                                        handleAddSelectedData(
                                                             row,
-                                                            key,
-                                                        ),
-                                                    )}
-                                                {:else}
-                                                    {TableHelper.getKey(
-                                                        row,
-                                                        key,
-                                                    )}
-                                                {/if}
+                                                        );
+                                                    }}
+                                                >
+                                                    <span
+                                                        class=" text-ios-systemColors-systemRed-light"
+                                                    >
+                                                        <SvgMinusCircle
+                                                        ></SvgMinusCircle>
+                                                    </span>
+                                                </IconButton>
+                                            {:else}
+                                                <IconButton
+                                                    onClick={() => {
+                                                        passData = row;
+                                                        handleAddSelectedData(
+                                                            row,
+                                                        );
+                                                    }}
+                                                >
+                                                    <span
+                                                        class="text-ios-activeColors-activeBlue-light"
+                                                    >
+                                                        <SvgAddCircle
+                                                        ></SvgAddCircle>
+                                                    </span>
+                                                </IconButton>
                                             {/if}
-                                        </span>
+                                        </div>
                                     </td>
                                 {/if}
-                            {/each}
+                                <td
+                                    class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
+                                >
+                                    <span
+                                        class="relative text-center align-middle text-sm font-normal"
+                                    >
+                                        {index +
+                                            1 +
+                                            (tableData.meta.pageNum - 1) *
+                                                tableData.meta.pageSize}
+                                    </span>
+                                </td>
+                                <!-- loop through each property -->
+                                {#each Object.keys(row) as key}
+                                    {#if !TableHelper.isHidden(tableData.hiddenColumn ?? [], key)}
+                                        <td
+                                            class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-start"
+                                        >
+                                            <span
+                                                class="relative text-start align-middle text-sm font-normal text-ios-labelColors-label-light"
+                                            >
+                                                {#if TableHelper.getKey(row, key) == null}
+                                                    Tiada Maklumat
+                                                {:else if TableHelper.getKey(row, key) !== ''}
+                                                    {#if typeof TableHelper.getKey(row, key) == 'string'}
+                                                        {TextAppearanceHelper.toProper(
+                                                            TableHelper.getKey(
+                                                                row,
+                                                                key,
+                                                            ),
+                                                        )}
+                                                    {:else}
+                                                        {TableHelper.getKey(
+                                                            row,
+                                                            key,
+                                                        )}
+                                                    {/if}
+                                                {/if}
+                                            </span>
+                                        </td>
+                                    {/if}
+                                {/each}
 
-                            <!-- actions column starts -->
-                            {#if tableData.option.detail}
-                                <td
-                                    class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
-                                >
-                                    <div
-                                        class="flex h-full flex-row items-center justify-center"
+                                <!-- actions column starts -->
+                                {#if tableData.option.detail}
+                                    <td
+                                        class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
                                     >
-                                        <IconButton
-                                            onClick={() => {
-                                                passData = row;
-                                                detailActions();
-                                            }}
+                                        <div
+                                            class="flex h-full flex-row items-center justify-center"
                                         >
-                                            <SvgEllipsisCircle
-                                            ></SvgEllipsisCircle>
-                                        </IconButton>
-                                    </div>
-                                </td>
-                            {/if}
-                            {#if tableData.option.select}
-                                <td
-                                    class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
-                                >
-                                    <div
-                                        class="flex h-full flex-row items-center justify-center"
+                                            <IconButton
+                                                onClick={() => {
+                                                    passData = row;
+                                                    detailActions();
+                                                }}
+                                            >
+                                                <SvgEllipsisCircle
+                                                ></SvgEllipsisCircle>
+                                            </IconButton>
+                                        </div>
+                                    </td>
+                                {/if}
+                                {#if tableData.option.select}
+                                    <td
+                                        class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
                                     >
-                                        <TableCellButton
-                                            label="Pilih"
-                                            onClick={() => {
-                                                passData = row;
-                                                selectActions();
-                                            }}
+                                        <div
+                                            class="flex h-full flex-row items-center justify-center"
                                         >
-                                            <SvgCheck slot="icon"></SvgCheck>
-                                        </TableCellButton>
-                                    </div>
-                                </td>
-                            {/if}
-                            {#if tableData.option.edit}
-                                <td
-                                    class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
-                                >
-                                    <div
-                                        class="flex h-full flex-row items-center justify-center"
+                                            <TableCellButton
+                                                label="Pilih"
+                                                onClick={() => {
+                                                    passData = row;
+                                                    selectActions();
+                                                }}
+                                            >
+                                                <SvgCheck slot="icon"
+                                                ></SvgCheck>
+                                            </TableCellButton>
+                                        </div>
+                                    </td>
+                                {/if}
+                                {#if tableData.option.edit}
+                                    <td
+                                        class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
                                     >
-                                        <TableIconButton
-                                            color="light"
-                                            onClick={() => {
-                                                passData = row;
-                                                editActions();
-                                            }}
+                                        <div
+                                            class="flex h-full flex-row items-center justify-center"
                                         >
-                                            <SvgEdit slot="icon" size="15"
-                                            ></SvgEdit>
-                                        </TableIconButton>
-                                    </div>
-                                </td>
-                            {/if}
+                                            <TableIconButton
+                                                color="light"
+                                                onClick={() => {
+                                                    passData = row;
+                                                    editActions();
+                                                }}
+                                            >
+                                                <SvgEdit slot="icon" size="15"
+                                                ></SvgEdit>
+                                            </TableIconButton>
+                                        </div>
+                                    </td>
+                                {/if}
 
-                            <!-- action columns ends -->
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
+                                <!-- action columns ends -->
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            {/if}
         </div>
         <!-- footer area -->
         <div
