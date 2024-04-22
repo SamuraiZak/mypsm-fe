@@ -29,6 +29,10 @@ export const load = async () => {
         currentRoleCode === RoleConstant.pengarahBahagian.code;
 
     let confirmationInServiceListResponse: CommonResponseDTO = {};
+    let confirmationInServiceExceedsThreeYearsListResponse: CommonResponseDTO =
+        {};
+    let confirmationInServiceRationalisationListResponse: CommonResponseDTO =
+        {};
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
@@ -73,12 +77,52 @@ export const load = async () => {
     };
 
     // List
-    if (!isEmploymentSecretaryRole) {
+    if (isEmploymentSecretaryRole) {
         confirmationInServiceListResponse =
             await ConfirmationServices.getConfirmationList(param);
-    } else if (!isAuditDirectorRole) {
+        confirmationInServiceExceedsThreeYearsListResponse =
+            await ConfirmationServices.getConfirmationList(
+                exceedsThreeYearsParam,
+            );
+        confirmationInServiceRationalisationListResponse =
+            await ConfirmationServices.getConfirmationList(
+                rationalisationParam,
+            );
+    } else if (isStateDirectorRole) {
         confirmationInServiceListResponse =
-            await ConfirmationServices.getConfirmationList(param);
+            await ConfirmationServices.getConfirmationStateDirectorList(param);
+        confirmationInServiceExceedsThreeYearsListResponse =
+            await ConfirmationServices.getConfirmationStateDirectorList(
+                exceedsThreeYearsParam,
+            );
+        confirmationInServiceRationalisationListResponse =
+            await ConfirmationServices.getConfirmationStateDirectorList(
+                rationalisationParam,
+            );
+    } else if (isIntegrityDirectorRole) {
+        confirmationInServiceListResponse =
+            await ConfirmationServices.getConfirmationIntegrityDirectorList(
+                param,
+            );
+        confirmationInServiceExceedsThreeYearsListResponse =
+            await ConfirmationServices.getConfirmationIntegrityDirectorList(
+                exceedsThreeYearsParam,
+            );
+        confirmationInServiceRationalisationListResponse =
+            await ConfirmationServices.getConfirmationIntegrityDirectorList(
+                rationalisationParam,
+            );
+    } else if (isAuditDirectorRole) {
+        confirmationInServiceListResponse =
+            await ConfirmationServices.getConfirmationAuditDirectorList(param);
+        confirmationInServiceExceedsThreeYearsListResponse =
+            await ConfirmationServices.getConfirmationAuditDirectorList(
+                exceedsThreeYearsParam,
+            );
+        confirmationInServiceRationalisationListResponse =
+            await ConfirmationServices.getConfirmationAuditDirectorList(
+                rationalisationParam,
+            );
     }
 
     // ==========================================================================
@@ -94,9 +138,13 @@ export const load = async () => {
 
     return {
         param,
+        exceedsThreeYearsParam,
+        rationalisationParam,
         currentRoleCode,
         responses: {
             confirmationInServiceListResponse,
+            confirmationInServiceExceedsThreeYearsListResponse,
+            confirmationInServiceRationalisationListResponse,
         },
         selectionOptions: {
             statusLookup,
