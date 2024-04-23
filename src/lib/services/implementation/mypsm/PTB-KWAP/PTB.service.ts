@@ -8,7 +8,8 @@ import {
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import { commonIdRequestDTOConvert, type commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import type { ptbPensionRequestDTO } from '$lib/dto/mypsm/employment/PTB-KWAP/add-ptb-kwap-service-detail.dto';
-import type { PTBIDRequestBodyDTO } from '$lib/dto/mypsm/employment/ptb-dan-kwap/id-request.dto';
+import type { PTBIDRequestBodyDTO, PensionId } from '$lib/dto/mypsm/employment/ptb-dan-kwap/id-request.dto';
+import type { PensionDetailDTO } from '$lib/dto/mypsm/employment/ptb-dan-kwap/ptb-kwap-dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
@@ -47,6 +48,40 @@ export class PTBKWAPServices {
             return CommonResponseConstant.httpError;
         }
     }
+
+
+    // list kakitangn
+    static async getPTBKWAPEmployeeListDetails(
+        param: CommonListRequestDTO,
+    ) {
+        try {
+            const url: Input = 'employment/pension_detail/employee/list';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    
+ 
     // ===========================================
     // ============ Personal Detail ==============
     // ===========================================
@@ -107,11 +142,11 @@ export class PTBKWAPServices {
     // ===========================================
 
     static async getPTBKWAPpensionDetails(
-        param: PTBIDRequestBodyDTO,
+        param: commonIdRequestDTO,
     ) {
 
         try {
-            let url: Input = 'employment/pension_detail/add';
+            let url: Input = 'employment/pension_detail/get';
 
             const response: Response = await http
                 .post(url, {
@@ -253,14 +288,14 @@ export class PTBKWAPServices {
     // ===========================================
 
     static async editPTBKWAPpensionDetails(
-        param: ptbPensionRequestDTO,
+        param: PensionDetailDTO,
     ) {
         try {
             const url: Input = 'employment/pension_detail/edit';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -385,6 +420,40 @@ export class PTBKWAPServices {
     }
 
 
+
+    // ===========================================
+    // ========== add PEnsion Detail =============
+    // ===========================================
+
+    static async addPensionDetail(
+        param: PensionDetailDTO,
+    ) {
+        try {
+            const url: Input = 'employment/pension_detail/add';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
    
 

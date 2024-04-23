@@ -11,6 +11,18 @@ import {
 } from '$lib/schemas/common/schema-type';
 import { date, z } from 'zod';
 
+const stringToMinDate = z.string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' }).refine((val) => {
+    const convertedStringToDate = new Date(val);
+    const currentDate = new Date();
+    return convertedStringToDate > currentDate;
+}, { message: "Tarikh tidak boleh kurang dari tarikh semasa." })
+
+const stringToMaxDate = z.string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' }).refine((val) => {
+    const convertedStringToDate = new Date(val);
+    const currentDate = new Date();
+    return convertedStringToDate < currentDate;
+}, { message: "Tarikh tidak boleh lebih dari tarikh semasa." })
+
 
 
 //=====================================================
@@ -24,12 +36,12 @@ export const _personalInfoSchema = z
         otherName:shortTextSchema,
         identityCard: shortTextSchema,
         identityCardColor: shortTextSchema,
-        dateOfBirth: maxDateSchema,
+        dateOfBirth: shortTextSchema,
         placeOfBirth: shortTextSchema,
-        gender: shortTextSchema,
         nationality: shortTextSchema,
-        religion: shortTextSchema,
         race: shortTextSchema,
+        religion: shortTextSchema,
+        gender: shortTextSchema,
         status: shortTextSchema,
         homeAddress: shortTextSchema,
         mailAddress: shortTextSchema,
@@ -93,18 +105,27 @@ export const _salaryInfoSchema = z.object({
 //======================================================
 
 export const _PTBPensionInfoSchema = z.object({
-    id: numberSchema,
-    employeeId: numberSchema,
-    PTBDate: dateSchema,
+    id: numberSchema.optional(),
+    employeeId: numberSchema.optional(),
+    PTBDate: stringToMinDate,
     referenceNumber: shortTextSchema,
-    referenceDate: dateSchema,
+    referenceDate: stringToMinDate,
     pensionNumber: shortTextSchema,
-    KWAPEmailDate: dateSchema,
+    KWAPEmailDate: stringToMinDate,
 
 });
 //======================================================
 //========= edit Peranan -Peranan Berkaitan ============
 //======================================================
+
+// put roles related
+export const _assignRolesRelatedSchema = z.object({
+    
+        id: numberSchema,
+        supporterName: shortTextSchema,
+        approverName:  shortTextSchema,
+    
+})
 
 // belum superform/service
 export const _rolesRelatedEditSchema = z.object({
@@ -127,10 +148,10 @@ export const _rolesRelatedEditSchema = z.object({
 
 export const _supporterInfoSchema = z.object({
 
-    supporterName: shortTextSchema,
-    supportedStatus: shortTextSchema,
-    supportedRemark: shortTextSchema,
-    supportedDate: dateSchema,
+    id: numberSchema,
+    status: booleanSchema,
+    remark: shortTextSchema,
+    
 });
 
 //======================================================
@@ -139,8 +160,7 @@ export const _supporterInfoSchema = z.object({
 
 export const _approveInfoSchema = z.object({
 
-    approverName: shortTextSchema,
-    approvedStatus: shortTextSchema,
-    approvedRemark: shortTextSchema,
-    approvedDate: dateSchema,
+    id: numberSchema,
+    status: booleanSchema,
+    remark: shortTextSchema,
 });

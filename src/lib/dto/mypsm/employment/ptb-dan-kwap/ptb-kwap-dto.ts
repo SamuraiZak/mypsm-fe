@@ -4,7 +4,7 @@ export interface PersonalDetailDTO {
     otherName: string;
     identityCard: string;
     identityCardColor: string;
-    dateOfBirth: Date;
+    dateOfBirth: string;
     placeOfBirth: string;
     nationality: string;
     race: string;
@@ -58,25 +58,42 @@ export interface SalaryDetailDTO {
 export interface PensionDetailDTO {
     id: number;
     employeeId: number;
-    PTBDate: Date;
+    PTBDate: string;
     referenceNumber: string;
-    referenceDate: Date;
+    referenceDate: string;
     pensionNumber: string;
-    KWAPEmailDate: Date;
+    KWAPEmailDate: string;
 }
 
 export interface SupportDetailDTO {
-    supporterName: string;
-    supportedStatus: string;
-    supportedRemark: string;
-    supportedDate: Date;
+
+    id: number;
+    status: boolean;
+    remark: string;
+ 
 }
 
 export interface ApproveDetailDTO {
-    approverName: string;
-    approvedStatus: string;
-    approvedRemark: string;
-    approvedDate: Date;
+    id: number;
+    status: boolean;
+    remark: string;
+}
+
+// roles Related
+export interface AssignRolesRelatedDTO{
+    id:            number;
+    supporterName: string;
+    approverName:  string;
+}
+export interface RolesRelatedDTO {
+    supporterName:   string;
+    supportedStatus: string;
+    supportedRemark: string;
+    supportedDate:   Date;
+    approverName:    string;
+    approvedStatus:  string;
+    approvedRemark:  string;
+    approvedDate:    Date;
 }
 
 // detail request DTO
@@ -92,5 +109,6 @@ export interface ptbKwapApplicationDetail {
     pensionDetail: PensionDetailDTO | null;
     supportDetail: SupportDetailDTO | null;
     approveDetail: ApproveDetailDTO | null;
+    assignRolesRelated: AssignRolesRelatedDTO | null;
 
 }

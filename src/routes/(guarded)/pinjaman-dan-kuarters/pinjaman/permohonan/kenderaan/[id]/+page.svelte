@@ -18,7 +18,7 @@
     import type { UploadDocuments } from '$lib/dto/mypsm/pinjaman/document.dto';
     import { LoanServices } from '$lib/services/implementation/mypsm/pinjaman/loan.service';
     import {
-    _applyLoan,
+        _applyLoan,
         _approverApprovalSubmit,
         _approverSubmit,
         _documentCheckDetailSubmit,
@@ -264,7 +264,6 @@
         },
     });
 
-
     const {
         form: secondScheduleForm,
         errors: secondScheduleError,
@@ -360,38 +359,47 @@
     };
 
     function apply() {
-        _applyLoan().then((value)=>{
-
-            if (value?.response.status =="success") {
-                
+        _applyLoan().then((value) => {
+            if (value?.response.status == 'success') {
                 let applicationId: number = value?.response.data?.details.id;
-                let url = '/pinjaman-dan-kuarters/pinjaman/permohonan/kenderaan/' +applicationId;
+                let url =
+                    '/pinjaman-dan-kuarters/pinjaman/permohonan/kenderaan/' +
+                    applicationId;
                 goto(url);
             }
-        })
+        });
     }
 </script>
 
 <Stepper>
     <StepperContent>
-        <StepperContentHeader title="Maklumat Peminjam {data.props.currentApplicationId}">
-            <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} />
+        <StepperContentHeader
+            title="Maklumat Peminjam {data.props.currentApplicationId}"
+        >
+            <TextIconButton
+                label="Kembali"
+                onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
+            />
             {#if data.props.currentApplicationId == 0}
-                
-           
-            <TextIconButton label="Teruskan" icon="check" onClick={()=>{apply();}}>
-
-            </TextIconButton>
+                <TextIconButton
+                    label="Teruskan"
+                    icon="check"
+                    onClick={() => {
+                        apply();
+                    }}
+                ></TextIconButton>
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
-            <div class="h-fit flex flex-col justify-start items-start p-4 w-full gap-4">
-
+            <div
+                class="flex h-fit w-full flex-col items-start justify-start gap-4 p-4"
+            >
                 <div class="flex w-full flex-col gap-10 lg:w-1/2">
                     <Alert color="blue">
                         <p>
                             <span class="font-medium">Arahan :</span>
-                            Sila isi semak butiran anda dan klik butang Teruskan untuk meneruskan proses permohonan pinjaman anda.
+                            Sila isi semak butiran anda dan klik butang Teruskan
+                            untuk meneruskan proses permohonan pinjaman anda.
                         </p>
                     </Alert>
                 </div>
@@ -399,7 +407,7 @@
                     id="personalFormStepper"
                     method="POST"
                     use:personalInfoEnhance
-                    class="flex w-full lg:w-1/2 flex-col gap-2"
+                    class="flex w-full flex-col gap-2 lg:w-1/2"
                 >
                     <CustomTextField
                         id="name"
@@ -480,500 +488,170 @@
                     ></CustomTextField>
                 </form>
             </div>
-            </StepperContentBody
-        >
+        </StepperContentBody>
     </StepperContent>
     {#if data.props.currentApplicationId !== 0}
-    <StepperContent>
-        <StepperContentHeader title="Maklumat Pinjaman"
-            >
-            <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} />
-            <TextIconButton label="Simpan" icon="check" form="loanInfoForm" />
-
-           </StepperContentHeader
-        >
-        <StepperContentBody>
-            <form
-                id="loanInfoForm"
-                method="POST"
-                use:loanInfoEnhance
-                class="flex w-full flex-col gap-2"
-            >
-                <CustomTextField
-                disabled={noturusetia}
-                    id="maxLoan"
-                    label={'Had Permohonan'}
-                    bind:val={$loanInfoForm.maxLoan}
-                ></CustomTextField>
-                <CustomTextField
-                disabled={notloanDetail}
-                    id="requestedLoan"
-                    label={'Jumlah yang Dipohon (RM)'}
-                    bind:val={$loanInfoForm.requestedLoan}
-                ></CustomTextField>
-                <CustomTextField
-                disabled={notloanDetail}
-                    id="paymentPeriod"
-                    label={'Tempoh Pembayaran'}
-                    bind:val={$loanInfoForm.paymentPeriod}
-                ></CustomTextField>
-                <CustomTextField
-                disabled={notloanDetail}
-                    id="reason"
-                    label={'Ulasan'}
-                    bind:val={$loanInfoForm.reason}
-                ></CustomTextField>
-            </form></StepperContentBody
-        >
-    </StepperContent>
-
-    <StepperContent>
-        <StepperContentHeader title="Maklumat Kenderaan yang Hendak Dibeli"
-            >   <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} />
-                <TextIconButton label="Simpan" icon="check" form="vehicleDetail" />
-
-        </StepperContentHeader
-        >
-        <StepperContentBody>
-            <form
-                id="vehicleDetail"
-                method="POST"
-                use:vehicleInfoEnhance
-                class="flex w-full flex-col gap-2"
-            >
-                <CustomTextField
-                    disabled={notkakitangan}
-                    id="condition"
-                    label={'Kondisi Kenderaan'}
-                    bind:val={$vehicleInfoForm.condition}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled={notkakitangan}
-                    id="vehicleType"
-                    label={'Jenis Kenderaan'}
-                    bind:val={$vehicleInfoForm.vehicleType}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled={notkakitangan}
-                    id="brandModel"
-                    label={'Jenama Model Kenderaan'}
-                    bind:val={$vehicleInfoForm.brandModel}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled={notkakitangan}
-                    id="engineNumber"
-                    label={'Sukatan Silinder/ No. Chasis/ No. Enjin'}
-                    bind:val={$vehicleInfoForm.engineNumber}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled={notkakitangan}
-                    type="date"
-                    id="registrationDate"
-                    label={'Tarikh Pendaftaran'}
-                    bind:val={$vehicleInfoForm.registrationDate}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled={notkakitangan}
-                    id="registrationNumber"
-                    label={'Nombor Pendaftaran'}
-                    bind:val={$vehicleInfoForm.registrationNumber}
-                ></CustomTextField>
-                <CustomTextField
-                    disabled={notkakitangan}
-                    id="nettPrice"
-                    label={'Harga Bersih (RM)'}
-                    bind:val={$vehicleInfoForm.nettPrice}
-                ></CustomTextField>
-            </form></StepperContentBody
-        >
-    </StepperContent>
-
-    <StepperContent>
-        <StepperContentHeader title="Dokumen Sokongan yang Berkaitan"
-            >
-            <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} />
-                {#if data.props.userMode == 'kakitangan' }
-            <TextIconButton
-                label="Muat Naik"
-                icon="check"
-                onClick={() => uploadDocument()}
-            />
-            {/if}</StepperContentHeader
-        >
-        <StepperContentBody>
-            <form class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10">
-                <div
-                    class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
-                >
-                    <span>Fail-fail yang dimuat naik:</span>
-                </div>
-                {#if data.props.userMode == 'kakitangan'}
-                    <div
-                        class="flex h-fit w-full flex-col justify-center gap-2"
-                    >
-                        <input
-                            class="rounded-md bg-ios-systemColors-systemFill-light"
-                            accept=".pdf"
-                            type="file"
-                            multiple
-                            bind:files
-                        />
-                    </div>
-                {/if}
-
-                <div class="flex w-full flex-col justify-start gap-2.5 px-2">
-                    <ContentHeader
-                        title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan Kontrak"
-                        borderClass="border-none"
-                    />
-                    <span
-                        class="text-sm text-ios-labelColors-secondaryLabel-light"
-                        >Borang-borang yang telah dimuat naik oleh kakitangan:</span
-                    >
-
-                    {#each data.props.loanDocumentDetail.document as docs}
-                        <a
-                            href={docs.document}
-                            download={docs.name}
-                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                            >{docs.name}</a
-                        >
-                    {/each}
-                </div>
-            </form>
-        </StepperContentBody>
-    </StepperContent>
-    <StepperContent>
-        <StepperContentHeader title="Pelulus Peminjam"
-            >   <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} />
-            <TextIconButton type="primary" label="Simpan" form="approverDetail"
-            ></TextIconButton>
-        </StepperContentHeader>
-        <StepperContentBody>
-            <div
-                class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5"
-            >
-                <ContentHeader title="Masukkan Nama Penyokong dan Pelulus"
-                ></ContentHeader>
-
+        <StepperContent>
+            <StepperContentHeader title="Maklumat Pinjaman">
+                <TextIconButton
+                    label="Kembali"
+                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
+                />
+                <TextIconButton
+                    label="Simpan"
+                    icon="check"
+                    form="loanInfoForm"
+                />
+            </StepperContentHeader>
+            <StepperContentBody>
                 <form
-                    id="approverDetail"
+                    id="loanInfoForm"
                     method="POST"
-                    use:approverInfoEnhance
+                    use:loanInfoEnhance
                     class="flex w-full flex-col gap-2"
                 >
-                    <CustomSelectField
+                    <CustomTextField
                         disabled={noturusetia}
-                        id="approverName"
-                        label={'Nama Pelulus'}
-                        options={data.supporterApproverLookup}
-                        bind:val={$approverInfoForm.approverId}
-                    ></CustomSelectField>
-                </form>
-            </div>
-        </StepperContentBody>
-    </StepperContent>
-    <!-- kemaskini -->
-
-  
-    
-    <StepperContent>
-        <StepperContentHeader title="Tetapan Pelulus">
-            <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} />
-
-        </StepperContentHeader>
-        <StepperContentBody>
-            <div
-                class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
+                        id="maxLoan"
+                        label={'Had Permohonan'}
+                        errors={$loanInfoError.maxLoan}
+                        bind:val={$loanInfoForm.maxLoan}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={notloanDetail}
+                        id="requestedLoan"
+                        label={'Jumlah yang Dipohon (RM)'}
+                        errors={$loanInfoError.requestedLoan}
+                        bind:val={$loanInfoForm.requestedLoan}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={notloanDetail}
+                        id="paymentPeriod"
+                        label={'Tempoh Pembayaran'}
+                        errors={$loanInfoError.paymentPeriod}
+                        bind:val={$loanInfoForm.paymentPeriod}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={notloanDetail}
+                        id="reason"
+                        label={'Ulasan'}
+                        errors={$loanInfoError.reason}
+                        bind:val={$loanInfoForm.reason}
+                    ></CustomTextField>
+                </form></StepperContentBody
             >
-                <ContentHeader title="Keputusan Dari Pelulus">
-                    <TextIconButton
-                        type="primary"
-                        label="Simpan"
-                        form="approverApprovalDetail"
-                    ></TextIconButton>
-                </ContentHeader>
+        </StepperContent>
+
+        <StepperContent>
+            <StepperContentHeader title="Maklumat Kenderaan yang Hendak Dibeli">
+                <TextIconButton
+                    label="Kembali"
+                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
+                />
+                <TextIconButton
+                    label="Simpan"
+                    icon="check"
+                    form="vehicleDetail"
+                />
+            </StepperContentHeader>
+            <StepperContentBody>
                 <form
-                    id="approverApprovalDetail"
+                    id="vehicleDetail"
                     method="POST"
-                    use:approverApprovalEnhance
+                    use:vehicleInfoEnhance
                     class="flex w-full flex-col gap-2"
                 >
                     <CustomTextField
-                        disabled={notpelulus}
-                        id="remark"
-                        label="Tindakan / Ulasan"
-                        bind:val={$approverApprovalForm.remark}
-                    />
-
-                    <CustomRadioBoolean
-                        disabled={notpelulus}
-                        id="status"
-                        label="Status"
-                        bind:val={$approverApprovalForm.status}
-                    />
-                </form>
-            </div>
-            <div
-                class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
-            >
-                <ContentHeader title="Keputusan Dari Penyokong">
-                    <TextIconButton
-                        type="primary"
-                        label="Simpan"
-                        form="supporterApprovalDetail"
-                    ></TextIconButton>
-                </ContentHeader>
-
-                <form
-                    id="supporterApprovalDetail"
-                    method="POST"
-                    use:supporterApprovalEnhance
-                    class="flex w-full flex-col gap-2"
-                >
+                        disabled={notkakitangan}
+                        id="condition"
+                        label={'Kondisi Kenderaan'}
+                        errors={$vehicleInfoError.condition}
+                        bind:val={$vehicleInfoForm.condition}
+                    ></CustomTextField>
                     <CustomTextField
-                        disabled={notketuaSeksyen}
-                        id="remark"
-                        label="Tindakan/ Ulasan"
-                        bind:val={$supporterApprovalForm.remark}
+                        disabled={notkakitangan}
+                        id="vehicleType"
+                        label={'Jenis Kenderaan'}
+                        errors={$vehicleInfoError.vehicleType}
+                        bind:val={$vehicleInfoForm.vehicleType}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={notkakitangan}
+                        id="brandModel"
+                        label={'Jenama Model Kenderaan'}
+                        errors={$vehicleInfoError.brandModel}
+                        bind:val={$vehicleInfoForm.brandModel}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={notkakitangan}
+                        id="engineNumber"
+                        label={'Sukatan Silinder/ No. Chasis/ No. Enjin'}
+                        errors={$vehicleInfoError.engineNumber}
+                        bind:val={$vehicleInfoForm.engineNumber}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={notkakitangan}
+                        type="date"
+                        id="registrationDate"
+                        label={'Tarikh Pendaftaran'}
+                        errors={$vehicleInfoError.registrationDate}
+                        bind:val={$vehicleInfoForm.registrationDate}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={notkakitangan}
+                        id="registrationNumber"
+                        label={'Nombor Pendaftaran'}
+                        errors={$vehicleInfoError.registrationNumber}
+                        bind:val={$vehicleInfoForm.registrationNumber}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={notkakitangan}
+                        id="nettPrice"
+                        label={'Harga Bersih (RM)'}
+                        errors={$vehicleInfoError.nettPrice}
+                        bind:val={$vehicleInfoForm.nettPrice}
+                    ></CustomTextField>
+                </form></StepperContentBody
+            >
+        </StepperContent>
+
+        <StepperContent>
+            <StepperContentHeader title="Dokumen Sokongan yang Berkaitan">
+                <TextIconButton
+                    label="Kembali"
+                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
+                />
+                {#if data.props.userMode == 'kakitangan'}
+                    <TextIconButton
+                        label="Muat Naik"
+                        icon="check"
+                        onClick={() => uploadDocument()}
                     />
-
-                    <CustomRadioBoolean
-                        disabled={notketuaSeksyen}
-                        id="status"
-                        label="Status"
-                        bind:val={$supporterApprovalForm.status}
-                    />
-                </form>
-
-            </div></StepperContentBody
-        >
-    </StepperContent>
-    {#if data.props.userMode == 'urusetia' || data.props.userMode == 'pelulus' || data.props.userMode == 'ketua Seksyen'}
-    <StepperContent>
-        <StepperContentHeader title="Kemaskini Maklumat Pinjaman"
-        >
-        <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} /></StepperContentHeader>
-            <CustomTab
-            id=schedule>
-                <CustomTabContent title="Jadual Pertama">
-                    <!-- {#if currEmpLoanRec[0].typeOfLoan == 'Kenderaan'} -->
-                    <ContentHeader
-                        title="Masukkan Maklumat dan Perihal Kenderaan"
-                    >
-                        <TextIconButton
-                            type="primary"
-                            label="Simpan"
-                            form="vehicleFirstSchedule"
-                        ></TextIconButton>
-                    </ContentHeader>
-                    <form
-                        id="vehicleFirstSchedule"
-                        method="POST"
-                        use:vehicleFirstScheduleEnhance
-                        class="flex w-full flex-col gap-2"
-                    >
-                        <CustomTextField
-                            disabled={noturusetia}
-                            id="engineNumber"
-                            label="No. Enjin"
-                            bind:val={$vehicleFirstScheduleForm.engineNumber}
-                        />
-                        <CustomTextField
-                            disabled={noturusetia}
-                            id="chassisNumber"
-                            label="No. Casis"
-                            bind:val={$vehicleFirstScheduleForm.chassisNumber}
-                        />
-                        <CustomTextField
-                            disabled={noturusetia}
-                            id="countryOrigin"
-                            label="Buatan"
-                            bind:val={$vehicleFirstScheduleForm.countryOrigin}
-                        />
-                        <CustomTextField
-                            disabled={noturusetia}
-                            id="brandModel"
-                            label="Nama Model"
-                            bind:val={$vehicleFirstScheduleForm.brandModel}
-                        />
-                        <CustomTextField
-                            disabled={noturusetia}
-                            id="engineHP"
-                            label="Kuasa Enjin"
-                            bind:val={$vehicleFirstScheduleForm.engineHP}
-                        />
-                        <CustomTextField
-                            disabled={noturusetia}
-                            id="fuelType"
-                            label="Bahan Bakar"
-                            bind:val={$vehicleFirstScheduleForm.fuelType}
-                        />
-                        <CustomTextField
-                            disabled={noturusetia}
-                            id="class"
-                            label="Kelas Kegunaan"
-                            bind:val={$vehicleFirstScheduleForm.class}
-                        />
-                        <CustomTextField
-                            disabled={noturusetia}
-                            id="bodyType"
-                            label="Jenis Badan"
-                            bind:val={$vehicleFirstScheduleForm.bodyType}
-                        />
-
-                        <CustomTextField
-                            disabled={noturusetia}
-                            id="makeYear"
-                            label="Tahun Dibuat"
-                            bind:val={$vehicleFirstScheduleForm.makeYear}
-                        />
-                        <ContentHeader
-                            title="Masukkan Butiran Penjualan/Tuan Asal"
-                        ></ContentHeader>
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2.5"
-                        >
-                            <CustomTextField
-                            disabled={noturusetia}
-                                id="previousOwner"
-                                label="Nama"
-                                bind:val={$vehicleFirstScheduleForm.previousOwner}
-                            />
-                            <CustomTextField
-                            disabled={noturusetia}
-                                id="previousOwnerIC"
-                                label="No. K/P"
-                                bind:val={$vehicleFirstScheduleForm.previousOwnerIC}
-                            />
-                            <CustomTextField
-                            disabled={noturusetia}
-                                id="address"
-                                label="Alamat"
-                                bind:val={$vehicleFirstScheduleForm.address}
-                            />
-                        </div>
-                    </form>
-                    <ContentHeader title="Masukkan Harga Belian Kenderaan">
-                        <TextIconButton
-                            type="primary"
-                            label="Simpan"
-                            form="firstScheduleDetail"
-                        ></TextIconButton>
-                    </ContentHeader>
-
-                    <form
-                        id="firstScheduleDetail"
-                        method="POST"
-                        use:firstScheduleEnhance
-                        class="flex w-full flex-col gap-2"
-                    >
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2.5"
-                        >
-                            <CustomTextField
-                                disabled={noturusetia}
-                                id="purchasePrice"
-                                label="Jumlah Harga Belian (RM)"
-                                bind:val={$firstScheduleForm.purchasePrice}
-                            />
-                            <CustomTextField
-                                disabled={noturusetia}
-                                id="balancePayment"
-                                label="Bayaran Baki (RM)"
-                                bind:val={$firstScheduleForm.balancePayment}
-                            />
-                            <CustomTextField
-                                disabled={noturusetia}
-                                id="govFund"
-                                label="Amaun Pembiayaan Kerajaan (RM)"
-                                bind:val={$firstScheduleForm.govFund}
-                            />
-                        </div>
-                    </form>
-                </CustomTabContent>
-                <CustomTabContent title="Jadual Kedua">
-                    <!-- {#if currEmpLoanRec[0].typeOfLoan == 'Kenderaan'} -->
-                    <ContentHeader
-                        title="Masukkan Maklumat Harga Jualan (RM)"
-                    >
-                        <TextIconButton
-                            type="primary"
-                            label="Simpan"
-                            form="secondScheduleDetail"
-                        ></TextIconButton>
-                    </ContentHeader>
+                {/if}</StepperContentHeader
+            >
+            <StepperContentBody>
+                <form
+                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
+                >
                     <div
-                        class="flex w-full flex-col items-start justify-start gap-2.5"
+                        class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
                     >
-                        <form
-                            id="secondScheduleDetail"
-                            method="POST"
-                            use:secondScheduleEnhance
-                            class="flex w-full flex-col gap-2"
-                        >
-                            <CustomTextField
-                                disabled={noturusetia}
-                                id="sellingPrice"
-                                label="Jumlah Harga Belian (RM)"
-                                bind:val={$secondScheduleForm.sellingPrice}
-                            ></CustomTextField>
-
-                            <CustomTextField
-                                disabled={noturusetia}
-                                id="sellingBalance"
-                                label="Bayaran Baki (RM)"
-                                bind:val={$secondScheduleForm.sellingBalance}
-                            ></CustomTextField>
-
-                            <CustomTextField
-                                disabled={noturusetia}
-                                id="govFund"
-                                label="Amaun Pembiayaan dan Keuntungan Kerajaan (RM)"
-                                bind:val={$secondScheduleForm.govFund}
-                            ></CustomTextField>
-
-                            <ContentHeader
-                                title="Masukkan Amaun dan Tempoh Bayaran Balik Harga Jualan"
-                            ></ContentHeader>
-                            <div
-                                class="flex w-full flex-col items-start justify-start gap-2.5"
-                            >
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="installment"
-                                    label="Amaun Bulanan (RM)"
-                                    bind:val={$secondScheduleForm.installment}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="paymentPeriod"
-                                    label={'Tempoh Pembayaran'}
-                                    bind:val={$secondScheduleForm.paymentPeriod}
-                                ></CustomTextField>
-                            </div>
-                        </form>
+                        <span>Fail-fail yang dimuat naik:</span>
                     </div>
-                </CustomTabContent>
+                    {#if data.props.userMode == 'kakitangan'}
+                        <div
+                            class="flex h-fit w-full flex-col justify-center gap-2"
+                        >
+                            <input
+                                class="rounded-md bg-ios-systemColors-systemFill-light"
+                                accept=".pdf"
+                                type="file"
+                                multiple
+                                bind:files
+                            />
+                        </div>
+                    {/if}
 
-            </CustomTab>
-
-
-    </StepperContent>
-    {/if}
-
-    <StepperContent>
-        <StepperContentHeader title="Muat Turun Surat Tawaran"
-        >   
-        <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} />
-        </StepperContentHeader>
-        <StepperContentBody>
-            <form class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10">
-                <div
-                    class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
-                ></div>
-                <div class="flex h-fit w-full flex-col justify-center gap-2">
                     <div
                         class="flex w-full flex-col justify-start gap-2.5 px-2"
                     >
@@ -983,331 +661,757 @@
                         />
                         <span
                             class="text-sm text-ios-labelColors-secondaryLabel-light"
-                            >Sila Muat turun dan pastikan dokumen diisi dengan
-                            lengkap dan ditandatangani sebelum dihantar kepada
-                            Urus Setia:</span
+                            >Borang-borang yang telah dimuat naik oleh
+                            kakitangan:</span
                         >
 
-                        <DownloadAttachment
-                            triggerDownload={() =>
-                                handleDownload(data.props.agreementLetter)}
-                            fileName="Surat Perjanjian Pinjaman Kenderaan.pdf"
-                        />
+                        {#each data.props.loanDocumentDetail.document as docs}
+                            <a
+                                href={docs.document}
+                                download={docs.name}
+                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                >{docs.name}</a
+                            >
+                        {/each}
                     </div>
-                </div>
-            </form>
-        </StepperContentBody>
-    </StepperContent>
-
-    <StepperContent>
-        <StepperContentHeader title="Muat Naik Surat Perjanjian">
-            <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} /> 
-                {#if data.props.userMode == 'kakitangan' }
-            <TextIconButton
-                label="Muat Naik"
-                icon="check"
-                onClick={() => uploadAgreementDocument()}
-            />
-            {/if}</StepperContentHeader
-        >
-        <StepperContentBody>
-            <form class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10">
-                <div
-                    class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
-                >
-                    <span>Fail-fail yang dimuat naik:</span>
-                </div>
-                {#if data.props.userMode == 'kakitangan'}
-                    <div
-                        class="flex h-fit w-full flex-col justify-center gap-2"
-                    >
-                        <input
-                            class="rounded-md bg-ios-systemColors-systemFill-light"
-                            accept=".pdf"
-                            type="file"
-                            multiple
-                            bind:files
-                        />
-                    </div>
-                {/if}
-
-                <div class="flex w-full flex-col justify-start gap-2.5 px-2">
-                    <ContentHeader
-                        title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan Kontrak"
-                        borderClass="border-none"
-                    />
-                    <span
-                        class="text-sm text-ios-labelColors-secondaryLabel-light"
-                        >Borang-borang yang telah dimuat naik oleh kakitangan:</span
-                    >
-                    {#each data.props.agreementLetterDetail.document as docs}
-                        <a
-                            href={docs.document}
-                            download={docs.name}
-                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                            >{docs.name}</a
-                        >
-                    {/each}
-                </div>
-            </form>
-        </StepperContentBody>
-    </StepperContent>
-    {#if data.props.userMode == 'urusetia' || data.props.userMode == 'pelulus' || data.props.userMode == 'ketua Seksyen'}
+                </form>
+            </StepperContentBody>
+        </StepperContent>
         <StepperContent>
-            <StepperContentHeader title="Kemaskini Maklumat Pinjaman"
-            >
-            <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} /></StepperContentHeader>
+            <StepperContentHeader title="Pelulus Peminjam">
+                <TextIconButton
+                    label="Kembali"
+                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
+                />
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    form="approverDetail"
+                ></TextIconButton>
+            </StepperContentHeader>
             <StepperContentBody>
-                <CustomTab>
-                    <CustomTabContent title="Maklumat Kelayakan">
-                        <ContentHeader title="Maklumat Kelayakan"
-                            ><TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                form="eligibiltyDetail"
-                            ></TextIconButton></ContentHeader
-                        >
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2.5"
-                        >
-                            <p class="text-sm text-system-primary">
-                                Gaji Pokok Sahaja
-                            </p>
+                <div
+                    class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5"
+                >
+                    <ContentHeader title="Masukkan Nama Penyokong dan Pelulus"
+                    ></ContentHeader>
+
+                    <form
+                        id="approverDetail"
+                        method="POST"
+                        use:approverInfoEnhance
+                        class="flex w-full flex-col gap-2"
+                    >
+                        <CustomSelectField
+                            disabled={noturusetia}
+                            id="approverName"
+                            label={'Nama Pelulus'}
+                            options={data.supporterApproverLookup}
+                            bind:val={$approverInfoForm.approverId}
+                        ></CustomSelectField>
+                    </form>
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+        <!-- kemaskini -->
+
+        <StepperContent>
+            <StepperContentHeader title="Tetapan Pelulus">
+                <TextIconButton
+                    label="Kembali"
+                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
+                />
+            </StepperContentHeader>
+            <StepperContentBody>
+                <div
+                    class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
+                >
+                    <ContentHeader title="Keputusan Dari Pelulus">
+                        <TextIconButton
+                            type="primary"
+                            label="Simpan"
+                            form="approverApprovalDetail"
+                        ></TextIconButton>
+                    </ContentHeader>
+                    <form
+                        id="approverApprovalDetail"
+                        method="POST"
+                        use:approverApprovalEnhance
+                        class="flex w-full flex-col gap-2"
+                    >
+                        <CustomTextField
+                            disabled={notpelulus}
+                            id="remark"
+                            label="Tindakan / Ulasan"
+                            errors={$approverApprovalError.remark}
+                            bind:val={$approverApprovalForm.remark}
+                        />
+
+                        <CustomRadioBoolean
+                            disabled={notpelulus}
+                            id="status"
+                            label="Status"
+                            errors={$approverApprovalError.status}
+                            bind:val={$approverApprovalForm.status}
+                        />
+                    </form>
+                </div>
+                <div
+                    class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
+                >
+                    <ContentHeader title="Keputusan Dari Ketua Seksyen">
+                        <TextIconButton
+                            type="primary"
+                            label="Simpan"
+                            form="supporterApprovalDetail"
+                        ></TextIconButton>
+                    </ContentHeader>
+
+                    <form
+                        id="supporterApprovalDetail"
+                        method="POST"
+                        use:supporterApprovalEnhance
+                        class="flex w-full flex-col gap-2"
+                    >
+                        <CustomTextField
+                            disabled={notketuaSeksyen}
+                            id="remark"
+                            label="Tindakan/ Ulasan"
+                            errors={$supporterApprovalError.remark}
+                            bind:val={$supporterApprovalForm.remark}
+                        />
+
+                        <CustomRadioBoolean
+                            disabled={notketuaSeksyen}
+                            id="status"
+                            label="Status"
+                            errors={$supporterApprovalError.status}
+                            bind:val={$supporterApprovalForm.status}
+                        />
+                    </form>
+                </div></StepperContentBody
+            >
+        </StepperContent>
+        {#if data.props.userMode == 'urusetia' || data.props.userMode == 'pelulus' || data.props.userMode == 'ketua Seksyen'}
+            <StepperContent>
+                <StepperContentHeader title="Kemaskini Maklumat Pinjaman">
+                    <TextIconButton
+                        label="Kembali"
+                        onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
+                    /></StepperContentHeader
+                >
+                <CustomTab id="schedule">
+                    <CustomTabContent title="Jadual Pertama">
+                        <!-- {#if currEmpLoanRec[0].typeOfLoan == 'Kenderaan'} -->
+                        <div class="h-full w-full overflow-y-auto pb-10">
+                            <ContentHeader
+                                title="Masukkan Maklumat dan Perihal Kenderaan"
+                            >
+                                <TextIconButton
+                                    type="primary"
+                                    label="Simpan"
+                                    form="vehicleFirstSchedule"
+                                ></TextIconButton>
+                            </ContentHeader>
                             <form
-                                id="eligibiltyDetail"
+                                id="vehicleFirstSchedule"
                                 method="POST"
-                                use:eligibilityEnhance
+                                use:vehicleFirstScheduleEnhance
                                 class="flex w-full flex-col gap-2"
                             >
                                 <CustomTextField
                                     disabled={noturusetia}
-                                    id="baseSalary"
-                                    label={'Gaji Pokok (RM)'}
-                                    bind:val={$eligibilityForm.baseSalary}
-                                ></CustomTextField>
+                                    id="engineNumber"
+                                    label="No. Enjin"
+                                    errors={$vehicleFirstScheduleError.engineNumber}
+                                    bind:val={$vehicleFirstScheduleForm.engineNumber}
+                                />
                                 <CustomTextField
                                     disabled={noturusetia}
-                                    type="number"
-                                    id="salaryCut"
-                                    label={'Potongan (RM)'}
-                                    bind:val={$eligibilityForm.salaryCut}
-                                ></CustomTextField>
+                                    id="chassisNumber"
+                                    label="No. Casis"
+                                    errors={$vehicleFirstScheduleError.chassisNumber}
+                                    bind:val={$vehicleFirstScheduleForm.chassisNumber}
+                                />
+                                <CustomTextField
+                                    disabled={noturusetia}
+                                    id="countryOrigin"
+                                    label="Buatan"
+                                    errors={$vehicleFirstScheduleError.countryOrigin}
+                                    bind:val={$vehicleFirstScheduleForm.countryOrigin}
+                                />
+                                <CustomTextField
+                                    disabled={noturusetia}
+                                    id="brandModel"
+                                    label="Nama Model"
+                                    errors={$vehicleFirstScheduleError.brandModel}
+                                    bind:val={$vehicleFirstScheduleForm.brandModel}
+                                />
+                                <CustomTextField
+                                    disabled={noturusetia}
+                                    id="engineHP"
+                                    label="Kuasa Enjin"
+                                    errors={$vehicleFirstScheduleError.engineHP}
+                                    bind:val={$vehicleFirstScheduleForm.engineHP}
+                                />
+                                <CustomTextField
+                                    disabled={noturusetia}
+                                    id="fuelType"
+                                    label="Bahan Bakar"
+                                    errors={$vehicleFirstScheduleError.fuelType}
+                                    bind:val={$vehicleFirstScheduleForm.fuelType}
+                                />
+                                <CustomTextField
+                                    disabled={noturusetia}
+                                    id="class"
+                                    label="Kelas Kegunaan"
+                                    errors={$vehicleFirstScheduleError.class}
+                                    bind:val={$vehicleFirstScheduleForm.class}
+                                />
+                                <CustomTextField
+                                    disabled={noturusetia}
+                                    id="bodyType"
+                                    label="Jenis Badan"
+                                    errors={$vehicleFirstScheduleError.bodyType}
+                                    bind:val={$vehicleFirstScheduleForm.bodyType}
+                                />
 
                                 <CustomTextField
                                     disabled={noturusetia}
-                                    id="balance"
-                                    type="number"
-                                    label={'Baki (RM)'}
-                                    bind:val={$eligibilityForm.balance}
-                                ></CustomTextField>
-                                <p class="text-sm text-system-primary">
-                                    Gaji Pokok dan Elaun
-                                </p>
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="salaryAndAllowance"
-                                    label={'Gaji Pokok dan Elaun (RM)'}
-                                    bind:val={$eligibilityForm.salaryAndAllowance}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    type="number"
-                                    id="newSalaryCut"
-                                    label={'Potongan Baru (RM)'}
-                                    bind:val={$eligibilityForm.newSalaryCut}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    type="number"
-                                    id="newBalance"
-                                    label={'Baki (RM)'}
-                                    bind:val={$eligibilityForm.newBalance}
-                                ></CustomTextField>
+                                    id="makeYear"
+                                    label="Tahun Dibuat"
+                                    errors={$vehicleFirstScheduleError.makeYear}
+                                    bind:val={$vehicleFirstScheduleForm.makeYear}
+                                />
+                                <ContentHeader
+                                    title="Masukkan Butiran Penjualan/Tuan Asal"
+                                ></ContentHeader>
+                                <div
+                                    class="flex w-full flex-col items-start justify-start gap-2.5"
+                                >
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="previousOwner"
+                                        label="Nama"
+                                        errors={$vehicleFirstScheduleError.previousOwner}
+                                        bind:val={$vehicleFirstScheduleForm.previousOwner}
+                                    />
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="previousOwnerIC"
+                                        label="No. K/P"
+                                        errors={$vehicleFirstScheduleError.previousOwnerIC}
+                                        bind:val={$vehicleFirstScheduleForm.previousOwnerIC}
+                                    />
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="address"
+                                        label="Alamat"
+                                        errors={$vehicleFirstScheduleError.address}
+                                        bind:val={$vehicleFirstScheduleForm.address}
+                                    />
+                                </div>
                             </form>
-                        </div>
-
-                    </CustomTabContent>
-                    <CustomTabContent title="Maklumat Kelulusan dan Tawaran">
-                        <ContentHeader
-                            title="Masukkan Maklumat Kelulusan dan Tawaran"
-                            ><TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                form="offerLoan"
-                            ></TextIconButton></ContentHeader
-                        >
-
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2.5"
-                        >
-                            <form
-                                id="offerLoan"
-                                method="POST"
-                                use:approvalAndOfferDetailEnhance
-                                class="flex w-full flex-col gap-2"
+                            <ContentHeader
+                                title="Masukkan Harga Belian Kenderaan"
                             >
-                                <CustomTextField
-                                    disabled
-                                    id="loanType"
-                                    label="Jenis Belian"
-                                    bind:val={$approvalAndOfferDetailForm.loanType}
-                                ></CustomTextField>
+                                <TextIconButton
+                                    type="primary"
+                                    label="Simpan"
+                                    form="firstScheduleDetail"
+                                ></TextIconButton>
+                            </ContentHeader>
 
+                            <form
+                                id="firstScheduleDetail"
+                                method="POST"
+                                use:firstScheduleEnhance
+                            >
                                 <CustomTextField
                                     disabled={noturusetia}
                                     id="purchasePrice"
-                                    label="Harga Belian Dengan Kerajaan (RM)"
-                                    bind:val={$approvalAndOfferDetailForm.purchasePrice}
-                                ></CustomTextField>
+                                    label="Jumlah Harga Belian (RM)"
+                                    errors={$firstScheduleError.purchasePrice}
+                                    bind:val={$firstScheduleForm.purchasePrice}
+                                />
                                 <CustomTextField
                                     disabled={noturusetia}
-                                    id="deposit"
-                                    label="Bayaran Muka (RM)"
-                                    bind:val={$approvalAndOfferDetailForm.deposit}
-                                ></CustomTextField>
-                                <!-- value={upfront} -->
-
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="govProfit"
-                                    label="Bayaran Amaun Pembiayaan Dan Keuntungan Kerajaan (RM)"
-                                    bind:val={$approvalAndOfferDetailForm.govProfit}
-                                ></CustomTextField>
+                                    id="balancePayment"
+                                    label="Bayaran Baki (RM)"
+                                    errors={$firstScheduleError.balancePayment}
+                                    bind:val={$firstScheduleForm.balancePayment}
+                                />
                                 <CustomTextField
                                     disabled={noturusetia}
                                     id="govFund"
                                     label="Amaun Pembiayaan Kerajaan (RM)"
-                                    bind:val={$approvalAndOfferDetailForm.govFund}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="sellingPrice"
-                                    label="Harga Jualan Kepada Pegawai (RM)"
-                                    bind:val={$approvalAndOfferDetailForm.sellingPrice}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="installment"
-                                    label="Ansuran Bulanan (RM)"
-                                    bind:val={$approvalAndOfferDetailForm.installment}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="startLoanDate"
-                                    type="date"
-                                    label="Tarikh Mula"
-                                    bind:val={$approvalAndOfferDetailForm.startLoanDate}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="paymentPeriod"
-                                    label="Tempoh"
-                                    bind:val={$approvalAndOfferDetailForm.paymentPeriod}
-                                ></CustomTextField>
+                                    errors={$firstScheduleError.govFund}
+                                    bind:val={$firstScheduleForm.govFund}
+                                />
                             </form>
                         </div>
                     </CustomTabContent>
-                   
-                </CustomTab>
-            </StepperContentBody>
-        </StepperContent>
-    {/if}
-    <StepperContent>
-        <StepperContentHeader title="Senarai Semak Surat Perjanjian"
-            >   <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} />
-            <TextIconButton
-                type="primary"
-                label="Simpan"
-                form="documentCheckDetail"
-            ></TextIconButton>
-        </StepperContentHeader>
-        <StepperContentBody>
-            <ContentHeader
-                title="Masukkan Maklumat Senarai Semak Surat Perjanjian"
-            >
-        </ContentHeader>
-            <form
-                id="documentCheckDetail"
-                method="POST"
-                use:documentCheckEnhance
-                class="flex w-full flex-col gap-2"
-            >
-                <div
-                    class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5"
-                >
-                    <CustomRadioBoolean
-                        disabled={noturusetia}
-                        id="agreementReceived"
-                        label="Diterima"
-                        bind:val={$documentCheckForm.agreementReceived}
-                    ></CustomRadioBoolean>
+                    <CustomTabContent title="Jadual Kedua">
+                        <!-- {#if currEmpLoanRec[0].typeOfLoan == 'Kenderaan'} -->
+                        <div class="h-full w-full overflow-y-auto pb-10">
+                        <ContentHeader
+                            title="Masukkan Maklumat Harga Jualan (RM)"
+                        >
+                            <TextIconButton
+                                type="primary"
+                                label="Simpan"
+                                form="secondScheduleDetail"
+                            ></TextIconButton>
+                        </ContentHeader>
+                        <div
+                            class="flex w-full flex-col items-start justify-start gap-2.5"
+                        >
+                            <form
+                                id="secondScheduleDetail"
+                                method="POST"
+                                use:secondScheduleEnhance
+                                class="flex w-full flex-col gap-2"
+                            >
+                                <CustomTextField
+                                    disabled={noturusetia}
+                                    id="sellingPrice"
+                                    label="Jumlah Harga Belian (RM)"
+                                    errors={$secondScheduleError.sellingPrice}
+                                    bind:val={$secondScheduleForm.sellingPrice}
+                                ></CustomTextField>
 
-                    <CustomRadioBoolean
-                        disabled={noturusetia}
-                        id="agreementChecked"
-                        label="Disemak"
-                        bind:val={$documentCheckForm.agreementChecked}
-                    ></CustomRadioBoolean>
-                </div>
-            </form></StepperContentBody
-        >
-    </StepperContent>
-    <StepperContent>
-        <StepperContentHeader title="Muat Turun Resit dan Invois"
-            >
-            <TextIconButton label="Kembali" onClick={()=> goto('/pinjaman-dan-kuarters/pinjaman/')} />
-                {#if data.props.userMode == 'kakitangan' }
+                                <CustomTextField
+                                    disabled={noturusetia}
+                                    id="sellingBalance"
+                                    label="Bayaran Baki (RM)"
+                                    errors={$secondScheduleError.sellingBalance}
+                                    bind:val={$secondScheduleForm.sellingBalance}
+                                ></CustomTextField>
+
+                                <CustomTextField
+                                    disabled={noturusetia}
+                                    id="govFund"
+                                    label="Amaun Pembiayaan dan Keuntungan Kerajaan (RM)"
+                                    errors={$secondScheduleError.govFund}
+                                    bind:val={$secondScheduleForm.govFund}
+                                ></CustomTextField>
+
+                                <ContentHeader
+                                    title="Masukkan Amaun dan Tempoh Bayaran Balik Harga Jualan"
+                                ></ContentHeader>
+                                <div
+                                    class="flex w-full flex-col items-start justify-start gap-2.5"
+                                >
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="installment"
+                                        label="Amaun Bulanan (RM)"
+                                        errors={$secondScheduleError.installment}
+                                        bind:val={$secondScheduleForm.installment}
+                                    ></CustomTextField>
+
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="paymentPeriod"
+                                        label={'Tempoh Pembayaran'}
+                                        errors={$secondScheduleError.paymentPeriod}
+                                        bind:val={$secondScheduleForm.paymentPeriod}
+                                    ></CustomTextField>
+                                </div>
+                            </form>
+                        </div>
+                        </div>
+                    </CustomTabContent>
+                </CustomTab>
+            </StepperContent>
+        {/if}
+
+        <StepperContent>
+            <StepperContentHeader title="Muat Turun Surat Tawaran">
                 <TextIconButton
-                label="Muat Naik"
-                icon="check"
-                onClick={() => uploadPayment()}
-            />
-            {/if}</StepperContentHeader
-        >
-        <StepperContentBody>
-            <form class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10">
-                <div
-                    class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
+                    label="Kembali"
+                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
+                />
+            </StepperContentHeader>
+            <StepperContentBody>
+                <form
+                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
                 >
-                    <span>Fail-fail yang dimuat naik:</span>
-                </div>
-                {#if data.props.userMode == 'kakitangan'}
+                    <div
+                        class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
+                    ></div>
                     <div
                         class="flex h-fit w-full flex-col justify-center gap-2"
                     >
-                        <input
-                            class="rounded-md bg-ios-systemColors-systemFill-light"
-                            accept=".pdf"
-                            type="file"
-                            multiple
-                            bind:files
-                        />
-                    </div>
-                {/if}
-
-                <div class="flex w-full flex-col justify-start gap-2.5 px-2">
-                    <ContentHeader
-                        title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan "
-                        borderClass="border-none"
-                    />
-                    <span
-                        class="text-sm text-ios-labelColors-secondaryLabel-light"
-                        >Borang-borang yang telah dimuat naik oleh kakitangan:</span
-                    >
-
-                    {#each data.props.loanPaymentDocumentDetail.document as docs}
-                        <a
-                            href={docs.document}
-                            download={docs.name}
-                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                            >{docs.name}</a
+                        <div
+                            class="flex w-full flex-col justify-start gap-2.5 px-2"
                         >
-                    {/each}
-                </div>
-            </form>
-        </StepperContentBody>
-    </StepperContent>
+                            <ContentHeader
+                                title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan Kontrak"
+                                borderClass="border-none"
+                            />
+                            <span
+                                class="text-sm text-ios-labelColors-secondaryLabel-light"
+                                >Sila Muat turun dan pastikan dokumen diisi
+                                dengan lengkap dan ditandatangani sebelum
+                                dihantar kepada Urus Setia:</span
+                            >
+
+                            <DownloadAttachment
+                                triggerDownload={() =>
+                                    handleDownload(data.props.agreementLetter)}
+                                fileName="Surat Perjanjian Pinjaman Kenderaan.pdf"
+                            />
+                        </div>
+                    </div>
+                </form>
+            </StepperContentBody>
+        </StepperContent>
+
+        <StepperContent>
+            <StepperContentHeader title="Muat Naik Surat Perjanjian">
+                <TextIconButton
+                    label="Kembali"
+                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
+                />
+                {#if data.props.userMode == 'kakitangan'}
+                    <TextIconButton
+                        label="Muat Naik"
+                        icon="check"
+                        onClick={() => uploadAgreementDocument()}
+                    />
+                {/if}</StepperContentHeader
+            >
+            <StepperContentBody>
+                <form
+                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
+                >
+                    <div
+                        class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
+                    >
+                        <span>Fail-fail yang dimuat naik:</span>
+                    </div>
+                    {#if data.props.userMode == 'kakitangan'}
+                        <div
+                            class="flex h-fit w-full flex-col justify-center gap-2"
+                        >
+                            <input
+                                class="rounded-md bg-ios-systemColors-systemFill-light"
+                                accept=".pdf"
+                                type="file"
+                                multiple
+                                bind:files
+                            />
+                        </div>
+                    {/if}
+
+                    <div
+                        class="flex w-full flex-col justify-start gap-2.5 px-2"
+                    >
+                        <ContentHeader
+                            title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan Kontrak"
+                            borderClass="border-none"
+                        />
+                        <span
+                            class="text-sm text-ios-labelColors-secondaryLabel-light"
+                            >Borang-borang yang telah dimuat naik oleh
+                            kakitangan:</span
+                        >
+                        {#each data.props.agreementLetterDetail.document as docs}
+                            <a
+                                href={docs.document}
+                                download={docs.name}
+                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                >{docs.name}</a
+                            >
+                        {/each}
+                    </div>
+                </form>
+            </StepperContentBody>
+        </StepperContent>
+        {#if data.props.userMode == 'urusetia' || data.props.userMode == 'pelulus' || data.props.userMode == 'ketua Seksyen'}
+            <StepperContent>
+                <StepperContentHeader title="Kemaskini Maklumat Pinjaman">
+                    <TextIconButton
+                        label="Kembali"
+                        onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
+                    /></StepperContentHeader
+                >
+                <StepperContentBody>
+                    <CustomTab>
+                        <CustomTabContent title="Maklumat Kelayakan">
+                            <ContentHeader title="Maklumat Kelayakan"
+                                ><TextIconButton
+                                    type="primary"
+                                    label="Simpan"
+                                    form="eligibiltyDetail"
+                                ></TextIconButton></ContentHeader
+                            >
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2.5"
+                            >
+                                <p class="text-sm text-system-primary">
+                                    Gaji Pokok Sahaja
+                                </p>
+                                <form
+                                    id="eligibiltyDetail"
+                                    method="POST"
+                                    use:eligibilityEnhance
+                                    class="flex w-full flex-col gap-2"
+                                >
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="baseSalary"
+                                        label={'Gaji Pokok (RM)'}
+                                        errors={$eligibilityError.baseSalary}
+                                        bind:val={$eligibilityForm.baseSalary}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        type="number"
+                                        id="salaryCut"
+                                        label={'Potongan (RM)'}
+                                        errors={$eligibilityError.salaryCut}
+                                        bind:val={$eligibilityForm.salaryCut}
+                                    ></CustomTextField>
+
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="balance"
+                                        type="number"
+                                        label={'Baki (RM)'}
+                                        errors={$eligibilityError.balance}
+                                        bind:val={$eligibilityForm.balance}
+                                    ></CustomTextField>
+                                    <p class="text-sm text-system-primary">
+                                        Gaji Pokok dan Elaun
+                                    </p>
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="salaryAndAllowance"
+                                        label={'Gaji Pokok dan Elaun (RM)'}
+                                        errors={$eligibilityError.salaryAndAllowance}
+                                        bind:val={$eligibilityForm.salaryAndAllowance}
+                                    ></CustomTextField>
+
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        type="number"
+                                        id="newSalaryCut"
+                                        label={'Potongan Baru (RM)'}
+                                        errors={$eligibilityError.newSalaryCut}
+                                        bind:val={$eligibilityForm.newSalaryCut}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        type="number"
+                                        id="newBalance"
+                                        label={'Baki (RM)'}
+                                        errors={$eligibilityError.newBalance}
+                                        bind:val={$eligibilityForm.newBalance}
+                                    ></CustomTextField>
+                                </form>
+                            </div>
+                        </CustomTabContent>
+                        <CustomTabContent
+                            title="Maklumat Kelulusan dan Tawaran"
+                        >
+                            <ContentHeader
+                                title="Masukkan Maklumat Kelulusan dan Tawaran"
+                                ><TextIconButton
+                                    type="primary"
+                                    label="Simpan"
+                                    form="offerLoan"
+                                ></TextIconButton></ContentHeader
+                            >
+
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2.5"
+                            >
+                                <form
+                                    id="offerLoan"
+                                    method="POST"
+                                    use:approvalAndOfferDetailEnhance
+                                    class="flex w-full flex-col gap-2"
+                                >
+                                    <CustomTextField
+                                        disabled
+                                        id="loanType"
+                                        label="Jenis Belian"
+                                        errors={$approvalAndOfferDetailError.loanType}
+                                        bind:val={$approvalAndOfferDetailForm.loanType}
+                                    ></CustomTextField>
+
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="purchasePrice"
+                                        label="Harga Belian Dengan Kerajaan (RM)"
+                                        errors={$approvalAndOfferDetailError.purchasePrice}
+                                        bind:val={$approvalAndOfferDetailForm.purchasePrice}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="deposit"
+                                        label="Bayaran Muka (RM)"
+                                        errors={$approvalAndOfferDetailError.deposit}
+                                        bind:val={$approvalAndOfferDetailForm.deposit}
+                                    ></CustomTextField>
+                                    <!-- value={upfront} -->
+
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="govProfit"
+                                        label="Bayaran Amaun Pembiayaan Dan Keuntungan Kerajaan (RM)"
+                                        errors={$approvalAndOfferDetailError.govProfit}
+                                        bind:val={$approvalAndOfferDetailForm.govProfit}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="govFund"
+                                        label="Amaun Pembiayaan Kerajaan (RM)"
+                                        errors={$approvalAndOfferDetailError.govFund}
+                                        bind:val={$approvalAndOfferDetailForm.govFund}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="sellingPrice"
+                                        label="Harga Jualan Kepada Pegawai (RM)"
+                                        errors={$approvalAndOfferDetailError.sellingPrice}
+                                        bind:val={$approvalAndOfferDetailForm.sellingPrice}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="installment"
+                                        label="Ansuran Bulanan (RM)"
+                                        errors={$approvalAndOfferDetailError.installment}
+                                        bind:val={$approvalAndOfferDetailForm.installment}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="startLoanDate"
+                                        type="date"
+                                        label="Tarikh Mula"
+                                        errors={$approvalAndOfferDetailError.startLoanDate}
+                                        bind:val={$approvalAndOfferDetailForm.startLoanDate}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="paymentPeriod"
+                                        label="Tempoh"
+                                        errors={$approvalAndOfferDetailError.paymentPeriod}
+                                        bind:val={$approvalAndOfferDetailForm.paymentPeriod}
+                                    ></CustomTextField>
+                                </form>
+                            </div>
+                        </CustomTabContent>
+                    </CustomTab>
+                </StepperContentBody>
+            </StepperContent>
+        {/if}
+        <StepperContent>
+            <StepperContentHeader title="Senarai Semak Surat Perjanjian">
+                <TextIconButton
+                    label="Kembali"
+                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
+                />
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    form="documentCheckDetail"
+                ></TextIconButton>
+            </StepperContentHeader>
+            <StepperContentBody>
+                <ContentHeader
+                    title="Masukkan Maklumat Senarai Semak Surat Perjanjian"
+                ></ContentHeader>
+                <form
+                    id="documentCheckDetail"
+                    method="POST"
+                    use:documentCheckEnhance
+                    class="flex w-full flex-col gap-2"
+                >
+                    <div
+                        class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5"
+                    >
+                        <CustomRadioBoolean
+                            disabled={noturusetia}
+                            id="agreementReceived"
+                            label="Diterima"
+                            bind:val={$documentCheckForm.agreementReceived}
+                        ></CustomRadioBoolean>
+
+                        <CustomRadioBoolean
+                            disabled={noturusetia}
+                            id="agreementChecked"
+                            label="Disemak"
+                            bind:val={$documentCheckForm.agreementChecked}
+                        ></CustomRadioBoolean>
+                    </div>
+                </form></StepperContentBody
+            >
+        </StepperContent>
+        <StepperContent>
+            <StepperContentHeader title="Muat Turun Resit dan Invois">
+                <TextIconButton
+                    label="Kembali"
+                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
+                />
+                {#if data.props.userMode == 'kakitangan'}
+                    <TextIconButton
+                        label="Muat Naik"
+                        icon="check"
+                        onClick={() => uploadPayment()}
+                    />
+                {/if}</StepperContentHeader
+            >
+            <StepperContentBody>
+                <form
+                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
+                >
+                    <div
+                        class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
+                    >
+                        <span>Fail-fail yang dimuat naik:</span>
+                    </div>
+                    {#if data.props.userMode == 'kakitangan'}
+                        <div
+                            class="flex h-fit w-full flex-col justify-center gap-2"
+                        >
+                            <input
+                                class="rounded-md bg-ios-systemColors-systemFill-light"
+                                accept=".pdf"
+                                type="file"
+                                multiple
+                                bind:files
+                            />
+                        </div>
+                    {/if}
+
+                    <div
+                        class="flex w-full flex-col justify-start gap-2.5 px-2"
+                    >
+                        <ContentHeader
+                            title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan "
+                            borderClass="border-none"
+                        />
+                        <span
+                            class="text-sm text-ios-labelColors-secondaryLabel-light"
+                            >Borang-borang yang telah dimuat naik oleh
+                            kakitangan:</span
+                        >
+
+                        {#each data.props.loanPaymentDocumentDetail.document as docs}
+                            <a
+                                href={docs.document}
+                                download={docs.name}
+                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                >{docs.name}</a
+                            >
+                        {/each}
+                    </div>
+                </form>
+            </StepperContentBody>
+        </StepperContent>
     {/if}
 </Stepper>
 <Toaster />

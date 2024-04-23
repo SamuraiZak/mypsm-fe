@@ -11,7 +11,7 @@
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
 
     import type { PageData } from './$types';
-    import { _updateTable, _updateTableNo } from './+page';
+    import { _updateTable, _updateTableEmployee, _updateTableNo } from './+page';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
@@ -19,6 +19,7 @@
     export let data: PageData;
     let param: CommonListRequestDTO = data.param;
     let paramNo: CommonListRequestDTO = data.paramNo;
+    let paramEmp: CommonListRequestDTO = data.paramEmp;
     let currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
     );
@@ -55,6 +56,17 @@
         data: data.ptbNoViewTable ?? [],
     };
 
+    let PTBtableEmployee: TableDTO = {
+        param: paramEmp,
+        meta: {
+            pageSize: 5,
+            pageNum: 1,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.ptbEmployeeTable ?? [],
+    };
+
     async function _search() {
         _updateTable(PTBtable.param).then((value) => {
             PTBtable.data = value.props.response.data?.dataList ?? [];
@@ -81,6 +93,20 @@
             PTBtableNo.param.pageNum = PTBtableNo.meta.pageNum;
         });
     }
+
+    async function _searchEmp() {
+        _updateTableEmployee(PTBtableEmployee.param).then((value) => {
+            PTBtableEmployee.data = value.props.response.data?.dataList ?? [];
+            PTBtableEmployee.meta = value.props.response.data?.meta ?? {
+                pageSize: 1,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            PTBtableEmployee.param.pageSize = PTBtableEmployee.meta.pageSize;
+            PTBtableEmployee.param.pageNum = PTBtableEmployee.meta.pageNum;
+        });
+    }
 </script>
 
 <!-- content header starts here -->
@@ -92,7 +118,7 @@
     <TextIconButton
     label="Tambah Rekod"
     onClick={() => {
-        goto('/perjawatan/PTB-dan-KWAP/butiran/'+ rowData.id);
+        goto('/perjawatan/PTB-dan-KWAP/butiran/baru-permohonan');
     }}
 >
     <SvgPlus />
@@ -104,7 +130,7 @@
 <section
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-    
+{#if currentRoleCode === urusetia}
         <CustomTab>
             
             <CustomTabContent
@@ -122,8 +148,7 @@
                         enableDetail
                         bind:passData={rowData}
                     detailActions={() => {
-                        goto( `./PTB-dan-KWAP/urus-setia/butiran-` +
-                                    rowData.employeeId);
+                        goto( `/perjawatan/PTB-dan-KWAP/butiran/`+rowData.employeeId+'-'+rowData.id);
                     }}
                
                         bind:tableData={PTBtable}
@@ -140,7 +165,7 @@
                 enableDetail
                 bind:passData={rowData}
             detailActions={() => {
-                goto( `./PTB-dan-KWAP/urus-setia/butiran`);
+                goto( `./PTB-dan-KWAP/urus-setia/butiran/`+rowData.employeeId+'-'+rowData.id);
             }}
        
                 bind:tableData={PTBtableNo}
@@ -148,6 +173,33 @@
                 </div>
             </CustomTabContent>
         </CustomTab>
+{/if}
+
+        {#if currentRoleCode === kakitangan}
+        <CustomTabContent
+        title="Senarai Kakitangan Baharu diberi PTB dan KWAP"
+    >
+    
+    
+    <FilterCard></FilterCard>
+        <div
+            class="flex max-h-full w-full flex-col items-start justify-start"
+        >
+     
+            <CustomTable
+                onUpdate={_searchEmp}
+                enableDetail
+                bind:passData={rowData}
+            detailActions={() => {
+                goto( `/perjawatan/PTB-dan-KWAP/butiran/` +
+                            rowData.employeeId+'-'+rowData.id);
+            }}
+       
+                bind:tableData={PTBtableEmployee}
+            ></CustomTable>
+        </div>
+    </CustomTabContent>
+    {/if}
    
     
 </section>

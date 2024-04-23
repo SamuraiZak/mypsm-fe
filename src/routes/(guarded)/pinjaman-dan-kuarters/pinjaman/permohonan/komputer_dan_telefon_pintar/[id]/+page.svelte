@@ -555,21 +555,25 @@
                     disabled={noturusetia}
                         id="maxLoan"
                         label={'Had Permohonan'}
+                        errors={$loanInfoError.maxLoan}
                         bind:val={$loanInfoForm.maxLoan}
                     ></CustomTextField>
                     <CustomTextField
                         id="requestedLoan"
                         label={'Jumlah yang Dipohon (RM)'}
+                        errors={$loanInfoError.requestedLoan}
                         bind:val={$loanInfoForm.requestedLoan}
                     ></CustomTextField>
                     <CustomTextField
                         id="paymentPeriod"
                         label={'Tempoh Pembayaran'}
+                        errors={$loanInfoError.paymentPeriod}
                         bind:val={$loanInfoForm.paymentPeriod}
                     ></CustomTextField>
                     <CustomTextField
                         id="reason"
                         label={'Ulasan'}
+                        errors={$loanInfoError.reason}
                         bind:val={$loanInfoForm.reason}
                     ></CustomTextField>
                 </form></StepperContentBody
@@ -702,6 +706,7 @@
                             disabled={notpelulus}
                             id="remark"
                             label="Tindakan / Ulasan"
+                            errors={$approverApprovalError.remark}
                             bind:val={$approverApprovalForm.remark}
                         />
 
@@ -709,6 +714,7 @@
                             disabled={notpelulus}
                             id="status"
                             label="Status"
+                            errors={$approverApprovalError.status}
                             bind:val={$approverApprovalForm.status}
                         />
                     </form>
@@ -716,7 +722,7 @@
                 <div
                     class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
                 >
-                    <ContentHeader title="Keputusan Dari Penyokong">
+                    <ContentHeader title="Keputusan Dari Ketua Seksyen">
                         <TextIconButton
                             type="primary"
                             label="Simpan"
@@ -734,6 +740,7 @@
                             disabled={notketuaSeksyen}
                             id="remark"
                             label="Tindakan/ Ulasan"
+                            errors={$supporterApprovalError.remark}
                             bind:val={$supporterApprovalForm.remark}
                         />
 
@@ -741,6 +748,7 @@
                             disabled={notketuaSeksyen}
                             id="status"
                             label="Status"
+                            errors={$supporterApprovalError.status}
                             bind:val={$supporterApprovalForm.status}
                         />
                     </form>
@@ -861,18 +869,21 @@
                             <CustomTextField
                                 id="sellingPrice"
                                 label="Jumlah Harga Belian (RM)"
+                                errors={$secondScheduleError.sellingPrice}
                                 bind:val={$secondScheduleForm.sellingPrice}
                             ></CustomTextField>
 
                             <CustomTextField
                                 id="sellingBalance"
                                 label="Bayaran Baki (RM)"
+                                errors={$secondScheduleError.sellingBalance}
                                 bind:val={$secondScheduleForm.sellingBalance}
                             ></CustomTextField>
 
                             <CustomTextField
                                 id="govFund"
                                 label="Amaun Pembiayaan dan Keuntungan Kerajaan (RM)"
+                                errors={$secondScheduleError.govFund}
                                 bind:val={$secondScheduleForm.govFund}
                             ></CustomTextField>
 
@@ -885,12 +896,14 @@
                                 <CustomTextField
                                     id="installment"
                                     label="Amaun Bulanan (RM)"
+                                    errors={$secondScheduleError.installment}
                                     bind:val={$secondScheduleForm.installment}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="paymentPeriod"
                                     label={'Tempoh Pembayaran'}
+                                    errors={$secondScheduleError.paymentPeriod}
                                     bind:val={$secondScheduleForm.paymentPeriod}
                                 ></CustomTextField>
                             </div>
@@ -1039,12 +1052,14 @@
                                         disabled
                                         id="baseSalary"
                                         label={'Gaji Pokok (RM)'}
+                                        errors={$eligibilityError.baseSalary}
                                         bind:val={$eligibilityForm.baseSalary}
                                     ></CustomTextField>
                                     <CustomTextField
                                         type="number"
                                         id="salaryCut"
                                         label={'Potongan (RM)'}
+                                        errors={$eligibilityError.salaryCut}
                                         bind:val={$eligibilityForm.salaryCut}
                                     ></CustomTextField>
 
@@ -1053,6 +1068,7 @@
                                         id="balance"
                                         type="number"
                                         label={'Baki (RM)'}
+                                        errors={$eligibilityError.balance}
                                         bind:val={$eligibilityForm.balance}
                                     ></CustomTextField>
                                     <p class="text-sm text-system-primary">
@@ -1062,6 +1078,7 @@
                                         disabled
                                         id="salaryAndAllowance"
                                         label={'Gaji Pokok dan Elaun (RM)'}
+                                        errors={$eligibilityError.salaryAndAllowance}
                                         bind:val={$eligibilityForm.salaryAndAllowance}
                                     ></CustomTextField>
 
@@ -1069,6 +1086,7 @@
                                         type="number"
                                         id="newSalaryCut"
                                         label={'Potongan Baru (RM)'}
+                                        errors={$eligibilityError.newSalaryCut}
                                         bind:val={$eligibilityForm.newSalaryCut}
                                     ></CustomTextField>
                                     <CustomTextField
@@ -1076,6 +1094,7 @@
                                         type="number"
                                         id="newBalance"
                                         label={'Baki (RM)'}
+                                        errors={$eligibilityError.newBalance}
                                         bind:val={$eligibilityForm.newBalance}
                                     ></CustomTextField>
                                 </form>
@@ -1108,17 +1127,20 @@
                                         disabled
                                         id="loanType"
                                         label="Jenis Belian"
+                                        errors={$approvalAndOfferDetailError.loanType}
                                         bind:val={$approvalAndOfferDetailForm.loanType}
                                     ></CustomTextField>
 
                                     <CustomTextField
                                         id="purchasePrice"
                                         label="Harga Belian Dengan Kerajaan (RM)"
+                                        errors={$approvalAndOfferDetailError.purchasePrice}
                                         bind:val={$approvalAndOfferDetailForm.purchasePrice}
                                     ></CustomTextField>
                                     <CustomTextField
                                         id="deposit"
                                         label="Bayaran Muka (RM)"
+                                        errors={$approvalAndOfferDetailError.deposit}
                                         bind:val={$approvalAndOfferDetailForm.deposit}
                                     ></CustomTextField>
                                     <!-- value={upfront} -->
@@ -1126,32 +1148,38 @@
                                     <CustomTextField
                                         id="govProfit"
                                         label="Bayaran Amaun Pembiayaan Dan Keuntungan Kerajaan (RM)"
+                                        errors={$approvalAndOfferDetailError.govProfit}
                                         bind:val={$approvalAndOfferDetailForm.govProfit}
                                     ></CustomTextField>
                                     <CustomTextField
                                         id="govFund"
                                         label="Amaun Pembiayaan Kerajaan (RM)"
+                                        errors={$approvalAndOfferDetailError.govFund}
                                         bind:val={$approvalAndOfferDetailForm.govFund}
                                     ></CustomTextField>
                                     <CustomTextField
                                         id="sellingPrice"
                                         label="Harga Jualan Kepada Pegawai (RM)"
+                                        errors={$approvalAndOfferDetailError.sellingPrice}
                                         bind:val={$approvalAndOfferDetailForm.sellingPrice}
                                     ></CustomTextField>
                                     <CustomTextField
                                         id="installment"
                                         label="Ansuran Bulanan (RM)"
+                                        errors={$approvalAndOfferDetailError.installment}
                                         bind:val={$approvalAndOfferDetailForm.installment}
                                     ></CustomTextField>
                                     <CustomTextField
                                         id="startLoanDate"
                                         type="date"
                                         label="Tarikh Mula"
+                                        errors={$approvalAndOfferDetailError.startLoanDate}
                                         bind:val={$approvalAndOfferDetailForm.startLoanDate}
                                     ></CustomTextField>
                                     <CustomTextField
                                         id="paymentPeriod"
                                         label="Tempoh"
+                                        errors={$approvalAndOfferDetailError.paymentPeriod}
                                         bind:val={$approvalAndOfferDetailForm.paymentPeriod}
                                     ></CustomTextField>
                                 </form>
