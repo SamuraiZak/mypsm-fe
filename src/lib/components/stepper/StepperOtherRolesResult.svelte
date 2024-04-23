@@ -1,5 +1,12 @@
-<div
-    class="mb-2.5 flex w-full flex-row text-start text-sm font-medium italic text-system-primary"
->
-    <p>Menunggu keputusan peranan bertanggungjawab.</p>
+<script>
+    import { Alert } from 'flowbite-svelte';
+</script>
+
+<div class="flex w-full flex-col gap-10 px-3">
+    <Alert color="blue">
+        <p>
+            <span class="font-medium">Tiada Maklumat! </span>
+            Menunggu keputusan peranan bertanggungjawab.
+        </p>
+    </Alert>
 </div>
