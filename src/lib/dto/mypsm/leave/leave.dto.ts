@@ -376,6 +376,7 @@ export interface GCRAccumulationAddDetailDTO {
 
 export interface GCRAccumulationDetailRequestDTO {
     id: number | null;
+    employeeId?: number;
 }
 
 export interface GCREndorsementDTO {
@@ -404,8 +405,7 @@ export interface GCRWithdrawalHistoryFilterDTO {
 
 export interface GCRWithdrawalDocumentDetailDTO {
     id: number;
-    identityDocument: DocumentDTO;
-    withdrawalDocument: DocumentDTO;
+    document: DocumentDTO[];
 }
 
 export interface GCRWithdrawalCalculationDTO {
@@ -417,6 +417,7 @@ export interface GCREmployeeDetailDTO {
     name: string;
     identityDocumentNumber: string;
     employeeNumber: string;
+    employeeId: number;
     grade: string;
     scheme: string;
     placement: string;
