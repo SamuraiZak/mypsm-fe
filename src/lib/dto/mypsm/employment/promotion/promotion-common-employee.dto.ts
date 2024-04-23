@@ -30,3 +30,67 @@ export interface PromotionCertificationEmployee {
     integrityCertification: string;
     directionCertification: string;
 }
+
+export interface PromotionPlacement {
+    promotionId:      number;
+    employeeNo:       string;
+    employeeName:     string;
+    identityCardNo:   string;
+    gradeNo:          string;
+    positionNo:       string;
+    currentPlacement: string;
+}
+
+export interface PromotionPlacementDetail {
+    employeeNumber:        string;
+    employeeName:          string;
+    promotionDate:         string;
+    newSalaryMovementDate: number;
+    firstMinimumSalary:    number;
+    firstMaximumSalary:    number;
+    firstSalaryRaise:      number;
+    secondMinimumSalary:   number;
+    secondMaximumSalary:   number;
+    secondSalaryRaise:     number;
+    currentPlacement:      string;
+    newPlacement:          string;
+}
+
+export interface PromotionSalaryAdjustment {
+    effectiveDate: string | null;
+    currentSalary: number | null;
+    newSalary:     number | null;
+    remark:        null | string;
+}
+
+export interface PromotionSalaryAdjustmentDetail {
+    promotionDate: string | null;
+    currentSalary: number | null;
+    newSalary:     string | null;
+    remarks:       string | null;
+}
+
+export interface PromotionDetail {
+    employeeNo:               string;
+    employeeName:             string;
+    identityCardNo:           string;
+    secretariatCertification: string;
+    supporterSupport:         string;
+    approverApproval:         string;
+}
+
+export interface PromotionProcessDetail {
+    integrityCertifierName:   string;
+    integrityCertifiedDate:   string;
+    integrityCertifiedRemark: string;
+    integrityCertifiedStatus: boolean;
+    approverName:             string;
+    approvedDate:             string;
+    approvedRemark:           string;
+    approvedStatus:           boolean;
+    supporterName:            string;
+    supportedDate:            string;
+    supportedRemark:          string;
+    supportedStatus:          boolean;
+}
+
