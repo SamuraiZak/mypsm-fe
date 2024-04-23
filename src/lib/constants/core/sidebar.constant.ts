@@ -988,7 +988,7 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Penamatan Tanggung Kerja',
-                            path: '/perjawatan/penamatan-tanggung-kerja',
+                            path: '/perjawatan/tanggung-kerja',
                         },
                     ],
                 },
