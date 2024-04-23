@@ -537,6 +537,73 @@
             </StepperContent>
 
             <!-- ================================= -->
+            <!-- CONFIRMATION -->
+            <!-- ================================= -->
+            {#if data.props.currentApplicationDetail.reason !== null}
+                <StepperContent>
+                    <StepperContentHeader title="Pengesahan Permohonan">
+                        {#if data.props.currentApplicationDetail.confirmation == null && data.props.userMode == 'employee'}
+                            <TextIconButton
+                                label="Hantar"
+                                icon="check"
+                                form="employeeConfirmationForm"
+                            ></TextIconButton>
+                        {/if}
+                    </StepperContentHeader>
+                    <StepperContentBody>
+                        {#if data.props.currentApplicationDetail.confirmation == null && data.props.userMode !== 'employee'}
+                            <div class="flex w-full flex-col gap-10 px-3 pb-10">
+                                <Alert color="blue">
+                                    <p>
+                                        <span class="font-medium"
+                                            >Tiada Maklumat!</span
+                                        >
+                                        {data.props.currentApplicationDetail
+                                            .status}
+                                    </p>
+                                </Alert>
+                            </div>
+                        {:else}
+                            <div
+                                class="flex h-full w-full flex-col items-start justify-start"
+                            >
+                                <form
+                                    id="employeeConfirmationForm"
+                                    method="POST"
+                                    use:employeeConfirmationEnhance
+                                    class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
+                                >
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomSelectField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .confirmation !== null}
+                                            id="status"
+                                            label={'Adakah Permohonan Penangguhan Ini Lulus?'}
+                                            bind:val={$employeeConfirmationForm.status}
+                                            options={data.props
+                                                .endorsementDropdown}
+                                        ></CustomSelectField>
+                                    </div>
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomTextField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .confirmation !== null}
+                                            id="remark"
+                                            label={'Ulasan'}
+                                            errors={$employeeConfirmationErrors.remark}
+                                            bind:val={$employeeConfirmationForm.remark}
+                                        ></CustomTextField>
+                                    </div>
+                                </form>
+                            </div>
+                        {/if}
+                    </StepperContentBody>
+                </StepperContent>
+            {/if}
+
+            <!-- ================================= -->
             <!-- TRANSFER DOCUMENT -->
             <!-- ================================= -->
             {#if data.props.currentApplicationDetail.reason !== null}
@@ -611,72 +678,7 @@
                 </StepperContent>
             {/if}
 
-            <!-- ================================= -->
-            <!-- CONFIRMATION -->
-            <!-- ================================= -->
-            {#if data.props.currentApplicationDetail.transferDocument !== null}
-                <StepperContent>
-                    <StepperContentHeader title="Pengesahan Permohonan">
-                        {#if data.props.currentApplicationDetail.confirmation == null && data.props.userMode == 'employee'}
-                            <TextIconButton
-                                label="Hantar"
-                                icon="check"
-                                form="employeeConfirmationForm"
-                            ></TextIconButton>
-                        {/if}
-                    </StepperContentHeader>
-                    <StepperContentBody>
-                        {#if data.props.currentApplicationDetail.confirmation == null && data.props.userMode !== 'employee'}
-                            <div class="flex w-full flex-col gap-10 px-3 pb-10">
-                                <Alert color="blue">
-                                    <p>
-                                        <span class="font-medium"
-                                            >Tiada Maklumat!</span
-                                        >
-                                        {data.props.currentApplicationDetail
-                                            .status}
-                                    </p>
-                                </Alert>
-                            </div>
-                        {:else}
-                            <div
-                                class="flex h-full w-full flex-col items-start justify-start"
-                            >
-                                <form
-                                    id="employeeConfirmationForm"
-                                    method="POST"
-                                    use:employeeConfirmationEnhance
-                                    class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
-                                >
-                                    <div class="flex w-full flex-col gap-2">
-                                        <CustomSelectField
-                                            disabled={data.props
-                                                .currentApplicationDetail
-                                                .confirmation !== null}
-                                            id="status"
-                                            label={'Adakah Permohonan Penangguhan Ini Lulus?'}
-                                            bind:val={$employeeConfirmationForm.status}
-                                            options={data.props
-                                                .endorsementDropdown}
-                                        ></CustomSelectField>
-                                    </div>
-                                    <div class="flex w-full flex-col gap-2">
-                                        <CustomTextField
-                                            disabled={data.props
-                                                .currentApplicationDetail
-                                                .confirmation !== null}
-                                            id="remark"
-                                            label={'Ulasan'}
-                                            errors={$employeeConfirmationErrors.remark}
-                                            bind:val={$employeeConfirmationForm.remark}
-                                        ></CustomTextField>
-                                    </div>
-                                </form>
-                            </div>
-                        {/if}
-                    </StepperContentBody>
-                </StepperContent>
-            {/if}
+            
 
             <!-- ================================= -->
             <!-- FIRST DIRECTOR APPROVAL -->

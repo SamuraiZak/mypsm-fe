@@ -140,6 +140,34 @@ export const LeaveStudyDetailsSchema = z.object({
     reason: z.string(),
 });
 
+export const LeaveReplacementDetailsSchema = z.object({
+    leaveTypeCode: z.string(),
+    reason: z.string(),
+    substituteName: z.string(),
+    substituteIC: z.string(),
+    startDate: z.string(),
+    startHalfDayOption: z.boolean(),
+    startHalfDayType: z.string(),
+    endDate: z.string(),
+    endHalfDayOption: z.boolean(),
+    endHalfDayType: z.string(),
+    durationDays: z.number(),
+    latestLeaveTakenDate: z.string(),
+    currentYearLeaveCount: z.number(),
+    replacementType: z.string(),
+    dutyDate: z.string(),
+    dutyStartTime: z.string(),
+    dutyEndTime: z.string(),
+    dutyDurationTime: z.string(),
+    dutyLocation: z.string(),
+    dutyDescription: z.string(),
+});
+export type LeaveReplacementDetails = z.infer<
+    typeof LeaveReplacementDetailsSchema
+>;
+
+// ====================================================================
+
 export const LeaveEntitlementDetailSchema = z.object({
     entitlement: z.number(),
     carryForward: z.number(),
@@ -147,7 +175,9 @@ export const LeaveEntitlementDetailSchema = z.object({
     leaveEntitlementTypeId: z.number(),
     used: z.number(),
 });
-export type LeaveEntitlementDetail = z.infer<typeof LeaveEntitlementDetailSchema>;
+export type LeaveEntitlementDetail = z.infer<
+    typeof LeaveEntitlementDetailSchema
+>;
 
 export const LeaveEntitlementEditDtoSchema = z.object({
     employeeId: z.number(),

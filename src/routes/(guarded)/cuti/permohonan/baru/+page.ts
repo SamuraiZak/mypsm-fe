@@ -1,11 +1,13 @@
 import { goto } from '$app/navigation';
 import { LeaveTypeConstant } from '$lib/constants/core/leave-type.constant';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import type {
     LeaveCommonDetailsDTO,
     LeaveDeliveryDetailsDTO,
+    LeaveReplacementDetailsDTO,
     LeaveStudyDetailsDTO,
     LeaveUnrecordedDetailsDTO,
 } from '$lib/dto/mypsm/leave/leave.dto';
@@ -14,6 +16,7 @@ import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     LeaveCommonDetailsSchema,
     LeaveDeliveryDetailsSchema,
+    LeaveReplacementDetailsSchema,
     LeaveStudyDetailsSchema,
     LeaveUnrecordedDetailsSchema,
 } from '$lib/schemas/mypsm/leave/leave.schema';
@@ -43,9 +46,35 @@ export async function load() {
     // leave study form
     const leaveStudyForm = await superValidate(zod(LeaveStudyDetailsSchema));
 
+    // replacement leave form
+    const leaveReplacementForm = await superValidate(
+        zod(LeaveReplacementDetailsSchema),
+    );
+
     // ============================================
     // get all enums
     // ============================================
+    // employee list
+    const employeeRequest: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 10000,
+        orderBy: 'name',
+        orderType: 0,
+        filter: {
+            program: 'TETAP',
+            employeeNumber: null,
+            name: null,
+            identityCard: null,
+            scheme: null,
+            grade: null,
+            position: null,
+        },
+    };
+    const employeeResponse: CommonResponseDTO =
+        await LookupServices.getEmployeeList(employeeRequest);
+
+    const employeeDropdown: DropdownDTO[] =
+        LookupServices.setSelectOptionSupporterAndApproverKP(employeeResponse);
 
     // get leave type
     let leaveTypeList: LookupDTO[] = [];
@@ -123,12 +152,14 @@ export async function load() {
             unrecordedLeaveTypeDropdown,
             halfDayTypeDropdown,
             halfDayOptionDropdown,
+            employeeDropdown,
         },
         forms: {
             leaveCommonForm,
             leaveUnrecordedForm,
             leaveDeliveryForm,
             leaveStudyForm,
+            leaveReplacementForm,
         },
     };
 }
@@ -242,6 +273,36 @@ export async function _leaveStudyFormSubmit(
         if (response.status == 'success') {
             const result: LeaveStudyDetailsDTO = response.data
                 ?.details as LeaveStudyDetailsDTO;
+
+            let url =
+                '/cuti/permohonan/' +
+                leaveType.description +
+                '/' +
+                result.leaveId;
+
+            setTimeout(() => {
+                goto(url);
+            }, 1000);
+        }
+    } else {
+        getErrorToast('Sila semak semula maklumat permohonan.');
+        error(400, { message: '' });
+    }
+}
+
+// submit common leave form
+export async function _leaveReplacementFormSubmit(
+    formData: LeaveReplacementDetailsDTO,
+    leaveType: LookupDTO,
+) {
+    const form = await superValidate(formData, zod(LeaveStudyDetailsSchema));
+
+    if (form.valid) {
+        const response = await LeaveApplicationServices.addReplacementLeave(formData);
+
+        if (response.status == 'success') {
+            const result: LeaveReplacementDetailsDTO = response.data
+                ?.details as LeaveReplacementDetailsDTO;
 
             let url =
                 '/cuti/permohonan/' +

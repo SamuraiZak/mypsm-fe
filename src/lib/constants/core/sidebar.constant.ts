@@ -63,8 +63,12 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pengumpulan GCR',
-                            path: '/cuti/pengumpulan_GCR'
-                        }
+                            path: '/cuti/pengumpulan_GCR',
+                        },
+                        {
+                            name: 'Pengeluaran GCR',
+                            path: '/cuti/pengeluaran_GCR',
+                        },
                     ],
                 },
                 {
@@ -283,6 +287,10 @@ export class SidebarConstant {
                         {
                             name: 'Permohonan',
                             path: '/cuti/permohonan',
+                        },
+                        {
+                            name: 'Pengeluaran GCR',
+                            path: '/cuti/pengeluaran_GCR',
                         },
                     ],
                 },
@@ -588,6 +596,10 @@ export class SidebarConstant {
                             name: 'Pengumpulan GCR',
                             path: '/cuti/pengumpulan_GCR',
                         },
+                        {
+                            name: 'Pengeluaran GCR',
+                            path: '/cuti/pengeluaran_GCR',
+                        },
                     ],
                 },
                 {
@@ -690,6 +702,10 @@ export class SidebarConstant {
                         {
                             name: 'Pengumpulan GCR',
                             path: '/cuti/pengumpulan_GCR',
+                        },
+                        {
+                            name: 'Pengeluaran GCR',
+                            path: '/cuti/pengeluaran_GCR',
                         },
                     ],
                 },
@@ -863,7 +879,7 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Latiham Baru',
+                            name: 'Latihan Baru',
                             path: '/perjawatan/lantikan-baru',
                         },
                         {
@@ -1281,8 +1297,12 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pengumpulan GCR',
-                            path: '/cuti/pengumpulan_GCR'
-                        }
+                            path: '/cuti/pengumpulan_GCR',
+                        },
+                        {
+                            name: 'Pengeluaran GCR',
+                            path: '/cuti/pengeluaran_GCR',
+                        },
                     ],
                 },
                 {
@@ -1432,6 +1452,10 @@ export class SidebarConstant {
                         {
                             name: 'Peruntukan',
                             path: '/cuti/peruntukan',
+                        },
+                        {
+                            name: 'Pengeluaran GCR',
+                            path: '/cuti/pengeluaran_GCR',
                         },
                     ],
                 },

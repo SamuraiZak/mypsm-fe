@@ -1,19 +1,23 @@
+import { GCRWithdrawalTypeConstant } from '$lib/constants/core/early-gcr.constant';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
-import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto.js';
-import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto.js';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { DocumentDTO } from '$lib/dto/core/document/document.dto';
+import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type {
-    GCRAccumulationApplicationDetailDTO,
     GCRAccumulationDetailRequestDTO,
+    GCRWithdrawalApplicationDetailDTO,
 } from '$lib/dto/mypsm/leave/leave.dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
-    GcrAccumulationDetailSchema,
     GcrEndorsementSchema,
-    type GcrAccumulationDetail,
+    GcrWithdrawalCalculationSchema,
+    GcrWithdrawalDetailAddSchema,
     type GcrEndorsement,
+    type GcrWithdrawalCalculation,
+    type GcrWithdrawalDetailAdd,
 } from '$lib/schemas/mypsm/leave/gcr.schema';
-import { GCRServices } from '$lib/services/implementation/mypsm/leave/gcr.service.js';
+import { GCRServices } from '$lib/services/implementation/mypsm/leave/gcr.service';
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -21,9 +25,14 @@ import { zod } from 'sveltekit-superforms/adapters';
 export async function load({ params }) {
     let currentApplicationId: number = 0;
 
-    if (params.id !== 'Baru') {
+    if (params.id !== 'baru') {
         currentApplicationId = parseInt(params.id);
     }
+
+    let currentType: DropdownDTO =
+        GCRWithdrawalTypeConstant.list.find(
+            (item) => item.url == params.type,
+        ) ?? GCRWithdrawalTypeConstant.death;
 
     let userMode = 'employee';
 
@@ -43,8 +52,14 @@ export async function load({ params }) {
         case UserRoleConstant.pengarahNegeri.code:
             userMode = 'director';
             break;
+        case UserRoleConstant.ketuaPengarah.code:
+            userMode = 'chiefDirector';
+            break;
         case UserRoleConstant.urusSetiaCuti.code:
             userMode = 'secretary';
+            break;
+        case UserRoleConstant.urusSetiaIntegriti.code:
+            userMode = 'integritySecretary';
             break;
         case UserRoleConstant.pengarahKhidmatPengurusan.code:
             userMode = 'management';
@@ -64,29 +79,28 @@ export async function load({ params }) {
     // =============================================
     // FORM
     // =============================================
+    // application details
     const applicationDetailForm = await superValidate(
-        zod(GcrAccumulationDetailSchema),
+        zod(GcrWithdrawalDetailAddSchema),
     );
 
-    const sectionLeadFeedbackForm = await superValidate(
-        zod(GcrEndorsementSchema),
-    );
-
-    const directorFeedbackForm = await superValidate(zod(GcrEndorsementSchema));
-
-    const secretaryFeedbackForm = await superValidate(
-        zod(GcrEndorsementSchema),
+    // chiefDirector feedback
+    const calculationForm = await superValidate(
+        zod(GcrWithdrawalCalculationSchema),
     );
 
     // =============================================
     // APPLICATION DETAIL
     // =============================================
-    let currentApplicationDetail: GCRAccumulationApplicationDetailDTO = {
-        personalDetail: null,
-        accumulation: null,
-        lead: null,
+    let currentApplicationDetail: GCRWithdrawalApplicationDetailDTO = {
+        employeeDetail: null,
+        gcrDetail: null,
+        document: null,
         director: null,
         secretary: null,
+        integrity: null,
+        chiefDirector: null,
+        calculation: null,
     };
 
     let currentApplicationDetailRequest: GCRAccumulationDetailRequestDTO = {
@@ -98,41 +112,49 @@ export async function load({ params }) {
     }
 
     let currentApplicationDetailResponse: CommonResponseDTO =
-        await GCRServices.getAccumulationApplicationDetail(
+        await GCRServices.getWithdrawalApplicationDetail(
             currentApplicationDetailRequest,
         );
 
     if (currentApplicationDetailResponse.status == 'success') {
-        currentApplicationDetail =
-            currentApplicationDetailResponse.data?.details;
+        currentApplicationDetail = currentApplicationDetailResponse.data
+            ?.details as GCRWithdrawalApplicationDetailDTO;
 
-        if (currentApplicationDetail.accumulation !== null) {
-            applicationDetailForm.data.collectedGCR =
-                currentApplicationDetail.accumulation.currentCollected;
+        if (currentApplicationDetail.employeeDetail !== null) {
+            applicationDetailForm.data.employeeId =
+                currentApplicationDetail.employeeDetail.employeeId;
 
-            currentApplicationId =
-                currentApplicationDetail.accumulation.id ?? 0;
-            console.log(currentApplicationId);
+            applicationDetailForm.data.withdrawalType = currentType.value;
         }
 
-        if (currentApplicationDetail.lead !== null) {
-            sectionLeadFeedbackForm.data = currentApplicationDetail.lead;
+        if (currentApplicationDetail.calculation !== null) {
+            calculationForm.data = currentApplicationDetail.calculation;
         } else {
-            sectionLeadFeedbackForm.data.id = currentApplicationId;
-        }
-
-        if (currentApplicationDetail.director !== null) {
-            directorFeedbackForm.data = currentApplicationDetail.director;
-        } else {
-            directorFeedbackForm.data.id = currentApplicationId;
-        }
-
-        if (currentApplicationDetail.secretary !== null) {
-            secretaryFeedbackForm.data = currentApplicationDetail.secretary;
-        } else {
-            secretaryFeedbackForm.data.id = currentApplicationId;
+            // calculationForm.data.id = currentApplicationId;
         }
     }
+
+    let eligibilityDropdown: DropdownDTO[] = [
+        {
+            value: true,
+            name: 'Layak',
+        },
+        {
+            value: false,
+            name: 'Tidak Layak',
+        },
+    ];
+
+    let booleanOption: DropdownDTO[] = [
+        {
+            value: true,
+            name: 'Ya',
+        },
+        {
+            value: false,
+            name: 'Tidak',
+        },
+    ];
 
     let endorsementDropdown: DropdownDTO[] = [
         {
@@ -145,35 +167,34 @@ export async function load({ params }) {
         },
     ];
 
-    
     return {
         props: {
-            currentApplicationId,
+            // currentApplicationId,
+            currentApplicationDetail,
             userMode,
             currentRoleCode,
-            currentApplicationDetail,
+            eligibilityDropdown,
+            booleanOption,
             endorsementDropdown,
         },
         forms: {
             applicationDetailForm,
-            sectionLeadFeedbackForm,
-            directorFeedbackForm,
-            secretaryFeedbackForm,
+            calculationForm,
         },
     };
 }
 
-// section lead
+// section application detail
 export async function _submitApplicationDetailForm(
-    formData: GcrAccumulationDetail,
+    formData: GcrWithdrawalDetailAdd,
 ) {
     const form = await superValidate(
         formData,
-        zod(GcrAccumulationDetailSchema),
+        zod(GcrWithdrawalDetailAddSchema),
     );
 
     if (form.valid) {
-        const response = await GCRServices.addAccumulationDetail(formData);
+        const response = await GCRServices.addWithdrawalDetail(formData);
 
         return {
             response,
@@ -184,47 +205,17 @@ export async function _submitApplicationDetailForm(
     }
 }
 
-// section lead
-export async function _submitSectionLeadFeedbackForm(formData: GcrEndorsement) {
-    const form = await superValidate(formData, zod(GcrEndorsementSchema));
+// chief director
+export async function _submitCalculationForm(
+    formData: GcrWithdrawalCalculation,
+) {
+    const form = await superValidate(
+        formData,
+        zod(GcrWithdrawalCalculationSchema),
+    );
 
     if (form.valid) {
-        const response =
-            await GCRServices.addAccumulationSectionLeadFeedback(formData);
-
-        return {
-            response,
-        };
-    } else {
-        getErrorToast('Sila semak semula maklumat anda.');
-        error(400, { message: '' });
-    }
-}
-
-// director
-export async function _submitDirectorFeedbackForm(formData: GcrEndorsement) {
-    const form = await superValidate(formData, zod(GcrEndorsementSchema));
-
-    if (form.valid) {
-        const response =
-            await GCRServices.addAccumulationDirectorFeedback(formData);
-
-        return {
-            response,
-        };
-    } else {
-        getErrorToast('Sila semak semula maklumat anda.');
-        error(400, { message: '' });
-    }
-}
-
-// secretary
-export async function _submitSecretaryFeedbackForm(formData: GcrEndorsement) {
-    const form = await superValidate(formData, zod(GcrEndorsementSchema));
-
-    if (form.valid) {
-        const response =
-            await GCRServices.addAccumulationSecretaryFeedback(formData);
+        const response = await GCRServices.addWithdrawalCalculation(formData);
 
         return {
             response,

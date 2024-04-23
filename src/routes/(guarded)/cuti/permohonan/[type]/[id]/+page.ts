@@ -17,6 +17,7 @@ import type {
     LeaveDocumentViewDTO,
     LeaveEndorserDetailsDTO,
     LeaveEndorsmentDTO,
+    LeaveReplacementDetailsDTO,
     LeaveStudyDetailsDTO,
     LeaveUnrecordedDetailsDTO,
 } from '$lib/dto/mypsm/leave/leave.dto.js';
@@ -27,6 +28,7 @@ import {
     LeaveDeliveryDetailsSchema,
     LeaveEndorsementSchema,
     LeaveEndorserDetailsSchema,
+    LeaveReplacementDetailsSchema,
     LeaveStudyDetailsSchema,
     LeaveUnrecordedDetailsSchema,
 } from '$lib/schemas/mypsm/leave/leave.schema';
@@ -38,7 +40,6 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export async function load({ params }) {
-    console.log(params.type);
     // get the current type
     const currentLeaveType: LookupDTO =
         LeaveTypeConstant.list.find(
@@ -208,6 +209,11 @@ export async function load({ params }) {
     // leave study form
     const leaveStudyForm = await superValidate(zod(LeaveStudyDetailsSchema));
 
+    // replacement leave form
+    const leaveReplacementForm = await superValidate(
+        zod(LeaveReplacementDetailsSchema),
+    );
+
     // ============================================
     // create endorsement forms
     // ============================================
@@ -313,6 +319,10 @@ export async function load({ params }) {
                 case LeaveTypeConstant.partnerMaternityLeave.code:
                     leaveDeliveryForm.data =
                         currentApplicationDetail.applicationDetail as LeaveDeliveryDetailsDTO;
+                    break;
+                case LeaveTypeConstant.replacementLeave.code:
+                    leaveReplacementForm.data =
+                        currentApplicationDetail.applicationDetail as LeaveReplacementDetailsDTO;
                     break;
 
                 default:
@@ -431,6 +441,7 @@ export async function load({ params }) {
             leaveUnrecordedForm,
             leaveDeliveryForm,
             leaveStudyForm,
+            leaveReplacementForm,
             headOfDirectorFeedbackForm,
             directorFeedbackForm,
             secretaryVerificationForm,

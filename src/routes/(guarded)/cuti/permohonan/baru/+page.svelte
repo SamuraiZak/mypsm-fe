@@ -5,6 +5,7 @@
     import {
         LeaveCommonDetailsSchema,
         LeaveDeliveryDetailsSchema,
+        LeaveReplacementDetailsSchema,
         LeaveStudyDetailsSchema,
         LeaveUnrecordedDetailsSchema,
     } from '$lib/schemas/mypsm/leave/leave.schema';
@@ -25,9 +26,11 @@
     import {
         _leaveCommonFormSubmit,
         _leaveDeliveryFormSubmit,
+        _leaveReplacementFormSubmit,
         _leaveStudyFormSubmit,
         _leaveUnrecordedFormSubmit,
     } from './+page';
+    import CustomTimeField from '$lib/components/inputs/time-field/CustomTimeField.svelte';
 
     export let data: PageData;
 
@@ -105,6 +108,26 @@
         },
     });
 
+    // replacement leave
+    const {
+        form: leaveReplacementForm,
+        errors: leaveReplacementErrors,
+        enhance: leaveReplacementEnhance,
+    } = superForm(data.forms.leaveReplacementForm, {
+        id: 'leaveReplacementForm',
+        SPA: true,
+        validators: zodClient(LeaveReplacementDetailsSchema),
+        onSubmit(input) {
+            $leaveReplacementForm.leaveTypeCode =
+                data.props.currentLeaveType.code;
+
+            _leaveReplacementFormSubmit(
+                $leaveReplacementForm,
+                data.props.currentLeaveType,
+            );
+        },
+    });
+
     function handleLeaveTypeChange() {
         let currentLeaveType: LookupDTO =
             LeaveTypeConstant.list.find(
@@ -152,6 +175,13 @@
                 {:else if data.props.currentLeaveTypeCode == LeaveTypeConstant.studyLeave.code}
                     <TextIconButton
                         form="leaveStudyForm"
+                        type="primary"
+                        label="Hantar"
+                        icon="check"
+                    ></TextIconButton>
+                {:else if data.props.currentLeaveTypeCode == LeaveTypeConstant.replacementLeave.code}
+                    <TextIconButton
+                        form="leaveReplacementForm"
                         type="primary"
                         label="Hantar"
                         icon="check"
@@ -357,7 +387,7 @@
                                 </div>
                             </form>
                         {:else if data.props.currentLeaveTypeCode == LeaveTypeConstant.studyLeave.code}
-                            <!-- DELIVERY LEAVE -->
+                            <!-- STUDY LEAVE -->
                             <form
                                 id="leaveStudyForm"
                                 method="POST"
@@ -462,6 +492,144 @@
                                         bind:val={$leaveStudyForm.reason}
                                         errors={$leaveStudyErrors.reason}
                                     ></CustomTextField>
+                                </div>
+                            </form>
+                        {:else if data.props.currentLeaveTypeCode == LeaveTypeConstant.replacementLeave.code}
+                            <form
+                                id="leaveReplacementForm"
+                                method="POST"
+                                use:leaveReplacementEnhance
+                                class="flex w-full flex-col items-center justify-start gap-2"
+                            >
+                                <!-- REASON -->
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomTextField
+                                        id="reason"
+                                        type="text"
+                                        label={'Alasan'}
+                                        bind:val={$leaveReplacementForm.reason}
+                                        errors={$leaveReplacementErrors.reason}
+                                    ></CustomTextField>
+                                </div>
+
+                                <!-- DUTY DESCRIPTION -->
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomTextField
+                                        id="dutyDescription"
+                                        type="text"
+                                        label={'Tugas'}
+                                        bind:val={$leaveReplacementForm.dutyDescription}
+                                        errors={$leaveReplacementErrors.dutyDescription}
+                                    ></CustomTextField>
+                                </div>
+
+                                <!-- DUTY LOCATION -->
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomTextField
+                                        id="dutyLocation"
+                                        type="text"
+                                        label={'Tempat Bertugas'}
+                                        bind:val={$leaveReplacementForm.dutyLocation}
+                                        errors={$leaveReplacementErrors.dutyLocation}
+                                    ></CustomTextField>
+                                </div>
+
+                                <!-- DUTY DATE -->
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomTextField
+                                        id="startDate"
+                                        type="date"
+                                        label={'Tarikh Bertugas Lebih Masa / Luar Waktu Pejabat'}
+                                        bind:val={$leaveReplacementForm.dutyDate}
+                                        errors={$leaveReplacementErrors.dutyDate}
+                                    ></CustomTextField>
+                                </div>
+
+                                <!-- DUTY TIME -->
+                                <div
+                                    class="flex w-full flex-row items-center justify-center gap-2"
+                                >
+                                    <CustomTimeField
+                                        id="dutyStartTime"
+                                        label={'Masa Mula Bertugas'}
+                                        bind:val={$leaveReplacementForm.dutyStartTime}
+                                        errors={$leaveReplacementErrors.dutyStartTime}
+                                    ></CustomTimeField>
+                                    <CustomTimeField
+                                        id="dutyEndTime"
+                                        label={'Masa Tamat Bertugas'}
+                                        bind:val={$leaveReplacementForm.dutyEndTime}
+                                        errors={$leaveReplacementErrors.dutyEndTime}
+                                    ></CustomTimeField>
+                                </div>
+
+                                <!-- SUBSTITUTE -->
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomSelectField
+                                        id="startHalfDayOption"
+                                        label={'Pengganti'}
+                                        bind:val={$leaveReplacementForm.substituteIC}
+                                        errors={$leaveReplacementErrors.substituteIC}
+                                        options={data.props.employeeDropdown}
+                                    ></CustomSelectField>
+                                </div>
+
+                                <!-- START -->
+                                <div
+                                    class="flex w-full flex-row items-center justify-center gap-2"
+                                >
+                                    <CustomTextField
+                                        id="startDate"
+                                        type="date"
+                                        label={'Tarikh Mula'}
+                                        bind:val={$leaveReplacementForm.startDate}
+                                        errors={$leaveReplacementErrors.startDate}
+                                    ></CustomTextField>
+
+                                    <CustomSelectField
+                                        id="startHalfDayOption"
+                                        label={'Setengah Hari'}
+                                        bind:val={$leaveReplacementForm.startHalfDayOption}
+                                        errors={$leaveReplacementErrors.startHalfDayOption}
+                                        options={data.props
+                                            .halfDayOptionDropdown}
+                                    ></CustomSelectField>
+                                    <CustomSelectField
+                                        id="startHalfDayOption"
+                                        label={'Pagi / Petang'}
+                                        bind:val={$leaveReplacementForm.startHalfDayOption}
+                                        errors={$leaveReplacementErrors.startHalfDayOption}
+                                        options={data.props.halfDayTypeDropdown}
+                                    ></CustomSelectField>
+                                </div>
+
+                                <!-- END -->
+                                <div
+                                    class="flex w-full flex-row items-center justify-center gap-2"
+                                >
+                                    <CustomTextField
+                                        id="endDate"
+                                        type="date"
+                                        label={'Tarikh Tamat'}
+                                        bind:val={$leaveReplacementForm.endDate}
+                                        errors={$leaveReplacementErrors.endDate}
+                                    ></CustomTextField>
+
+                                    <CustomSelectField
+                                        id="endHalfDayOption"
+                                        label={'Setengah Hari'}
+                                        bind:val={$leaveReplacementForm.endHalfDayOption}
+                                        errors={$leaveReplacementErrors.endHalfDayOption}
+                                        options={data.props
+                                            .halfDayOptionDropdown}
+                                    ></CustomSelectField>
+                                    <CustomSelectField
+                                        id="startHalfDayOption"
+                                        label={'Pagi / Petang'}
+                                        bind:val={$leaveReplacementForm.startHalfDayOption}
+                                        errors={$leaveReplacementErrors.startHalfDayOption}
+                                        options={data.props.halfDayTypeDropdown}
+                                    ></CustomSelectField>
                                 </div>
                             </form>
                         {:else}
