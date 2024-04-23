@@ -13,6 +13,7 @@ import { commonIdRequestDTOConvert, type commonIdRequestDTO } from "$lib/dto/cor
 import { ActingDetailsConvert, type ActingDetails } from "$lib/dto/mypsm/employment/acting/acting-result.dto";
 import { UpdateMainPromotionMeetingConvert, type UpdateMainPromotionMeeting } from "$lib/dto/mypsm/employment/acting/main-update-promotion-meeting.dto";
 import { QuarterCommonApprovalConvert, type QuarterCommonApproval } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto";
+import { EmployeePostponeConvert, type EmployeePostpone } from "$lib/dto/mypsm/employment/acting/acting-employee-form.dto";
 
 
 export class EmploymentActingServices {
@@ -70,6 +71,30 @@ export class EmploymentActingServices {
     static async getMainList(param: CommonListRequestDTO) {
         try{
             const url: Input = 'employment/acting/mains/list';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await promiseRes;
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //table for employee acting offer
+    static async getEmployeeActingOffer(param: CommonListRequestDTO) {
+        try{
+            const url: Input = 'employment/acting/employee/list';
 
             const promiseRes: Promise<Response> = http
                 .post(url, {
@@ -827,6 +852,32 @@ export class EmploymentActingServices {
             const promiseRes: Promise<Response> = http
                 .post(url, {
                     body: UpdateMainPromotionMeetingConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await getPromiseToast(promiseRes);
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    await invalidateAll();
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // update employee postpone form
+    static async editPostponeStatus (param: EmployeePostpone) {
+        try{
+            const url: Input = 'employment/acting/employee/postpone_detail/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: EmployeePostponeConvert.toJson(param),
                 })
                 .json();
 
