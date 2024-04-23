@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { error } from '@sveltejs/kit';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import type { LayoutData } from './$types';
     import { goto } from '$app/navigation';
@@ -14,9 +15,9 @@
     export let data: LayoutData;
     let rowData: ConfirmationListResponseDTO;
 
-    // Table list - Charge Table
+    // Table list - all Table
     let confirmationListTable: TableSettingDTO = {
-        param: data.param ?? data.param,
+        param: data.param,
         meta: data.responses.confirmationInServiceListResponse.data?.meta ?? {
             pageSize: 1,
             pageNum: 1,
@@ -39,7 +40,16 @@
                 malay: 'Tarikh Mula Perkhidmatan',
             },
         ],
-        url: 'employment/confirmation/list',
+        url:
+            data.roles.isEmploymentSecretaryRole || data.roles.isStaffRole
+                ? 'employment/confirmation/list'
+                : data.roles.isStateDirectorRole
+                  ? 'employment/confirmation/director/list'
+                  : data.roles.isIntegrityDirectorRole
+                    ? 'employment/confirmation/integrity/list'
+                    : data.roles.isAuditDirectorRole
+                      ? 'employment/confirmation/audit/list'
+                      : error(401, { message: 'Tiada akses kepada laman ini' }),
         id: 'confirmationListTable',
         option: {
             checkbox: false,
@@ -53,39 +63,92 @@
         },
     };
 
-    // Suspension Table
-    let suspendListTable: TableSettingDTO = {
-        param: data.param,
-        meta: {
+    // exceeds 3 years Table
+    let confirmationExceedsThreeYearsListTable: TableSettingDTO = {
+        param: data.exceedsThreeYearsParam,
+        meta: data.responses.confirmationInServiceExceedsThreeYearsListResponse
+            .data?.meta ?? {
             pageSize: 1,
             pageNum: 1,
             totalData: 1,
             totalPage: 1,
         },
-        data: [],
+        data:
+            (data.responses.confirmationInServiceExceedsThreeYearsListResponse
+                .data?.dataList as ConfirmationListResponseDTO[]) ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['integrityId', 'employeeId', 'declarationLetter'],
+        hiddenColumn: ['id'],
         dictionary: [
             {
-                english: 'suspendMeetingDate',
-                malay: 'Tarikh Mesyuarat Tahan Kerja',
+                english: 'positionByBoard',
+                malay: 'Jawatan Mengikut Waran',
             },
             {
-                english: 'suspendMeetingResult',
-                malay: 'Keputusan Mesyuarat Tahan Kerja',
-            },
-            {
-                english: 'disciplinaryType',
-                malay: 'Jenis Prosiding Tatatertib',
-            },
-            {
-                english: 'isAppeal',
-                malay: 'Rayuan Dikemuka',
+                english: 'employedDate',
+                malay: 'Tarikh Mula Perkhidmatan',
             },
         ],
-        url: 'integrity/proceeding/suspension/list',
-        id: 'suspendListTable',
+        url:
+            data.roles.isEmploymentSecretaryRole || data.roles.isStaffRole
+                ? 'employment/confirmation/list'
+                : data.roles.isStateDirectorRole
+                  ? 'employment/confirmation/director/list'
+                  : data.roles.isIntegrityDirectorRole
+                    ? 'employment/confirmation/integrity/list'
+                    : data.roles.isAuditDirectorRole
+                      ? 'employment/confirmation/audit/list'
+                      : error(401, { message: 'Tiada akses kepada laman ini' }),
+        id: 'confirmationExceedsThreeYearsListTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
+    };
+
+    // rationalisation Table
+    let confirmationRationalisationListTable: TableSettingDTO = {
+        param: data.rationalisationParam,
+        meta: data.responses.confirmationInServiceRationalisationListResponse
+            .data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data:
+            (data.responses.confirmationInServiceRationalisationListResponse
+                .data?.dataList as ConfirmationListResponseDTO[]) ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['id'],
+        dictionary: [
+            {
+                english: 'positionByBoard',
+                malay: 'Jawatan Mengikut Waran',
+            },
+            {
+                english: 'employedDate',
+                malay: 'Tarikh Mula Perkhidmatan',
+            },
+        ],
+        url:
+            data.roles.isEmploymentSecretaryRole || data.roles.isStaffRole
+                ? 'employment/confirmation/list'
+                : data.roles.isStateDirectorRole
+                  ? 'employment/confirmation/director/list'
+                  : data.roles.isIntegrityDirectorRole
+                    ? 'employment/confirmation/integrity/list'
+                    : data.roles.isAuditDirectorRole
+                      ? 'employment/confirmation/audit/list'
+                      : error(401, { message: 'Tiada akses kepada laman ini' }),
+        id: 'confirmationRationalisationListTable',
         option: {
             checkbox: false,
             detail: true,
@@ -126,9 +189,6 @@
 
                             goto(route);
                         }}
-                        addActions={() => {
-                            goto('./prosiding/tambah-prosiding');
-                        }}
                     >
                         <FilterWrapper slot="filter">
                             <FilterTextField
@@ -167,44 +227,35 @@
                     <div class="h h-fit w-full">
                         <DataTable
                             title="Senarai Rekod Pengesahan Yang Melebihi Tempoh 3 Tahun"
-                            bind:tableData={suspendListTable}
+                            bind:tableData={confirmationExceedsThreeYearsListTable}
                             bind:passData={rowData}
                             detailActions={() => {
-                                const route = `./prosiding/suspend-${rowData.id}`;
+                                const route = `./pengesahan-dalam-perkhidmatan/${rowData.id}`;
 
                                 goto(route);
-                            }}
-                            addActions={() => {
-                                goto('./prosiding/tambah-prosiding');
                             }}
                         >
                             <FilterWrapper slot="filter">
                                 <FilterTextField
                                     label="No. Pekerja"
-                                    bind:inputValue={suspendListTable.param
-                                        .filter.employeeNumber}
+                                    bind:inputValue={confirmationExceedsThreeYearsListTable
+                                        .param.filter.employeeNumber}
                                 ></FilterTextField>
                                 <FilterTextField
                                     label="Nama Kakitangan"
-                                    bind:inputValue={suspendListTable.param
-                                        .filter.name}
+                                    bind:inputValue={confirmationExceedsThreeYearsListTable
+                                        .param.filter.name}
                                 ></FilterTextField>
                                 <FilterTextField
                                     label="No. Kad Pengenalan"
-                                    bind:inputValue={suspendListTable.param
-                                        .filter.identityCardNumber}
+                                    bind:inputValue={confirmationExceedsThreeYearsListTable
+                                        .param.filter.identityCard}
                                 ></FilterTextField>
-                                <FilterSelectField
-                                    label="Jawatan Semasa"
-                                    options={data.selectionOptions.statusLookup}
-                                    bind:inputValue={suspendListTable.param
-                                        .filter.status}
-                                ></FilterSelectField>
                                 <FilterSelectField
                                     label="Status"
                                     options={data.selectionOptions.statusLookup}
-                                    bind:inputValue={suspendListTable.param
-                                        .filter.status}
+                                    bind:inputValue={confirmationExceedsThreeYearsListTable
+                                        .param.filter.status}
                                 ></FilterSelectField>
                             </FilterWrapper>
                         </DataTable>
@@ -224,44 +275,35 @@
                     <div class="h h-fit w-full">
                         <DataTable
                             title="Senarai Rekod Pengesahan Lantikan ke Gred/Skim Baru (Rasionalisasi)"
-                            bind:tableData={suspendListTable}
+                            bind:tableData={confirmationRationalisationListTable}
                             bind:passData={rowData}
                             detailActions={() => {
-                                const route = `./prosiding/suspend-${rowData.id}`;
+                                const route = `./pengesahan-dalam-perkhidmatan/${rowData.id}`;
 
                                 goto(route);
-                            }}
-                            addActions={() => {
-                                goto('./prosiding/tambah-prosiding');
                             }}
                         >
                             <FilterWrapper slot="filter">
                                 <FilterTextField
                                     label="No. Pekerja"
-                                    bind:inputValue={suspendListTable.param
-                                        .filter.employeeNumber}
+                                    bind:inputValue={confirmationRationalisationListTable
+                                        .param.filter.employeeNumber}
                                 ></FilterTextField>
                                 <FilterTextField
                                     label="Nama Kakitangan"
-                                    bind:inputValue={suspendListTable.param
-                                        .filter.name}
+                                    bind:inputValue={confirmationRationalisationListTable
+                                        .param.filter.name}
                                 ></FilterTextField>
                                 <FilterTextField
                                     label="No. Kad Pengenalan"
-                                    bind:inputValue={suspendListTable.param
-                                        .filter.identityCardNumber}
+                                    bind:inputValue={confirmationRationalisationListTable
+                                        .param.filter.identityCard}
                                 ></FilterTextField>
-                                <FilterSelectField
-                                    label="Jawatan Semasa"
-                                    options={data.selectionOptions.statusLookup}
-                                    bind:inputValue={suspendListTable.param
-                                        .filter.status}
-                                ></FilterSelectField>
                                 <FilterSelectField
                                     label="Status"
                                     options={data.selectionOptions.statusLookup}
-                                    bind:inputValue={suspendListTable.param
-                                        .filter.status}
+                                    bind:inputValue={confirmationRationalisationListTable
+                                        .param.filter.status}
                                 ></FilterSelectField>
                             </FilterWrapper>
                         </DataTable>

@@ -1,7 +1,11 @@
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto.js';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
-import type { ConfirmationFullDetailResponseDTO } from '$lib/dto/mypsm/employment/confirmation/confirmation_request_response.dto.js';
+import type {
+    ConfirmationApprovalDTO,
+    ConfirmationFullDetailResponseDTO,
+    ConfirmationMeetingResultRequestDTO,
+} from '$lib/dto/mypsm/employment/confirmation/confirmation_request_response.dto.js';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _confirmationApprovalSchema,
@@ -10,8 +14,8 @@ import {
     _confirmationMeetingResultSchema,
     _confirmationPersonalDetailSchema,
     _confirmationServiceSchema,
+    _updateConfirmationMeetingResultSchema,
 } from '$lib/schemas/mypsm/employment/confirmation-in-service/schema.js';
-import { _proceedingApproverSchema } from '$lib/schemas/mypsm/integrity/proceeding-scheme';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { ConfirmationServices } from '$lib/services/implementation/mypsm/employment/confirmation-in-service/confirmation.service.js';
 import { error } from '@sveltejs/kit';
@@ -57,6 +61,16 @@ export async function load({ params }) {
         zod(_confirmationDiciplinarySchema),
         { errors: false },
     );
+    const employmentSecretaryInfoForm = await superValidate(
+        confirmationInServiceView.secretary,
+        zod(_confirmationApprovalSchema),
+        { errors: false },
+    );
+    const divisionDirectorInfoForm = await superValidate(
+        confirmationInServiceView.division,
+        zod(_confirmationApprovalSchema),
+        { errors: false },
+    );
     const integrityDirectorApprovalForm = await superValidate(
         confirmationInServiceView.integrity,
         zod(_confirmationApprovalSchema),
@@ -67,12 +81,8 @@ export async function load({ params }) {
         zod(_confirmationApprovalSchema),
         { errors: false },
     );
-    const divisionDirectorInfoForm = await superValidate(
-        confirmationInServiceView.division,
-        zod(_confirmationApprovalSchema),
-        { errors: false },
-    );
     const confirmationMeetingForm = await superValidate(
+        confirmationInServiceView.meeting,
         zod(_confirmationMeetingResultSchema),
         { errors: false },
     );
@@ -312,9 +322,10 @@ export async function load({ params }) {
             serviceInfoForm,
             examsInfoForm,
             diciplinaryInfoForm,
+            employmentSecretaryInfoForm,
+            divisionDirectorInfoForm,
             integrityDirectorApprovalForm,
             auditDirectorInfoForm,
-            divisionDirectorInfoForm,
             confirmationMeetingForm,
         },
         lookups: {
@@ -347,38 +358,117 @@ export async function load({ params }) {
     };
 }
 
-export const _addSuspendsIntegrityDirectorConfirmation = async (
+export const _addConfirmationEmploymentSecretary = async (
+    id: number,
     formData: object,
 ) => {
-    const form = await superValidate(formData, zod(_proceedingApproverSchema));
+    const form = await superValidate(
+        formData,
+        zod(_confirmationApprovalSchema),
+    );
+    form.data.id = id;
 
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    // const response: CommonResponseDTO =
-    //     await ConfirmationServices.createIntegrityDirectorSuspendsConfirmation(
-    //         form.data as ProceedingApproverResultDTO,
-    //     );
+    const response: CommonResponseDTO =
+        await ConfirmationServices.createConfirmationEmploymentSecretaryResult(
+            form.data as ConfirmationApprovalDTO,
+        );
 
-    // return { response };
+    return { response };
 };
 
-export const _addCriminalCancelIntegrityDirectorConfirmation = async (
+export const _addConfirmationStateDirector = async (
+    id: number,
     formData: object,
 ) => {
-    const form = await superValidate(formData, zod(_proceedingApproverSchema));
+    const form = await superValidate(
+        formData,
+        zod(_confirmationApprovalSchema),
+    );
+    form.data.id = id;
 
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    // const response: CommonResponseDTO =
-    //     await ConfirmationServices.createIntegrityDirectorCriminalConfirmation(
-    //         form.data as ProceedingApproverResultDTO,
-    //     );
+    const response: CommonResponseDTO =
+        await ConfirmationServices.createConfirmationStateDirectorResult(
+            form.data as ConfirmationApprovalDTO,
+        );
 
-    // return { response };
+    return { response };
+};
+
+export const _addConfirmationIntegrityDirector = async (
+    id: number,
+    formData: object,
+) => {
+    const form = await superValidate(
+        formData,
+        zod(_confirmationApprovalSchema),
+    );
+    form.data.id = id;
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await ConfirmationServices.createConfirmationIntegrityDirectorResult(
+            form.data as ConfirmationApprovalDTO,
+        );
+
+    return { response };
+};
+
+export const _addConfirmationAuditDirector = async (
+    id: number,
+    formData: object,
+) => {
+    const form = await superValidate(
+        formData,
+        zod(_confirmationApprovalSchema),
+    );
+    form.data.id = id;
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await ConfirmationServices.createConfirmationAuditDirectorResult(
+            form.data as ConfirmationApprovalDTO,
+        );
+
+    return { response };
+};
+
+export const _addConfirmationMeetingResult = async (
+    id: number,
+    formData: object,
+) => {
+    const form = await superValidate(
+        formData,
+        zod(_updateConfirmationMeetingResultSchema),
+    );
+    form.data.id = id;
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await ConfirmationServices.createConfirmationMeetingResult(
+            form.data as ConfirmationMeetingResultRequestDTO,
+        );
+
+    return { response };
 };

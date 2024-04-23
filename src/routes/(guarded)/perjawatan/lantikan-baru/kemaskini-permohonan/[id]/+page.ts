@@ -10,44 +10,31 @@ import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto.js';
 import type {
     Academic,
     CandidateAcademicDetailRequestDTO,
-    CandidateAcademicDetailResponseDTO,
 } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-academic-details.dto.js';
 import type {
     Activity,
     CandidateActivityDetailRequestDTO,
-    CandidateActivityDetailResponseDTO,
 } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-activity.dto.js';
 import type {
     CandidateDependenciesDetailRequestDTO,
-    CandidateDependenciesDetailResponseDTO,
     Dependency,
 } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto.js';
 import type {
     CandidateExperiencesDetailRequestDTO,
-    CandidateExperiencesDetailResponseDTO,
     Experience,
 } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-experience-details.dto.js';
 import type {
     CandidateFamilyDetailRequestDTO,
-    CandidateFamilyDetailResponseDTO,
     Family,
 } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-family-details.dto.js';
 import type {
     CandidateNextOfKinDetailRequestDTO,
-    CandidateNextOfKinDetailResponseDTO,
     NextOfKin,
 } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto.js';
-import type {
-    CandidatePersonalRequestDTO,
-    CandidatePersonalResponseDTO,
-} from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto.js';
-import type { NewHireDocumentsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-documents.dto.js';
+import type { CandidatePersonalRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto.js';
+import type { NewHireFullDetailResponseDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-full-detail-response.dto';
 import type { CandidateNewHireApproverResultDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-get-approver-result.dto';
-import type { NewHireGetApproversDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-get-approvers.dto.js';
-import type {
-    NewHireSecretaryServiceUpdateRequestDTO,
-    NewHireSecretaryServiceUpdateResponseDTO,
-} from '$lib/dto/mypsm/employment/new-hire/new-hire-secretary-service-update.dto.js';
+import type { NewHireSecretaryServiceUpdateRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-secretary-service-update.dto.js';
 import type { NewHireSetApproversDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-set-approvers.dto';
 import { _fileToBase64String } from '$lib/helpers/core/fileToBase64String.helper';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
@@ -62,10 +49,12 @@ import {
     _dependencyListRequestSchema,
     _dependencyListResponseSchema,
     _documentsSchema,
+    _employeeNumberSchema,
     _experienceInfoSchema,
     _experienceListRequestSchema,
     _experienceListResponseSchema,
     _familyListRequestSchema,
+    _getNewHireApproversSchema,
     _nextOfKinListRequestSchema,
     _personalInfoRequestSchema,
     _personalInfoResponseSchema,
@@ -113,6 +102,12 @@ export async function load({ params }) {
         );
     }
 
+    const newHireFullDetailResponse: CommonResponseDTO =
+        await EmploymentServices.getNewHireFullDetail(candidateIdRequestBody);
+
+    const newHireFullDetailView: NewHireFullDetailResponseDTO =
+        newHireFullDetailResponse.data?.details;
+
     const personalDetailResponse: CommonResponseDTO =
         await EmploymentServices.getCurrentCandidatePersonalDetails(
             candidateIdRequestBody,
@@ -157,18 +152,11 @@ export async function load({ params }) {
         await EmploymentServices.getCurrentCandidateSecretaryUpdate(
             candidateIdRequestBody,
         );
-    const serviceDetails: NewHireSecretaryServiceUpdateResponseDTO =
-        serviceResponse.data
-            ?.details as NewHireSecretaryServiceUpdateResponseDTO;
 
     const secretaryApprovalResponse: CommonResponseDTO =
         await EmploymentServices.getCurrentCandidateSecretaryApproval(
             candidateIdRequestBody,
         );
-
-    const secretaryApprovalDetailResponse: CandidateNewHireApproverResultDTO =
-        secretaryApprovalResponse.data
-            ?.details as CandidateNewHireApproverResultDTO;
 
     const secretaryGetApproversResponse: CommonResponseDTO =
         await EmploymentServices.getCurrentCandidateApprovers(
@@ -221,54 +209,49 @@ export async function load({ params }) {
     const employeeLookup: DropdownDTO[] = (
         response.data?.dataList as CommonEmployeeDTO[]
     ).map((data) => ({
-        value: data.employeeNumber,
-        name: data.employeeNumber,
+        value: Number(data.employeeNumber),
+        name: String(data.employeeNumber),
     }));
 
     // ============================================================
     // Superformed the data
     // ============================================================
     const personalInfoForm = await superValidate(
-        personalDetailResponse.data?.details as CandidatePersonalResponseDTO,
+        newHireFullDetailView.personalDetail,
         zod(_personalInfoResponseSchema),
         { errors: false },
     );
 
     const academicInfoForm = await superValidate(
-        academicInfoResponse.data
-            ?.details as CandidateAcademicDetailResponseDTO,
+        newHireFullDetailView.academic,
         zod(_academicListResponseSchema),
         { errors: false },
     );
 
     const experienceInfoForm = await superValidate(
-        experienceInfoResponse.data
-            ?.details as CandidateExperiencesDetailResponseDTO,
+        newHireFullDetailView.experience,
         zod(_experienceListResponseSchema),
         { errors: false },
     );
     const activityInfoForm = await superValidate(
-        activityInfoResponse.data
-            ?.details as CandidateActivityDetailResponseDTO,
+        newHireFullDetailView.activity,
         zod(_activityListResponseSchema),
         { errors: false },
     );
 
     const familyInfoForm = await superValidate(
-        familyInfoResponse.data?.details as CandidateFamilyDetailResponseDTO,
+        newHireFullDetailView.family,
         zod(_dependencyListResponseSchema),
         { errors: false, id: 'familyFormId' },
     );
 
     const dependencyInfoForm = await superValidate(
-        dependencyInfoResponse.data
-            ?.details as CandidateDependenciesDetailResponseDTO,
+        newHireFullDetailView.dependent,
         zod(_dependencyListResponseSchema),
         { errors: false, id: 'dependencyFormId' },
     );
     const nextOfKinInfoForm = await superValidate(
-        nextOfKinInfoResponse.data
-            ?.details as CandidateNextOfKinDetailResponseDTO,
+        newHireFullDetailView.nextOfKin,
         zod(_dependencyListResponseSchema),
         { errors: false, id: 'nextOfKinFormId' },
     );
@@ -296,40 +279,43 @@ export async function load({ params }) {
     });
 
     const serviceInfoForm = await superValidate(
-        serviceDetails,
+        newHireFullDetailView.secretaryUpdate,
         zod(_serviceInfoResponseSchema),
         { errors: false },
     );
 
     const secretaryApprovalInfoForm = await superValidate(
-        secretaryApprovalDetailResponse,
+        newHireFullDetailView.secretaryApproval,
         zod(_approvalResultSchema),
         { errors: false, id: 'secretaryApprovalInfoFormId' },
     );
     const supporterApprovalForm = await superValidate(
-        supporterResultResponse.data
-            ?.details as CandidateNewHireApproverResultDTO,
+        newHireFullDetailView.supporter,
         zod(_approvalResultSchema),
         { errors: false, id: 'supporterApprovalId' },
     );
     const approverApprovalForm = await superValidate(
-        approverResultResponse.data
-            ?.details as CandidateNewHireApproverResultDTO,
+        newHireFullDetailView.approver,
         zod(_approvalResultSchema),
         { errors: false, id: 'approverApprovalId' },
     );
 
     const secretarySetApproversForm = await superValidate(
-        secretaryGetApproversResponse.data?.details as NewHireGetApproversDTO,
-        zod(_setApproversSchema),
+        newHireFullDetailView.supporterApprover,
+        zod(_getNewHireApproversSchema),
         { errors: false },
     );
 
     const submittedDocuments = await superValidate(
-        documentInfoResponse.data?.details as NewHireDocumentsDTO,
+        newHireFullDetailView.document,
         zod(_documentsSchema),
         { errors: false },
     );
+    const newHireEmployeeNumberForm = await superValidate(
+        newHireFullDetailView.employeeNumber,
+        zod(_employeeNumberSchema),
+    );
+
     const newHireDocumentForm = await superValidate(
         zod(_uploadDocumentsSchema),
     );
@@ -501,7 +487,7 @@ export async function load({ params }) {
         await LookupServices.getServiceGradeEnums();
 
     const gradeLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsNameIsCode(gradeLookupResponse);
+        LookupServices.setSelectOptions(gradeLookupResponse);
 
     // ===========================================================================
 
@@ -550,6 +536,23 @@ export async function load({ params }) {
 
     // ===========================================================================
 
+    const programLookupResponse: CommonResponseDTO =
+        await LookupServices.getProgrammeEnums();
+
+    const programLookup: DropdownDTO[] = LookupServices.setSelectOptions(
+        programLookupResponse,
+    );
+
+    // ===========================================================================
+
+    const schemeLookupResponse: CommonResponseDTO =
+        await LookupServices.getSchemeEnums();
+
+    const schemeLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(schemeLookupResponse);
+
+    // ===========================================================================
+
     const generalLookup: DropdownDTO[] = [
         {
             value: true,
@@ -564,6 +567,8 @@ export async function load({ params }) {
     // ===========================================================================
 
     return {
+        params,
+        newHireFullDetailView,
         newHireId,
         newHireStatusResponse,
         personalDetailResponse,
@@ -601,6 +606,7 @@ export async function load({ params }) {
         submittedDocuments,
         mypsmIDResponse,
         relationshipLookupResponse,
+        newHireEmployeeNumberForm,
         selectionOptions: {
             identityCardColorLookup,
             cityLookup,
@@ -613,8 +619,10 @@ export async function load({ params }) {
             genderLookup,
             maritalLookup,
             positionLookup,
+            programLookup,
             relationshipLookup,
             institutionLookup,
+            schemeLookup,
             educationLookup,
             sponsorshipLookup,
             majorMinorLookup,
@@ -760,7 +768,7 @@ export const _submitNextOfKinForm = async (formData: object) => {
 
 export const _submitServiceForm = async (formData: object) => {
     const form = await superValidate(formData, zod(_serviceInfoRequestSchema));
-
+    console.log(form);
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
@@ -822,8 +830,12 @@ export const _submitApproverApprovalForm = async (formData: object) => {
     return { response };
 };
 
-export const _submitSecretarySetApproverForm = async (formData: object) => {
+export const _submitSecretarySetApproverForm = async (
+    id: number,
+    formData: object,
+) => {
     const form = await superValidate(formData, zod(_setApproversSchema));
+    form.data.candidateId = id;
 
     if (!form.valid) {
         getErrorToast();
@@ -838,7 +850,7 @@ export const _submitSecretarySetApproverForm = async (formData: object) => {
     return { response };
 };
 
-export const _submitDocumentForm = async (id: number, files: File[]) => {
+export const _submitDocumentForm = async (files: File[]) => {
     const documentData = new FormData();
 
     // check file size validation
@@ -848,7 +860,7 @@ export const _submitDocumentForm = async (id: number, files: File[]) => {
 
     const form = await superValidate(documentData, zod(_uploadDocumentsSchema));
 
-    if (!form.valid || id === undefined) {
+    if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
@@ -857,14 +869,12 @@ export const _submitDocumentForm = async (id: number, files: File[]) => {
     const base64String = await _fileToBase64String(files[0]);
 
     const requestBody: {
-        id: number;
         document?: DocumentBase64RequestDTO | undefined;
     } = {
         document: {
             base64: base64String,
             name: files[0].name,
         },
-        id: id,
     };
 
     const response: CommonResponseDTO =

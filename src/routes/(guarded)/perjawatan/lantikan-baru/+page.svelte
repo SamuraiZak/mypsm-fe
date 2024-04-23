@@ -7,7 +7,10 @@
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type {
+        TableDTO,
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
     import type { LayoutData } from './$types';
 
     import {
@@ -20,6 +23,8 @@
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import DataTable from '$lib/components/table/DataTable.svelte';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
 
     export let data: LayoutData;
     let rowData: any;
@@ -164,6 +169,39 @@
             approverViewTable.param.pageNum = approverViewTable.meta.pageNum;
         });
     }
+
+    // Table list - New Hire Candidate
+    let newCandidateListTable: TableSettingDTO = {
+        param: data.param ?? data.param,
+        meta: data.responses.candidateViewResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.responses.candidateViewResponse.data?.dataList ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['id'],
+        dictionary: [
+            {
+                english: 'meetingNo',
+                malay: 'Nombor Mesyuarat',
+            },
+        ],
+        url: 'employment/new_hire/personal_detail/list',
+        id: 'newCandidateListTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
+    };
 </script>
 
 <!-- content header starts here -->
@@ -183,18 +221,35 @@
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                <CustomTable
-                    title="Senarai Lantikan Baru"
-                    onUpdate={_searchCandidateView}
-                    enableDetail
-                    bind:tableData={candidateViewTable}
+                <DataTable
+                    title="Senarai Rekod Mesyuarat Tawaran Baru"
+                    bind:tableData={newCandidateListTable}
                     bind:passData={rowData}
                     detailActions={() => {
                         const route = `./lantikan-baru/kemaskini-permohonan/${rowData.candidateId}`;
 
                         goto(route);
                     }}
-                ></CustomTable>
+                >
+                    <FilterWrapper slot="filter">
+                        <FilterTextField
+                            label="Nama Mesyuarat"
+                            bind:inputValue={newCandidateListTable.param.filter
+                                .meetingName}
+                        ></FilterTextField>
+                        <!-- <FilterDateField
+                            label="Tarikh Mesyuarat"
+                            bind:inputValue={newCandidateListTable.param
+                                .filter.meetingDate}
+                        ></FilterDateField> -->
+                        <FilterSelectField
+                            label="Status"
+                            options={data.selectionOptions.statusLookup}
+                            bind:inputValue={newCandidateListTable.param.filter
+                                .status}
+                        ></FilterSelectField>
+                    </FilterWrapper>
+                </DataTable>
             </div>
         </div>
     {:else if data.isEmploymentSecretaryRole}

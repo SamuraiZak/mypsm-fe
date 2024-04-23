@@ -30,13 +30,31 @@
         _sentenceSchema,
     } from '$lib/schemas/mypsm/integrity/proceeding-scheme';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
-    import { certifyOptions } from '$lib/constants/core/radio-option-constants';
+    import {
+        approveOptions,
+        certifyOptions,
+        confirmOptions,
+    } from '$lib/constants/core/radio-option-constants';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import {
+        _confirmationApprovalSchema,
+        _confirmationMeetingResultSchema,
+    } from '$lib/schemas/mypsm/employment/confirmation-in-service/schema';
+    import {
+        _addConfirmationAuditDirector,
+        _addConfirmationEmploymentSecretary,
+        _addConfirmationIntegrityDirector,
+        _addConfirmationMeetingResult,
+        _addConfirmationStateDirector,
+    } from './+page';
     export let data: PageData;
 
     let confirmationEmploymentSecretaryIsApproved = writable<boolean>(false);
     let confirmationDivisionDirectorIsApproved = writable<boolean>(false);
     let confirmationIntegrityDirectorIsApproved = writable<boolean>(false);
     let confirmationAuditDirectorIsApproved = writable<boolean>(false);
+    let confirmationMeetingResultIsApproved = writable<boolean>(false);
+
     let isReadOnlyEmploymentSecretaryConfirmationInServiceApproval =
         writable<boolean>(false);
     let isReadOnlyDivisionDirectorConfirmationInServiceApproval =
@@ -45,14 +63,15 @@
         writable<boolean>(false);
     let isReadOnlyAuditDirectorConfirmationInServiceApproval =
         writable<boolean>(false);
+    let isReadOnlyConfirmationInServiceMeetingResult = writable<boolean>(false);
 
     $: {
-        if (data.view.confirmationInServiceView.integrity.status !== null) {
+        if (data.view.confirmationInServiceView.secretary.status !== null) {
             isReadOnlyEmploymentSecretaryConfirmationInServiceApproval.set(
                 true,
             );
 
-            data.view.confirmationInServiceView.integrity.status
+            data.view.confirmationInServiceView.secretary.status
                 ? confirmationEmploymentSecretaryIsApproved.set(true)
                 : confirmationEmploymentSecretaryIsApproved.set(false);
         } else {
@@ -87,6 +106,16 @@
         } else {
             isReadOnlyAuditDirectorConfirmationInServiceApproval.set(false);
         }
+
+        if (data.view.confirmationInServiceView.meeting.isReadonly) {
+            isReadOnlyConfirmationInServiceMeetingResult.set(true);
+
+            data.view.confirmationInServiceView.meeting.meetingResult
+                ? confirmationMeetingResultIsApproved.set(true)
+                : confirmationMeetingResultIsApproved.set(false);
+        } else {
+            isReadOnlyConfirmationInServiceMeetingResult.set(false);
+        }
     }
 
     // Superforms
@@ -118,23 +147,24 @@
     );
 
     const {
-        form: integrityDirectorDetailForm,
-        errors: integrityDirectorDetailFormErrors,
-        enhance: integrityDirectorDetailFormEnhance,
-    } = superForm(data.forms.integrityDirectorApprovalForm, {
+        form: employmentSecretaryDetailForm,
+        errors: employmentSecretaryDetailFormErrors,
+        enhance: employmentSecretaryDetailFormEnhance,
+    } = superForm(data.forms.employmentSecretaryInfoForm, {
         SPA: true,
         dataType: 'json',
-        validators: false,
-    });
-
-    const {
-        form: auditDirectorDetailForm,
-        errors: auditDirectorDetailFormErrors,
-        enhance: auditDirectorDetailFormEnhance,
-    } = superForm(data.forms.auditDirectorInfoForm, {
-        SPA: true,
-        dataType: 'json',
-        validators: false,
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_confirmationApprovalSchema),
+        taintedMessage: false,
+        onSubmit() {
+            _addConfirmationEmploymentSecretary(
+                Number(data.params.id),
+                $employmentSecretaryDetailForm,
+            );
+        },
     });
 
     const {
@@ -144,7 +174,60 @@
     } = superForm(data.forms.divisionDirectorInfoForm, {
         SPA: true,
         dataType: 'json',
-        validators: false,
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_confirmationApprovalSchema),
+        taintedMessage: false,
+        onSubmit() {
+            _addConfirmationStateDirector(
+                Number(data.params.id),
+                $divisionDirectorDetaiForm,
+            );
+        },
+    });
+
+    const {
+        form: integrityDirectorDetailForm,
+        errors: integrityDirectorDetailFormErrors,
+        enhance: integrityDirectorDetailFormEnhance,
+    } = superForm(data.forms.integrityDirectorApprovalForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_confirmationApprovalSchema),
+        taintedMessage: false,
+        onSubmit() {
+            _addConfirmationIntegrityDirector(
+                Number(data.params.id),
+                $integrityDirectorDetailForm,
+            );
+        },
+    });
+
+    const {
+        form: auditDirectorDetailForm,
+        errors: auditDirectorDetailFormErrors,
+        enhance: auditDirectorDetailFormEnhance,
+    } = superForm(data.forms.auditDirectorInfoForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_confirmationApprovalSchema),
+        taintedMessage: false,
+        onSubmit() {
+            _addConfirmationAuditDirector(
+                Number(data.params.id),
+                $auditDirectorDetailForm,
+            );
+        },
     });
 
     const {
@@ -154,7 +237,18 @@
     } = superForm(data.forms.confirmationMeetingForm, {
         SPA: true,
         dataType: 'json',
-        validators: false,
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_confirmationMeetingResultSchema),
+        taintedMessage: false,
+        onSubmit() {
+            _addConfirmationMeetingResult(
+                Number(data.params.id),
+                $confirmationMeetingDetailForm,
+            );
+        },
     });
 
     // Table list
@@ -214,10 +308,10 @@
 </script>
 
 <ContentHeader title="Maklumat Prosiding Tatatertib">
-    {#if $isReadOnlyAuditDirectorConfirmationInServiceApproval}
-        <Badge color="dark">Proses Pengesahan dalam Perkhidmatan Sah</Badge>
+    {#if $isReadOnlyConfirmationInServiceMeetingResult && $confirmationMeetingResultIsApproved}
+        <Badge color="dark">Proses Pengesahan dalam Perkhidmatan Tamat</Badge>
     {/if}
-    {#if ($confirmationEmploymentSecretaryIsApproved && !$confirmationEmploymentSecretaryIsApproved) || ($isReadOnlyDivisionDirectorConfirmationInServiceApproval && !confirmationDivisionDirectorIsApproved) || ($isReadOnlyIntegrityDirectorConfirmationInServiceApproval && !confirmationIntegrityDirectorIsApproved) || ($isReadOnlyAuditDirectorConfirmationInServiceApproval && !confirmationAuditDirectorIsApproved)}
+    {#if ($isReadOnlyEmploymentSecretaryConfirmationInServiceApproval && !$confirmationEmploymentSecretaryIsApproved) || ($isReadOnlyDivisionDirectorConfirmationInServiceApproval && !confirmationDivisionDirectorIsApproved) || ($isReadOnlyIntegrityDirectorConfirmationInServiceApproval && !confirmationIntegrityDirectorIsApproved) || ($isReadOnlyAuditDirectorConfirmationInServiceApproval && !confirmationAuditDirectorIsApproved) || ($isReadOnlyConfirmationInServiceMeetingResult && !$confirmationMeetingResultIsApproved)}
         <Badge color="red">Proses Pengesahan dalam Perkhidmatan Tidak Sah</Badge
         >
     {/if}
@@ -581,7 +675,7 @@
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2.5">
                 <DataTable
-                    title="Senarai Peperiksaan Perkhidmatan / Kursus Induksi  "
+                    title="Sejarah Peperiksaan(Perkhidmatan/Kursus Induksi) Yang Pernah Diduduki"
                     bind:tableData={examsListTable}
                 />
             </div>
@@ -592,7 +686,7 @@
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2.5">
                 <DataTable
-                    title="Tapisan Tatatertib"
+                    title="Sejarah Tindakan Tatatertib yang Dikenakan"
                     bind:tableData={diciplinaryListTable}
                 />
             </div>
@@ -602,17 +696,17 @@
         <StepperContentHeader
             title="Keputusan Pengesahan Dalam Perhidmatan Daripada Peranan - Peranan Bertanggungjawab"
         >
-            {#if !$isReadOnlyIntegrityDirectorConfirmationInServiceApproval && data.roles.isEmploymentSecretaryRole}
+            {#if !$isReadOnlyEmploymentSecretaryConfirmationInServiceApproval && data.roles.isEmploymentSecretaryRole}
                 <TextIconButton
                     type="primary"
                     label="Simpan"
-                    form="integrityDirectorDetailForm"
+                    form="employmentSecretaryDetailForm"
                 ></TextIconButton>
             {:else if !$isReadOnlyDivisionDirectorConfirmationInServiceApproval && data.roles.isStateDirectorRole}
                 <TextIconButton
                     type="primary"
                     label="Simpan"
-                    form="integrityDirectorDetailForm"
+                    form="divisionDirectorDetaiForm"
                 ></TextIconButton>
             {:else if !$isReadOnlyIntegrityDirectorConfirmationInServiceApproval && data.roles.isIntegrityDirectorRole}
                 <TextIconButton
@@ -624,17 +718,17 @@
                 <TextIconButton
                     type="primary"
                     label="Simpan"
-                    form="integrityDirectorDetailForm"
+                    form="auditDirectorDetailForm"
                 ></TextIconButton>
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2.5">
-                {#if !$isReadOnlyIntegrityDirectorConfirmationInServiceApproval && data.roles.isEmploymentSecretaryRole}
+                {#if !$isReadOnlyEmploymentSecretaryConfirmationInServiceApproval && data.roles.isEmploymentSecretaryRole}
                     <form
-                        id="integrityDirectorDetailForm"
+                        id="employmentSecretaryDetailForm"
                         method="POST"
-                        use:integrityDirectorDetailFormEnhance
+                        use:employmentSecretaryDetailFormEnhance
                         class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
                     >
                         <div class="mb-5">
@@ -643,19 +737,19 @@
                             >
                         </div>
                         <CustomTextField
-                            disabled={$isReadOnlyIntegrityDirectorConfirmationInServiceApproval}
-                            errors={$integrityDirectorDetailFormErrors.remark}
+                            disabled={$isReadOnlyEmploymentSecretaryConfirmationInServiceApproval}
+                            errors={$employmentSecretaryDetailFormErrors.remark}
                             id="approverRemark"
                             label="Tindakan/Ulasan"
-                            bind:val={$integrityDirectorDetailForm.remark}
+                            bind:val={$employmentSecretaryDetailForm.remark}
                         ></CustomTextField>
                         <CustomSelectField
-                            disabled={$isReadOnlyIntegrityDirectorConfirmationInServiceApproval}
-                            errors={$integrityDirectorDetailFormErrors.status}
+                            disabled={$isReadOnlyEmploymentSecretaryConfirmationInServiceApproval}
+                            errors={$employmentSecretaryDetailFormErrors.status}
                             id="approverIsApproved"
                             options={certifyOptions}
                             label={'Keputusan'}
-                            bind:val={$integrityDirectorDetailForm.status}
+                            bind:val={$employmentSecretaryDetailForm.status}
                         ></CustomSelectField>
                     </form>
                 {:else if !$isReadOnlyDivisionDirectorConfirmationInServiceApproval && data.roles.isStateDirectorRole}
@@ -681,7 +775,7 @@
                             disabled={$isReadOnlyDivisionDirectorConfirmationInServiceApproval}
                             errors={$divisionDirectorDetaiFormErrors.status}
                             id="approverIsApproved"
-                            options={certifyOptions}
+                            options={confirmOptions}
                             label={'Keputusan'}
                             bind:val={$divisionDirectorDetaiForm.status}
                         ></CustomSelectField>
@@ -709,7 +803,7 @@
                             disabled={$isReadOnlyIntegrityDirectorConfirmationInServiceApproval}
                             errors={$integrityDirectorDetailFormErrors.status}
                             id="approverIsApproved"
-                            options={certifyOptions}
+                            options={confirmOptions}
                             label={'Keputusan'}
                             bind:val={$integrityDirectorDetailForm.status}
                         ></CustomSelectField>
@@ -737,7 +831,7 @@
                             disabled={$isReadOnlyAuditDirectorConfirmationInServiceApproval}
                             errors={$auditDirectorDetailFormErrors.status}
                             id="approverIsApproved"
-                            options={certifyOptions}
+                            options={confirmOptions}
                             label={'Keputusan'}
                             bind:val={$auditDirectorDetailForm.status}
                         ></CustomSelectField>
@@ -746,8 +840,31 @@
 
                 <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
                     <div class="mb-5">
+                        <b class="text-sm text-system-primary">Pengarah Audit</b
+                        >
+                    </div>
+                    {#if $isReadOnlyAuditDirectorConfirmationInServiceApproval}
+                        <CustomTextField
+                            disabled
+                            id="integrityDirectorRemark"
+                            label="Tindakan/Ulasan"
+                            bind:val={$auditDirectorDetailForm.remark}
+                        ></CustomTextField>
+                        <CustomSelectField
+                            disabled
+                            id="integrityDirectorStatus"
+                            options={certifyOptions}
+                            label={'Keputusan'}
+                            bind:val={$auditDirectorDetailForm.status}
+                        ></CustomSelectField>
+                    {:else}
+                        <StepperOtherRolesResult />
+                    {/if}
+                </div>
+                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                    <div class="mb-5">
                         <b class="text-sm text-system-primary"
-                            >Urus Setia Perjawatan</b
+                            >Pengarah Integriti</b
                         >
                     </div>
                     {#if $isReadOnlyIntegrityDirectorConfirmationInServiceApproval}
@@ -795,45 +912,22 @@
                 <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
                     <div class="mb-5">
                         <b class="text-sm text-system-primary"
-                            >Pengarah Integriti</b
+                            >Urus Setia Perjawatan</b
                         >
                     </div>
-                    {#if $isReadOnlyIntegrityDirectorConfirmationInServiceApproval}
+                    {#if $isReadOnlyEmploymentSecretaryConfirmationInServiceApproval}
                         <CustomTextField
                             disabled
                             id="integrityDirectorRemark"
                             label="Tindakan/Ulasan"
-                            bind:val={$integrityDirectorDetailForm.remark}
+                            bind:val={$employmentSecretaryDetailForm.remark}
                         ></CustomTextField>
                         <CustomSelectField
                             disabled
                             id="integrityDirectorStatus"
                             options={certifyOptions}
                             label={'Keputusan'}
-                            bind:val={$integrityDirectorDetailForm.status}
-                        ></CustomSelectField>
-                    {:else}
-                        <StepperOtherRolesResult />
-                    {/if}
-                </div>
-                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
-                    <div class="mb-5">
-                        <b class="text-sm text-system-primary">Pengarah Audit</b
-                        >
-                    </div>
-                    {#if $isReadOnlyAuditDirectorConfirmationInServiceApproval}
-                        <CustomTextField
-                            disabled
-                            id="integrityDirectorRemark"
-                            label="Tindakan/Ulasan"
-                            bind:val={$auditDirectorDetailForm.remark}
-                        ></CustomTextField>
-                        <CustomSelectField
-                            disabled
-                            id="integrityDirectorStatus"
-                            options={certifyOptions}
-                            label={'Keputusan'}
-                            bind:val={$auditDirectorDetailForm.status}
+                            bind:val={$employmentSecretaryDetailForm.status}
                         ></CustomSelectField>
                     {:else}
                         <StepperOtherRolesResult />
@@ -853,7 +947,15 @@
                     class="flex w-full flex-col items-center gap-2"
                 >
                     <CustomTextField
-                        disabled={true}
+                        disabled={$isReadOnlyConfirmationInServiceMeetingResult}
+                        errors={$confirmationMeetingDetailFormErrors.meetingName}
+                        id="meetingName"
+                        label="Nama Mesyuarat"
+                        placeholder="-"
+                        bind:val={$confirmationMeetingDetailForm.meetingName}
+                    ></CustomTextField>
+                    <CustomTextField
+                        disabled={$isReadOnlyConfirmationInServiceMeetingResult}
                         errors={$confirmationMeetingDetailFormErrors.meetingDate}
                         id="meetingDate"
                         label="Tarikh Mesyuarat"
@@ -862,29 +964,21 @@
                         bind:val={$confirmationMeetingDetailForm.meetingDate}
                     ></CustomTextField>
                     <CustomTextField
-                        disabled={true}
-                        errors={$confirmationMeetingDetailFormErrors.meetingCount}
-                        id="meetingCount"
-                        label="Bil Mesyuarat"
+                        disabled={$isReadOnlyConfirmationInServiceMeetingResult}
+                        errors={$confirmationMeetingDetailFormErrors.meetingRemark}
+                        id="meetingRemark"
+                        label="Catatan Mesyuarat"
                         placeholder="-"
-                        type="number"
-                        bind:val={$confirmationMeetingDetailForm.meetingCount}
-                    ></CustomTextField>
-                    <CustomTextField
-                        disabled={true}
-                        errors={$confirmationMeetingDetailFormErrors.meetingName}
-                        id="meetingName"
-                        label="Nama Mesyuarat"
-                        placeholder="-"
-                        bind:val={$confirmationMeetingDetailForm.meetingName}
+                        type="text"
+                        bind:val={$confirmationMeetingDetailForm.meetingRemark}
                     ></CustomTextField>
                     <CustomSelectField
-                        disabled={true}
+                        disabled={$isReadOnlyConfirmationInServiceMeetingResult}
                         errors={$confirmationMeetingDetailFormErrors.meetingResult}
                         id="meetingResult"
                         label="Keputusan Mesyuarat"
                         placeholder="-"
-                        options={data.lookups.generalLookup}
+                        options={approveOptions}
                         bind:val={$confirmationMeetingDetailForm.meetingResult}
                     ></CustomSelectField>
                 </form>
