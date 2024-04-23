@@ -82,7 +82,7 @@ export const _personalInfoResponseSchema = z.object({
     mailPostcode: shortTextSchema,
     isExPoliceOrSoldier: booleanSchema,
     isInternalRelationship: booleanSchema,
-    employeeNumber: z.string().nullable(),
+    employeeNumber: z.coerce.string().nullable(),
     employeeName: z.string().nullable(),
     employeePosition: z.string().nullable(),
     relationshipId: z.number().nullable(),
@@ -305,7 +305,7 @@ export const _nextOfKinListRequestSchema = z.object({
 //==========================================================
 
 export const _serviceDetailSchema = z.object({
-    candidateId: numberIdSchema,
+    candidateId: z.number().readonly(),
     gradeId: numberIdSchema,
     maxGradeId: numberIdSchema,
     positionId: numberIdSchema,
@@ -362,7 +362,7 @@ export const _approvalResultSchema = z.object({
     id: z.number().readonly(),
     name: z.string().readonly(),
     remark: longTextSchema,
-    status: booleanSchema.default(true),
+    status: booleanSchema,
     isReadonly: z.boolean().readonly(),
 });
 
@@ -371,7 +371,7 @@ export const _approvalResultSchema = z.object({
 //==========================================================
 
 export const _setApproversSchema = z.object({
-    candidateId: numberIdSchema,
+    candidateId: z.number().readonly(),
     supporterId: numberIdSchema,
     approverId: numberIdSchema,
 });
