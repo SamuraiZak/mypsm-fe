@@ -26,6 +26,8 @@ import type { commonIdRequestDTO } from "$lib/dto/core/common/id-request.dto";
 import type { ActingDetails } from "$lib/dto/mypsm/employment/acting/acting-result.dto";
 import type { QuarterCommonApproval } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto";
 import type { UpdateMainPromotionMeeting } from "$lib/dto/mypsm/employment/acting/main-update-promotion-meeting.dto";
+import type { EmployeePostpone } from "$lib/dto/mypsm/employment/acting/acting-employee-form.dto.js";
+import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-document-request.dto";
 
 export const load = async ({ params }) => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
@@ -141,6 +143,7 @@ export const load = async ({ params }) => {
     const updateActingResultForm = await superValidate(zod(_updateActingResultSchema))
     const supporterResultForm = await superValidate(zod(_actingApprovalSchema))
     const approverResultForm = await superValidate(zod(_actingApprovalSchema))
+    const employeeNeedPlacementAmendmentForm = await superValidate(zod(_placementAmendmentApplication))
 
 
 
@@ -149,7 +152,6 @@ export const load = async ({ params }) => {
     const updateMainPromotionMeetingResultDetailForm = await superValidate(zod(_mainUpdatePromotionMeetingResultDetailSchema))
     const updateMainActingEmployeeDetailForm = await superValidate(zod(_mainUpdateActingEmployeeDetailSchema))
     const mainSupporterAndApproverForm = await superValidate(zod(_mainSupporterAndApproverSchema))
-    const employeeNeedPlacementAmendmentForm = await superValidate(zod(_placementAmendmentApplication))
 
 
 
@@ -185,11 +187,12 @@ export const load = async ({ params }) => {
         mainActingPromotionListResponse,
         mainActingPromotionList,
         updateMainPromotionMeetingResultForm,
-
+        employeeNeedPlacementAmendmentForm,
 
         // main
         mainActingCertification,
         mainActingCertificationResponse,
+
 
         updatePlacementAmendmentApplicationResultForm,
         updateMeetingResultForm,
@@ -197,7 +200,7 @@ export const load = async ({ params }) => {
         updatePromotionMeetingResultForm, updateEmployeePlacementMeetingResultForm,
         updateMainPromotionMeetingResultDetailForm,
         updateMainActingEmployeeDetailForm, mainSupporterAndApproverForm,
-        approverResultForm, directorResultForm, employeeNeedPlacementAmendmentForm,
+        approverResultForm, directorResultForm 
     };
 
 };
@@ -219,10 +222,10 @@ export const _submitDirectorResultForm = async (formData: QuarterCommonApproval)
         zod(_actingApprovalSchema),
     );
     if (form.valid) {
-        const response: CommonResponseDTO = 
+        const response: CommonResponseDTO =
             await EmploymentActingServices.updateDirectorApproval(form.data as QuarterCommonApproval)
 
-        return { response}
+        return { response }
     }
 };
 export const _submitUpdateMeetingDetailForm = async (formData: UpdateActingInterview) => {
@@ -276,7 +279,6 @@ export const _submitUpdatePlacementMeeting = async (formData: PlacementMeetingDe
         formData,
         zod(_updatePlacementMeeting),
     );
-    console.log(form)
     if (form.valid) {
         const response: CommonResponseDTO =
             await EmploymentActingServices.addPlacementMeeting(form.data as PlacementMeetingDetail)
@@ -521,28 +523,18 @@ export const _submitMainSupporterAndApproverForm = async (formData: object) => {
 
 // ================ kakitangan submit form
 
-export const _submitEmployeeNeedPlacementAmendmentForm = async (formData: object) => {
-    const employeeNeedPlacementAmendmentForm = await superValidate(
+export const _submitEmployeeNeedPlacementAmendmentForm = async (formData: EmployeePostpone) => {
+    const form = await superValidate(
         formData,
         zod(_placementAmendmentApplication)
 
     );
-    console.log(employeeNeedPlacementAmendmentForm)
-    if (employeeNeedPlacementAmendmentForm.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(employeeNeedPlacementAmendmentForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (employeeNeedPlacementAmendmentForm.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
+
+    if (form.valid) {
+        const response: CommonResponseDTO
+            = await EmploymentActingServices.editPostponeStatus(form.data as EmployeePostpone)
+
+            return { response }
     }
 }
 
@@ -618,5 +610,44 @@ const getLookup = async () => {
     }
 }
 
+// Create a function that returns a promise resolving to an array of DocumentBase64RequestDTO objects
+export function _fileToBase64Object(fileList: FileList): Promise<DocumentBase64RequestDTO[]> {
+    return new Promise((resolve, reject) => {
+        // Convert FileList to array
+        const fileArray: File[] = Array.from(fileList);
 
+        // Simulate fetching base64 data for each file asynchronously
+        const filesPromiseArray: Promise<DocumentBase64RequestDTO>[] = [];
+        fileArray.forEach((file) => {
+            const filePromise = fetchBase64Data(file);
+            filesPromiseArray.push(filePromise);
+        });
+
+        // Resolve the promise when all file promises are resolved
+        Promise.all(filesPromiseArray)
+            .then((files) => {
+                resolve(files);
+            })
+            .catch((error) => {
+                reject(error);
+            });
+    });
+}
+
+// Function to fetch base64 data for a file asynchronously
+function fetchBase64Data(file: File): Promise<DocumentBase64RequestDTO> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const base64Data = event.target?.result as string;
+            const fileName = file.name;
+            const fileObject: DocumentBase64RequestDTO = { name: fileName, base64: base64Data.split(",")[1] };
+            resolve(fileObject);
+        };
+        reader.onerror = (error) => {
+            reject(error);
+        };
+        reader.readAsDataURL(file);
+    });
+}
 
