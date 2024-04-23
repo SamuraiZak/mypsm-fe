@@ -175,8 +175,8 @@ export const _clinicPaymentSchema = z.object({
 })
 
 export const _editAllocations = z.object({
+    year: z.number(),
     currentAllocation: z.number(),
-    remainingAllocation: z.number(),
     newAllocation: z.number(),
-    year: z.number().optional(),
+    remainingAllocation: z.number(),
 })

@@ -21,7 +21,7 @@ import { MedicalClaimsAddConvert, type MedicalClaimsAdd } from '$lib/dto/mypsm/p
 import { MedicalClinicApplicationConvert, type MedicalClinicApplication } from '$lib/dto/mypsm/perubatan/permohonan-klinik/medical-clinic-application.dto';
 import { ClinicContractConvert, type ClinicContract } from '$lib/dto/mypsm/perubatan/permohonan-klinik/medical-clinic-contract.dto';
 import { MedicalEmployeeMakePaymentConvert, type MedicalEmployeeMakePayment } from '$lib/dto/mypsm/perubatan/tuntutan-kakitangan/employee-make-payment.dto';
-import { ClinicAllocationConvert, type ClinicAllocation } from '$lib/dto/mypsm/perubatan/tuntutan-klinik/clinic-allocation.dto';
+import { ClinicAllocationConvert, CurrentYearAllocationConvert, type ClinicAllocation, type CurrentYearAllocation } from '$lib/dto/mypsm/perubatan/tuntutan-klinik/clinic-allocation.dto';
 import { MedicalClinicClaimSuppAppConvert, type MedicalClinicClaimSuppApp } from '$lib/dto/mypsm/perubatan/tuntutan-klinik/clinic-claim-supporter-approver.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
@@ -1477,14 +1477,17 @@ export class MedicalServices {
             return CommonResponseConstant.httpError;
         }
     }
-    static async getClinicPanelAllocations() {
+    static async getClinicPanelAllocations(param: CurrentYearAllocation) {
         try {
-            const url: Input = 'medical/clinic_claim/allocation/get';
+            let url: Input = 'medical/clinic_claim/allocation/get';
 
-            const response: Response = await http.get(url, {}).json();
+            const response: Response = await http
+                .post(url, {
+                    body: CurrentYearAllocationConvert.toJson(param),
+                })
+                .json();
 
-            const result: CommonResponseDTO =
-                CommonResponseConvert.fromResponse(response);
+            const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
                 return result;

@@ -7,11 +7,9 @@
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
-    import FilterNumberField from '$lib/components/table/filter/FilterNumberField.svelte';
-    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import type {
-        TableDTO,
         TableSettingDTO,
     } from '$lib/dto/core/table/table.dto';
     import {
@@ -40,6 +38,7 @@
         _directorApproval,
         _supportApproval,
         _approverApproval,
+        _fileToBase64Object,
     } from './+page';
     import type { PageData } from './$types';
     export let data: PageData;
@@ -76,7 +75,7 @@
         EmployeePromotionDetail,
         PostponeDetail,
     } from '$lib/dto/mypsm/employment/acting/acting-chosen-employee.dto';
-    import { successOption } from '$lib/constants/core/dropdown.constant';
+    import { dropdownCommonOption, successOption } from '$lib/constants/core/dropdown.constant';
     import type { ActingResult } from '$lib/dto/mypsm/employment/acting/acting-result.dto';
     import type { ActingConfirmationDetail } from '$lib/dto/mypsm/employment/acting/acting-confirmation-detail.dto';
     import {
@@ -90,16 +89,29 @@
         ActingDirectorApproval,
         ActingSupportApproval,
     } from '$lib/dto/mypsm/employment/acting/acting-approval.dto';
+    import type { EmployeePostpone } from '$lib/dto/mypsm/employment/acting/acting-employee-form.dto';
 
     let employeeRoleCode: string = UserRoleConstant.kakitangan.code;
     let secretaryRoleCode: string = UserRoleConstant.urusSetiaPerjawatan.code;
-    let supporterRoleCode: string = UserRoleConstant.penyokong.code;
-    let approverRoleCode: string = UserRoleConstant.pelulus.code;
     let stateDirectorRoleCode: string = UserRoleConstant.pengarahNegeri.code;
     let depDirectorRoleCode: string = UserRoleConstant.pengarahBahagian.code;
 
-    let isNotUrusSetia: boolean =
-        data.currentRoleCode !== secretaryRoleCode ? true : false;
+    function uploadDocument() {
+        if (files == undefined) {
+            alert('Dokumen sokongan tidak boleh kosong.');
+        } else {
+            _fileToBase64Object(files)
+                .then(async (result) => {
+                    $employeeNeedPlacementAmendmentForm.documents = result;
+
+                }).finally(() => {
+                    _submitEmployeeNeedPlacementAmendmentForm($employeeNeedPlacementAmendmentForm);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }
 
     let stepperIndex: number = 0;
 
@@ -114,7 +126,7 @@
     let detailOpen: boolean = false;
 
     let selectedCandidate: ActingChosenEmployee;
-
+    let files: FileList;
     //all tables
     let chosenEmployeeTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
@@ -412,11 +424,6 @@
     };
 
     // ================ delete this after done
-
-    let isNeedPlacementAmendmentOption: DropdownDTO[] = [
-        { value: true, name: 'Ya' },
-        { value: false, name: 'Tidak' },
-    ];
     let promotionMeetingResultOptions: RadioDTO[] = [
         {
             value: true,
@@ -731,17 +738,12 @@
         dataType: 'json',
         invalidateAll: true,
         multipleSubmits: 'prevent',
-        onSubmit(formData) {
-            _submitEmployeeNeedPlacementAmendmentForm(formData.formData);
+        onSubmit() {
+            $employeeNeedPlacementAmendmentForm.id = 14;
+            uploadDocument();
         },
     });
 
-    // file upload functions
-    const handleOnInput = (e: Event) => {
-        $employeeNeedPlacementAmendmentForm.document = Array.from(
-            (e.currentTarget as HTMLInputElement).files ?? [],
-        );
-    };
 
     // ================= pass data for tables' detail
     let employeePromotionDetail: EmployeePromotionDetail = {
@@ -798,6 +800,7 @@
                     .finally(() => {
                         // TODO: edit postpone result here
                     });
+                    break;
             }
             case 3: {
                 _actingResult(selectedCandidate.actingId)
@@ -822,6 +825,7 @@
                         // $updateActingResultForm.approverName = employeeActingResult.actingDetails?.approverName;
                     })
                     .catch((e) => console.log(e));
+                    break;
             }
             case 4: {
                 _actingConfirmation(selectedCandidate.actingId).then((res) => {
@@ -838,12 +842,14 @@
                     .finally(() => {
                         // TODO: edit postpone result here
                     });
+                    break;
             }
             case 6: {
                 _directorApproval(selectedCandidate.actingId).then((res) => {
                     directorApproval = res.response.data
                         ?.details as ActingDirectorApproval;
                 });
+                break;
             }
             case 7: {
                 _supportApproval(selectedCandidate.actingId).then((res) => {
@@ -855,6 +861,7 @@
                         ?.details as ActingApproverApproval;
                 });
             }
+            break;
         }
     };
 </script>
@@ -1826,8 +1833,8 @@
                         {:else}
                             <TextIconButton
                                 label="Simpan"
-                                form="updatePlacementMeeting"
                                 icon="check"
+                                form="updatePlacementMeeting"
                             />
                         {/if}
                     </StepperContentHeader>
@@ -1866,7 +1873,7 @@
                                             title=""
                                             bind:tableData={placementTable}
                                             bind:passData={selectedCandidate}
-                                            detailActions={async () => {
+                                            detailActions={() => {
                                                 detailOpen = true;
                                             }}
                                         ></DataTable>
@@ -2689,10 +2696,9 @@
                 </StepperContentHeader>
                 <StepperContentBody>
                     <form
-                        class="flex w-full flex-col gap-2.5 pb-10"
+                        class="flex w-full flex-col gap-2.5 p-3 pb-10"
                         id="employeeNeedPlacementAmendmentForm"
                         method="POST"
-                        enctype="multipart/form-data"
                         use:employeeNeedPlacementAmendmentEnhance
                     >
                         <ContentHeader
@@ -2701,18 +2707,18 @@
                         />
                         <CustomSelectField
                             label="Adakah anda memerlukan penangguhan/pindaan penempatan?"
-                            id="isNeedPlacementAmendment"
-                            options={isNeedPlacementAmendmentOption}
-                            bind:val={$employeeNeedPlacementAmendmentForm.isNeedPlacementAmendment}
-                            errors={$employeeNeedPlacementAmendmentError.isNeedPlacementAmendment}
+                            id="postponeNeeded"
+                            options={dropdownCommonOption}
+                            bind:val={$employeeNeedPlacementAmendmentForm.postponeNeeded}
+                            errors={$employeeNeedPlacementAmendmentError.postponeNeeded}
                         />
-                        {#if $employeeNeedPlacementAmendmentForm.isNeedPlacementAmendment}
+                        {#if $employeeNeedPlacementAmendmentForm.postponeNeeded}
                             <CustomTextField
                                 label="Tarikh Lapor Diri yang Dipohon"
-                                id="requestedReportingDate"
+                                id="requestedReportDate"
                                 type="date"
-                                bind:val={$employeeNeedPlacementAmendmentForm.requestedReportingDate}
-                                errors={$employeeNeedPlacementAmendmentError.requestedReportingDate}
+                                bind:val={$employeeNeedPlacementAmendmentForm.requestedReportDate}
+                                errors={$employeeNeedPlacementAmendmentError.requestedReportDate}
                             />
                             <CustomSelectField
                                 label="Pindaan Penempatan Dipohon"
@@ -2721,91 +2727,22 @@
                                 bind:val={$employeeNeedPlacementAmendmentForm.requestedPlacement}
                                 options={data.lookup.placementLookup}
                             />
+                            <CustomTextField
+                                label="Sebab-sebab penangguhan/pindaan"
+                                id="postponeReason"
+                                bind:val={$employeeNeedPlacementAmendmentForm.postponeReason}
+                                errors={$employeeNeedPlacementAmendmentError.postponeReason}
+                            />
                             <ContentHeader
                                 title="Dokumen-Dokumen yang Berkaitan"
                                 borderClass="border-none"
                             />
-                            <!-- upload file here -->
-                            <input
-                                type="file"
-                                name="document"
-                                accept=".pdf"
-                                on:input={(e) =>
-                                    ($employeeNeedPlacementAmendmentForm.document =
-                                        Array.from(
-                                            e.currentTarget.files ?? [],
-                                        ))}
-                            />
-                            {#if $employeeNeedPlacementAmendmentError.document}
-                                <span
-                                    class="font-sans text-sm italic text-system-danger"
-                                    >{$employeeNeedPlacementAmendmentError.document}</span
-                                >
-                            {/if}
-                            <ContentHeader
-                                title="Dokumen Sokongan"
-                                borderClass="border-none"
-                            >
-                                <div
-                                    hidden={$employeeNeedPlacementAmendmentForm
-                                        .document.length < 1}
-                                >
-                                    <FileInputField
-                                        id="document"
-                                        handleOnInput={(e) => handleOnInput(e)}
-                                    ></FileInputField>
-                                </div>
-                            </ContentHeader>
-                            <div
-                                class="border-bdr-primaryp-5 flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border p-2.5"
-                            >
-                                <div class="flex flex-wrap gap-3">
-                                    <!-- {#each $employeeNeedPlacementAmendmentForm.document as item, index}
-                                        <FileInputFieldChildren
-                                            childrenType="grid"
-                                            fileName={item.name}
-                                        />
-                                    {/each} -->
-                                </div>
-                                <div
-                                    class="flex flex-col items-center justify-center gap-2.5"
-                                >
-                                    <p
-                                        class=" text-sm text-txt-tertiary"
-                                        hidden={$employeeNeedPlacementAmendmentForm
-                                            .document.length > 0}
-                                    >
-                                        Pilih fail dari peranti anda.
-                                    </p>
-                                    <div
-                                        class="text-txt-tertiary"
-                                        hidden={$employeeNeedPlacementAmendmentForm
-                                            .document.length > 0}
-                                    >
-                                        <svg
-                                            width={40}
-                                            height={40}
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke-width="1.5"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <div
-                                        hidden={$employeeNeedPlacementAmendmentForm
-                                            .document.length > 0}
-                                    >
-                                        <FileInputField id="document"
-                                        ></FileInputField>
-                                    </div>
-                                </div>
+                            <div class="flex w-full flex-col gap-2">
+                                <CustomFileField
+                                    label="Dokumen Sokongan"
+                                    id="postponeDocs"
+                                    bind:files
+                                ></CustomFileField>
                             </div>
                         {/if}
                     </form>

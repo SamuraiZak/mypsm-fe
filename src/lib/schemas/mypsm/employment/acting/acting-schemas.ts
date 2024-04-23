@@ -65,7 +65,7 @@ export const _updatePromotionMeetingResultSchema = z.object({
 export const _updatePlacementMeeting = z.object({
     batchId: z.number(),
     meetingName: shortTextSchema,
-    meetingDate: stringToMaxDate,
+    meetingDate: shortTextSchema,
 })
 
 export const _updateEmployeePlacementMeetingResultSchema = z.object({
@@ -144,13 +144,16 @@ export const _mainSupporterAndApproverSchema = z.object({
     approverName: codeSchema,
 })
 
+const documentSchema = z.object({
+    base64: z.string(),
+    name: shortTextSchema,
+})
 // ================== kakitangan schema
 export const _placementAmendmentApplication = z.object({
-    isNeedPlacementAmendment: booleanSchema,
-    requestedReportingDate: z.coerce.string(),
-    requestedPlacement: numberSchema.refine((x) =>  x > 0, {message: "Silap tetapkan pilihan anda."}),
-    document: z
-        .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
-        .refine((f) => f.size < 1_000_000, 'Maximum 1 MB saiz muat naik.')
-        .array(),
+    id: z.number(),
+    postponeNeeded: booleanSchema,
+    postponeReason: shortTextSchema,
+    requestedPlacement: shortTextSchema,
+    requestedReportDate: stringToMinDate,
+    documents: documentSchema.array(),
 })

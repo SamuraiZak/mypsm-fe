@@ -186,14 +186,7 @@
                         bind:val={$form.currentAllocation}
                     />
                     <CustomTextField
-                        label="Baki Peruntukkan Tahun Semasa (RM)"
-                        id="remainingAllocation"
-                        disabled={readOnly}
-                        type="number"
-                        bind:val={$form.remainingAllocation}
-                    />
-                    <CustomTextField
-                        label="Peruntukkan Tahun Baru (RM)"
+                        label="Peruntukkan Baru (RM)"
                         id="newAllocation"
                         disabled={readOnly}
                         type="number"
@@ -202,7 +195,7 @@
                     <CustomTextField
                         label="Tahun"
                         id="year"
-                        disabled
+                        disabled={readOnly}
                         type="number"
                         bind:val={$form.year}
                     />

@@ -2,7 +2,7 @@ import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.c
 import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
-import type { ActingCommonList } from "$lib/dto/mypsm/employment/acting/acting-common-list.dto";
+import type { EmployeeActingOffer, ActingCommonList } from "$lib/dto/mypsm/employment/acting/acting-common-list.dto";
 import { EmploymentActingServices } from "$lib/services/implementation/mypsm/perjawatan/employment-acting.service";
 
 export const load = async () => {
@@ -13,8 +13,11 @@ export const load = async () => {
     let tableListFlexi41: ActingCommonList[] = [];
     let tableListMainResponse: CommonResponseDTO = {};
     let tableListMain: ActingCommonList[] = [];
+    let employeeOfferResponse: CommonResponseDTO = {};
+    let employeeOffer: EmployeeActingOffer[] = [];
+
     // param for table 154/flexi41/main
-    const param = {
+    const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
         orderBy: null,
@@ -22,7 +25,6 @@ export const load = async () => {
         filter: {},
     };
 
-    let dataList;
     //table for urus setia
     if (currentRoleCode !== UserRoleConstant.kakitangan.code) {
         //154
@@ -40,9 +42,10 @@ export const load = async () => {
     }
     //table for kakitangan 
     else if (currentRoleCode === UserRoleConstant.kakitangan.code) {
-        dataList = [
-            { idPemangkuan: 'PMGK-1234', tarikhTawaran: '19/02/2024', gred: 'N32', position: 'Setiausaha Pejabat', keputusanPemangkuan: 'Belum Dikemaskini' },
-        ]
+        employeeOfferResponse =
+            await EmploymentActingServices.getEmployeeActingOffer(param);
+        employeeOffer =
+            employeeOfferResponse.data?.dataList as EmployeeActingOffer[];
     }
 
     return {
@@ -53,7 +56,8 @@ export const load = async () => {
         tableListFlexi41,
         tableListMainResponse,
         tableListMain,
-        dataList,
         currentRoleCode,
+        employeeOfferResponse,
+        employeeOffer,
     };
 };

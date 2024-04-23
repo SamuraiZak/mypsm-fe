@@ -104,10 +104,10 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
-    {#if data.currentRoleCode === UserRoleConstant.kakitangan.code || data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code || data.currentRoleCode == UserRoleConstant.ketuaSeksyen.code}
+    {#if data.currentRoleCode === UserRoleConstant.kakitangan.code || data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code || data.currentRoleCode == UserRoleConstant.ketuaSeksyen.code || data.currentRoleCode == UserRoleConstant.timbalanKetuaSeksyen.code}
         <CustomTab>
             
-            {#if data.currentRoleCode !== UserRoleConstant.ketuaSeksyen.code}
+            {#if data.currentRoleCode !== UserRoleConstant.ketuaSeksyen.code && data.currentRoleCode !== UserRoleConstant.timbalanKetuaSeksyen.code}
             <CustomTabContent title="Permohonan Tanggung Kerja">
                 <div class="h h-fit w-full">
                     <DataTable

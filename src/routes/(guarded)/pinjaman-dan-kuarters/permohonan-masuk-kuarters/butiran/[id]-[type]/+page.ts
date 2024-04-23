@@ -192,7 +192,7 @@ export const _applyQuarters = async () => {
         await QuartersServices.addMovingInApplication();
 
     if (response.status == "success") {
-        goto('/pinjaman-dan-kuarters/permohonan-masuk-kuarters')
+        goto('/pinjaman-dan-kuarters/permohonan-masuk-kuarters/butiran/'+response.data?.details.id+'-kakitangan')
     } else {
         throw new Error('Failed to create new application.')
     }

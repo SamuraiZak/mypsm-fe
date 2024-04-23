@@ -47,7 +47,7 @@ export const load = async () => {
         }
     }
     else {
-        if (currentRoleCode !== UserRoleConstant.ketuaSeksyen.code) {
+        if (currentRoleCode !== UserRoleConstant.ketuaSeksyen.code && currentRoleCode !== UserRoleConstant.timbalanKetuaSeksyen.code) {
             employeeInterimApplicationResponse =
                 await EmploymentInterimServices.getApplicationList(param);
             if (employeeInterimApplicationResponse.status == "success") {
@@ -55,7 +55,7 @@ export const load = async () => {
             }
         }
 
-        if (currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code || currentRoleCode == UserRoleConstant.ketuaSeksyen.code) {
+        if (currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code || currentRoleCode == UserRoleConstant.ketuaSeksyen.code || currentRoleCode == UserRoleConstant.timbalanKetuaSeksyen.code) {
             employeeInterimTerminationListResponse =
                 await EmploymentInterimServices.getTerminationList(param);
             employeeInterimTerminationList =

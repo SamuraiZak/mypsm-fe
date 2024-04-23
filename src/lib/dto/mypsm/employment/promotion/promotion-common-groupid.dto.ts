@@ -12,3 +12,19 @@ export class PromotionGroupIDConvert {
         return JSON.stringify(value);
     }
 }
+
+export interface PromotionCertificationGet {
+    id: number;
+    promotionType: string;
+}
+
+// Converts JSON strings to/from your types
+export class PromotionCertificationGetConvert {
+    public static fromJson(json: string): PromotionCertificationGet {
+        return JSON.parse(json);
+    }
+
+    public static toJson(value: PromotionCertificationGet): string {
+        return JSON.stringify(value);
+    }
+}

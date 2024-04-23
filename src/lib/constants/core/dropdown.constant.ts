@@ -59,3 +59,8 @@ export const successOption: DropdownDTO[] = [
     { value: 'Berjaya', name: 'Berjaya' },
     { value: 'Tidak Berjaya', name: 'Tidak Berjaya' },
 ];
+
+export const dropdownCommonOption: DropdownDTO[] = [
+    { value: true, name: 'Ya' },
+    { value: false, name: 'Tidak' },
+];
