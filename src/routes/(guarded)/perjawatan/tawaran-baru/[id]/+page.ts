@@ -51,7 +51,7 @@ export async function load({ params }) {
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
-        pageSize: 5,
+        pageSize: 10000,
         orderBy: null,
         orderType: null,
         filter: {
@@ -71,7 +71,7 @@ export async function load({ params }) {
     const employeesListLookup: DropdownDTO[] = (
         employeesListResponse.data?.dataList as CommonEmployeeDTO[]
     ).map((data) => ({
-        value: Number(data.employeeId),
+        value: String(data.employeeId),
         name: String(data.name),
     }));
 
