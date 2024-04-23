@@ -12,6 +12,7 @@ import type {
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import type {
     GcrEndorsement,
+    GcrWithdrawalCalculation,
     GcrWithdrawalDetailAdd,
 } from '$lib/schemas/mypsm/leave/gcr.schema';
 import type { Input } from 'ky';
@@ -351,6 +352,31 @@ export class GCRServices {
     static async addWithdrawalChiefDirectorFeedback(param: GcrEndorsement) {
         try {
             let url: Input = 'leave/gcr/withdrawal/chief_director';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await getPromiseToast(promiseResponse);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // add calculation
+    static async addWithdrawalCalculation(param: GcrWithdrawalCalculation) {
+        try {
+            let url: Input = 'leave/gcr/withdrawal/calculation';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
