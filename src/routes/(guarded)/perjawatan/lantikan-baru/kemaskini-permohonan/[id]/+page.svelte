@@ -62,7 +62,7 @@
     import type { PageData } from './$types';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
-    import CustomRadioField from '$lib/components/inputs/radio-field/CustomRadioField.svelte';
+    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
@@ -247,7 +247,7 @@
         invalidateAll: true,
         resetForm: false,
         multipleSubmits: 'prevent',
-        validationMethod: 'oninput',
+        validationMethod: 'auto',
         validators: zod(_personalInfoResponseSchema),
         onSubmit() {
             _submitPersonalForm($form);
@@ -266,7 +266,7 @@
         taintedMessage: false,
         resetForm: false,
         multipleSubmits: 'prevent',
-        validationMethod: 'oninput',
+        validationMethod: 'auto',
         validators: zod(_serviceInfoResponseSchema),
         onSubmit(formData) {
             _submitServiceForm(Number(data.params.id), formData.formData);
@@ -280,16 +280,16 @@
     } = superForm(data.secretaryApprovalInfoForm, {
         SPA: true,
         dataType: 'json',
-        invalidateAll: true,
+        invalidateAll: false,
         taintedMessage: false,
         resetForm: false,
         multipleSubmits: 'prevent',
-        validationMethod: 'oninput',
+        validationMethod: 'auto',
         validators: zod(_approvalResultSchema),
-        onSubmit(formData) {
+        onSubmit() {
             _submitSecretaryApprovalForm(
                 Number(data.params.id),
-                formData.formData,
+                $secretaryApprovalInfoForm,
             );
         },
     });
@@ -305,12 +305,12 @@
         taintedMessage: false,
         resetForm: false,
         multipleSubmits: 'prevent',
-        validationMethod: 'oninput',
+        validationMethod: 'auto',
         validators: zod(_approvalResultSchema),
-        onSubmit(formData) {
+        onSubmit() {
             _submitSupporterApprovalForm(
                 Number(data.params.id),
-                formData.formData,
+                $supporterApprovalForm,
             );
         },
     });
@@ -326,12 +326,12 @@
         taintedMessage: false,
         resetForm: false,
         multipleSubmits: 'prevent',
-        validationMethod: 'oninput',
+        validationMethod: 'auto',
         validators: zod(_approvalResultSchema),
-        onSubmit(formData) {
+        onSubmit() {
             _submitApproverApprovalForm(
                 Number(data.params.id),
-                formData.formData,
+                $approverApprovalForm,
             );
         },
     });
@@ -347,7 +347,7 @@
         taintedMessage: false,
         resetForm: false,
         multipleSubmits: 'prevent',
-        validationMethod: 'oninput',
+        validationMethod: 'auto',
         validators: zod(_setApproversSchema),
         onSubmit(formData) {
             _submitSecretarySetApproverForm(
@@ -460,15 +460,13 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'allow',
-        validationMethod: 'oninput',
+        validationMethod: 'auto',
         validators: zod(_academicInfoSchema),
         async onSubmit(formData) {
             const result = await superValidate(
                 formData.formData,
                 zod(_academicInfoSchema),
             );
-
-            console.log('Result: ', result);
 
             if (!result.valid) {
                 getErrorToast();
@@ -494,7 +492,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'allow',
-        validationMethod: 'oninput',
+        validationMethod: 'auto',
         validators: zod(_experienceInfoSchema),
         async onSubmit(formData) {
             for (const pair of formData.formData.entries()) {
@@ -531,7 +529,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'allow',
-        validationMethod: 'oninput',
+        validationMethod: 'auto',
         validators: zod(_activityInfoSchema),
         async onSubmit(formData) {
             const result = await superValidate(
@@ -565,7 +563,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'allow',
-        validationMethod: 'oninput',
+        validationMethod: 'auto',
         validators: zod(_relationsSchema),
         async onSubmit(formData) {
             const result = await superValidate(
@@ -596,7 +594,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'allow',
-        validationMethod: 'oninput',
+        validationMethod: 'auto',
         validators: zod(_relationsSchema),
         async onSubmit(formData) {
             const result = await superValidate(
@@ -627,7 +625,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'allow',
-        validationMethod: 'oninput',
+        validationMethod: 'auto',
         validators: zod(_relationsSchema),
         async onSubmit(formData) {
             const result = await superValidate(
@@ -732,7 +730,7 @@
         type="neutral"
         onClick={() => {
             goto('../../lantikan-baru');
-        }}  
+        }}
     /></ContentHeader
 >
 <Stepper>
@@ -1031,24 +1029,14 @@
                     {#if $form.isInternalRelationship}
                         <CustomSelectField
                             disabled={$isReadonlyPersonalFormStepper}
-                            bind:errors={$errors.employeeNumber}
+                            errors={$errors.employeeNumber}
                             id="employeeNumber"
-                            label="No. Pekerja LKIM"
+                            label="Nama Pekerja LKIM"
                             bind:val={$form.employeeNumber}
                             options={data.selectionOptions.employeeLookup}
                         ></CustomSelectField>
 
                         {#if !!data.newHireFullDetailView.personalDetail.employeeNumber}
-                            <CustomTextField
-                                placeholder="-"
-                                disabled={$isReadonlyPersonalFormStepper}
-                                errors={$errors.employeeName}
-                                id="employeeName"
-                                label={'Nama Kakitangan LKIM'}
-                                type="text"
-                                bind:val={$form.employeeName}
-                            ></CustomTextField>
-
                             <CustomSelectField
                                 disabled={$isReadonlyPersonalFormStepper}
                                 errors={$errors.employeePosition}
@@ -2276,7 +2264,11 @@
         </StepperContentHeader>
         <StepperContentBody
             ><div class="flex w-full flex-col gap-2">
-                {#if !$isReadonlyDocumentFormStepper && data.isCandidateRole}
+                {#if data.newHireFullDetailView.nextOfKin.dependencies.length < 1}
+                    <div class="text-center text-sm italic text-system-primary">
+                        Tiada maklumat.
+                    </div>
+                {:else if !$isReadonlyDocumentFormStepper && data.isCandidateRole}
                     <p class="text-sm">
                         Sila muat turun, isi dengan lengkap dokumen berikut,
                         kemudian muat naik dokumen pada ruangan yang disediakan.
@@ -2286,15 +2278,14 @@
                         class="cursor-pointer space-y-1 text-sm italic text-system-primary underline"
                     >
                         <li>
-                            <button
-                                on:click={() =>
-                                    handleDownload(
-                                        data.newHireFullDetailView.document
-                                            .template,
-                                    )}
-                                class="underline"
-                            >
-                                Borang Lantikan Baru</button
+                            <a
+                                href={data.newHireFullDetailView.document
+                                    .template}
+                                download={data.newHireFullDetailView.document
+                                    .templateName}
+                                class="cursor-pointer underline"
+                                >{data.newHireFullDetailView.document
+                                    .templateName}</a
                             >
                         </li>
                     </ul>
@@ -2369,10 +2360,6 @@
                             {/if}
                         </div>
                     </form>
-                {:else if data.newHireFullDetailView.document.attachment === null}
-                    <div class="text-center text-sm italic text-system-primary">
-                        Tiada maklumat.
-                    </div>
                 {:else}
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
@@ -2386,7 +2373,6 @@
                             Fail-fail yang dimuat naik:
                         </p>
 
-                        <!-- {#each currentEmployeeUploadedDocuments as item, i} -->
                         <div
                             class="flex w-full flex-row items-center justify-between"
                         >
@@ -2395,17 +2381,16 @@
                                 class="block w-[20px] min-w-[20px] text-[11px] font-medium"
                                 >1.</label
                             >
-                            <DownloadAttachment
-                                triggerDownload={() =>
-                                    handleDownload(
-                                        data.newHireFullDetailView.document
-                                            .attachment,
-                                    )}
-                                fileName={data.newHireFullDetailView.document
+                            <a
+                                href={data.newHireFullDetailView.document
+                                    .attachment}
+                                download={data.newHireFullDetailView.document
                                     .attachmentName}
-                            ></DownloadAttachment>
+                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                >{data.newHireFullDetailView.document
+                                    .attachmentName}</a
+                            >
                         </div>
-                        <!-- {/each} -->
                     </div>{/if}
             </div></StepperContentBody
         >
@@ -2698,7 +2683,7 @@
                             errors={$serviceInfoErrors.kgt}
                             id="kgt"
                             type="number"
-                            label={'KGT'}
+                            label={'KGT(RM)'}
                             bind:val={$serviceInfoForm.kgt}
                         ></CustomTextField>
 
@@ -2835,13 +2820,14 @@
                                 label="Tindakan/Ulasan"
                                 bind:val={$secretaryApprovalInfoForm.remark}
                             ></CustomTextField>
-                            <CustomRadioField
+                            <CustomRadioBoolean
                                 disabled={$isReadonlySecretaryApprovalResult}
+                                errors={$secretaryApprovalInfoErrors.status}
                                 id="status"
                                 options={certifyOptions}
                                 label={'Keputusan'}
                                 bind:val={$secretaryApprovalInfoForm.status}
-                            ></CustomRadioField>
+                            ></CustomRadioBoolean>
                         </form>
                     {/if}
                 </StepperContentBody>
@@ -2933,14 +2919,14 @@
                                         label="Tindakan/Ulasan"
                                         bind:val={$supporterApprovalForm.remark}
                                     ></CustomTextField>
-                                    <CustomRadioField
+                                    <CustomRadioBoolean
                                         disabled={$isReadonlySupporterApprovalResult}
                                         errors={$supporterApprovalErrors.status}
                                         id="supporterIsApproved"
                                         options={supportOptions}
                                         label={'Keputusan'}
                                         bind:val={$supporterApprovalForm.status}
-                                    ></CustomRadioField>
+                                    ></CustomRadioBoolean>
                                 </form>
                             {:else if data.isApproverRole && !$isReadonlyApproverApprovalResult && $newHireSupporterApprovalIsApproved}
                                 <form
@@ -2962,13 +2948,13 @@
                                         label="Tindakan/Ulasan"
                                         bind:val={$approverApprovalForm.remark}
                                     ></CustomTextField>
-                                    <CustomRadioField
+                                    <CustomRadioBoolean
                                         disabled={$isReadonlyApproverApprovalResult}
                                         id="approverIsApproved"
                                         options={approveOptions}
                                         label={'Keputusan'}
                                         bind:val={$approverApprovalForm.status}
-                                    ></CustomRadioField>
+                                    ></CustomRadioBoolean>
                                 </form>
                             {/if}
                         {/if}
@@ -2987,17 +2973,17 @@
                                     disabled
                                     id="approverRemark"
                                     label="Tindakan/Ulasan"
-                                    val={data.newHireFullDetailView.approver
-                                        .remark}
+                                    bind:val={data.newHireFullDetailView
+                                        .approver.remark}
                                 ></CustomTextField>
-                                <CustomRadioField
+                                <CustomRadioBoolean
                                     disabled
                                     id="approverStatus"
                                     options={approveOptions}
                                     label={'Keputusan'}
-                                    val={data.newHireFullDetailView.approver
-                                        .status}
-                                ></CustomRadioField>
+                                    bind:val={data.newHireFullDetailView
+                                        .approver.status}
+                                ></CustomRadioBoolean>
                             {:else if !$newHireSecretaryApprovalIsApproved || !newHireSupporterApprovalIsApproved}
                                 <StepperFailStatement />
                             {:else}
@@ -3018,17 +3004,17 @@
                                     disabled
                                     id="supporterRemark"
                                     label="Tindakan/Ulasan"
-                                    val={data.newHireFullDetailView.supporter
-                                        .remark}
+                                    bind:val={data.newHireFullDetailView
+                                        .supporter.remark}
                                 ></CustomTextField>
-                                <CustomRadioField
+                                <CustomRadioBoolean
                                     disabled
                                     id="supporterStatus"
                                     options={supportOptions}
                                     label={'Keputusan'}
-                                    val={data.newHireFullDetailView.supporter
-                                        .status}
-                                ></CustomRadioField>
+                                    bind:val={data.newHireFullDetailView
+                                        .supporter.status}
+                                ></CustomRadioBoolean>
                             {:else if !$newHireSecretaryApprovalIsApproved}
                                 <StepperFailStatement />
                             {:else}
@@ -3050,17 +3036,17 @@
                                     disabled
                                     id="service-secretary-remark"
                                     label="Tindakan/Ulasan"
-                                    val={data.newHireFullDetailView
+                                    bind:val={data.newHireFullDetailView
                                         .secretaryApproval.remark}
                                 ></CustomTextField>
-                                <CustomRadioField
+                                <CustomRadioBoolean
                                     disabled
                                     id="supporterIsApproved"
                                     options={certifyOptions}
                                     label={'Keputusan'}
-                                    val={data.newHireFullDetailView
+                                    bind:val={data.newHireFullDetailView
                                         .secretaryApproval.status}
-                                ></CustomRadioField>
+                                ></CustomRadioBoolean>
                             {:else}
                                 <StepperOtherRolesResult />
                             {/if}
@@ -3078,8 +3064,8 @@
                                 disabled
                                 id="employeeNumber"
                                 label="Nombor Pekerja (Dijana secara automatik oleh sistem setelah lulus."
-                                val={data.mypsmIDResponse.data?.details
-                                    .employeeNumber}
+                                bind:val={data.newHireFullDetailView
+                                    .employeeNumber.employeeNumber}
                             ></CustomTextField>
                         </div>
                     </StepperContentBody>
