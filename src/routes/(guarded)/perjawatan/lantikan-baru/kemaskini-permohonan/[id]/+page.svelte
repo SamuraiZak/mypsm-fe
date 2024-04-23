@@ -57,11 +57,8 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import { Toaster } from 'svelte-french-toast';
-    import {
-        dateProxy,
-        superForm,
-        superValidate,
-    } from 'sveltekit-superforms/client';
+    import { Badge } from 'flowbite-svelte';
+    import { superForm, superValidate } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
@@ -272,7 +269,7 @@
         validationMethod: 'oninput',
         validators: zod(_serviceInfoResponseSchema),
         onSubmit(formData) {
-            _submitServiceForm(formData.formData);
+            _submitServiceForm(Number(data.params.id), formData.formData);
         },
     });
 
@@ -290,7 +287,10 @@
         validationMethod: 'oninput',
         validators: zod(_approvalResultSchema),
         onSubmit(formData) {
-            _submitSecretaryApprovalForm(formData.formData);
+            _submitSecretaryApprovalForm(
+                Number(data.params.id),
+                formData.formData,
+            );
         },
     });
 
@@ -308,7 +308,10 @@
         validationMethod: 'oninput',
         validators: zod(_approvalResultSchema),
         onSubmit(formData) {
-            _submitSupporterApprovalForm(formData.formData);
+            _submitSupporterApprovalForm(
+                Number(data.params.id),
+                formData.formData,
+            );
         },
     });
 
@@ -326,7 +329,10 @@
         validationMethod: 'oninput',
         validators: zod(_approvalResultSchema),
         onSubmit(formData) {
-            _submitApproverApprovalForm(formData.formData);
+            _submitApproverApprovalForm(
+                Number(data.params.id),
+                formData.formData,
+            );
         },
     });
 
@@ -713,8 +719,15 @@
     };
 </script>
 
-<ContentHeader title="Maklumat Lantikan Baru"
-    ><TextIconButton
+<ContentHeader title="Maklumat Lantikan Baru">
+    {#if $isReadonlyApproverApprovalResult && $newHireSecretaryApprovalIsApproved}
+        <Badge color="dark">Proses Lantikan Baru Sah</Badge>
+    {/if}
+    {#if ($isReadonlySecretaryApprovalResult && !$newHireSecretaryApprovalIsApproved) || ($isReadonlySupporterApprovalResult && !$newHireSupporterApprovalIsApproved) || ($isReadonlyApproverApprovalResult && !$newHireApproverApprovalIsApproved)}
+        <Badge color="red">Proses Lantikan Baru Tidak Sah</Badge>
+    {/if}
+
+    <TextIconButton
         label="Kembali"
         type="neutral"
         onClick={() => {
@@ -2609,6 +2622,24 @@
                             placeholder="-"
                             type="date"
                             disabled={$isReadonlyServiceFormStepper}
+                            errors={$serviceInfoErrors.confirmServiceDate}
+                            id="confirmServiceDate"
+                            label={'Tarikh Disahkan Perkhidmatan Sekarang'}
+                            bind:val={$serviceInfoForm.confirmServiceDate}
+                        ></CustomTextField>
+                        <CustomTextField
+                            placeholder="-"
+                            type="date"
+                            disabled={$isReadonlyServiceFormStepper}
+                            errors={$serviceInfoErrors.firstEffectiveServiceDate}
+                            id="firstEffectiveServiceDate"
+                            label={'Mula Berkuatkuasa Perkhidmatan Pertama'}
+                            bind:val={$serviceInfoForm.firstEffectiveServiceDate}
+                        ></CustomTextField>
+                        <CustomTextField
+                            placeholder="-"
+                            type="date"
+                            disabled={$isReadonlyServiceFormStepper}
                             errors={$serviceInfoErrors.firstConfirmServiceDate}
                             id="firstConfirmServiceDate"
                             label={'Disahkan Dalam Jawatan Pertama LKIM'}
@@ -2762,19 +2793,17 @@
                 {/if}
             </StepperContentBody>
         </StepperContent>
-        {#if $newHireSecretaryApprovalIsApproved}
+        {#if $isReadonlyServiceFormStepper}
             <StepperContent>
                 <StepperContentHeader
                     title="Keputusan Lantikan Baru (Urus Setia Perjawatan)"
                 >
-                    {#if $isReadonlySecretaryApprovalResult && data.isEmploymentSecretaryRole}
+                    {#if !$isReadonlySecretaryApprovalResult && data.isEmploymentSecretaryRole}
                         <TextIconButton
                             type="primary"
                             label="Simpan"
                             form="newEmploymentSecretaryResultForm"
-                        >
-                            <SvgCheck></SvgCheck>
-                        </TextIconButton>
+                        ></TextIconButton>
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -2817,6 +2846,8 @@
                     {/if}
                 </StepperContentBody>
             </StepperContent>
+        {/if}
+        {#if $newHireSecretaryApprovalIsApproved}
             <StepperContent>
                 <StepperContentHeader
                     title="Tetapan Penyokong dan Pelulus (Jika Sah)"
@@ -2826,9 +2857,7 @@
                             type="primary"
                             label="Simpan"
                             form="newEmploymentAssignApproverSupporterForm"
-                        >
-                            <SvgCheck></SvgCheck>
-                        </TextIconButton>
+                        ></TextIconButton>
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>

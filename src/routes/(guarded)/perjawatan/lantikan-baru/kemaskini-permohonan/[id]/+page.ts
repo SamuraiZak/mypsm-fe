@@ -487,7 +487,7 @@ export async function load({ params }) {
         await LookupServices.getServiceGradeEnums();
 
     const gradeLookup: DropdownDTO[] =
-        LookupServices.setSelectOptions(gradeLookupResponse);
+        LookupServices.setSelectOptionsNameIsCode(gradeLookupResponse);
 
     // ===========================================================================
 
@@ -766,9 +766,10 @@ export const _submitNextOfKinForm = async (formData: object) => {
     return { response };
 };
 
-export const _submitServiceForm = async (formData: object) => {
+export const _submitServiceForm = async (id: number, formData: object) => {
     const form = await superValidate(formData, zod(_serviceInfoRequestSchema));
-    console.log(form);
+    form.data.candidateId = id;
+
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
@@ -782,8 +783,12 @@ export const _submitServiceForm = async (formData: object) => {
     return { response };
 };
 
-export const _submitSecretaryApprovalForm = async (formData: object) => {
+export const _submitSecretaryApprovalForm = async (
+    id: number,
+    formData: object,
+) => {
     const form = await superValidate(formData, zod(_approvalResultSchema));
+    form.data.id = id;
 
     if (!form.valid) {
         getErrorToast();
@@ -798,8 +803,12 @@ export const _submitSecretaryApprovalForm = async (formData: object) => {
     return { response };
 };
 
-export const _submitSupporterApprovalForm = async (formData: object) => {
+export const _submitSupporterApprovalForm = async (
+    id: number,
+    formData: object,
+) => {
     const form = await superValidate(formData, zod(_approvalResultSchema));
+    form.data.id = id;
 
     if (!form.valid) {
         getErrorToast();
@@ -814,8 +823,12 @@ export const _submitSupporterApprovalForm = async (formData: object) => {
     return { response };
 };
 
-export const _submitApproverApprovalForm = async (formData: object) => {
+export const _submitApproverApprovalForm = async (
+    id: number,
+    formData: object,
+) => {
     const form = await superValidate(formData, zod(_approvalResultSchema));
+    form.data.id = id;
 
     if (!form.valid) {
         getErrorToast();
