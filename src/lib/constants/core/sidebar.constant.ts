@@ -879,7 +879,7 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Latiham Baru',
+                            name: 'Latihan Baru',
                             path: '/perjawatan/lantikan-baru',
                         },
                         {
