@@ -86,7 +86,7 @@ export const _personalInfoResponseSchema = z.object({
     employeeName: z.string().nullable(),
     employeePosition: z.string().nullable(),
     relationshipId: z.number().nullable(),
-    isReadOnly: z.boolean().readonly(),
+    isReadonly: z.boolean().readonly(),
 });
 // .partial({
 //     alternativeName: true,
@@ -102,7 +102,7 @@ export const _personalInfoRequestSchema = _personalInfoResponseSchema
         id: true,
         employeeName: true,
         employeePosition: true,
-        isReadOnly: true,
+        isReadonly: true,
     })
     .superRefine(
         (
@@ -177,7 +177,7 @@ export const _academicInfoSchema = z
 
 export const _academicListResponseSchema = z.object({
     academics: z.array(_academicInfoSchema),
-    isReadOnly: z.boolean().readonly(),
+    isReadonly: z.boolean().readonly(),
 });
 
 export const _academicListRequestSchema = _academicListResponseSchema.pick({
@@ -200,7 +200,7 @@ export const _experienceInfoSchema = z.object({
 
 export const _experienceListResponseSchema = z.object({
     experiences: z.array(_experienceInfoSchema),
-    isReadOnly: z.boolean().readonly(),
+    isReadonly: z.boolean().readonly(),
 });
 
 export const _experienceListRequestSchema = _experienceListResponseSchema.pick({
@@ -220,7 +220,7 @@ export const _activityInfoSchema = z.object({
 
 export const _activityListResponseSchema = z.object({
     activities: z.array(_activityInfoSchema),
-    isReadOnly: z.boolean().readonly(),
+    isReadonly: z.boolean().readonly(),
 });
 
 export const _activityListRequestSchema = _activityListResponseSchema.pick({
@@ -275,17 +275,17 @@ export const _relationsSchema = z
 
 // export const _familyListResponseSchema = z.object({
 //     dependencies: z.array(_relationsSchema),
-//     isReadOnly: z.boolean().readonly(),
+//     isReadonly: z.boolean().readonly(),
 // });
 
 export const _dependencyListResponseSchema = z.object({
     dependencies: z.array(_relationsSchema),
-    isReadOnly: z.boolean().readonly(),
+    isReadonly: z.boolean().readonly(),
 });
 
 // export const _nextOfKinListResponseSchema = z.object({
 //     nextOfKins: z.array(_relationsSchema),
-//     isReadOnly: z.boolean().readonly(),
+//     isReadonly: z.boolean().readonly(),
 // });
 
 export const _familyListRequestSchema = _dependencyListResponseSchema.pick({
@@ -310,10 +310,11 @@ export const _serviceDetailSchema = z.object({
     maxGradeId: numberIdSchema,
     positionId: numberIdSchema,
     placementId: numberIdSchema,
+    schemeId: numberIdSchema,
     serviceTypeId: numberIdSchema,
     serviceGroupId: numberIdSchema,
     unitId: numberIdSchema,
-    programId: numberIdSchema,
+    programmeId: numberIdSchema,
     employmentStatusId: numberIdSchema,
     effectiveDate: dateStringSchema,
     retirementBenefit: codeSchema,
@@ -340,7 +341,7 @@ export const _serviceDetailSchema = z.object({
     itp: numberSchema,
     epw: numberSchema,
     cola: numberSchema,
-    isReadOnly: z.boolean().readonly(),
+    isReadonly: z.boolean().readonly(),
 });
 
 export const _serviceInfoResponseSchema = _serviceDetailSchema.omit({
@@ -348,7 +349,7 @@ export const _serviceInfoResponseSchema = _serviceDetailSchema.omit({
 });
 
 export const _serviceInfoRequestSchema = _serviceDetailSchema.omit({
-    isReadOnly: true,
+    isReadonly: true,
 });
 
 //==========================================================
@@ -360,6 +361,7 @@ export const _approvalResultSchema = z.object({
     name: z.string().readonly(),
     remark: longTextSchema,
     status: booleanSchema.default(true),
+    isReadonly: z.boolean().readonly(),
 });
 
 //==========================================================
@@ -386,9 +388,19 @@ export const _getNewHireApproversSchema = z.object({
 //================== Document Schema =======================
 //==========================================================
 
+export const _employeeNumberSchema = z.object({
+    employeeNumber: z.string().readonly(),
+});
+
+//==========================================================
+//================== Employee Number Schema =======================
+//==========================================================
+
 export const _documentsSchema = z.object({
     template: z.string().readonly(),
+    templateName: z.string().readonly(),
     attachment: z.string().readonly(),
+    attachmentName: z.string().readonly(),
     isReadonly: z.boolean().readonly(),
 });
 
@@ -397,4 +409,21 @@ export const _uploadDocumentsSchema = z.object({
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
         .refine((f) => f.size < 1_000_000, 'Maximum 1 MB saiz muat naik.')
         .array(),
+});
+
+export const _newHireFullDetailSchema = z.object({
+    personalDetail: _personalInfoResponseSchema,
+    academic: _academicListResponseSchema,
+    experience: _experienceListResponseSchema,
+    activity: _activityListResponseSchema,
+    family: _dependencyListResponseSchema,
+    dependent: _dependencyListResponseSchema,
+    nextOfKin: _dependencyListResponseSchema,
+    document: _documentsSchema,
+    secretaryUpdate: _serviceDetailSchema,
+    secretaryApproval: _approvalResultSchema,
+    supporterApprover: _getNewHireApproversSchema,
+    supporter: _approvalResultSchema,
+    approver: _approvalResultSchema,
+    employeeNumber: _employeeNumberSchema,
 });
