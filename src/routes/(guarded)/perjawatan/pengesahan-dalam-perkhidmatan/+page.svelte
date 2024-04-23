@@ -189,9 +189,6 @@
 
                             goto(route);
                         }}
-                        addActions={() => {
-                            goto('./prosiding/tambah-prosiding');
-                        }}
                     >
                         <FilterWrapper slot="filter">
                             <FilterTextField
@@ -233,12 +230,9 @@
                             bind:tableData={confirmationExceedsThreeYearsListTable}
                             bind:passData={rowData}
                             detailActions={() => {
-                                const route = `./prosiding/suspend-${rowData.id}`;
+                                const route = `./pengesahan-dalam-perkhidmatan/${rowData.id}`;
 
                                 goto(route);
-                            }}
-                            addActions={() => {
-                                goto('./prosiding/tambah-prosiding');
                             }}
                         >
                             <FilterWrapper slot="filter">
@@ -284,12 +278,9 @@
                             bind:tableData={confirmationRationalisationListTable}
                             bind:passData={rowData}
                             detailActions={() => {
-                                const route = `./prosiding/suspend-${rowData.id}`;
+                                const route = `./pengesahan-dalam-perkhidmatan/${rowData.id}`;
 
                                 goto(route);
-                            }}
-                            addActions={() => {
-                                goto('./prosiding/tambah-prosiding');
                             }}
                         >
                             <FilterWrapper slot="filter">
