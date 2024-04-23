@@ -732,7 +732,7 @@
         type="neutral"
         onClick={() => {
             goto('../../lantikan-baru');
-        }}
+        }}  
     /></ContentHeader
 >
 <Stepper>
