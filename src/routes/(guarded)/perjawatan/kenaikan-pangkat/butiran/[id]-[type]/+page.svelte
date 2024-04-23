@@ -12,7 +12,14 @@
         TableDTO,
         TableSettingDTO,
     } from '$lib/dto/core/table/table.dto';
-    import { _submitAddNewPromotion } from './+page';
+    import {
+        _getPlacementDetail,
+        _getPromotionDetail,
+        _submitAddNewPromotion,
+        _submitCertification,
+        _submitEmployeePromotion,
+        _submitPlacement,
+    } from './+page';
     import type { PageData } from './$types';
     export let data: PageData;
     import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
@@ -23,11 +30,32 @@
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
-    import type { PromotionCommonEmployee } from '$lib/dto/mypsm/employment/promotion/promotion-common-employee.dto';
+    import type {
+        PromotionCommonEmployee,
+        PromotionPlacement,
+        PromotionPlacementDetail,
+        PromotionProcessDetail,
+        PromotionSalaryAdjustment,
+        PromotionSalaryAdjustmentDetail,
+    } from '$lib/dto/mypsm/employment/promotion/promotion-common-employee.dto';
     import { superForm } from 'sveltekit-superforms/client';
     import { zod } from 'sveltekit-superforms/adapters';
-    import { _addNewPromotion } from '$lib/schemas/mypsm/employment/promotion/promotion-schemas';
+    import {
+        _addNewPromotion,
+        _editEmployeePromotion,
+        _editPromotionCertification,
+        _editPromotionPlacement,
+    } from '$lib/schemas/mypsm/employment/promotion/promotion-schemas';
     import { Toaster } from 'svelte-french-toast';
+    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
+    import {
+        approveOptions,
+        certifyOptions,
+        confirmOptions,
+    } from '$lib/constants/core/radio-option-constants';
+    import { kgtMonthStringLookup } from '$lib/constants/core/dropdown.constant';
+    import type { PromotionCertificationGet } from '$lib/dto/mypsm/employment/promotion/promotion-common-groupid.dto';
+    import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 
     let currentRoleCode: string | null;
     let employeeRoleCode: string = UserRoleConstant.kakitangan.code;
@@ -171,45 +199,119 @@
             add: false,
         },
     };
+    let promotionTable: TableSettingDTO = {
+        param: data.commonParam,
+        meta: data.placementListResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.placementList,
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['promotionId'],
+        dictionary: [],
+        url: 'employment/promotion/placement_meetings/list',
+        id: 'certificationTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
+    };
+    let promotionEmployee: TableSettingDTO = {
+        param: data.promotionEmployeeParam,
+        meta: data.promotionDetailResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.promotionDetail,
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: [],
+        dictionary: [],
+        url: 'employment/promotion/employee_promotions/list',
+        id: 'certificationTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
+    };
+
+    const {
+        form: certificationForm,
+        errors: certificationError,
+        enhance: certificationEnhance,
+    } = superForm(data.certificationForm, {
+        SPA: true,
+        resetForm: false,
+        dataType: 'json',
+        invalidateAll: true,
+        id: 'certificationForm',
+        validators: zod(_editPromotionCertification),
+        onSubmit() {
+            $certificationForm.promotionType = data.promotionType
+                .split(' ')
+                .slice(-1)[0];
+            $certificationForm.id = data.currentId.groupId;
+            if ($certificationForm.meetingResult) {
+                $certificationForm.actingEndDate = '';
+                $certificationForm.gradeRevertDate = '';
+                $certificationForm.newPlacement = '';
+            } else if (!$certificationForm.meetingResult) {
+                $certificationForm.confirmedDate = '';
+            }
+            _submitCertification($certificationForm);
+        },
+    });
+    const {
+        form: placementForm,
+        errors: placementError,
+        enhance: placementEnhance,
+    } = superForm(data.placementForm, {
+        SPA: true,
+        resetForm: false,
+        dataType: 'json',
+        invalidateAll: true,
+        id: 'placementForm',
+        validators: zod(_editPromotionPlacement),
+        onSubmit() {
+            _submitPlacement($placementForm);
+        },
+    });
+    const {
+        form: employeePromotion,
+        errors: employeePromotionError,
+        enhance: employeePromotionEnhance,
+    } = superForm(data.employeePromotion, {
+        SPA: true,
+        resetForm: false,
+        dataType: 'json',
+        invalidateAll: true,
+        id: 'employeePromotion',
+        validators: zod(_editEmployeePromotion),
+        onSubmit() {
+            _submitEmployeePromotion($employeePromotion);
+        },
+    });
 
     // to be remove
-    let param: CommonListRequestDTO = data.param;
-    let table: TableDTO = {
-        param: param,
-        meta: {
-            pageSize: 5,
-            pageNum: 1,
-            totalData: 4,
-            totalPage: 1,
-        },
-        data: data.dataList ?? [],
-        selectedData: [],
-    };
-
-    let statusPerakuan: TableDTO = {
-        param: param,
-        meta: {
-            pageSize: 5,
-            pageNum: 1,
-            totalData: 4,
-            totalPage: 1,
-        },
-        data: data.dataList2 ?? [],
-    };
-
-    let employeePlacementTable: TableDTO = {
-        param: param,
-        meta: {
-            pageSize: 5,
-            pageNum: 1,
-            totalData: 4,
-            totalPage: 1,
-        },
-        data: data.dataList3 ?? [],
-    };
-
     let salaryMovementRecordTable: TableDTO = {
-        param: param,
+        param: data.param,
         meta: {
             pageSize: 5,
             pageNum: 1,
@@ -220,7 +322,7 @@
     };
 
     let employeePromotionTable: TableDTO = {
-        param: param,
+        param: data.param,
         meta: {
             pageSize: 5,
             pageNum: 1,
@@ -231,7 +333,7 @@
     };
 
     let directorStepperTable: TableDTO = {
-        param: param,
+        param: data.param,
         meta: {
             pageSize: 5,
             pageNum: 1,
@@ -241,29 +343,51 @@
         data: data.dataList6 ?? [],
     };
 
-    let dropdownOptions: DropdownDTO[] = [
-        {
-            name: 'Kim Jong Kook',
-            value: 'Kim Jong Kook',
+    let currentEmployeeDetail: PromotionPlacementDetail;
+    let rowData: PromotionPlacement;
+    let salaryAdjustmentDetail: PromotionSalaryAdjustmentDetail;
+    let salaryAdjustment: PromotionSalaryAdjustment[] = [];
+    let salaryAdjustmentResponse: CommonResponseDTO = {};
+    let salaryAdjustmentParam: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: '',
+        orderType: 0,
+        filter: {
+            employeeId: 1,
         },
-        {
-            name: 'Yoo Jae Suk',
-            value: 'Yoo Jae Suk',
-        },
-    ];
-
-    let meetingName: DropdownDTO[] = [
-        { value: 'Mesyuarat 1/12', name: 'Mesyuarat 1/12' },
-        { value: 'Mesyuarat 1/102', name: 'Mesyuarat 1/102' },
-        { value: 'Mesyuarat 2/101', name: 'Mesyuarat 2/101' },
-    ];
-
-    let meetingResultOption: DropdownDTO[] = [
-        { value: 'Berjaya', name: 'Berjaya' },
-        { value: 'Tidak Berjaya', name: 'Tidak Berjaya' },
-    ];
-
-    let dropdownVal: string;
+    };
+    let processDetail: PromotionProcessDetail;
+    const getTableInformation = async (index: number) => {
+        let requestedDetail: PromotionCertificationGet = {
+            id: rowData.promotionId,
+            promotionType: data.promotionType,
+        };
+        switch (index) {
+            case 1: {
+                _getPlacementDetail(requestedDetail, salaryAdjustmentParam)
+                    .then((res) => {
+                        currentEmployeeDetail = res.response.data
+                            ?.details as PromotionPlacementDetail;
+                        salaryAdjustmentDetail = res.salaryDetail.data
+                            ?.details as PromotionSalaryAdjustmentDetail;
+                        // salaryAdjustmentResponse = res.tableResponse.data.
+                    })
+                    .finally(() => {
+                        // set form here
+                    });
+                break;
+            }
+            case 2: {
+                _getPromotionDetail(requestedDetail).then((res) => {
+                    processDetail = res.response.data
+                        ?.details as PromotionProcessDetail;
+                }).finally(() => {
+                    // employeePromotion here
+                } );
+            }
+        }
+    };
 </script>
 
 <!-- content header starts here -->
@@ -275,7 +399,7 @@
             icon="cancel"
             type="neutral"
             label="Tutup"
-            onClick={() => goto('./')}
+            onClick={() => goto('/perjawatan/kenaikan-pangkat')}
         />
     </ContentHeader>
 </section>
@@ -290,12 +414,14 @@
             {#if currentRoleCode === secretaryRoleCode}
                 <StepperContent>
                     <StepperContentHeader title="Pemilihan Kakitangan">
-                        <TextIconButton
-                            type="primary"
-                            label="Tambah"
-                            icon="add"
-                            form="addnewPromotionForm"
-                        />
+                        {#if data.isNewPromotion}
+                            <TextIconButton
+                                type="primary"
+                                label="Tambah"
+                                icon="add"
+                                form="addnewPromotionForm"
+                            />
+                        {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
                         <form
@@ -323,48 +449,25 @@
                         </form>
                     </StepperContentBody>
                 </StepperContent>
-
-                <StepperContent>
-                    <StepperContentHeader
-                        title="Senarai Kakitangan Yang Dipilih"
-                    ></StepperContentHeader>
-                    <StepperContentBody>
-                        <div
-                            class="flex w-full flex-col justify-start gap-2.5 pb-10"
-                        >
-                            <div class="h-fit w-full">
-                                <DataTable
-                                    title=""
-                                    bind:tableData={certificationTable}
-                                ></DataTable>
-                            </div>
-                        </div>
-                    </StepperContentBody>
-                </StepperContent>
             {/if}
 
             <StepperContent>
                 <StepperContentHeader title="Semak Status Perakuan">
-                    {#if currentRoleCode === secretaryRoleCode}
+                    {#if openDetail}
                         <TextIconButton
-                            type="netural"
+                            type="neutral"
                             label="Kembali"
-                            icon="previous"
-                            onClick={() => goPrevious()}
+                            icon="cancel"
+                            onClick={() => (openDetail = false)}
                         />
+                        <TextIconButton label="Simpan" icon="check" form="" />
                     {/if}
-                    <TextIconButton
-                        type="primary"
-                        label="Seterusnya"
-                        icon="next"
-                        onClick={() => goNext()}
-                    />
                 </StepperContentHeader>
                 <StepperContentBody>
-                    <div
-                        class="flex w-full flex-col justify-start gap-2.5 px-2.5"
-                    >
-                        {#if currentRoleCode === secretaryRoleCode}
+                    {#if !openDetail}
+                        <div
+                            class="flex w-full flex-col justify-start gap-2.5 p-3"
+                        >
                             <div
                                 class="flex w-full flex-col justify-start gap-2.5 pb-10"
                             >
@@ -372,78 +475,70 @@
                                     <DataTable
                                         title=""
                                         bind:tableData={certificationTable}
+                                        detailActions={() =>
+                                            (openDetail = true)}
                                     ></DataTable>
                                 </div>
                             </div>
-                        {:else if currentRoleCode === supporterRoleCode || currentRoleCode === approverRoleCode}
-                            <ContentHeader
-                                title="Urus Setia Integriti"
-                                borderClass="border-none"
-                            />
-                            <CustomTextField
-                                label="Nama"
-                                disabled={currentRoleCode !== secretaryRoleCode
-                                    ? true
-                                    : false}
-                                id="secretaryName"
-                                type="text"
-                                val="Justin Bieber"
-                            />
-                            <CustomTextField
-                                label="Ulasan/Tindakan"
-                                disabled={currentRoleCode !== secretaryRoleCode
-                                    ? true
-                                    : false}
-                                id="secretaryRemark"
-                                type="text"
-                                val="Disetuju untuk perakuan"
-                            />
-                            <CustomTextField
-                                label="Keputusan"
-                                disabled={currentRoleCode !== secretaryRoleCode
-                                    ? true
-                                    : false}
-                                id="secretaryResult"
-                                type="text"
-                                val="DIPERAKU (green background)"
-                            />
-                            <ContentHeader
-                                title="Pengarah Bahagian/Negeri"
-                                borderClass="border-none"
-                            />
-                            <CustomTextField
-                                label="Nama"
-                                disabled={currentRoleCode !== secretaryRoleCode
-                                    ? true
-                                    : false}
-                                id="directorName"
-                                type="text"
-                                val="Justin Bieber"
-                            />
-                            <CustomTextField
-                                label="Ulasan/Tindakan"
-                                disabled={currentRoleCode !== secretaryRoleCode
-                                    ? true
-                                    : false}
-                                id="directorRemark"
-                                type="text"
-                                val="Disetuju untuk perakuan"
-                            />
-                            <CustomTextField
-                                label="Keputusan"
-                                disabled={currentRoleCode !== secretaryRoleCode
-                                    ? true
-                                    : false}
-                                id="directorResult"
-                                type="text"
-                                val="DIPERAKU (green background)"
-                            />
-                        {/if}
-                    </div>
+                        </div>
+                    {:else}
+                        <div class="flex w-full flex-col gap-2.5 pb-2.5">
+                            <form
+                                class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10 md:w-1/2"
+                            >
+                                <ContentHeader
+                                    title="Urus Setia Integriti"
+                                    borderClass="border-none"
+                                />
+                                <CustomTextField
+                                    label="Nama"
+                                    id="secretaryName"
+                                    type="text"
+                                    val="Justin Bieber"
+                                />
+                                <CustomTextField
+                                    label="Ulasan/Tindakan"
+                                    id="secretaryRemark"
+                                    type="text"
+                                    val="Disetuju untuk perakuan"
+                                />
+                                <CustomRadioBoolean
+                                    label="Keputusan"
+                                    id="secretaryResult"
+                                    disabled={false}
+                                    options={confirmOptions}
+                                    val={true}
+                                />
+                                <ContentHeader
+                                    title="Pengarah Bahagian/Negeri"
+                                    borderClass="border-none"
+                                />
+                                <CustomTextField
+                                    label="Nama"
+                                    id="directorName"
+                                    type="text"
+                                    val="Justin Bieber"
+                                />
+                                <CustomTextField
+                                    label="Ulasan/Tindakan"
+                                    id="directorRemark"
+                                    type="text"
+                                    val="Disetuju untuk perakuan"
+                                />
+                                <CustomRadioBoolean
+                                    label="Keputusan"
+                                    id="directorResult"
+                                    disabled={false}
+                                    options={confirmOptions}
+                                    val={true}
+                                />
+                            </form>
+                        </div>
+                    {/if}
                 </StepperContentBody>
             </StepperContent>
 
-            {#if data.promotionType === 'gred_utama' && currentRoleCode === secretaryRoleCode}
+            {#if data.promotionType === 'Gred Utama' && currentRoleCode === secretaryRoleCode}
                 <StepperContent>
                     <StepperContentHeader title="Muat Turun Borang Berkaitan">
                         <TextIconButton
@@ -472,20 +567,7 @@
                 <StepperContentHeader
                     title="Keputusan Mesyuarat Kenaikan Pangkat"
                 >
-                    {#if !openDetail || currentRoleCode === supporterRoleCode}
-                        <TextIconButton
-                            type="netural"
-                            label="Kembali"
-                            icon="previous"
-                            onClick={() => goPrevious()}
-                        />
-                        <TextIconButton
-                            type="primary"
-                            label="Seterusnya"
-                            icon="next"
-                            onClick={() => goNext()}
-                        />
-                    {:else}
+                    {#if openDetail}
                         <TextIconButton
                             type="netural"
                             label="Batal"
@@ -496,108 +578,109 @@
                             type="primary"
                             label="Simpan"
                             icon="check"
-                            onClick={() => {}}
+                            form="certificationForm"
                         />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
                     {#if !openDetail && currentRoleCode === secretaryRoleCode}
                         <div
-                                class="flex w-full flex-col justify-start gap-2.5 pb-10"
-                            >
-                                <div class="h-fit w-full">
-                                    <DataTable
-                                        title="Senarai Kakitangan Terpilih"
-                                        bind:tableData={certificationTable}
-                                        detailActions={() => {}}
-                                    ></DataTable>
-                                </div>
-                            </div>
-                    {:else}
-                        <form
-                            class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                            class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
                         >
-                            <span
-                                class="pb-2 text-sm italic text-ios-activeColors-activeBlue-light"
+                            <div class="h-fit w-full">
+                                <DataTable
+                                    title="Senarai Kakitangan Terpilih"
+                                    bind:tableData={certificationTable}
+                                    detailActions={() => {
+                                        openDetail = true;
+                                    }}
+                                ></DataTable>
+                            </div>
+                        </div>
+                    {:else}
+                        <div class="flex w-full flex-col gap-2.5 pb-10">
+                            <form
+                                class="flex w-full flex-col justify-start gap-2.5 px-2 md:w-1/2"
+                                id="certificationForm"
+                                method="POST"
+                                use:certificationEnhance
                             >
-                                Sekiranya kakitangan tidak lulus mesyuarat,
-                                proses akan berakhir untuk kakitangan tersebut.
-                            </span>
-                            <CustomSelectField
-                                label="Nama dan Bilangan Mesyuarat"
-                                disabled={currentRoleCode !== secretaryRoleCode
-                                    ? true
-                                    : false}
-                                id="meetingName"
-                                options={meetingName}
-                                bind:val={dropdownVal}
-                            />
-                            <CustomTextField
-                                label="Tarikh Mesyuarat"
-                                disabled={currentRoleCode !== secretaryRoleCode
-                                    ? true
-                                    : false}
-                                id="meetingDate"
-                                type="text"
-                                val="date selector here"
-                            />
-                            <CustomTextField
-                                label="Tindakan/Ulasan Mesyuarat"
-                                disabled={currentRoleCode !== secretaryRoleCode
-                                    ? true
-                                    : false}
-                                id="meetingRemark"
-                                type="text"
-                                val="this is long text field"
-                            />
-                            <span>Keputusan mesyuarat radio here</span>
-                            {#if data.promotionType === '1_54'}
-                                <CustomTextField
-                                    label="Tarikh Pengesahan Kenaikan Pangkat (Jika Lulus)"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="promotionDate"
-                                    type="text"
-                                    val="date selector here"
-                                />
-                                <ContentHeader
-                                    title="Penamatan Pemangkuan (Jika Mesyuarat Tidak Lulus)"
-                                    borderClass="border-none"
-                                />
-                                <CustomTextField
-                                    label="Tarikh Tamat Pemangkuan"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="actingEndDate"
-                                    type="text"
-                                    val="date selector here"
-                                />
-                                <CustomTextField
-                                    label="Tarikh Kembali Ke Gred Asal"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="toOriginalGradeDate"
-                                    type="text"
-                                    val="date selector here"
-                                />
+                                <span
+                                    class="pb-2 text-sm italic text-ios-activeColors-activeBlue-light"
+                                >
+                                    Sekiranya kakitangan tidak lulus mesyuarat,
+                                    proses akan berakhir untuk kakitangan
+                                    tersebut.
+                                </span>
                                 <CustomSelectField
-                                    label="Penempatan Baru"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="newPlacement"
-                                    options={dropdownOptions}
-                                    bind:val={dropdownVal}
+                                    label="Nama dan Bilangan Mesyuarat"
+                                    id="meetingNameCount"
+                                    options={data.lookup.meetingNameLookup}
+                                    bind:val={$certificationForm.meetingNameCount}
                                 />
-                            {/if}
-                        </form>
+                                <CustomTextField
+                                    label="Tarikh Mesyuarat"
+                                    id="meetingDate"
+                                    type="date"
+                                    bind:val={$certificationForm.meetingDate}
+                                    errors={$certificationError.meetingDate}
+                                />
+                                <CustomTextField
+                                    label="Tindakan/Ulasan Mesyuarat"
+                                    id="meetingRemark"
+                                    type="text"
+                                    bind:val={$certificationForm.meetingRemark}
+                                    errors={$certificationError.meetingRemark}
+                                />
+                                <CustomRadioBoolean
+                                    label="Keputusan"
+                                    id="meetingResult"
+                                    disabled={false}
+                                    options={approveOptions}
+                                    bind:val={$certificationForm.meetingResult}
+                                    errors={$certificationError.meetingResult}
+                                />
+
+                                {#if data.promotionType === 'Gred 1-54'}
+                                    {#if $certificationForm.meetingResult}
+                                        <CustomTextField
+                                            label="Tarikh Pengesahan Kenaikan Pangkat (Jika Lulus)"
+                                            id="confirmedDate"
+                                            type="date"
+                                            bind:val={$certificationForm.confirmedDate}
+                                            errors={$certificationError.confirmedDate}
+                                        />
+                                    {:else}
+                                        <ContentHeader
+                                            title="Penamatan Pemangkuan (Jika Mesyuarat Tidak Lulus)"
+                                            borderClass="border-none"
+                                        />
+                                        <CustomTextField
+                                            label="Tarikh Tamat Pemangkuan"
+                                            id="actingEndDate"
+                                            type="date"
+                                            bind:val={$certificationForm.actingEndDate}
+                                            errors={$certificationError.actingEndDate}
+                                        />
+                                        <CustomTextField
+                                            label="Tarikh Kembali Ke Gred Asal"
+                                            id="gradeRevertDate"
+                                            type="date"
+                                            bind:val={$certificationForm.gradeRevertDate}
+                                            errors={$certificationError.gradeRevertDate}
+                                        />
+                                        <CustomSelectField
+                                            label="Penempatan Baru"
+                                            id="newPlacement"
+                                            options={data.lookup
+                                                .placementLookup}
+                                            bind:val={$certificationForm.newPlacement}
+                                            errors={$certificationError.newPlacement}
+                                        />
+                                    {/if}
+                                {/if}
+                            </form>
+                        </div>
                     {/if}
                 </StepperContentBody>
             </StepperContent>
@@ -606,20 +689,7 @@
                 <StepperContentHeader
                     title="Keputusan Mesyuarat Penempatan Kakitangan"
                 >
-                    {#if !openDetail || currentRoleCode === supporterRoleCode}
-                        <TextIconButton
-                            type="netural"
-                            label="Kembali"
-                            icon="previous"
-                            onClick={() => goPrevious()}
-                        />
-                        <TextIconButton
-                            type="primary"
-                            label="Seterusnya"
-                            icon="next"
-                            onClick={() => goNext()}
-                        />
-                    {:else}
+                    {#if openDetail}
                         <TextIconButton
                             type="netural"
                             label="Batal"
@@ -630,28 +700,35 @@
                             type="primary"
                             label="Simpan"
                             icon="check"
-                            onClick={() => {}}
+                            form="placementForm"
                         />
                     {/if}
                 </StepperContentHeader>
-                <StepperContentBody>
+                <StepperContentBody paddingClass="p-none">
                     {#if !openDetail && currentRoleCode === secretaryRoleCode}
-                        <ContentHeader
-                            title="Senarai Calon Kakitangan Yang Dibawa Ke Mesyuarat Penempatan Kakitangan"
-                            borderClass="border-none"
-                        />
-                        <CustomTable
-                            bind:tableData={employeePlacementTable}
-                            enableDetail
-                            detailActions={() => (openDetail = true)}
-                        />
+                        <div
+                            class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10"
+                        >
+                            <div class="h-fit w-full">
+                                <DataTable
+                                    title="Senarai Calon Kakitangan Yang Dibawa Ke Mesyuarat Penempatan Kakitangan"
+                                    bind:tableData={promotionTable}
+                                    bind:passData={rowData}
+                                    detailActions={async () => {
+                                        await getTableInformation(1).finally(
+                                            () => (openDetail = true),
+                                        );
+                                    }}
+                                ></DataTable>
+                            </div>
+                        </div>
                     {:else}
                         <CustomTab>
                             <CustomTabContent
                                 title="Butiran Kenaikan Pangkat Kakitangan"
                             >
                                 <div
-                                    class="flex w-full flex-col justify-start gap-1 text-sm italic text-ios-labelColors-secondaryLabel-light"
+                                    class="flex w-full flex-col justify-start gap-1 px-2 text-sm italic text-ios-labelColors-secondaryLabel-light"
                                 >
                                     <span>
                                         Borang-borang berkaitan yang akan
@@ -667,113 +744,87 @@
                                     title="Butiran Kenaikan Pangkat"
                                     borderClass="border-none"
                                 />
-                                <CustomTextField
-                                    label="No. Pekerja"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="employeeNumber"
-                                    type="text"
-                                    val="28339"
-                                />
-                                <CustomTextField
-                                    label="Nama Pekerja"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="employeeName"
-                                    type="text"
-                                    val="Vinicius Junior"
-                                />
-                                <CustomTextField
-                                    label="Tarikh Kenaikan Pangkat"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="promotionDate"
-                                    type="text"
-                                    val="date selector here"
-                                />
-                                <CustomSelectField
-                                    label="Tarikh Pergerakan Gaji Asal"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="originalSalaryMovementDate"
-                                    options={meetingResultOption}
-                                    bind:val={dropdownVal}
-                                />
-                                <CustomSelectField
-                                    label="Tarikh Pergerakan Gaji Baru"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="newSalaryMovementDate"
-                                    options={dropdownOptions}
-                                    bind:val={dropdownVal}
-                                />
-                                <CustomTextField
-                                    label="Gaji Minimum - Gaji Maksimum E19"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="minMaxSalary"
-                                    type="text"
-                                    val="RM 1,335.00 - RM 4,0005.00"
-                                />
-                                <CustomTextField
-                                    label="Kenaikan Gaji Tahunan E19"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="annualSalaryIncrement"
-                                    type="text"
-                                    val="RM 100.00"
-                                />
-                                <CustomTextField
-                                    label="Gaji Minimum - Gaji Maksimum E22"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="minMaxSalaryNewGrade"
-                                    type="text"
-                                    val="RM 2,254.00 -RM 4,694.00"
-                                />
-                                <CustomTextField
-                                    label="Kenaikan Gaji Tahunan E22"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="newGradeAnnualSalaryIncrement"
-                                    type="text"
-                                    val="RM 115.00"
-                                />
-                                <CustomTextField
-                                    label="Penempatan Sekarang"
-                                    disabled={true}
-                                    id="currentPlacement"
-                                    type="text"
-                                    val="Pejabat Ketua Pengarah"
-                                />
-                                <CustomSelectField
-                                    label="Penempatan Baru"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="newPlacement"
-                                    options={dropdownOptions}
-                                    bind:val={dropdownVal}
-                                />
+                                <div class="flex w-full flex-col gap-2.5 pb-10">
+                                    <form
+                                        class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10 md:w-1/2"
+                                        id="placementForm"
+                                        use:placementEnhance
+                                        method="POST"
+                                    >
+                                        <CustomTextField
+                                            label="No. Pekerja"
+                                            id="employeeNumber"
+                                            disabled
+                                            val={currentEmployeeDetail?.employeeNumber}
+                                        />
+                                        <CustomTextField
+                                            label="Nama Pekerja"
+                                            id="employeeName"
+                                            disabled
+                                            val={currentEmployeeDetail?.employeeName}
+                                        />
+                                        <CustomTextField
+                                            label="Tarikh Kenaikan Pangkat"
+                                            id="promotionDate"
+                                            type="date"
+                                            val={currentEmployeeDetail?.promotionDate}
+                                        />
+                                        <CustomSelectField
+                                            label="Tarikh Pergerakan Gaji Asal"
+                                            id="originalSalaryMovementDate"
+                                            options={kgtMonthStringLookup}
+                                            val={currentEmployeeDetail?.employeeName}
+                                        />
+                                        <CustomSelectField
+                                            label="Tarikh Pergerakan Gaji Baru"
+                                            id="newSalaryMovementDate"
+                                            options={kgtMonthStringLookup}
+                                            val={currentEmployeeDetail?.newSalaryMovementDate}
+                                        />
+                                        <CustomTextField
+                                            label="Gaji Minimum - Gaji Maksimum E19"
+                                            id="firstMinimumSalary"
+                                            disabled
+                                            val={'RM ' +
+                                                currentEmployeeDetail?.firstMinimumSalary +
+                                                ' -  RM' +
+                                                currentEmployeeDetail?.firstMaximumSalary}
+                                        />
+                                        <CustomTextField
+                                            label="Kenaikan Gaji Tahunan E19"
+                                            id="firstSalaryRaise"
+                                            disabled
+                                            val={currentEmployeeDetail?.firstSalaryRaise}
+                                        />
+                                        <CustomTextField
+                                            label="Gaji Minimum - Gaji Maksimum E22"
+                                            id="minMaxSalaryNewGrade"
+                                            val={'RM ' +
+                                                currentEmployeeDetail?.secondMinimumSalary +
+                                                ' -  RM ' +
+                                                currentEmployeeDetail?.secondMaximumSalary}
+                                        />
+                                        <CustomTextField
+                                            label="Kenaikan Gaji Tahunan E22"
+                                            id="secondSalaryRaise"
+                                            placeholder=""
+                                            val={currentEmployeeDetail?.secondSalaryRaise}
+                                        />
+                                        <CustomTextField
+                                            label="Penempatan Sekarang"
+                                            disabled
+                                            id="currentPlacement"
+                                            val={currentEmployeeDetail?.currentPlacement}
+                                        />
+                                        <CustomSelectField
+                                            label="Penempatan Baru"
+                                            id="newPlacement"
+                                            options={data.lookup
+                                                .placementLookup}
+                                            val={currentEmployeeDetail?.newPlacement}
+                                        />
+                                    </form>
+                                </div>
                             </CustomTabContent>
                             <CustomTabContent
                                 title="Jadual Pelarasan Gaji Kakitangan"
@@ -782,54 +833,47 @@
                                     title="Kemaskini Rekod Kenaikan Gaji"
                                     borderClass="border-none"
                                 />
-                                <CustomTextField
-                                    label="Tarikh Kuatkuasa"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="effectiveDate"
-                                    type="text"
-                                    val="date selector here"
-                                />
-                                <CustomTextField
-                                    label="Gaji Sekarang (RM)"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="currentSalary"
-                                    type="text"
-                                    val="2,269.00"
-                                />
-                                <CustomTextField
-                                    label="Gaji Baru (RM)"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="newSalary"
-                                    type="text"
-                                    val="2,369.00"
-                                />
-                                <CustomTextField
-                                    label="Catatan"
-                                    disabled={currentRoleCode !==
-                                    secretaryRoleCode
-                                        ? true
-                                        : false}
-                                    id="salaryIncrementNote"
-                                    type="text"
-                                    val="TPG Gred Jawatan Baru Diberi Pergerakan Gaji Biasa Mengikut Keputusan PPSM Selaras Dengan Perlaksanaan Penambahbaikan Gaji Baru SSM. (Pergerakan Gaji Tahunan RM 115.00 Bagi Gred E22)"
-                                />
-
-                                <ContentHeader
-                                    title="Senarai Rekod Kenaikan Gaji"
-                                    borderClass="border-none"
-                                />
-                                <CustomTable
-                                    bind:tableData={salaryMovementRecordTable}
-                                />
+                                <div
+                                    class="flex w-full flex-col gap-2.5 px-2.5 pb-10"
+                                >
+                                    <form
+                                        class="flex w-full flex-col justify-start gap-2.5 md:w-1/2"
+                                    >
+                                        <CustomTextField
+                                            label="Tarikh Kuatkuasa"
+                                            id="effectiveDate"
+                                            placeholder=""
+                                            disabled
+                                            val={salaryAdjustmentDetail?.promotionDate}
+                                        />
+                                        <CustomTextField
+                                            label="Gaji Sekarang (RM)"
+                                            id="currentSalary"
+                                            type="number"
+                                            disabled
+                                            val={salaryAdjustmentDetail?.currentSalary}
+                                        />
+                                        <CustomTextField
+                                            label="Gaji Baru (RM)"
+                                            id="newSalary"
+                                            disabled
+                                            placeholder=""
+                                            type="number"
+                                            val={salaryAdjustmentDetail?.newSalary}
+                                        />
+                                        <CustomTextField
+                                            label="Catatan"
+                                            placeholder=""
+                                            id="remarks"
+                                            disabled
+                                            val={salaryAdjustmentDetail?.remarks}
+                                        />
+                                    </form>
+                                    <CustomTable
+                                        title="Senarai Rekod Kenaikan Gaji"
+                                        bind:tableData={salaryMovementRecordTable}
+                                    />
+                                </div>
                             </CustomTabContent>
                         </CustomTab>
                     {/if}
@@ -840,28 +884,7 @@
                 <StepperContentHeader
                     title="Maklumat Kenaikan Pangkat Kakitangan"
                 >
-                    {#if !openDetail || currentRoleCode === supporterRoleCode}
-                        <TextIconButton
-                            type="netural"
-                            label="Kembali"
-                            icon="previous"
-                            onClick={() => goPrevious()}
-                        />
-                        <TextIconButton
-                            type="primary"
-                            label={currentRoleCode !== secretaryRoleCode
-                                ? 'Seterusnya'
-                                : 'Simpan'}
-                            icon={currentRoleCode !== secretaryRoleCode
-                                ? 'next'
-                                : 'check'}
-                            onClick={() => {
-                                currentRoleCode !== secretaryRoleCode
-                                    ? goNext()
-                                    : {};
-                            }}
-                        />
-                    {:else}
+                    {#if openDetail}
                         <TextIconButton
                             type="netural"
                             label="Batal"
@@ -872,55 +895,79 @@
                             type="primary"
                             label="Simpan"
                             icon="check"
-                            onClick={() => {}}
+                            form="employeePromotion"
                         />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
-                    {#if !openDetail && currentRoleCode === secretaryRoleCode}
-                        <ContentHeader
-                            title="Senarai Calon Kakitangan Yang Lulus Untuk Kenaikan Pangkat"
-                            borderClass="border-none"
-                        />
-                        <CustomTable
-                            bind:tableData={employeePromotionTable}
-                            enableDetail
-                            detailActions={() => (openDetail = true)}
-                        />
+                    {#if !openDetail}
+                        <div
+                            class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10"
+                        >
+                            <div class="h-fit w-full">
+                                <DataTable
+                                    title="Senarai Calon Kakitangan Yang Lulus Untuk Kenaikan Pangkat"
+                                    bind:tableData={promotionEmployee}
+                                    detailActions={async () => {
+                                        // await getTableInformation(1).finally(
+                                        //     () => (openDetail = true),
+                                        // );
+                                        openDetail = true;
+                                    }}
+                                ></DataTable>
+                            </div>
+                        </div>
                     {:else}
-                        <CustomTextField
-                            label="Tarikh Pengesahan"
-                            disabled={currentRoleCode !== secretaryRoleCode
-                                ? true
-                                : false}
-                            id="validationDate"
-                            type="text"
-                            val="date selector here"
-                        />
-                        <CustomTextField
-                            label="Ulasan"
-                            disabled={currentRoleCode !== secretaryRoleCode
-                                ? true
-                                : false}
-                            id="promotionRemark"
-                            type="text"
-                            val="Borang Lengkap dan Kakitangan Setuju"
-                        />
-                        <span>Radio Button Here (Sah & X Sah)</span>
-                        <CustomTextField
-                            label="Nama Pelulus"
-                            id="approverName"
-                            disabled={true}
-                            type="text"
-                            val="Zinadine Zidane"
-                        />
-                        <CustomTextField
-                            label="Nama Penyokong"
-                            id="supporterName"
-                            disabled={true}
-                            type="text"
-                            val="Anthony Joshua"
-                        />
+                        <div class="flex w-full flex-col gap-2.5 pb-10">
+                            <form
+                                class="flex w-full flex-col justify-start gap-2.5 px-2 pt-2 md:w-1/2"
+                                id="employeePromotion"
+                            >
+                                <CustomSelectField
+                                    label="Nama Urus Setia Integriti"
+                                    id="integrityCertifierName"
+                                    options={data.lookup
+                                        .supporterApproverLookup}
+                                    disabled
+                                    val={processDetail?.integrityCertifierName}
+                                />
+                                <CustomTextField
+                                    label="Ulasan"
+                                    id="integrityCertifiedRemark"
+                                    disabled
+                                    val={processDetail?.integrityCertifiedRemark}
+                                />
+                                <CustomRadioBoolean
+                                    label="Keputusan"
+                                    id="integrityCertifiedStatus"
+                                    disabled
+                                    options={certifyOptions}
+                                    val={processDetail?.integrityCertifiedStatus}
+                                />
+                                <CustomTextField
+                                    label="Tarikh Pengesahan"
+                                    id="integrityCertifiedDate"
+                                    disabled
+                                    val={processDetail?.integrityCertifiedDate}
+                                />
+                                <CustomSelectField
+                                    label="Nama Pelulus"
+                                    id="approverName"
+                                    disabled
+                                    options={data.lookup
+                                        .supporterApproverLookup}
+                                    val={processDetail?.approverName}
+                                />
+                                <CustomSelectField
+                                    label="Nama Penyokong"
+                                    id="supporterName"
+                                    disabled
+                                    options={data.lookup
+                                        .supporterApproverLookup}
+                                    val={processDetail?.supporterName}
+                                />
+                            </form>
+                        </div>
                     {/if}
                 </StepperContentBody>
             </StepperContent>

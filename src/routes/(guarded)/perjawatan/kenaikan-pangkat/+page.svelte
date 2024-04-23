@@ -13,6 +13,7 @@
         TableDTO,
         TableSettingDTO,
     } from '$lib/dto/core/table/table.dto';
+    import type { PromotionCommonList } from '$lib/dto/mypsm/employment/promotion/promotion-common-list.dto';
     import type { PageData } from './$types';
     import { _updateTable } from './+page';
     export let data: PageData;
@@ -29,7 +30,7 @@
         {
             value: 'Gred 1-54',
             name: 'Gred 1-54',
-            href: './kenaikan-pangkat/butiran/1_54',
+            href: './kenaikan-pangkat/butiran/baru-1-54',
         },
         {
             value: 'TBK 1 dan 2 - Kumpulan Sokongan',
@@ -39,9 +40,11 @@
         {
             value: 'Gred Utama',
             name: 'Gred Utama',
-            href: './kenaikan-pangkat/butiran/gred_utama',
+            href: './kenaikan-pangkat/butiran/baru-Utama',
         },
     ];
+
+    let rowData: PromotionCommonList;
 
     let table154: TableSettingDTO = {
         param: data.param,
@@ -180,8 +183,9 @@
                         <DataTable
                             title="Senarai rekod kenaikan pangkat bagi Gred 1-54"
                             bind:tableData={table154}
+                            bind:passData={rowData}
                             detailActions={() => {
-                                goto('/perjawatan/kenaikan-pangkat/butiran/30')
+                                goto('/perjawatan/kenaikan-pangkat/butiran/'+rowData.groupId+'-'+'Gred 1-54')
                             }}
                         ></DataTable>
                     </div>
@@ -199,8 +203,9 @@
                         <DataTable
                             title="Senarai rekod kenaikan pangkat bagi TBK 1&2 - Kumpulan Sokongan"
                             bind:tableData={tableTbk12}
+                            bind:passData={rowData}
                             detailActions={() => {
-                                goto('/perjawatan/kenaikan-pangkat/butiran/30')
+                                goto('/perjawatan/kenaikan-pangkat/butiran/'+rowData.groupId+'-'+'Gred TBK 1 dan 2')
                             }}
                         ></DataTable>
                     </div>
@@ -218,8 +223,9 @@
                             <DataTable
                                 title="Senarai rekod kenaikan pangkat bagi Gred Utama"
                                 bind:tableData={tableMain}
+                                bind:passData={rowData}
                                 detailActions={() => {
-                                    goto('/perjawatan/kenaikan-pangkat/butiran/30')
+                                goto('/perjawatan/kenaikan-pangkat/butiran/'+rowData.groupId+'-'+'Gred Utama')
                                 }}
                             ></DataTable>
                         </div>
