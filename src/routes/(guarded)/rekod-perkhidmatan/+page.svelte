@@ -402,7 +402,7 @@
                                     <CustomTextField
                                         disabled
                                         id="field"
-                                        label={'Bidang'}
+                                        label={'Catatan'}
                                         type="text"
                                         bind:val={$academicInfoForm.academics[i]
                                             .field}
