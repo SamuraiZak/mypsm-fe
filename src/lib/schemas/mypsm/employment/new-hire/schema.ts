@@ -330,6 +330,8 @@ export const _serviceDetailSchema = z.object({
     firstServiceDate: dateStringSchema,
     firstConfirmServiceDate: dateStringSchema,
     firstEffectiveDate: dateStringSchema,
+    firstEffectiveServiceDate: dateStringSchema,
+    confirmServiceDate: dateStringSchema,
     confirmDate: dateStringSchema,
     pensionNumber: shortTextSchema,
     kgt: numberSchema,
