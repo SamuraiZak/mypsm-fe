@@ -562,7 +562,7 @@
 
         <StepperContent>
             <StepperContentHeader title="Keputusan Penyokong dan Pelulus">
-                {#if !submitSupporter && data.currentRoleCode == UserRoleConstant.penyokong.code}
+                {#if !submitSupporter && data.currentRoleCode == UserRoleConstant.timbalanKetuaSeksyen.code}
                     <TextIconButton
                         label="Simpan"
                         icon="check"
@@ -588,7 +588,7 @@
                     id="supporterApprovalForm"
                     use:supporterApprovalEnhance
                 >
-                    {#if $supporterApprovalForm.remark == '' && data.currentRoleCode !== UserRoleConstant.penyokong.code}
+                    {#if $supporterApprovalForm.remark == '' && data.currentRoleCode !== UserRoleConstant.timbalanKetuaSeksyen.code}
                         <div class="flex w-full flex-col gap-10 px-3">
                             <Alert color="blue">
                                 <p>
