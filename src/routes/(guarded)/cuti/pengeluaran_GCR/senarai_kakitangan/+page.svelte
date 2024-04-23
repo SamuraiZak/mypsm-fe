@@ -14,8 +14,8 @@
 
     let selectedData: any;
 
-    let withdrawalListTable: TableSettingDTO = {
-        param: data.props.request,
+    let employeeListTable: TableSettingDTO = {
+        param: data.props.param,
         meta: data.props.response.data?.meta ?? {
             pageSize: 1,
             pageNum: 1,
@@ -32,13 +32,13 @@
                 malay: 'No. Kad Pengenalan',
             },
         ],
-        url: 'leave/gcr/withdrawal/list',
-        id: 'withdrawalListTable',
+        url: 'employee/list',
+        id: 'employeeListTable',
         option: {
             checkbox: false,
-            detail: true,
+            detail: false,
             edit: false,
-            select: false,
+            select: true,
             filter: true,
         },
         controls: {
@@ -49,42 +49,14 @@
                     UserRoleConstant.urusSetiaCuti.code,
         },
     };
-
-    function addApplication() {
-        let url = '';
-        switch (data.props.currentRoleCode) {
-            case UserRoleConstant.kakitangan.code:
-                url = '/cuti/pengeluaran_GCR/baru/pengeluaran_awal';
-                break;
-            case UserRoleConstant.urusSetiaCuti.code:
-                url = '/cuti/pengeluaran_GCR/senarai';
-                break;
-            default:
-                url = '/cuti/pengeluaran_GCR/baru/pengeluaran_awal';
-                break;
-        }
-
-        goto(url);
-    }
-
-    function viewDetails() {
-        let currentType: DropdownDTO =
-            GCRWithdrawalTypeConstant.list.find(
-                (item) => item.name == selectedData.dataType,
-            ) ?? GCRWithdrawalTypeConstant.early;
-
-        let url =
-            '/cuti/pengeluaran_GCR/' + selectedData.id + '/' + currentType.url;
-
-        goto(url);
-    }
 </script>
 
 <div
     class="flex h-full max-h-full w-full flex-col overflow-y-hidden bg-ios-basic-lightBackgroundGray"
 >
     <section class="flex w-full flex-col items-start justify-start">
-        <ContentHeader title="Pengeluaran GCR"></ContentHeader>
+        <ContentHeader title="Pengeluaran GCR">
+        </ContentHeader>
     </section>
     <div
         class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-10 py-4"
@@ -92,19 +64,18 @@
         <div class="h h-fit w-full">
             <DataTable
                 title="Senarai Permohonan Pengeluaran GCR"
-                bind:tableData={withdrawalListTable}
+                bind:tableData={employeeListTable}
                 bind:passData={selectedData}
-                detailActions={() => {
-                    viewDetails();
-                }}
-                addActions={() => {
-                    addApplication();
+                selectActions={()=>{
+                    let url = '/cuti/pengeluaran_GCR/permohonan_baru/' + selectedData.employeeId;
+
+                    goto(url);
                 }}
             >
                 <FilterWrapper slot="filter">
                     <FilterNumberField
                         label="Tahun"
-                        bind:inputValue={withdrawalListTable.param.filter.year}
+                        bind:inputValue={employeeListTable.param.filter.year}
                     ></FilterNumberField>
                 </FilterWrapper>
             </DataTable>
