@@ -42,11 +42,7 @@
             filter: true,
         },
         controls: {
-            add:
-                data.props.currentRoleCode ==
-                    UserRoleConstant.kakitangan.code ||
-                data.props.currentRoleCode ==
-                    UserRoleConstant.urusSetiaCuti.code,
+            add: false,
         },
     };
 </script>
