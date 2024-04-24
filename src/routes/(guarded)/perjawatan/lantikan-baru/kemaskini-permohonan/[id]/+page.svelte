@@ -86,7 +86,7 @@
     import { error } from '@sveltejs/kit';
     import { writable } from 'svelte/store';
     import { zod } from 'sveltekit-superforms/adapters';
-    import SuperDebug from 'sveltekit-superforms';
+    import { RetirementBenefitDropdownConstant } from '$lib/constants/dropdown/retirement-benefit.constant';
     export let data: PageData;
 
     let newHireSecretaryApprovalIsApproved = writable<boolean>(false);
@@ -719,10 +719,10 @@
 
 <ContentHeader title="Maklumat Lantikan Baru">
     {#if $isReadonlyApproverApprovalResult && $newHireSecretaryApprovalIsApproved}
-        <Badge color="dark">Proses Lantikan Baru Sah</Badge>
+        <Badge color="green">Proses Lantikan Baru Berjaya</Badge>
     {/if}
     {#if ($isReadonlySecretaryApprovalResult && !$newHireSecretaryApprovalIsApproved) || ($isReadonlySupporterApprovalResult && !$newHireSupporterApprovalIsApproved) || ($isReadonlyApproverApprovalResult && !$newHireApproverApprovalIsApproved)}
-        <Badge color="red">Proses Lantikan Baru Tidak Sah</Badge>
+        <Badge color="red">Proses Lantikan Baru Tidak Berjaya</Badge>
     {/if}
 
     <TextIconButton
@@ -1033,7 +1033,7 @@
                             id="employeeNumber"
                             label="Nama Pekerja LKIM"
                             bind:val={$form.employeeNumber}
-                            options={data.selectionOptions.employeeLookup}
+                            options={data.selectionOptions.employeeIdLookup}
                         ></CustomSelectField>
 
                         {#if !!data.newHireFullDetailView.personalDetail.employeeNumber}
@@ -2519,8 +2519,7 @@
                             id="retirementBenefit"
                             label="Faedah Persaraan"
                             bind:val={$serviceInfoForm.retirementBenefit}
-                            options={data.selectionOptions
-                                .retirementBenefitLookup}
+                            options={RetirementBenefitDropdownConstant.list}
                         ></CustomSelectField>
 
                         <CustomTextField
@@ -2668,25 +2667,6 @@
                             bind:val={$serviceInfoForm.pensionNumber}
                         ></CustomTextField>
 
-                        <CustomSelectField
-                            disabled={$isReadonlyServiceFormStepper}
-                            errors={$serviceInfoErrors.revisionMonth}
-                            id="revisionMonth"
-                            label="Bulan KGT"
-                            bind:val={$serviceInfoForm.revisionMonth}
-                            options={monthLookup}
-                        ></CustomSelectField>
-
-                        <CustomTextField
-                            placeholder="-"
-                            disabled={$isReadonlyServiceFormStepper}
-                            errors={$serviceInfoErrors.kgt}
-                            id="kgt"
-                            type="number"
-                            label={'KGT(RM)'}
-                            bind:val={$serviceInfoForm.kgt}
-                        ></CustomTextField>
-
                         <CustomTextField
                             placeholder="-"
                             type="date"
@@ -2702,26 +2682,31 @@
                         </p>
                         <div class="grid grid-cols-2 gap-10">
                             <div class="space-y-2.5">
-                                <!-- <CustomTextField
-                            placeholder="-"
-                        errors={$serviceInfoErrors.salaryDateOfEffect}
-                        idame="salaryDateOfEffect"
-                        label={'Tarikh Berkuatkuasa'}
-                        bind:val={'12/12/2021'}
-                    ></TextFld>
-                    {#if $serviceInfoErrors.salaryDateOfEffect}
-                        <span
-                            class="ml-[220px] font-sans text-sm italic text-system-danger"
-                            >{$serviceInfoErrors.salaryDateOfEffect}</span
-                        >
-                    {/if} -->
+                                <CustomSelectField
+                                    disabled={$isReadonlyServiceFormStepper}
+                                    errors={$serviceInfoErrors.revisionMonth}
+                                    id="revisionMonth"
+                                    label="Bulan Berkuatkuasa"
+                                    bind:val={$serviceInfoForm.revisionMonth}
+                                    options={monthLookup}
+                                ></CustomSelectField>
+
+                                <CustomTextField
+                                    placeholder="-"
+                                    disabled={$isReadonlyServiceFormStepper}
+                                    errors={$serviceInfoErrors.kgt}
+                                    id="kgt"
+                                    type="number"
+                                    label={'KGT (RM)'}
+                                    bind:val={$serviceInfoForm.kgt}
+                                ></CustomTextField>
                                 <CustomTextField
                                     placeholder="-"
                                     disabled={$isReadonlyServiceFormStepper}
                                     errors={$serviceInfoErrors.maximumSalary}
                                     id="maximumSalary"
                                     type="number"
-                                    label={'Tangga Gaji'}
+                                    label={'Tangga Gaji (RM)'}
                                     bind:val={$serviceInfoForm.maximumSalary}
                                 ></CustomTextField>
 
@@ -2730,7 +2715,7 @@
                                     disabled={$isReadonlyServiceFormStepper}
                                     errors={$serviceInfoErrors.baseSalary}
                                     id="baseSalary"
-                                    label={'Gaji Pokok'}
+                                    label={'Gaji Pokok (RM)'}
                                     type="number"
                                     bind:val={$serviceInfoForm.baseSalary}
                                 ></CustomTextField>
@@ -2741,7 +2726,7 @@
                                     disabled={$isReadonlyServiceFormStepper}
                                     errors={$serviceInfoErrors.itka}
                                     id="itka"
-                                    label={'ITKA'}
+                                    label={'ITKA (RM)'}
                                     type="number"
                                     bind:val={$serviceInfoForm.itka}
                                 ></CustomTextField>
@@ -2750,7 +2735,7 @@
                                     disabled={$isReadonlyServiceFormStepper}
                                     errors={$serviceInfoErrors.itp}
                                     id="itp"
-                                    label={'ITP'}
+                                    label={'ITP (RM)'}
                                     type="number"
                                     bind:val={$serviceInfoForm.itp}
                                 ></CustomTextField>
@@ -2759,7 +2744,7 @@
                                     disabled={$isReadonlyServiceFormStepper}
                                     errors={$serviceInfoErrors.epw}
                                     id="epw"
-                                    label={'EPW'}
+                                    label={'EPW (RM)'}
                                     type="number"
                                     bind:val={$serviceInfoForm.epw}
                                 ></CustomTextField>
@@ -2768,7 +2753,7 @@
                                     disabled={$isReadonlyServiceFormStepper}
                                     errors={$serviceInfoErrors.cola}
                                     id="cola"
-                                    label={'COLA'}
+                                    label={'COLA (RM)'}
                                     type="number"
                                     bind:val={$serviceInfoForm.cola}
                                 ></CustomTextField>
