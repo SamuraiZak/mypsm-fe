@@ -42,7 +42,7 @@
             filter: true,
         },
         controls: {
-            add: false,
+            add: true,
         },
     };
 
