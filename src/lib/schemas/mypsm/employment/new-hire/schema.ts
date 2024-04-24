@@ -88,14 +88,6 @@ export const _personalInfoResponseSchema = z.object({
     relationshipId: z.number().nullable(),
     isReadonly: z.boolean().readonly(),
 });
-// .partial({
-//     alternativeName: true,
-//     propertyDeclarationDate: true,
-//     employeeNumber: true,
-//     employeeName: true,
-//     employeePosition: true,
-//     relationshipId: true,
-// });
 
 export const _personalInfoRequestSchema = _personalInfoResponseSchema
     .omit({

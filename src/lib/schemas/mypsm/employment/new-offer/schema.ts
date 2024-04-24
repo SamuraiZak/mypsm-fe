@@ -82,9 +82,10 @@ export const _meetingResultEmployeeSchema = z.object({
 });
 
 export const _processEmployeeSchema = z.object({
-    employeeNumber: numberIdSchema,
-    employeeName: shortTextSchema,
+    employeeNumber: z.string().readonly(),
+    employeeName: z.string().readonly(),
     gradeId: numberIdSchema,
+    maxGradeId: numberIdSchema,
     positionId: numberIdSchema,
     placementId: numberIdSchema,
     serviceTypeId: numberIdSchema,
@@ -105,8 +106,11 @@ export const _processEmployeeSchema = z.object({
     firstServiceDate: dateStringSchema,
     firstConfirmServiceDate: dateStringSchema,
     firstEffectiveDate: dateStringSchema,
+    firstEffectiveServiceDate: dateStringSchema,
+    confirmServiceDate: dateStringSchema,
     confirmDate: dateStringSchema,
     pensionNumber: numberToStringSchema,
+    kgt: numberSchema,
     retirementDate: dateStringSchema,
     revisionMonth: codeSchema,
     maximumSalary: numberSchema,
@@ -123,8 +127,8 @@ export const _createProcessSchema = z.object({
 });
 
 export const _supporterApproverSchema = z.object({
-    supporterId: z.string(),
-    approverId: z.string(),
+    supporterId: numberIdSchema,
+    approverId: numberIdSchema,
     isReadonly: z.boolean().readonly(),
 });
 

@@ -27,10 +27,10 @@ export const _confirmationListSchema = z.object({
 });
 
 export const _confirmationApprovalSchema = z.object({
-    id: z.number(),
-    name: z.string().optional(),
+    id: z.number().readonly(),
     remark: shortTextSchema,
     status: booleanSchema,
+    isReadonly: z.boolean().readonly(),
 });
 
 export const _confirmationDiciplinarySchema = z.object({
@@ -42,7 +42,7 @@ export const _confirmationExaminationSchema = z.object({
 });
 
 export const _confirmationPersonalDetailSchema = z.object({
-    id: z.number(),
+    id: z.number().readonly(),
     genderId: z.number(),
     nationalityId: z.number(),
     religionId: z.number(),
@@ -104,6 +104,7 @@ export const _updateConfirmationMeetingResultSchema =
     });
 
 export const _confirmationFullDetailSchema = z.object({
+    dataType: z.string().readonly(),
     personalDetail: _confirmationPersonalDetailSchema,
     service: _confirmationServiceSchema,
     examination: _confirmationExaminationSchema,
