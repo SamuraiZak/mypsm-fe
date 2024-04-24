@@ -68,9 +68,7 @@
     let isReadOnlyConfirmationInServiceMeetingResult = writable<boolean>(false);
 
     $: {
-        if (
-            data.view.confirmationInServiceView.dataType !== 'Lebih tiga tahun'
-        ) {
+        if (data.view.confirmationInServiceView.dataType !== 'Lebih 3 tahun') {
             isTypeConfirmationExceedsThreeYears.set(true);
         } else {
             isTypeConfirmationExceedsThreeYears.set(false);
@@ -342,9 +340,7 @@
 <ContentHeader
     title="Maklumat Pengesahan dalam Perkhidmatan {isTypeConfirmationExceedsThreeYears
         ? 'Melebihi 3 Tahun'
-        : isTypeConfirmationRationalisation
-          ? 'Rasionalisasi'
-          : 'Lantikan'}"
+        : ''}"
 >
     {#if $isReadOnlyConfirmationInServiceMeetingResult && $confirmationMeetingResultIsApproved}
         <Badge color="dark">Proses Pengesahan dalam Perkhidmatan Tamat</Badge>
