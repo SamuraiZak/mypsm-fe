@@ -173,9 +173,9 @@
     if ($setDirectorForm.directorApproverId !== 0) {
         directorExist = true;
     }
-    if ($moveOutSecretaryForm.movingOutDate != '') {
+    if ($moveOutSecretaryForm.movingOutDate != '' || data.currentRoleCode !== UserRoleConstant.urusSetiaPeringkatNegeri.code) {
         secretaryMovingOut = true;
-    }
+    } 
     const {
         form: directorApprovalForm,
         errors: directorApprovalError,
