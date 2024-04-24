@@ -52,8 +52,8 @@ export async function load({ params }) {
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 10000,
-        orderBy: null,
-        orderType: null,
+        orderBy: 'name',
+        orderType: 0,
         filter: {
             program: 'SEMUA',
             employeeNumber: null, //string | null | undefined;
@@ -71,7 +71,7 @@ export async function load({ params }) {
     const employeesListLookup: DropdownDTO[] = (
         employeesListResponse.data?.dataList as CommonEmployeeDTO[]
     ).map((data) => ({
-        value: String(data.employeeId),
+        value: Number(data.employeeId),
         name: String(data.name),
     }));
 
