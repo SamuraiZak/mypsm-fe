@@ -9,6 +9,7 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import { Toaster } from 'svelte-french-toast';
     import { superForm } from 'sveltekit-superforms/client';
+    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import StepperOtherRolesResult from '$lib/components/stepper/StepperOtherRolesResult.svelte';
     import type { PageData } from './$types';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
@@ -56,7 +57,6 @@
     let confirmationMeetingResultIsApproved = writable<boolean>(false);
 
     let isTypeConfirmationExceedsThreeYears = writable<boolean>(false);
-    let isTypeConfirmationRationalisation = writable<boolean>(false);
     let isReadOnlyEmploymentSecretaryConfirmationInServiceApproval =
         writable<boolean>(false);
     let isReadOnlyDivisionDirectorConfirmationInServiceApproval =
@@ -68,16 +68,10 @@
     let isReadOnlyConfirmationInServiceMeetingResult = writable<boolean>(false);
 
     $: {
-        if (data.view.confirmationInServiceView.dataType !== 'Lebih 3 tahun') {
+        if (data.view.confirmationInServiceView.dataType === 'Lebih 3 tahun') {
             isTypeConfirmationExceedsThreeYears.set(true);
         } else {
             isTypeConfirmationExceedsThreeYears.set(false);
-        }
-
-        if (data.view.confirmationInServiceView.dataType !== 'rasionalisasi') {
-            isTypeConfirmationRationalisation.set(true);
-        } else {
-            isTypeConfirmationRationalisation.set(false);
         }
 
         if (
@@ -338,9 +332,9 @@
 </script>
 
 <ContentHeader
-    title="Maklumat Pengesahan dalam Perkhidmatan {isTypeConfirmationExceedsThreeYears
+    title="Maklumat Pengesahan dalam Perkhidmatan {$isTypeConfirmationExceedsThreeYears
         ? 'Melebihi 3 Tahun'
-        : ''}"
+        : 'Rasionalisasi'}"
 >
     {#if $isReadOnlyConfirmationInServiceMeetingResult && $confirmationMeetingResultIsApproved}
         <Badge color="dark">Proses Pengesahan dalam Perkhidmatan Tamat</Badge>
@@ -778,7 +772,7 @@
                             label="Tindakan/Ulasan"
                             bind:val={$employmentSecretaryDetailForm.remark}
                         ></CustomTextField>
-                        <CustomSelectField
+                        <CustomRadioBoolean
                             disabled={data.view.confirmationInServiceView
                                 .secretary.isReadonly}
                             errors={$employmentSecretaryDetailFormErrors.status}
@@ -786,7 +780,7 @@
                             options={certifyOptions}
                             label={'Keputusan'}
                             bind:val={$employmentSecretaryDetailForm.status}
-                        ></CustomSelectField>
+                        ></CustomRadioBoolean>
                     </form>
                 {:else if !data.view.confirmationInServiceView.division.isReadonly && data.roles.isStateDirectorRole && !$isTypeConfirmationExceedsThreeYears}
                     <form
@@ -808,7 +802,7 @@
                             label="Tindakan/Ulasan"
                             bind:val={$divisionDirectorDetaiForm.remark}
                         ></CustomTextField>
-                        <CustomSelectField
+                        <CustomRadioBoolean
                             disabled={data.view.confirmationInServiceView
                                 .division.isReadonly}
                             errors={$divisionDirectorDetaiFormErrors.status}
@@ -816,7 +810,7 @@
                             options={confirmOptions}
                             label={'Keputusan'}
                             bind:val={$divisionDirectorDetaiForm.status}
-                        ></CustomSelectField>
+                        ></CustomRadioBoolean>
                     </form>
                 {:else if !data.view.confirmationInServiceView.integrity.isReadonly && data.roles.isIntegrityDirectorRole && !$isTypeConfirmationExceedsThreeYears}
                     <form
@@ -838,7 +832,7 @@
                             label="Tindakan/Ulasan"
                             bind:val={$integrityDirectorDetailForm.remark}
                         ></CustomTextField>
-                        <CustomSelectField
+                        <CustomRadioBoolean
                             disabled={data.view.confirmationInServiceView
                                 .integrity.isReadonly}
                             errors={$integrityDirectorDetailFormErrors.status}
@@ -846,7 +840,7 @@
                             options={confirmOptions}
                             label={'Keputusan'}
                             bind:val={$integrityDirectorDetailForm.status}
-                        ></CustomSelectField>
+                        ></CustomRadioBoolean>
                     </form>
                 {:else if !data.view.confirmationInServiceView.audit.isReadonly && data.roles.isAuditDirectorRole && !$isTypeConfirmationExceedsThreeYears}
                     <form
@@ -868,7 +862,7 @@
                             label="Tindakan/Ulasan"
                             bind:val={$auditDirectorDetailForm.remark}
                         ></CustomTextField>
-                        <CustomSelectField
+                        <CustomRadioBoolean
                             disabled={data.view.confirmationInServiceView.audit
                                 .isReadonly}
                             errors={$auditDirectorDetailFormErrors.status}
@@ -876,7 +870,7 @@
                             options={confirmOptions}
                             label={'Keputusan'}
                             bind:val={$auditDirectorDetailForm.status}
-                        ></CustomSelectField>
+                        ></CustomRadioBoolean>
                     </form>
                 {/if}
 
@@ -894,13 +888,13 @@
                                 label="Tindakan/Ulasan"
                                 bind:val={$auditDirectorDetailForm.remark}
                             ></CustomTextField>
-                            <CustomSelectField
+                            <CustomRadioBoolean
                                 disabled
                                 id="integrityDirectorStatus"
                                 options={certifyOptions}
                                 label={'Keputusan'}
                                 bind:val={$auditDirectorDetailForm.status}
-                            ></CustomSelectField>
+                            ></CustomRadioBoolean>
                         {:else}
                             <StepperOtherRolesResult />
                         {/if}
@@ -918,13 +912,13 @@
                                 label="Tindakan/Ulasan"
                                 bind:val={$integrityDirectorDetailForm.remark}
                             ></CustomTextField>
-                            <CustomSelectField
+                            <CustomRadioBoolean
                                 disabled
                                 id="integrityDirectorStatus"
                                 options={certifyOptions}
                                 label={'Keputusan'}
                                 bind:val={$integrityDirectorDetailForm.status}
-                            ></CustomSelectField>
+                            ></CustomRadioBoolean>
                         {:else}
                             <StepperOtherRolesResult />
                         {/if}
@@ -942,13 +936,13 @@
                                 label="Tindakan/Ulasan"
                                 bind:val={$divisionDirectorDetaiForm.remark}
                             ></CustomTextField>
-                            <CustomSelectField
+                            <CustomRadioBoolean
                                 disabled
                                 id="integrityDirectorStatus"
                                 options={certifyOptions}
                                 label={'Keputusan'}
                                 bind:val={$divisionDirectorDetaiForm.status}
-                            ></CustomSelectField>
+                            ></CustomRadioBoolean>
                         {:else}
                             <StepperOtherRolesResult />
                         {/if}
@@ -967,13 +961,13 @@
                             label="Tindakan/Ulasan"
                             bind:val={$employmentSecretaryDetailForm.remark}
                         ></CustomTextField>
-                        <CustomSelectField
+                        <CustomRadioBoolean
                             disabled
                             id="integrityDirectorStatus"
                             options={certifyOptions}
                             label={'Keputusan'}
                             bind:val={$employmentSecretaryDetailForm.status}
-                        ></CustomSelectField>
+                        ></CustomRadioBoolean>
                     {:else}
                         <StepperOtherRolesResult />
                     {/if}
@@ -981,9 +975,17 @@
             </div>
         </StepperContentBody>
     </StepperContent>
-    {#if $isReadOnlyAuditDirectorConfirmationInServiceApproval && $confirmationAuditDirectorIsApproved}
+    {#if ($isReadOnlyAuditDirectorConfirmationInServiceApproval && $confirmationAuditDirectorIsApproved) || ($isTypeConfirmationExceedsThreeYears && $confirmationEmploymentSecretaryIsApproved)}
         <StepperContent>
-            <StepperContentHeader title="Keputusan Mesyuarat" />
+            <StepperContentHeader title="Keputusan Mesyuarat">
+                {#if !$isReadOnlyConfirmationInServiceMeetingResult && data.roles.isEmploymentSecretaryRole}
+                    <TextIconButton
+                        type="primary"
+                        label="Simpan"
+                        form="confirmationMeetingDetailForm"
+                    ></TextIconButton>
+                {/if}
+            </StepperContentHeader>
             <StepperContentBody>
                 <form
                     id="confirmationMeetingDetailForm"
@@ -1017,15 +1019,14 @@
                         type="text"
                         bind:val={$confirmationMeetingDetailForm.meetingRemark}
                     ></CustomTextField>
-                    <CustomSelectField
+                    <CustomRadioBoolean
                         disabled={$isReadOnlyConfirmationInServiceMeetingResult}
                         errors={$confirmationMeetingDetailFormErrors.meetingResult}
                         id="meetingResult"
                         label="Keputusan Mesyuarat"
-                        placeholder="-"
                         options={approveOptions}
                         bind:val={$confirmationMeetingDetailForm.meetingResult}
-                    ></CustomSelectField>
+                    ></CustomRadioBoolean>
                 </form>
             </StepperContentBody>
         </StepperContent>
