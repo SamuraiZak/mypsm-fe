@@ -11,6 +11,7 @@
     import type { PageData } from './$types';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
+    import { Accordion, AccordionItem } from 'flowbite-svelte';
 
     export let data: PageData;
 </script>
@@ -83,44 +84,53 @@
             <StepperContentHeader title="Maklumat Pesakit"
             ></StepperContentHeader>
             <StepperContentBody paddingClass="p-none">
-                <CustomTab id="patientTab">
-                    {#each data.patientDetail as patients, i}
-                        <CustomTabContent title="Pesakit {i + 1}">
-                            <CustomTextField
-                                label="Nama Pesakit"
-                                id="name"
-                                disabled
-                                bind:val={patients.name}
-                            />
-                            <CustomTextField
-                                label="No. Kad Pengenalan"
-                                id="identityDocumentCard"
-                                disabled
-                                bind:val={patients.identityDocumentCard}
-                            />
-                            <CustomSelectField
-                                label="Hubungan"
-                                id="relationshipId"
-                                disabled
-                                options={data.lookup.relationshipLookup}
-                                bind:val={patients.relationshipId}
-                            />
-                            <CustomSelectField
-                                label="Pejabat LKIM"
-                                id="placementId"
-                                disabled
-                                options={data.lookup.placementLookup}
-                                bind:val={patients.placementId}
-                            />
-                            <CustomTextField
-                                label="Tarikh"
-                                id="date"
-                                disabled
-                                bind:val={patients.date}
-                            />
-                        </CustomTabContent>
-                    {/each}
-                </CustomTab>
+                <div
+                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
+                >
+                    <Accordion>
+                        {#each data.patientDetail as patients, i}
+                            <AccordionItem>
+                                <span
+                                    slot="header"
+                                    class="text-sm text-ios-labelColors-link-light"
+                                    >Pesakit {i + 1}</span
+                                >
+                                <CustomTextField
+                                    label="Nama Pesakit"
+                                    id="name"
+                                    disabled
+                                    bind:val={patients.name}
+                                />
+                                <CustomTextField
+                                    label="No. Kad Pengenalan"
+                                    id="identityDocumentCard"
+                                    disabled
+                                    bind:val={patients.identityDocumentCard}
+                                />
+                                <CustomSelectField
+                                    label="Hubungan"
+                                    id="relationshipId"
+                                    disabled
+                                    options={data.lookup.relationshipLookup}
+                                    bind:val={patients.relationshipId}
+                                />
+                                <CustomSelectField
+                                    label="Pejabat LKIM"
+                                    id="placementId"
+                                    disabled
+                                    options={data.lookup.placementLookup}
+                                    bind:val={patients.placementId}
+                                />
+                                <CustomTextField
+                                    label="Tarikh"
+                                    id="date"
+                                    disabled
+                                    bind:val={patients.date}
+                                />
+                            </AccordionItem>
+                        {/each}
+                    </Accordion>
+                </div>
             </StepperContentBody>
         </StepperContent>
 
@@ -128,29 +138,46 @@
             <StepperContentHeader title="Maklumat Rawatan"
             ></StepperContentHeader>
             <StepperContentBody paddingClass="p-none">
-                <CustomTab id="treatmentTab">
-                    {#each data.treatmentDetail as treatments, i}
-                        <CustomTabContent title={treatments.patientName}>
-                            {#each treatments.treatmentList as treatmentList, i}
-                                <div class="w-full flex flex-col justify-start gap-2.5 p-3 border rounded-md">
-                                    <CustomTextField
-                                        label="Jenis Rawatan"
-                                        id="name"
-                                        disabled
-                                        bind:val={treatmentList.description}
-                                    />
-                                    <CustomTextField
-                                        label="Jumlah (RM)"
-                                        id="name"
-                                        type="number"
-                                        disabled
-                                        bind:val={treatmentList.amount}
-                                    />
-                                </div>
-                            {/each}
-                        </CustomTabContent>
-                    {/each}
-                </CustomTab>
+                <div
+                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
+                >
+                    <Accordion>
+                        {#each data.treatmentDetail as treatments, i}
+                            <AccordionItem>
+                                <span
+                                    slot="header"
+                                    class="text-sm text-ios-labelColors-link-light"
+                                    >Pesakit {i + 1}</span
+                                >
+                                {#each treatments.treatmentList as treatmentList, i}
+                                    <div
+                                        class="flex w-full flex-col justify-start gap-2.5 rounded-md border p-3"
+                                    >
+                                        <CustomTextField
+                                            label="Nama Pesakit"
+                                            id="patientName"
+                                            disabled
+                                            bind:val={treatments.patientName}
+                                        />
+                                        <CustomTextField
+                                            label="Jenis Rawatan"
+                                            id="name"
+                                            disabled
+                                            bind:val={treatmentList.description}
+                                        />
+                                        <CustomTextField
+                                            label="Jumlah (RM)"
+                                            id="name"
+                                            type="number"
+                                            disabled
+                                            bind:val={treatmentList.amount}
+                                        />
+                                    </div>
+                                {/each}
+                            </AccordionItem>
+                        {/each}
+                    </Accordion>
+                </div>
             </StepperContentBody>
         </StepperContent>
     </Stepper>

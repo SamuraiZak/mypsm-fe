@@ -24,7 +24,7 @@ export const load = async () => {
 
     const singlePatientForm = await superValidate(zod(_patientSchema));
     const patientForm = await superValidate(zod(_addPatientSchema));
-    const singleTreatmentForm = await superValidate(zod(_treatmentSchema));
+    const singleTreatmentForm = await superValidate(zod(_treatmentSchema), {errors: false});
     const treatmentForm = await superValidate(zod(_addTreatmentSchema));
     return {
         currentRoleCode,
