@@ -133,11 +133,19 @@ export async function load({ params }) {
     const response: CommonResponseDTO =
         await EmployeeServices.getEmployeeList(param);
 
-    // convert to apcdto
-    const employeeLookup: DropdownDTO[] = (
+    // convert to emp number string
+    const employeeIdLookup: DropdownDTO[] = (
         response.data?.dataList as CommonEmployeeDTO[]
     ).map((data) => ({
         value: Number(data.employeeNumber),
+        name: String(data.name),
+    }));
+
+    //convert to id number
+    const employeeLookup: DropdownDTO[] = (
+        response.data?.dataList as CommonEmployeeDTO[]
+    ).map((data) => ({
+        value: Number(data.employeeId),
         name: String(data.name),
     }));
 
@@ -539,6 +547,7 @@ export async function load({ params }) {
             titleLookup,
             generalLookup,
             employeeLookup,
+            employeeIdLookup,
             assetDeclarationLookup,
             gradeLookup,
             placementLookup,
