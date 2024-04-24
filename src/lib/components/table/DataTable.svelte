@@ -303,6 +303,12 @@
             throw new Error('Something went wrong');
         }
     }
+
+    onMount(() => {
+        if (tableData.option.footer == undefined) {
+            tableData.option.footer = true;
+        }
+    });
 </script>
 
 {#if loading}
@@ -322,6 +328,7 @@
         </div>
         <!-- trailing -->
         <div class="flex h-fit w-fit flex-row items-center justify-start gap-1">
+            <slot name="extras" />
             {#if tableData.controls.add}
                 <TextIconButton
                     label="Tambah"
@@ -388,7 +395,7 @@
         >
             {#if tableData.data.length == 0}
                 <div
-                    class="flex  h-60 min-h-60 w-full flex-col items-center justify-center bg-ios-basic-white"
+                    class="flex h-60 min-h-60 w-full flex-col items-center justify-center bg-ios-basic-white"
                 >
                     <span class=" text-ios-labelColors-secondaryLabel-light">
                         <SvgEmptyBox size="30"></SvgEmptyBox>
@@ -712,71 +719,73 @@
             {/if}
         </div>
         <!-- footer area -->
-        <div
-            class="flex h-10 min-h-10 w-full flex-row items-center justify-between rounded-bl rounded-br border-t bg-white px-2"
-        >
-            <!-- leading -->
-            <div class="flex flex-row items-center gap-2">
-                <label
-                    for="idType"
-                    class=" w-full text-sm font-medium text-ios-labelColors-secondaryLabel-light"
-                >
-                    Saiz Data
-                </label>
-                <select
-                    name="idType"
-                    bind:value={tableData.param.pageSize}
-                    on:change={handlePageSize}
-                    class=" block h-7 appearance-none rounded border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
-                >
-                    {#each pageSizeOption as option}
-                        <option value={option.value}>{option.key}</option>
-                    {/each}
-                </select>
-            </div>
-            <div class="flex flex-row items-center gap-2">
-                <label
-                    for="idType"
-                    class=" w-full text-nowrap text-sm font-medium text-ios-labelColors-secondaryLabel-light"
-                >
-                    {tableData.meta.totalData} hasil carian
-                </label>
-            </div>
-
-            <!-- trailing -->
-            <div class="flex flex-row items-center gap-2">
-                <button
-                    disabled={tableData.param.pageNum == 1}
-                    on:click={() => {
-                        handlePagination('previous');
-                    }}
-                    type="button"
-                    class=" block h-7 w-7 rounded border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light disabled:text-ios-basic-inactiveGray"
-                >
-                    <span
-                        class="flex flex-col items-center justify-center text-center"
+        {#if tableData.option.footer}
+            <div
+                class="flex h-10 min-h-10 w-full flex-row items-center justify-between rounded-bl rounded-br border-t bg-white px-2"
+            >
+                <!-- leading -->
+                <div class="flex flex-row items-center gap-2">
+                    <label
+                        for="idType"
+                        class=" w-full text-sm font-medium text-ios-labelColors-secondaryLabel-light"
                     >
-                        <SvgChevronLeft></SvgChevronLeft>
-                    </span>
-                </button>
-
-                <button
-                    disabled={tableData.param.pageNum ==
-                        tableData.meta.totalPage}
-                    on:click={() => {
-                        handlePagination('next');
-                    }}
-                    type="button"
-                    class=" block h-7 w-7 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light disabled:text-ios-basic-inactiveGray"
-                >
-                    <span
-                        class="flex flex-col items-center justify-center text-center"
+                        Saiz Data
+                    </label>
+                    <select
+                        name="idType"
+                        bind:value={tableData.param.pageSize}
+                        on:change={handlePageSize}
+                        class=" block h-7 appearance-none rounded border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
                     >
-                        <SvgChevronRight></SvgChevronRight>
-                    </span>
-                </button>
+                        {#each pageSizeOption as option}
+                            <option value={option.value}>{option.key}</option>
+                        {/each}
+                    </select>
+                </div>
+                <div class="flex flex-row items-center gap-2">
+                    <label
+                        for="idType"
+                        class=" w-full text-nowrap text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                    >
+                        {tableData.meta.totalData} hasil carian
+                    </label>
+                </div>
+
+                <!-- trailing -->
+                <div class="flex flex-row items-center gap-2">
+                    <button
+                        disabled={tableData.param.pageNum == 1}
+                        on:click={() => {
+                            handlePagination('previous');
+                        }}
+                        type="button"
+                        class=" block h-7 w-7 rounded border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light disabled:text-ios-basic-inactiveGray"
+                    >
+                        <span
+                            class="flex flex-col items-center justify-center text-center"
+                        >
+                            <SvgChevronLeft></SvgChevronLeft>
+                        </span>
+                    </button>
+
+                    <button
+                        disabled={tableData.param.pageNum ==
+                            tableData.meta.totalPage}
+                        on:click={() => {
+                            handlePagination('next');
+                        }}
+                        type="button"
+                        class=" block h-7 w-7 rounded-md border border-ios-labelColors-separator-light bg-ios-systemColors-quaternarySystemFill-light px-2.5 py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light disabled:text-ios-basic-inactiveGray"
+                    >
+                        <span
+                            class="flex flex-col items-center justify-center text-center"
+                        >
+                            <SvgChevronRight></SvgChevronRight>
+                        </span>
+                    </button>
+                </div>
             </div>
-        </div>
+        {/if}
     </div>
 </div>
 
