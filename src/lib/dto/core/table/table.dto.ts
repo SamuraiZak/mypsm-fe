@@ -27,6 +27,7 @@ export interface TableSettingDTO {
         edit: boolean;
         select: boolean;
         filter: boolean;
+        footer?: boolean;
     };
     controls: {
         add: boolean;
