@@ -203,10 +203,7 @@ export const _applyMoveoutQuarters = async (form: commonIdRequestDTO) => {
 
     if (response.status == "success") {
         setTimeout(() => goto(
-            '/pinjaman-dan-kuarters/permohonan-keluar-kuarters/butiran/' +
-            response.data?.details.id +
-            '-' +
-            'kakitangan',
+            '/pinjaman-dan-kuarters/permohonan-keluar-kuarters'
         ), 1000)
     } else {
         throw new Error('Failed to create new application.')
@@ -218,10 +215,7 @@ export const _applyMoveoutQuartersForOutsiders = async (form: commonIdRequestDTO
 
     if (response.status == "success") {
         setTimeout(() => goto(
-            '/pinjaman-dan-kuarters/permohonan-keluar-kuarters/butiran/' +
-            response.data?.details.id +
-            '-' +
-            'luar',
+            '/pinjaman-dan-kuarters/permohonan-keluar-kuarters'
         ), 1000)
     } else {
         throw new Error('Failed to create new application.')

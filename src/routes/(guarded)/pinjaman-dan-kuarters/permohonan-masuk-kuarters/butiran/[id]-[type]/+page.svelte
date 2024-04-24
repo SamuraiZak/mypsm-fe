@@ -1067,6 +1067,7 @@
                 </StepperContent>
             {/if}
 
+            {#if data.currentRoleCode == UserRoleConstant.kakitangan.code}
             <StepperContent>
                 <StepperContentHeader title="Surat Tawaran Kuarters"
                 ></StepperContentHeader>
@@ -1095,6 +1096,7 @@
                     </div>
                 </StepperContentBody>
             </StepperContent>
+            {/if}
         {:else if data.isFirstApplication}
             <StepperContent>
                 <StepperContentHeader title="Maklumat Peribadi Pemohon">
