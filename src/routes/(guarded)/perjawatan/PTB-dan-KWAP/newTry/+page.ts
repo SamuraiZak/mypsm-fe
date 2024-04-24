@@ -8,7 +8,7 @@ import { EmploymentActingServices } from "$lib/services/implementation/mypsm/per
 
 export const load = async () => {
     
-
+    let agreementLetter = getAgreementLetter()
     
     let currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
@@ -17,8 +17,8 @@ export const load = async () => {
     // urusetia
     let urusetia = UserRoleConstant.urusSetiaPerjawatan.code;
 
-     // employee NO PTB
-     const paramEm = {
+    // employee NO PTB
+    const paramEm = {
         pageNum: 1,
         pageSize: 5,
         orderBy: null,
@@ -33,6 +33,8 @@ let actingEmployeeList: CommonEmployeeDTO[] = [];
 if (actingEmployeeListResponse.status == "success") {
     actingEmployeeList = actingEmployeeListResponse.data?.dataList as CommonEmployeeDTO[];
 }
+
+
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
@@ -156,7 +158,7 @@ if (actingEmployeeListResponse.status == "success") {
 
 
     return {
-        param, paramUrusSetia,paramEmp, ptbViewResponse, ptbViewTable, ptbNoViewResponse, ptbNoViewTable, paramNo,ptbEmployeeTable,ptbEmployeeResponse,actingEmployeeListResponse,actingEmployeeList,
+        param, paramUrusSetia,paramEmp, ptbViewResponse, ptbViewTable, ptbNoViewResponse, ptbNoViewTable, paramNo,ptbEmployeeTable,ptbEmployeeResponse,agreementLetter,actingEmployeeListResponse,actingEmployeeList,
     };
 
 };
@@ -188,6 +190,13 @@ export async function _updateTableEmployee(paramEmp: CommonListRequestDTO) {
             response,
         },
     };
+}
+
+
+const getAgreementLetter = () => {
+    const url = "http://localhost:3333/employment/pension_detail/employee/forms/download"
+    
+    return url
 }
 
 

@@ -80,8 +80,7 @@ export const _serviceInfoSchema = z.object({
     currentActing: shortTextSchema,
     lastSalary: numberSchema,
     lastPromotion: shortTextSchema,
-    kgt: numberSchema,
-    retirementDate: minDateSchema,
+    retirementDate: dateSchema,
 
 });
 
@@ -110,7 +109,7 @@ export const _PTBPensionInfoSchema = z.object({
     PTBDate: stringToMinDate,
     referenceNumber: shortTextSchema,
     referenceDate: stringToMinDate,
-    pensionNumber: shortTextSchema,
+    pensionNumber: shortTextSchema.optional(),
     KWAPEmailDate: stringToMinDate,
 
 });

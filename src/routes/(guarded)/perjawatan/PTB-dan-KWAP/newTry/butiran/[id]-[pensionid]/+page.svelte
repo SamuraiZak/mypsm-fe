@@ -43,8 +43,8 @@
     import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import {
-        _editApproverDetailSubmit,
-        _editSupporterDetailSubmit,
+    _editApproverDetailSubmit,
+    _editSupporterDetailSubmit,
         // _editSupporterDetailSubmit,
         _editpensionDetailSubmit,
         _editrolesRelatedDetailSubmit,
@@ -55,35 +55,6 @@
     import { Toaster } from 'svelte-french-toast';
 
     export let data: PageData;
-
-    // let notpelulus: boolean = true;
-    // let notketuaSeksyen: boolean = true;
-    // let notloanDetail: boolean = true;
-    // let noturusetia: boolean = true;
-    // let notkakitangan: boolean = true;
-
-    // if (data.props.userMode == 'pelulus') {
-    //     notpelulus = false;
-    // }
-
-    // if (data.props.userMode == 'ketua Seksyen') {
-    //     notketuaSeksyen = false;
-    // }
-
-    // if (data.props.userMode == 'urusetia') {
-    //     noturusetia = false;
-    // }
-
-    // if (data.props.userMode == 'kakitangan') {
-    //     notkakitangan = false;
-    // }
-
-    // if (
-    //     data.props.userMode == 'kakitangan' ||
-    //     data.props.userMode == 'urusetia'
-    // ) {
-    //     notloanDetail = false;
-    // }
 
     let rowData: CommonEmployeeDTO;
     // table employee table
@@ -127,7 +98,6 @@
     let pelulus = UserRoleConstant.pelulus.code;
     // penyokong
     let penyokong = UserRoleConstant.penyokong.code;
-
     // export let data: PageData;
     let stepperIndex = 0;
     let status: string = 'LULUS';
@@ -205,31 +175,24 @@
         validationMethod: 'oninput',
         validators: zod(_PTBPensionInfoSchema),
         async onSubmit() {
-            if (data.isNewApplication) {
+            if(data.isNewApplication){
+                let tempId: number = 0;
                 let tempPensionId: number = 0;
-                $PTBPensionInfoForm.employeeId = data.currentApplicationId;
-                await _pensionDetailSubmit($PTBPensionInfoForm)
-                    .then((res) => {
-                        if (res?.response.status == 'success') {
-                            tempPensionId =
-                                res?.response.data?.details.pensionId;
-                        }
-                    })
-                    .finally(() => {
-                        setTimeout(
-                            () =>
-                                goto(
-                                    '/perjawatan/PTB-dan-KWAP/butiran/' +
-                                        data.currentApplicationId +
-                                        '-' +
-                                        tempPensionId,
-                                ),
-                            1000,
-                        );
-                    });
-            } else if (!data.isNewApplication) {
+                $PTBPensionInfoForm.employeeId = rowData.employeeId
+                await _pensionDetailSubmit($PTBPensionInfoForm).then((res) => {
+                    if(res?.response.status == "success"){
+                      tempId = rowData.employeeId;
+                      tempPensionId = res?.response.data?.details.pensionId
+                    }
+                }).finally(() => {
+                    setTimeout(() => 
+                        goto('/perjawatan/PTB-dan-KWAP/butiran/'+tempId+'-'+tempPensionId),1000
+                    )
+                    
+                })
+            } else if (!data.isNewApplication){
                 $PTBPensionInfoForm.id = data.currentApplicationId;
-                _editpensionDetailSubmit($PTBPensionInfoForm);
+                _editpensionDetailSubmit($PTBPensionInfoForm)
             }
         },
     });
@@ -247,8 +210,9 @@
         validationMethod: 'oninput',
         validators: zod(_assignRolesRelatedSchema),
         onSubmit() {
-            $assignRolesRelatedInfoForm.id = data.currentApplicationId;
+            $assignRolesRelatedInfoForm.id = data.currentApplicationId
             _editrolesRelatedDetailSubmit($assignRolesRelatedInfoForm);
+           
         },
     });
     const {
@@ -284,7 +248,7 @@
         validationMethod: 'oninput',
         validators: zod(_supporterInfoSchema),
         onSubmit() {
-            $supporterInfoForm.id = data.currentApplicationId;
+            $supporterInfoForm.id = data.currentApplicationId
             _editSupporterDetailSubmit($supporterInfoForm);
         },
     });
@@ -303,8 +267,8 @@
         validationMethod: 'oninput',
         validators: zod(_approveInfoSchema),
         onSubmit() {
-            rolesRelatedInfoForm;
-            $approverInfoForm.id = data.currentApplicationId;
+            rolesRelatedInfoForm
+            $approverInfoForm.id = data.currentApplicationId
             _editApproverDetailSubmit($approverInfoForm);
         },
     });
@@ -337,7 +301,7 @@
             ></StepperContentHeader>
             <!-- {#if editingCandidateList} -->
             <StepperContentBody>
-                <!-- <b class="text-sm text-system-primary">Maklumat Peribadi</b>
+                <b class="text-sm text-system-primary">Maklumat Peribadi</b>
                 {#if data.isNewApplication}
                     <div class="h-fit w-full p-3">
                         <DataTable
@@ -349,7 +313,7 @@
                             }}
                         ></DataTable>
                     </div>
-                {/if} -->
+                {/if}
                 <form
                     class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
                     id="personalDetail"
@@ -740,7 +704,6 @@
                         use:PTBPensionInfoEnhance
                     >
                         <CustomTextField
-                        disabled={currentRoleCode !== urusetia}
                             id="PTBdate"
                             type="date"
                             label="Tarikh Diberi PTB"
@@ -748,7 +711,6 @@
                             bind:val={$PTBPensionInfoForm.PTBDate}
                         ></CustomTextField>
                         <CustomTextField
-                        disabled={currentRoleCode !== urusetia}
                             id="referenceNumber"
                             type="text"
                             label="No. Rujukan Surat JPA"
@@ -757,7 +719,6 @@
                         ></CustomTextField>
 
                         <CustomTextField
-                        disabled={currentRoleCode !== urusetia}
                             id="referenceDate"
                             type="date"
                             label="Tarikh Rujukan"
@@ -766,7 +727,6 @@
                         ></CustomTextField>
 
                         <CustomTextField
-                        disabled={currentRoleCode !== urusetia}
                             id="pensionNumber"
                             label="No. Pencen"
                             errors={$PTBPensionInfoError.pensionNumber}
@@ -774,7 +734,6 @@
                         ></CustomTextField>
 
                         <CustomTextField
-                        disabled={currentRoleCode !== urusetia}
                             id="KWAPEmailDate"
                             type="date"
                             label="Tarikh Emel (KWAP)"
@@ -814,7 +773,6 @@
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     ></div>
                     <CustomSelectField
-                    disabled={currentRoleCode !== urusetia}
                         id="staffSupporter"
                         label="Nama Penyokong"
                         options={data.supporterApproverLookup}
@@ -822,7 +780,6 @@
                     />
 
                     <CustomSelectField
-                    disabled={currentRoleCode !== urusetia}
                         id="staffApprover"
                         label="Nama Pelulus"
                         options={data.supporterApproverLookup}
@@ -861,7 +818,7 @@
                                 >
                             </div>
                             <CustomTextField
-                                disabled
+                            disabled
                                 type="text"
                                 id="supporterName"
                                 label="Nama"
@@ -869,14 +826,14 @@
                                 bind:val={$rolesRelatedInfoForm.supporterName}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled
+                            disabled
                                 id="supportedStatus"
                                 label="Ulasan"
                                 errors={$rolesRelatedInfoError.supportedStatus}
                                 bind:val={$rolesRelatedInfoForm.supportedStatus}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled
+                            disabled
                                 id="supportedRemark"
                                 label="Tindakan"
                                 errors={$rolesRelatedInfoError.supportedRemark}
@@ -908,7 +865,7 @@
                                 >
                             </div>
                             <CustomTextField
-                                disabled
+                            disabled
                                 type="text"
                                 id="approverName"
                                 label="Nama"
@@ -916,14 +873,14 @@
                                 bind:val={$rolesRelatedInfoForm.approverName}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled
+                            disabled
                                 id="approvedStatus"
                                 label="Ulasan"
                                 errors={$rolesRelatedInfoError.approvedStatus}
                                 bind:val={$rolesRelatedInfoForm.approvedStatus}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled
+                            disabled
                                 id="approvedRemark"
                                 label="Tindakan"
                                 errors={$rolesRelatedInfoError.approvedRemark}
@@ -942,133 +899,127 @@
             >
         </StepperContent>
 
-        {#if currentRoleCode === penyokong}
-            <StepperContent>
-                <StepperContentHeader
-                    title="Sila Tetapkan Keputusan Anda - Penyokong"
+        <StepperContent>
+            <StepperContentHeader
+                title="Sila Tetapkan Keputusan Anda - Penyokong"
+            >
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    form="supporterDetail"
                 >
-                    <TextIconButton
-                        type="primary"
-                        label="Simpan"
-                        form="supporterDetail"
+                    <SvgCheck></SvgCheck>
+                </TextIconButton>
+            </StepperContentHeader>
+            <StepperContentBody>
+                <ContentHeader
+                    title="Keputusan akan dihantar ke peranan - peranan berkaitan."
+                ></ContentHeader>
+                <form
+                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
+                    id="supporterDetail"
+                    method="POST"
+                    use:supporterInfoEnhance
+                >
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start"
                     >
-                        <SvgCheck></SvgCheck>
-                    </TextIconButton>
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <ContentHeader
-                        title="Keputusan akan dihantar ke peranan - peranan berkaitan."
-                    ></ContentHeader>
-                    <form
-                        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
-                        id="supporterDetail"
-                        method="POST"
-                        use:supporterInfoEnhance
-                    >
-                        <div
-                            class="flex max-h-full w-full flex-col items-start justify-start"
-                        >
-                            <!-- Penyokong Card -->
+                        <!-- Penyokong Card -->
 
-                            <b class="text-sm text-system-primary"
-                                >Keputusan Penyokong</b
-                            >
-                            <!-- <CustomTextField
+                        <b class="text-sm text-system-primary"
+                            >Keputusan Penyokong</b
+                        >
+                        <!-- <CustomTextField
                             id="supporterName"
                             label="Nama Penyokong"
                             errors={$supporterInfoError.supporterName}
                             bind:val={$supporterInfoForm.supporterName}
                         ></CustomTextField> -->
-                            <CustomRadioBoolean
-                                disabled={false}
-                                id="status"
-                                label="Status"
-                                errors={$supporterInfoError.status}
-                                bind:val={$supporterInfoForm.status}
-                            ></CustomRadioBoolean>
-                            <CustomTextField
-                                id="remark"
-                                label="Tindakan/Ulasan"
-                                errors={$supporterInfoError.remark}
-                                bind:val={$supporterInfoForm.remark}
-                            ></CustomTextField>
-                            <!-- <CustomTextField
+                        <CustomRadioBoolean
+                        disabled={false}
+                            id="status"
+                            label="Status"
+                            errors={$supporterInfoError.status}
+                            bind:val={$supporterInfoForm.status}
+                        ></CustomRadioBoolean>
+                        <CustomTextField
+                            id="remark"
+                            label="Tindakan/Ulasan"
+                            errors={$supporterInfoError.remark}
+                            bind:val={$supporterInfoForm.remark}
+                        ></CustomTextField>
+                        <!-- <CustomTextField
                             id="supportedDate"
                             type="date"
                             label="Tarikh Diluluskan"
                             errors={$supporterInfoError.supportedDate}
                             bind:val={$supporterInfoForm.supportedDate}
                         ></CustomTextField> -->
-                            <hr />
-                        </div>
-                    </form>
-                </StepperContentBody>
-            </StepperContent>
-        {/if}
+                        <hr />
+                    </div>
+                </form>
+            </StepperContentBody>
+        </StepperContent>
 
-        {#if currentRoleCode === pelulus}
-            <StepperContent>
-                <StepperContentHeader
-                    title="Sila Tetapkan Keputusan Anda - Pelulus "
+        <StepperContent>
+            <StepperContentHeader
+                title="Sila Tetapkan Keputusan Anda - Penyokong"
+            >
+                <TextIconButton
+                    label="simpan"
+                    type="primary"
+                    icon="check"
+                    form="approverDetail"
+                ></TextIconButton>
+            </StepperContentHeader>
+            <StepperContentBody>
+                <ContentHeader
+                    title="Keputusan akan dihantar ke peranan - peranan berkaitan."
+                ></ContentHeader>
+                <form
+                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
+                    id="approverDetail"
+                    method="POST"
+                    use:approverInfoEnhance
                 >
-                    <TextIconButton
-                        label="simpan"
-                        type="primary"
-                        icon="check"
-                        form="approverDetail"
-                    ></TextIconButton>
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <ContentHeader
-                        title="Keputusan akan dihantar ke peranan - peranan berkaitan."
-                    ></ContentHeader>
-                    <form
-                        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
-                        id="approverDetail"
-                        method="POST"
-                        use:approverInfoEnhance
+                    <!-- Pelulus Card -->
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start"
                     >
-                        <!-- Pelulus Card -->
-                        <div
-                            class="flex max-h-full w-full flex-col items-start justify-start"
-                        >
-                            <div>
-                                <b class="text-sm text-system-primary"
-                                    >Pelulus</b
-                                >
-                            </div>
-                            <!-- <CustomTextField
+                        <div>
+                            <b class="text-sm text-system-primary">Pelulus</b>
+                        </div>
+                        <!-- <CustomTextField
                             type="text"
                             id="approverName"
                             label="Nama"
                             errors={$approverInfoError.approverName}
                             bind:val={$approverInfoForm.approverName}
                         ></CustomTextField> -->
-                            <CustomRadioBoolean
-                                disabled={false}
-                                id="status"
-                                label="Status"
-                                errors={$approverInfoError.status}
-                                bind:val={$approverInfoForm.status}
-                            ></CustomRadioBoolean>
-                            <CustomTextField
-                                id="remark"
-                                label="Tindakan/Ulasan"
-                                errors={$approverInfoError.remark}
-                                bind:val={$approverInfoForm.remark}
-                            ></CustomTextField>
-                            <!-- <CustomTextField
+                        <CustomRadioBoolean
+                        disabled={false}
+                            id="status"
+                            label="Status"
+                            errors={$approverInfoError.status}
+                            bind:val={$approverInfoForm.status}
+                        ></CustomRadioBoolean>
+                        <CustomTextField
+                            id="remark"
+                            label="Tindakan/Ulasan"
+                            errors={$approverInfoError.remark}
+                            bind:val={$approverInfoForm.remark}
+                        ></CustomTextField>
+                        <!-- <CustomTextField
                             id="approvedDate"
                             label="Tarikh Diluluskan"
                             errors={$approverInfoError.approvedDate}
                             bind:val={$approverInfoForm.approvedDate}
                         ></CustomTextField> -->
-                            <div class="flex w-full flex-row text-sm"></div>
-                        </div>
-                    </form>
-                </StepperContentBody>
-            </StepperContent>
-        {/if}
+                        <div class="flex w-full flex-row text-sm"></div>
+                    </div>
+                </form>
+            </StepperContentBody>
+        </StepperContent>
     </Stepper>
 </section>
 <Toaster></Toaster>

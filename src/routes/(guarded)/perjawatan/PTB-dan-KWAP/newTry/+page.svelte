@@ -20,8 +20,8 @@
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
-    import { _tableInformation } from './butiran/[id]-[pensionid]/+page';
     import DataTable from '$lib/components/table/DataTable.svelte';
+    import { _tableInformation } from '../butiran/[id]-[pensionid]/+page';
 
     export let data: PageData;
 
@@ -160,16 +160,14 @@
         title="Pemberian Taraf Berpencen (PTB) dan Kumpulan Wang Persaraan
         (KWAP)"
     >
-        <!-- <TextIconButton
+        <TextIconButton
             label="Tambah Rekod"
             onClick={() => {
-                goto('/perjawatan/PTB-dan-KWAP/butiran/baru-permohonan');
+                goto('/perjawatan/PTB-dan-KWAP/butiran/'+rowData.employeeId+'-baru')
             }}
         >
             <SvgPlus />
-        </TextIconButton> -->
-
-        {#if currentRoleCode === kakitangan}
+        </TextIconButton>
         <TextIconButton
         label="Surat Permohonan"
         onClick={() => {
@@ -177,8 +175,7 @@
         }}
     >
         <SvgPlus />
-    </TextIconButton>
-    {/if}</ContentHeader
+    </TextIconButton></ContentHeader
     >
 </section>
 
@@ -187,7 +184,7 @@
 <section
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-{#if currentRoleCode === urusetia || currentRoleCode === pelulus || currentRoleCode === penyokong }
+    {#if currentRoleCode === urusetia}
         <CustomTab>
             <CustomTabContent
                 title="Senarai Kakitangan Baharu diberi PTB dan KWAP"
@@ -217,36 +214,21 @@
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
-                    <!-- <CustomTable
-                        onUpdate={_searchNo}
-                        enableDetail
+                <div class="h-fit w-full p-3">
+                    <DataTable
+                        title="Senarai Kakitangan"
+                        bind:tableData={addActingTable}
                         bind:passData={rowData}
                         detailActions={() => {
-                            goto(
-                                `./PTB-dan-KWAP/urus-setia/butiran/` +
-                                    rowData.employeeId +
-                                    '-' +
-                                    rowData.id,
-                            );
+                        goto('/perjawatan/PTB-dan-KWAP/butiran/'+rowData.employeeId+'-baru')
                         }}
-                        bind:tableData={PTBtableNo}
-                    ></CustomTable> -->
-                    <div class="h-fit w-full p-3">
-                        <DataTable
-                            title="Senarai Kakitangan"
-                            bind:tableData={addActingTable}
-                            bind:passData={rowData}
-                            detailActions={() => {
-                            goto('/perjawatan/PTB-dan-KWAP/butiran/'+rowData.employeeId+'-baru')
-                            }}
-                                
-                        ></DataTable>
-                    </div>
+
+                    ></DataTable>
+                </div>
                 </div>
             </CustomTabContent>
         </CustomTab>
-        {/if}
-  
+    {/if}
 
     {#if currentRoleCode === kakitangan}
         <CustomTabContent title="Senarai Kakitangan Baharu diberi PTB dan KWAP">

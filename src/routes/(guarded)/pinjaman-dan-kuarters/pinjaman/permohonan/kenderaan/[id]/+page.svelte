@@ -7,6 +7,7 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
@@ -642,13 +643,11 @@
                         <div
                             class="flex h-fit w-full flex-col justify-center gap-2"
                         >
-                            <input
-                                class="rounded-md bg-ios-systemColors-systemFill-light"
-                                accept=".pdf"
-                                type="file"
-                                multiple
-                                bind:files
-                            />
+                        <CustomFileField
+                        label="Dokumen Sokongan"
+                        id="employeeClaimDocument"
+                        bind:files
+                    ></CustomFileField>
                         </div>
                     {/if}
 
@@ -794,7 +793,7 @@
         </StepperContent>
         {#if data.props.userMode == 'urusetia' || data.props.userMode == 'pelulus' || data.props.userMode == 'ketua Seksyen'}
             <StepperContent>
-                <StepperContentHeader title="Kemaskini Maklumat Pinjaman">
+                <StepperContentHeader title="Kemaskini Jadual Pertama Dan Jadual Kedua">
                     <TextIconButton
                         label="Kembali"
                         onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
@@ -1095,13 +1094,11 @@
                         <div
                             class="flex h-fit w-full flex-col justify-center gap-2"
                         >
-                            <input
-                                class="rounded-md bg-ios-systemColors-systemFill-light"
-                                accept=".pdf"
-                                type="file"
-                                multiple
-                                bind:files
-                            />
+                        <CustomFileField
+                        label="Dokumen Sokongan"
+                        id="employeeClaimDocument"
+                        bind:files
+                    ></CustomFileField>
                         </div>
                     {/if}
 
@@ -1377,13 +1374,11 @@
                         <div
                             class="flex h-fit w-full flex-col justify-center gap-2"
                         >
-                            <input
-                                class="rounded-md bg-ios-systemColors-systemFill-light"
-                                accept=".pdf"
-                                type="file"
-                                multiple
-                                bind:files
-                            />
+                        <CustomFileField
+                        label="Dokumen Sokongan"
+                        id="employeeClaimDocument"
+                        bind:files
+                    ></CustomFileField>
                         </div>
                     {/if}
 

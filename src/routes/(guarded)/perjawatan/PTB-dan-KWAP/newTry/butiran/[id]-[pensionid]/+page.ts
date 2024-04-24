@@ -79,10 +79,13 @@ export async function load({ params }) {
     const currentRoleCode: string = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode) ?? UserRoleConstant.kakitangan.code;
 
     // set default id
-    let currentApplicationId: number = Number(params.id);
-    if (params.pensionid !== "baru") {
+    let currentApplicationId: number = 0;
+
+    if (params.id !== "baru") {
+        currentApplicationId = parseInt(params.id);
         isNewApplication = false;
     }
+
     // ============================================
     // CREATE ALL FORMS
     // ============================================
@@ -152,14 +155,26 @@ export async function load({ params }) {
 
     if (personalDetailResponse.status == 'success') {
         personalDetail = personalDetailResponse.data?.details as PersonalDetailDTO;
+
         personalDetailForm.data = personalDetail;
     }
 
 
-   
+    if (currentApplicationId !== 0) {
         // if application exist
 
-    
+
+        const personalDetailResponse: CommonResponseDTO =
+            await PTBKWAPServices.getPTBKWAPPersonalDetails(personalDetailRequestBody);
+
+        if (personalDetailResponse.status == 'success') {
+            personalDetail = personalDetailResponse.data?.details as PersonalDetailDTO;
+
+            personalDetailForm.data = personalDetail;
+        }
+    } else {
+
+    }
 
      // ===============
     // SERVICE Detail
@@ -301,7 +316,6 @@ export async function load({ params }) {
 
             approverDetailForm.data = approveDetail;
         }
-        
     }
 
     return {
@@ -345,7 +359,7 @@ export async function load({ params }) {
 // ================================================================
 export const _pensionDetailSubmit = async (formData: object) => {
     const pensionDetailsInfoForm = await superValidate(formData, (zod)(_PTBPensionInfoSchema));
-    console.log(pensionDetailsInfoForm)
+
     if (pensionDetailsInfoForm.valid) {
         const response: CommonResponseDTO =
             await PTBKWAPServices.addPensionDetail(pensionDetailsInfoForm.data as PensionDetailDTO);
