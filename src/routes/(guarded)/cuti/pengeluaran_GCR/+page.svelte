@@ -42,11 +42,7 @@
             filter: true,
         },
         controls: {
-            add:
-                data.props.currentRoleCode ==
-                    UserRoleConstant.kakitangan.code ||
-                data.props.currentRoleCode ==
-                    UserRoleConstant.urusSetiaCuti.code,
+            add: false,
         },
     };
 
@@ -57,7 +53,7 @@
                 url = '/cuti/pengeluaran_GCR/baru/pengeluaran_awal';
                 break;
             case UserRoleConstant.urusSetiaCuti.code:
-                url = '/cuti/pengeluaran_GCR/senarai';
+                url = '/cuti/pengeluaran_GCR/senarai_kakitangan';
                 break;
             default:
                 url = '/cuti/pengeluaran_GCR/baru/pengeluaran_awal';
