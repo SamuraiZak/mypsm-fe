@@ -9,7 +9,7 @@
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import { Toaster } from 'svelte-french-toast';
-    import { Accordion, AccordionItem, Alert, Modal } from 'flowbite-svelte';
+    import { Alert } from 'flowbite-svelte';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
