@@ -82,7 +82,7 @@ export const _personalInfoResponseSchema = z.object({
     mailPostcode: shortTextSchema,
     isExPoliceOrSoldier: booleanSchema,
     isInternalRelationship: booleanSchema,
-    employeeNumber: z.coerce.string().nullable(),
+    employeeNumber: z.string().nullable(),
     employeeName: z.string().nullable(),
     employeePosition: z.string().nullable(),
     relationshipId: z.number().nullable(),
