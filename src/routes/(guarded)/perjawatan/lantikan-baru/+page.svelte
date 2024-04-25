@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { error } from '@sveltejs/kit';
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
@@ -6,7 +7,7 @@
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type { LayoutData } from './$types';
-
+    import { Toaster } from 'svelte-french-toast';
     import {
         _updateApproverViewTable,
         _updateCandidateViewTable,
@@ -18,6 +19,10 @@
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
+    import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawatan/employment.service';
+    import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+    import { getErrorToast } from '$lib/helpers/core/toast.helper';
+    import type { CandidateIDRequestBody } from '$lib/dto/core/common/candidate-id-request.view-dto';
 
     export let data: LayoutData;
     let rowData: any;
@@ -166,6 +171,29 @@
             add: false,
         },
     };
+
+    const checkIfFail = async (id: number) => {
+        const candidateIdRequestBody: CandidateIDRequestBody = {
+            id: Number(id),
+        };
+
+        const newHireFullDetailResponse: CommonResponseDTO =
+            await EmploymentServices.getNewHireFullDetail(
+                candidateIdRequestBody,
+            );
+
+        if (newHireFullDetailResponse.status === 'error') {
+            getErrorToast(
+                'Harap Maklum. Tiada maklumat dijumpai pada masa ini. Sila laporkan kepada admin sistem.',
+            );
+            error(500, {
+                message: newHireFullDetailResponse.message as string,
+            });
+        }
+        
+        const route = `./lantikan-baru/kemaskini-permohonan/${rowData.candidateId}`;
+        goto(route);
+    };
 </script>
 
 <!-- content header starts here -->
@@ -187,9 +215,7 @@
                 bind:tableData={newCandidateListTable}
                 bind:passData={rowData}
                 detailActions={() => {
-                    const route = `./lantikan-baru/kemaskini-permohonan/${rowData.candidateId}`;
-
-                    goto(route);
+                    checkIfFail(rowData.candidateId);
                 }}
             >
                 <FilterWrapper slot="filter">
@@ -223,9 +249,7 @@
                         bind:tableData={submittedListTable}
                         bind:passData={rowData}
                         detailActions={() => {
-                            const route = `./lantikan-baru/kemaskini-permohonan/${rowData.candidateId}`;
-
-                            goto(route);
+                            checkIfFail(rowData.candidateId);
                         }}
                     >
                         <FilterWrapper slot="filter">
@@ -302,9 +326,7 @@
                 bind:tableData={supporterViewTable}
                 bind:passData={rowData}
                 detailActions={() => {
-                    const route = `./lantikan-baru/kemaskini-permohonan/${rowData.candidateId}`;
-
-                    goto(route);
+                    checkIfFail(rowData.candidateId);
                 }}
             >
                 <FilterWrapper slot="filter">
@@ -338,10 +360,8 @@
                 title="Senarai Lantikan Baru"
                 bind:tableData={approverViewTable}
                 bind:passData={rowData}
-                detailActions={() => {
-                    const route = `./lantikan-baru/kemaskini-permohonan/${rowData.candidateId}`;
-
-                    goto(route);
+                detailActions={async () => {
+                    checkIfFail(rowData.candidateId);
                 }}
             >
                 <FilterWrapper slot="filter">
@@ -370,4 +390,4 @@
     {/if}
 </section>
 
-<!-- <Toaster /> -->
+<Toaster />

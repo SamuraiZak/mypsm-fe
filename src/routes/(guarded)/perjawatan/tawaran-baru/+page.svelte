@@ -6,9 +6,15 @@
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import FilterDateField from '$lib/components/table/filter/FilterDateField.svelte';
+    import { Toaster } from 'svelte-french-toast';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import type { NewOfferMeetingListResponseDTO } from '$lib/dto/mypsm/employment/new-offer/new-offer-request-response.dto';
+    import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
+    import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+    import { NewOfferServices } from '$lib/services/implementation/mypsm/employment/new-offer/new-offer.service';
+    import { error } from '@sveltejs/kit';
+    import { getErrorToast } from '$lib/helpers/core/toast.helper';
 
     export let data: LayoutData;
     let rowData: NewOfferMeetingListResponseDTO;
@@ -51,6 +57,26 @@
             add: data.roles.isEmploymentSecretaryRole,
         },
     };
+
+    const checkIfFail = async (id: number) => {
+        const idRequestBody: commonIdRequestDTO = {
+            id: Number(id),
+        };
+
+        const newOfferFullDetailViewResponse: CommonResponseDTO =
+            await NewOfferServices.getNewOfferFullDetail(idRequestBody);
+
+        if (newOfferFullDetailViewResponse.status === 'error') {
+            getErrorToast(
+                'Harap Maklum. Tiada maklumat dijumpai pada masa ini. Sila laporkan kepada admin sistem.',
+            );
+            error(500, {
+                message: newOfferFullDetailViewResponse.message as string,
+            });
+        }
+        const route = `./tawaran-baru/${id}`;
+        goto(route);
+    };
 </script>
 
 <!-- content header starts here -->
@@ -72,9 +98,7 @@
                 bind:tableData={newOfferMeetingBatchListTable}
                 bind:passData={rowData}
                 detailActions={() => {
-                    const route = `./tawaran-baru/${rowData.meetingId}`;
-
-                    goto(route);
+                    checkIfFail(rowData.meetingId);
                 }}
                 addActions={() => {
                     goto('./tawaran-baru/tambah-tawaran-baru');
@@ -103,4 +127,4 @@
     </div>
 </section>
 
-<!-- <Toaster /> -->
+<Toaster />

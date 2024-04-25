@@ -7,10 +7,15 @@
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
+    import { Toaster } from 'svelte-french-toast';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import type { ConfirmationListResponseDTO } from '$lib/dto/mypsm/employment/confirmation/confirmation_request_response.dto';
+    import { getErrorToast } from '$lib/helpers/core/toast.helper';
+    import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
+    import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+    import { ConfirmationServices } from '$lib/services/implementation/mypsm/employment/confirmation-in-service/confirmation.service';
 
     export let data: LayoutData;
     let rowData: ConfirmationListResponseDTO;
@@ -160,6 +165,27 @@
             add: false,
         },
     };
+
+    const checkIfFail = async (id: number) => {
+        const idRequestBody: commonIdRequestDTO = {
+            id: Number(id),
+        };
+
+        const confirmationInServiceDetailViewResponse: CommonResponseDTO =
+            await ConfirmationServices.getConfirmationFullDetail(idRequestBody);
+
+        if (confirmationInServiceDetailViewResponse.status === 'error') {
+            getErrorToast(
+                'Harap Maklum. Tiada maklumat dijumpai pada masa ini. Sila laporkan kepada admin sistem.',
+            );
+            error(500, {
+                message:
+                    confirmationInServiceDetailViewResponse.message as string,
+            });
+        }
+        const route = `./pengesahan-dalam-perkhidmatan/${id}`;
+        goto(route);
+    };
 </script>
 
 <!-- content header starts here -->
@@ -185,9 +211,7 @@
                         bind:tableData={confirmationListTable}
                         bind:passData={rowData}
                         detailActions={() => {
-                            const route = `./pengesahan-dalam-perkhidmatan/${rowData.id}`;
-
-                            goto(route);
+                            checkIfFail(rowData.id);
                         }}
                     >
                         <FilterWrapper slot="filter">
@@ -231,9 +255,7 @@
                                 bind:tableData={confirmationExceedsThreeYearsListTable}
                                 bind:passData={rowData}
                                 detailActions={() => {
-                                    const route = `./pengesahan-dalam-perkhidmatan/${rowData.id}`;
-
-                                    goto(route);
+                                    checkIfFail(rowData.id);
                                 }}
                             >
                                 <FilterWrapper slot="filter">
@@ -281,9 +303,7 @@
                             bind:tableData={confirmationRationalisationListTable}
                             bind:passData={rowData}
                             detailActions={() => {
-                                const route = `./pengesahan-dalam-perkhidmatan/${rowData.id}`;
-
-                                goto(route);
+                                checkIfFail(rowData.id);
                             }}
                         >
                             <FilterWrapper slot="filter">
@@ -317,4 +337,4 @@
     </CustomTab>
 </section>
 
-<!-- <Toaster /> -->
+<Toaster />
