@@ -7,7 +7,7 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import { Toaster } from 'svelte-french-toast';
-    import { dateProxy, superForm } from 'sveltekit-superforms/client';
+    import { superForm } from 'sveltekit-superforms/client';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
