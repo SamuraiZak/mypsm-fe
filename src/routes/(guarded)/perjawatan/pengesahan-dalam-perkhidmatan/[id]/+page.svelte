@@ -914,7 +914,7 @@
                             <CustomSelectField
                                 disabled
                                 id="integrityDirectorStatus"
-                                options={certifyOptions}
+                                options={confirmOptions}
                                 label={'Keputusan'}
                                 bind:val={$divisionDirectorDetaiForm.status}
                             ></CustomSelectField>
@@ -937,7 +937,7 @@
                             <CustomSelectField
                                 disabled
                                 id="integrityDirectorStatus"
-                                options={certifyOptions}
+                                options={confirmOptions}
                                 label={'Keputusan'}
                                 bind:val={$integrityDirectorDetailForm.status}
                             ></CustomSelectField>
@@ -960,7 +960,7 @@
                             <CustomSelectField
                                 disabled
                                 id="integrityDirectorStatus"
-                                options={certifyOptions}
+                                options={confirmOptions}
                                 label={'Keputusan'}
                                 bind:val={$auditDirectorDetailForm.status}
                             ></CustomSelectField>

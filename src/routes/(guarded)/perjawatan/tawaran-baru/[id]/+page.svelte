@@ -1217,30 +1217,7 @@
                             >
                                 <div class="mb-5">
                                     <b class="text-sm text-system-primary"
-                                        >1. Pelulus</b
-                                    >
-                                </div>
-                                {#if $isReadOnlyNewOfferApprovalResult}
-                                    <CustomTextField
-                                        disabled
-                                        id="remark"
-                                        label="Tindakan/Ulasan"
-                                        bind:val={$newOfferApproverResultForm.remark}
-                                    ></CustomTextField>
-                                    <CustomSelectField
-                                        disabled
-                                        id="status"
-                                        options={certifyOptions}
-                                        label={'Keputusan'}
-                                        bind:val={$newOfferApproverResultForm.status}
-                                    ></CustomSelectField>
-                                {:else}
-                                    <StepperOtherRolesResult />
-                                {/if}
-                                <hr />
-                                <div class="mb-5">
-                                    <b class="text-sm text-system-primary"
-                                        >2. Penyokong</b
+                                        >1. Penyokong</b
                                     >
                                 </div>
                                 {#if $isReadOnlyNewOfferSupporterResult}
@@ -1253,9 +1230,32 @@
                                     <CustomSelectField
                                         disabled
                                         id="status"
-                                        options={certifyOptions}
+                                        options={supportOptions}
                                         label={'Keputusan'}
                                         bind:val={$newOfferSupporterResultForm.status}
+                                    ></CustomSelectField>
+                                {:else}
+                                    <StepperOtherRolesResult />
+                                {/if}
+                                <hr />
+                                <div class="mb-5">
+                                    <b class="text-sm text-system-primary"
+                                        >2. Pelulus</b
+                                    >
+                                </div>
+                                {#if $isReadOnlyNewOfferApprovalResult}
+                                    <CustomTextField
+                                        disabled
+                                        id="remark"
+                                        label="Tindakan/Ulasan"
+                                        bind:val={$newOfferApproverResultForm.remark}
+                                    ></CustomTextField>
+                                    <CustomSelectField
+                                        disabled
+                                        id="status"
+                                        options={approveOptions}
+                                        label={'Keputusan'}
+                                        bind:val={$newOfferApproverResultForm.status}
                                     ></CustomSelectField>
                                 {:else}
                                     <StepperOtherRolesResult />
