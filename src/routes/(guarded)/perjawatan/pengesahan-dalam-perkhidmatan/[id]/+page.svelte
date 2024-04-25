@@ -878,7 +878,7 @@
                     {#if !$isTypeConfirmationExceedsThreeYears}
                         <div class="mb-5">
                             <b class="text-sm text-system-primary"
-                                >Pengarah Audit</b
+                                >4. Pengarah Audit</b
                             >
                         </div>
                         {#if $isReadOnlyAuditDirectorConfirmationInServiceApproval}
@@ -888,20 +888,20 @@
                                 label="Tindakan/Ulasan"
                                 bind:val={$auditDirectorDetailForm.remark}
                             ></CustomTextField>
-                            <CustomRadioBoolean
+                            <CustomSelectField
                                 disabled
                                 id="integrityDirectorStatus"
                                 options={certifyOptions}
                                 label={'Keputusan'}
                                 bind:val={$auditDirectorDetailForm.status}
-                            ></CustomRadioBoolean>
+                            ></CustomSelectField>
                         {:else}
                             <StepperOtherRolesResult />
                         {/if}
                         <hr />
                         <div class="mb-5">
                             <b class="text-sm text-system-primary"
-                                >Pengarah Integriti</b
+                                >3. Pengarah Integriti</b
                             >
                         </div>
                         {#if $isReadOnlyIntegrityDirectorConfirmationInServiceApproval}
@@ -911,20 +911,20 @@
                                 label="Tindakan/Ulasan"
                                 bind:val={$integrityDirectorDetailForm.remark}
                             ></CustomTextField>
-                            <CustomRadioBoolean
+                            <CustomSelectField
                                 disabled
                                 id="integrityDirectorStatus"
                                 options={certifyOptions}
                                 label={'Keputusan'}
                                 bind:val={$integrityDirectorDetailForm.status}
-                            ></CustomRadioBoolean>
+                            ></CustomSelectField>
                         {:else}
                             <StepperOtherRolesResult />
                         {/if}
                         <hr />
                         <div class="mb-5">
                             <b class="text-sm text-system-primary"
-                                >Pengarah Bahagian/Negeri</b
+                                >2. Pengarah Bahagian/Negeri</b
                             >
                         </div>
                         {#if $isReadOnlyDivisionDirectorConfirmationInServiceApproval}
@@ -934,13 +934,13 @@
                                 label="Tindakan/Ulasan"
                                 bind:val={$divisionDirectorDetaiForm.remark}
                             ></CustomTextField>
-                            <CustomRadioBoolean
+                            <CustomSelectField
                                 disabled
                                 id="integrityDirectorStatus"
                                 options={certifyOptions}
                                 label={'Keputusan'}
                                 bind:val={$divisionDirectorDetaiForm.status}
-                            ></CustomRadioBoolean>
+                            ></CustomSelectField>
                         {:else}
                             <StepperOtherRolesResult />
                         {/if}
@@ -948,7 +948,7 @@
                     {/if}
                     <div class="mb-5">
                         <b class="text-sm text-system-primary"
-                            >Urus Setia Perjawatan</b
+                            >1. Urus Setia Perjawatan</b
                         >
                     </div>
                     {#if $isReadOnlyEmploymentSecretaryConfirmationInServiceApproval}
@@ -958,13 +958,13 @@
                             label="Tindakan/Ulasan"
                             bind:val={$employmentSecretaryDetailForm.remark}
                         ></CustomTextField>
-                        <CustomRadioBoolean
+                        <CustomSelectField
                             disabled
                             id="integrityDirectorStatus"
                             options={certifyOptions}
                             label={'Keputusan'}
                             bind:val={$employmentSecretaryDetailForm.status}
-                        ></CustomRadioBoolean>
+                        ></CustomSelectField>
                     {:else}
                         <StepperOtherRolesResult />
                     {/if}

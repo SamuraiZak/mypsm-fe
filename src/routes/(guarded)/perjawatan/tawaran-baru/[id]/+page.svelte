@@ -1217,7 +1217,7 @@
                             >
                                 <div class="mb-5">
                                     <b class="text-sm text-system-primary"
-                                        >Penyokong</b
+                                        >2. Penyokong</b
                                     >
                                 </div>
                                 {#if $isReadOnlyNewOfferSupporterResult}
@@ -1240,7 +1240,7 @@
                                 <hr />
                                 <div class="mb-5">
                                     <b class="text-sm text-system-primary"
-                                        >Pelulus</b
+                                        >1. Pelulus</b
                                     >
                                 </div>
                                 {#if $isReadOnlyNewOfferApprovalResult}
