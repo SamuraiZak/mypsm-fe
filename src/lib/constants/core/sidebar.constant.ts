@@ -164,10 +164,6 @@ export class SidebarConstant {
                     path: '/pengurusan_sistem',
                 },
                 {
-                    name: 'Log Audit Sistem',
-                    path: '/log-audit-sistem',
-                },
-                {
                     name: 'Tetapan Akaun',
                     path: '/tetapan',
                 },
