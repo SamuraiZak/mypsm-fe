@@ -3,6 +3,7 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterNumberField from '$lib/components/table/filter/FilterNumberField.svelte';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
@@ -71,14 +72,14 @@
                 }}
             >
                 <FilterWrapper slot="filter">
-                    <FilterNumberField
-                        label="name"
+                    <FilterTextField
+                        label="Nama Peranan"
                         bind:inputValue={employeeListTable.param.filter.name}
-                    ></FilterNumberField>
-                    <FilterNumberField
-                        label="name"
-                        bind:inputValue={employeeListTable.param.filter.name}
-                    ></FilterNumberField>
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={employeeListTable.param.filter.identityCard}
+                    ></FilterTextField>
                 </FilterWrapper>
             </DataTable>
         </div>
