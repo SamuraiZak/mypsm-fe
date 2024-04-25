@@ -48,7 +48,7 @@ export interface PromotionEmployeeEdit {
     confirmedDate: string;
     supporterName: string;
     approverName:  string;
-    confirmation:  boolean;
+    status:  boolean;
     remark:        string;
 }
 
@@ -59,6 +59,24 @@ export class PromotionEmployeeEditConvert {
     }
 
     public static toJson(value: PromotionEmployeeEdit): string {
+        return JSON.stringify(value);
+    }
+}
+
+export interface PromotionCommonApproval {
+    id:                  number;
+    promotionType:       string;
+    status:              boolean;
+    remark:              string;
+}
+
+// Converts JSON strings to/from your types
+export class PromotionCommonApprovalConvert {
+    public static fromJson(json: string): PromotionCommonApproval {
+        return JSON.parse(json);
+    }
+
+    public static toJson(value: PromotionCommonApproval): string {
         return JSON.stringify(value);
     }
 }

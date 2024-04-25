@@ -6,7 +6,7 @@ import { invalidateAll } from "$app/navigation";
 import { getPromiseToast } from "$lib/helpers/core/toast.helper";
 import { CommonResponseConvert } from "$lib/dto/core/common/common-response.dto";
 import { AddNewPromotionConvert, type AddNewPromotion } from "$lib/dto/mypsm/employment/promotion/add-promotion.dto";
-import { PromotionCertificationConvert, PromotionEmployeeEditConvert, PromotionPlacementEditConvert, type PromotionCertification, type PromotionEmployeeEdit, type PromotionPlacementEdit } from "$lib/dto/mypsm/employment/promotion/promotion-form.dto";
+import { PromotionCertificationConvert, PromotionCommonApprovalConvert, PromotionEmployeeEditConvert, PromotionPlacementEditConvert, type PromotionCertification, type PromotionCommonApproval, type PromotionEmployeeEdit, type PromotionPlacementEdit } from "$lib/dto/mypsm/employment/promotion/promotion-form.dto";
 import { PromotionCertificationGetConvert, type PromotionCertificationGet } from "$lib/dto/mypsm/employment/promotion/promotion-common-groupid.dto";
 
 
@@ -413,5 +413,231 @@ export class EmploymentPromotionServices {
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
+    }  
+    
+    //add director approval
+    static async addDirectorApproval (param: PromotionCommonApproval) {
+        try{
+            const url: Input = 'employment/promotion/director_certifies/edit';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: PromotionCommonApprovalConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await getPromiseToast(promiseRes);
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    await invalidateAll();
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
     }
+    // get director approval
+    static async getDirectorApproval(param: PromotionCertificationGet) {
+        try{
+            const url: Input = 'employment/promotion/director_certifies/get';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: PromotionCertificationGetConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await promiseRes;
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    } 
+    
+    //add integrity approval
+    static async addIntegrityApproval (param: PromotionCommonApproval) {
+        try{
+            const url: Input = 'employment/promotion/integrity_certifies/edit';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: PromotionCommonApprovalConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await getPromiseToast(promiseRes);
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    await invalidateAll();
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    } 
+
+    // get integrity approval
+    static async getIntegrityApproval(param: PromotionCertificationGet) {
+        try{
+            const url: Input = 'employment/promotion/integrity_certifies/get';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: PromotionCertificationGetConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await promiseRes;
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    } 
+
+    //add supporter approval
+    static async addSupporterApproval (param: PromotionCommonApproval) {
+        try{
+            const url: Input = 'employment/promotion/supports/edit';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: PromotionCommonApprovalConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await getPromiseToast(promiseRes);
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    await invalidateAll();
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    // get psupporter approval
+    static async getSupporterApproval(param: PromotionCertificationGet) {
+        try{
+            const url: Input = 'employment/promotion/supports/get';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: PromotionCertificationGetConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await promiseRes;
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    } 
+
+    //add approver approval
+    static async addAppproverApproval (param: PromotionCommonApproval) {
+        try{
+            const url: Input = 'employment/promotion/approves/edit';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: PromotionCommonApprovalConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await getPromiseToast(promiseRes);
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    await invalidateAll();
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    // get approver approval
+    static async getApproverApproval(param: PromotionCertificationGet) {
+        try{
+            const url: Input = 'employment/promotion/approves/get';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: PromotionCertificationGetConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await promiseRes;
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }  
+
+    // get director approval
+    static async getEmployeePromotionOffer(param: CommonListRequestDTO) {
+        try{
+            const url: Input = 'employment/promotion/employee/list';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await promiseRes;
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    } 
 }
