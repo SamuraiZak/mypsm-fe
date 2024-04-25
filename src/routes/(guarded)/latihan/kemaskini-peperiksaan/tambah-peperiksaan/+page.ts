@@ -2,6 +2,7 @@ import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { CourseCreateExamRequestDTO } from '$lib/dto/mypsm/course/exam/course-exam.dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import { _examInfoRequestSchema } from '$lib/schemas/mypsm/course/exam-schema';
 import { CourseServices } from '$lib/services/implementation/mypsm/latihan/course.service.js';
@@ -49,17 +50,8 @@ export const _createExamForm = async (formData: FormData) => {
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    const modifiedForm = {
-        examTypeId: form.data.examTypeId,
-        examTitle: form.data.examTitle,
-        startDate: form.data.startDate.toISOString().split('T')[0],
-        endDate: form.data.endDate.toISOString().split('T')[0],
-        examDate: form.data.examDate.toISOString().split('T')[0],
-        examLocation: form.data.examLocation,
-    };
-
     const response: CommonResponseDTO =
-        await CourseServices.createCourseExam(modifiedForm);
+        await CourseServices.createCourseExam(form.data as CourseCreateExamRequestDTO);
 
     if (response.status === 'success')
         setTimeout(() => {

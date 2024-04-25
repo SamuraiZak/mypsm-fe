@@ -34,14 +34,6 @@
         },
         taintedMessage: false,
     });
-
-    const proxyExamApplicationStartDate = dateProxy(form, 'startDate', {
-        format: 'date',
-    });
-    const proxyExamApplicationEndDate = dateProxy(form, 'endDate', {
-        format: 'date',
-    });
-    const proxyExamDate = dateProxy(form, 'examDate', { format: 'date' });
 </script>
 
 <ContentHeader title="Maklumat Peperiksaan"
@@ -93,7 +85,7 @@
                     id="startDate"
                     label="Tarikh Mula Permohonan"
                     type="date"
-                    bind:val={$proxyExamApplicationStartDate}
+                    bind:val={$form.startDate}
                 ></CustomTextField>
                 <CustomTextField
                     disabled={false}
@@ -101,7 +93,7 @@
                     id="endDate"
                     label="Tarikh Tutup Permohonan"
                     type="date"
-                    bind:val={$proxyExamApplicationEndDate}
+                    bind:val={$form.endDate}
                 ></CustomTextField>
                 <CustomTextField
                     disabled={false}
@@ -109,7 +101,7 @@
                     id="examDate"
                     label="Tarikh Peperiksaan"
                     type="date"
-                    bind:val={$proxyExamDate}
+                    bind:val={$form.examDate}
                 ></CustomTextField>
                 <CustomTextField
                     disabled={false}
