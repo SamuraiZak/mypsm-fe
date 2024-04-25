@@ -3,19 +3,18 @@
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
     import type {
-        TableDTO,
         TableSettingDTO,
     } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
     import { goto } from '$app/navigation';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import DataTable from '$lib/components/table/DataTable.svelte';
-    import type { ActingCommonList } from '$lib/dto/mypsm/employment/acting/acting-common-list.dto';
+    import type { ActingCommonList, EmployeeActingOffer } from '$lib/dto/mypsm/employment/acting/acting-common-list.dto';
     export let data: PageData;
 
     let rowData = {} as ActingCommonList;
+    let employeeRowData = {} as EmployeeActingOffer;
 
     let gradeOptions: IntDropdownOption[] = [
         {
@@ -168,7 +167,7 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
-    {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code || data.currentRoleCode === UserRoleConstant.pelulus.code || data.currentRoleCode === UserRoleConstant.penyokong.code}
+    {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code}
         <CustomTab>
             <!-- Gred 1-54 -->
             <CustomTabContent title="Gred 1-54">
@@ -208,6 +207,7 @@
                 </div>
             </CustomTabContent>
 
+            {#if data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
             <!-- Gred Utama -->
             <CustomTabContent title="Gred Utama">
                 <div class="h h-fit w-full p-3">
@@ -226,91 +226,25 @@
                     ></DataTable>
                 </div>
             </CustomTabContent>
+            {/if}
         </CustomTab>
     {:else if data.currentRoleCode === UserRoleConstant.kakitangan.code}
         <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
             <div class="h-fit w-full">
-                <DataTable title="Senarai Tawaran Pemangkuan" bind:tableData={employeeOfferTable}
+                <DataTable
+                    title="Senarai Tawaran Pemangkuan"
+                    bind:tableData={employeeOfferTable}
+                    bind:passData={employeeRowData}
+                    detailActions={() => {
+                        goto(
+                            '/perjawatan/pemangkuan/butiran/' +
+                                employeeRowData.actingId +
+                                '-' +
+                                employeeRowData.actingType,
+                        );
+                    }}
                 ></DataTable>
             </div>
         </div>
-        <!-- {:else if data.currentRoleCode === approverRoleCode}
-        <CustomTab>
-            <CustomTabContent title="Permohonan Penangguhan/Pindaan Penempatan">
-                <ContentHeader
-                    borderClass="border-none"
-                    title="Senarai rekod permohonan penangguhan/pindaan penempatan yang menunggu keputusan anda"
-                />
-                <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
-                >
-                    <CustomTable
-                        title=""
-                        onUpdate={_search}
-                        enableDetail
-                        detailActions={() => {}}
-                        bind:tableData={table}
-                    ></CustomTable>
-                </div>
-            </CustomTabContent>
-
-            <CustomTabContent title="Pengesahan Keputusan Pemangkuan">
-                <ContentHeader
-                    borderClass="border-none"
-                    title="Senarai rekod pemangkuan yang menunggu keputusan anda"
-                ></ContentHeader>
-                <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
-                >
-                    
-                    <CustomTable
-                        title=""
-                        onUpdate={_search}
-                        enableDetail
-                        bind:tableData={table}
-                    ></CustomTable>
-                </div>
-            </CustomTabContent>
-        </CustomTab> -->
-    {:else if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code || UserRoleConstant.pengarahBahagian.code || UserRoleConstant.pengarahNegeri.code}
-        <CustomTab>
-            <!-- Gred 1-54 -->
-            <CustomTabContent title="Gred 1-54">
-                <ContentHeader
-                    borderClass="border-none"
-                    title="Senarai rekod pemangkuan bagi Gred 1-54"
-                />
-                <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
-                >
-                    <CustomTable
-                        title=""
-                        enableDetail
-                        detailActions={() => goto('/perjawatan/pemangkuan/butiran-1_54')}
-                        bind:tableData={employeeOfferTable}
-                    ></CustomTable>
-                </div>
-            </CustomTabContent>
-
-            <!-- Gred Flexi 41 -->
-            <CustomTabContent title="Gred Flexi 41">
-                <ContentHeader
-                    borderClass="border-none"
-                    title="Senarai rekod pemangkuan bagi Gred Flexi 41"
-                ></ContentHeader>
-                <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
-                >
-                    <!-- Table Here -->
-                    <CustomTable
-                        title=""
-                        enableDetail
-                        detailActions={() =>
-                            goto('/perjawatan/pemangkuan/butiran-flexi_41')}
-                        bind:tableData={employeeOfferTable}
-                    ></CustomTable>
-                </div>
-            </CustomTabContent>
-        </CustomTab>
     {/if}
 </section>

@@ -9,15 +9,12 @@
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
-    import type {
-        TableSettingDTO,
-    } from '$lib/dto/core/table/table.dto';
+    import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import {
         _submitUpdateMeetingDetailForm,
         _submitUpdateMeetingResultForm,
         _submitUpdatePromotionMeetingResultForm,
         _submitUpdateEmployeePlacementMeetingResultForm,
-        _submitUpdatePlacementAmendmentApplicationResultForm,
         _submitUpdateActingResultForm,
         _submitUpdateMainPromotionMeetingResultForm,
         _submitUpdateMainPromotionMeetingResultDetailForm,
@@ -39,13 +36,12 @@
         _supportApproval,
         _approverApproval,
         _fileToBase64Object,
+        _submitPostponeForm,
     } from './+page';
     import type { PageData } from './$types';
     export let data: PageData;
-    import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
     import { goto } from '$app/navigation';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
-    import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import { superForm } from 'sveltekit-superforms/client';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
@@ -55,7 +51,6 @@
         _updateMeetingDetailSchema,
         _updatePromotionMeetingResultSchema,
         _updateEmployeePlacementMeetingResultSchema,
-        _updatePlacementAmendmentApplicationResultSchema,
         _updateActingResultSchema,
         _mainUpdatePromotionMeetingResultSchema,
         _mainUpdatePromotionMeetingResultDetailSchema,
@@ -66,6 +61,7 @@
         _updateMeetingResult,
         _updatePromotionDetail,
         _actingApprovalSchema,
+        _postponeDetailSchema,
     } from '$lib/schemas/mypsm/employment/acting/acting-schemas';
     import FileInputField from '$lib/components/inputs/file-input-field/FileInputField.svelte';
     import { Toaster } from 'svelte-french-toast';
@@ -75,7 +71,10 @@
         EmployeePromotionDetail,
         PostponeDetail,
     } from '$lib/dto/mypsm/employment/acting/acting-chosen-employee.dto';
-    import { dropdownCommonOption, successOption } from '$lib/constants/core/dropdown.constant';
+    import {
+        dropdownCommonOption,
+        successOption,
+    } from '$lib/constants/core/dropdown.constant';
     import type { ActingResult } from '$lib/dto/mypsm/employment/acting/acting-result.dto';
     import type { ActingConfirmationDetail } from '$lib/dto/mypsm/employment/acting/acting-confirmation-detail.dto';
     import {
@@ -89,7 +88,6 @@
         ActingDirectorApproval,
         ActingSupportApproval,
     } from '$lib/dto/mypsm/employment/acting/acting-approval.dto';
-    import type { EmployeePostpone } from '$lib/dto/mypsm/employment/acting/acting-employee-form.dto';
 
     let employeeRoleCode: string = UserRoleConstant.kakitangan.code;
     let secretaryRoleCode: string = UserRoleConstant.urusSetiaPerjawatan.code;
@@ -97,15 +95,20 @@
     let depDirectorRoleCode: string = UserRoleConstant.pengarahBahagian.code;
 
     function uploadDocument() {
-        if (files == undefined) {
+        if (
+            files == undefined &&
+            $employeeNeedPlacementAmendmentForm.postponeNeeded
+        ) {
             alert('Dokumen sokongan tidak boleh kosong.');
         } else {
             _fileToBase64Object(files)
                 .then(async (result) => {
                     $employeeNeedPlacementAmendmentForm.documents = result;
-
-                }).finally(() => {
-                    _submitEmployeeNeedPlacementAmendmentForm($employeeNeedPlacementAmendmentForm);
+                })
+                .finally(() => {
+                    _submitEmployeeNeedPlacementAmendmentForm(
+                        $employeeNeedPlacementAmendmentForm,
+                    );
                 })
                 .catch((error) => {
                     console.log(error);
@@ -387,7 +390,7 @@
         id: 'mainCertification',
         option: {
             checkbox: false,
-            detail: true,
+            detail: false,
             edit: false,
             select: false,
             filter: false,
@@ -621,37 +624,19 @@
 
     // KIV
     const {
-        form: updatePlacementAmendmentApplicationResultForm,
-        errors: updatePlacementAmendmentApplicationResultError,
-        enhance: updatePlacementAmendmentApplicationResultEnhance,
-    } = superForm(data.updatePlacementAmendmentApplicationResultForm, {
+        form: updatePostponeDetail,
+        errors: updatePostponeError,
+        enhance: updatePostponeEnhance,
+    } = superForm(data.updatePostponeDetail, {
         SPA: true,
         resetForm: false,
         dataType: 'json',
         invalidateAll: true,
-        id: 'updateMeetingDetailForm',
-        validators: zod(_updatePlacementAmendmentApplicationResultSchema),
+        id: 'updatePostponeDetail',
+        validators: zod(_postponeDetailSchema),
         onSubmit() {
-            if (data.actingType == 'Gred 1-54') {
-                $updatePlacementAmendmentApplicationResultForm.originalPlacementDate =
-                    null;
-                $updatePlacementAmendmentApplicationResultForm.placementRequestedAmendmentDate =
-                    null;
-                $updatePlacementAmendmentApplicationResultForm.placementAmendmentReason =
-                    null;
-                $updatePlacementAmendmentApplicationResultForm.approverName =
-                    null;
-            } else if (data.actingType == 'flexi_41') {
-                $updatePlacementAmendmentApplicationResultForm.placementAmendmentResult =
-                    null;
-                $updatePlacementAmendmentApplicationResultForm.approvedNewReportingDate =
-                    null;
-                $updatePlacementAmendmentApplicationResultForm.approvedRequestedPlacementAmendment =
-                    null;
-            }
-            _submitUpdatePlacementAmendmentApplicationResultForm(
-                $updatePlacementAmendmentApplicationResultForm,
-            );
+            $updatePostponeDetail.id = selectedCandidate.actingId;
+            _submitPostponeForm($updatePostponeDetail);
         },
     });
 
@@ -739,11 +724,10 @@
         invalidateAll: true,
         multipleSubmits: 'prevent',
         onSubmit() {
-            $employeeNeedPlacementAmendmentForm.id = 14;
+            $employeeNeedPlacementAmendmentForm.id = 110;
             uploadDocument();
         },
     });
-
 
     // ================= pass data for tables' detail
     let employeePromotionDetail: EmployeePromotionDetail = {
@@ -763,6 +747,7 @@
         meetingResult: '',
         newReportDutyDate: '',
         newPlacement: '',
+        documents: [],
     };
     let employeeActingResult = {} as ActingResult;
     let employeeActingConfirmation = {} as ActingConfirmationDetail;
@@ -800,7 +785,7 @@
                     .finally(() => {
                         // TODO: edit postpone result here
                     });
-                    break;
+                break;
             }
             case 3: {
                 _actingResult(selectedCandidate.actingId)
@@ -825,7 +810,15 @@
                         // $updateActingResultForm.approverName = employeeActingResult.actingDetails?.approverName;
                     })
                     .catch((e) => console.log(e));
-                    break;
+                _supportApproval(selectedCandidate.actingId).then((res) => {
+                    supporterApproval = res.response.data
+                        ?.details as ActingSupportApproval;
+                });
+                _approverApproval(selectedCandidate.actingId).then((res) => {
+                    approverApproval = res.response.data
+                        ?.details as ActingApproverApproval;
+                });
+                break;
             }
             case 4: {
                 _actingConfirmation(selectedCandidate.actingId).then((res) => {
@@ -842,7 +835,7 @@
                     .finally(() => {
                         // TODO: edit postpone result here
                     });
-                    break;
+                break;
             }
             case 6: {
                 _directorApproval(selectedCandidate.actingId).then((res) => {
@@ -851,17 +844,6 @@
                 });
                 break;
             }
-            case 7: {
-                _supportApproval(selectedCandidate.actingId).then((res) => {
-                    supporterApproval = res.response.data
-                        ?.details as ActingSupportApproval;
-                });
-                _approverApproval(selectedCandidate.actingId).then((res) => {
-                    approverApproval = res.response.data
-                        ?.details as ActingApproverApproval;
-                });
-            }
-            break;
         }
     };
 </script>
@@ -976,7 +958,7 @@
                             borderClass="border-none"
                         />
                         <form
-                            class="flex w-full flex-col justify-start gap-2.5 border-b pb-5"
+                            class="flex w-full flex-col justify-start gap-2.5 border-b p-3 pb-5"
                             id="updateMainPromotionMeetingResultForm"
                             method="POST"
                             use:updateMainPromotionMeetingResultEnhance
@@ -984,15 +966,16 @@
                             <CustomSelectField
                                 label="Name Mesyuarat"
                                 id="meetingName"
-                                errors={$updateMainPromotionMeetingResultError.meetingName}
-                                bind:val={$updateMainPromotionMeetingResultForm.meetingName}
                                 options={data.lookup.meetingNameLookup}
+                                bind:val={$updateMainPromotionMeetingResultForm.meetingName}
+                                errors={$updateMainPromotionMeetingResultError.meetingName}
                             />
                             <CustomTextField
                                 label="Tarikh Mesyuarat"
                                 id="meetingDate"
                                 type="date"
-                                val=""
+                                bind:val={$updateMainPromotionMeetingResultForm.meetingDate}
+                                errors={$updateMainPromotionMeetingResultError.meetingDate}
                             />
                             <CustomSelectField
                                 label="Jawatan Pemangkuan"
@@ -1045,7 +1028,7 @@
                             />
                         </form>
                         <div
-                            class="flex w-full flex-col justify-start gap-2.5 px-2.5 pb-10"
+                            class="flex w-full flex-col justify-start gap-2.5 px-3 pb-10"
                         >
                             <ContentHeader
                                 title="Tindakan: Tetapkan untuk semua kakitangan berkaitan."
@@ -1167,25 +1150,19 @@
                 <StepperContentHeader
                     title="Kemaskini Maklumat Pemangkuan Kakitangan"
                 >
-                    <TextIconButton
-                        label={!detailOpen ? 'Kembali' : 'Batal'}
-                        icon={!detailOpen ? 'previous' : 'block'}
-                        type="neutral"
-                        onClick={() => {
-                            !detailOpen ? goPrevious() : (detailOpen = false);
-                        }}
-                    />
-                    <TextIconButton
-                        label={!detailOpen ? 'Seterusnya' : 'Simpan'}
-                        icon={!detailOpen ? 'next' : 'check'}
-                        type="primary"
-                        onClick={() => {
-                            !detailOpen ? goNext() : {};
-                        }}
-                        form={!detailOpen
-                            ? ''
-                            : 'updateMainActingEmployeeDetailForm'}
-                    />
+                    {#if detailOpen}
+                        <TextIconButton
+                            label="Batal"
+                            icon="block"
+                            type="neutral"
+                            onClick={() => (detailOpen = false)}
+                        />
+                        <TextIconButton
+                            label="Simpan"
+                            icon="check"
+                            form="updateMainActingEmployeeDetailForm"
+                        />
+                    {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
                     {#if !detailOpen}
@@ -1303,17 +1280,17 @@
                         method="POST"
                         use:mainSupporterAndApproverEnhance
                     >
-                        <CustomTextField
+                        <CustomSelectField
                             label="Nama Penyokong"
                             id="supporterName"
-                            type="text"
+                            options={data.lookup.supporterApproverLookup}
                             errors={$mainSupporterAndApproverError.supporterName}
                             bind:val={$mainSupporterAndApproverForm.supporterName}
                         />
-                        <CustomTextField
+                        <CustomSelectField
                             label="Nama Pelulus"
                             id="approverName"
-                            type="text"
+                            options={data.lookup.supporterApproverLookup}
                             errors={$mainSupporterAndApproverError.approverName}
                             bind:val={$mainSupporterAndApproverForm.approverName}
                         />
@@ -1347,7 +1324,7 @@
                 <StepperContentHeader
                     title="Kemaskini Keputusan Mesyuarat Pemilihan Calon"
                 >
-                    {#if isUndefinedOrEmpty && data.currentRoleCode == UserRoleConstant.pengarahNegeri.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code}
+                    {#if (isUndefinedOrEmpty && data.currentRoleCode == UserRoleConstant.pengarahNegeri.code) || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code}
                         <TextIconButton
                             label="Simpan"
                             icon="check"
@@ -1367,6 +1344,53 @@
                         >
                             <ContentHeader
                                 title="Keputusan daripada Pengarah Bahagian atau Negeri"
+                                borderClass="border-none"
+                            />
+                            {#if isUndefinedOrEmpty}
+                                <CustomTextField
+                                    label="Tindakan/Ulasan"
+                                    id="directorCertifiedRemark"
+                                    disabled
+                                    bind:val={directorApproval.directorCertifiedRemark}
+                                />
+                                <CustomTextField
+                                    label="Keputusan"
+                                    id="directorCertifiedStatus"
+                                    disabled
+                                    bind:val={directorApproval.directorCertifiedStatus}
+                                />
+                                <CustomTextField
+                                    label="Tarikh Diperakui"
+                                    id="directorCertifiedDate"
+                                    disabled
+                                    bind:val={directorApproval.directorCertifiedDate}
+                                />
+                            {:else}
+                                <CustomTextField
+                                    label="Tindakan/Ulasan"
+                                    id="remark"
+                                    type="text"
+                                    errors={$directorResultError.remark}
+                                    bind:val={$directorResultForm.remark}
+                                />
+                                <CustomRadioBoolean
+                                    id="status"
+                                    label="Keputusan"
+                                    disabled={false}
+                                    bind:val={$directorResultForm.status}
+                                    errors={$directorResultError.status}
+                                    options={confirmOptions}
+                                />
+                            {/if}
+                        </form>
+                        <form
+                            class="flex w-full flex-col justify-start gap-2.5 p-3"
+                            id="directorResultForm"
+                            method="POST"
+                            use:directorResultEnhance
+                        >
+                            <ContentHeader
+                                title="Keputusan daripada Urus Setia Integriti"
                                 borderClass="border-none"
                             />
                             {#if isUndefinedOrEmpty}
@@ -1960,18 +1984,12 @@
                                     detailOpen = false;
                                 }}
                             />
+                            <TextIconButton
+                                label="Simpan"
+                                icon="check"
+                                form="updatePostponeDetail"
+                            />
                         {/if}
-                        <TextIconButton
-                            label={!detailOpen ? 'Seterusnya' : 'Simpan'}
-                            icon={!detailOpen ? 'next' : 'check'}
-                            type="primary"
-                            onClick={() => {
-                                !detailOpen ? goNext() : {};
-                            }}
-                            form={!detailOpen
-                                ? ''
-                                : 'updatePlacementAmendmentApplicationResultForm'}
-                        />
                     </StepperContentHeader>
                     <StepperContentBody>
                         {#if !detailOpen}
@@ -2000,9 +2018,9 @@
                             />
                             <form
                                 class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
-                                id="updatePlacementAmendmentApplicationResultForm"
+                                id="updatePostponeDetail"
                                 method="POST"
-                                use:updatePlacementAmendmentApplicationResultEnhance
+                                use:updatePostponeEnhance
                             >
                                 <CustomTextField
                                     label="Kakitangan Memerlukan Penangguhan/Pindaan Penempatan?"
@@ -2010,9 +2028,24 @@
                                     id="postponeNeeded"
                                     bind:val={employeePostponeDetail.postponeNeeded}
                                 />
-                                <DownloadAttachment
-                                    label="Dokumen-Dokumen Berkaitan"
+                                <ContentHeader
+                                    title="Dokumen Sokongan"
+                                    borderClass="border-none"
                                 />
+                                <div
+                                    class="flex w-full flex-col justify-start gap-2.5 px-2"
+                                >
+                                    {#if employeePostponeDetail.documents !== undefined}
+                                        {#each employeePostponeDetail.documents as docs}
+                                            <a
+                                                href={docs.document}
+                                                download={docs.name}
+                                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                                >{docs.name}</a
+                                            >
+                                        {/each}
+                                    {/if}
+                                </div>
                                 <div class="flex flex-row gap-2 pb-2.5">
                                     <span
                                         class="text-sm italic text-ios-labelColors-secondaryLabel-light"
@@ -2070,55 +2103,55 @@
                                     />
                                     <CustomSelectField
                                         label="Keputusan"
-                                        id="placementAmendmentResult"
-                                        errors={$updatePlacementAmendmentApplicationResultError.placementAmendmentResult}
-                                        bind:val={$updatePlacementAmendmentApplicationResultForm.placementAmendmentResult}
+                                        id="meetingResult"
+                                        errors={$updatePostponeError.meetingResult}
+                                        bind:val={$updatePostponeDetail.meetingResult}
                                         options={successOption}
                                     />
                                     <CustomTextField
                                         label="Kelulusan Tarikh Lapor Diri Baru"
-                                        id="approvedNewReportingDate"
-                                        errors={$updatePlacementAmendmentApplicationResultError.approvedNewReportingDate}
+                                        id="newReportDateApproval"
+                                        errors={$updatePostponeError.newReportDateApproval}
                                         type="date"
-                                        bind:val={$updatePlacementAmendmentApplicationResultForm.approvedNewReportingDate}
+                                        bind:val={$updatePostponeDetail.newReportDateApproval}
                                     />
                                     <CustomSelectField
                                         label="Kelulusan Pindaan Penempatan Dipohon"
-                                        id="approvedRequestedPlacementAmendment"
-                                        errors={$updatePlacementAmendmentApplicationResultError.approvedRequestedPlacementAmendment}
-                                        bind:val={$updatePlacementAmendmentApplicationResultForm.approvedRequestedPlacementAmendment}
-                                        options={data.lookup.departmentLookup}
+                                        id="placementApproval"
+                                        errors={$updatePostponeError.placementApproval}
+                                        bind:val={$updatePostponeDetail.placementApproval}
+                                        options={data.lookup.placementLookup}
                                     />
-                                {:else}
+                                    <!-- {:else}
                                     <CustomTextField
                                         label="Tarikh Asal Penempatan"
                                         id="originalPlacementDate"
-                                        errors={$updatePlacementAmendmentApplicationResultError.originalPlacementDate}
+                                        errors={$updatePostponeError.originalPlacementDate}
                                         type="text"
-                                        bind:val={$updatePlacementAmendmentApplicationResultForm.originalPlacementDate}
+                                        bind:val={$updatePostponeDetail.originalPlacementDate}
                                     />
                                     <CustomTextField
                                         label="Tarikh Pertukaran Yang Dipohon"
                                         id="placementRequestedAmendmentDate"
-                                        errors={$updatePlacementAmendmentApplicationResultError.placementRequestedAmendmentDate}
+                                        errors={$updatePostponeError.placementRequestedAmendmentDate}
                                         type="text"
-                                        bind:val={$updatePlacementAmendmentApplicationResultForm.placementRequestedAmendmentDate}
+                                        bind:val={$updatePostponeDetail.placementRequestedAmendmentDate}
                                     />
                                     <CustomTextField
                                         label="Alasan Penangguhan"
                                         id="placementAmendmentReason"
-                                        errors={$updatePlacementAmendmentApplicationResultError.placementAmendmentReason}
+                                        errors={$updatePostponeError.placementAmendmentReason}
                                         type="text"
-                                        bind:val={$updatePlacementAmendmentApplicationResultForm.placementAmendmentReason}
+                                        bind:val={$updatePostponeDetail.placementAmendmentReason}
                                     />
                                     <CustomSelectField
                                         label="Nama Pelulus"
                                         id="approverName"
-                                        errors={$updatePlacementAmendmentApplicationResultError.approverName}
+                                        errors={$updatePostponeError.approverName}
                                         options={data.lookup
                                             .supporterApproverLookup}
-                                        val={$updatePlacementAmendmentApplicationResultForm.approverName}
-                                    />
+                                        val={$updatePostponeDetail.approverName}
+                                    /> -->
                                 {/if}
                             </form>
                         {/if}
@@ -2201,19 +2234,19 @@
                                 </div>
                             </div>
                         {:else}
-                            <ContentHeader
-                                title="Maklumat Calon"
-                                borderClass="border-none"
-                            />
                             <div
-                                class="flex w-full flex-col justify-start p-3 pb-10"
+                                class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
                             >
                                 <form
-                                    class="flex w-full flex-col justify-start gap-2.5"
+                                    class="flex w-full flex-col justify-start gap-2.5 rounded-md border border-ios-activeColors-activeBlue-light p-3 md:w-1/2"
                                     id="updateActingResultForm"
                                     method="POST"
                                     use:updateActingResultEnhance
                                 >
+                                    <ContentHeader
+                                        title="Maklumat Calon"
+                                        borderClass="border-none"
+                                    />
                                     <CustomTextField
                                         label="No. Pekerja"
                                         disabled
@@ -2279,38 +2312,50 @@
                                         errors={$updateActingResultError.reportDate}
                                         bind:val={$updateActingResultForm.reportDate}
                                     />
-                                    <ContentHeader
-                                        title="Pengesah Keputusan"
-                                        borderClass="border-none"
-                                    />
-                                    <CustomSelectField
-                                        label="Nama Penyokong"
-                                        id="supporterName"
-                                        bind:val={$updateActingResultForm.supporterName}
-                                        errors={$updateActingResultError.supporterName}
-                                        options={data.lookup
-                                            .supporterApproverLookup}
-                                    />
-                                    <CustomSelectField
-                                        label="Nama Pelulus"
-                                        id="approverName"
-                                        bind:val={$updateActingResultForm.approverName}
-                                        errors={$updateActingResultError.approverName}
-                                        options={data.lookup
-                                            .supporterApproverLookup}
-                                    />
+                                    {#if Object.values(approverApproval).length < 1}
+                                        <ContentHeader
+                                            title="Pengesah Keputusan"
+                                            borderClass="border-none"
+                                        />
+                                        <CustomSelectField
+                                            label="Nama Penyokong"
+                                            id="supporterName"
+                                            bind:val={$updateActingResultForm.supporterName}
+                                            errors={$updateActingResultError.supporterName}
+                                            options={data.lookup
+                                                .supporterApproverLookup}
+                                        />
+                                        <CustomSelectField
+                                            label="Nama Pelulus"
+                                            id="approverName"
+                                            bind:val={$updateActingResultForm.approverName}
+                                            errors={$updateActingResultError.approverName}
+                                            options={data.lookup
+                                                .supporterApproverLookup}
+                                        />
+                                    {/if}
                                 </form>
-
                                 <form
-                                    class="flex w-full flex-col justify-start gap-2.5 p-3"
+                                    class="flex w-full flex-col justify-start gap-2.5 rounded-md border border-ios-activeColors-activeBlue-light p-3 md:w-1/2"
                                     id="supporterResultForm"
                                     method="POST"
                                     use:supporterResultEnhance
                                 >
                                     <ContentHeader
-                                        title="Keputusan daripada Penyokong"
+                                        title="Penyokong"
                                         borderClass="border-none"
-                                    />{#if supporterApproval}
+                                    />
+                                    {#if Object.values(supporterApproval).length > 0}
+                                        <CustomSelectField
+                                            label="Nama Penyokong"
+                                            id="supporterName"
+                                            disabled
+                                            bind:val={$updateActingResultForm.supporterName}
+                                            errors={$updateActingResultError.supporterName}
+                                            options={data.lookup
+                                                .supporterApproverLookup}
+                                        />
+
                                         <CustomTextField
                                             label="Tindakan/Ulasan"
                                             id="supportedRemark"
@@ -2324,7 +2369,7 @@
                                             bind:val={supporterApproval.supportedStatus}
                                         />
                                         <CustomTextField
-                                            label="Tarikh Diluluskan"
+                                            label="Tarikh Disokong"
                                             id="supportedDate"
                                             disabled
                                             bind:val={supporterApproval.supportedDate}
@@ -2333,7 +2378,6 @@
                                         <CustomTextField
                                             label="Tindakan/Ulasan"
                                             id="remark"
-                                            type="text"
                                             errors={$supporterResultError.remark}
                                             bind:val={$supporterResultForm.remark}
                                         />
@@ -2348,16 +2392,25 @@
                                     {/if}
                                 </form>
                                 <form
-                                    class="flex w-full flex-col justify-start gap-2.5 p-3"
+                                    class="flex w-full flex-col justify-start gap-2.5 rounded-md border border-ios-activeColors-activeBlue-light p-3 md:w-1/2"
                                     id="approverResultForm"
                                     method="POST"
                                     use:approverResultEnhance
                                 >
                                     <ContentHeader
-                                        title="Keputusan daripada Pelulus"
+                                        title="Pelulus"
                                         borderClass="border-none"
                                     />
-                                    {#if approverApproval}
+                                    {#if Object.values(approverApproval).length > 0}
+                                        <CustomSelectField
+                                            label="Nama Pelulus"
+                                            id="approverName"
+                                            disabled
+                                            bind:val={$updateActingResultForm.approverName}
+                                            errors={$updateActingResultError.approverName}
+                                            options={data.lookup
+                                                .supporterApproverLookup}
+                                        />
                                         <CustomTextField
                                             label="Tindakan/Ulasan"
                                             id="approvedRemark"
@@ -2371,7 +2424,7 @@
                                             bind:val={approverApproval.approvedStatus}
                                         />
                                         <CustomTextField
-                                            label="Tarikh Diperakui"
+                                            label="Tarikh Diluluskan"
                                             id="approvedDate"
                                             disabled
                                             bind:val={approverApproval.approvedDate}
@@ -2560,7 +2613,7 @@
                     />
                 </StepperContentHeader>
                 <StepperContentBody>
-                    <div class="flex w-full flex-col gap-2.5">
+                    <div class="flex w-full flex-col gap-2.5 p-3">
                         <ContentHeader
                             title="Butiran Temuduga"
                             borderClass="border-none"
@@ -2615,64 +2668,53 @@
                     />
                 </StepperContentHeader>
                 <StepperContentBody>
-                    <div class="flex w-full flex-col gap-2.5 pb-12">
+                    <div class="flex w-full flex-col gap-2.5 p-3 pb-10">
                         <ContentHeader
                             title="Butiran Pemangkuan"
                             borderClass="border-none"
                         />
                         <CustomTextField
                             label="Gred"
+                            placeholder=""
                             disabled
                             id="grade"
-                            type="text"
-                            val="N32"
+                            val={data.employeeMeetingDetail.grade}
                         />
                         <CustomTextField
                             label="Jawatan"
+                            placeholder=""
                             disabled
                             id="position"
-                            type="text"
-                            val="Setiausaha Pejabat"
+                            val={data.employeeMeetingDetail.position}
                         />
                         <CustomTextField
                             label="Tarikh Berkuatkuasa"
+                            placeholder=""
                             disabled
-                            id="effectiveDate"
-                            type="text"
-                            val="23/02/2024"
+                            id="date"
+                            val={data.employeeMeetingDetail.date}
                         />
                         <CustomTextField
                             label="Penempatan Baru"
+                            placeholder=""
                             disabled
                             id="newPlacement"
-                            type="text"
-                            val="LKIM SARAWAK - KUCHING"
+                            val={data.employeeMeetingDetail.newPlacement}
                         />
 
                         <ContentHeader
                             title="Dokumen-dokumen yang perlu dimuat turun dan diisi"
                             borderClass="border-none"
                         />
-                        <DownloadAttachment
-                            label="Surat Tawaran Pemangkuan"
-                            fileName="surat_tawaran_pemangkuan.pdf"
-                            triggerDownload={() => {}}
-                        />
-                        <DownloadAttachment
-                            label="Surat Setuju Terima"
-                            fileName="surat_setuju_terima.pdf"
-                            triggerDownload={() => {}}
-                        />
-                        <DownloadAttachment
-                            label="Surat Lapor Diri"
-                            fileName="borang_lapor_diri.pdf"
-                            triggerDownload={() => {}}
-                        />
-                        <DownloadAttachment
-                            label="Nota Serah Tugas"
-                            fileName="nota_serah_tugas.pdf"
-                            triggerDownload={() => {}}
-                        />
+                        {#each data.employeeMeetingDetail.document as docs}
+                            <a
+                                href={docs.document}
+                                target="_blank"
+                                download={docs.name}
+                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                >{docs.name}</a
+                            >
+                        {/each}
                     </div>
                 </StepperContentBody>
             </StepperContent>
@@ -2767,39 +2809,7 @@
                     />
                 </StepperContentHeader>
                 <StepperContentBody>
-                    <div class="flex w-full flex-col gap-2.5 pb-12">
-                        <ContentHeader
-                            title="Butiran Permohonan Penangguhan/Pindaan Penempatan"
-                            borderClass="border-none"
-                        />
-                        <CustomTextField
-                            label="Adakah Anak Memerlukan Penangguhan?"
-                            disabled
-                            id="amendmentRequest"
-                            type="text"
-                            val="Ya"
-                        />
-                        <CustomTextField
-                            label="Alasan Penangguhan"
-                            disabled
-                            id="postponeReason"
-                            type="text"
-                            val="Urusan pindah rumah dan hantar anak ke klinik"
-                        />
-                        <CustomTextField
-                            label="Tarikh Lapor Diri Yang Dipohon"
-                            disabled
-                            id="requestedReportingDate"
-                            type="text"
-                            val="22/02/2024"
-                        />
-                        <CustomTextField
-                            label="Pindaan Penempatan Dipohon"
-                            disabled
-                            id="requestedPlacementAmendment"
-                            type="text"
-                            val="Bahagian Teknologi"
-                        />
+                    <div class="flex w-full flex-col gap-2.5 p-3 pb-10">
                         <ContentHeader
                             title="Keputusan Mesyuarat"
                             borderClass="border-none"
@@ -2807,23 +2817,23 @@
                         <CustomTextField
                             label="Keputusan"
                             disabled
-                            id="postponeResult"
-                            type="text"
-                            val="Lulus"
+                            placeholder=""
+                            id="meetingResult"
+                            val={data.employeePostponeResult.meetingResult}
                         />
                         <CustomTextField
                             label="Kelulusan Pindaan Penempatan Dipohon"
                             disabled
-                            id="approvedRequestedPlacementAmendment"
-                            type="text"
-                            val="Bahagian Teknologi"
+                            placeholder=""
+                            id="postponeApproval"
+                            val={data.employeePostponeResult.postponeApproval}
                         />
                         <CustomTextField
                             label="Kelulusan Tarikh Lapor Diri Baru"
                             disabled
-                            id="approvedNewReportingDate"
-                            type="text"
-                            val="22/02/2024"
+                            placeholder=""
+                            id="newReportDate"
+                            val={data.employeePostponeResult.newReportDate}
                         />
                         <DownloadAttachment
                             label="Surat Penangguhan Rayuan"
@@ -2846,11 +2856,13 @@
                         type="primary"
                         label="Selesai"
                         icon="check"
-                        onClick={() => {}}
+                        onClick={() => {
+                            goto('/perjawatan/pemangkuan');
+                        }}
                     />
                 </StepperContentHeader>
                 <StepperContentBody>
-                    <form class="flex w-full flex-col gap-2.5 pb-20">
+                    <form class="flex w-full flex-col gap-2.5 p-3 pb-10">
                         <ContentHeader
                             title="Butiran Pemangkuan"
                             borderClass="border-none"
@@ -2858,44 +2870,44 @@
                         <CustomTextField
                             label="Gred"
                             disabled
+                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
                             id="grade"
-                            type="text"
-                            val="N32"
+                            val={data.employeeFinalResult?.grade}
                         />
                         <CustomTextField
                             label="Jawatan"
                             disabled
+                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
                             id="position"
-                            type="text"
-                            val="Setiausaha Pejabat"
+                            val={data.employeeFinalResult?.position}
                         />
                         <CustomTextField
                             label="Tarikh Berkuatkuasa"
                             disabled
-                            id="effectiveDate"
-                            type="text"
-                            val="22/02/2024"
+                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                            id="meetingDate"
+                            val={data.employeeFinalResult?.meetingDate}
                         />
                         <CustomTextField
                             label="Penempatan Baru"
                             disabled
-                            id="newPlacem,ent"
-                            type="text"
-                            val="LKIM SARAWAK - KUCHING"
+                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                            id="newPlacement"
+                            val={data.employeeFinalResult?.newPlacement}
                         />
                         <CustomTextField
                             label="Pengarah Baru"
                             disabled
+                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
                             id="newDirector"
-                            type="text"
-                            val="Lionel Messi"
+                            val={data.employeeFinalResult?.newDirector}
                         />
                         <CustomTextField
                             label="Tarikh Lapor Diri"
                             disabled
+                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
                             id="reportingDate"
-                            type="text"
-                            val="23/02/2024"
+                            val={data.employeeFinalResult?.reportDutyDate}
                         />
                         <ContentHeader
                             title="Pengesahan Keputusan"
@@ -2904,31 +2916,31 @@
                         <CustomTextField
                             label="Nama Penyokong"
                             disabled
+                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
                             id="supporterName"
-                            type="text"
-                            val="Cristiano Ronaldo"
+                            val={data.employeeFinalResult?.supporter}
                         />
-                        <CustomTextField
+                        <!-- <CustomTextField
                             label="Keputusan"
                             disabled
+                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
                             id="supporterResult"
-                            type="text"
-                            val="Disokong"
-                        />
+                            val={data.employeeFinalResult?.}
+                            /> -->
                         <CustomTextField
                             label="Nama Pelulus"
                             disabled
+                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
                             id="approverName"
-                            type="text"
-                            val="Gareth Bale"
+                            val={data.employeeFinalResult?.approver}
                         />
-                        <CustomTextField
+                        <!-- <CustomTextField
                             label="Keputusan"
                             disabled
+                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
                             id="approverResult"
-                            type="text"
-                            val="Diluluskan"
-                        />
+                            val={data.employeeFinalResult?.}
+                            /> -->
                         <span
                             class="text-sm italic text-ios-labelColors-secondaryLabel-light"
                             >Tahniah! Anda boleh menyemak perubahan pada gaji
