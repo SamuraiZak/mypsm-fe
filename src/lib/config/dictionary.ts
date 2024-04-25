@@ -441,6 +441,7 @@ const dictionary: { [key: string]: string } = {
     totalAllocation: "Jumlah Peruntukkan (RM)",
     totalSuccessfulClaims: "Jumlah Tuntutan Berjaya (RM)",
     remainderAllocation: "Baki Peruntukkan (RM)",
+    treatmentDate: "Tarikh Rawatan",
 
 
     // PDP
