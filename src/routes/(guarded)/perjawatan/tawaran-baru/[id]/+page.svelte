@@ -1237,10 +1237,7 @@
                                 {:else}
                                     <StepperOtherRolesResult />
                                 {/if}
-                            </div>
-                            <div
-                                class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                            >
+                                <hr />
                                 <div class="mb-5">
                                     <b class="text-sm text-system-primary"
                                         >Pelulus</b

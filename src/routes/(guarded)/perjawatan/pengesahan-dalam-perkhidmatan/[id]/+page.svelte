@@ -874,8 +874,8 @@
                     </form>
                 {/if}
 
-                {#if !$isTypeConfirmationExceedsThreeYears}
-                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                    {#if !$isTypeConfirmationExceedsThreeYears}
                         <div class="mb-5">
                             <b class="text-sm text-system-primary"
                                 >Pengarah Audit</b
@@ -898,8 +898,7 @@
                         {:else}
                             <StepperOtherRolesResult />
                         {/if}
-                    </div>
-                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <hr />
                         <div class="mb-5">
                             <b class="text-sm text-system-primary"
                                 >Pengarah Integriti</b
@@ -922,8 +921,7 @@
                         {:else}
                             <StepperOtherRolesResult />
                         {/if}
-                    </div>
-                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <hr />
                         <div class="mb-5">
                             <b class="text-sm text-system-primary"
                                 >Pengarah Bahagian/Negeri</b
@@ -946,9 +944,8 @@
                         {:else}
                             <StepperOtherRolesResult />
                         {/if}
-                    </div>
-                {/if}
-                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <hr />
+                    {/if}
                     <div class="mb-5">
                         <b class="text-sm text-system-primary"
                             >Urus Setia Perjawatan</b
@@ -978,7 +975,7 @@
     {#if ($isReadOnlyAuditDirectorConfirmationInServiceApproval && $confirmationAuditDirectorIsApproved) || ($isTypeConfirmationExceedsThreeYears && $confirmationEmploymentSecretaryIsApproved)}
         <StepperContent>
             <StepperContentHeader title="Keputusan Mesyuarat">
-                {#if !$isReadOnlyConfirmationInServiceMeetingResult && data.roles.isEmploymentSecretaryRole}
+                {#if !data.view.confirmationInServiceView.meeting.isReadonly && data.roles.isEmploymentSecretaryRole}
                     <TextIconButton
                         type="primary"
                         label="Simpan"
@@ -987,47 +984,51 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <form
-                    id="confirmationMeetingDetailForm"
-                    method="POST"
-                    use:confirmationMeetingDetailFormEnhance
-                    class="flex w-full flex-col items-center gap-2"
-                >
-                    <CustomTextField
-                        disabled={$isReadOnlyConfirmationInServiceMeetingResult}
-                        errors={$confirmationMeetingDetailFormErrors.meetingName}
-                        id="meetingName"
-                        label="Nama Mesyuarat"
-                        placeholder="-"
-                        bind:val={$confirmationMeetingDetailForm.meetingName}
-                    ></CustomTextField>
-                    <CustomTextField
-                        disabled={$isReadOnlyConfirmationInServiceMeetingResult}
-                        errors={$confirmationMeetingDetailFormErrors.meetingDate}
-                        id="meetingDate"
-                        label="Tarikh Mesyuarat"
-                        type="date"
-                        placeholder="-"
-                        bind:val={$confirmationMeetingDetailForm.meetingDate}
-                    ></CustomTextField>
-                    <CustomTextField
-                        disabled={$isReadOnlyConfirmationInServiceMeetingResult}
-                        errors={$confirmationMeetingDetailFormErrors.meetingRemark}
-                        id="meetingRemark"
-                        label="Catatan Mesyuarat"
-                        placeholder="-"
-                        type="text"
-                        bind:val={$confirmationMeetingDetailForm.meetingRemark}
-                    ></CustomTextField>
-                    <CustomRadioBoolean
-                        disabled={$isReadOnlyConfirmationInServiceMeetingResult}
-                        errors={$confirmationMeetingDetailFormErrors.meetingResult}
-                        id="meetingResult"
-                        label="Keputusan Mesyuarat"
-                        options={approveOptions}
-                        bind:val={$confirmationMeetingDetailForm.meetingResult}
-                    ></CustomRadioBoolean>
-                </form>
+                {#if !$isReadOnlyConfirmationInServiceMeetingResult && !data.roles.isEmploymentSecretaryRole}
+                    <StepperOtherRolesResult />
+                {:else}
+                    <form
+                        id="confirmationMeetingDetailForm"
+                        method="POST"
+                        use:confirmationMeetingDetailFormEnhance
+                        class="flex w-full flex-col items-center gap-2"
+                    >
+                        <CustomTextField
+                            disabled={$isReadOnlyConfirmationInServiceMeetingResult}
+                            errors={$confirmationMeetingDetailFormErrors.meetingName}
+                            id="meetingName"
+                            label="Nama Mesyuarat"
+                            placeholder="-"
+                            bind:val={$confirmationMeetingDetailForm.meetingName}
+                        ></CustomTextField>
+                        <CustomTextField
+                            disabled={$isReadOnlyConfirmationInServiceMeetingResult}
+                            errors={$confirmationMeetingDetailFormErrors.meetingDate}
+                            id="meetingDate"
+                            label="Tarikh Mesyuarat"
+                            type="date"
+                            placeholder="-"
+                            bind:val={$confirmationMeetingDetailForm.meetingDate}
+                        ></CustomTextField>
+                        <CustomTextField
+                            disabled={$isReadOnlyConfirmationInServiceMeetingResult}
+                            errors={$confirmationMeetingDetailFormErrors.meetingRemark}
+                            id="meetingRemark"
+                            label="Catatan Mesyuarat"
+                            placeholder="-"
+                            type="text"
+                            bind:val={$confirmationMeetingDetailForm.meetingRemark}
+                        ></CustomTextField>
+                        <CustomRadioBoolean
+                            disabled={$isReadOnlyConfirmationInServiceMeetingResult}
+                            errors={$confirmationMeetingDetailFormErrors.meetingResult}
+                            id="meetingResult"
+                            label="Keputusan Mesyuarat"
+                            options={approveOptions}
+                            bind:val={$confirmationMeetingDetailForm.meetingResult}
+                        ></CustomRadioBoolean>
+                    </form>
+                {/if}
             </StepperContentBody>
         </StepperContent>
     {/if}

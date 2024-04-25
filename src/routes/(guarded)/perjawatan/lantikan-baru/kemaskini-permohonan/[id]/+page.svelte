@@ -2974,10 +2974,7 @@
                             {:else}
                                 <StepperOtherRolesResult />
                             {/if}
-                        </div>
-                        <div
-                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                        >
+                            <hr />
                             <div class="mb-5">
                                 <b class="text-sm text-system-primary"
                                     >Penyokong</b
@@ -3002,36 +2999,6 @@
                                 ></CustomRadioBoolean>
                             {:else if !$newHireSecretaryApprovalIsApproved}
                                 <StepperFailStatement />
-                            {:else}
-                                <StepperOtherRolesResult />
-                            {/if}
-                        </div>
-
-                        <div
-                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                        >
-                            <div class="mb-5">
-                                <b class="text-sm text-system-primary"
-                                    >Urus Setia Perjawatan</b
-                                >
-                            </div>
-                            {#if $isReadonlySecretaryApprovalResult}
-                                <CustomTextField
-                                    placeholder="-"
-                                    disabled
-                                    id="service-secretary-remark"
-                                    label="Tindakan/Ulasan"
-                                    bind:val={data.newHireFullDetailView
-                                        .secretaryApproval.remark}
-                                ></CustomTextField>
-                                <CustomRadioBoolean
-                                    disabled
-                                    id="supporterIsApproved"
-                                    options={certifyOptions}
-                                    label={'Keputusan'}
-                                    bind:val={data.newHireFullDetailView
-                                        .secretaryApproval.status}
-                                ></CustomRadioBoolean>
                             {:else}
                                 <StepperOtherRolesResult />
                             {/if}
