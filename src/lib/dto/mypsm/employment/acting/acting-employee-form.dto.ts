@@ -34,8 +34,8 @@ export interface PostponeResult {
 export interface PostponeDetailResult {
     id:                    number;
     meetingResult:         string;
-    newReportDateApproval: boolean;
-    placementApproval:     boolean;
+    newReportDutyDate: string;
+    newPlacement:     string;
     approvalLetter:        DocumentBase64RequestDTO[];
 }
 

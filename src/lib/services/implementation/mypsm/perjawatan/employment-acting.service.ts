@@ -345,6 +345,32 @@ export class EmploymentActingServices {
             return CommonResponseConstant.httpError;
         }
     }
+    //update integrity approval
+    static async updateIntegrityApproval (param: QuarterCommonApproval) {
+        try{
+            const url: Input = 'employment/acting/integrity_certifies/edit';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: QuarterCommonApprovalConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await getPromiseToast(promiseRes);
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    await invalidateAll();
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
 
     //get promotion meeting table
     static async getPromotionMeetingResult(param: CommonListRequestDTO) {
@@ -701,6 +727,30 @@ export class EmploymentActingServices {
     static async getDirectorApproval(param: commonIdRequestDTO) {
         try {
             const url: Input = 'employment/acting/director_certifies/get'
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //get integirty approval
+    static async getIntegrityApproval(param: commonIdRequestDTO) {
+        try {
+            const url: Input = 'employment/acting/integrity_certifies/get'
 
             const promiseRes: Promise<Response> = http
                 .post(url, {

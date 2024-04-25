@@ -1425,7 +1425,7 @@ export class SidebarConstant {
                         },
                         {
                             name: 'Pemangkuan',
-                            path: '/perjawatan/pemangkuan/urus-setia',
+                            path: '/perjawatan/pemangkuan',
                         },
                         {
                             name: 'Kenaikan Pangkat',

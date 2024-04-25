@@ -20,8 +20,15 @@ export const load = async () => {
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: "batchId",
+        orderType: 1,
+        filter: {},
+    };
+    const employeeParam: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: "actingId",
+        orderType: 1,
         filter: {},
     };
 
@@ -43,7 +50,7 @@ export const load = async () => {
     //table for kakitangan 
     else if (currentRoleCode === UserRoleConstant.kakitangan.code) {
         employeeOfferResponse =
-            await EmploymentActingServices.getEmployeeActingOffer(param);
+            await EmploymentActingServices.getEmployeeActingOffer(employeeParam);
         employeeOffer =
             employeeOfferResponse.data?.dataList as EmployeeActingOffer[];
     }
@@ -59,5 +66,6 @@ export const load = async () => {
         currentRoleCode,
         employeeOfferResponse,
         employeeOffer,
+        employeeParam,
     };
 };

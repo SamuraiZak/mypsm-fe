@@ -34,7 +34,7 @@ export const _updateChosenCandidate = z.object({
 //3rd stepper schema
 export const _updateMeetingDetailSchema = z.object({
     batchId: z.number(),
-    grade: shortTextSchema,
+    grade: z.string().min(1, {message: "Ruangan ini tidak boleh kosong."}),
     position: shortTextSchema,
     meetingName: shortTextSchema,
     meetingDate: stringToMinDate,
@@ -104,8 +104,8 @@ export const _actingApprovalSchema = z.object({
 export const _postponeDetailSchema = z.object({
     id: z.number(),
     meetingResult: shortTextSchema,
-    newReportDateApproval: z.boolean().default(true),
-    placementApproval: booleanSchema,
+    newReportDutyDate: shortTextSchema,
+    newPlacement: shortTextSchema,
     approvalLetter: z.object({
         base64: z.string(),
         name: z.string()
