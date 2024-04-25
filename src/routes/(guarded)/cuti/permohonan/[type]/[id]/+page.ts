@@ -265,6 +265,7 @@ export async function load({ params }) {
     // ============================================
 
     let currentApplicationDetail: LeaveApplicationDetailDTO = {
+        status: 'inactive',
         applicationDetail: null,
         headOfDirectorFeedback: null,
         directorFeedback: null,
@@ -339,6 +340,10 @@ export async function load({ params }) {
                 headOfDirectorFeedbackForm.data.leaveId = currentApplicationId;
                 headOfDirectorFeedbackForm.data.leaveTypeCode =
                     currentLeaveType.code;
+
+                if (currentApplicationDetail.status == "inactive") {
+                    currentApplicationProcess.headOfDirectorFeedback = false;
+                }
             }
 
             // fit data into director feedback form
@@ -351,6 +356,10 @@ export async function load({ params }) {
             } else {
                 directorFeedbackForm.data.leaveId = currentApplicationId;
                 directorFeedbackForm.data.leaveTypeCode = currentLeaveType.code;
+
+                if (currentApplicationDetail.status == "inactive") {
+                    currentApplicationProcess.directorFeedback = false;
+                }
             }
 
             // fit data into secretary verification form
@@ -366,6 +375,10 @@ export async function load({ params }) {
                 secretaryVerificationForm.data.leaveId = currentApplicationId;
                 secretaryVerificationForm.data.leaveTypeCode =
                     currentLeaveType.code;
+
+                    if (currentApplicationDetail.status == "inactive") {
+                        currentApplicationProcess.secretaryVerification = false;
+                    }
             }
 
             // fit data into supporter feedback form
@@ -376,6 +389,10 @@ export async function load({ params }) {
                 supporterFeedbackForm.data.leaveId = currentApplicationId;
                 supporterFeedbackForm.data.leaveTypeCode =
                     currentLeaveType.code;
+
+                    if (currentApplicationDetail.status == "inactive") {
+                        currentApplicationProcess.supporterFeedback = false;
+                    }
             }
 
             // fit data into approver feedback form
@@ -385,6 +402,10 @@ export async function load({ params }) {
             } else {
                 approverFeedbackForm.data.leaveId = currentApplicationId;
                 approverFeedbackForm.data.leaveTypeCode = currentLeaveType.code;
+
+                if (currentApplicationDetail.status == "inactive") {
+                    currentApplicationProcess.approverFeedback = false;
+                }
             }
 
             // fit data into management feedback form
@@ -395,6 +416,10 @@ export async function load({ params }) {
                 managementFeedbackForm.data.leaveId = currentApplicationId;
                 managementFeedbackForm.data.leaveTypeCode =
                     currentLeaveType.code;
+
+                    if (currentApplicationDetail.status == "inactive") {
+                        currentApplicationProcess.managementFeedback = false;
+                    }
             }
 
             // fit data into meeting form
@@ -404,6 +429,10 @@ export async function load({ params }) {
             } else {
                 meetingResultForm.data.leaveId = currentApplicationId;
                 meetingResultForm.data.leaveTypeCode = currentLeaveType.code;
+
+                if (currentApplicationDetail.status == "inactive") {
+                    currentApplicationProcess.meeting = false;
+                }
             }
 
             // fit data into endorser detail form
@@ -413,6 +442,10 @@ export async function load({ params }) {
             } else {
                 endorserDetailForm.data.leaveId = currentApplicationId;
                 endorserDetailForm.data.leaveTypeCode = currentLeaveType.code;
+
+                if (currentApplicationDetail.status == "inactive") {
+                    currentApplicationProcess.endorserDetail = false;
+                }
             }
 
             if (currentApplicationDetail.document !== null) {
