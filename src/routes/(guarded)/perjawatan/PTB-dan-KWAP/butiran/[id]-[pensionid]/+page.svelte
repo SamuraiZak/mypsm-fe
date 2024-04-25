@@ -248,7 +248,7 @@
         validationMethod: 'oninput',
         validators: zod(_assignRolesRelatedSchema),
         onSubmit() {
-            $assignRolesRelatedInfoForm.id = data.currentApplicationId;
+            $assignRolesRelatedInfoForm.id = data.pensionId.id;
             _editrolesRelatedDetailSubmit($assignRolesRelatedInfoForm);
         },
     });
@@ -285,7 +285,7 @@
         validationMethod: 'oninput',
         validators: zod(_supporterInfoSchema),
         onSubmit() {
-            $supporterInfoForm.id = data.currentApplicationId;
+            $supporterInfoForm.id = data.pensionId.id;
             _editSupporterDetailSubmit($supporterInfoForm);
         },
     });
@@ -305,7 +305,7 @@
         validators: zod(_approveInfoSchema),
         onSubmit() {
             rolesRelatedInfoForm;
-            $approverInfoForm.id = data.currentApplicationId;
+            $approverInfoForm.id = data.pensionId.id;
             _editApproverDetailSubmit($approverInfoForm);
         },
     });
@@ -815,7 +815,7 @@
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     ></div>
                     <CustomSelectField
-                    disabled={currentRoleCode !== urusetia}
+                    disabled={currentRoleCode !== urusetia || data.rolesRelatedResponse.data?.details.supporterName !== null }
                         id="staffSupporter"
                         label="Nama Penyokong"
                         options={data.supporterApproverLookup}
@@ -823,7 +823,7 @@
                     />
 
                     <CustomSelectField
-                    disabled={currentRoleCode !== urusetia}
+                    disabled={currentRoleCode !== urusetia || data.rolesRelatedResponse.data?.details.approverName !== null}
                         id="staffApprover"
                         label="Nama Pelulus"
                         options={data.supporterApproverLookup}

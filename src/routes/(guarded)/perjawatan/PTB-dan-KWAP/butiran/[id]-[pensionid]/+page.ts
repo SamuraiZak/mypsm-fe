@@ -23,12 +23,12 @@ export async function load({ params }) {
     // =================== Lookup ================================
     // -------------------------------------------------------
 
-      // -------------------------------------------------------
-      const suppAppResponse: CommonListRequestDTO = {
+    // -------------------------------------------------------
+    const suppAppResponse: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 350,
-        orderBy: null,
-        orderType: null,
+        orderBy: 'name',
+        orderType: 0,
         filter: {
             program: "TETAP",
             employeeNumber: null,
@@ -47,9 +47,9 @@ export async function load({ params }) {
     );
     let isNewApplication: boolean = true;
 
-    
 
-    
+
+
     // ---------------------------------------------------------------
 
     // table
@@ -70,7 +70,9 @@ export async function load({ params }) {
         actingEmployeeList = actingEmployeeListResponse.data?.dataList as CommonEmployeeDTO[];
     }
 
-
+    const pensionIDBody = {
+        id: Number(params.pensionid)
+    }
 
 
 
@@ -112,7 +114,6 @@ export async function load({ params }) {
 
     //======================================================
     //========= assign Peranan -Peranan Berkaitan ============
-
 
     const assignrolesRelatedlForm = await superValidate(zod(_assignRolesRelatedSchema));
 
@@ -156,12 +157,12 @@ export async function load({ params }) {
     }
 
 
-   
-        // if application exist
 
-    
+    // if application exist
 
-     // ===============
+
+
+    // ===============
     // SERVICE Detail
     // ===============
 
@@ -169,7 +170,7 @@ export async function load({ params }) {
     let serviceDetailRequestBody: PTBIDRequestBodyDTO = {
         id: currentApplicationId
     }
-   
+
     const serviceDetailResponse: CommonResponseDTO =
         await PTBKWAPServices.getPTBKWAPServiceDetails(serviceDetailRequestBody);
 
@@ -208,7 +209,7 @@ export async function load({ params }) {
 
         const pensionDetailResponse: CommonResponseDTO =
             await PTBKWAPServices.getPTBKWAPpensionDetails
-                (pensionId);
+                (pensionIDBody);
 
         if (pensionDetailResponse.status == 'success') {
             pensionDetail = pensionDetailResponse.data?.details as PensionDetailDTO;
@@ -223,21 +224,22 @@ export async function load({ params }) {
 
     // need service for get
     let assignrolesRelatedDetail: AssignRolesRelatedDTO | null = null;
-
+    let rolesRelatedResponse: CommonResponseDTO = {};
     if (params.id !== "baru") {
         let rolesRelatedRequestBody: PTBIDRequestBodyDTO = {
             id: currentApplicationId
         }
 
-        const rolesRelatedResponse: CommonResponseDTO =
-            await PTBKWAPServices.getPTBKWAPRolesRelated
-                (rolesRelatedRequestBody);
+        rolesRelatedResponse =
+            await PTBKWAPServices.getPTBKWAPRolesRelatedNames
+                (pensionIDBody);
 
         if (rolesRelatedResponse.status == 'success') {
             assignrolesRelatedDetail = rolesRelatedResponse.data?.details as AssignRolesRelatedDTO;
 
             assignrolesRelatedlForm.data = assignrolesRelatedDetail;
         }
+
     }
 
     // ===============
@@ -252,7 +254,7 @@ export async function load({ params }) {
 
         const rolesRelatedResponse: CommonResponseDTO =
             await PTBKWAPServices.getPTBKWAPRolesRelated
-                (rolesRelatedRequestBody);
+                (pensionIDBody);
 
         if (rolesRelatedResponse.status == 'success') {
             rolesRelatedDetail = rolesRelatedResponse.data?.details as RolesRelatedDTO;
@@ -273,7 +275,7 @@ export async function load({ params }) {
 
         const supportResponse: CommonResponseDTO =
             await PTBKWAPServices.getPTBKWAPSupport
-                (supportRequestBody);
+                (pensionIDBody);
 
         if (supportResponse.status == 'success') {
             supportDetail = supportResponse.data?.details as SupportDetailDTO;
@@ -294,14 +296,14 @@ export async function load({ params }) {
 
         const approveResponse: CommonResponseDTO =
             await PTBKWAPServices.getPTBKWAPApprove
-                (approveRequestBody);
+                (pensionIDBody);
 
         if (approveResponse.status == 'success') {
             approveDetail = approveResponse.data?.details as ApproveDetailDTO;
 
             approverDetailForm.data = approveDetail;
         }
-        
+
     }
 
     return {
@@ -311,6 +313,7 @@ export async function load({ params }) {
         salaryDetailForm,
         pensionDetailForm,
         assignrolesRelatedlForm,
+        rolesRelatedResponse,
         rolesRelatedlForm,
         supporterDetailForm,
         approverDetailForm,
@@ -325,7 +328,7 @@ export async function load({ params }) {
         param,
         supporterApproverLookup,
         isNewApplication,
-
+        pensionId
     }
 
 }
