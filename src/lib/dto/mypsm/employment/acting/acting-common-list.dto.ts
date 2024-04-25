@@ -20,6 +20,7 @@ export class ActingCommonListConvert {
 export interface EmployeeActingOffer {
     actingId:      number;
     offerDate:     string | null;
+    actingType:    string;
     grade:         string;
     position:      string;
     meetingResult: string;

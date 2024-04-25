@@ -57,6 +57,11 @@ export class EmployeePromotionDetailConvert {
     }
 }
 
+interface ActingDocs {
+    name: string;
+    document: string;
+}
+
 export interface PostponeDetail {
     postponeNeeded:      string;
     initialReportDate:   string;
@@ -66,6 +71,7 @@ export interface PostponeDetail {
     meetingResult:       string;
     newReportDutyDate:   string | null;
     newPlacement:        string;
+    documents:           ActingDocs[];  
 }
 
 // Converts JSON strings to/from your types
