@@ -2891,7 +2891,7 @@
                                 >
                                     <div class="mb-5">
                                         <b class="text-sm text-system-primary"
-                                            >2. Penyokong</b
+                                            >Penyokong</b
                                         >
                                     </div>
                                     <CustomTextField
@@ -2902,14 +2902,14 @@
                                         label="Tindakan/Ulasan"
                                         bind:val={$supporterApprovalForm.remark}
                                     ></CustomTextField>
-                                    <CustomSelectField
+                                    <CustomRadioBoolean
                                         disabled={$isReadonlySupporterApprovalResult}
                                         errors={$supporterApprovalErrors.status}
                                         id="supporterIsApproved"
                                         options={supportOptions}
                                         label={'Keputusan'}
                                         bind:val={$supporterApprovalForm.status}
-                                    ></CustomSelectField>
+                                    ></CustomRadioBoolean>
                                 </form>
                             {:else if data.isApproverRole && !$isReadonlyApproverApprovalResult && $newHireSupporterApprovalIsApproved}
                                 <form
@@ -2920,7 +2920,7 @@
                                 >
                                     <div class="mb-5">
                                         <b class="text-sm text-system-primary"
-                                            >1. Pelulus</b
+                                            >Pelulus</b
                                         >
                                     </div>
                                     <CustomTextField
@@ -2931,13 +2931,13 @@
                                         label="Tindakan/Ulasan"
                                         bind:val={$approverApprovalForm.remark}
                                     ></CustomTextField>
-                                    <CustomSelectField
+                                    <CustomRadioBoolean
                                         disabled={$isReadonlyApproverApprovalResult}
                                         id="approverIsApproved"
                                         options={approveOptions}
                                         label={'Keputusan'}
                                         bind:val={$approverApprovalForm.status}
-                                    ></CustomSelectField>
+                                    ></CustomRadioBoolean>
                                 </form>
                             {/if}
                         {/if}
@@ -2947,35 +2947,7 @@
                         >
                             <div class="mb-5">
                                 <b class="text-sm text-system-primary"
-                                    >Pelulus</b
-                                >
-                            </div>
-                            {#if $isReadonlyApproverApprovalResult}
-                                <CustomTextField
-                                    placeholder="-"
-                                    disabled
-                                    id="approverRemark"
-                                    label="Tindakan/Ulasan"
-                                    bind:val={data.newHireFullDetailView
-                                        .approver.remark}
-                                ></CustomTextField>
-                                <CustomRadioBoolean
-                                    disabled
-                                    id="approverStatus"
-                                    options={approveOptions}
-                                    label={'Keputusan'}
-                                    bind:val={data.newHireFullDetailView
-                                        .approver.status}
-                                ></CustomRadioBoolean>
-                            {:else if !$newHireSecretaryApprovalIsApproved || !newHireSupporterApprovalIsApproved}
-                                <StepperFailStatement />
-                            {:else}
-                                <StepperOtherRolesResult />
-                            {/if}
-                            <hr />
-                            <div class="mb-5">
-                                <b class="text-sm text-system-primary"
-                                    >Penyokong</b
+                                    >1. Penyokong</b
                                 >
                             </div>
                             {#if $isReadonlySupporterApprovalResult}
@@ -2987,15 +2959,43 @@
                                     bind:val={data.newHireFullDetailView
                                         .supporter.remark}
                                 ></CustomTextField>
-                                <CustomRadioBoolean
+                                <CustomSelectField
                                     disabled
                                     id="supporterStatus"
                                     options={supportOptions}
                                     label={'Keputusan'}
                                     bind:val={data.newHireFullDetailView
                                         .supporter.status}
-                                ></CustomRadioBoolean>
+                                ></CustomSelectField>
                             {:else if !$newHireSecretaryApprovalIsApproved}
+                                <StepperFailStatement />
+                            {:else}
+                                <StepperOtherRolesResult />
+                            {/if}
+                            <hr />
+                            <div class="mb-5">
+                                <b class="text-sm text-system-primary"
+                                    >2. Pelulus</b
+                                >
+                            </div>
+                            {#if $isReadonlyApproverApprovalResult}
+                                <CustomTextField
+                                    placeholder="-"
+                                    disabled
+                                    id="approverRemark"
+                                    label="Tindakan/Ulasan"
+                                    bind:val={data.newHireFullDetailView
+                                        .approver.remark}
+                                ></CustomTextField>
+                                <CustomSelectField
+                                    disabled
+                                    id="approverStatus"
+                                    options={approveOptions}
+                                    label={'Keputusan'}
+                                    bind:val={data.newHireFullDetailView
+                                        .approver.status}
+                                ></CustomSelectField>
+                            {:else if !$newHireSecretaryApprovalIsApproved || !newHireSupporterApprovalIsApproved}
                                 <StepperFailStatement />
                             {:else}
                                 <StepperOtherRolesResult />

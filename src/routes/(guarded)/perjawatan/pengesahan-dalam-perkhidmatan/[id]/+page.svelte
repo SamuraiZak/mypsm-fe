@@ -875,25 +875,48 @@
                 {/if}
 
                 <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                    <div class="mb-5">
+                        <b class="text-sm text-system-primary"
+                            >1. Urus Setia Perjawatan</b
+                        >
+                    </div>
+                    {#if $isReadOnlyEmploymentSecretaryConfirmationInServiceApproval}
+                        <CustomTextField
+                            disabled
+                            id="integrityDirectorRemark"
+                            label="Tindakan/Ulasan"
+                            bind:val={$employmentSecretaryDetailForm.remark}
+                        ></CustomTextField>
+                        <CustomSelectField
+                            disabled
+                            id="integrityDirectorStatus"
+                            options={certifyOptions}
+                            label={'Keputusan'}
+                            bind:val={$employmentSecretaryDetailForm.status}
+                        ></CustomSelectField>
+                    {:else}
+                        <StepperOtherRolesResult />
+                    {/if}
                     {#if !$isTypeConfirmationExceedsThreeYears}
+                        <hr />
                         <div class="mb-5">
                             <b class="text-sm text-system-primary"
-                                >4. Pengarah Audit</b
+                                >2. Pengarah Bahagian/Negeri</b
                             >
                         </div>
-                        {#if $isReadOnlyAuditDirectorConfirmationInServiceApproval}
+                        {#if $isReadOnlyDivisionDirectorConfirmationInServiceApproval}
                             <CustomTextField
                                 disabled
                                 id="integrityDirectorRemark"
                                 label="Tindakan/Ulasan"
-                                bind:val={$auditDirectorDetailForm.remark}
+                                bind:val={$divisionDirectorDetaiForm.remark}
                             ></CustomTextField>
                             <CustomSelectField
                                 disabled
                                 id="integrityDirectorStatus"
                                 options={certifyOptions}
                                 label={'Keputusan'}
-                                bind:val={$auditDirectorDetailForm.status}
+                                bind:val={$divisionDirectorDetaiForm.status}
                             ></CustomSelectField>
                         {:else}
                             <StepperOtherRolesResult />
@@ -924,49 +947,26 @@
                         <hr />
                         <div class="mb-5">
                             <b class="text-sm text-system-primary"
-                                >2. Pengarah Bahagian/Negeri</b
+                                >4. Pengarah Audit</b
                             >
                         </div>
-                        {#if $isReadOnlyDivisionDirectorConfirmationInServiceApproval}
+                        {#if $isReadOnlyAuditDirectorConfirmationInServiceApproval}
                             <CustomTextField
                                 disabled
                                 id="integrityDirectorRemark"
                                 label="Tindakan/Ulasan"
-                                bind:val={$divisionDirectorDetaiForm.remark}
+                                bind:val={$auditDirectorDetailForm.remark}
                             ></CustomTextField>
                             <CustomSelectField
                                 disabled
                                 id="integrityDirectorStatus"
                                 options={certifyOptions}
                                 label={'Keputusan'}
-                                bind:val={$divisionDirectorDetaiForm.status}
+                                bind:val={$auditDirectorDetailForm.status}
                             ></CustomSelectField>
                         {:else}
                             <StepperOtherRolesResult />
                         {/if}
-                        <hr />
-                    {/if}
-                    <div class="mb-5">
-                        <b class="text-sm text-system-primary"
-                            >1. Urus Setia Perjawatan</b
-                        >
-                    </div>
-                    {#if $isReadOnlyEmploymentSecretaryConfirmationInServiceApproval}
-                        <CustomTextField
-                            disabled
-                            id="integrityDirectorRemark"
-                            label="Tindakan/Ulasan"
-                            bind:val={$employmentSecretaryDetailForm.remark}
-                        ></CustomTextField>
-                        <CustomSelectField
-                            disabled
-                            id="integrityDirectorStatus"
-                            options={certifyOptions}
-                            label={'Keputusan'}
-                            bind:val={$employmentSecretaryDetailForm.status}
-                        ></CustomSelectField>
-                    {:else}
-                        <StepperOtherRolesResult />
                     {/if}
                 </div>
             </div>
