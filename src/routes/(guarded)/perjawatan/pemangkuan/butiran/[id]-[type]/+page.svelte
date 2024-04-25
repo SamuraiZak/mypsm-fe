@@ -37,6 +37,7 @@
         _approverApproval,
         _fileToBase64Object,
         _submitPostponeForm,
+        _submitIntegrityResultForm,
     } from './+page';
     import type { PageData } from './$types';
     export let data: PageData;
@@ -86,8 +87,10 @@
     import type {
         ActingApproverApproval,
         ActingDirectorApproval,
+        ActingIntegrityApproval,
         ActingSupportApproval,
     } from '$lib/dto/mypsm/employment/acting/acting-approval.dto';
+    import type { QuarterCommonApproval } from '$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto';
 
     let employeeRoleCode: string = UserRoleConstant.kakitangan.code;
     let secretaryRoleCode: string = UserRoleConstant.urusSetiaPerjawatan.code;
@@ -180,7 +183,7 @@
         id: 'updatedChosenEmployeeTable',
         option: {
             checkbox: true,
-            detail: false,
+            detail: true,
             edit: false,
             select: false,
             filter: false,
@@ -465,10 +468,30 @@
         enhance: directorResultEnhance,
     } = superForm(data.directorResultForm, {
         SPA: true,
+        resetForm: false,
+        dataType: 'json',
+        invalidateAll: true,
+        id: 'directorResultForm',
         validators: zod(_actingApprovalSchema),
         onSubmit() {
-            $directorResultForm.id = data.batchId.batchId;
+            $directorResultForm.id = selectedCandidate.actingId;
             _submitDirectorResultForm($directorResultForm);
+        },
+    });
+    const {
+        form: integrityResultForm,
+        errors: integrityResultError,
+        enhance: integrityResultEnhance,
+    } = superForm(data.integrityResultForm, {
+        SPA: true,
+        resetForm: false,
+        dataType: 'json',
+        invalidateAll: true,
+        id: 'integrityResultForm',
+        validators: zod(_actingApprovalSchema),
+        onSubmit() {
+            $integrityResultForm.id = selectedCandidate.actingId;
+            _submitIntegrityResultForm($integrityResultForm);
         },
     });
     const {
@@ -724,7 +747,13 @@
         invalidateAll: true,
         multipleSubmits: 'prevent',
         onSubmit() {
-            $employeeNeedPlacementAmendmentForm.id = 110;
+            $employeeNeedPlacementAmendmentForm.id = data.batchId.batchId;
+            if (!$employeeNeedPlacementAmendmentForm.postponeNeeded) {
+                $employeeNeedPlacementAmendmentForm.postponeReason = null;
+                $employeeNeedPlacementAmendmentForm.requestedPlacement = null;
+                $employeeNeedPlacementAmendmentForm.requestedReportDate = null;
+                $employeeNeedPlacementAmendmentForm.documents = null;
+            }
             uploadDocument();
         },
     });
@@ -751,11 +780,8 @@
     };
     let employeeActingResult = {} as ActingResult;
     let employeeActingConfirmation = {} as ActingConfirmationDetail;
-    let directorApproval = {} as ActingDirectorApproval;
-
-    const isUndefined = typeof directorApproval === 'undefined';
-    const isEmpty = Object.keys(directorApproval).length === 0;
-    const isUndefinedOrEmpty = isUndefined && isEmpty;
+    let directorApproved: boolean = false;
+    let integrityApproved: boolean = false;
 
     let supporterApproval = {} as ActingSupportApproval;
     let approverApproval = {} as ActingApproverApproval;
@@ -806,8 +832,6 @@
                             employeeActingResult.actingDetails?.newPlacement;
                         $updateActingResultForm.reportDate =
                             employeeActingResult.actingDetails?.reportDate;
-                        // $updateActingResultForm.supporterName = employeeActingResult.actingDetails?.supporterName;
-                        // $updateActingResultForm.approverName = employeeActingResult.actingDetails?.approverName;
                     })
                     .catch((e) => console.log(e));
                 _supportApproval(selectedCandidate.actingId).then((res) => {
@@ -838,10 +862,24 @@
                 break;
             }
             case 6: {
-                _directorApproval(selectedCandidate.actingId).then((res) => {
-                    directorApproval = res.response.data
-                        ?.details as ActingDirectorApproval;
-                });
+                _directorApproval(selectedCandidate.actingId)
+                    .then((res) => {
+                     
+                            $directorResultForm = res.response.data
+                                ?.details as QuarterCommonApproval;
+                            if($directorResultForm.remark !== null){
+                                directorApproved = true;
+                            } else {
+                                directorApproved = false;
+                            }                                       
+                            $integrityResultForm = res.integrityResponse.data
+                                ?.details as QuarterCommonApproval;
+                            if($integrityResultForm.remark !== null){
+                                integrityApproved = true;
+                            }else {
+                                integrityApproved = false;
+                            }
+                    })
                 break;
             }
         }
@@ -877,7 +915,7 @@
                             title="Tindakan: Tetapkan untuk semua kakitangan yang berkaitan."
                             borderClass="border-none"
                         >
-                            <TextIconButton
+                            <!-- <TextIconButton
                                 type="primary"
                                 label="Peraku"
                                 icon="check"
@@ -888,7 +926,7 @@
                                 label="Tidak Peraku"
                                 icon="cancel"
                                 onClick={() => {}}
-                            />
+                            /> -->
                         </ContentHeader>
                         <div
                             class="flex w-full flex-col justify-start gap-2.5 pb-10"
@@ -904,7 +942,7 @@
                 </StepperContentBody>
             </StepperContent>
 
-            <StepperContent>
+            <!-- <StepperContent>
                 <StepperContentHeader title="Borang Berkaitan">
                     <TextIconButton
                         type="neutral"
@@ -922,7 +960,7 @@
                 <StepperContentBody>
                     <DownloadAttachment></DownloadAttachment>
                 </StepperContentBody>
-            </StepperContent>
+            </StepperContent> -->
 
             <StepperContent>
                 <StepperContentHeader
@@ -1129,7 +1167,7 @@
                                 val={mainPromotionDetail.candidate
                                     ?.institutionLoanAccount}
                             />
-                            <ContentHeader
+                            <!-- <ContentHeader
                                 title="Keputusan Mesyuarat Kenaikan Pangkat"
                                 borderClass="border-none"
                             />
@@ -1140,7 +1178,7 @@
                                 bind:val={$updateMainPromotionMeetingResultDetailForm.promotionMeetingResult}
                                 errors={$updateMainPromotionMeetingResultDetailError.promotionMeetingResult}
                                 options={promotionMeetingResultOptions}
-                            />
+                            /> -->
                         </form>
                     {/if}
                 </StepperContentBody>
@@ -1166,12 +1204,17 @@
                 </StepperContentHeader>
                 <StepperContentBody>
                     {#if !detailOpen}
-                        <CustomTable
-                            title="Senarai Calon"
-                            enableDetail
-                            detailActions={() => (detailOpen = true)}
-                            bind:tableData={chosenEmployeeTable}
-                        />
+                        <div
+                            class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                        >
+                            <div class="h-fit w-full">
+                                <DataTable
+                                    title=""
+                                    bind:tableData={mainCertification}
+                                    detailActions={() => (detailOpen = true)}
+                                ></DataTable>
+                            </div>
+                        </div>
                     {:else}
                         <form
                             class="flex w-full flex-col justify-start px-2.5 pb-10"
@@ -1324,7 +1367,13 @@
                 <StepperContentHeader
                     title="Kemaskini Keputusan Mesyuarat Pemilihan Calon"
                 >
-                    {#if (isUndefinedOrEmpty && data.currentRoleCode == UserRoleConstant.pengarahNegeri.code) || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code}
+                    <TextIconButton
+                        label="Kembali"
+                        icon="cancel"
+                        type="neutral"
+                        onClick={() => (detailOpen = false)}
+                    />
+                    {#if data.currentRoleCode == UserRoleConstant.pengarahNegeri.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code}
                         <TextIconButton
                             label="Simpan"
                             icon="check"
@@ -1332,104 +1381,90 @@
                             form="directorResultForm"
                         />
                     {/if}
+                    {#if data.currentRoleCode === UserRoleConstant.urusSetiaIntegriti.code}
+                        <TextIconButton
+                            label="Simpan"
+                            icon="check"
+                            type="primary"
+                            form="integrityResultForm"
+                        />
+                    {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
-                    <!-- Director Only -->
-                    {#if data.currentRoleCode === UserRoleConstant.pengarahNegeri.code || data.currentRoleCode === UserRoleConstant.pengarahNegeri.code}
-                        <form
-                            class="flex w-full flex-col justify-start gap-2.5 p-3"
-                            id="directorResultForm"
-                            method="POST"
-                            use:directorResultEnhance
-                        >
-                            <ContentHeader
-                                title="Keputusan daripada Pengarah Bahagian atau Negeri"
-                                borderClass="border-none"
-                            />
-                            {#if isUndefinedOrEmpty}
-                                <CustomTextField
-                                    label="Tindakan/Ulasan"
-                                    id="directorCertifiedRemark"
-                                    disabled
-                                    bind:val={directorApproval.directorCertifiedRemark}
+                    {#if data.currentRoleCode === UserRoleConstant.pengarahNegeri.code || data.currentRoleCode === UserRoleConstant.pengarahNegeri.code || data.currentRoleCode === UserRoleConstant.urusSetiaIntegriti.code}
+                        {#if !detailOpen}
+                            <div
+                                class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                            >
+                                <div class="h-fit w-full p-3">
+                                    <DataTable
+                                        title="Senarai Kakitangan Dipilih"
+                                        bind:tableData={updatedChosenEmployeeTable}
+                                        bind:passData={selectedCandidate}
+                                        detailActions={async () => {
+                                            await getTableInformation(
+                                                6,
+                                            ).finally(
+                                                () => (detailOpen = true),
+                                            );
+                                        }}
+                                    ></DataTable>
+                                </div>
+                            </div>
+                        {:else}
+                            <form
+                                class="flex w-full flex-col justify-start gap-2.5 p-3"
+                                id="directorResultForm"
+                                method="POST"
+                                use:directorResultEnhance
+                            >
+                                <ContentHeader
+                                    title="Keputusan daripada Pengarah Bahagian atau Negeri"
+                                    borderClass="border-none"
                                 />
-                                <CustomTextField
-                                    label="Keputusan"
-                                    id="directorCertifiedStatus"
-                                    disabled
-                                    bind:val={directorApproval.directorCertifiedStatus}
-                                />
-                                <CustomTextField
-                                    label="Tarikh Diperakui"
-                                    id="directorCertifiedDate"
-                                    disabled
-                                    bind:val={directorApproval.directorCertifiedDate}
-                                />
-                            {:else}
                                 <CustomTextField
                                     label="Tindakan/Ulasan"
                                     id="remark"
-                                    type="text"
+                                    disabled={directorApproved}
                                     errors={$directorResultError.remark}
                                     bind:val={$directorResultForm.remark}
                                 />
                                 <CustomRadioBoolean
                                     id="status"
                                     label="Keputusan"
-                                    disabled={false}
+                                    disabled={directorApproved}
                                     bind:val={$directorResultForm.status}
                                     errors={$directorResultError.status}
                                     options={confirmOptions}
                                 />
-                            {/if}
-                        </form>
-                        <form
-                            class="flex w-full flex-col justify-start gap-2.5 p-3"
-                            id="directorResultForm"
-                            method="POST"
-                            use:directorResultEnhance
-                        >
-                            <ContentHeader
-                                title="Keputusan daripada Urus Setia Integriti"
-                                borderClass="border-none"
-                            />
-                            {#if isUndefinedOrEmpty}
-                                <CustomTextField
-                                    label="Tindakan/Ulasan"
-                                    id="directorCertifiedRemark"
-                                    disabled
-                                    bind:val={directorApproval.directorCertifiedRemark}
+                            </form>
+                            <form
+                                class="flex w-full flex-col justify-start gap-2.5 p-3"
+                                id="integrityResultForm"
+                                method="POST"
+                                use:integrityResultEnhance
+                            >
+                                <ContentHeader
+                                    title="Keputusan daripada Urus Setia Integriti"
+                                    borderClass="border-none"
                                 />
-                                <CustomTextField
-                                    label="Keputusan"
-                                    id="directorCertifiedStatus"
-                                    disabled
-                                    bind:val={directorApproval.directorCertifiedStatus}
-                                />
-                                <CustomTextField
-                                    label="Tarikh Diperakui"
-                                    id="directorCertifiedDate"
-                                    disabled
-                                    bind:val={directorApproval.directorCertifiedDate}
-                                />
-                            {:else}
                                 <CustomTextField
                                     label="Tindakan/Ulasan"
                                     id="remark"
-                                    type="text"
-                                    errors={$directorResultError.remark}
-                                    bind:val={$directorResultForm.remark}
+                                    disabled={integrityApproved}
+                                    bind:val={$integrityResultForm.remark}
+                                    errors={$integrityResultError.remark}
                                 />
                                 <CustomRadioBoolean
                                     id="status"
                                     label="Keputusan"
-                                    disabled={false}
-                                    bind:val={$directorResultForm.status}
-                                    errors={$directorResultError.status}
+                                    disabled={integrityApproved}
                                     options={confirmOptions}
+                                    bind:val={$integrityResultForm.status}
+                                    errors={$integrityResultError.status}
                                 />
-                            {/if}
-                        </form>
+                            </form>
+                        {/if}
                     {:else}
                         <form
                             class="flex w-full flex-col justify-start gap-2.5 pb-10"
@@ -1482,6 +1517,13 @@
                                     <DataTable
                                         title="Senarai Kakitangan Dipilih"
                                         bind:tableData={updatedChosenEmployeeTable}
+                                        detailActions={async () => {
+                                            await getTableInformation(
+                                                6,
+                                            ).finally(
+                                                () => (detailOpen = true),
+                                            );
+                                        }}
                                     ></DataTable>
                                 </div>
                             </div>
@@ -1490,7 +1532,7 @@
                 </StepperContentBody>
             </StepperContent>
 
-            {#if data.currentRoleCode !== depDirectorRoleCode && data.currentRoleCode !== stateDirectorRoleCode}
+            {#if data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code && data.currentRoleCode !== UserRoleConstant.urusSetiaIntegriti.code}
                 <StepperContent>
                     <StepperContentHeader title="Kemaskini Maklumat Temuduga">
                         <TextIconButton
@@ -2110,16 +2152,16 @@
                                     />
                                     <CustomTextField
                                         label="Kelulusan Tarikh Lapor Diri Baru"
-                                        id="newReportDateApproval"
-                                        errors={$updatePostponeError.newReportDateApproval}
+                                        id="newReportDutyDate"
+                                        errors={$updatePostponeError.newReportDutyDate}
                                         type="date"
-                                        bind:val={$updatePostponeDetail.newReportDateApproval}
+                                        bind:val={$updatePostponeDetail.newReportDutyDate}
                                     />
                                     <CustomSelectField
                                         label="Kelulusan Pindaan Penempatan Dipohon"
-                                        id="placementApproval"
-                                        errors={$updatePostponeError.placementApproval}
-                                        bind:val={$updatePostponeDetail.placementApproval}
+                                        id="newPlacement"
+                                        errors={$updatePostponeError.newPlacement}
+                                        bind:val={$updatePostponeDetail.newPlacement}
                                         options={data.lookup.placementLookup}
                                     />
                                     <!-- {:else}
@@ -2603,7 +2645,7 @@
             {/if}
             <!-- For kakitangan only -->
         {:else if data.currentRoleCode === employeeRoleCode}
-            <StepperContent>
+            <!-- <StepperContent>
                 <StepperContentHeader title="Panggilan Temuduga">
                     <TextIconButton
                         type="primary"
@@ -2650,7 +2692,7 @@
                         </div>
                     </div>
                 </StepperContentBody>
-            </StepperContent>
+            </StepperContent> -->
 
             <StepperContent>
                 <StepperContentHeader title="Keputusan Mesyuarat">
@@ -2835,11 +2877,11 @@
                             id="newReportDate"
                             val={data.employeePostponeResult.newReportDate}
                         />
-                        <DownloadAttachment
+                        <!-- <DownloadAttachment
                             label="Surat Penangguhan Rayuan"
                             fileName="surat_kelulusan_penangguhan_rayuan.pdf"
                             triggerDownload={() => {}}
-                        />
+                        /> -->
                     </div>
                 </StepperContentBody>
             </StepperContent>

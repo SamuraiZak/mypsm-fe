@@ -135,6 +135,7 @@ export const load = async ({ params }) => {
     //form validation
     const updateChosenCandidateForm = await superValidate(zod(_updateChosenCandidate))
     const directorResultForm = await superValidate(zod(_actingApprovalSchema))
+    const integrityResultForm = await superValidate(zod(_actingApprovalSchema))
     const updateMeetingDetailForm = await superValidate(zod(_updateMeetingDetailSchema))
     const updateMeetingResultForm = await superValidate(zod(_updateMeetingResult))
     const updatePromotionMeetingForm = await superValidate(zod(_updatePromotionDetail))
@@ -231,6 +232,7 @@ export const load = async ({ params }) => {
         updateMainPromotionMeetingResultForm,
         employeeNeedPlacementAmendmentForm,
         updatePostponeDetail,
+        integrityResultForm,
 
         // main
         mainActingCertification,
@@ -274,6 +276,18 @@ export const _submitDirectorResultForm = async (formData: QuarterCommonApproval)
     if (form.valid) {
         const response: CommonResponseDTO =
             await EmploymentActingServices.updateDirectorApproval(form.data as QuarterCommonApproval)
+
+        return { response }
+    }
+};
+export const _submitIntegrityResultForm = async (formData: QuarterCommonApproval) => {
+    const form = await superValidate(
+        formData,
+        zod(_actingApprovalSchema),
+    );
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await EmploymentActingServices.updateIntegrityApproval(form.data as QuarterCommonApproval)
 
         return { response }
     }
@@ -444,9 +458,12 @@ export const _directorApproval = async (id: number) => {
     }
     const response: CommonResponseDTO =
         await EmploymentActingServices.getDirectorApproval(currentId)
-
-    return { response }
+    
+    const integrityResponse: CommonResponseDTO =
+        await EmploymentActingServices.getIntegrityApproval(currentId)
+    return { response, integrityResponse }
 }
+
 export const _supportApproval = async (id: number) => {
     let currentId: commonIdRequestDTO = {
         id: id,
@@ -499,25 +516,12 @@ export const _submitUpdateMainPromotionMeetingResultForm = async (formData: Upda
     }
 }
 export const _submitUpdateMainPromotionMeetingResultDetailForm = async (formData: object) => {
-    const updatePromotionMeetingResultDetailForm = await superValidate(
+    const form = await superValidate(
         formData,
         zod(_mainUpdatePromotionMeetingResultDetailSchema),
     );
-    if (updatePromotionMeetingResultDetailForm.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(updatePromotionMeetingResultDetailForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (updatePromotionMeetingResultDetailForm.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
+    if (form.valid) {
+        
     }
 }
 export const _submitUpdateMainActingEmployeeDetailForm = async (formData: object) => {
@@ -543,26 +547,13 @@ export const _submitUpdateMainActingEmployeeDetailForm = async (formData: object
     }
 }
 export const _submitMainSupporterAndApproverForm = async (formData: object) => {
-    const mainSupporterAndApproverForm = await superValidate(
+    const form = await superValidate(
         formData,
         zod(_mainSupporterAndApproverSchema),
     );
-    console.log(mainSupporterAndApproverForm)
-    if (mainSupporterAndApproverForm.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(mainSupporterAndApproverForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (mainSupporterAndApproverForm.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
+    
+    if (form.valid) {
+       
     }
 }
 

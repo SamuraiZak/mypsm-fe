@@ -119,7 +119,7 @@
     };
 
     let employeeOfferTable: TableSettingDTO = {
-        param: data.param,
+        param: data.employeeParam,
         meta: data.employeeOfferResponse.data?.meta ?? {
             pageSize: 1,
             pageNum: 1,
