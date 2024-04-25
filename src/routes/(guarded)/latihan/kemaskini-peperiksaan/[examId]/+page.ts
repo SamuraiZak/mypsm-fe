@@ -2,7 +2,10 @@ import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.c
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto.js';
-import type { CourseExamDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam.dto.js';
+import type {
+    CourseEditExamRequestDTO,
+    CourseExamDetailResponseDTO,
+} from '$lib/dto/mypsm/course/exam/course-exam.dto.js';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _editExamInfoRequestSchema,
@@ -63,18 +66,9 @@ export const _editExamForm = async (formData: object) => {
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    const modifiedForm = {
-        id: form.data.id,
-        examTypeId: form.data.examTypeId,
-        examTitle: form.data.examTitle,
-        startDate: form.data.startDate.toISOString().split('T')[0],
-        endDate: form.data.endDate.toISOString().split('T')[0],
-        examDate: form.data.examDate.toISOString().split('T')[0],
-        examLocation: form.data.examLocation,
-    };
-
-    const response: CommonResponseDTO =
-        await CourseServices.editCourseExam(modifiedForm);
+    const response: CommonResponseDTO = await CourseServices.editCourseExam(
+        form.data as CourseEditExamRequestDTO,
+    );
 
     return { response };
 };

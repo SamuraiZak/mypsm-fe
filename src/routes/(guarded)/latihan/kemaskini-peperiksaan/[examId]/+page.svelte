@@ -8,7 +8,7 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import toast, { Toaster } from 'svelte-french-toast';
-    import { dateProxy, superForm } from 'sveltekit-superforms/client';
+    import { superForm } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
@@ -44,14 +44,6 @@
         },
         taintedMessage: false,
     });
-
-    const proxyExamApplicationStartDate = dateProxy(form, 'startDate', {
-        format: 'date',
-    });
-    const proxyExamApplicationEndDate = dateProxy(form, 'endDate', {
-        format: 'date',
-    });
-    const proxyExamDate = dateProxy(form, 'examDate', { format: 'date' });
 </script>
 
 <ContentHeader title="Maklumat Lantikan Baru"
@@ -119,7 +111,7 @@
                     id="startDate"
                     label="Tarikh Mula Permohonan"
                     type="date"
-                    bind:val={$proxyExamApplicationStartDate}
+                    bind:val={$form.startDate}
                 ></CustomTextField>
                 <CustomTextField
                     disabled={isReadonlyExamFormStepper}
@@ -127,7 +119,7 @@
                     id="endDate"
                     label="Tarikh Tutup Permohonan"
                     type="date"
-                    bind:val={$proxyExamApplicationEndDate}
+                    bind:val={$form.endDate}
                 ></CustomTextField>
                 <CustomTextField
                     disabled={isReadonlyExamFormStepper}
@@ -135,7 +127,7 @@
                     id="examDate"
                     label="Tarikh Peperiksaan"
                     type="date"
-                    bind:val={$proxyExamDate}
+                    bind:val={$form.examDate}
                 ></CustomTextField>
                 <CustomTextField
                     disabled={isReadonlyExamFormStepper}

@@ -104,7 +104,7 @@ export const numberSchema = z.coerce
 export const numberIdSchema = z.coerce.number({
     required_error: 'Tidak tepat.',
     invalid_type_error: 'Sila pastikan ID ditaip dengan angka',
-});
+}).min(1, {message:"Sila tetapkan pilihan"});
 
 export const dateStringSchema = z.coerce
     .string({ required_error: 'Tarikh tidak boleh kosong' })

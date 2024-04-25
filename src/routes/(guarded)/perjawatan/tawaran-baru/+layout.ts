@@ -16,18 +16,6 @@ export const load = async () => {
     const isEmploymentSecretaryRole =
         currentRoleCode === RoleConstant.urusSetiaPerjawatan.code;
 
-    const isAuditDirectorRole =
-        currentRoleCode === RoleConstant.pengarahAudit.code;
-
-    const isIntegrityDirectorRole =
-        currentRoleCode === RoleConstant.pengarahIntegriti.code;
-
-    const isStateDirectorRole =
-        currentRoleCode === RoleConstant.pengarahNegeri.code;
-
-    const isUnitDirectorRole =
-        currentRoleCode === RoleConstant.pengarahBahagian.code;
-
     const isSupporterRole = currentRoleCode === RoleConstant.penyokong.code;
 
     const isApproverRole = currentRoleCode === RoleConstant.pelulus.code;
@@ -50,6 +38,12 @@ export const load = async () => {
     if (isEmploymentSecretaryRole) {
         newOfferMeetingListResponse =
             await NewOfferServices.getNewOfferMeetingList(param);
+    } else if (isSupporterRole) {
+        newOfferMeetingListResponse =
+            await NewOfferServices.getNewOfferMeetingSupporterList(param);
+    } else if (isApproverRole) {
+        newOfferMeetingListResponse =
+            await NewOfferServices.getNewOfferMeetingApproverList(param);
     }
 
     // ==========================================================================
@@ -74,11 +68,7 @@ export const load = async () => {
         },
         roles: {
             isStaffRole,
-            isStateDirectorRole,
-            isUnitDirectorRole,
             isEmploymentSecretaryRole,
-            isAuditDirectorRole,
-            isIntegrityDirectorRole,
             isSupporterRole,
             isApproverRole,
         },

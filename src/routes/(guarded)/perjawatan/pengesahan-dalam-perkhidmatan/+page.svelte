@@ -173,7 +173,7 @@
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     <CustomTab>
-        <CustomTabContent title="Pengesahan Lantikan Baru">
+        <CustomTabContent title="Pengesahan (Semua Kakitangan)">
             <div
                 class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
             >
@@ -181,7 +181,7 @@
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
                     <DataTable
-                        title="Senarai Rekod Pengesahan Lantikan Baru"
+                        title="Senarai Rekod Pengesahan Semua Kakitangan LKIM"
                         bind:tableData={confirmationListTable}
                         bind:passData={rowData}
                         detailActions={() => {
@@ -217,52 +217,55 @@
                 </div>
             </div>
         </CustomTabContent>
-        <CustomTabContent title="Pengesahan Yang Melebihi Tempoh 3 Tahun">
-            <div
-                class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
-            >
+        {#if data.roles.isEmploymentSecretaryRole || data.roles.isStaffRole}
+            <CustomTabContent title="Pengesahan Yang Melebihi Tempoh 3 Tahun">
                 <div
-                    class="flex max-h-full w-full flex-col items-start justify-start"
+                    class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
                 >
-                    <div class="h h-fit w-full">
-                        <DataTable
-                            title="Senarai Rekod Pengesahan Yang Melebihi Tempoh 3 Tahun"
-                            bind:tableData={confirmationExceedsThreeYearsListTable}
-                            bind:passData={rowData}
-                            detailActions={() => {
-                                const route = `./pengesahan-dalam-perkhidmatan/${rowData.id}`;
+                    <div
+                        class="flex max-h-full w-full flex-col items-start justify-start"
+                    >
+                        <div class="h h-fit w-full">
+                            <DataTable
+                                title="Senarai Rekod Pengesahan Yang Melebihi Tempoh 3 Tahun"
+                                bind:tableData={confirmationExceedsThreeYearsListTable}
+                                bind:passData={rowData}
+                                detailActions={() => {
+                                    const route = `./pengesahan-dalam-perkhidmatan/${rowData.id}`;
 
-                                goto(route);
-                            }}
-                        >
-                            <FilterWrapper slot="filter">
-                                <FilterTextField
-                                    label="No. Pekerja"
-                                    bind:inputValue={confirmationExceedsThreeYearsListTable
-                                        .param.filter.employeeNumber}
-                                ></FilterTextField>
-                                <FilterTextField
-                                    label="Nama Kakitangan"
-                                    bind:inputValue={confirmationExceedsThreeYearsListTable
-                                        .param.filter.name}
-                                ></FilterTextField>
-                                <FilterTextField
-                                    label="No. Kad Pengenalan"
-                                    bind:inputValue={confirmationExceedsThreeYearsListTable
-                                        .param.filter.identityCard}
-                                ></FilterTextField>
-                                <FilterSelectField
-                                    label="Status"
-                                    options={data.selectionOptions.statusLookup}
-                                    bind:inputValue={confirmationExceedsThreeYearsListTable
-                                        .param.filter.status}
-                                ></FilterSelectField>
-                            </FilterWrapper>
-                        </DataTable>
+                                    goto(route);
+                                }}
+                            >
+                                <FilterWrapper slot="filter">
+                                    <FilterTextField
+                                        label="No. Pekerja"
+                                        bind:inputValue={confirmationExceedsThreeYearsListTable
+                                            .param.filter.employeeNumber}
+                                    ></FilterTextField>
+                                    <FilterTextField
+                                        label="Nama Kakitangan"
+                                        bind:inputValue={confirmationExceedsThreeYearsListTable
+                                            .param.filter.name}
+                                    ></FilterTextField>
+                                    <FilterTextField
+                                        label="No. Kad Pengenalan"
+                                        bind:inputValue={confirmationExceedsThreeYearsListTable
+                                            .param.filter.identityCard}
+                                    ></FilterTextField>
+                                    <FilterSelectField
+                                        label="Status"
+                                        options={data.selectionOptions
+                                            .statusLookup}
+                                        bind:inputValue={confirmationExceedsThreeYearsListTable
+                                            .param.filter.status}
+                                    ></FilterSelectField>
+                                </FilterWrapper>
+                            </DataTable>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </CustomTabContent>
+            </CustomTabContent>
+        {/if}
         <CustomTabContent
             title="Pengesahan Lantikan ke Gred/Skim Baru (Rasionalisasi)"
         >

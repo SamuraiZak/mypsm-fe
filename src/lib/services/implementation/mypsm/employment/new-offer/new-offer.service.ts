@@ -43,6 +43,56 @@ export class NewOfferServices {
         }
     }
 
+    // get list of new offer meetings - supporter
+    static async getNewOfferMeetingSupporterList(param: CommonListRequestDTO) {
+        try {
+            const url: Input = 'employment/new_offer/supporter_approval/list';
+
+            // get the promise response
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get list of new offer meetings - approver
+    static async getNewOfferMeetingApproverList(param: CommonListRequestDTO) {
+        try {
+            const url: Input = 'employment/new_offer/approver_approval/list';
+
+            // get the promise response
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     // get new offer full detail
     static async getNewOfferFullDetail(param: commonIdRequestDTO) {
         try {

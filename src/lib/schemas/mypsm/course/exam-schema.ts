@@ -7,7 +7,6 @@ import {
     codeSchema,
     dateStringSchema,
     longTextSchema,
-    minDateSchema,
     numberIdSchema,
     requiredDateStringSchema,
     requiredTextSchema,
@@ -26,9 +25,9 @@ export const _examInfoResponseSchema = z.object({
     id: z.number().readonly(),
     examTypeId: numberIdSchema,
     examTitle: codeSchema,
-    startDate: minDateSchema,
-    endDate: minDateSchema,
-    examDate: minDateSchema,
+    startDate: dateStringSchema,
+    endDate: dateStringSchema,
+    examDate: dateStringSchema,
     examLocation: longTextSchema,
 });
 

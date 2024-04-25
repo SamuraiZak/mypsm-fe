@@ -41,8 +41,8 @@ export const load = async () => {
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: 'candidateId',
+        orderType: 1,
         filter: {
             dataType: 0, // 0: New | 1: Other | null
             identityCard: null, //string | null | undefined;
@@ -55,8 +55,8 @@ export const load = async () => {
     const submittedTableParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: 'candidateId',
+        orderType: 1,
         filter: {
             dataType: 1, // 0: New | 1: Other | null
             identityCard: null, //string | null | undefined;
@@ -69,8 +69,8 @@ export const load = async () => {
     const allNewHireTableParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: 'candidateId',
+        orderType: 1,
         filter: {
             dataType: null, // 0: New | 1: Other | null
             identityCard: null, //string | null | undefined;
