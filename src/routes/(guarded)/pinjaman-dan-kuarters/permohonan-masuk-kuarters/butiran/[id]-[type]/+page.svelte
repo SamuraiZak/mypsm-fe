@@ -862,7 +862,7 @@
                             method="POST"
                             use:directorApprovalEnhance
                         >
-                            {#if $directorApprovalForm.remark == null && (data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code || data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code)}
+                            {#if $directorApprovalForm.remark == null && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code && data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code}
                                 <div class="flex w-full flex-col gap-10 px-3">
                                     <Alert color="blue">
                                         <p>
