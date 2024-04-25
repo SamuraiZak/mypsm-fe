@@ -580,7 +580,7 @@
                                                 .confirmation !== null}
                                             id="status"
                                             label={'Saya mengaku bahawa semua butiran permohonan adalah benar'}
-                                            bind:val={$employeeConfirmationForm.status}
+                                            bind:val={$employeeConfirmationForm.confirmation}
                                             options={data.props
                                                 .endorsementDropdown}
                                         ></CustomSelectField>

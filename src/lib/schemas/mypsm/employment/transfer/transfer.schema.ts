@@ -93,7 +93,7 @@ export type TransferSelfReason = z.infer<typeof TransferSelfReasonSchema>;
 
 export const TransferSelfEndorsementSchema = z.object({
     id: z.number(),
-    status: z.boolean(),
+    confirmation: z.boolean(),
     applicationDate: z.string().nullish(),
 });
 export type TransferSelfEndorsement = z.infer<
