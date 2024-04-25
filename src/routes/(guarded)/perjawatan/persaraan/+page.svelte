@@ -7,7 +7,10 @@
     import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
-    import type { TableDTO, TableSettingDTO } from '$lib/dto/core/table/table.dto';
+    import type {
+        TableDTO,
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
 
@@ -75,7 +78,7 @@
         },
     };
 
-       // Forced table
+    // Forced table
 
     let forceApplicationtable: TableSettingDTO = {
         param: data.param,
@@ -126,15 +129,15 @@
         data: data.unspecifyViewResponse.data?.dataList ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: [],
+        hiddenColumn: ['retirementId'],
         dictionary: [
             {
-                english: 'identityCardNumber',
-                malay: 'No. Kad Pengenalan',
+                english: 'name',
+                malay: 'Kod Kumpulan',
             },
             {
-                english: 'durationDays',
-                malay: 'Jumlah Hari',
+                english: 'headCount',
+                malay: 'Jumlah Kakitangan Terpilih',
             },
         ],
         url: 'employment/retirement/unspecify/list',
@@ -147,10 +150,17 @@
             filter: true,
         },
         controls: {
-            add: data.props.currentRoleCode == UserRoleConstant.kakitangan.code,
+            add:
+                data.props.currentRoleCode ==
+                UserRoleConstant.urusSetiaPersaraan.code,
         },
     };
 
+    function unspecifyAddNew() {
+        let url = '/perjawatan/persaraan/persaraan_lain-lain/baru';
+
+        goto(url);
+    }
 
     let voluntarytable: TableDTO = {
         param: data.param,
@@ -229,17 +239,15 @@
 </script>
 
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Persaraan">
-    </ContentHeader>
+    <ContentHeader title="Persaraan"></ContentHeader>
 </section>
 
 <section class="flex w-full flex-col items-start justify-start overflow-y-auto">
     <CustomTab>
         <CustomTabContent title="Permohonan Sendiri">
             <div
-            class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-10 py-4"
+                class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-10 py-4"
             >
-
                 <div class="h h-fit w-full">
                     <DataTable
                         title="Senarai Permohonan Cuti"
@@ -247,19 +255,22 @@
                         bind:passData={rowData}
                         addActions={() => {
                             // addApplication();
-                            let url = "/perjawatan/persaraan/persaraan_pilihan/Baru"
-                            goto(url)
+                            let url =
+                                '/perjawatan/persaraan/persaraan_pilihan/Baru';
+                            goto(url);
                         }}
                         detailActions={() => {
-                            let url = "/perjawatan/persaraan/persaraan_pilihan/" + rowData.retirementId
-                            goto(url)
+                            let url =
+                                '/perjawatan/persaraan/persaraan_pilihan/' +
+                                rowData.retirementId;
+                            goto(url);
                         }}
                     >
                         <FilterWrapper slot="filter">
                             <FilterNumberField
                                 label="Tahun"
-                                bind:inputValue={voluntaryApplicationtable.param.filter
-                                    .year}
+                                bind:inputValue={voluntaryApplicationtable.param
+                                    .filter.year}
                             ></FilterNumberField>
                         </FilterWrapper>
                     </DataTable>
@@ -269,9 +280,8 @@
         <!-- forceApplicationtable -->
         <CustomTabContent title="Persaraan Paksaan">
             <div
-            class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-10 py-4"
+                class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-10 py-4"
             >
-
                 <div class="h h-fit w-full">
                     <DataTable
                         title="Senarai Permohonan Cuti"
@@ -279,19 +289,22 @@
                         bind:passData={rowData}
                         addActions={() => {
                             // addApplication();
-                            let url = "/perjawatan/persaraan/persaraan_paksaan/Baru"
-                            goto(url)
+                            let url =
+                                '/perjawatan/persaraan/persaraan_paksaan/Baru';
+                            goto(url);
                         }}
                         detailActions={() => {
-                            let url = "/perjawatan/persaraan/persaraan_paksaan/" + rowData.retirementId
-                            goto(url)
+                            let url =
+                                '/perjawatan/persaraan/persaraan_paksaan/' +
+                                rowData.retirementId;
+                            goto(url);
                         }}
                     >
                         <FilterWrapper slot="filter">
                             <FilterNumberField
                                 label="Tahun"
-                                bind:inputValue={forceApplicationtable.param.filter
-                                    .year}
+                                bind:inputValue={forceApplicationtable.param
+                                    .filter.year}
                             ></FilterNumberField>
                         </FilterWrapper>
                     </DataTable>
@@ -303,29 +316,28 @@
 
         <CustomTabContent title="Persaraan lain-lain">
             <div
-            class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-10 py-4"
+                class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-10 py-4"
             >
-
                 <div class="h h-fit w-full">
                     <DataTable
-                        title="Senarai Permohonan Cuti"
+                        title="Senarai Kumpulan Persaraan Lain-lain"
                         bind:tableData={unspecifyApplicationtable}
                         bind:passData={rowData}
                         addActions={() => {
-                            // addApplication();
-                            let url = "/perjawatan/persaraan/persaran_lain-lain/Baru"
-                            goto(url)
+                            unspecifyAddNew();
                         }}
                         detailActions={() => {
-                            let url = "/perjawatan/persaraan/persaran_lain-lain/" + rowData.retirementId
-                            goto(url)
+                            let url =
+                                '/perjawatan/persaraan/persaraan_lain-lain/' +
+                                rowData.retirementId;
+                            goto(url);
                         }}
                     >
                         <FilterWrapper slot="filter">
                             <FilterNumberField
                                 label="Tahun"
-                                bind:inputValue={unspecifyApplicationtable.param.filter
-                                    .year}
+                                bind:inputValue={unspecifyApplicationtable.param
+                                    .filter.year}
                             ></FilterNumberField>
                         </FilterWrapper>
                     </DataTable>

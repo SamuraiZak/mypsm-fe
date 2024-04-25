@@ -265,6 +265,7 @@ export interface LeaveReplacementDetailsDTO {
 }
 
 export interface LeaveApplicationDetailDTO {
+    status: string;
     applicationDetail?: any | null;
     headOfDirectorFeedback?: LeaveEndorsmentDTO | null;
     directorFeedback?: LeaveEndorsmentDTO | null;

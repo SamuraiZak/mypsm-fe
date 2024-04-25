@@ -42,11 +42,7 @@
             filter: true,
         },
         controls: {
-            add:
-                data.props.currentRoleCode ==
-                    UserRoleConstant.kakitangan.code ||
-                data.props.currentRoleCode ==
-                    UserRoleConstant.urusSetiaCuti.code,
+            add: false,
         },
     };
 </script>
@@ -55,19 +51,20 @@
     class="flex h-full max-h-full w-full flex-col overflow-y-hidden bg-ios-basic-lightBackgroundGray"
 >
     <section class="flex w-full flex-col items-start justify-start">
-        <ContentHeader title="Pengeluaran GCR">
-        </ContentHeader>
+        <ContentHeader title="Pengeluaran GCR"></ContentHeader>
     </section>
     <div
         class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-10 py-4"
     >
         <div class="h h-fit w-full">
             <DataTable
-                title="Senarai Permohonan Pengeluaran GCR"
+                title="Senarai Kakitangan"
                 bind:tableData={employeeListTable}
                 bind:passData={selectedData}
-                selectActions={()=>{
-                    let url = '/cuti/pengeluaran_GCR/permohonan_baru/' + selectedData.employeeId;
+                selectActions={() => {
+                    let url =
+                        '/cuti/pengeluaran_GCR/permohonan_baru/' +
+                        selectedData.employeeId;
 
                     goto(url);
                 }}

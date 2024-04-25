@@ -29,7 +29,7 @@
             <ImpactCard
                 title="Peranan Pengguna"
                 handleClick={() => {
-                    goto('/pengurusan_sistem/carian');
+                    goto('/pengurusan_sistem/peranan_pengguna');
                 }}
             ></ImpactCard>
         </div>

@@ -4,9 +4,6 @@
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterNumberField from '$lib/components/table/filter/FilterNumberField.svelte';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
-    import { GCRWithdrawalTypeConstant } from '$lib/constants/core/early-gcr.constant';
-    import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
-    import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
 
@@ -14,26 +11,27 @@
 
     let selectedData: any;
 
-    let withdrawalListTable: TableSettingDTO = {
-        param: data.props.request,
-        meta: data.props.response.data?.meta ?? {
+    // POC
+    let employeeListTable: TableSettingDTO = {
+        param: data.props.employeeListRequest,
+        meta: data.props.employeeListResponse.data?.meta ?? {
             pageSize: 1,
             pageNum: 1,
             totalData: 1,
             totalPage: 1,
         },
-        data: data.props.response.data?.dataList ?? [],
+        data: data.props.employeeListResponse.data?.dataList ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['employeeId', 'employeeNumber', 'id'],
+        hiddenColumn: ['employeeId', 'employeeNumber', 'leaveCode'],
         dictionary: [
             {
                 english: 'identityCardNumber',
                 malay: 'No. Kad Pengenalan',
             },
         ],
-        url: 'leave/gcr/withdrawal/list',
-        id: 'withdrawalListTable',
+        url: 'employee/list',
+        id: 'employeeListTable',
         option: {
             checkbox: false,
             detail: true,
@@ -42,35 +40,12 @@
             filter: true,
         },
         controls: {
-            add: true,
+            add: false,
         },
     };
 
-    function addApplication() {
-        let url = '';
-        switch (data.props.currentRoleCode) {
-            case UserRoleConstant.kakitangan.code:
-                url = '/cuti/pengeluaran_GCR/baru/pengeluaran_awal';
-                break;
-            case UserRoleConstant.urusSetiaCuti.code:
-                url = '/cuti/pengeluaran_GCR/senarai_kakitangan';
-                break;
-            default:
-                url = '/cuti/pengeluaran_GCR/baru/pengeluaran_awal';
-                break;
-        }
-
-        goto(url);
-    }
-
     function viewDetails() {
-        let currentType: DropdownDTO =
-            GCRWithdrawalTypeConstant.list.find(
-                (item) => item.name == selectedData.dataType,
-            ) ?? GCRWithdrawalTypeConstant.early;
-
-        let url =
-            '/cuti/pengeluaran_GCR/' + selectedData.id + '/' + currentType.url;
+        let url = '/pengurusan_sistem/peranan_pengguna/' + selectedData.employeeId;
 
         goto(url);
     }
@@ -80,27 +55,28 @@
     class="flex h-full max-h-full w-full flex-col overflow-y-hidden bg-ios-basic-lightBackgroundGray"
 >
     <section class="flex w-full flex-col items-start justify-start">
-        <ContentHeader title="Pengeluaran GCR"></ContentHeader>
+        <ContentHeader title="Permohonan Cuti"></ContentHeader>
     </section>
     <div
         class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-10 py-4"
     >
         <div class="h h-fit w-full">
             <DataTable
-                title="Senarai Permohonan Pengeluaran GCR"
-                bind:tableData={withdrawalListTable}
+                title="Senarai Permohonan Cuti"
+                bind:tableData={employeeListTable}
                 bind:passData={selectedData}
                 detailActions={() => {
                     viewDetails();
                 }}
-                addActions={() => {
-                    addApplication();
-                }}
             >
                 <FilterWrapper slot="filter">
                     <FilterNumberField
-                        label="Tahun"
-                        bind:inputValue={withdrawalListTable.param.filter.year}
+                        label="name"
+                        bind:inputValue={employeeListTable.param.filter.name}
+                    ></FilterNumberField>
+                    <FilterNumberField
+                        label="name"
+                        bind:inputValue={employeeListTable.param.filter.name}
                     ></FilterNumberField>
                 </FilterWrapper>
             </DataTable>
