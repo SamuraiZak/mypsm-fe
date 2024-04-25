@@ -65,12 +65,12 @@
         id: 'singlePatientForm',
         validators: zod(_patientSchema),
         resetForm: true,
+        clearOnSubmit: 'errors-and-message',
         async onSubmit() {
             const form = await superValidate(
                 $singlePatientForm,
                 zod(_patientSchema),
             );
-
             if (form.valid) {
                 let tempPatient: PatientList = {
                     name: $singlePatientForm.name,
@@ -80,12 +80,11 @@
                     placementId: $singlePatientForm.placementId,
                     date: $singlePatientForm.date,
                 };
-                $patientForm.patientList.push(tempPatient);
+                $patientForm.patientList = [tempPatient, ...$patientForm.patientList];
                 $treatmentForm.patientList[patientIndex] = {
                     patientName: $singlePatientForm.name,
                     treatmentList: [],
                 };
-                patientIsEmployee = false;
                 patientIndex += 1;
                 setTimeout(() => (patientModal = false), 50);
                 patientIsEmployee = false;
@@ -133,7 +132,7 @@
                 $singleTreatmentForm,
                 zod(_treatmentSchema),
             );
-
+            
             if (form.valid) {
                 let temptTreatment: TreatmentDetailList = {
                     description: $singleTreatmentForm.description,

@@ -88,24 +88,6 @@ export const _updateActingResultSchema = z.object({
     approverName: shortTextSchema.optional(),
 })
 
-
-
-
-
-
-
-
-
-export const _updatePlacementAmendmentApplicationResultSchema = z.object({
-    placementAmendmentResult: codeSchema.nullable().default(""),
-    approvedNewReportingDate: stringToMinDate.nullable(),
-    approvedRequestedPlacementAmendment: codeSchema.nullable().default(""),
-    originalPlacementDate: codeSchema.nullable().default(""),
-    placementRequestedAmendmentDate: codeSchema.nullable().default(""),
-    placementAmendmentReason: codeSchema.nullable().default(""),
-    approverName: codeSchema.nullable().default(""),
-})
-
 export const _actingApprovalSchema = z.object({
     id: z.number(),
     remark: shortTextSchema,
@@ -113,13 +95,34 @@ export const _actingApprovalSchema = z.object({
 })
 
 
+
+
+
+
+
+
+export const _postponeDetailSchema = z.object({
+    id: z.number(),
+    meetingResult: shortTextSchema,
+    newReportDateApproval: z.boolean().default(true),
+    placementApproval: booleanSchema,
+    approvalLetter: z.object({
+        base64: z.string(),
+        name: z.string()
+    }).array()
+})
+
+
+
+
 // =============== gred utama validation 
 export const _mainUpdatePromotionMeetingResultSchema = z.object({
     batchId: z.number(),
-    actingPosition: shortTextSchema,
-    actingGrade: shortTextSchema,
-    placement: shortTextSchema,
+    actingPosition: z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
+    actingGrade: z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
+    placement: z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
     meetingName: shortTextSchema,
+    meetingDate: shortTextSchema,
     referenceTitle: shortTextSchema,
     referenceNo: shortTextSchema,
     referenceDate: stringToMinDate,
@@ -152,8 +155,8 @@ const documentSchema = z.object({
 export const _placementAmendmentApplication = z.object({
     id: z.number(),
     postponeNeeded: booleanSchema,
-    postponeReason: shortTextSchema,
-    requestedPlacement: shortTextSchema,
-    requestedReportDate: stringToMinDate,
-    documents: documentSchema.array(),
+    postponeReason: shortTextSchema.nullable(),
+    requestedPlacement: shortTextSchema.nullable(),
+    requestedReportDate: stringToMinDate.nullable(),
+    documents: documentSchema.array().nullable(),
 })

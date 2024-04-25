@@ -27,6 +27,7 @@
         _outsiderFamily,
         _outsiderService,
         _quarterCommonApproval,
+        _quarterSecretaryApproval,
     } from '$lib/schemas/mypsm/quarters/quarters-schema';
     import {
         _applyMoveoutQuarters,
@@ -41,6 +42,7 @@
         _submitQuarterDetailsForm,
         _submitQuartersDocument,
         _submitSecretaryApprovalForm,
+        _submitQuarterPayment,
     } from './+page';
     import type { QuartersUploadDocuments } from '$lib/dto/mypsm/pinjaman/kuarters/quarters-upload-document.dto';
     import { ContractEmployeeServices } from '$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service';
@@ -52,7 +54,7 @@
     let submitQuarterDetails: boolean = false;
     let submitDirectorApproval: boolean = false;
     let successUpload: boolean = false;
-    let paymentRates: number = 2;
+    let submitPayment: boolean = false;
     let files: FileList;
     let applicantType: number = 1;
 
@@ -129,7 +131,7 @@
                     if (!$personalDetailForm.marital) {
                         $outsiderFamily.outsiderId = outsiderId;
                         $outsiderFamily.currentSalary = null;
-                        $outsiderFamily.name = "Tiada";
+                        $outsiderFamily.name = 'Tiada';
                         $outsiderFamily.phoneNumber = null;
                         $outsiderFamily.position = null;
                         $outsiderFamily.totalChildren = null;
@@ -214,7 +216,7 @@
         id: 'secretaryApprovalForm',
         invalidateAll: true,
         resetForm: false,
-        validators: zod(_quarterCommonApproval),
+        validators: zod(_quarterSecretaryApproval),
         async onSubmit() {
             $secretaryApprovalForm.id = data.currentId.id;
 
@@ -223,31 +225,6 @@
             );
             if (readOnly?.response.status == 'success') {
                 submitSecretaryApproval = true;
-            }
-        },
-    });
-    const {
-        form: quarterDetailForm,
-        errors: quarterDetailError,
-        enhance: quarterDetailEnhance,
-    } = superForm(data.quarterDetailForm, {
-        SPA: true,
-        taintedMessage: false,
-        id: 'quarterDetailForm',
-        invalidateAll: true,
-        resetForm: false,
-        validators: zod(_addQuarterDetails),
-        async onSubmit() {
-            $quarterDetailForm.id = data.currentId.id;
-
-            if (data.applicationType == 'luar') {
-                $quarterDetailForm.paymentMethod = 1;
-            }
-
-            const readOnly =
-                await _submitQuarterDetailsForm($quarterDetailForm);
-            if (readOnly?.response.status == 'success') {
-                submitQuarterDetails = true;
             }
         },
     });
@@ -273,6 +250,54 @@
             }
         },
     });
+    const {
+        form: quarterDetailForm,
+        errors: quarterDetailError,
+        enhance: quarterDetailEnhance,
+    } = superForm(data.quarterDetailForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'quarterDetailForm',
+        invalidateAll: true,
+        resetForm: false,
+        validators: zod(_addQuarterDetails),
+        async onSubmit() {
+            $quarterDetailForm.id = data.currentId.id;
+            $quarterDetailForm.directorApproverId =
+                $secretaryApprovalForm.directorApproverId;
+
+            const readOnly =
+                await _submitQuarterDetailsForm($quarterDetailForm);
+            if (readOnly?.response.status == 'success') {
+                submitQuarterDetails = true;
+            }
+        },
+    });
+    console.log($quarterDetailForm)
+
+    const {
+        form: quarterPaymentForm,
+        errors: quarterPaymentError,
+        enhance: quarterPaymentEnhance,
+    } = superForm(data.quarterPaymentForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'quarterPaymentForm',
+        invalidateAll: true,
+        resetForm: false,
+        validators: zod(_addQuarterDetails),
+        async onSubmit() {
+            $quarterPaymentForm.id = data.currentId.id;
+            if (data.applicationType == 'luar') {
+                $quarterPaymentForm.paymentMethod = 1;
+            }
+
+            const readOnly = await _submitQuarterPayment($quarterPaymentForm);
+            if (readOnly?.response.status == 'success') {
+                submitPayment = true;
+            }
+        },
+    });
     if ($confirmationForm.confirm) {
         submitConfirmation = true;
     }
@@ -294,6 +319,9 @@
     if ($outsiderServiceForm.position !== '') {
         outsiderService = true;
     }
+    if($quarterPaymentForm.paymentMethod){
+        submitPayment = true;
+    }
 
     const handleDownload = async (url: string) => {
         await ContractEmployeeServices.downloadContractAttachment(url);
@@ -303,13 +331,13 @@
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader title="Permohonan Masuk Kuarters">
-        {#if $directorApprovalForm.status && data.currentRoleCode == UserRoleConstant.kakitangan.code && data.applicationType == 'kakitangan'}
+        {#if $quarterPaymentForm.paymentMethod && data.currentRoleCode == UserRoleConstant.kakitangan.code && data.applicationType == 'kakitangan'}
             <TextIconButton
                 label="Permohonan Keluar"
                 icon="add"
                 onClick={() => _applyMoveoutQuarters(data.currentId)}
             />
-        {:else if $directorApprovalForm.status && data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code && data.applicationType == 'luar'}
+        {:else if $quarterPaymentForm.paymentMethod && data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code && data.applicationType == 'luar'}
             <TextIconButton
                 label="Permohonan Keluar"
                 icon="add"
@@ -757,7 +785,7 @@
                 </StepperContent>
             {/if}
 
-            {#if data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code || data.currentRoleCode == UserRoleConstant.pengarahBahagian.code}
+            {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code}
                 <StepperContent>
                     <StepperContentHeader
                         title="Ulasan Kelulusan daripada Urus Setia"
@@ -795,219 +823,19 @@
                                 options={approveOptions}
                                 bind:val={$secretaryApprovalForm.status}
                             />
-                        </form>
-                    </StepperContentBody>
-                </StepperContent>
-
-                <StepperContent>
-                    <StepperContentHeader title="Kemaskini Maklumat Permohonan">
-                        {#if !submitQuarterDetails && data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
-                            <TextIconButton
-                                label="Simpan"
-                                icon="check"
-                                form="quarterDetailForm"
+                            <ContentHeader
+                                title="Pelulus (Pengarah Bahagian/Negeri)"
+                                borderClass="border-none"
                             />
-                        {/if}
-                    </StepperContentHeader>
-                    <StepperContentBody paddingClass="p-none">
-                        <CustomTab>
-                            {#if data.applicationType == 'kakitangan'}
-                                <CustomTabContent title="Maklumat Kelayakan">
-                                    <div
-                                        class="flex w-full flex-col justify-start gap-2.5 p-3"
-                                    >
-                                        <ContentHeader
-                                            title="Maklumat Kelayakan"
-                                            borderClass="border-none"
-                                        />
-                                        {#if data.eligibilityDetail.baseSalary}
-                                            <CustomTextField
-                                                label="Gaji Pokok (RM)"
-                                                id="baseSalary"
-                                                disabled
-                                                bind:val={data.eligibilityDetail
-                                                    .baseSalary}
-                                            />
-                                            <CustomTextField
-                                                label="Elaun-elaun (RM)"
-                                                id="allowance"
-                                                disabled
-                                                bind:val={data.eligibilityDetail
-                                                    .allowance}
-                                            />
-                                        {:else}
-                                            <div
-                                                class="flex w-full flex-col gap-10 px-3"
-                                            >
-                                                <Alert color="blue">
-                                                    <p>
-                                                        <span
-                                                            class="font-medium"
-                                                            >Tiada Maklumat
-                                                        </span>
-                                                        dikesan.
-                                                    </p>
-                                                </Alert>
-                                            </div>
-                                        {/if}
-                                    </div>
-                                </CustomTabContent>
-                            {/if}
-                            <CustomTabContent
-                                title="Maklumat Kelulusan dan Tawaran"
-                            >
-                                <ContentHeader
-                                    title="Pelulus"
-                                    borderClass="border-none"
-                                />
-                                <form
-                                    class="flex w-full flex-col justify-start gap-2.5 p-3"
-                                    id="quarterDetailForm"
-                                    method="POST"
-                                    use:quarterDetailEnhance
-                                >
-                                    <CustomSelectField
-                                        label="Nama Pelulus"
-                                        id="directorApproverId"
-                                        disabled={submitQuarterDetails}
-                                        options={data.lookup
-                                            .supporterApproverLookup}
-                                        bind:val={$quarterDetailForm.directorApproverId}
-                                        errors={$quarterDetailError.directorApproverId}
-                                    />
-                                    <ContentHeader
-                                        title="Butiran Penempatan Kuarter"
-                                        borderClass="border-none"
-                                    />
-                                    {#if data.applicationType == 'luar'}
-                                        <CustomTextField
-                                            label="Emel Pemohon"
-                                            id="email"
-                                            placeholder=""
-                                            disabled
-                                            bind:val={$personalDetailForm.email}
-                                        />
-                                    {/if}
-                                    <CustomTextField
-                                        label="Tarikh Masuk Kuarter"
-                                        id="movingInDate"
-                                        disabled={submitQuarterDetails}
-                                        type="date"
-                                        bind:val={$quarterDetailForm.movingInDate}
-                                        errors={$quarterDetailError.movingInDate}
-                                    />
-                                    <CustomTextField
-                                        label="Unit dan Kuarter"
-                                        id="quarterDetails"
-                                        disabled={submitQuarterDetails}
-                                        bind:val={$quarterDetailForm.quarterDetails}
-                                        errors={$quarterDetailError.quarterDetails}
-                                    />
-
-                                    <ContentHeader
-                                        title="Kadar Bayaran Sewa Kuarters (Unit Pengurusan Fasiliti)"
-                                        borderClass="border-none"
-                                    />
-                                    {#if data.applicationType !== 'luar'}
-                                        <ul
-                                            class="flex w-full flex-col gap-2.5"
-                                        >
-                                            <li>
-                                                <Radio
-                                                    aria-describedby="in25Km"
-                                                    class="p-3"
-                                                    disabled={submitQuarterDetails}
-                                                    bind:group={$quarterDetailForm.paymentMethod}
-                                                    value={1}
-                                                    >Dalam Jarak 25KM</Radio
-                                                >
-                                                <Helper id="in25Km" class="ps-9"
-                                                    >Potongan ITP 75% dan
-                                                    Potongan COLA 50%</Helper
-                                                >
-                                            </li>
-
-                                            <li>
-                                                <Radio
-                                                    aria-describedby="moreThan25Km"
-                                                    class="p-3"
-                                                    disabled={submitQuarterDetails}
-                                                    bind:group={$quarterDetailForm.paymentMethod}
-                                                    value={2}
-                                                    >Jarak Melebihi 25KM</Radio
-                                                >
-                                                <Helper
-                                                    id="moreThan25Km"
-                                                    class="ps-9"
-                                                    >Potongan COLA 50%</Helper
-                                                >
-                                            </li>
-
-                                            <li>
-                                                <Radio
-                                                    aria-describedby="betterGradeForKuarters"
-                                                    class="p-3"
-                                                    disabled={submitQuarterDetails}
-                                                    bind:group={$quarterDetailForm.paymentMethod}
-                                                    value={3}
-                                                    >Gred Jawatan Melebihi
-                                                    Kategori Kuarters</Radio
-                                                >
-                                                <Helper
-                                                    id="betterGradeForKuarters"
-                                                    class="ps-9"
-                                                    >Potongan ITP mengikut nilai
-                                                    sewaan gred tertinggi
-                                                    kuarters yang diperuntukkan
-                                                    (RM):</Helper
-                                                >
-
-                                                <div class="w-[220px] ps-9">
-                                                    <CustomTextField
-                                                        label=""
-                                                        id="rentRate"
-                                                        type="number"
-                                                        disabled={$quarterDetailForm.paymentMethod !==
-                                                        3
-                                                            ? true
-                                                            : submitQuarterDetails
-                                                              ? true
-                                                              : false}
-                                                        bind:val={$quarterDetailForm.rentRate}
-                                                        errors={$quarterDetailError.rentRate}
-                                                    />
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    {:else}
-                                        <CustomTextField
-                                            label="Nilai Sewaan Bulanan (RM)"
-                                            type="number"
-                                            id="rentRate"
-                                            disabled={submitQuarterDetails}
-                                            bind:val={$quarterDetailForm.rentRate}
-                                            errors={$quarterDetailError.rentRate}
-                                        />
-                                        <CustomTextField
-                                            label="Deposit (2 bulan nilai sewaan) (RM)"
-                                            type="number"
-                                            id="deposit"
-                                            disabled={submitQuarterDetails}
-                                            bind:val={$quarterDetailForm.deposit}
-                                            errors={$quarterDetailError.deposit}
-                                        />
-                                        <CustomTextField
-                                            label="Deposit (Air dan Elektrik) (RM)"
-                                            type="number"
-                                            id="billDeposit"
-                                            disabled={submitQuarterDetails}
-                                            bind:val={$quarterDetailForm.billDeposit}
-                                            errors={$quarterDetailError.billDeposit}
-                                        />
-                                    {/if}
-                                </form>
-                            </CustomTabContent>
-                        </CustomTab>
+                            <CustomSelectField
+                                label="Nama Pelulus"
+                                id="directorApproverId"
+                                disabled={submitSecretaryApproval}
+                                options={data.lookup.supporterApproverLookup}
+                                bind:val={$secretaryApprovalForm.directorApproverId}
+                                errors={$secretaryApprovalError.directorApproverId}
+                            />
+                        </form>
                     </StepperContentBody>
                 </StepperContent>
 
@@ -1015,7 +843,7 @@
                     <StepperContentHeader
                         title="Ulasan Kelulusan daripada Pengarah Negeri / Bahagian"
                     >
-                        {#if (!submitDirectorApproval && data.currentRoleCode == UserRoleConstant.pengarahNegeri.code) || data.currentRoleCode == UserRoleConstant.pengarahBahagian.code}
+                        {#if !submitDirectorApproval && (data.currentRoleCode == UserRoleConstant.pengarahNegeri.code || data.currentRoleCode == UserRoleConstant.pengarahBahagian.code)}
                             <TextIconButton
                                 label="Simpan"
                                 icon="check"
@@ -1065,36 +893,266 @@
                         </form>
                     </StepperContentBody>
                 </StepperContent>
+
+                {#if data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code || data.currentRoleCode == UserRoleConstant.pengarahBahagian.code}
+                    <StepperContent>
+                        <StepperContentHeader
+                            title="Kemaskini Maklumat Permohonan"
+                        >
+                            {#if !submitQuarterDetails && data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
+                                <TextIconButton
+                                    label="Simpan"
+                                    icon="check"
+                                    form="quarterDetailForm"
+                                />
+                            {/if}
+                        </StepperContentHeader>
+                        <StepperContentBody paddingClass="p-none">
+                            <CustomTab>
+                                {#if data.applicationType == 'kakitangan'}
+                                    <CustomTabContent
+                                        title="Maklumat Kelayakan"
+                                    >
+                                        <div
+                                            class="flex w-full flex-col justify-start gap-2.5 p-3"
+                                        >
+                                            <ContentHeader
+                                                title="Maklumat Kelayakan"
+                                                borderClass="border-none"
+                                            />
+                                            {#if data.eligibilityDetail.baseSalary}
+                                                <CustomTextField
+                                                    label="Gaji Pokok (RM)"
+                                                    id="baseSalary"
+                                                    disabled
+                                                    bind:val={data
+                                                        .eligibilityDetail
+                                                        .baseSalary}
+                                                />
+                                                <CustomTextField
+                                                    label="Elaun-elaun (RM)"
+                                                    id="allowance"
+                                                    disabled
+                                                    bind:val={data
+                                                        .eligibilityDetail
+                                                        .allowance}
+                                                />
+                                            {:else}
+                                                <div
+                                                    class="flex w-full flex-col gap-10 px-3"
+                                                >
+                                                    <Alert color="blue">
+                                                        <p>
+                                                            <span
+                                                                class="font-medium"
+                                                                >Tiada Maklumat
+                                                            </span>
+                                                            dikesan.
+                                                        </p>
+                                                    </Alert>
+                                                </div>
+                                            {/if}
+                                        </div>
+                                    </CustomTabContent>
+                                {/if}
+                                <CustomTabContent
+                                    title="Maklumat Kelulusan dan Tawaran"
+                                >
+                                    <form
+                                        class="flex w-full flex-col justify-start gap-2.5 p-3"
+                                        id="quarterDetailForm"
+                                        method="POST"
+                                        use:quarterDetailEnhance
+                                    >
+                                        <ContentHeader
+                                            title="Butiran Penempatan Kuarter"
+                                            borderClass="border-none"
+                                        />
+                                        {#if data.applicationType == 'luar'}
+                                            <CustomTextField
+                                                label="Emel Pemohon"
+                                                id="email"
+                                                placeholder=""
+                                                disabled
+                                                bind:val={$personalDetailForm.email}
+                                            />
+                                        {/if}
+                                        <CustomTextField
+                                            label="Tarikh Masuk Kuarter"
+                                            id="movingInDate"
+                                            disabled={submitQuarterDetails}
+                                            type="date"
+                                            bind:val={$quarterDetailForm.movingInDate}
+                                            errors={$quarterDetailError.movingInDate}
+                                        />
+                                        <CustomTextField
+                                            label="Unit dan Kuarter"
+                                            id="quarterDetails"
+                                            disabled={submitQuarterDetails}
+                                            bind:val={$quarterDetailForm.quarterDetails}
+                                            errors={$quarterDetailError.quarterDetails}
+                                        />
+                                    </form>
+
+                                    <form
+                                        class="flex w-full flex-col justify-start gap-2.5 p-3 pb-5"
+                                        method="POST"
+                                        use:quarterPaymentEnhance
+                                        id="quarterPaymentForm"
+                                    >
+                                        <ContentHeader
+                                            title="Kadar Bayaran Sewa Kuarters (Unit Pengurusan Fasiliti)"
+                                            borderClass="border-none"
+                                        >
+                                            {#if !submitPayment && data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
+                                                <TextIconButton
+                                                    label="Hantar"
+                                                    icon="check"
+                                                    form="quarterPaymentForm"
+                                                />
+                                            {/if}
+                                        </ContentHeader>
+                                        {#if data.applicationType !== 'luar'}
+                                            <ul
+                                                class="flex w-full flex-col gap-2.5"
+                                            >
+                                                <li>
+                                                    <Radio
+                                                        aria-describedby="in25Km"
+                                                        class="p-3"
+                                                        disabled={submitPayment}
+                                                        bind:group={$quarterPaymentForm.paymentMethod}
+                                                        value={1}
+                                                        >Dalam Jarak 25KM</Radio
+                                                    >
+                                                    <Helper
+                                                        id="in25Km"
+                                                        class="ps-9"
+                                                        >Potongan ITP 75% dan
+                                                        Potongan COLA 50%</Helper
+                                                    >
+                                                </li>
+
+                                                <li>
+                                                    <Radio
+                                                        aria-describedby="moreThan25Km"
+                                                        class="p-3"
+                                                        disabled={submitPayment}
+                                                        bind:group={$quarterPaymentForm.paymentMethod}
+                                                        value={2}
+                                                        >Jarak Melebihi 25KM</Radio
+                                                    >
+                                                    <Helper
+                                                        id="moreThan25Km"
+                                                        class="ps-9"
+                                                        >Potongan COLA 50%</Helper
+                                                    >
+                                                </li>
+
+                                                <li>
+                                                    <Radio
+                                                        aria-describedby="betterGradeForKuarters"
+                                                        class="p-3"
+                                                        disabled={submitPayment}
+                                                        bind:group={$quarterPaymentForm.paymentMethod}
+                                                        value={3}
+                                                        >Gred Jawatan Melebihi
+                                                        Kategori Kuarters</Radio
+                                                    >
+                                                    <Helper
+                                                        id="betterGradeForKuarters"
+                                                        class="ps-9"
+                                                        >Potongan ITP mengikut
+                                                        nilai sewaan gred
+                                                        tertinggi kuarters yang
+                                                        diperuntukkan (RM):</Helper
+                                                    >
+
+                                                    <div class="w-[220px] ps-9">
+                                                        <CustomTextField
+                                                            label=""
+                                                            id="rentRate"
+                                                            type="number"
+                                                            disabled={$quarterPaymentForm.paymentMethod !==
+                                                            3
+                                                                ? true
+                                                                : submitPayment
+                                                                  ? true
+                                                                  : false}
+                                                            bind:val={$quarterPaymentForm.rentRate}
+                                                            errors={$quarterPaymentError.rentRate}
+                                                        />
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        {:else}
+                                            <CustomTextField
+                                                label="Nilai Sewaan Bulanan (RM)"
+                                                type="number"
+                                                id="rentRate"
+                                                disabled={submitPayment}
+                                                bind:val={$quarterPaymentForm.rentRate}
+                                                errors={$quarterPaymentError.rentRate}
+                                            />
+                                            <CustomTextField
+                                                label="Deposit (2 bulan nilai sewaan) (RM)"
+                                                type="number"
+                                                id="deposit"
+                                                disabled={submitPayment}
+                                                bind:val={$quarterPaymentForm.deposit}
+                                                errors={$quarterPaymentError.deposit}
+                                            />
+                                            <CustomTextField
+                                                label="Deposit (Air dan Elektrik) (RM)"
+                                                type="number"
+                                                id="billDeposit"
+                                                disabled={submitPayment}
+                                                bind:val={$quarterPaymentForm.billDeposit}
+                                                errors={$quarterPaymentError.billDeposit}
+                                            />
+                                        {/if}
+                                    </form>
+                                </CustomTabContent>
+                            </CustomTab>
+                        </StepperContentBody>
+                    </StepperContent>
+                {/if}
             {/if}
 
-            <StepperContent>
-                <StepperContentHeader title="Surat Tawaran Kuarters"
-                ></StepperContentHeader>
-                <StepperContentBody>
-                    <div class="flex w-full flex-col justify-start gap-2.5 p-3">
-                        {#if !$directorApprovalForm.status}
-                            <div class="flex w-full flex-col gap-10 px-3">
-                                <Alert color="blue">
-                                    <p>
-                                        <span class="font-medium"
-                                            >Tiada Maklumat!
-                                        </span>
-                                        Surat Tawaran menduduki kuarters akan dijana
-                                        setelah permohonan diluluskan oleh Pengarah
-                                        Bahagian/Negeri.
-                                    </p>
-                                </Alert>
-                            </div>
-                        {:else}
-                            <DownloadAttachment
-                                fileName="Surat Tawaran Menduduki Kuarters.pdf"
-                                triggerDownload={() =>
-                                    handleDownload(data.quartersOfferLetter)}
-                            />
-                        {/if}
-                    </div>
-                </StepperContentBody>
-            </StepperContent>
+            {#if data.currentRoleCode == UserRoleConstant.kakitangan.code || data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
+                <StepperContent>
+                    <StepperContentHeader title="Surat Tawaran Kuarters"
+                    ></StepperContentHeader>
+                    <StepperContentBody>
+                        <div
+                            class="flex w-full flex-col justify-start gap-2.5 p-3"
+                        >
+                            {#if !submitPayment}
+                                <div class="flex w-full flex-col gap-10 px-3">
+                                    <Alert color="blue">
+                                        <p>
+                                            <span class="font-medium"
+                                                >Tiada Maklumat!
+                                            </span>
+                                            Surat Tawaran menduduki kuarters akan
+                                            dijana setelah permohonan diluluskan
+                                            oleh Pengarah Bahagian/Negeri.
+                                        </p>
+                                    </Alert>
+                                </div>
+                            {:else}
+                                <DownloadAttachment
+                                    fileName="Surat Tawaran Menduduki Kuarters.pdf"
+                                    triggerDownload={() =>
+                                        handleDownload(
+                                            data.quartersOfferLetter,
+                                        )}
+                                />
+                            {/if}
+                        </div>
+                    </StepperContentBody>
+                </StepperContent>
+            {/if}
         {:else if data.isFirstApplication}
             <StepperContent>
                 <StepperContentHeader title="Maklumat Peribadi Pemohon">

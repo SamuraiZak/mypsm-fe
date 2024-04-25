@@ -13,7 +13,7 @@ import { commonIdRequestDTOConvert, type commonIdRequestDTO } from "$lib/dto/cor
 import { ActingDetailsConvert, type ActingDetails } from "$lib/dto/mypsm/employment/acting/acting-result.dto";
 import { UpdateMainPromotionMeetingConvert, type UpdateMainPromotionMeeting } from "$lib/dto/mypsm/employment/acting/main-update-promotion-meeting.dto";
 import { QuarterCommonApprovalConvert, type QuarterCommonApproval } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto";
-import { EmployeePostponeConvert, type EmployeePostpone } from "$lib/dto/mypsm/employment/acting/acting-employee-form.dto";
+import { EmployeePostponeConvert, PostponeDetailResultConvert, type EmployeePostpone, type PostponeDetailResult } from "$lib/dto/mypsm/employment/acting/acting-employee-form.dto";
 
 
 export class EmploymentActingServices {
@@ -769,6 +769,81 @@ export class EmploymentActingServices {
             return CommonResponseConstant.httpError;
         }
     }
+    // update supporter approval
+    static async addSupporterApproval (param: QuarterCommonApproval) {
+        try{
+            const url: Input = 'employment/acting/supports/edit';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: QuarterCommonApprovalConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await getPromiseToast(promiseRes);
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    await invalidateAll();
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    // update approver approval
+    static async addApproverApproval (param: QuarterCommonApproval) {
+        try{
+            const url: Input = 'employment/acting/approves/edit';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: QuarterCommonApprovalConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await getPromiseToast(promiseRes);
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    await invalidateAll();
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+     // update postpone result
+     static async updatePostponeResult (param: PostponeDetailResult) {
+        try{
+            const url: Input = 'employment/acting/postpones/edit';
+            
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: PostponeDetailResultConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await getPromiseToast(promiseRes);
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    await invalidateAll();
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
 
     // ======================== Gred Utama
@@ -870,6 +945,56 @@ export class EmploymentActingServices {
         }
     }
 
+    //get employee meeting detail
+    static async getEmployeeMeetingDetail(param: commonIdRequestDTO) {
+        try {
+            const url: Input = 'employment/acting/employee/meeting_detail/get'
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get employee interview docs
+    static async getEmployeeInterviewDetail(param: commonIdRequestDTO) {
+        try {
+            const url: Input = 'employment/acting/employee/meeting_documents/download'
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     // update employee postpone form
     static async editPostponeStatus (param: EmployeePostpone) {
         try{
@@ -891,6 +1016,81 @@ export class EmploymentActingServices {
                 } else {
                     return CommonResponseConstant.httpError;
                 }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get employee postpone detail
+    static async getEmployeePostponeDetail(param: commonIdRequestDTO) {
+        try {
+            const url: Input = 'employment/acting/employee/postpone_detail/get'
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get employee postpone result
+    static async getEmployeePostponeResult(param: commonIdRequestDTO) {
+        try {
+            const url: Input = 'employment/acting/employee/updated_detail/get'
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get employee acting final result
+    static async getEmployeeActingResult(param: commonIdRequestDTO) {
+        try {
+            const url: Input = 'employment/acting/employee/final_result/get'
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }

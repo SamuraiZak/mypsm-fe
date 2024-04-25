@@ -28,6 +28,7 @@
         _submitDirectorApprovalForm,
         _submitMoveOutForm,
         _submitMovingOutDocument,
+        _submitOutstandingDocument,
         _submitSecretaryApprovalForm,
         _submitSetDirectorForm,
     } from './+page';
@@ -36,6 +37,7 @@
         _moveOutQuarter,
         _quarterCommonApproval,
         _setDirector,
+        _quarterSecretaryApproval,
     } from '$lib/schemas/mypsm/quarters/quarters-schema';
     import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
     import { ContractEmployeeServices } from '$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service';
@@ -46,7 +48,7 @@
     let successUpload: boolean = false;
     let secretaryApproval: boolean = false;
     let submitConfirmation: boolean = false;
-    let secretaryMovingOut: boolean = false;
+    let outstandingUploaded: boolean = false;
     let directorExist: boolean = false;
     let submitDirectorApproval: boolean = false;
     let files: FileList;
@@ -120,7 +122,7 @@
         id: 'secretaryApprovalForm',
         invalidateAll: true,
         resetForm: false,
-        validators: zod(_quarterCommonApproval),
+        validators: zod(_quarterSecretaryApproval),
         async onSubmit() {
             $secretaryApprovalForm.id = data.currentId.id;
 
@@ -132,49 +134,8 @@
             }
         },
     });
-    const {
-        form: moveOutSecretaryForm,
-        errors: moveOutSecretaryError,
-        enhance: moveOutSecretaryEnhance,
-    } = superForm(data.moveOutSecretaryForm, {
-        SPA: true,
-        taintedMessage: false,
-        id: 'moveOutSecretaryForm',
-        invalidateAll: true,
-        resetForm: false,
-        validators: zod(_moveOutQuarter),
-        async onSubmit() {
-            $moveOutSecretaryForm.id = data.currentId.id;
-            const readOnly = await _submitMoveOutForm($moveOutSecretaryForm);
-            if (readOnly?.response.status == 'success') {
-                secretaryMovingOut = true;
-            }
-        },
-    });
-    const {
-        form: setDirectorForm,
-        errors: setDirectorError,
-        enhance: setDirectorEnhance,
-    } = superForm(data.setDirectorForm, {
-        SPA: true,
-        taintedMessage: false,
-        id: 'setDirectorForm',
-        invalidateAll: true,
-        resetForm: false,
-        validators: zod(_setDirector),
-        async onSubmit() {
-            $setDirectorForm.id = data.currentId.id;
-            const readOnly = await _submitSetDirectorForm($setDirectorForm);
-            if (readOnly?.response.status == 'success') {
-                directorExist = true;
-            }
-        },
-    });
-    if ($setDirectorForm.directorApproverId !== 0) {
+    if ($secretaryApprovalForm.remark !== null) {
         directorExist = true;
-    }
-    if ($moveOutSecretaryForm.movingOutDate != '') {
-        secretaryMovingOut = true;
     }
     const {
         form: directorApprovalForm,
@@ -205,7 +166,7 @@
     const handleDownload = async (url: string) => {
         await ContractEmployeeServices.downloadContractAttachment(url);
     };
-    function uploadDocument() {
+    function uploadDocument(stepper: number) {
         if (files == undefined) {
             alert('Dokumen sokongan tidak boleh kosong.');
         } else {
@@ -215,12 +176,22 @@
                         id: data.currentId.id,
                         documents: result,
                     };
-                    const res = await _submitMovingOutDocument(
-                        JSON.stringify(quartersDocument),
-                    );
+                    if (stepper == 1) {
+                        const res = await _submitOutstandingDocument(
+                            JSON.stringify(quartersDocument),
+                        );
 
-                    if (res.response.status == 'success') {
-                        successUpload = true;
+                        if (res.response.status == 'success') {
+                            outstandingUploaded = true;
+                        }
+                    } else if (stepper == 2) {
+                        const res = await _submitMovingOutDocument(
+                            JSON.stringify(quartersDocument),
+                        );
+
+                        if (res.response.status == 'success') {
+                            successUpload = true;
+                        }
                     }
                 })
                 .catch((error) => {
@@ -533,7 +504,7 @@
                         label="Emel Pemohon"
                         id="email"
                         disabled
-                        bind:val={data.quarterDetails.email}
+                        bind:val={data.personalDetail.email}
                     />
                     <CustomTextField
                         label="Tarikh Masuk Kuarters"
@@ -558,7 +529,7 @@
                                     aria-describedby="in25Km"
                                     class="p-3"
                                     disabled
-                                    bind:group={data.quarterDetails
+                                    bind:group={data.paymentDetail
                                         .paymentMethod}
                                     value={1}>Dalam Jarak 25KM</Radio
                                 >
@@ -572,7 +543,7 @@
                                     aria-describedby="moreThan25Km"
                                     class="p-3"
                                     disabled
-                                    bind:group={data.quarterDetails
+                                    bind:group={data.paymentDetail
                                         .paymentMethod}
                                     value={2}>Jarak Melebihi 25KM</Radio
                                 >
@@ -586,7 +557,7 @@
                                     aria-describedby="betterGradeForKuarters"
                                     class="p-3"
                                     disabled
-                                    bind:group={data.quarterDetails
+                                    bind:group={data.paymentDetail
                                         .paymentMethod}
                                     value={3}
                                     >Gred Jawatan Melebihi Kategori Kuarters</Radio
@@ -602,7 +573,7 @@
                                         id=""
                                         type="number"
                                         disabled
-                                        bind:val={data.quarterDetails.rentRate}
+                                        bind:val={data.paymentDetail.rentRate}
                                     />
                                 </div>
                             </li>
@@ -613,70 +584,127 @@
                             type="number"
                             id="rentRate"
                             disabled
-                            bind:val={data.quarterDetails.rentRate}
+                            bind:val={data.paymentDetail.rentRate}
                         />
                         <CustomTextField
                             label="Deposit (2 bulan nilai sewaan) (RM)"
                             type="number"
                             id="deposit"
                             disabled
-                            bind:val={data.quarterDetails.deposit}
+                            bind:val={data.paymentDetail.deposit}
                         />
                         <CustomTextField
                             label="Deposit (Air dan Elektrik) (RM)"
                             type="number"
                             id="billDeposit"
                             disabled
-                            bind:val={data.quarterDetails.billDeposit}
+                            bind:val={data.paymentDetail.billDeposit}
                         />
                     {/if}
                 </div>
             </StepperContentBody>
         </StepperContent>
 
-        {#if data.applicationType == 'kakitangan'}
-            <StepperContent>
-                <StepperContentHeader title="Maklumat Keluar Kuarters">
-                    {#if !moveOutSubmitted && data.currentRoleCode == UserRoleConstant.kakitangan.code}
-                        <TextIconButton
-                            label="Simpan"
-                            icon="check"
-                            form="moveOutForm"
+        <StepperContent>
+            <StepperContentHeader title="Maklumat Keluar Kuarters">
+                {#if (!moveOutSubmitted && data.currentRoleCode == UserRoleConstant.kakitangan.code) || data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
+                    <TextIconButton
+                        label="Simpan"
+                        icon="check"
+                        form="moveOutForm"
+                    />
+                {/if}
+            </StepperContentHeader>
+            <StepperContentBody>
+                <form
+                    class="flex w-full flex-col justify-start gap-2.5 p-3"
+                    id="moveOutForm"
+                    method="POST"
+                    use:moveOutEnhance
+                >
+                    <CustomTextField
+                        label="Tarikh Keluar Kuarter Yang Dipohon"
+                        id="movingOutDate"
+                        disabled={moveOutSubmitted}
+                        type="date"
+                        bind:val={$moveOutForm.movingOutDate}
+                        errors={$moveOutError.movingOutDate}
+                    />
+                    <CustomTextField
+                        label="Unit dan Kuarter"
+                        id="quarterDetails"
+                        disabled
+                        bind:val={data.quarterDetails.quarterDetails}
+                    />
+
+                    {#if data.applicationType == 'luar'}
+                        <ContentHeader
+                            title="Butiran Tunggakan Bayaran"
+                            borderClass="border-none"
                         />
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <form
-                        class="flex w-full flex-col justify-start gap-2.5 p-3"
-                        id="moveOutForm"
-                        method="POST"
-                        use:moveOutEnhance
-                    >
-                        <CustomTextField
-                            label="Tarikh Keluar Kuarter Yang Dipohon"
-                            id="movingOutDate"
-                            disabled={moveOutSubmitted}
-                            type="date"
-                            bind:val={$moveOutForm.movingOutDate}
-                            errors={$moveOutError.movingOutDate}
-                        />
-                        <CustomTextField
+                        <CustomRadioBoolean
                             label="Unit dan Kuarter"
-                            id="quarterDetails"
-                            disabled
-                            bind:val={data.quarterDetails.quarterDetails}
+                            id="outstandingBalance"
+                            disabled={moveOutSubmitted}
+                            bind:val={$moveOutForm.outstandingBalance}
                         />
-                    </form>
-                </StepperContentBody>
-            </StepperContent>
-        {/if}
+                        {#if $moveOutForm.outstandingBalance}
+                            <CustomTextField
+                                label="Jumlah Tunggakan (RM)"
+                                id="outstandingAmount"
+                                type="number"
+                                disabled={moveOutSubmitted}
+                                bind:val={$moveOutForm.outstandingAmount}
+                            />
+
+                            {#if data.outstandingDocument.document.length > 0}
+                                <div
+                                    class="flex h-fit w-full flex-col justify-start gap-2 pb-5 text-sm text-ios-labelColors-secondaryLabel-light"
+                                >
+                                    {#each data.outstandingDocument.document as documents}
+                                        <a
+                                            href={documents.document}
+                                            download={documents.name}
+                                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                            >{documents.name}</a
+                                        >
+                                    {/each}
+                                </div>
+                            {:else}
+                                <div class="flex w-full flex-col gap-2">
+                                    <ContentHeader
+                                        title="Tindakan: Muat naik surat arahan bayaran tunggakan."
+                                        borderClass="border-none"
+                                    >
+                                        {#if !outstandingUploaded && data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
+                                            <TextIconButton
+                                                label="Muat Naik"
+                                                icon="check"
+                                                onClick={() =>
+                                                    uploadDocument(1)}
+                                            />
+                                        {/if}
+                                    </ContentHeader>
+                                    <CustomFileField
+                                        label="Muat naik"
+                                        id="movingOutDocument"
+                                        bind:files
+                                    ></CustomFileField>
+                                </div>
+                            {/if}
+                        {/if}
+                    {/if}
+                </form>
+            </StepperContentBody>
+        </StepperContent>
+
         <StepperContent>
             <StepperContentHeader title="Dokumen Sokongan">
                 {#if !successUpload && (data.currentRoleCode == UserRoleConstant.kakitangan.code || data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code)}
                     <TextIconButton
                         label="Simpan"
                         icon="check"
-                        onClick={() => uploadDocument()}
+                        onClick={() => uploadDocument(2)}
                     />
                 {/if}
             </StepperContentHeader>
@@ -805,19 +833,20 @@
                             options={approveOptions}
                             bind:val={$secretaryApprovalForm.status}
                         />
+                        <CustomSelectField
+                            label="Pengarah Bahagian/Negeri"
+                            options={data.lookup.supporterApproverLookup}
+                            disabled={secretaryApproval}
+                            id="directorApproverId"
+                            bind:val={$secretaryApprovalForm.directorApproverId}
+                            errors={$secretaryApprovalError.directorApproverId}
+                        />
                     </form>
                 </StepperContentBody>
             </StepperContent>
 
             <StepperContent>
                 <StepperContentHeader title="Maklumat Permohonan">
-                    {#if !secretaryMovingOut && data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
-                        <TextIconButton
-                            label="Simpan"
-                            icon="check"
-                            form="moveOutSecretaryForm"
-                        />
-                    {/if}
                 </StepperContentHeader>
                 <StepperContentBody paddingClass="p-none">
                     <CustomTab>
@@ -829,7 +858,7 @@
                                     label="Emel Pemohon"
                                     id="email"
                                     disabled
-                                    bind:val={data.quarterDetails.email}
+                                    bind:val={data.personalDetail.email}
                                 />
                                 <CustomTextField
                                     label="Tarikh Masuk Kuarters"
@@ -856,7 +885,7 @@
                                                 aria-describedby="in25Km"
                                                 class="p-3"
                                                 disabled
-                                                bind:group={data.quarterDetails
+                                                bind:group={data.paymentDetail
                                                     .paymentMethod}
                                                 value={1}
                                                 >Dalam Jarak 25KM</Radio
@@ -872,7 +901,7 @@
                                                 aria-describedby="moreThan25Km"
                                                 class="p-3"
                                                 disabled
-                                                bind:group={data.quarterDetails
+                                                bind:group={data.paymentDetail
                                                     .paymentMethod}
                                                 value={2}
                                                 >Jarak Melebihi 25KM</Radio
@@ -889,7 +918,7 @@
                                                 aria-describedby="betterGradeForKuarters"
                                                 class="p-3"
                                                 disabled
-                                                bind:group={data.quarterDetails
+                                                bind:group={data.paymentDetail
                                                     .paymentMethod}
                                                 value={3}
                                                 >Gred Jawatan Melebihi Kategori
@@ -909,8 +938,7 @@
                                                     id=""
                                                     type="number"
                                                     disabled
-                                                    bind:val={data
-                                                        .quarterDetails
+                                                    bind:val={data.paymentDetail
                                                         .rentRate}
                                                 />
                                             </div>
@@ -922,35 +950,32 @@
                                         type="number"
                                         id="rentRate"
                                         disabled
-                                        bind:val={data.quarterDetails.rentRate}
+                                        bind:val={data.paymentDetail.rentRate}
                                     />
                                     <CustomTextField
                                         label="Deposit (2 bulan nilai sewaan) (RM)"
                                         type="number"
                                         id="deposit"
                                         disabled
-                                        bind:val={data.quarterDetails.deposit}
+                                        bind:val={data.paymentDetail.deposit}
                                     />
                                     <CustomTextField
                                         label="Deposit (Air dan Elektrik) (RM)"
                                         type="number"
                                         id="billDeposit"
                                         disabled
-                                        bind:val={data.quarterDetails
+                                        bind:val={data.paymentDetail
                                             .billDeposit}
                                     />
                                 {/if}
                             </div>
                         </CustomTabContent>
                         <CustomTabContent title="Maklumat Keluar">
-                            <form
+                            <div
                                 class="flex w-full flex-col justify-start gap-2.5 p-3"
-                                id="moveOutSecretaryForm"
-                                method="POST"
-                                use:moveOutSecretaryEnhance
                             >
                                 <ContentHeader
-                                    title="Kemaskini Butiran Keluar Kuarter"
+                                    title="Butiran Keluar Kuarter"
                                     borderClass="border-none"
                                 />
 
@@ -958,9 +983,9 @@
                                     label="Tarikh Keluar Kuarter"
                                     id="movingOutDate"
                                     type="date"
-                                    disabled={secretaryMovingOut}
-                                    bind:val={$moveOutSecretaryForm.movingOutDate}
-                                    errors={$moveOutSecretaryError.movingOutDate}
+                                    disabled
+                                    bind:val={$moveOutForm.movingOutDate}
+                                    errors={$moveOutError.movingOutDate}
                                 />
                                 <CustomTextField
                                     label="Unit dan Kuarters"
@@ -969,7 +994,7 @@
                                     bind:val={data.quarterDetails
                                         .quarterDetails}
                                 />
-                            </form>
+                            </div>
                         </CustomTabContent>
                     </CustomTab>
                 </StepperContentBody>
@@ -979,13 +1004,6 @@
                 <StepperContentHeader
                     title="Ulasan daripada Pengarah Bahagian/Negeri"
                 >
-                    {#if !directorExist && data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
-                        <TextIconButton
-                            label="Simpan"
-                            icon="check"
-                            form="setDirectorForm"
-                        />
-                    {/if}
                     {#if !submitDirectorApproval && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
                         <TextIconButton
                             label="Simpan"
@@ -995,23 +1013,8 @@
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
-                    <form
-                        class="flex w-full flex-col justify-start gap-2.5 px-3 pt-3"
-                        method="POST"
-                        id="setDirectorForm"
-                        use:setDirectorEnhance
-                    >
-                        <CustomSelectField
-                            label="Pengarah Bahagian/Negeri"
-                            options={data.lookup.supporterApproverLookup}
-                            disabled={directorExist}
-                            id="directorApproverId"
-                            bind:val={$setDirectorForm.directorApproverId}
-                            errors={$setDirectorError.directorApproverId}
-                        />
-                    </form>
                     {#if directorExist}
-                        {#if !submitDirectorApproval && data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
+                        {#if !submitDirectorApproval && (data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code)}
                             <div class="flex w-full flex-col gap-10 px-3">
                                 <Alert color="blue">
                                     <p>
@@ -1023,6 +1026,18 @@
                                 </Alert>
                             </div>
                         {:else}
+                            <div
+                                class="flex w-full flex-col justify-start gap-2.5 px-3 pt-3"
+                            >
+                                <CustomSelectField
+                                    label="Pengarah Bahagian/Negeri"
+                                    options={data.lookup
+                                        .supporterApproverLookup}
+                                    disabled
+                                    id="directorApproverId"
+                                    bind:val={$secretaryApprovalForm.directorApproverId}
+                                />
+                            </div>
                             <form
                                 class="flex w-full flex-col justify-start gap-2.5 px-3"
                                 id="directorApprovalForm"

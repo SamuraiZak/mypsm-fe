@@ -1256,15 +1256,15 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Pinjaman Komputer, Telefon Pintar dan Kenderaan',
-                            path: '/pinjaman-kuarters/pinjaman',
+                            path: '/pinjaman-dan-kuarters/pinjaman',
                         },
                         {
                             name: 'Kuarters - Permohonan Menduduki Kuarter',
-                            path: '/pinjaman-kuarters/permohonan-menduduki-kuarter',
+                            path: '/pinjaman-dan-kuarters/permohonan-menduduki-kuarters',
                         },
                         {
                             name: 'Kuarters - Permohonan Keluar Kuarter',
-                            path: '/pinjaman-kuarters/permohonan-keluar-kuarter',
+                            path: '/pinjaman-dan-kuarters/permohonan-keluar-kuarters',
                         },
                     ],
                 },

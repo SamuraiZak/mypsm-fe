@@ -63,7 +63,7 @@
                     ) {
                         goto(
                             './permohonan-masuk-kuarters/butiran/' +
-                                undefined+
+                                "baru"+
                                 '-' +
                                 'kakitangan',
                         );
@@ -73,7 +73,7 @@
                     ) {
                         goto(
                             './permohonan-masuk-kuarters/butiran/' +
-                                undefined +
+                                "baru" +
                                 '-' +
                                 'luar',
                         );

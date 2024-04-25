@@ -4,6 +4,7 @@ export interface UpdateMainPromotionMeeting {
     actingGrade:    string;
     placement:      string;
     meetingName:    string;
+    meetingDate:    string;
     referenceTitle: string;
     referenceNo:    string;
     referenceDate:  string;

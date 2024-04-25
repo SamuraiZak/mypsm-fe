@@ -11,13 +11,12 @@ import type { OutsiderServiceDetail, QuartersServiceDetail } from "$lib/dto/myps
 import type { OutsiderFamily, QuartersPartnerDetail } from "$lib/dto/mypsm/pinjaman/kuarters/application-partner-detail.dto"
 import { superValidate } from "sveltekit-superforms"
 import { zod } from "sveltekit-superforms/adapters"
-import { _addConfirmationSchema, _addQuarterDetails, _outsiderApplication, _outsiderFamily, _outsiderService, _quarterCommonApproval } from "$lib/schemas/mypsm/quarters/quarters-schema"
+import { _addConfirmationSchema, _addQuarterDetails, _outsiderApplication, _outsiderFamily, _outsiderService, _quarterCommonApproval, _quarterSecretaryApproval, _quartersPayment } from "$lib/schemas/mypsm/quarters/quarters-schema"
 import type { QuartersAddConfirmation } from "$lib/dto/mypsm/pinjaman/kuarters/application-confirmation.dto"
 import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-document-request.dto"
 import type { QuartersGetDocument } from "$lib/dto/mypsm/pinjaman/kuarters/application-get-document.dto"
-import type { QuarterCommonApproval } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto"
-import type { QuarterDetails } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-details.dto"
-import type { OutsiderPersonalDetail } from "$lib/dto/mypsm/pinjaman/kuarters/outsider-personal-detail.dto"
+import type { QuarterCommonApproval, QuarterSecretaryApproval } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto"
+import type { QuarterDetails, QuarterPayment } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-details.dto"
 import type { OutsiderId } from "$lib/dto/mypsm/pinjaman/kuarters/outsider-id.dto"
 import { goto } from "$app/navigation"
 import { UserRoleConstant } from "$lib/constants/core/user-role.constant.js"
@@ -38,27 +37,29 @@ export const load = async ({ params }) => {
         id: 0,
         document: [],
     };
-    let secretaryApproval = {} as QuarterCommonApproval;
+    let secretaryApproval = {} as QuarterSecretaryApproval;
     let quarterDetails = {} as QuarterDetails;
     let directorApproval = {} as QuarterCommonApproval;
+    let paymentDetail = {} as QuarterPayment;
     let eligibilityDetail = {} as QuartersEligibilityDetail;
     let isFirstApplication: boolean = false;
     //employee
     const confirmationForm = await superValidate(zod(_addConfirmationSchema), { errors: false });
-    const secretaryApprovalForm = await superValidate(zod(_quarterCommonApproval), { errors: false });
-    const quarterDetailForm = await superValidate(zod(_addQuarterDetails), { errors: false });
+    const secretaryApprovalForm = await superValidate(zod(_quarterSecretaryApproval), { errors: false });
     const directorApprovalForm = await superValidate(zod(_quarterCommonApproval), { errors: false });
+    const quarterDetailForm = await superValidate(zod(_addQuarterDetails), { errors: false });
+    const quarterPaymentForm = await superValidate(zod(_quartersPayment), { errors: false });
     //outsider
     const personalDetailForm = await superValidate(zod(_outsiderApplication));
     const outsiderFamily = await superValidate(zod(_outsiderFamily));
     const outsiderServiceForm = await superValidate(zod(_outsiderService));
 
-    if (params.id !== "undefined" && applicationType == "kakitangan") {
+    if (params.id !== "baru" && applicationType == "kakitangan") {
         const personalDetailResponse: CommonResponseDTO =
             await QuartersServices.getApplicationPersonalDetail(currentId);
         personalDetail =
             personalDetailResponse.data?.details as QuartersPersonalDetail;
-        if(personalDetailResponse.status == "success"){
+        if (personalDetailResponse.status == "success") {
             personalDetailForm.data = personalDetail
         }
         const serviceDetailResponse: CommonResponseDTO =
@@ -86,7 +87,7 @@ export const load = async ({ params }) => {
         const secretaryApprovalResponse: CommonResponseDTO =
             await QuartersServices.getApplicationSecretaryApproval(currentId);
         secretaryApproval =
-            secretaryApprovalResponse.data?.details as QuarterCommonApproval;
+            secretaryApprovalResponse.data?.details as QuarterSecretaryApproval;
         if (secretaryApprovalResponse.status == "success") {
             secretaryApprovalForm.data = secretaryApproval
         }
@@ -108,8 +109,15 @@ export const load = async ({ params }) => {
             await QuartersServices.getEligibility(currentId);
         eligibilityDetail =
             eligibilityDetailResponse.data?.details as QuartersEligibilityDetail;
+        const paymentDetailResponse: CommonResponseDTO =
+            await QuartersServices.getQuarterPayment(currentId);
+        paymentDetail =
+            paymentDetailResponse.data?.details as QuarterPayment;
+        if (paymentDetailResponse.status == "success") {
+            quarterPaymentForm.data = paymentDetail;
+        }
 
-    } else if (params.id !== "undefined" && applicationType == "luar") {
+    } else if (params.id !== "baru" && applicationType == "luar") {
         const personalDetailResponse: CommonResponseDTO =
             await QuartersServices.getOutsiderPersonalDetail(currentId);
         personalDetail =
@@ -133,26 +141,33 @@ export const load = async ({ params }) => {
         const secretaryApprovalResponse: CommonResponseDTO =
             await QuartersServices.getApplicationSecretaryApproval(currentId);
         secretaryApproval =
-            secretaryApprovalResponse.data?.details as QuarterCommonApproval;
-        if(secretaryApprovalResponse.status == "success"){
+            secretaryApprovalResponse.data?.details as QuarterSecretaryApproval;
+        if (secretaryApprovalResponse.status == "success") {
             secretaryApprovalForm.data = secretaryApproval;
         }
         const quarterDetailsResponse: CommonResponseDTO =
             await QuartersServices.getApplicationQuarterDetails(currentId);
         quarterDetails =
             quarterDetailsResponse.data?.details as QuarterDetails;
-        if(quarterDetailsResponse.status == "success"){
+        if (quarterDetailsResponse.status == "success") {
             quarterDetailForm.data = quarterDetails;
         }
         const directorApprovalResponse: CommonResponseDTO =
             await QuartersServices.getApplicationDirectorApproval(currentId);
         directorApproval =
             directorApprovalResponse.data?.details as QuarterCommonApproval;
-        if(directorApprovalResponse.status == "success"){
+        if (directorApprovalResponse.status == "success") {
             directorApprovalForm.data = directorApproval;
         }
+        const paymentDetailResponse: CommonResponseDTO =
+            await QuartersServices.getQuarterPayment(currentId);
+        paymentDetail =
+            paymentDetailResponse.data?.details as QuarterPayment;
+        if (paymentDetailResponse.status == "success") {
+            quarterPaymentForm.data = paymentDetail;
+        }
 
-    } else if (params.id == "undefined" && currentRoleCode == UserRoleConstant.kakitangan.code) {
+    } else if (params.id == "baru" && currentRoleCode == UserRoleConstant.kakitangan.code) {
         isFirstApplication = true;
         const response: CommonResponseDTO =
             await QuartersServices.getEmployeePersonalDetail()
@@ -179,6 +194,7 @@ export const load = async ({ params }) => {
         quartersOfferLetter,
         eligibilityDetail,
         applicationType,
+        quarterPaymentForm,
         //outsider
         personalDetailForm,
         outsiderFamily,
@@ -192,7 +208,7 @@ export const _applyQuarters = async () => {
         await QuartersServices.addMovingInApplication();
 
     if (response.status == "success") {
-        goto('/pinjaman-dan-kuarters/permohonan-masuk-kuarters/butiran/'+response.data?.details.id+'-kakitangan')
+        goto('/pinjaman-dan-kuarters/permohonan-masuk-kuarters/butiran/' + response.data?.details.id + '-kakitangan')
     } else {
         throw new Error('Failed to create new application.')
     }
@@ -203,10 +219,7 @@ export const _applyMoveoutQuarters = async (form: commonIdRequestDTO) => {
 
     if (response.status == "success") {
         setTimeout(() => goto(
-            '/pinjaman-dan-kuarters/permohonan-keluar-kuarters/butiran/' +
-            response.data?.details.id +
-            '-' +
-            'kakitangan',
+            '/pinjaman-dan-kuarters/permohonan-keluar-kuarters'
         ), 1000)
     } else {
         throw new Error('Failed to create new application.')
@@ -218,10 +231,7 @@ export const _applyMoveoutQuartersForOutsiders = async (form: commonIdRequestDTO
 
     if (response.status == "success") {
         setTimeout(() => goto(
-            '/pinjaman-dan-kuarters/permohonan-keluar-kuarters/butiran/' +
-            response.data?.details.id +
-            '-' +
-            'luar',
+            '/pinjaman-dan-kuarters/permohonan-keluar-kuarters'
         ), 1000)
     } else {
         throw new Error('Failed to create new application.')
@@ -246,22 +256,12 @@ export const _submitQuartersDocument = async (formData: string) => {
     return { response }
 }
 
-export const _submitSecretaryApprovalForm = async (formData: QuarterCommonApproval) => {
-    const form = await superValidate(formData, zod(_quarterCommonApproval));
+export const _submitSecretaryApprovalForm = async (formData: QuarterSecretaryApproval) => {
+    const form = await superValidate(formData, zod(_quarterSecretaryApproval));
 
     if (form.valid) {
         const response: CommonResponseDTO =
-            await QuartersServices.addApplicationSecretaryApproval(form.data as QuarterCommonApproval)
-
-        return { response }
-    }
-}
-export const _submitQuarterDetailsForm = async (formData: QuarterDetails) => {
-    const form = await superValidate(formData, zod(_addQuarterDetails));
-
-    if (form.valid) {
-        const response: CommonResponseDTO =
-            await QuartersServices.addApplicationQuarterDetails(form.data as QuarterDetails)
+            await QuartersServices.addApplicationSecretaryApproval(form.data as QuarterSecretaryApproval)
 
         return { response }
     }
@@ -276,6 +276,27 @@ export const _submitDirectorApprovalForm = async (formData: QuarterCommonApprova
         return { response }
     }
 }
+export const _submitQuarterDetailsForm = async (formData: QuarterDetails) => {
+    const form = await superValidate(formData, zod(_addQuarterDetails));
+
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await QuartersServices.addApplicationQuarterDetails(form.data as QuarterDetails)
+
+        return { response }
+    }
+}
+export const _submitQuarterPayment = async (formData: QuarterPayment) => {
+    const form = await superValidate(formData, zod(_quartersPayment));
+
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await QuartersServices.addQuarterPayment(form.data as QuarterPayment)
+
+        return { response }
+    }
+}
+
 
 // ======================================== Outsider Registration
 export const _submitOutsiderFamilyForm = async (formData: OutsiderFamily) => {

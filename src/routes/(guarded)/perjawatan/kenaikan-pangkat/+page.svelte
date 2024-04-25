@@ -4,25 +4,16 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
-    import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
-    import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type {
-        TableDTO,
         TableSettingDTO,
     } from '$lib/dto/core/table/table.dto';
     import type { PromotionCommonList } from '$lib/dto/mypsm/employment/promotion/promotion-common-list.dto';
     import type { PageData } from './$types';
-    import { _updateTable } from './+page';
     export let data: PageData;
 
     // Role Code
-    let employeeRoleCode: string = UserRoleConstant.kakitangan.code;
-    let secretaryRoleCode: string = UserRoleConstant.urusSetiaPerjawatan.code;
-    let supporterRoleCode: string = UserRoleConstant.penyokong.code;
-    let approverRoleCode: string = UserRoleConstant.pelulus.code;
     let stateDirectorRoleCode: string = UserRoleConstant.pengarahNegeri.code;
     let depDirectorRoleCode: string = UserRoleConstant.pengarahBahagian.code;
 
@@ -125,32 +116,32 @@
         },
     };
 
-    let param: CommonListRequestDTO = data.param;
-    let table: TableDTO = {
-        param: param,
-        meta: {
-            pageSize: 5,
+    let employeeTable: TableSettingDTO = {
+        param: data.param,
+        meta: data.employeePromotionResponse.data?.meta ?? {
+            pageSize: 1,
             pageNum: 1,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
-        //varies based on role, US & PBN view the same table @ penyokong and pelulus view same table diff data from US & PBN
-        data: data.dataList ?? [], //datalist for US & PBN @ datalist2 for penyokong and pelulus
-        //data: role === penyokong ? data.datalist : data.datalist2 ?? [],
+        data: data.employeePromotion,
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['groupId'],
+        dictionary: [],
+        url: 'employment/promotion/employee/list',
+        id: 'table154',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
     };
-    async function _search() {
-        _updateTable(table.param).then((value) => {
-            table.data = value.response?.dataList ?? [];
-            table.meta = value.response?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            table.param.pageSize = table.meta.pageSize;
-            table.param.pageNum = table.meta.pageNum;
-        });
-    }
 </script>
 
 <!-- content header starts here -->
@@ -162,7 +153,7 @@
                 type="primary"
                 label="Kenaikan Pangkat Baru"
                 options={gradeOptions}
-            />  
+            />
         {/if}
     </ContentHeader>
 </section>
@@ -185,7 +176,12 @@
                             bind:tableData={table154}
                             bind:passData={rowData}
                             detailActions={() => {
-                                goto('/perjawatan/kenaikan-pangkat/butiran/'+rowData.groupId+'-'+'Gred 1-54')
+                                goto(
+                                    '/perjawatan/kenaikan-pangkat/butiran/' +
+                                        rowData.groupId +
+                                        '-' +
+                                        'Gred 1-54',
+                                );
                             }}
                         ></DataTable>
                     </div>
@@ -205,7 +201,12 @@
                             bind:tableData={tableTbk12}
                             bind:passData={rowData}
                             detailActions={() => {
-                                goto('/perjawatan/kenaikan-pangkat/butiran/'+rowData.groupId+'-'+'Gred TBK 1 dan 2')
+                                goto(
+                                    '/perjawatan/kenaikan-pangkat/butiran/' +
+                                        rowData.groupId +
+                                        '-' +
+                                        'Gred TBK 1 dan 2',
+                                );
                             }}
                         ></DataTable>
                     </div>
@@ -225,7 +226,12 @@
                                 bind:tableData={tableMain}
                                 bind:passData={rowData}
                                 detailActions={() => {
-                                goto('/perjawatan/kenaikan-pangkat/butiran/'+rowData.groupId+'-'+'Gred Utama')
+                                    goto(
+                                        '/perjawatan/kenaikan-pangkat/butiran/' +
+                                            rowData.groupId +
+                                            '-' +
+                                            'Gred Utama',
+                                    );
                                 }}
                             ></DataTable>
                         </div>
@@ -233,19 +239,16 @@
                 </CustomTabContent>
             {/if}
         </CustomTab>
-    {:else if data.currentRoleCode === employeeRoleCode}
-        <div class="flex w-full flex-col justify-start px-5 py-2">
-            <ContentHeader
-                borderClass="border-none"
-                title="Senarai Rekod Kenaikan Pangkat"
-            />
-            <CustomTable
-                title=""
-                tableData={table}
-                enableDetail
-                detailActions={() =>
-                    goto('/perjawatan/kenaikan-pangkat/butiran-rekod')}
-            />
+    {:else if data.currentRoleCode === UserRoleConstant.kakitangan.code}
+        <div class="flex w-full flex-col justify-start p-5">
+            <div class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10">
+                <div class="h-fit w-full">
+                    <DataTable
+                        title="Rekod Kenaikan Pangkat"
+                        bind:tableData={employeeTable}
+                    ></DataTable>
+                </div>
+            </div>
         </div>
     {/if}
 </section>

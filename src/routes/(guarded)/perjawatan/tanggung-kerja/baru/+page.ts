@@ -45,7 +45,7 @@ const getLookup = async () => {
         await LookupServices.getServiceGradeEnums();
 
     const gradeLookup: DropdownDTO[] =
-        LookupServices.setSelectOptions(gradeLookupResponse);
+        LookupServices.setSelectOptionsNameIsCode(gradeLookupResponse);
     // -------------------------------------------------------
     const placementLookupResponse: CommonResponseDTO =
         await LookupServices.getPlacementEnums();

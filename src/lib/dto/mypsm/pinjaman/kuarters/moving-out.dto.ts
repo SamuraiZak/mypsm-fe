@@ -2,6 +2,8 @@ export interface MoveOutQuarters {
     id:            number;
     movingOutDate: string;
     quarterDetails?: string;
+    outstandingBalance: boolean;
+    outstandingAmount?: number;
 }
 
 // Converts JSON strings to/from your types

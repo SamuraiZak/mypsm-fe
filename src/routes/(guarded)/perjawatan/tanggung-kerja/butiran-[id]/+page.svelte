@@ -28,7 +28,7 @@
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import { zod } from 'sveltekit-superforms/adapters';
     import { superForm } from 'sveltekit-superforms/client';
-    import { Checkbox } from 'flowbite-svelte';
+    import { Alert, Checkbox } from 'flowbite-svelte';
     import {
         approveOptions,
         supportOptions,
@@ -101,7 +101,7 @@
             }
         },
     });
-    if ($skippingForm.remark !== '') {
+    if ($skippingForm.remark !== null) {
         submitSkip = true;
     }
     const {
@@ -489,7 +489,7 @@
                 <StepperContentHeader
                     title="Sokongan dari Pengarah Bahagian/Negeri"
                 >
-                    {#if !submitDirector && data.currentRoleCode == UserRoleConstant.pengarahBahagian.code && data.currentRoleCode == UserRoleConstant.pengarahNegeri.code}
+                    {#if (!submitDirector && data.currentRoleCode == UserRoleConstant.pengarahBahagian.code) || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code}
                         <TextIconButton
                             label="Simpan"
                             icon="check"
@@ -502,7 +502,7 @@
                         title="Ulasan Keputusan Daripada Pengarah Bahagian/Negeri"
                         borderClass="border-none"
                     />
-                    {#if data.interimSupportDetail.name == ''}
+                    {#if (data.interimSupportDetail.name == '' && data.currentRoleCode == UserRoleConstant.pengarahBahagian.code) || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code}
                         <form
                             class="flex w-full flex-col justify-start gap-2.5"
                             method="POST"
@@ -530,18 +530,21 @@
                             <CustomTextField
                                 label="Nama"
                                 disabled
+                                placeholder="Menunggu keputusan..."
                                 id="name"
                                 bind:val={data.interimSupportDetail.name}
                             />
                             <CustomTextField
                                 label="Ulasan"
                                 disabled
+                                placeholder="Menunggu keputusan..."
                                 id="remark"
                                 bind:val={data.interimSupportDetail.remark}
                             />
                             <CustomTextField
                                 label="Keputusan"
                                 disabled
+                                placeholder="Menunggu keputusan..."
                                 id="status"
                                 bind:val={data.interimSupportDetail.status}
                             />
@@ -615,6 +618,9 @@
                                             class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             <Checkbox
+                                                class={submitChecklist
+                                                    ? 'text-ios-labelColors-secondaryLabel-light'
+                                                    : ''}
                                                 disabled={submitChecklist}
                                                 bind:checked={$checklistForm.applicationLetterStatus}
                                             />
@@ -627,6 +633,9 @@
                                             class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             <Checkbox
+                                                class={submitChecklist
+                                                    ? 'text-ios-labelColors-secondaryLabel-light'
+                                                    : ''}
                                                 disabled={submitChecklist}
                                                 bind:checked={$checklistForm.applicationLetterCheck}
                                             />
@@ -653,6 +662,9 @@
                                             class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             <Checkbox
+                                                class={submitChecklist
+                                                    ? 'text-ios-labelColors-secondaryLabel-light'
+                                                    : ''}
                                                 disabled={submitChecklist}
                                                 bind:checked={$checklistForm.certifiedFormStatus}
                                             />
@@ -665,6 +677,9 @@
                                             class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             <Checkbox
+                                                class={submitChecklist
+                                                    ? 'text-ios-labelColors-secondaryLabel-light'
+                                                    : ''}
                                                 disabled={submitChecklist}
                                                 bind:checked={$checklistForm.certifiedFormCheck}
                                             />
@@ -695,6 +710,9 @@
                                             class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             <Checkbox
+                                                class={submitChecklist
+                                                    ? 'text-ios-labelColors-secondaryLabel-light'
+                                                    : ''}
                                                 disabled={submitChecklist}
                                                 bind:checked={$checklistForm.organisationalChartStatus}
                                             />
@@ -707,6 +725,9 @@
                                             class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             <Checkbox
+                                                class={submitChecklist
+                                                    ? 'text-ios-labelColors-secondaryLabel-light'
+                                                    : ''}
                                                 disabled={submitChecklist}
                                                 bind:checked={$checklistForm.organisationalChartCheck}
                                             />
@@ -734,6 +755,9 @@
                                             class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             <Checkbox
+                                                class={submitChecklist
+                                                    ? 'text-ios-labelColors-secondaryLabel-light'
+                                                    : ''}
                                                 disabled={submitChecklist}
                                                 bind:checked={$checklistForm.jobDescriptionStatus}
                                             />
@@ -746,6 +770,9 @@
                                             class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             <Checkbox
+                                                class={submitChecklist
+                                                    ? 'text-ios-labelColors-secondaryLabel-light'
+                                                    : ''}
                                                 disabled={submitChecklist}
                                                 bind:checked={$checklistForm.jobDescriptionCheck}
                                             />
@@ -776,6 +803,9 @@
                                             class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             <Checkbox
+                                                class={submitChecklist
+                                                    ? 'text-ios-labelColors-secondaryLabel-light'
+                                                    : ''}
                                                 disabled={submitChecklist}
                                                 bind:checked={$checklistForm.orderLetterStatus}
                                             />
@@ -788,6 +818,9 @@
                                             class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             <Checkbox
+                                                class={submitChecklist
+                                                    ? 'text-ios-labelColors-secondaryLabel-light'
+                                                    : ''}
                                                 disabled={submitChecklist}
                                                 bind:checked={$checklistForm.orderLetterCheck}
                                             />
@@ -820,6 +853,9 @@
                                             class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             <Checkbox
+                                                class={submitChecklist
+                                                    ? 'text-ios-labelColors-secondaryLabel-light'
+                                                    : ''}
                                                 disabled={submitChecklist}
                                                 bind:checked={$checklistForm.leaveStatementStatus}
                                             />
@@ -832,6 +868,9 @@
                                             class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             <Checkbox
+                                                class={submitChecklist
+                                                    ? 'text-ios-labelColors-secondaryLabel-light'
+                                                    : ''}
                                                 disabled={submitChecklist}
                                                 bind:checked={$checklistForm.leaveStatementCheck}
                                             />
@@ -877,6 +916,9 @@
                                             class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             <Checkbox
+                                                class={submitChecklist
+                                                    ? 'text-ios-labelColors-secondaryLabel-light'
+                                                    : ''}
                                                 disabled={submitChecklist}
                                                 bind:checked={$checklistForm.documentListStatus}
                                             />
@@ -889,6 +931,9 @@
                                             class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             <Checkbox
+                                                class={submitChecklist
+                                                    ? 'text-ios-labelColors-secondaryLabel-light'
+                                                    : ''}
                                                 disabled={submitChecklist}
                                                 bind:checked={$checklistForm.documentListCheck}
                                             />
@@ -926,6 +971,9 @@
                                             class="flex h-fit items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             <Checkbox
+                                                class={submitChecklist
+                                                    ? 'text-ios-labelColors-secondaryLabel-light'
+                                                    : ''}
                                                 disabled={submitChecklist}
                                                 bind:checked={$checklistForm.justificationStatus}
                                             />
@@ -938,6 +986,9 @@
                                             class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             <Checkbox
+                                                class={submitChecklist
+                                                    ? 'text-ios-labelColors-secondaryLabel-light'
+                                                    : ''}
                                                 disabled={submitChecklist}
                                                 bind:checked={$checklistForm.justificationCheck}
                                             />
@@ -993,20 +1044,34 @@
                         use:approverEnhance
                     >
                         {#if data.interimApprovalDetail.name == ''}
-                            <CustomTextField
-                                label="Tindakan/Ulasan"
-                                disabled={submitApprover}
-                                id="remark"
-                                bind:val={$approverForm.remark}
-                                errors={$approverError.remark}
-                            />
-                            <CustomRadioBoolean
-                                label="Keputusan"
-                                id="status"
-                                disabled={submitApprover}
-                                options={approveOptions}
-                                bind:val={$approverForm.status}
-                            />
+                            {#if data.currentRoleCode !== UserRoleConstant.pengarahKhidmatPengurusan.code}
+                                <div class="flex w-full flex-col gap-10 px-3">
+                                    <Alert color="blue">
+                                        <p>
+                                            <span class="font-medium"
+                                                >Tiada Maklumat!
+                                            </span>
+                                            Menunggu keputusan daripada Pengarah
+                                            Khidmat Pengurusan.
+                                        </p>
+                                    </Alert>
+                                </div>
+                            {:else}
+                                <CustomTextField
+                                    label="Tindakan/Ulasan"
+                                    disabled={submitApprover}
+                                    id="remark"
+                                    bind:val={$approverForm.remark}
+                                    errors={$approverError.remark}
+                                />
+                                <CustomRadioBoolean
+                                    label="Keputusan"
+                                    id="status"
+                                    disabled={submitApprover}
+                                    options={approveOptions}
+                                    bind:val={$approverForm.status}
+                                />
+                            {/if}
                         {:else}
                             <CustomTextField
                                 label="Nama"

@@ -23,6 +23,8 @@ export class PromotionCommonEmployeeConvert {
 }
 
 export interface PromotionCertificationEmployee {
+    promotionId:            number;
+    employeeId:             number;
     employeeNo:             string;
     employeeName:           string;
     identityCardNo:         string;
@@ -33,6 +35,7 @@ export interface PromotionCertificationEmployee {
 
 export interface PromotionPlacement {
     promotionId:      number;
+    employeeId:       number;
     employeeNo:       string;
     employeeName:     string;
     identityCardNo:   string;
@@ -45,7 +48,7 @@ export interface PromotionPlacementDetail {
     employeeNumber:        string;
     employeeName:          string;
     promotionDate:         string;
-    newSalaryMovementDate: number;
+    salaryMovementMonth:   string;
     firstMinimumSalary:    number;
     firstMaximumSalary:    number;
     firstSalaryRaise:      number;
@@ -71,6 +74,8 @@ export interface PromotionSalaryAdjustmentDetail {
 }
 
 export interface PromotionDetail {
+    promotionId:              number;
+    promotionType:            number;
     employeeNo:               string;
     employeeName:             string;
     identityCardNo:           string;
@@ -80,17 +85,23 @@ export interface PromotionDetail {
 }
 
 export interface PromotionProcessDetail {
-    integrityCertifierName:   string;
-    integrityCertifiedDate:   string;
-    integrityCertifiedRemark: string;
-    integrityCertifiedStatus: boolean;
-    approverName:             string;
-    approvedDate:             string;
-    approvedRemark:           string;
-    approvedStatus:           boolean;
-    supporterName:            string;
-    supportedDate:            string;
-    supportedRemark:          string;
-    supportedStatus:          boolean;
+    id:            number;
+    confirmedDate: string;
+    approverName:  string;
+    supporterName: string;
+    status:        boolean;
+    remark:        string;
+}
+
+export interface PromotionCertificationResult {
+    meetingName:      string;
+    numberOfMeetings: number;
+    meetingDate:      string;
+    meetingRemarks:   string;
+    meetingResult:    boolean;
+    confirmedDate:    string;
+    actingEndDate:    string | null;
+    gradeRevertDate:  string | null;
+    newPlacement:     string | null;
 }
 

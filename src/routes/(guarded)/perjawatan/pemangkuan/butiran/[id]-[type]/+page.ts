@@ -1,4 +1,3 @@
-import type { CommonFilterDTO } from "$lib/dto/core/common/common-filter.dto";
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
 import { superValidate } from "sveltekit-superforms/client";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
@@ -10,8 +9,8 @@ import {
     _mainUpdateActingEmployeeDetailSchema, _mainUpdatePromotionMeetingResultDetailSchema,
     _mainUpdatePromotionMeetingResultSchema, _placementAmendmentApplication,
     _updateActingResultSchema, _updateChosenCandidate, _updateEmployeePlacementMeetingResultSchema,
-    _updateMeetingDetailSchema, _updateMeetingResult,
-    _updatePlacementAmendmentApplicationResultSchema, _updatePlacementMeeting, _updatePromotionDetail, _updatePromotionMeetingResultSchema
+    _updateMeetingDetailSchema, _updateMeetingResult, _postponeDetailSchema,
+    _updatePlacementMeeting, _updatePromotionDetail, _updatePromotionMeetingResultSchema
 } from "$lib/schemas/mypsm/employment/acting/acting-schemas";
 import { zod } from "sveltekit-superforms/adapters";
 import type { ActingCommonBatchId, ActingCommonId } from "$lib/dto/mypsm/employment/acting/acting-batchid.dto";
@@ -19,15 +18,17 @@ import type { ActingChosenEmployee } from "$lib/dto/mypsm/employment/acting/acti
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
 import { EmploymentActingServices } from "$lib/services/implementation/mypsm/perjawatan/employment-acting.service";
 import type { UpdateChosenEmployee } from "$lib/dto/mypsm/employment/acting/add-chosen-acting-employee.dto";
-import type { UpdateActingInterview } from "$lib/dto/mypsm/employment/acting/update-interview-detail.dto";
+import type { ActingEmployeeInterviewDetail, ActingEmployeeMeetingDetail, UpdateActingInterview } from "$lib/dto/mypsm/employment/acting/update-interview-detail.dto";
 import type { UpdateInterviewResult } from "$lib/dto/mypsm/employment/acting/update-interview-result.dto";
 import type { PlacementMeetingDetail, PlacementResult, PromotionMeetingResult, UpdatePromotionMeeting } from "$lib/dto/mypsm/employment/acting/update-promotion-meeting.dto";
 import type { commonIdRequestDTO } from "$lib/dto/core/common/id-request.dto";
 import type { ActingDetails } from "$lib/dto/mypsm/employment/acting/acting-result.dto";
 import type { QuarterCommonApproval } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto";
 import type { UpdateMainPromotionMeeting } from "$lib/dto/mypsm/employment/acting/main-update-promotion-meeting.dto";
-import type { EmployeePostpone } from "$lib/dto/mypsm/employment/acting/acting-employee-form.dto.js";
+import type { EmployeePostpone, PostponeDetailResult, PostponeResult } from "$lib/dto/mypsm/employment/acting/acting-employee-form.dto";
 import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-document-request.dto";
+import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
+import type { ActingFinalResult } from "$lib/dto/mypsm/employment/acting/acting-final-result.dto";
 
 export const load = async ({ params }) => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
@@ -147,7 +148,47 @@ export const load = async ({ params }) => {
 
 
 
-    const updatePlacementAmendmentApplicationResultForm = await superValidate(zod(_updatePlacementAmendmentApplicationResultSchema))
+    //employee services
+    let currentId: commonIdRequestDTO = {
+        id: Number(params.id)
+    }
+    let employeeInterviewDetail = {} as ActingEmployeeInterviewDetail;
+    let employeeMeetingDetail = {} as ActingEmployeeMeetingDetail;
+    let employeePostponeDetail = {} as PostponeResult;
+    let employeePostponeResult = {} as PostponeResult;
+    let employeeFinalResult = {} as ActingFinalResult;
+
+    if (currentRoleCode == UserRoleConstant.kakitangan.code) {
+        const employeeInterviewResponse: CommonResponseDTO =
+            await EmploymentActingServices.getEmployeeInterviewDetail(currentId);
+        employeeInterviewDetail =
+            employeeInterviewResponse.data?.details as ActingEmployeeInterviewDetail;
+        const employeeMeetingResponse: CommonResponseDTO =
+            await EmploymentActingServices.getEmployeeMeetingDetail(currentId);
+        employeeMeetingDetail =
+            employeeMeetingResponse.data?.details as ActingEmployeeMeetingDetail;
+        const employeePostponeDetailResponse: CommonResponseDTO =
+            await EmploymentActingServices.getEmployeePostponeDetail(currentId);
+        employeePostponeDetail =
+            employeePostponeDetailResponse.data?.details as PostponeResult;
+        if (employeePostponeDetailResponse.status == "success") {
+            employeeNeedPlacementAmendmentForm.data.postponeNeeded = employeePostponeDetail.postponeNeeded;
+            employeeNeedPlacementAmendmentForm.data.postponeReason = employeePostponeDetail.postponeReason;
+            employeeNeedPlacementAmendmentForm.data.requestedReportDate = employeePostponeDetail.requestedReportDate;
+            employeeNeedPlacementAmendmentForm.data.requestedPlacement = employeePostponeDetail.requestedPlacement;
+        }
+
+        const employeePostponeResultRespone: CommonResponseDTO =
+            await EmploymentActingServices.getEmployeePostponeResult(currentId);
+        employeePostponeResult =
+            employeePostponeResultRespone.data?.details as PostponeResult;
+        const employeeFinalResultResponse: CommonResponseDTO =
+            await EmploymentActingServices.getEmployeeActingResult(currentId);
+        employeeFinalResult =
+            employeeFinalResultResponse.data?.details as ActingFinalResult;
+    }
+
+    const updatePostponeDetail = await superValidate(zod(_postponeDetailSchema))
     const updateMainPromotionMeetingResultForm = await superValidate(zod(_mainUpdatePromotionMeetingResultSchema))
     const updateMainPromotionMeetingResultDetailForm = await superValidate(zod(_mainUpdatePromotionMeetingResultDetailSchema))
     const updateMainActingEmployeeDetailForm = await superValidate(zod(_mainUpdateActingEmployeeDetailSchema))
@@ -160,6 +201,7 @@ export const load = async ({ params }) => {
         lookup,
         currentRoleCode,
         batchId,
+        actingType,
         chosenEmployee,
         chosenEmployeeResponse,
         chosenEmployeeParam,
@@ -188,24 +230,32 @@ export const load = async ({ params }) => {
         mainActingPromotionList,
         updateMainPromotionMeetingResultForm,
         employeeNeedPlacementAmendmentForm,
+        updatePostponeDetail,
 
         // main
         mainActingCertification,
         mainActingCertificationResponse,
 
 
-        updatePlacementAmendmentApplicationResultForm,
+        //employee
+        employeeInterviewDetail,
+        employeeMeetingDetail,
+        employeePostponeResult,
+        employeePostponeDetail,
+        employeeFinalResult,
+
+   
         updateMeetingResultForm,
-        actingType,
+
         updatePromotionMeetingResultForm, updateEmployeePlacementMeetingResultForm,
         updateMainPromotionMeetingResultDetailForm,
         updateMainActingEmployeeDetailForm, mainSupporterAndApproverForm,
-        approverResultForm, directorResultForm 
+        approverResultForm, directorResultForm
     };
 
 };
 
-// =================== gred 1 - 54 and flexi 41 submit form
+// =================== 
 export const _submitUpdateChosenCandidateForm = async (formData: UpdateChosenEmployee) => {
     const form = await superValidate(formData, zod(_updateChosenCandidate));
 
@@ -316,9 +366,11 @@ export const _submitSupporterResultForm = async (formData: QuarterCommonApproval
         formData,
         zod(_actingApprovalSchema),
     );
-    console.log(form)
     if (form.valid) {
+        const response: CommonResponseDTO =
+            await EmploymentActingServices.addSupporterApproval(form.data as QuarterCommonApproval)
 
+        return { response }
     }
 }
 export const _submitApproverResultForm = async (formData: QuarterCommonApproval) => {
@@ -327,13 +379,28 @@ export const _submitApproverResultForm = async (formData: QuarterCommonApproval)
         zod(_actingApprovalSchema),
     );
     if (form.valid) {
+        const response: CommonResponseDTO =
+            await EmploymentActingServices.addApproverApproval(form.data as QuarterCommonApproval)
 
+        return { response }
+    }
+}
+export const _submitPostponeForm = async (formData: PostponeDetailResult) => {
+    const form = await superValidate(
+        formData,
+        zod(_postponeDetailSchema),
+    );
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await EmploymentActingServices.updatePostponeResult(form.data as PostponeDetailResult)
+
+        return { response }
     }
 }
 
 
 // ================================================
-// get table information
+// get table row information
 // ================================================
 export const _tableInformation = async (id: number) => {
     let currentId: commonIdRequestDTO = {
@@ -414,29 +481,7 @@ export const _mainPromotion = async (id: number) => {
 
 
 
-export const _submitUpdatePlacementAmendmentApplicationResultForm = async (formData: object) => {
-    const updatePlacementAmendmentApplicationResultForm = await superValidate(
-        formData,
-        zod(_updatePlacementAmendmentApplicationResultSchema),
-    );
-    console.log(updatePlacementAmendmentApplicationResultForm)
-    if (updatePlacementAmendmentApplicationResultForm.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(updatePlacementAmendmentApplicationResultForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (updatePlacementAmendmentApplicationResultForm.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
-    }
-}
+
 
 
 
@@ -534,7 +579,7 @@ export const _submitEmployeeNeedPlacementAmendmentForm = async (formData: Employ
         const response: CommonResponseDTO
             = await EmploymentActingServices.editPostponeStatus(form.data as EmployeePostpone)
 
-            return { response }
+        return { response }
     }
 }
 

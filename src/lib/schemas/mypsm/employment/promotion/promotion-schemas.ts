@@ -17,6 +17,13 @@ export const _addNewPromotion = z.object({
     employeeIds: z.number().array(),
 })
 
+export const _promotionCommonApproval = z.object({
+    id: z.number(),
+    promotionType: shortTextSchema,
+    status: booleanSchema,
+    remark: shortTextSchema,
+})
+
 export const _editPromotionCertification = z.object({
     id: z.number(),
     promotionType: shortTextSchema,
@@ -45,6 +52,6 @@ export const _editEmployeePromotion = z.object({
     confirmedDate: shortTextSchema,
     supporterName: shortTextSchema,
     approverName: shortTextSchema,
-    confirmation: booleanSchema,
+    status: booleanSchema,
     remark: shortTextSchema,
 })
