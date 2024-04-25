@@ -375,8 +375,9 @@
 <Stepper>
     <StepperContent>
         <StepperContentHeader
-            title="Maklumat Peminjam {data.props.currentApplicationId}"
+            title="Maklumat Peminjam"
         >
+        <!-- {data.props.currentApplicationId} -->
             <TextIconButton
                 label="Kembali"
                 onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
@@ -395,6 +396,7 @@
             <div
                 class="flex h-fit w-full flex-col items-start justify-start gap-4 p-4"
             >
+            {#if data.props.currentApplicationId == 0}
                 <div class="flex w-full flex-col gap-10 lg:w-1/2">
                     <Alert color="blue">
                         <p>
@@ -404,6 +406,7 @@
                         </p>
                     </Alert>
                 </div>
+                {/if}
                 <form
                     id="personalFormStepper"
                     method="POST"

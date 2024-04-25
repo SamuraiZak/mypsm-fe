@@ -2,7 +2,6 @@
     import { goto, invalidateAll } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-
     import CustomTable from '$lib/components/table/CustomTable.svelte';
     import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
@@ -10,12 +9,9 @@
     import type { TableDTO } from '$lib/dto/core/table/table.dto';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import { dateProxy, superValidate } from 'sveltekit-superforms/client';
-
     import type { PageData } from './$types';
-
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
-    import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
@@ -24,8 +20,6 @@
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import { Checkbox, Modal } from 'flowbite-svelte';
-    import FileInputField from '$lib/components/inputs/file-input-field/FileInputField.svelte';
-    import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import type { RadioDTO } from '$lib/dto/core/radio/radio.dto';
     import {
         _academicInfoSchema,
@@ -833,14 +827,14 @@
                                     bind:val={$personalInfoForm.name}
                                 ></CustomTextField>
 
-                                <CustomSelectField
+                                <!-- <CustomSelectField
                                     disabled
                                     errors={$personalInfoError.titleId}
                                     id="titleId"
                                     label="Gelaran"
                                     bind:val={$personalInfoForm.titleId}
                                     options={data.selectionOptions.titleLookup}
-                                ></CustomSelectField>
+                                ></CustomSelectField> -->
 
                                 <CustomTextField
                                     disabled={isReadonlyPersonalFormStepper}
@@ -1107,13 +1101,13 @@
                                     label="Pinjaman Rumah"
                                     bind:val={$personalInfoForm.houseLoan}
                                 />
-                                <CustomTextField
+                                <!-- <CustomTextField
                                     type="number"
                                     disabled
                                     id="vehicleLoan"
                                     label="Pinjaman Kenderaan"
                                     bind:val={$personalInfoForm.vehicleLoan}
-                                />
+                                /> -->
 
                                 <p class={stepperFormTitleClass}>
                                     Maklumat Pertalian Dengan Kakitangan LKIM
@@ -1128,7 +1122,7 @@
                                     options={data.selectionOptions
                                         .generalLookup}
                                 ></CustomSelectField>
-
+                                        
                                 <!-- <CustomSelectField
                                      disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.identityCardNumber}
@@ -1141,41 +1135,40 @@
 
                                 <CustomTextField
                                     disabled={isReadonlyPersonalFormStepper}
-                                    errors={$personalInfoError.relationDetail
-                                        ?.employeeNumber}
+                                    errors={$personalInfoError.
+                                        employeeNumber}
                                     id="employeeNumber"
+                                    placeholder=""
                                     label="ID Kakitangan LKIM"
-                                    bind:val={$personalInfoForm.relationDetail
-                                        .employeeNumber}
+                                    bind:val={$personalInfoForm.relationDetail.employeeNumber}
                                 ></CustomTextField>
 
-                                <CustomTextField
+                                <!-- <CustomTextField
                                     disabled={isReadonlyPersonalFormStepper}
-                                    errors={$personalInfoError.relationDetail
-                                        ?.employeeName}
+                                    errors={$personalInfoError.
+                                        employeeName}
                                     id="employeeName"
                                     label="Nama Kakitangan LKIM"
-                                    bind:val={$personalInfoForm.relationDetail
-                                        .employeeName}
+                                    bind:val={$personalInfoForm.
+                                        employeeName}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     disabled={isReadonlyPersonalFormStepper}
-                                    errors={$personalInfoError.relationDetail
-                                        ?.employeePosition}
+                                    errors={$personalInfoError.
+                                        employeePosition}
                                     id="employeePosition"
                                     label="Jawatan Kakitangan LKIM"
-                                    bind:val={$personalInfoForm.relationDetail
-                                        .employeePosition}
-                                ></CustomTextField>
+                                    bind:val={$personalInfoForm.
+                                        employeePosition}
+                                ></CustomTextField> -->
                                 <CustomSelectField
                                     disabled={isReadonlyPersonalFormStepper}
-                                    errors={$personalInfoError.relationDetail
-                                        ?.relationshipId}
+                                    errors={$personalInfoError.relationDetail?.relationshipId}
                                     id="relationshipId"
+                                    placeholder=""
                                     label="Hubungan"
-                                    bind:val={$personalInfoForm.relationDetail
-                                        .relationshipId}
+                                    bind:val={$personalInfoForm.relationDetail.relationshipId}
                                     options={data.selectionOptions
                                         .relationshipLookup}
                                 ></CustomSelectField>
@@ -1568,7 +1561,7 @@
                         {:else}
                             <TextIconButton
                                 type="primary"
-                                label="Kemaskini"
+                                label="Simpan"
                                 form="academicFormStepper"
                             />
                             <TextIconButton
@@ -1625,7 +1618,7 @@
                                     Tiada maklumat.
                                 </div>
                             {:else}
-                                <CustomTab id="academics">
+                                <CustomTab  pill={true} id="academics">
                                     {#each $academicInfoForm.academics as _, i}
                                         <CustomTabContent
                                             title={`Akademik #${i + 1}`}
@@ -1833,7 +1826,7 @@
                                     Tiada maklumat.
                                 </div>
                             {:else}
-                                <CustomTab id="experiences">
+                                <CustomTab  pill={true} id="experiences">
                                     {#each $experienceInfoForm.experiences as _, i}
                                         <CustomTabContent
                                             title={`Pengalaman #${i + 1}`}
@@ -2008,7 +2001,7 @@
                                     Tiada maklumat.
                                 </div>
                             {:else}
-                                <CustomTab id="activities">
+                                <CustomTab  pill={true} id="activities">
                                     {#each $activityInfoForm.activities as _, i}
                                         <CustomTabContent
                                             title={`Aktiviti #${i + 1}`}
@@ -2448,7 +2441,7 @@
                                     Tiada maklumat.
                                 </div>
                             {:else}
-                                <CustomTab id="dependents">
+                                <CustomTab  pill={true} id="dependents">
                                     {#each Object.entries($dependencyInfoForm.dependents) as [key, _], i}
                                         <CustomTabContent
                                             title={i +
@@ -2750,7 +2743,7 @@
                                     Tiada maklumat.
                                 </div>
                             {:else}
-                                <CustomTab id="nextOfKins">
+                                <CustomTab  pill={true} id="nextOfKins">
                                     {#each $nextOfKinInfoForm.nextOfKins as _, i}
                                         <CustomTabContent
                                             title={i +

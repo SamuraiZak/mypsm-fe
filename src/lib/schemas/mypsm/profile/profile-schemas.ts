@@ -14,50 +14,92 @@ import {
 import { date, number, z } from 'zod';
 
 export const _relationDetailSchema = z.object({
-    employeeNumber: z.string(),
-    employeeName: z.string(),
-    employeePosition: z.string(),
-    relationshipId: z.number(),
+    employeeNumber: z.string().nullable(),
+    employeeName: z.string().nullable(),
+    employeePosition: z.string().nullable(),
+    relationshipId: z.number().nullable(),
 })
-export const _personalInfoResponseSchema = z
-    .object({
-        id: z.number().readonly(),
-        name: z.string(),
-        alternativeName: shortTextSchema.nullable(),
-        identityCardNumber: z.string(),
-        identityDocumentColor: z.string(),
-        email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
-        assetDeclarationStatusId: numberIdSchema,
-        propertyDeclarationDate: dateStringSchema.nullable(),
-        birthDate: z.coerce.string({
-            required_error: 'Pastikan tarikh adalah betul.',
-        }),
-        birthStateId: numberIdSchema,
-        birthCountryId: numberIdSchema,
-        genderId: numberIdSchema,
-        nationalityId: numberIdSchema,
-        religionId: numberIdSchema,
-        raceId: numberIdSchema,
-        titleId: numberIdSchema,
-        ethnicId: numberIdSchema,
-        maritalId: numberIdSchema,
-        homeAddress: shortTextSchema,
-        homeCountryId: numberIdSchema,
-        homeStateId: numberIdSchema,
-        homeCityId: numberIdSchema,
-        homePostcode: shortTextSchema.nullish(),
-        mailAddress: shortTextSchema,
-        mailCountryId: numberIdSchema,
-        mailStateId: numberIdSchema,
-        mailCityId: numberIdSchema,
-        mailPostcode: shortTextSchema.nullish(),
-        isExPoliceOrSoldier: booleanSchema,
-        isInternalRelationship: booleanSchema,
-        relationDetail: _relationDetailSchema,
-        houseLoanType:z.string(),
-        houseLoan:z.number(),
-        vehicleLoan:z.number(),
-    })
+// export const _personalInfoResponseSchema = z
+//     .object({
+//         id: z.number().readonly(),
+//         name: z.string(),
+//         alternativeName: shortTextSchema.nullable(),
+//         identityCardNumber: z.string(),
+//         identityDocumentColor: z.string(),
+//         email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
+//         assetDeclarationStatusId: numberIdSchema,
+//         propertyDeclarationDate: dateStringSchema.nullable(),
+//         birthDate: z.coerce.string({
+//             required_error: 'Pastikan tarikh adalah betul.',
+//         }),
+//         birthStateId: numberIdSchema,
+//         birthCountryId: numberIdSchema,
+//         genderId: numberIdSchema,
+//         nationalityId: numberIdSchema,
+//         religionId: numberIdSchema,
+//         raceId: numberIdSchema,
+//         titleId: numberIdSchema,
+//         ethnicId: numberIdSchema,
+//         maritalId: numberIdSchema,
+//         homeAddress: shortTextSchema,
+//         homeCountryId: numberIdSchema,
+//         homeStateId: numberIdSchema,
+//         homeCityId: numberIdSchema,
+//         homePostcode: shortTextSchema.nullish(),
+//         mailAddress: shortTextSchema,
+//         mailCountryId: numberIdSchema,
+//         mailStateId: numberIdSchema,
+//         mailCityId: numberIdSchema,
+//         mailPostcode: shortTextSchema.nullish(),
+//         isExPoliceOrSoldier: booleanSchema,
+//         isInternalRelationship: booleanSchema,
+//         relationshipId: z.number().nullable(),
+//         houseLoanType: z.string(),
+//         houseLoan: z.number(),
+//         employeeNumber: z.string().nullable(),
+//         vehicleLoan: z.number(),
+//     })
+
+export const _personalInfoResponseSchema = z.object({
+    name: shortTextSchema,
+    alternativeName: shortTextSchema.nullable(),
+    identityCardNumber: shortTextSchema,
+    identityDocumentColor: shortTextSchema,
+    email: shortTextSchema,
+    status: shortTextSchema,
+    birthDate: shortTextSchema,
+    birthStateId: z.number(),
+    birthCountryId: z.number(),
+    genderId: z.number(),
+    nationalityId: z.number(),
+    religionId: z.number(),
+    raceId: z.number(),
+    ethnicId: z.number(),
+    maritalId: z.number(),
+    titleId: z.number().default(1),
+    assetDeclarationStatusId: z.number().default(1),
+    homeAddress: z.string(),
+    homeCountryId: z.number(),
+    homeStateId: z.number(),
+    homeCityId: z.number(),
+    homePostcode: z.string(),
+    mailAddress: z.string(),
+    mailCountryId: z.number(),
+    mailStateId: z.number(),
+    mailCityId: z.number(),
+    mailPostcode: z.string(),
+    employeeNumber: shortTextSchema,
+    isExPoliceOrSoldier: booleanSchema,
+    isInternalRelationship: booleanSchema,
+    relationDetail: z.object({
+        employeeNumber: z.string(),
+        employeeName: z.string(),
+        employeePosition: z.string(),
+        relationshipId: z.number().nullable()
+    }),
+    houseLoanType: z.string(),
+    houseLoan: z.number(),
+})
 
 export const _personalInfoRequestSchema = _personalInfoResponseSchema
     .omit({
@@ -72,47 +114,49 @@ export const _personalInfoRequestSchema = _personalInfoResponseSchema
     .superRefine(
         (
             {
-                assetDeclarationStatusId,
-                propertyDeclarationDate,
+                // assetDeclarationStatusId,
+                // propertyDeclarationDate,
                 isInternalRelationship,
                 employeeNumber,
                 relationshipId,
             },
             ctx,
         ) => {
-            if (
-                assetDeclarationStatusId === 12 ||
-                assetDeclarationStatusId === 14 ||
-                assetDeclarationStatusId === 15 ||
-                assetDeclarationStatusId === 17 ||
-                assetDeclarationStatusId === 18 ||
-                assetDeclarationStatusId === 22
-            ) {
-                if (propertyDeclarationDate === null) {
-                    ctx.addIssue({
-                        code: 'custom',
-                        message: 'Tarikh tidak boleh kosong.',
-                        path: ['propertyDeclarationDate'],
-                    });
-                }
-            }
-
-            // if (isInternalRelationship) {
-            //     if (employeeNumber === '') {
+            // if (
+            //     assetDeclarationStatusId === 12 ||
+            //     assetDeclarationStatusId === 14 ||
+            //     assetDeclarationStatusId === 15 ||
+            //     assetDeclarationStatusId === 17 ||
+            //     assetDeclarationStatusId === 18 ||
+            //     assetDeclarationStatusId === 22
+            // ) {
+            //     if (propertyDeclarationDate === null) {
             //         ctx.addIssue({
             //             code: 'custom',
-            //             message: 'Nombor pekerja tidak boleh kosong.',
-            //             path: ['employeeNumber'],
-            //         });
-            //     }
-            //     if (relationshipId === null) {
-            //         ctx.addIssue({
-            //             code: 'custom',
-            //             message: 'Hubungan tidak boleh kosong.',
-            //             path: ['relationshipId'],
+            //             message: 'Tarikh tidak boleh kosong.',
+            //             path: ['propertyDeclarationDate'],
             //         });
             //     }
             // }
+
+            if (isInternalRelationship) {
+                if (employeeNumber === '') {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Nombor pekerja tidak boleh kosong.',
+                        path: ['employeeNumber'],
+                    });
+                }
+                if (relationshipId === null ||
+                    relationshipId < 0
+                ) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Hubungan tidak boleh kosong.',
+                        path: ['relationshipId'],
+                    });
+                }
+            }
         },
     );
 
@@ -186,7 +230,7 @@ export const _serviceInfoRequestSchema = _serviceDetailSchema.omit({
 
 export const _academicInfoSchema = z
     .object({
-        
+
         educationId: z.number().readonly().optional(),
         majorId: numberIdSchema,
         minorId: numberIdSchema,
@@ -274,7 +318,7 @@ export const _activityEditRequestSchema = _activityListResponseSchema.pick({
 
 export const _relationsSchema = z
     .object({
-        familyId:numberIdSchema,
+        familyId: numberIdSchema,
         birthCountryId: numberIdSchema,
         birthStateId: numberIdSchema,
         relationshipId: numberIdSchema,
@@ -296,21 +340,21 @@ export const _relationsSchema = z
         marriageDate: dateStringSchema.nullish(),
         inSchool: booleanSchema,
     })
-    // .partial({
-    //     marriageDate: true,
-    //     alternativeName: true,
-    // })
-    // .superRefine(({ maritalId, marriageDate }, ctx) => {
-    //     if (maritalId === 3) {
-    //         if (marriageDate === null) {
-    //             ctx.addIssue({
-    //                 code: 'custom',
-    //                 message: 'Tarikh tidak boleh kosong.',
-    //                 path: ['marriageDate'],
-    //             });
-    //         }
-    //     }
-    // });
+// .partial({
+//     marriageDate: true,
+//     alternativeName: true,
+// })
+// .superRefine(({ maritalId, marriageDate }, ctx) => {
+//     if (maritalId === 3) {
+//         if (marriageDate === null) {
+//             ctx.addIssue({
+//                 code: 'custom',
+//                 message: 'Tarikh tidak boleh kosong.',
+//                 path: ['marriageDate'],
+//             });
+//         }
+//     }
+// });
 
 export const _familyListResponseSchema = z.object({
     families: z.array(_relationsSchema),

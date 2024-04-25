@@ -642,14 +642,15 @@ const relationshipIsNonFamilyResponse: CommonResponseDTO =
 // ========== add Personal Info ====================================
 // ================================================================
 export const _personalInfoSubmit = async (formData: object) => {
+    
 
     const personalInfoForm = await superValidate(formData, zod(_personalInfoRequestSchema));
 
     personalInfoForm.data.identityDocumentNumber = (formData as CandidatePersonalResponseDTO).identityCardNumber;
-    personalInfoForm.data.employeeNumber = (formData as CandidatePersonalResponseDTO).relationDetail.employeeNumber;
+    personalInfoForm.data.employeeNumber = (formData as CandidatePersonalResponseDTO).employeeNumber;
     personalInfoForm.data.relationshipId = (formData as CandidatePersonalResponseDTO).relationDetail.relationshipId;
 
-
+console.log(personalInfoForm)
     if (!personalInfoForm.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });

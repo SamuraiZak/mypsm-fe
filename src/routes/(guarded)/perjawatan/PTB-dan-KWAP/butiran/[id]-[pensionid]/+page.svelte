@@ -53,6 +53,7 @@
     } from './+page';
     import type { PersonalDetailDTO } from '$lib/dto/mypsm/employment/ptb-dan-kwap/ptb-kwap-dto';
     import { Toaster } from 'svelte-french-toast';
+    import { approveOptions, supportOptions } from '$lib/constants/core/radio-option-constants';
 
     export let data: PageData;
 
@@ -331,7 +332,7 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col justify-start overflow-y-auto bg-bgr-primary"
 >
-    <Stepper bind:activeIndex={stepperIndex} dataId="#01" dataStatus="Draf">
+    <Stepper bind:activeIndex={stepperIndex} dataId="Permohonan Pemberian Taraf Berpencen" >
         <StepperContent>
             <StepperContentHeader title="Maklumat Kakitangan"
             ></StepperContentHeader>
@@ -984,6 +985,7 @@
                                 id="status"
                                 label="Status"
                                 errors={$supporterInfoError.status}
+                                options={supportOptions}
                                 bind:val={$supporterInfoForm.status}
                             ></CustomRadioBoolean>
                             <CustomTextField
@@ -1049,6 +1051,7 @@
                                 id="status"
                                 label="Status"
                                 errors={$approverInfoError.status}
+                                options={approveOptions}
                                 bind:val={$approverInfoForm.status}
                             ></CustomRadioBoolean>
                             <CustomTextField

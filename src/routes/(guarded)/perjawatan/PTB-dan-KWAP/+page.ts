@@ -37,8 +37,8 @@ if (actingEmployeeListResponse.status == "success") {
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: "id",
+        orderType: 1,
         filter: {
             dataType: 1,
             staffName: "",
@@ -89,8 +89,8 @@ if (actingEmployeeListResponse.status == "success") {
     const paramUrusSetia: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: "id",
+        orderType: 1,
         filter: {
             employeeNumber: null,
             name: null,

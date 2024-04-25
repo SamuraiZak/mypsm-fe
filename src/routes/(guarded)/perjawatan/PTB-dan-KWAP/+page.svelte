@@ -9,7 +9,8 @@
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableDTO, TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
-
+    import FilterDateField from '$lib/components/table/filter/FilterDateField.svelte';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import type { PageData } from './$types';
     import {
         _updateTable,
@@ -22,6 +23,7 @@
     import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import { _tableInformation } from './butiran/[id]-[pensionid]/+page';
     import DataTable from '$lib/components/table/DataTable.svelte';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
 
     export let data: PageData;
 
@@ -192,11 +194,37 @@
             <CustomTabContent
                 title="Senarai Kakitangan Baharu diberi PTB dan KWAP"
             >
-                <FilterCard></FilterCard>
+              
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
+                <FilterCard onSearch={_search}>
+                    <FilterTextField
+                        label="Nama"
+                        bind:inputValue={PTBtable.param.filter
+                            .staffName}
+                    />
+                    <FilterTextField
+                        label="No. Pekerja"
+                        bind:inputValue={PTBtable.param.filter.staffNo}
+                    />
+                    <FilterTextField
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={PTBtable.param.filter
+                            .identityCard}
+                    />
+                    <FilterTextField
+                        label="Jawatan"
+                        bind:inputValue={PTBtable.param.filter
+                            .position}
+                    />
+                    <FilterTextField
+                        label="Gred"
+                        bind:inputValue={PTBtable.param.filter.grade}
+                    />
+                </FilterCard>
                     <CustomTable
+                    title="Senarai Kakitangan Baharu diberi PTB dan KWAP"
                         onUpdate={_search}
                         enableDetail
                         bind:passData={rowData}
@@ -240,7 +268,30 @@
                             goto('/perjawatan/PTB-dan-KWAP/butiran/'+rowData.employeeId+'-baru')
                             }}
                                 
-                        ></DataTable>
+                        >
+                        <FilterWrapper slot="filter">
+                            <FilterTextField
+                                label="Nama"
+                                bind:inputValue={addActingTable.param
+                                    .filter.employeeName}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="No. Pekerja"
+                                bind:inputValue={addActingTable.param
+                                    .filter.employeeNo}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="No. Kad Pengenalan"
+                                bind:inputValue={addActingTable.param
+                                    .filter.identityCardNo}
+                            ></FilterTextField>
+                            <FilterDateField
+                                label="Tarikh Permohonan"
+                                bind:inputValue={addActingTable.param
+                                    .filter.applicationDate}
+                            ></FilterDateField>
+                        </FilterWrapper>
+                    </DataTable>
                     </div>
                 </div>
             </CustomTabContent>
