@@ -12,8 +12,8 @@ import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export async function load({params}) {
- 
+export async function load({ params }) {
+
     // get current role code
     const currentRoleCode: string = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode) ?? UserRoleConstant.kakitangan.code;
 
@@ -37,6 +37,9 @@ export async function load({params}) {
 
     // STEP 3: Secretary verification
     const confirmationForm = await superValidate(zod(RetirementEndorsementSchema));
+
+    // STEP 3: Secretary verification
+    const certificationForm = await superValidate(zod(RetirementEndorsementSchema));
 
     // STEP 4: Endorser details
     const supportApproverForm = await superValidate(zod(RetirementEndorserDetailSchema));
@@ -68,18 +71,28 @@ export async function load({params}) {
         retirementDatee: ""
     };
 
-    const originalRetirementDetailResponse: CommonResponseDTO = await RetirementApplicationServices.getOriginalRetirementDetail();
-
-    if (originalRetirementDetailResponse.status == "success") {
-        originalRetirementDetail = originalRetirementDetailResponse.data?.details as RetirementOriginalDetailDTO;
+    if (currentApplicationId == 0) {
+        
+        const originalRetirementDetailResponse: CommonResponseDTO = await RetirementApplicationServices.getOriginalRetirementDetail();
+    
+        if (originalRetirementDetailResponse.status == "success") {
+            originalRetirementDetail = originalRetirementDetailResponse.data?.details as RetirementOriginalDetailDTO;
+        }
     }
 
+
     // set default application detail
-    let currentApplicationDetail: RetirementOthersApplicationDetail = {
-        RetirementOthersDetailDTO:null,
-        RetirementOthersChoosenDetailDTO:  null,
-        RetirementOthersUpdateListlDTO: null,
-        RetirementOthersDocumentCertificationlDTO: null,
+    let currentApplicationDetail: RetirementVoluntaryApplicationDetail = {
+        applicationDetail: null,
+        certification: null,
+        confirmation: null,
+        supportApprover: null,
+        firstSupporter: null,
+        secondSupporter: null,
+        approval: null,
+        secretaryApproval: null,
+        documentCertification: null,
+        letterCertification: null,
     }
 
     if (currentApplicationId !== 0) {
@@ -92,7 +105,7 @@ export async function load({params}) {
         }
 
         // fetch the application detail
-        const applicationDetailResponse: CommonResponseDTO = await RetirementApplicationServices.getRetirementVoluntaryUnspecifyDetail(applicationDetailRequest);
+        const applicationDetailResponse: CommonResponseDTO = await RetirementApplicationServices.getRetirementVoluntaryApplicationDetail(applicationDetailRequest);
 
         if (applicationDetailResponse.status == "success") {
             // assign new value to currentApplicationDetail
@@ -108,28 +121,27 @@ export async function load({params}) {
             // assign value to certificationForm
             if (currentApplicationDetail.certification !== null) {
                 certificationForm.data = currentApplicationDetail.certification;
-            }else{
+            } else {
                 certificationForm.data.voluntaryId = currentApplicationId;
             }
 
             // assign value to confirmationForm
             if (currentApplicationDetail.confirmation !== null) {
                 confirmationForm.data = currentApplicationDetail.confirmation;
-            }else{
+            } else {
                 confirmationForm.data.voluntaryId = currentApplicationId;
             }
-            
+
             // assign value to supportApproverForm
             if (currentApplicationDetail.supportApprover !== null) {
                 supportApproverForm.data = currentApplicationDetail.supportApprover;
-            }else{
+            } else {
                 supportApproverForm.data.voluntaryId = currentApplicationId;
             }
-            
+
         }
-        
+
     } else {
-        console.log(originalRetirementDetail.retirementDatee);
         // TODO: add action when application is new
         applicationDetailForm.data.retirementDate = originalRetirementDetail.retirementDatee;
     }
@@ -172,19 +184,24 @@ export async function load({params}) {
     ];
 
     return {
-        props:{
+        props: {
             currentRoleCode,
             currentApplicationId,
             currentApplicationDetail,
             endorserDropdown,
             endorsementDropdown
         },
-        forms:{
+        forms: {
             applicationDetailForm,
             certificationForm,
             confirmationForm,
             supportApproverForm,
-           
+            firstSupporterForm,
+            secondSupporterForm,
+            documentCertificationForm,
+            secretaryApprovalForm,
+            letterCertificationForm,
+            approvalForm,
         }
     }
 }
@@ -194,7 +211,7 @@ export async function load({params}) {
 // ============================================
 
 // submit application Detail
-export async function _applicationDetailFormSubmit(formData:RetirementVoluntaryDetail) {
+export async function _applicationDetailFormSubmit(formData: RetirementVoluntaryDetail) {
     const form = await superValidate(
         formData,
         zod(RetirementVoluntaryDetailSchema),
@@ -213,8 +230,184 @@ export async function _applicationDetailFormSubmit(formData:RetirementVoluntaryD
     }
 }
 
+
+
 // choosen list
-export async function _choosenListFormSubmit(formData:RetirementEndorsement) {
+export async function _certificationFormSubmit(formData: RetirementEndorsement) {
+    const form = await superValidate(
+        formData,
+        zod(RetirementEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response =
+            await RetirementApplicationServices.addRetirementVoluntaryCertification(
+                formData,
+            );
+
+        return { response };
+    } else {
+        getErrorToast('Sila semak semula maklumat anda.');
+        error(400, { message: '' });
+    }
+}
+// choosen list
+export async function _supportApproverFormSubmit(formData: RetirementEndorserDetail) {
+    const form = await superValidate(
+        formData,
+        zod(RetirementEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response =
+            await RetirementApplicationServices.addRetirementVoluntarySupportApprover(
+                formData,
+            );
+
+        return { response };
+    } else {
+        getErrorToast('Sila semak semula maklumat anda.');
+        error(400, { message: '' });
+    }
+}
+
+// choosen list
+export async function _confirmationFormSubmit(formData: RetirementEndorsement) {
+    const form = await superValidate(
+        formData,
+        zod(RetirementEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response =
+            await RetirementApplicationServices.addRetirementVoluntaryConfirmation(
+                formData,
+            );
+
+        return { response };
+    } else {
+        getErrorToast('Sila semak semula maklumat anda.');
+        error(400, { message: '' });
+    }
+}
+
+// choosen list
+export async function _firstSupporterFormSubmit(formData: RetirementEndorsement) {
+    const form = await superValidate(
+        formData,
+        zod(RetirementEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response =
+            await RetirementApplicationServices.addFirstSupporterVoluntary(
+                formData,
+            );
+
+        return { response };
+    } else {
+        getErrorToast('Sila semak semula maklumat anda.');
+        error(400, { message: '' });
+    }
+}
+// choosen list
+export async function _secondSupporterFormSubmit(formData: RetirementEndorsement) {
+    const form = await superValidate(
+        formData,
+        zod(RetirementEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response =
+            await RetirementApplicationServices.addSecondSupporterVoluntary(
+                formData,
+            );
+
+        return { response };
+    } else {
+        getErrorToast('Sila semak semula maklumat anda.');
+        error(400, { message: '' });
+    }
+}
+// choosen list
+export async function _approvalFormSubmit(formData: RetirementEndorsement) {
+    const form = await superValidate(
+        formData,
+        zod(RetirementEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response =
+            await RetirementApplicationServices.addRetirementVoluntaryCertification(
+                formData,
+            );
+
+        return { response };
+    } else {
+        getErrorToast('Sila semak semula maklumat anda.');
+        error(400, { message: '' });
+    }
+}
+// choosen list
+export async function _secretaryApprovalFormSubmit(formData: RetirementEndorsement) {
+    const form = await superValidate(
+        formData,
+        zod(RetirementEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response =
+            await RetirementApplicationServices.addRetirementSecretaryApproval(
+                formData,
+            );
+
+        return { response };
+    } else {
+        getErrorToast('Sila semak semula maklumat anda.');
+        error(400, { message: '' });
+    }
+}
+// choosen list
+export async function _documentCertificationFormSubmit(formData: RetirementEndorsement) {
+    const form = await superValidate(
+        formData,
+        zod(RetirementEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response =
+            await RetirementApplicationServices.addRetirementDocumentCertification(
+                formData,
+            );
+
+        return { response };
+    } else {
+        getErrorToast('Sila semak semula maklumat anda.');
+        error(400, { message: '' });
+    }
+}
+// choosen list
+export async function _letterCertificationFormSubmit(formData: RetirementEndorsement) {
+    const form = await superValidate(
+        formData,
+        zod(RetirementEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response =
+            await RetirementApplicationServices.addRetirementLetterCertification(
+                formData,
+            );
+
+        return { response };
+    } else {
+        getErrorToast('Sila semak semula maklumat anda.');
+        error(400, { message: '' });
+    }
+}
+
+// choosen list
+export async function _choosenListFormSubmit(formData: RetirementEndorsement) {
     const form = await superValidate(
         formData,
         zod(RetirementEndorsementSchema),
@@ -234,7 +427,7 @@ export async function _choosenListFormSubmit(formData:RetirementEndorsement) {
 }
 
 // confirmation Choosen Update
-export async function _ChoosenUpdateFormSubmit(formData:RetirementEndorsement) {
+export async function _ChoosenUpdateFormSubmit(formData: RetirementEndorsement) {
     const form = await superValidate(
         formData,
         zod(RetirementEndorsementSchema),
@@ -255,7 +448,7 @@ export async function _ChoosenUpdateFormSubmit(formData:RetirementEndorsement) {
 
 //  retirement Document
 
-export async function _retirementDocumentFormSubmit(formData:RetirementEndorserDetail) {
+export async function _retirementDocumentFormSubmit(formData: RetirementEndorserDetail) {
     const form = await superValidate(
         formData,
         zod(RetirementEndorsementSchema),

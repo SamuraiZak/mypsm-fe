@@ -42,7 +42,7 @@ export type RetirementVoluntaryDetail = z.infer<
 // FORCED SHARED
 // ======================================================
 export const RetirementForcedEndorsementSchema = z.object({
-    forceId: z.number(),
+    forcedId: z.number(),
     name: z.string().nullish(),
     status: z.boolean(),
     remark: z.string(),

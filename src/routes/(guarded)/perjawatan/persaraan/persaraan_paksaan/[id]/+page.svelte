@@ -2,7 +2,7 @@
     import { superForm } from "sveltekit-superforms";
     import type { PageData } from "./$types";
     import { zodClient } from "sveltekit-superforms/adapters";
-    import { RetirementEndorsementSchema } from "$lib/schemas/mypsm/employment/retirement/retirement.schema";
+    import { RetirementEndorsementSchema, RetirementForcedEndorsementSchema } from "$lib/schemas/mypsm/employment/retirement/retirement.schema";
     import { _certificationFormSubmit, _confirmationFormSubmit, _documentFormSubmit, _letterCertificationFormSubmit } from "./+page";
     import StepperContentHeader from "$lib/components/stepper/StepperContentHeader.svelte";
     import StepperContentBody from "$lib/components/stepper/StepperContentBody.svelte";
@@ -12,6 +12,7 @@
     import TextIconButton from "$lib/components/button/TextIconButton.svelte";
     import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
     import Stepper from "$lib/components/stepper/Stepper.svelte";
+    import { Toaster } from 'svelte-french-toast';
 
 
 export let data: PageData;
@@ -29,6 +30,7 @@ const {
         invalidateAll: true,
         validators: zodClient(RetirementEndorsementSchema),
         async onSubmit(input) {
+            $certificationForm.forcedId = data.props.currentApplicationId
             const response = _certificationFormSubmit($certificationForm);
         },
     });
@@ -44,8 +46,9 @@ const {
         resetForm: false,
         validationMethod: 'oninput',
         invalidateAll: true,
-        validators: zodClient(RetirementEndorsementSchema),
+        validators: zodClient(RetirementForcedEndorsementSchema),
         async onSubmit(input) {
+            $confirmForm.forcedId = data.props.currentApplicationId
             const response = _confirmationFormSubmit($confirmForm);
         },
     });
@@ -61,8 +64,9 @@ const {
         resetForm: false,
         validationMethod: 'oninput',
         invalidateAll: true,
-        validators: zodClient(RetirementEndorsementSchema),
+        validators: zodClient(RetirementForcedEndorsementSchema),
         async onSubmit(input) {
+            $documentForm.forcedId = data.props.currentApplicationId
             const response = _documentFormSubmit($documentForm);
         },
     });
@@ -78,8 +82,9 @@ const {
         resetForm: false,
         validationMethod: 'oninput',
         invalidateAll: true,
-        validators: zodClient(RetirementEndorsementSchema),
+        validators: zodClient(RetirementForcedEndorsementSchema),
         async onSubmit(input) {
+            $letterCertificationForm.forcedId = data.props.currentApplicationId
             const response = _letterCertificationFormSubmit($letterCertificationForm);
         },
     });
@@ -121,17 +126,17 @@ const {
                     class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
                 >
                     <div class="flex w-full flex-col gap-2">
+                        <!-- disabled={data.props.currentApplicationDetail.certificationDetail !== null || data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code} -->
                         <CustomSelectField
-                            disabled={data.props.currentApplicationDetail.certificationDetail !== null || data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                             id="status"
                             label={'Adakah Permohonan Ini Sah?'}
                             bind:val={$certificationForm.status}
                             options={data.props.endorsementDropdown}
                         ></CustomSelectField>
                     </div>
+                    <!-- disabled={data.props.currentApplicationDetail.certificationDetail !== null || data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code} -->
                     <div class="flex w-full flex-col gap-2">
                         <CustomTextField
-                        disabled={data.props.currentApplicationDetail.certificationDetail !== null || data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                             id="remark"
                             label={'Alasan Pertukaran'}
                             errors={$certificationErrors.remark}
@@ -176,14 +181,14 @@ const {
                 class="flex h-full w-full flex-col items-start justify-start"
             >
                 <form
-                    id="certificationForm"
+                    id="confirmForm"
                     method="POST"
                     use:confirmEnhance
                     class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
                 >
                     <div class="flex w-full flex-col gap-2">
+                        <!-- disabled={data.props.currentApplicationDetail.confirmationDetail !== null || data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code} -->
                         <CustomSelectField
-                            disabled={data.props.currentApplicationDetail.confirmationDetail !== null || data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                             id="status"
                             label={'Adakah Permohonan Ini Sah?'}
                             bind:val={$confirmForm.status}
@@ -191,8 +196,8 @@ const {
                         ></CustomSelectField>
                     </div>
                     <div class="flex w-full flex-col gap-2">
+                        <!-- disabled={data.props.currentApplicationDetail.confirmationDetail !== null || data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code} -->
                         <CustomTextField
-                        disabled={data.props.currentApplicationDetail.confirmationDetail !== null || data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                             id="remark"
                             label={'Alasan Pertukaran'}
                             errors={$confirmErrors.remark}
@@ -218,7 +223,7 @@ const {
             <TextIconButton
                 label="Hantar"
                 icon="check"
-                form="certificationForm"
+                form="documentForm"
             ></TextIconButton>
         <!-- {/if} -->
     </StepperContentHeader>
@@ -239,14 +244,14 @@ const {
                 class="flex h-full w-full flex-col items-start justify-start"
             >
                 <form
-                    id="certificationForm"
+                    id="documentForm"
                     method="POST"
                     use:documentEnhance
                     class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
                 >
                     <div class="flex w-full flex-col gap-2">
+                        <!-- disabled={data.props.currentApplicationDetail.document !== null || data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code} -->
                         <CustomSelectField
-                            disabled={data.props.currentApplicationDetail.document !== null || data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                             id="status"
                             label={'Adakah Permohonan Ini Sah?'}
                             bind:val={$documentForm.status}
@@ -254,8 +259,8 @@ const {
                         ></CustomSelectField>
                     </div>
                     <div class="flex w-full flex-col gap-2">
+                        <!-- disabled={data.props.currentApplicationDetail.document !== null || data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code} -->
                         <CustomTextField
-                        disabled={data.props.currentApplicationDetail.document !== null || data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                             id="remark"
                             label={'Alasan Pertukaran'}
                             errors={$documentErrors.remark}
@@ -279,7 +284,7 @@ const {
             <TextIconButton
                 label="Hantar"
                 icon="check"
-                form="certificationForm"
+                form="letterCertificationForm"
             ></TextIconButton>
         <!-- {/if} -->
     </StepperContentHeader>
@@ -306,8 +311,8 @@ const {
                     class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
                 >
                     <div class="flex w-full flex-col gap-2">
+                        <!-- disabled={data.props.currentApplicationDetail.letterCertificationDetail !== null || data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code} -->
                         <CustomSelectField
-                            disabled={data.props.currentApplicationDetail.letterCertificationDetail !== null || data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                             id="status"
                             label={'Adakah Permohonan Ini Sah?'}
                             bind:val={$letterCertificationForm.status}
@@ -315,8 +320,8 @@ const {
                         ></CustomSelectField>
                     </div>
                     <div class="flex w-full flex-col gap-2">
+                        <!-- disabled={data.props.currentApplicationDetail.letterCertificationDetail !== null || data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code} -->
                         <CustomTextField
-                        disabled={data.props.currentApplicationDetail.letterCertificationDetail !== null || data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                             id="remark"
                             label={'Alasan Pertukaran'}
                             errors={$certificationErrors.remark}
@@ -330,3 +335,7 @@ const {
 </StepperContent>
 <!-- {/if} -->
 </Stepper>
+
+<Toaster>
+
+</Toaster>

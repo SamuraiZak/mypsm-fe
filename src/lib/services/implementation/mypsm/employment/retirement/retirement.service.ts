@@ -349,7 +349,7 @@ export class RetirementApplicationServices {
             let url: Input = 'employment/retirement/force/certification';
 
             const promiseResponse: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -374,7 +374,7 @@ export class RetirementApplicationServices {
             let url: Input = 'employment/retirement/force/confirmation';
 
             const promiseResponse: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -400,7 +400,7 @@ export class RetirementApplicationServices {
             let url: Input = 'employment/retirement/force/documents_certification';
 
             const promiseResponse: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -426,7 +426,7 @@ export class RetirementApplicationServices {
             let url: Input = 'employment/retirement/force/letter_certification';
 
             const promiseResponse: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();

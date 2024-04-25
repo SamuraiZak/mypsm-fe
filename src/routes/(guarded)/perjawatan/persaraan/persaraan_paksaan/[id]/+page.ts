@@ -48,7 +48,7 @@ export async function load({ params }) {
 
     // create the application detail request body
     const applicationDetailRequest: RetirementForcedApplicationDetailRequestDTO = {
-        forceId: currentApplicationId,
+        forcedId: currentApplicationId,
     }
 
     // fetch the application detail
@@ -64,28 +64,28 @@ export async function load({ params }) {
         if (currentApplicationDetail.certificationDetail !== null) {
             certificationDetailForm.data = currentApplicationDetail.certificationDetail;
         } else {
-            certificationDetailForm.data.forceId = currentApplicationId;
+            certificationDetailForm.data.forcedId = currentApplicationId;
         }
 
         // assign value to confirmationForm
         if (currentApplicationDetail.confirmationDetail !== null) {
             confirmationDetailForm.data = currentApplicationDetail.confirmationDetail;
         } else {
-            confirmationDetailForm.data.forceId = currentApplicationId;
+            confirmationDetailForm.data.forcedId = currentApplicationId;
         }
 
         // assign value to documentCertificationForm
         if (currentApplicationDetail.document !== null) {
             documentForm.data = currentApplicationDetail.document;
         } else {
-            documentForm.data.forceId = currentApplicationId;
+            documentForm.data.forcedId = currentApplicationId;
         }
 
         // assign value to letterCertificationForm
         if (currentApplicationDetail.letterCertificationDetail !== null) {
             letterCertificationDetailForm.data = currentApplicationDetail.letterCertificationDetail;
         } else {
-            letterCertificationDetailForm.data.forceId = currentApplicationId;
+            letterCertificationDetailForm.data.forcedId = currentApplicationId;
         }
 
     }
@@ -205,7 +205,7 @@ export async function _letterCertificationFormSubmit(formData:RetirementForcedEn
 
     if (form.valid) {
         const response =
-            await RetirementApplicationServices.addRetirementforcedDocument(
+            await RetirementApplicationServices.addRetirementforcedLetter(
                 formData,
             );
 

@@ -112,7 +112,7 @@
             filter: true,
         },
         controls: {
-            add: data.props.currentRoleCode == UserRoleConstant.kakitangan.code,
+            add: data.props.currentRoleCode == UserRoleConstant.urusSetiaPersaraan.code,
         },
     };
 
@@ -158,6 +158,12 @@
 
     function unspecifyAddNew() {
         let url = '/perjawatan/persaraan/persaraan_lain-lain/baru';
+
+        goto(url);
+    }
+
+    function forceAddNew() {
+        let url = '/perjawatan/persaraan/persaraan_paksaan/baru';
 
         goto(url);
     }
@@ -250,7 +256,7 @@
             >
                 <div class="h h-fit w-full">
                     <DataTable
-                        title="Senarai Permohonan Cuti"
+                        title="Senarai Permohonan Sendiri"
                         bind:tableData={voluntaryApplicationtable}
                         bind:passData={rowData}
                         addActions={() => {
@@ -284,14 +290,15 @@
             >
                 <div class="h h-fit w-full">
                     <DataTable
-                        title="Senarai Permohonan Cuti"
+                        title="Senarai Kumpulan Persaraan Paksaan"
                         bind:tableData={forceApplicationtable}
                         bind:passData={rowData}
                         addActions={() => {
                             // addApplication();
-                            let url =
-                                '/perjawatan/persaraan/persaraan_paksaan/Baru';
-                            goto(url);
+                            // let url =
+                            //     '/perjawatan/persaraan/persaraan_paksaan/Baru';
+                            // goto(url);
+                            forceAddNew()
                         }}
                         detailActions={() => {
                             let url =

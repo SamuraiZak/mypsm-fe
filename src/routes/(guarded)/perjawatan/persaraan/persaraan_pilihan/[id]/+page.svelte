@@ -2,7 +2,6 @@
     import { superForm } from "sveltekit-superforms/client";
     import type { PageData } from "./$types";
     import { zodClient } from "sveltekit-superforms/adapters";
-    import { _applicationDetailFormSubmit, _approvalFormSubmit, _certificationFormSubmit, _confirmationFormSubmit, _documentCertificationFormSubmit, _firstSupporterFormSubmit, _letterCertificationFormSubmit, _secondSupporterFormSubmit, _secretaryApprovalFormSubmit, _supportApproverFormSubmit } from "./+page";
     import { RetirementEndorsementSchema, RetirementEndorserDetailSchema, RetirementVoluntaryDetailSchema } from "$lib/schemas/mypsm/employment/retirement/retirement.schema";
     import ContentHeader from "$lib/components/headers/ContentHeader.svelte";
     import TextIconButton from "$lib/components/button/TextIconButton.svelte";
@@ -18,6 +17,7 @@
     import CustomSelectField from "$lib/components/inputs/select-field/CustomSelectField.svelte";
     import type { RetirementVoluntaryDetailDTO } from "$lib/dto/mypsm/employment/retirement/retirement.dto";
     import { Toaster } from "svelte-french-toast";
+    import { _applicationDetailFormSubmit, _approvalFormSubmit, _certificationFormSubmit, _confirmationFormSubmit, _documentCertificationFormSubmit, _firstSupporterFormSubmit, _letterCertificationFormSubmit, _secondSupporterFormSubmit, _secretaryApprovalFormSubmit, _supportApproverFormSubmit } from "./+page";
 
     export let data: PageData;
 
@@ -120,6 +120,7 @@
             const response = _firstSupporterFormSubmit($firstSupporterForm);
         },
     });
+    
     const {
         form: secondSupporterForm,
         errors: secondSupporterErrors,
@@ -292,7 +293,7 @@
         {#if data.props.currentApplicationDetail.applicationDetail !== null}
         <StepperContent>
             <StepperContentHeader title="Perakuan Dari Unit Integriti">
-                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode == 'secretary'}
+                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                     <TextIconButton
                         label="Hantar"
                         icon="check"
@@ -354,7 +355,7 @@
         {#if data.props.currentApplicationDetail.applicationDetail !== null}
         <StepperContent>
             <StepperContentHeader title="Pengesahan Permohonan Persaraan">
-                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode == 'secretary'}
+                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                     <TextIconButton
                         label="Hantar"
                         icon="check"
@@ -415,7 +416,7 @@
         {#if data.props.currentApplicationDetail.applicationDetail !== null}
         <StepperContent>
             <StepperContentHeader title="Penyokong & Pelulus">
-                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode == 'secretary'}
+                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                     <TextIconButton
                         label="Hantar"
                         icon="check"
@@ -485,7 +486,7 @@
         {#if data.props.currentApplicationDetail.applicationDetail !== null}
         <StepperContent>
             <StepperContentHeader title="Penyokong #1">
-                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode == 'secretary'}
+                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                     <TextIconButton
                         label="Hantar"
                         icon="check"
@@ -546,7 +547,7 @@
         {#if data.props.currentApplicationDetail.applicationDetail !== null}
         <StepperContent>
             <StepperContentHeader title="Penyokong #2">
-                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode == 'secretary'}
+                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                     <TextIconButton
                         label="Hantar"
                         icon="check"
@@ -607,7 +608,7 @@
         {#if data.props.currentApplicationDetail.applicationDetail !== null}
         <StepperContent>
             <StepperContentHeader title="Kelulusan Permohonan Persaraan">
-                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode == 'secretary'}
+                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                     <TextIconButton
                         label="Hantar"
                         icon="check"
@@ -669,7 +670,7 @@
         {#if data.props.currentApplicationDetail.applicationDetail !== null}
         <StepperContent>
             <StepperContentHeader title="Pengesahan Urus Setia">
-                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode == 'secretary'}
+                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                     <TextIconButton
                         label="Hantar"
                         icon="check"
@@ -730,7 +731,7 @@
         {#if data.props.currentApplicationDetail.applicationDetail !== null}
         <StepperContent>
             <StepperContentHeader title="Pengesahan Dokumen Persaraan">
-                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode == 'secretary'}
+                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                     <TextIconButton
                         label="Hantar"
                         icon="check"
@@ -791,7 +792,7 @@
         {#if data.props.currentApplicationDetail.applicationDetail !== null}
         <StepperContent>
             <StepperContentHeader title="Pengesahan Surat Persaraan">
-                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode == 'secretary'}
+                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.currentRoleCode !== UserRoleConstant.unitIntegriti.code}
                     <TextIconButton
                         label="Hantar"
                         icon="check"

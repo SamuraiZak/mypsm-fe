@@ -1,7 +1,7 @@
 <script lang="ts">
     import { zodClient } from 'sveltekit-superforms/adapters';
     import { superForm } from 'sveltekit-superforms/client';
-    import type { PageData } from './$types';
+  
     import { _documentApprovalSubmit, _retirementDetailSubmit } from './+page';
     import {
         UspRetirementDetailSchema,
@@ -19,6 +19,7 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import { Toaster } from 'svelte-french-toast';
+        import type { PageData } from './$types';
 
     export let data: PageData;
 

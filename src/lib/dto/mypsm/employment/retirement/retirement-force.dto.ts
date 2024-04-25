@@ -2,14 +2,14 @@
 // SHARED
 // ======================================================
 export interface RetirementEndorsementDTO {
-    forceId: number;
+    forcedId: number;
     status:      boolean;
     remark:      string;
 }
 
 // detail request DTO
 export interface RetirementForcedApplicationDetailRequestDTO{
-    forceId?:       number;
+    forcedId?:       number;
 }
 
 // ======================================================
