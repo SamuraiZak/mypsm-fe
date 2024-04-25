@@ -14,3 +14,21 @@ export class QuarterCommonApprovalConvert {
         return JSON.stringify(value);
     }
 }
+
+export interface QuarterSecretaryApproval {
+    id:     number;
+    status: boolean;
+    remark: string;
+    directorApproverId: number;
+}
+
+// Converts JSON strings to/from your types
+export class QuarterSecretaryApprovalConvert {
+    public static fromJson(json: string): QuarterSecretaryApproval {
+        return JSON.parse(json);
+    }
+
+    public static toJson(value: QuarterSecretaryApproval): string {
+        return JSON.stringify(value);
+    }
+}

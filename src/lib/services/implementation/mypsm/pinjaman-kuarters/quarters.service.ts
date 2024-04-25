@@ -17,8 +17,8 @@ import { OutsiderServiceDetailDetailConvert, type OutsiderServiceDetail } from '
 import { movingOutSetDirectorConvert, type MovingOutSetDirector } from '$lib/dto/mypsm/pinjaman/kuarters/moving-out-set-director.dto';
 import { MoveOutConvert, type MoveOutQuarters } from '$lib/dto/mypsm/pinjaman/kuarters/moving-out.dto';
 import { OutsiderIdConvert, type OutsiderId } from '$lib/dto/mypsm/pinjaman/kuarters/outsider-id.dto';
-import { QuarterCommonApprovalConvert, type QuarterCommonApproval } from '$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto';
-import { QuarterDetailsConvert, type QuarterDetails } from '$lib/dto/mypsm/pinjaman/kuarters/quarter-details.dto';
+import { QuarterCommonApprovalConvert, QuarterSecretaryApprovalConvert, type QuarterCommonApproval, type QuarterSecretaryApproval } from '$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto';
+import { QuarterDetailsConvert, QuarterPaymentConvert, type QuarterDetails, type QuarterPayment } from '$lib/dto/mypsm/pinjaman/kuarters/quarter-details.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
@@ -307,13 +307,13 @@ export class QuartersServices {
     }
 
     //add application secretary approval
-    static async addApplicationSecretaryApproval(param: QuarterCommonApproval) {
+    static async addApplicationSecretaryApproval(param: QuarterSecretaryApproval) {
         try {
             let url: Input = 'quarter/moving_in/secretary_approval/add';
 
             const promiseRes: Promise<Response> = http
                 .post(url, {
-                    body: QuarterCommonApprovalConvert.toJson(param),
+                    body: QuarterSecretaryApprovalConvert.toJson(param),
                 })
                 .json();
 
@@ -353,6 +353,53 @@ export class QuartersServices {
             return CommonResponseConstant.httpError;
         }
     }
+    //add quarter payment
+    static async addQuarterPayment(param: QuarterPayment) {
+        try {
+            let url: Input = 'quarter/moving_in/payment_detail/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: QuarterPaymentConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //get quarter payment
+    static async getQuarterPayment(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'quarter/moving_in/payment_detail/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
 
     //get employee eligibility
     static async getEligibility(param: commonIdRequestDTO) {
@@ -590,6 +637,53 @@ export class QuartersServices {
         }
     }
 
+    // add outstanding document
+    static async addOutstandingDocument(param: string) {
+        try {
+            let url: Input = 'quarter/moving_out/outstanding_document/upload';
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: param,
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get outstanding documents
+    static async getOutstandingDocuments(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'quarter/moving_out/outstanding_document/download';
+
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     // add moving out document
     static async addMovingOutDocument(param: string) {
         try {
@@ -685,7 +779,7 @@ export class QuartersServices {
     }
 
     //add moving out secretary approval
-    static async addMovingOutSecretaryApproval(param: QuarterCommonApproval) {
+    static async addMovingOutSecretaryApproval(param: QuarterSecretaryApproval) {
         try {
             let url: Input = 'quarter/moving_out/secretary_approval/add';
 
