@@ -700,9 +700,7 @@
             (e.currentTarget as HTMLInputElement)?.files ?? [],
         );
 
-        additionalFiles.forEach((file) => {
-            $documentForm.document = [...$documentForm.document, file];
-        });
+        $documentForm.document = [additionalFiles[0]];
     };
 
     const handleDownload = async (url: string) => {
