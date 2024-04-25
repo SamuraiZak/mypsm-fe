@@ -3,6 +3,7 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterNumberField from '$lib/components/table/filter/FilterNumberField.svelte';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
@@ -45,7 +46,8 @@
     };
 
     function viewDetails() {
-        let url = '/pengurusan_sistem/peranan_pengguna/' + selectedData.employeeId;
+        let url =
+            '/pengurusan_sistem/peranan_pengguna/' + selectedData.employeeId;
 
         goto(url);
     }
@@ -55,14 +57,14 @@
     class="flex h-full max-h-full w-full flex-col overflow-y-hidden bg-ios-basic-lightBackgroundGray"
 >
     <section class="flex w-full flex-col items-start justify-start">
-        <ContentHeader title="Permohonan Cuti"></ContentHeader>
+        <ContentHeader title="Pengurusan Peranan Pengguna"></ContentHeader>
     </section>
     <div
         class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-10 py-4"
     >
         <div class="h h-fit w-full">
             <DataTable
-                title="Senarai Permohonan Cuti"
+                title="Senarai Kakitangan"
                 bind:tableData={employeeListTable}
                 bind:passData={selectedData}
                 detailActions={() => {
@@ -70,14 +72,14 @@
                 }}
             >
                 <FilterWrapper slot="filter">
-                    <FilterNumberField
-                        label="name"
+                    <FilterTextField
+                        label="Nama Peranan"
                         bind:inputValue={employeeListTable.param.filter.name}
-                    ></FilterNumberField>
-                    <FilterNumberField
-                        label="name"
-                        bind:inputValue={employeeListTable.param.filter.name}
-                    ></FilterNumberField>
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={employeeListTable.param.filter.identityCard}
+                    ></FilterTextField>
                 </FilterWrapper>
             </DataTable>
         </div>

@@ -90,3 +90,12 @@ export const TransferSelfReasonSchema = z.object({
     date: z.string().nullish(),
 });
 export type TransferSelfReason = z.infer<typeof TransferSelfReasonSchema>;
+
+export const TransferSelfEndorsementSchema = z.object({
+    id: z.number(),
+    status: z.boolean(),
+    applicationDate: z.string().nullish(),
+});
+export type TransferSelfEndorsement = z.infer<
+    typeof TransferSelfEndorsementSchema
+>;

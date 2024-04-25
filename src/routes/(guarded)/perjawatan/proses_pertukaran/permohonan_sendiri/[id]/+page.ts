@@ -23,6 +23,7 @@ import {
     TransferCommonPostponeApplicationSchema,
     TransferCommonPostponeResultSchema,
     TransferSelfDetailSchema,
+    TransferSelfEndorsementSchema,
     TransferSelfReasonSchema,
     type TransferCommonEndorsement,
     type TransferCommonEndorserDetail,
@@ -30,6 +31,7 @@ import {
     type TransferCommonPostponeApplication,
     type TransferCommonPostponeResult,
     type TransferSelfDetail,
+    type TransferSelfEndorsement,
     type TransferSelfReason,
 } from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
@@ -94,7 +96,7 @@ export async function load({ params }) {
 
     // employee confirmation form
     const employeeConfirmationForm = await superValidate(
-        zod(TransferCommonEndorsementSchema),
+        zod(TransferSelfEndorsementSchema),
     );
 
     // first director feedback form
@@ -462,7 +464,7 @@ export async function _submitReasonForm(formData: TransferSelfReason) {
 
 // submit confirmation form
 export async function _submitConfirmationForm(
-    formData: TransferCommonEndorsement,
+    formData: TransferSelfEndorsement,
 ) {
     const form = await superValidate(
         formData,

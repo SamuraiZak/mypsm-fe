@@ -579,23 +579,25 @@
                                                 .currentApplicationDetail
                                                 .confirmation !== null}
                                             id="status"
-                                            label={'Adakah Permohonan Penangguhan Ini Lulus?'}
+                                            label={'Saya mengaku bahawa semua butiran permohonan adalah benar'}
                                             bind:val={$employeeConfirmationForm.status}
                                             options={data.props
                                                 .endorsementDropdown}
                                         ></CustomSelectField>
                                     </div>
-                                    <div class="flex w-full flex-col gap-2">
-                                        <CustomTextField
-                                            disabled={data.props
-                                                .currentApplicationDetail
-                                                .confirmation !== null}
-                                            id="remark"
-                                            label={'Ulasan'}
-                                            errors={$employeeConfirmationErrors.remark}
-                                            bind:val={$employeeConfirmationForm.remark}
-                                        ></CustomTextField>
-                                    </div>
+                                    {#if data.props.currentApplicationDetail.confirmation !== null}
+                                        <div class="flex w-full flex-col gap-2">
+                                            <CustomTextField
+                                                disabled={data.props
+                                                    .currentApplicationDetail
+                                                    .confirmation !== null}
+                                                id="applicationDate"
+                                                label={'Ulasan'}
+                                                errors={$employeeConfirmationErrors.applicationDate}
+                                                bind:val={$employeeConfirmationForm.applicationDate}
+                                            ></CustomTextField>
+                                        </div>
+                                    {/if}
                                 </form>
                             </div>
                         {/if}
@@ -677,8 +679,6 @@
                     </StepperContentBody>
                 </StepperContent>
             {/if}
-
-            
 
             <!-- ================================= -->
             <!-- FIRST DIRECTOR APPROVAL -->

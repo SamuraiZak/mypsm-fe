@@ -41,7 +41,10 @@ export async function load() {
     // get self application history list
     let selfApplicationList: TransferSelfHistoryDTO[] = [];
 
-    let selfApplicationListFilter: TransferSelfHistoryFilterDTO = {};
+    let selfApplicationListFilter: TransferSelfHistoryFilterDTO = {
+        employeeName: null,
+        identityDocumentNumber: null,
+    };
 
     let selfApplicationListRequest: CommonListRequestDTO = {
         pageNum: 1,
@@ -67,7 +70,7 @@ export async function load() {
     let directorApplicationListFilter: TransferCommonHistoryFilterDTO = {
         directorName: '',
         employeeName: '',
-        employeeIdentityCardNumber: '',
+        identityDocumentNumber: '',
         status: '',
         result: '',
         applicationType: 'director',
@@ -97,7 +100,7 @@ export async function load() {
     let managementApplicationListFilter: TransferCommonHistoryFilterDTO = {
         directorName: '',
         employeeName: '',
-        employeeIdentityCardNumber: '',
+        identityDocumentNumber: '',
         status: '',
         result: '',
         applicationType: 'management',

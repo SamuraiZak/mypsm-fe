@@ -18,6 +18,7 @@ import type {
     TransferCommonPostponeApplication,
     TransferCommonPostponeResult,
     TransferSelfDetail,
+    TransferSelfEndorsement,
     TransferSelfReason,
 } from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
 import http from '$lib/services/implementation/service-provider.service';
@@ -259,8 +260,7 @@ export class TransferApplicationServices {
     // add common transfer supporter feedback
     static async addCommonApproverFeedback(param: TransferCommonEndorsement) {
         try {
-            let url: Input =
-                'employment/forced_transfer/add_approver_approval';
+            let url: Input = 'employment/forced_transfer/add_approver_approval';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -310,7 +310,8 @@ export class TransferApplicationServices {
 
     static async uploadCommonPostponeDocument(param: string) {
         try {
-            let url: Input = 'employment/forced_transfer/upload_postpone_document';
+            let url: Input =
+                'employment/forced_transfer/upload_postpone_document';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -387,8 +388,7 @@ export class TransferApplicationServices {
     // add self transfer detail
     static async addSelfTransferDetail(param: TransferSelfDetail) {
         try {
-            let url: Input =
-                'employment/self_transfer/add';
+            let url: Input = 'employment/self_transfer/add';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -414,8 +414,7 @@ export class TransferApplicationServices {
     // add self transfer reason
     static async addSelfTransferReason(param: TransferSelfReason) {
         try {
-            let url: Input =
-                'employment/self_transfer/add_reason';
+            let url: Input = 'employment/self_transfer/add_reason';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -439,10 +438,9 @@ export class TransferApplicationServices {
     }
 
     // add self transfer confirmation
-    static async addSelfTransferConfirmation(param: TransferCommonEndorsement) {
+    static async addSelfTransferConfirmation(param: TransferSelfEndorsement) {
         try {
-            let url: Input =
-                'employment/self_transfer/add_confirmation';
+            let url: Input = 'employment/self_transfer/add_confirmation';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -464,12 +462,11 @@ export class TransferApplicationServices {
             return CommonResponseConstant.httpError;
         }
     }
-    
+
     // add common transfer document
     static async addSelfTransferDocument(param: string) {
         try {
-            let url: Input =
-                'employment/self_transfer/add_document';
+            let url: Input = 'employment/self_transfer/add_document';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -493,10 +490,11 @@ export class TransferApplicationServices {
     }
 
     // add self transfer first director approval
-    static async addSelfTransferFirstDirectorApproval(param: TransferCommonEndorsement) {
+    static async addSelfTransferFirstDirectorApproval(
+        param: TransferCommonEndorsement,
+    ) {
         try {
-            let url: Input =
-                'employment/self_transfer/add_first_director';
+            let url: Input = 'employment/self_transfer/add_first_director';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -520,10 +518,11 @@ export class TransferApplicationServices {
     }
 
     // add self transfer second director approval
-    static async addSelfTransferSecondDirectorApproval(param: TransferCommonEndorsement) {
+    static async addSelfTransferSecondDirectorApproval(
+        param: TransferCommonEndorsement,
+    ) {
         try {
-            let url: Input =
-                'employment/self_transfer/add_second_director';
+            let url: Input = 'employment/self_transfer/add_second_director';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -603,7 +602,8 @@ export class TransferApplicationServices {
     // add self transfer postpone document
     static async uploadSelfTransferPostponeDocument(param: string) {
         try {
-            let url: Input = 'employment/self_transfer/upload_postpone_document';
+            let url: Input =
+                'employment/self_transfer/upload_postpone_document';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -627,7 +627,9 @@ export class TransferApplicationServices {
     }
 
     // add self transfer postpone result
-    static async addSelfTransferPostponeResult(param: TransferCommonPostponeResult) {
+    static async addSelfTransferPostponeResult(
+        param: TransferCommonPostponeResult,
+    ) {
         try {
             let url: Input = 'employment/self_transfer/add_postpone_result';
 
@@ -653,7 +655,9 @@ export class TransferApplicationServices {
     }
 
     // add self transfer postpone result
-    static async addSelfTransferPostponeApproval(param: TransferCommonEndorsement) {
+    static async addSelfTransferPostponeApproval(
+        param: TransferCommonEndorsement,
+    ) {
         try {
             let url: Input = 'employment/self_transfer/add_postpone_approval';
 
@@ -679,7 +683,9 @@ export class TransferApplicationServices {
     }
 
     // add self transfer endorser detail
-    static async addSelfTransferEndorserDetail(param: TransferCommonEndorserDetail) {
+    static async addSelfTransferEndorserDetail(
+        param: TransferCommonEndorserDetail,
+    ) {
         try {
             let url: Input = 'employment/self_transfer/add_endorser';
 
@@ -705,10 +711,11 @@ export class TransferApplicationServices {
     }
 
     // add common transfer supporter feedback
-    static async addSelfTransferSupporterFeedback(param: TransferCommonEndorsement) {
+    static async addSelfTransferSupporterFeedback(
+        param: TransferCommonEndorsement,
+    ) {
         try {
-            let url: Input =
-                'employment/self_transfer/add_supporter_approval';
+            let url: Input = 'employment/self_transfer/add_supporter_approval';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -732,10 +739,11 @@ export class TransferApplicationServices {
     }
 
     // add common transfer supporter feedback
-    static async addSelfTransferApproverFeedback(param: TransferCommonEndorsement) {
+    static async addSelfTransferApproverFeedback(
+        param: TransferCommonEndorsement,
+    ) {
         try {
-            let url: Input =
-                'employment/self_transfer/add_approver_approval';
+            let url: Input = 'employment/self_transfer/add_approver_approval';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {

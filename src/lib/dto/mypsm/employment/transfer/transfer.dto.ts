@@ -1,5 +1,8 @@
 // =========================================================
 //  SHARED
+
+import type { TransferSelfEndorsement } from "$lib/schemas/mypsm/employment/transfer/transfer.schema";
+
 // =========================================================
 export interface TransferDocumentDTO {
     name: string;
@@ -29,7 +32,7 @@ export interface TransferCommonEndorserDetailDTO {
 export interface TransferCommonHistoryFilterDTO {
     directorName: string | null;
     employeeName: string | null;
-    employeeIdentityCardNumber: string | null;
+    identityDocumentNumber: string | null;
     status: string | null;
     result: string | null;
     applicationType: string | null;
@@ -105,7 +108,7 @@ export interface TransferCommonPostponeResultDTO {
 export interface TransferSelfHistoryDTO {
     id: number;
     employeeNumber: string;
-    empooyeeName: string;
+    employeeName: string;
     identityDocumentNumber: string;
     transferType: string;
     applicationDate: null;
@@ -113,7 +116,10 @@ export interface TransferSelfHistoryDTO {
     result: string;
 }
 
-export interface TransferSelfHistoryFilterDTO {}
+export interface TransferSelfHistoryFilterDTO {
+    employeeName: string | null;
+    identityDocumentNumber: string | null;
+}
 
 export interface TransferSelfDetailDTO {
     id: number;
@@ -141,7 +147,7 @@ export interface TransferSelfApplicationDetailDTO {
     status: string | null;
     applicationDetail: TransferSelfDetailDTO | null;
     reason: TransferSelfReasonDTO | null;
-    confirmation: TransferCommonEndorsementDTO | null;
+    confirmation: TransferSelfEndorsement | null;
     transferDocument: TransferDocumentAddDTO | null;
     firstDirector: TransferCommonEndorsementDTO | null;
     secondDirector: TransferCommonEndorsementDTO | null;

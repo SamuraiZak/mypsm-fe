@@ -163,26 +163,28 @@
                     slot="extras"
                     class="flex h-full w-fit flex-row items-center justify-end gap-1"
                 >
-                    <TextIconButton
-                        label="Set Semula"
-                        icon="reset"
-                        type="neutral"
-                        onClick={() => {
-                            reset();
-                        }}
-                    ></TextIconButton>
-                    <TextIconButton
-                        label="Kemaskini"
-                        icon="check"
-                        onClick={() => {
-                            submit();
-                        }}
-                    ></TextIconButton>
+                    {#if roleListTable.selectedData.length !== data.props.currentEmployeeDetail?.roles.length}
+                        <TextIconButton
+                            label="Set Semula"
+                            icon="reset"
+                            type="neutral"
+                            onClick={() => {
+                                reset();
+                            }}
+                        ></TextIconButton>
+                        <TextIconButton
+                            label="Kemaskini"
+                            icon="check"
+                            onClick={() => {
+                                submit();
+                            }}
+                        ></TextIconButton>
+                    {/if}
                 </div>
                 <FilterWrapper slot="filter">
                     <FilterTextField
                         label="Nama Peranan"
-                        bind:inputValue={roleListTable.param.filter.name}
+                        bind:inputValue={roleListTable.param.filter.description}
                     ></FilterTextField>
                 </FilterWrapper>
             </DataTable>

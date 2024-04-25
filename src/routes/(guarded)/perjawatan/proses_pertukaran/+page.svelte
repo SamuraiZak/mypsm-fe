@@ -5,6 +5,7 @@
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterNumberField from '$lib/components/table/filter/FilterNumberField.svelte';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import { TransferTypeConstant } from '$lib/constants/core/transfer.constant';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
@@ -25,12 +26,20 @@
             totalData: 1,
             totalPage: 1,
         },
-        data:
-            data.self.selfApplicationListResponse.data?.dataList ?? [],
+        data: data.self.selfApplicationListResponse.data?.dataList ?? [],
         selectedData: [],
         exportData: [],
         hiddenColumn: ['id', 'employeeNumber', 'applicationType'],
-        dictionary: [],
+        dictionary: [
+            {
+                malay: 'Nama Kakitangan',
+                english: 'employeeName',
+            },
+            {
+                english: 'transferType',
+                malay: 'Jenis Pertukaran',
+            },
+        ],
         url: 'employment/self_transfer/list',
         id: 'selfApplicationTable',
         option: {
@@ -58,7 +67,12 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['id', 'employeeNumber', 'applicationType'],
-        dictionary: [],
+        dictionary: [
+            {
+                malay: 'Nama Kakitangan',
+                english: 'employeeName',
+            },
+        ],
         url: 'employment/forced_transfer/list',
         id: 'directorApplicationTable',
         option: {
@@ -87,7 +101,12 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['id', 'employeeNumber', 'applicationType'],
-        dictionary: [],
+        dictionary: [
+            {
+                malay: 'Nama Kakitangan',
+                english: 'employeeName',
+            },
+        ],
         url: 'employment/forced_transfer/list',
         id: 'managementApplicationTable',
         option: {
@@ -166,7 +185,7 @@
             >
                 <div class="h-fit w-full">
                     <DataTable
-                        title="Senarai Permohonan Pertukaran"
+                        title="Senarai Permohonan Pertukaran Atas Pilihan Sendiri"
                         bind:tableData={selfApplicationTable}
                         bind:passData={selectedData}
                         addActions={() => {
@@ -177,11 +196,16 @@
                         }}
                     >
                         <FilterWrapper slot="filter">
-                            <FilterNumberField
-                                label="Tahun"
+                            <FilterTextField
+                                label="Nama Kakitangan"
                                 bind:inputValue={selfApplicationTable.param
-                                    .filter.year}
-                            ></FilterNumberField>
+                                    .filter.employeeName}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="No. Kad Pengenalan"
+                                bind:inputValue={selfApplicationTable.param
+                                    .filter.identityDocumentNumber}
+                            ></FilterTextField>
                         </FilterWrapper>
                     </DataTable>
                 </div>
@@ -193,7 +217,7 @@
             >
                 <div class="h-fit w-full">
                     <DataTable
-                        title="Senarai Permohonan Pertukaran"
+                        title="Senarai Permohonan Pertukaran Atas Arahan Pengarah"
                         bind:tableData={directorApplicationTable}
                         bind:passData={selectedData}
                         addActions={() => {
@@ -204,11 +228,21 @@
                         }}
                     >
                         <FilterWrapper slot="filter">
-                            <FilterNumberField
-                                label="Tahun"
+                            <FilterTextField
+                                label="Nama Pemohon"
                                 bind:inputValue={directorApplicationTable.param
-                                    .filter.year}
-                            ></FilterNumberField>
+                                    .filter.directorName}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="Nama Kakitangan"
+                                bind:inputValue={directorApplicationTable.param
+                                    .filter.employeeName}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="No. Kad Pengenalan"
+                                bind:inputValue={directorApplicationTable.param
+                                    .filter.identityDocumentNumber}
+                            ></FilterTextField>
                         </FilterWrapper>
                     </DataTable>
                 </div>
@@ -220,7 +254,7 @@
             >
                 <div class="h-fit w-full">
                     <DataTable
-                        title="Senarai Permohonan Pertukaran"
+                        title="Senarai Permohonan Pertukaran Atas Arahan Pihak Pengurusan"
                         bind:tableData={managementApplicationTable}
                         bind:passData={selectedData}
                         addActions={() => {
@@ -229,11 +263,16 @@
                         detailActions={() => {}}
                     >
                         <FilterWrapper slot="filter">
-                            <FilterNumberField
-                                label="Tahun"
+                            <FilterTextField
+                                label="Nama Kakitangan"
                                 bind:inputValue={managementApplicationTable
-                                    .param.filter.year}
-                            ></FilterNumberField>
+                                    .param.filter.employeeName}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="No. Kad Pengenalan"
+                                bind:inputValue={managementApplicationTable
+                                    .param.filter.identityDocumentNumber}
+                            ></FilterTextField>
                         </FilterWrapper>
                     </DataTable>
                 </div>
