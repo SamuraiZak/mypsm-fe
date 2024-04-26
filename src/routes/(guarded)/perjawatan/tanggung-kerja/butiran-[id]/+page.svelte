@@ -554,7 +554,7 @@
                 </StepperContentBody>
             </StepperContent>
 
-            {#if data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code}
+            {#if data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code || data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
             <StepperContent>
                 <StepperContentHeader
                     title="Senarai Semak Permohonan Penangguhan/Pindaan Penempatan Kerja"

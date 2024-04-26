@@ -166,7 +166,7 @@
 
         <StepperContent>
             <StepperContentHeader
-                title="Pegawai Yang Menanggung Kerja"
+                title="Tempoh Tanggung Kerja Kerja"
             ></StepperContentHeader>
             <StepperContentBody>
                 <Alert color="blue" class="w-full">

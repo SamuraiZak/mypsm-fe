@@ -34,7 +34,7 @@
     let submitSupporter: boolean = false;
     let submitApprover: boolean = false;
 
-    if (data.secretaryDetail.name !== '') {
+    if (data.secretaryDetail?.name !== '') {
         submitSecretary = true;
     }
     const {
@@ -77,7 +77,7 @@
             }
         },
     });
-    if ($suppAppForm.approver !== '') {
+    if ($suppAppForm?.approver !== '') {
         submitSuppApp = true;
     }
     const {
@@ -100,7 +100,7 @@
             }
         },
     });
-    if ($supporterApprovalForm.remark !== '') {
+    if ($supporterApprovalForm?.remark !== '') {
         submitSupporter = true;
     }
 
@@ -124,7 +124,7 @@
             }
         },
     });
-    if ($approverApprovalForm.remark !== '') {
+    if ($approverApprovalForm?.remark !== '') {
         submitApprover = true;
     }
 </script>
@@ -158,56 +158,54 @@
                         id="grade"
                         disabled
                         options={data.lookup.gradeLookup}
-                        val={data.terminationDetail.applicationDetail.grade}
+                        val={data.terminationDetail?.applicationDetail?.grade}
                     />
                     <CustomSelectField
                         label="Jawatan"
                         id="position"
                         disabled
                         options={data.lookup.positionLookup}
-                        val={data.terminationDetail.applicationDetail.position}
+                        val={data.terminationDetail?.applicationDetail?.position}
                     />
                     <CustomSelectField
                         label="Kementrian/Jabatan"
                         id="placement"
                         disabled
                         options={data.lookup.placementLookup}
-                        val={data.terminationDetail.applicationDetail.placement}
+                        val={data.terminationDetail?.applicationDetail?.placement}
                     />
                     <CustomTextField
                         label="Nombor Butiran Anggaran Belanjawan Mengurus/Waran Penjawatan"
                         id="referenceNumber"
                         disabled
-                        val={data.terminationDetail.applicationDetail
-                            .referenceNumber}
+                        val={data.terminationDetail?.applicationDetail?.referenceNumber}
                     />
                     <CustomTextField
                         label="Tarikh Mula"
                         id="startDate"
                         disabled
                         type="date"
-                        val={data.terminationDetail.applicationDetail.startDate}
+                        val={data.terminationDetail?.applicationDetail?.startDate}
                     />
                     <CustomTextField
                         label="Tarikh Tamat"
                         id="endDate"
                         disabled
                         type="date"
-                        val={data.terminationDetail.applicationDetail.endDate}
+                        val={data.terminationDetail?.applicationDetail?.endDate}
                     />
                     <CustomSelectField
                         label="Tempat Kekosongan"
                         id="newPlacement"
                         disabled
                         options={data.lookup.placementLookup}
-                        val={data.terminationDetail.applicationDetail
-                            .newPlacement}
+                        val={data.terminationDetail?.applicationDetail?.newPlacement}
                     />
                     <CustomTextField
                         label="Sebab-sebab Kekosongan"
                         id="reason"
                         disabled
-                        val={data.terminationDetail.applicationDetail.reason}
+                        val={data.terminationDetail?.applicationDetail?.reason}
                     />
                 </div>
             </StepperContentBody>
@@ -223,46 +221,46 @@
                         label="Nama Pegawai"
                         id="name"
                         disabled
-                        val={data.terminationDetail.detail.name}
+                        val={data.terminationDetail?.detail?.name}
                     />
                     <CustomTextField
                         label="No. Kad Pengenalan"
                         id="identityCardNumber"
                         disabled
-                        val={data.terminationDetail.detail.identityCardNumber}
+                        val={data.terminationDetail?.detail?.identityCardNumber}
                     />
                     <CustomTextField
                         label="Tarikh Lantikan Jawatan Sekarang"
                         id="serviceDate"
                         disabled
                         type="date"
-                        val={data.terminationDetail.detail.serviceDate}
+                        val={data.terminationDetail?.detail?.serviceDate}
                     />
                     <CustomTextField
                         label="Tarikh Sah Dalam Jawatan Sekarang"
                         id="effectiveDate"
                         disabled
                         type="date"
-                        val={data.terminationDetail.detail.effectiveDate}
+                        val={data.terminationDetail?.detail?.effectiveDate}
                     />
                     <CustomTextField
                         label="Jawatan/Gred"
                         id="positionWithGrade"
                         disabled
-                        val={data.terminationDetail.detail.positionWithGrade}
+                        val={data.terminationDetail?.detail?.positionWithGrade}
                     />
                     <CustomTextField
                         label="Tarikh Mula Bertugas di Jawatan Sekarang"
                         id="confirmDate"
                         disabled
                         type="date"
-                        val={data.terminationDetail.detail.confirmDate}
+                        val={data.terminationDetail?.detail?.confirmDate}
                     />
                     <CustomTextField
                         label="Tempat Bertugas Semasa"
                         id="placement"
                         disabled
-                        val={data.terminationDetail.detail.placement}
+                        val={data.terminationDetail?.detail?.placement}
                     />
                 </div>
             </StepperContentBody>
@@ -287,7 +285,7 @@
                     use:secretaryApprovalEnhance
                     id="secretaryApprovalForm"
                 >
-                    {#if data.secretaryDetail.name == ''}
+                    {#if data.secretaryDetail?.name == ''}
                         <CustomTextField
                             label="Tindakan/Ulasan"
                             id="remark"
@@ -307,19 +305,19 @@
                             label="Nama"
                             id="name"
                             disabled
-                            bind:val={data.secretaryDetail.name}
+                            val={data.secretaryDetail?.name}
                         />
                         <CustomTextField
                             label="Tindakan/Ulasan"
                             id="remark"
                             disabled
-                            bind:val={data.secretaryDetail.remark}
+                            val={data.secretaryDetail?.remark}
                         />
                         <CustomTextField
                             label="Status"
                             id="status"
                             disabled
-                            bind:val={data.secretaryDetail.statusDescription}
+                            val={data.secretaryDetail?.statusDescription}
                         />
                     {/if}
                 </form>
@@ -340,49 +338,49 @@
                         label="Nama Pegawai"
                         id="name"
                         disabled
-                        val={data.terminationDetail.calculation.personalDetail
+                        val={data.terminationDetail?.calculation.personalDetail
                             .name}
                     />
                     <CustomTextField
                         label="No. Kad Pengenalan"
                         id="identityCardNumber"
                         disabled
-                        val={data.terminationDetail.calculation.personalDetail
+                        val={data.terminationDetail?.calculation.personalDetail
                             .identityCardNumber}
                     />
                     <CustomTextField
                         label="No. Pekerja"
                         id="employeeNumber"
                         disabled
-                        val={data.terminationDetail.calculation.personalDetail
+                        val={data.terminationDetail?.calculation.personalDetail
                             .employeeNumber}
                     />
                     <CustomTextField
                         label="Jawatan Hakiki Sekarang"
                         id="currentPosition"
                         disabled
-                        val={data.terminationDetail.calculation.personalDetail
+                        val={data.terminationDetail?.calculation.personalDetail
                             .currentPosition}
                     />
                     <CustomTextField
                         label="Jawatan Yang Ditanggung Kerja"
                         id="interimPosition"
                         disabled
-                        val={data.terminationDetail.calculation.personalDetail
+                        val={data.terminationDetail?.calculation.personalDetail
                             .interimPosition}
                     />
                     <CustomTextField
                         label="Gred dan Gaji Minima Jawatan yang Ditanggung Kerja"
                         id="interimMinimalSalary"
                         disabled
-                        val={data.terminationDetail.calculation.personalDetail
+                        val={data.terminationDetail?.calculation.personalDetail
                             .interimMinimalSalary}
                     />
                     <CustomTextField
                         label="25% Daripada Gaji Minima"
                         id="twentyfivePercent"
                         disabled
-                        val={data.terminationDetail.calculation.personalDetail
+                        val={data.terminationDetail?.calculation.personalDetail
                             .twentyfivePercent}
                     />
                     <div class="flex w-full flex-row justify-between gap-5">
@@ -391,7 +389,7 @@
                             id="startEffectiveDate"
                             disabled
                             type="date"
-                            val={data.terminationDetail.calculation
+                            val={data.terminationDetail?.calculation
                                 .personalDetail.startEffectiveDate}
                         />
                         <CustomTextField
@@ -399,7 +397,7 @@
                             id="endEffectiveDate"
                             disabled
                             type="date"
-                            val={data.terminationDetail.calculation
+                            val={data.terminationDetail?.calculation
                                 .personalDetail.endEffectiveDate}
                         />
                     </div>
@@ -407,7 +405,7 @@
                         label="Penempatan"
                         id="placement"
                         disabled
-                        val={data.terminationDetail.calculation.personalDetail
+                        val={data.terminationDetail?.calculation.personalDetail
                             .placement}
                     />
                 </div>
@@ -422,7 +420,7 @@
                         <span
                             class="text-sm text-ios-labelColors-secondaryLabel-light min-w-[90px] max-w-[90px]"
                             >Bulan {new Date(
-                                data.terminationDetail.calculation.personalDetail.startEffectiveDate,
+                                data.terminationDetail?.calculation.personalDetail.startEffectiveDate,
                             ).toLocaleString('ms', { month: 'long' })}</span
                         >
                         <div
@@ -430,23 +428,23 @@
                         >
                             <span>&#40;</span>
                             <span
-                                >{data.terminationDetail.calculation.breakdown
+                                >{data.terminationDetail?.calculation.breakdown
                                     .allowance}</span
                             >
                             <span>x</span>
                             <span
-                                >{data.terminationDetail.calculation.breakdown
+                                >{data.terminationDetail?.calculation.breakdown
                                     .startDay} hari</span
                             >
                             <span>&#41;</span>
                             <span>/</span>
                             <span
-                                >{data.terminationDetail.calculation.breakdown
+                                >{data.terminationDetail?.calculation.breakdown
                                     .NumberOfDaysForStartMonth}</span
                             >
                             <span>=</span>
                             <span
-                                >{data.terminationDetail.calculation.breakdown
+                                >{data.terminationDetail?.calculation.breakdown
                                     .firstMonthAllowance}</span
                             >
                         </div>
@@ -461,18 +459,18 @@
                         >
                             <span>&#40;</span>
                             <span
-                                >{data.terminationDetail.calculation.breakdown
+                                >{data.terminationDetail?.calculation.breakdown
                                     .allowance}</span
                             >
                             <span>x</span>
                             <span
-                                >{data.terminationDetail.calculation.breakdown
+                                >{data.terminationDetail?.calculation.breakdown
                                     .MonthInBetween} bulan</span
                             >
                             <span>&#41;</span>
                             <span>=</span>
                             <span
-                                >{data.terminationDetail.calculation.breakdown
+                                >{data.terminationDetail?.calculation.breakdown
                                     .calculateInBetween}</span
                             >
                         </div>
@@ -481,7 +479,7 @@
                         <span
                             class="text-sm text-ios-labelColors-secondaryLabel-light min-w-[90px] max-w-[90px]"
                             >Bulan {new Date(
-                                data.terminationDetail.calculation.personalDetail.endEffectiveDate,
+                                data.terminationDetail?.calculation.personalDetail.endEffectiveDate,
                             ).toLocaleString('ms', { month: 'long' })}</span
                         >
                         <div
@@ -489,23 +487,23 @@
                         >
                             <span>&#40;</span>
                             <span
-                                >{data.terminationDetail.calculation.breakdown
+                                >{data.terminationDetail?.calculation.breakdown
                                     .allowance}</span
                             >
                             <span>x</span>
                             <span
-                                >{data.terminationDetail.calculation.breakdown
+                                >{data.terminationDetail?.calculation.breakdown
                                     .endDay} hari</span
                             >
                             <span>&#41;</span>
                             <span>/</span>
                             <span
-                                >{data.terminationDetail.calculation.breakdown
+                                >{data.terminationDetail?.calculation.breakdown
                                     .NumberOfDaysForEndMonth}</span
                             >
                             <span>=</span>
                             <span
-                                >{data.terminationDetail.calculation.breakdown
+                                >{data.terminationDetail?.calculation.breakdown
                                     .lastMonthAllowance}</span
                             >
                         </div>
@@ -515,7 +513,7 @@
                         label="Jumlah Bayaran Tunggakkan ETK"
                         id="totalETK"
                         disabled
-                        val={data.terminationDetail.calculation.breakdown
+                        val={data.terminationDetail?.calculation.breakdown
                             .totalETK}
                     />
                 </div>
