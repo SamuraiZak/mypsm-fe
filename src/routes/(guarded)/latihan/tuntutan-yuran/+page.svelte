@@ -7,43 +7,71 @@
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type {
+        TableDTO,
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import type { LayoutData } from './$types';
     import FilterNumberField from '$lib/components/table/filter/FilterNumberField.svelte';
+    import DataTable from '$lib/components/table/DataTable.svelte';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
 
     export let data: LayoutData;
     let rowData: CourseFundReimbursementDetailResponseDTO;
-    let param: CommonListRequestDTO = data.param;
 
-    let fundReimbursementTable: TableDTO = {
-        param: param,
+    let fundReimbursementTable: TableSettingDTO = {
+        param: data.param ?? data.param,
         meta: data.responses.fundReimbursementResponse.data?.meta ?? {
+            pageSize: 1,
             pageNum: 1,
-            pageSize: 5,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
-        data: data.list.fundReimbursementList ?? [],
-        hiddenData: ['id'],
+        data: data.responses.fundReimbursementResponse.data?.dataList ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['id'],
+        dictionary: [
+            {
+                english: 'employeeIdentityNumber',
+                malay: 'No. Kad Pengenalan',
+            },
+            {
+                english: 'academic',
+                malay: 'Taraf Pendidikan',
+            },
+            {
+                english: 'courseName',
+                malay: 'Tajuk Pembelajaran',
+            },
+            {
+                english: 'LNPTAverage',
+                malay: 'Purata LNPT (%)',
+            },
+            {
+                english: 'studyDuration',
+                malay: 'Tempoh Pembelajaran (Tahun)',
+            },
+            {
+                english: 'courseApplicationDate',
+                malay: 'Tarikh Permohonan',
+            },
+        ],
+        url: 'course/fund_reimbursement/list',
+        id: 'fundReimbursementTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: data.roles.isStaffRole,
+        },
     };
-
-    async function _updateExamTable() {
-        _updateTable(fundReimbursementTable.param).then((value) => {
-            fundReimbursementTable.data = value.response.data?.dataList ?? [];
-            fundReimbursementTable.meta = value.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            fundReimbursementTable.param.pageSize =
-                fundReimbursementTable.meta.pageSize;
-            fundReimbursementTable.param.pageNum =
-                fundReimbursementTable.meta.pageNum;
-        });
-    }
 </script>
 
 <!-- content header starts here -->
@@ -60,57 +88,43 @@
     <div
         class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
     >
-        {#if data.roles.isStaffRole}
-            <ContentHeader
-                title="Tekan butang disebelah untuk menambah tuntutan yuran"
-                borderClass="border-none"
-            >
-                <TextIconButton
-                    label="Tambah Tuntutan Yuran"
-                    type="primary"
-                    onClick={() => goto('./tuntutan-yuran/mohon-tuntutan')}
-                ></TextIconButton>
-            </ContentHeader>
-        {/if}
-        <!-- Table filter placeholder -->
-        <FilterCard onSearch={_updateExamTable}>
-            <FilterTextField
-                label="No. Kad Pengenalan"
-                bind:inputValue={fundReimbursementTable.param.filter
-                    .identityDocumentNumber}
-            ></FilterTextField>
-            <FilterTextField
-                label="Nombor Pekerja"
-                bind:inputValue={fundReimbursementTable.param.filter
-                    .employeeNumber}
-            ></FilterTextField>
-            <FilterTextField
-                label="Nama Pekerja"
-                bind:inputValue={fundReimbursementTable.param.filter
-                    .employeeName}
-            ></FilterTextField>
-            <FilterNumberField
-                label="Jumlah Tuntutan"
-                bind:inputValue={fundReimbursementTable.param.filter.totalClaim}
-            ></FilterNumberField>
-            <FilterSelectField
-                label="Status"
-                options={data.lookups.statusLookup}
-                bind:inputValue={fundReimbursementTable.param.filter.status}
-            ></FilterSelectField>
-        </FilterCard>
-        <div class="flex max-h-full w-full flex-col items-start justify-start">
-            <CustomTable
-                title="Senarai Permohonan Peperiksaan"
-                onUpdate={_updateExamTable}
-                enableDetail
-                bind:tableData={fundReimbursementTable}
-                bind:passData={rowData}
-                detailActions={() => {
-                    _checkIfDocumentExist(data.roles.isStaffRole, rowData.id);
-                }}
-            ></CustomTable>
-        </div>
+        <DataTable
+            title="Senarai Permohonan Tuntutan Yuran Pengajian"
+            bind:tableData={fundReimbursementTable}
+            bind:passData={rowData}
+            detailActions={() => {
+                _checkIfDocumentExist(data.roles.isStaffRole, rowData.id);
+            }}
+            addActions={() => goto('./tuntutan-yuran/mohon-tuntutan')}
+        >
+            <FilterWrapper slot="filter">
+                <FilterTextField
+                    label="No. Kad Pengenalan"
+                    bind:inputValue={fundReimbursementTable.param.filter
+                        .identityDocumentNumber}
+                ></FilterTextField>
+                <FilterTextField
+                    label="Nombor Pekerja"
+                    bind:inputValue={fundReimbursementTable.param.filter
+                        .employeeNumber}
+                ></FilterTextField>
+                <FilterTextField
+                    label="Nama Pekerja"
+                    bind:inputValue={fundReimbursementTable.param.filter
+                        .employeeName}
+                ></FilterTextField>
+                <FilterNumberField
+                    label="Jumlah Tuntutan"
+                    bind:inputValue={fundReimbursementTable.param.filter
+                        .totalClaim}
+                ></FilterNumberField>
+                <FilterSelectField
+                    label="Status"
+                    options={data.lookups.statusLookup}
+                    bind:inputValue={fundReimbursementTable.param.filter.status}
+                ></FilterSelectField>
+            </FilterWrapper>
+        </DataTable>
     </div>
 </section>
 
