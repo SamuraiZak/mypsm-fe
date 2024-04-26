@@ -782,17 +782,18 @@
                                 <label
                                     for=""
                                     class="block w-[20px] min-w-[20px] text-[11px] font-medium"
-                                    >1.</label
+                                    >{i + 1}.</label
                                 >
-                                <DownloadAttachment
-                                    triggerDownload={() =>
-                                        handleDownload(
-                                            $reimbursementDocumentsForm
-                                                .document[i].document,
-                                        )}
-                                    fileName={$reimbursementDocumentsForm
+                                <a
+                                    href={$reimbursementDocumentsForm.document[
+                                        i
+                                    ].document}
+                                    download={$reimbursementDocumentsForm
                                         .document[i].name}
-                                ></DownloadAttachment>
+                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                    >{$reimbursementDocumentsForm.document[i]
+                                        .name}</a
+                                >
                             </div>
                         {/each}
                     </div>
