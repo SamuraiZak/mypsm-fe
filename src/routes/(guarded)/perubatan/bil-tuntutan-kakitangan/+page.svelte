@@ -19,7 +19,7 @@
     import type { MedicalClinicEmployeePaymentList } from '$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-payments-list.dto';
     import Alert from 'flowbite-svelte/Alert.svelte';
     import type { PageData } from './$types';
-    import { _submit, _updatePaymentTable } from './+page';
+    import { _submit} from './+page';
     import { superForm } from 'sveltekit-superforms/client';
     import { _editAllocations } from '$lib/schemas/mypsm/medical/medical-schema';
     import { zod } from 'sveltekit-superforms/adapters';
@@ -59,7 +59,7 @@
 
     //table peruntukan kakitangan
     let employeeAllocationTable: TableSettingDTO = {
-        param: data.param,
+        param: data.allocationParam,
         meta: data.employeeGetAllocationResponse.data?.meta ?? {
             pageSize: 1,
             pageNum: 1,
@@ -119,12 +119,15 @@
         taintedMessage: false,
         id: 'allocationForm',
         validators: zod(_editAllocations),
-        resetForm: false,
+        invalidateAll: true,
+        resetForm: true,
         async onSubmit() {
-            const res = await _submit($form);
+            const res = await _submit($form, employeeAllocationTable.param);
 
             if (res?.response.status == 'success') {
+                employeeAllocationTable.data = res.employeeGetAllocation;
                 readOnly = true;
+                
             }
         },
     });
@@ -138,70 +141,6 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
-{#if data.currentRoleCode === UserRoleConstant.urusSetiaPerubatan.code}
-            <div
-                class="flex w-full flex-col items-end justify-start gap-3 border-b border-ios-activeColors-activeBlue-light p-5"
-            >
-                <Alert class="flex w-full flex-row justify-between items-center" color="blue">
-                    <p class="font-medium text-lg">
-                        Tetapan
-                    </p>
-                    {#if readOnly}
-                        <TextIconButton
-                            label="Kemaskini"
-                            type="neutral"
-                            onClick={() => {
-                                readOnly = false;
-                            }}
-                        />
-                    {:else}
-                        <div class="flex flex-row items-end gap-2.5">
-                            <TextIconButton
-                                label="Batal"
-                                icon="cancel"
-                                type="neutral"
-                                onClick={() => {
-                                    readOnly = true;
-                                }}
-                            />
-                            <TextIconButton
-                                label="Simpan"
-                                icon="check"
-                                form="allocationForm"
-                            />
-                        </div>
-                    {/if}
-                </Alert>
-                <form
-                    class="grid w-full grid-cols-2 justify-start gap-5"
-                    id="allocationForm"
-                    method="POST"
-                    use:enhance
-                >
-                    <CustomTextField
-                        label="Peruntukkan Tahun Semasa (RM)"
-                        id="currentAllocation"
-                        disabled={readOnly}
-                        type="number"
-                        bind:val={$form.currentAllocation}
-                    />
-                    <CustomTextField
-                        label="Peruntukkan Baru (RM)"
-                        id="newAllocation"
-                        disabled={readOnly}
-                        type="number"
-                        bind:val={$form.newAllocation}
-                    />
-                    <CustomTextField
-                        label="Tahun"
-                        id="year"
-                        disabled={readOnly}
-                        type="number"
-                        bind:val={$form.year}
-                    />
-                </form>
-            </div>
-        {/if}
     <CustomTab>
         <CustomTabContent title="Senarai Tuntutan Kakitangan">
             <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
@@ -238,20 +177,94 @@
             </div>
         </CustomTabContent>
         {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code}
-            <CustomTabContent title="Senarai Kakitangan - Peruntukan">
+            <CustomTabContent
+                title="Senarai Kakitangan - Peruntukan"
+                paddingClass="p-none"
+            >
                 <div
-                    class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10"
+                    class="flex w-full flex-col items-end justify-start gap-2.5 border-b border-ios-activeColors-activeBlue-light px-5 pt-2"
                 >
-                    <!-- <div
-                        class="flex max-h-full w-full flex-col items-start justify-start"
+                    <Alert
+                        class="flex w-full flex-row items-center justify-between"
+                        color="blue"
                     >
-                        <CustomTable
-                            title="Rekod Peruntukan bagi Kakitangan"
-                            onUpdate={_searchAllocation}
-                            bind:tableData={employeeAllocationTable}
+                        <p class="text-lg font-medium">Tetapan</p>
+                        {#if readOnly}
+                            <TextIconButton
+                                label="Kemaskini"
+                                type="neutral"
+                                onClick={() => {
+                                    readOnly = false;
+                                }}
+                            />
+                        {:else}
+                            <div class="flex flex-row items-end gap-2.5">
+                                <TextIconButton
+                                    label="Batal"
+                                    icon="cancel"
+                                    type="neutral"
+                                    onClick={() => {
+                                        readOnly = true;
+                                    }}
+                                />
+                                <TextIconButton
+                                    label="Simpan"
+                                    icon="check"
+                                    form="allocationForm"
+                                />
+                            </div>
+                        {/if}
+                    </Alert>
+                    <form
+                        class="grid w-full grid-cols-2 justify-start gap-x-10"
+                        id="allocationForm"
+                        method="POST"
+                        use:enhance
+                    >
+                        <CustomTextField
+                            label="Peruntukkan Semasa (RM)"
+                            id="currentAllocation"
+                            disabled
+                            placeholder=""
+                            type="number"
+                            val={data.clinicPanelAllocations?.currentAllocation}
                         />
-                    </div> -->
-                    <!-- TODO: jana surat for enable detail -->
+                        <CustomTextField
+                            label="Kumulatif Peruntukkan (RM)"
+                            id="cumulAlloc"
+                            disabled
+                            placeholder=""
+                            type="number"
+                            val={data.clinicPanelAllocations?.cumulAlloc}
+                        />
+                        <div class="flex flex-row w-full gap-10">
+                            {#if !readOnly}
+                                <CustomTextField
+                                    label="Peruntukkan Baru (RM)"
+                                    id="newAllocation"
+                                    type="number"
+                                    bind:val={$form.newAllocation}
+                                />
+                            {/if}
+                            <CustomTextField
+                                label="Tahun"
+                                id="year"
+                                disabled={readOnly}
+                                type="number"
+                                bind:val={$form.year}
+                            />
+                        </div>
+                        <CustomTextField
+                            label="Kumulatif Baki Peruntukkan (RM)"
+                            id="cumulRemainder"
+                            disabled
+                            placeholder=""
+                            type="number"
+                            val={data.clinicPanelAllocations?.cumulRemainder}
+                        />
+                    </form>
+                </div>
+                <div class="flex w-full flex-col justify-start p-5 pb-10">
                     <div class="h h-fit w-full">
                         <DataTable
                             title="Rekod Peruntukan bagi Kakitangan"
@@ -297,13 +310,13 @@
                             <FilterWrapper slot="filter">
                                 <FilterTextField
                                     label="No. Pekerja"
-                                    bind:inputValue={employeePaymentTable
-                                        .param.filter.employeeNumber}
+                                    bind:inputValue={employeePaymentTable.param
+                                        .filter.employeeNumber}
                                 />
                                 <FilterTextField
                                     label="Nama Kakitangan"
-                                    bind:inputValue={employeePaymentTable
-                                        .param.filter.name}
+                                    bind:inputValue={employeePaymentTable.param
+                                        .filter.name}
                                 />
                             </FilterWrapper>
                         </DataTable>
@@ -314,4 +327,4 @@
     </CustomTab>
 </section>
 
-<Toaster/>
+<Toaster />
