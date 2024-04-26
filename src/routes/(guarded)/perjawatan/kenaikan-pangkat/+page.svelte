@@ -180,7 +180,7 @@
                                     '/perjawatan/kenaikan-pangkat/butiran/' +
                                         rowData.groupId +
                                         '-' +
-                                        'Gred 1-54',
+                                        '1-54',
                                 );
                             }}
                         ></DataTable>
@@ -205,7 +205,7 @@
                                     '/perjawatan/kenaikan-pangkat/butiran/' +
                                         rowData.groupId +
                                         '-' +
-                                        'Gred TBK 1 dan 2',
+                                        'TBK 1 dan 2',
                                 );
                             }}
                         ></DataTable>
@@ -230,7 +230,7 @@
                                         '/perjawatan/kenaikan-pangkat/butiran/' +
                                             rowData.groupId +
                                             '-' +
-                                            'Gred Utama',
+                                            'Utama',
                                     );
                                 }}
                             ></DataTable>
