@@ -37,8 +37,8 @@ export const load = async () => {
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: 'id',
-        orderType: 1,
+        orderBy: null,
+        orderType: null,
         filter: {
             dataType: 0, // 0:semua | 1:Lebih 3 tahun | 2: Rasionalisasi (kurang 3 tahun)
             employeeNumber: null, //string | null | undefined;
@@ -51,8 +51,8 @@ export const load = async () => {
     const exceedsThreeYearsParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: 'id',
-        orderType: 1,
+        orderBy: null,
+        orderType: null,
         filter: {
             dataType: 1, // 0:semua | 1:Lebih 3 tahun | 2: Rasionalisasi (kurang 3 tahun)
             employeeNumber: null, //string | null | undefined;
@@ -65,8 +65,8 @@ export const load = async () => {
     const rationalisationParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: 'id',
-        orderType: 1,
+        orderBy: null,
+        orderType: null,
         filter: {
             dataType: 2, // 0:semua | 1:Lebih 3 tahun | 2: Rasionalisasi (kurang 3 tahun)
             employeeNumber: null, //string | null | undefined;
