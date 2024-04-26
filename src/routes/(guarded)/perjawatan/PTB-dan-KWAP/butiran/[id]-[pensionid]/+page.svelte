@@ -726,6 +726,7 @@
         {#if currentRoleCode === urusetia}
             <StepperContent>
                 <StepperContentHeader title="Kemaskini Maklumat PTB dan KWAP">
+                    
                     <TextIconButton
                         label="simpan"
                         type="primary"
@@ -741,7 +742,7 @@
                         use:PTBPensionInfoEnhance
                     >
                         <CustomTextField
-                        disabled={currentRoleCode !== urusetia}
+                        disabled={currentRoleCode !== urusetia && $PTBPensionInfoForm.PTBDate !== null  }
                             id="PTBdate"
                             type="date"
                             label="Tarikh Diberi PTB"
@@ -749,7 +750,7 @@
                             bind:val={$PTBPensionInfoForm.PTBDate}
                         ></CustomTextField>
                         <CustomTextField
-                        disabled={currentRoleCode !== urusetia}
+                        disabled={currentRoleCode !== urusetia && $PTBPensionInfoForm.referenceNumber !== null  }
                             id="referenceNumber"
                             type="text"
                             label="No. Rujukan Surat JPA"
@@ -758,7 +759,7 @@
                         ></CustomTextField>
 
                         <CustomTextField
-                        disabled={currentRoleCode !== urusetia}
+                        disabled={currentRoleCode !== urusetia && $PTBPensionInfoForm.referenceDate !== null  }
                             id="referenceDate"
                             type="date"
                             label="Tarikh Rujukan"
@@ -767,7 +768,7 @@
                         ></CustomTextField>
 
                         <CustomTextField
-                        disabled={currentRoleCode !== urusetia}
+                        disabled={currentRoleCode !== urusetia && $PTBPensionInfoForm.pensionNumber !== null  }
                             id="pensionNumber"
                             label="No. Pencen"
                             errors={$PTBPensionInfoError.pensionNumber}
@@ -775,7 +776,7 @@
                         ></CustomTextField>
 
                         <CustomTextField
-                        disabled={currentRoleCode !== urusetia}
+                        disabled={currentRoleCode !== urusetia && $PTBPensionInfoForm.KWAPEmailDate !== null  }
                             id="KWAPEmailDate"
                             type="date"
                             label="Tarikh Emel (KWAP)"
@@ -788,7 +789,7 @@
         {/if}
 
         <!-- Peranan -Peranan Berkaitan -->
-
+        {#if data.pensionDetailResponse.data?.details.referenceDate !== null}
         <StepperContent>
             <StepperContentHeader
                 title="Masukkan Maklumat Peranan - Peranan Berkaitan"
@@ -814,8 +815,9 @@
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start"
                     ></div>
+                    <!-- || data.rolesRelatedResponse.data?.details.supporterName !== null  -->
                     <CustomSelectField
-                    disabled={currentRoleCode !== urusetia || data.rolesRelatedResponse.data?.details.supporterName !== null }
+                    disabled={currentRoleCode !== urusetia}
                         id="staffSupporter"
                         label="Nama Penyokong"
                         options={data.supporterApproverLookup}
@@ -823,7 +825,7 @@
                     />
 
                     <CustomSelectField
-                    disabled={currentRoleCode !== urusetia || data.rolesRelatedResponse.data?.details.approverName !== null}
+                    disabled={currentRoleCode !== urusetia}
                         id="staffApprover"
                         label="Nama Pelulus"
                         options={data.supporterApproverLookup}
@@ -832,7 +834,7 @@
                 </StepperContentBody>
             </form>
         </StepperContent>
-
+       
         <!-- Keputusan Daripada Peranan - Peranan Berkaitan -->
         <StepperContent>
             <StepperContentHeader
@@ -942,6 +944,7 @@
                 </form></StepperContentBody
             >
         </StepperContent>
+        {/if}
 
         {#if currentRoleCode === penyokong}
             <StepperContent>

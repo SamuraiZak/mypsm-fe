@@ -27,7 +27,7 @@ export async function load({ params }) {
     const suppAppResponse: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 350,
-        orderBy: 'name',
+        orderBy: "",
         orderType: 0,
         filter: {
             program: "TETAP",
@@ -201,13 +201,13 @@ export async function load({ params }) {
     // Pension Detail
     // ===============
     let pensionDetail: PensionDetailDTO | null = null;
-
+    let  pensionDetailResponse: CommonResponseDTO = {}
     if (currentApplicationId !== 0) {
         let pensionDetailRequestBody: PTBIDRequestBodyDTO = {
             id: currentApplicationId
         }
 
-        const pensionDetailResponse: CommonResponseDTO =
+        pensionDetailResponse =
             await PTBKWAPServices.getPTBKWAPpensionDetails
                 (pensionIDBody);
 
@@ -328,7 +328,9 @@ export async function load({ params }) {
         param,
         supporterApproverLookup,
         isNewApplication,
-        pensionId
+        pensionId,
+        pensionDetailResponse,
+        
     }
 
 }
