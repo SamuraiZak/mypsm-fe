@@ -42,3 +42,23 @@ export interface ADRoleListFilterDTO {
     description: string | null;
     userGroupCode: string | null;
 }
+
+
+// ===========================================
+// Audit
+// ===========================================
+
+export interface AuditTrailDTO {
+    id:           number;
+    employeeName: string;
+    module:       string;
+    action:       string;
+    date:         string;
+    time:         string;
+}
+
+export interface AuditTrailFilterDTO{
+    module: number;
+    employeeName: string | null;
+    date: string | null;
+}
