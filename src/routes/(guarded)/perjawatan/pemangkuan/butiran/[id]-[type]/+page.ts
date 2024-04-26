@@ -42,11 +42,14 @@ export const load = async ({ params }) => {
     let batchId: ActingCommonBatchId = {
         batchId: Number(params.id)
     }
-    if(params.type == "Gred 1-54"){
+    let mainId: commonIdRequestDTO = {
+        id: Number(params.id)
+    }
+    if (params.type == "Gred 1-54") {
         actingType = "1-54"
-    }else if (params.type == "Gred Flexi 41"){
+    } else if (params.type == "Gred Flexi 41") {
         actingType = "Flexi 41"
-    }else if (params.type == "Gred Utama"){
+    } else if (params.type == "Gred Utama") {
         actingType = "Utama"
     }
     let lookup = await getLookup();
@@ -78,11 +81,14 @@ export const load = async ({ params }) => {
     let mainActingPromotionListResponse: CommonResponseDTO = {};
     let mainActingInfo: MainActingInfo[] = [];
     let mainActingInfoResponse: CommonResponseDTO = {};
+    let mainActingPromotionMeetingDetail = {} as UpdateMainPromotionMeeting;
     const certifySelected = await superValidate(zod(_certifySelected));
     const mainMeetingResultForm = await superValidate(zod(_mainMeetingResult));
     const mainMeetingDetailForm = await superValidate(zod(_mainMeetingDetail));
     const mainSupporterApproval = await superValidate(zod(_quarterCommonApproval));
     const mainApproverApproval = await superValidate(zod(_quarterCommonApproval));
+    const updateMainPromotionMeetingResultForm = await superValidate(zod(_mainUpdatePromotionMeetingResultSchema))
+
 
 
     const chosenEmployeeParam: CommonListRequestDTO = {
@@ -150,6 +156,13 @@ export const load = async ({ params }) => {
                 mainActingCertificationResponse.data?.dataList as ActingChosenEmployee[];
             mainActingPromotionListResponse =
                 await EmploymentActingServices.getMainPromotionTable(chosenEmployeeParam);
+            const mainActingPromotionMeetingDetailResponse =
+                await EmploymentActingServices.getMainPromotionMeetingDetail(mainId)
+            mainActingPromotionMeetingDetail =
+                mainActingPromotionMeetingDetailResponse.data?.details as UpdateMainPromotionMeeting;
+            if(mainActingPromotionMeetingDetail.meetingDate !== null){
+                updateMainPromotionMeetingResultForm.data = mainActingPromotionMeetingDetail;
+            }
             mainActingPromotionList =
                 mainActingPromotionListResponse.data?.dataList as ActingChosenEmployee[];
             mainActingInfoResponse =
@@ -217,7 +230,6 @@ export const load = async ({ params }) => {
     }
 
     const updatePostponeDetail = await superValidate(zod(_postponeDetailSchema))
-    const updateMainPromotionMeetingResultForm = await superValidate(zod(_mainUpdatePromotionMeetingResultSchema))
     const updateMainPromotionMeetingResultDetailForm = await superValidate(zod(_mainUpdatePromotionMeetingResultDetailSchema))
     const mainSupporterAndApproverForm = await superValidate(zod(_mainSupporterAndApproverSchema))
 

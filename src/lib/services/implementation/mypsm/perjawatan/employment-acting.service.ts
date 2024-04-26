@@ -1222,6 +1222,30 @@ export class EmploymentActingServices {
             return CommonResponseConstant.httpError;
         }
     }
+    //get main promotion meeting
+    static async getMainPromotionMeetingDetail(param: commonIdRequestDTO) {
+        try {
+            const url: Input = 'employment/acting/mains/promotion_meetings/detail'
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
     //get main acting info
     static async getMainActingDetails(param: commonIdRequestDTO) {
