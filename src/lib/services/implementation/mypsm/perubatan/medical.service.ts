@@ -21,7 +21,7 @@ import { MedicalClaimsAddConvert, type MedicalClaimsAdd } from '$lib/dto/mypsm/p
 import { MedicalClinicApplicationConvert, type MedicalClinicApplication } from '$lib/dto/mypsm/perubatan/permohonan-klinik/medical-clinic-application.dto';
 import { ClinicContractConvert, type ClinicContract } from '$lib/dto/mypsm/perubatan/permohonan-klinik/medical-clinic-contract.dto';
 import { MedicalEmployeeMakePaymentConvert, type MedicalEmployeeMakePayment } from '$lib/dto/mypsm/perubatan/tuntutan-kakitangan/employee-make-payment.dto';
-import { ClinicAllocationConvert, CurrentYearAllocationConvert, type ClinicAllocation, type CurrentYearAllocation } from '$lib/dto/mypsm/perubatan/tuntutan-klinik/clinic-allocation.dto';
+import { ClinicAllocationConvert, ClinicAllocationEditConvert, CurrentYearAllocationConvert, type ClinicAllocation, type ClinicAllocationEdit, type CurrentYearAllocation } from '$lib/dto/mypsm/perubatan/tuntutan-klinik/clinic-allocation.dto';
 import { MedicalClinicClaimSuppAppConvert, type MedicalClinicClaimSuppApp } from '$lib/dto/mypsm/perubatan/tuntutan-klinik/clinic-claim-supporter-approver.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
@@ -1499,13 +1499,13 @@ export class MedicalServices {
         }
     }
     //edit clinic allocation
-    static async editAllocations(param: ClinicAllocation) {
+    static async editAllocations(param: ClinicAllocationEdit) {
         try {
             let url: Input = 'medical/clinic_claim/allocation/edit';
 
             const promiseRes: Promise<Response> = http
                 .put(url, {
-                    body: ClinicAllocationConvert.toJson(param),
+                    body: ClinicAllocationEditConvert.toJson(param),
                 })
                 .json();
 
@@ -1513,7 +1513,7 @@ export class MedicalServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                invalidateAll()
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
