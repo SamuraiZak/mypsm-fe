@@ -333,7 +333,7 @@
 
 <ContentHeader
     title="Maklumat Pengesahan dalam Perkhidmatan {$isTypeConfirmationExceedsThreeYears
-        ? 'Melebihi 3 Tahun'
+        ? 'Melebihi Tempoh 3 Tahun'
         : 'Rasionalisasi'}"
 >
     {#if $isReadOnlyConfirmationInServiceMeetingResult && $confirmationMeetingResultIsApproved}
