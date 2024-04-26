@@ -181,7 +181,7 @@
                                 '/perjawatan/pemangkuan/butiran/' +
                                     rowData.batchId +
                                     '-' +
-                                    rowData.actingType,
+                                    '1-54',
                             );
                         }}
                     ></DataTable>
@@ -200,7 +200,7 @@
                                 '/perjawatan/pemangkuan/butiran/' +
                                     rowData.batchId +
                                     '-' +
-                                    rowData.actingType,
+                                    'Flexi 41',
                             );
                         }}
                     ></DataTable>
@@ -220,7 +220,7 @@
                                 '/perjawatan/pemangkuan/butiran/' +
                                     rowData.batchId +
                                     '-' +
-                                    rowData.actingType,
+                                    'Utama',
                             );
                         }}
                     ></DataTable>
