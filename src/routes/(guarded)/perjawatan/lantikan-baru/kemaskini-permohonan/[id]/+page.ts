@@ -137,7 +137,7 @@ export async function load({ params }) {
     const employeeIdLookup: DropdownDTO[] = (
         response.data?.dataList as CommonEmployeeDTO[]
     ).map((data) => ({
-        value: Number(data.employeeNumber),
+        value: String(data.employeeNumber),
         name: String(data.name),
     }));
 

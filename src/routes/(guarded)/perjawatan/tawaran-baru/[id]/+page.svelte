@@ -1217,7 +1217,7 @@
                             >
                                 <div class="mb-5">
                                     <b class="text-sm text-system-primary"
-                                        >2. Penyokong</b
+                                        >1. Penyokong</b
                                     >
                                 </div>
                                 {#if $isReadOnlyNewOfferSupporterResult}
@@ -1230,7 +1230,7 @@
                                     <CustomSelectField
                                         disabled
                                         id="status"
-                                        options={certifyOptions}
+                                        options={supportOptions}
                                         label={'Keputusan'}
                                         bind:val={$newOfferSupporterResultForm.status}
                                     ></CustomSelectField>
@@ -1240,7 +1240,7 @@
                                 <hr />
                                 <div class="mb-5">
                                     <b class="text-sm text-system-primary"
-                                        >1. Pelulus</b
+                                        >2. Pelulus</b
                                     >
                                 </div>
                                 {#if $isReadOnlyNewOfferApprovalResult}
@@ -1253,7 +1253,7 @@
                                     <CustomSelectField
                                         disabled
                                         id="status"
-                                        options={certifyOptions}
+                                        options={approveOptions}
                                         label={'Keputusan'}
                                         bind:val={$newOfferApproverResultForm.status}
                                     ></CustomSelectField>
