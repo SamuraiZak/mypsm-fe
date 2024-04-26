@@ -1522,20 +1522,8 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Latihan (Kemaskini Peperiksaan dalam Jabatan LKIM)',
-                            path: '/latihan/kemaskini-peperiksaan',
-                        },
-                        {
-                            name: 'Latihan (Rekod Peperiksaan)',
-                            path: '/latihan/rekod-peperiksaan',
-                        },
-                        {
                             name: 'Latihan (Permohonan Pembiayaan Pembelajaran)',
                             path: '/latihan/pembiayaan',
-                        },
-                        {
-                            name: 'Latihan (Permohonan Tuntutan Pembiayaan Yuran Pengajian)',
-                            path: '/latihan/tuntutan-yuran',
                         },
                     ],
                 },
