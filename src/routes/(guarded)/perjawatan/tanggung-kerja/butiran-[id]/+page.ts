@@ -41,7 +41,7 @@ export const load = async ({ params }) => {
     const skippingForm = await superValidate(zod(_addInterimApprovalSchema));
     const approverForm = await superValidate(zod(_addInterimApprovalSchema))
     const directorForm = await superValidate(zod(_addInterimApprovalSchema));
-
+    let failToLoad: boolean = false;
 
 
     employeeInterimApplicationDetailResponse =
@@ -49,6 +49,7 @@ export const load = async ({ params }) => {
     interimApplicationDetail =
         employeeInterimApplicationDetailResponse.data?.details as InterimApplicationDetailDTO;
 
+    if(employeeInterimApplicationDetailResponse.status == "success"){
     //if not null
     if(interimApplicationDetail.download !== null){
         uploadedDocuments = interimApplicationDetail.download;
@@ -66,7 +67,9 @@ export const load = async ({ params }) => {
     if(interimApplicationDetail.approval !== null){
         interimApprovalDetail = interimApplicationDetail.approval;
     }
-
+}else {
+    failToLoad = true;
+}
     return {
         currentRoleCode,
         interimId,
@@ -79,6 +82,7 @@ export const load = async ({ params }) => {
         uploadedDocuments,
         approverForm,
         interimApprovalDetail,
+        failToLoad,
     }
 }
 

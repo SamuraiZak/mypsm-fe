@@ -34,6 +34,7 @@ export const load = async ({ params }) => {
         await EmploymentInterimServices.getTerminationDetail(interimId)
     terminationDetail =
         terminationDetaiLResponse.data?.details as InterimTermination;
+        console.log(terminationDetail)
     if (terminationDetail.verify !== null) {
         secretaryDetail = terminationDetail.verify;
     }

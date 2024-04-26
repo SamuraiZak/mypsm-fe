@@ -83,7 +83,7 @@
             </StepperContentHeader>
             <StepperContentBody>
                 <form
-                    class="flex w-full flex-col justify-start gap-2.5 pb-12"
+                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-12"
                     id="addNewInterimApplicationForm"
                     method="POST"
                     use:addNewInterimApplicationEnhance
@@ -107,7 +107,7 @@
                         id="placementId"
                         bind:val={$addNewInterimApplicationForm.placementId}
                         errors={$addNewInterimApplicationError.placementId}
-                        options={data.lookup.departmentLookup}
+                        options={data.lookup.placementLookup}
                     />
                     <CustomTextField
                         id="referenceNumber"

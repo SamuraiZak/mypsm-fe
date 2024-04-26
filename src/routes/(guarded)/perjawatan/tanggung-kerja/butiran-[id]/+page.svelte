@@ -28,7 +28,7 @@
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import { zod } from 'sveltekit-superforms/adapters';
     import { superForm } from 'sveltekit-superforms/client';
-    import { Alert, Checkbox } from 'flowbite-svelte';
+    import { Alert, Checkbox, Modal } from 'flowbite-svelte';
     import {
         approveOptions,
         supportOptions,
@@ -187,6 +187,7 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
+{#if !data.failToLoad}
     <Stepper>
         <StepperContent>
             <StepperContentHeader title="Butiran Permohonan Tanggung Kerja" />
@@ -553,6 +554,7 @@
                 </StepperContentBody>
             </StepperContent>
 
+            {#if data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code}
             <StepperContent>
                 <StepperContentHeader
                     title="Senarai Semak Permohonan Penangguhan/Pindaan Penempatan Kerja"
@@ -1096,8 +1098,26 @@
                     </form>
                 </StepperContentBody>
             </StepperContent>
+            {/if}
         {/if}
     </Stepper>
+    {:else}
+        <Modal title="Harap Maaf." open={data.failToLoad} dismissable={false}>
+            <Alert color="red" class="w-full">
+                <p>
+                    <span class="font-medium">Gagal mengesan data.</span>
+                    Sila cuba sekali lagi.
+                </p>
+            </Alert>
+            <div class="w-full flex items-center justify-center">
+            <TextIconButton
+                label="Kembali"
+                onClick={() => goto('/perjawatan/tanggung-kerja')}
+                type="neutral"
+                />
+            </div>
+        </Modal>
+    {/if}
 </section>
 
 <Toaster />
