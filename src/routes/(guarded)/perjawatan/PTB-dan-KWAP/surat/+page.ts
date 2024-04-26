@@ -1,17 +1,13 @@
-export async function load({ params }) {
-    let agreementLetter = getAgreementLetter()
+import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
+import { PTBKWAPServices } from "$lib/services/implementation/mypsm/PTB-KWAP/PTB.service";
 
+export async function load({ params }) {
+
+    const documentDetailsPTBResponse: CommonResponseDTO =
+        await PTBKWAPServices.getPTBKWAPEmployeeDocuments();
 
 return {
-    agreementLetter,
+    documentDetailsPTBResponse,
 
 }
 }
-
-
-const getAgreementLetter = () => {
-    const url = "http://localhost:3333/employment/pension_detail/employee/forms/download"
-    
-    return url
-}
-
