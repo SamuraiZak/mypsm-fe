@@ -6,11 +6,14 @@ import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto";
 import {
     _actingApprovalSchema,
     _mainSupporterAndApproverSchema,
-    _mainUpdateActingEmployeeDetailSchema, _mainUpdatePromotionMeetingResultDetailSchema,
+    _mainUpdatePromotionMeetingResultDetailSchema,
     _mainUpdatePromotionMeetingResultSchema, _placementAmendmentApplication,
     _updateActingResultSchema, _updateChosenCandidate, _updateEmployeePlacementMeetingResultSchema,
     _updateMeetingDetailSchema, _updateMeetingResult, _postponeDetailSchema,
-    _updatePlacementMeeting, _updatePromotionDetail, _updatePromotionMeetingResultSchema
+    _updatePlacementMeeting, _updatePromotionDetail, _updatePromotionMeetingResultSchema,
+    _certifySelected,
+    _mainMeetingResult,
+    _mainMeetingDetail
 } from "$lib/schemas/mypsm/employment/acting/acting-schemas";
 import { zod } from "sveltekit-superforms/adapters";
 import type { ActingCommonBatchId, ActingCommonId } from "$lib/dto/mypsm/employment/acting/acting-batchid.dto";
@@ -29,12 +32,22 @@ import type { EmployeePostpone, PostponeDetailResult, PostponeResult } from "$li
 import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-document-request.dto";
 import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
 import type { ActingFinalResult } from "$lib/dto/mypsm/employment/acting/acting-final-result.dto";
+import type { CertifySelected, MainActingDetailEdit, MainMeetingResult } from "$lib/dto/mypsm/employment/acting/main-acting-form.dto.js";
+import type { MainActingInfo } from "$lib/dto/mypsm/employment/acting/main-acting-info.dto.js";
+import { _quarterCommonApproval } from "$lib/schemas/mypsm/quarters/quarters-schema.js";
 
 export const load = async ({ params }) => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
     let actingType: string = params.type;
     let batchId: ActingCommonBatchId = {
         batchId: Number(params.id)
+    }
+    if(params.type == "Gred 1-54"){
+        actingType = "1-54"
+    }else if (params.type == "Gred Flexi 41"){
+        actingType = "Flexi 41"
+    }else if (params.type == "Gred Utama"){
+        actingType = "Utama"
     }
     let lookup = await getLookup();
     let chosenEmployee: ActingChosenEmployee[] = [];
@@ -63,6 +76,14 @@ export const load = async ({ params }) => {
     let mainActingCertificationResponse: CommonResponseDTO = {};
     let mainActingPromotionList: ActingChosenEmployee[] = [];
     let mainActingPromotionListResponse: CommonResponseDTO = {};
+    let mainActingInfo: MainActingInfo[] = [];
+    let mainActingInfoResponse: CommonResponseDTO = {};
+    const certifySelected = await superValidate(zod(_certifySelected));
+    const mainMeetingResultForm = await superValidate(zod(_mainMeetingResult));
+    const mainMeetingDetailForm = await superValidate(zod(_mainMeetingDetail));
+    const mainSupporterApproval = await superValidate(zod(_quarterCommonApproval));
+    const mainApproverApproval = await superValidate(zod(_quarterCommonApproval));
+
 
     const chosenEmployeeParam: CommonListRequestDTO = {
         pageNum: 1,
@@ -71,20 +92,6 @@ export const load = async ({ params }) => {
         orderType: null,
         filter: batchId,
     }
-
-    chosenEmployeeResponse =
-        await EmploymentActingServices.getChosenEmployees(chosenEmployeeParam);
-    chosenEmployee =
-        chosenEmployeeResponse.data?.dataList as ActingChosenEmployee[];
-    interviewInfoResponse =
-        await EmploymentActingServices.getInterviewInfo(chosenEmployeeParam);
-    interviewInfo =
-        interviewInfoResponse.data?.dataList as ActingChosenEmployee[];
-
-    //4th stepper
-    if (interviewInfoResponse.status == "success") {
-        interviewInfo.forEach((val) => actingId.actingIds.push(val.actingId))
-    }
     const interviewResultParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
@@ -92,44 +99,64 @@ export const load = async ({ params }) => {
         orderType: null,
         filter: actingId,
     }
-    interviewResultResponse =
-        await EmploymentActingServices.getInterviewResult(interviewResultParam);
-    interviewResult =
-        interviewResultResponse.data?.dataList as ActingChosenEmployee[];
+    if (currentRoleCode !== UserRoleConstant.kakitangan.code) {
+        chosenEmployeeResponse =
+            await EmploymentActingServices.getChosenEmployees(chosenEmployeeParam);
+        chosenEmployee =
+            chosenEmployeeResponse.data?.dataList as ActingChosenEmployee[];
+        interviewInfoResponse =
+            await EmploymentActingServices.getInterviewInfo(chosenEmployeeParam);
+        interviewInfo =
+            interviewInfoResponse.data?.dataList as ActingChosenEmployee[];
 
-    //fifth stepper and so on
-    promotionMeetingResponse =
-        await EmploymentActingServices.getPromotionMeetingResult(chosenEmployeeParam);
-    promotionMeetingResult =
-        promotionMeetingResponse.data?.dataList as ActingChosenEmployee[];
-    placementDetailResponse =
-        await EmploymentActingServices.getPlacementList(chosenEmployeeParam);
-    placementDetail =
-        placementDetailResponse.data?.dataList as ActingChosenEmployee[];
-    postponeListResponse =
-        await EmploymentActingServices.getPostponeList(chosenEmployeeParam);
-    postponeList =
-        postponeListResponse.data?.dataList as ActingChosenEmployee[];
-    postponeResultResponse =
-        await EmploymentActingServices.getPostponeResult(chosenEmployeeParam);
-    postponeResult =
-        postponeResultResponse.data?.dataList as ActingChosenEmployee[];
-    actingConfirmationResponse =
-        await EmploymentActingServices.getActingConfirmation(chosenEmployeeParam);
-    actingConfirmation =
-        actingConfirmationResponse.data?.dataList as ActingChosenEmployee[];
+        //4th stepper
+        if (interviewInfoResponse.status == "success") {
+            interviewInfo.forEach((val) => actingId.actingIds.push(val.actingId))
+        }
+
+        interviewResultResponse =
+            await EmploymentActingServices.getInterviewResult(interviewResultParam);
+        interviewResult =
+            interviewResultResponse.data?.dataList as ActingChosenEmployee[];
+
+        //fifth stepper and so on
+        promotionMeetingResponse =
+            await EmploymentActingServices.getPromotionMeetingResult(chosenEmployeeParam);
+        promotionMeetingResult =
+            promotionMeetingResponse.data?.dataList as ActingChosenEmployee[];
+        placementDetailResponse =
+            await EmploymentActingServices.getPlacementList(chosenEmployeeParam);
+        placementDetail =
+            placementDetailResponse.data?.dataList as ActingChosenEmployee[];
+        postponeListResponse =
+            await EmploymentActingServices.getPostponeList(chosenEmployeeParam);
+        postponeList =
+            postponeListResponse.data?.dataList as ActingChosenEmployee[];
+        postponeResultResponse =
+            await EmploymentActingServices.getPostponeResult(chosenEmployeeParam);
+        postponeResult =
+            postponeResultResponse.data?.dataList as ActingChosenEmployee[];
+        actingConfirmationResponse =
+            await EmploymentActingServices.getActingConfirmation(chosenEmployeeParam);
+        actingConfirmation =
+            actingConfirmationResponse.data?.dataList as ActingChosenEmployee[];
 
 
-    // gred utamaa
-    if (actingType == "Gred Utama") {
-        mainActingCertificationResponse =
-            await EmploymentActingServices.getMainCertification(chosenEmployeeParam)
-        mainActingCertification =
-            mainActingCertificationResponse.data?.dataList as ActingChosenEmployee[];
-        mainActingPromotionListResponse =
-            await EmploymentActingServices.getMainPromotionTable(chosenEmployeeParam);
-        mainActingPromotionList =
-            mainActingPromotionListResponse.data?.dataList as ActingChosenEmployee[];
+        // gred utamaa
+        if (actingType == "Utama") {
+            mainActingCertificationResponse =
+                await EmploymentActingServices.getMainCertification(chosenEmployeeParam)
+            mainActingCertification =
+                mainActingCertificationResponse.data?.dataList as ActingChosenEmployee[];
+            mainActingPromotionListResponse =
+                await EmploymentActingServices.getMainPromotionTable(chosenEmployeeParam);
+            mainActingPromotionList =
+                mainActingPromotionListResponse.data?.dataList as ActingChosenEmployee[];
+            mainActingInfoResponse =
+                await EmploymentActingServices.getMainActingInfo(chosenEmployeeParam)
+            mainActingInfo =
+                mainActingInfoResponse.data?.dataList as MainActingInfo[];
+        }
     }
 
     //form validation
@@ -192,7 +219,6 @@ export const load = async ({ params }) => {
     const updatePostponeDetail = await superValidate(zod(_postponeDetailSchema))
     const updateMainPromotionMeetingResultForm = await superValidate(zod(_mainUpdatePromotionMeetingResultSchema))
     const updateMainPromotionMeetingResultDetailForm = await superValidate(zod(_mainUpdatePromotionMeetingResultDetailSchema))
-    const updateMainActingEmployeeDetailForm = await superValidate(zod(_mainUpdateActingEmployeeDetailSchema))
     const mainSupporterAndApproverForm = await superValidate(zod(_mainSupporterAndApproverSchema))
 
 
@@ -237,6 +263,13 @@ export const load = async ({ params }) => {
         // main
         mainActingCertification,
         mainActingCertificationResponse,
+        certifySelected,
+        mainMeetingResultForm,
+        mainActingInfoResponse,
+        mainActingInfo,
+        mainMeetingDetailForm,
+        mainSupporterApproval,
+        mainApproverApproval,
 
 
         //employee
@@ -246,12 +279,12 @@ export const load = async ({ params }) => {
         employeePostponeDetail,
         employeeFinalResult,
 
-   
+
         updateMeetingResultForm,
 
         updatePromotionMeetingResultForm, updateEmployeePlacementMeetingResultForm,
         updateMainPromotionMeetingResultDetailForm,
-        updateMainActingEmployeeDetailForm, mainSupporterAndApproverForm,
+        mainSupporterAndApproverForm,
         approverResultForm, directorResultForm
     };
 
@@ -412,6 +445,68 @@ export const _submitPostponeForm = async (formData: PostponeDetailResult) => {
     }
 }
 
+// ===================== gred utama
+export const _submitCertifySelectedForm = async (formData: CertifySelected) => {
+    const form = await superValidate(
+        formData,
+        zod(_certifySelected),
+    );
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await EmploymentActingServices.addCertifySelected(form.data as CertifySelected)
+
+        return { response }
+    }
+}
+export const _submitMainMeetingResult = async (formData: MainMeetingResult) => {
+    const form = await superValidate(
+        formData,
+        zod(_mainMeetingResult),
+    );
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await EmploymentActingServices.addMainMeetingResult(form.data as MainMeetingResult)
+
+        return { response }
+    }
+}
+export const _submitMainMeetingDetail = async (formData: MainActingDetailEdit) => {
+    const form = await superValidate(
+        formData,
+        zod(_mainMeetingDetail),
+    );
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await EmploymentActingServices.addMainActingDetail(form.data as MainActingDetailEdit)
+
+        return { response }
+    }
+}
+export const _submitMainSupporter = async (formData: QuarterCommonApproval) => {
+    const form = await superValidate(
+        formData,
+        zod(_quarterCommonApproval),
+    );
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await EmploymentActingServices.addMainActingSupporter(form.data as QuarterCommonApproval)
+
+        return { response }
+    }
+}
+export const _submitMainApprover = async (formData: QuarterCommonApproval) => {
+    const form = await superValidate(
+        formData,
+        zod(_quarterCommonApproval),
+    );
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await EmploymentActingServices.addMainActingApprover(form.data as QuarterCommonApproval)
+
+        return { response }
+    }
+}
+
 
 // ================================================
 // get table row information
@@ -458,7 +553,7 @@ export const _directorApproval = async (id: number) => {
     }
     const response: CommonResponseDTO =
         await EmploymentActingServices.getDirectorApproval(currentId)
-    
+
     const integrityResponse: CommonResponseDTO =
         await EmploymentActingServices.getIntegrityApproval(currentId)
     return { response, integrityResponse }
@@ -492,8 +587,15 @@ export const _mainPromotion = async (id: number) => {
     return { response }
 }
 
+export const _mainActing = async (id: number) => {
+    let currentId: commonIdRequestDTO = {
+        id: id,
+    }
+    const response: CommonResponseDTO =
+        await EmploymentActingServices.getMainActingDetails(currentId)
 
-
+    return { response }
+}
 
 
 
@@ -515,45 +617,15 @@ export const _submitUpdateMainPromotionMeetingResultForm = async (formData: Upda
         return { response }
     }
 }
-export const _submitUpdateMainPromotionMeetingResultDetailForm = async (formData: object) => {
-    const form = await superValidate(
-        formData,
-        zod(_mainUpdatePromotionMeetingResultDetailSchema),
-    );
-    if (form.valid) {
-        
-    }
-}
-export const _submitUpdateMainActingEmployeeDetailForm = async (formData: object) => {
-    const updateMainActingEmployeeDetailForm = await superValidate(
-        formData,
-        zod(_mainUpdateActingEmployeeDetailSchema),
-    );
-    if (updateMainActingEmployeeDetailForm.valid) {
-        const response = fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST',
-            body: JSON.stringify(updateMainActingEmployeeDetailForm),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        })
-        if (updateMainActingEmployeeDetailForm.valid) {
-            const result: string | null = 'success';
-            return { response, result };
-        } else {
-            const result: string | null = 'fail';
-            return { response, result };
-        }
-    }
-}
+
 export const _submitMainSupporterAndApproverForm = async (formData: object) => {
     const form = await superValidate(
         formData,
         zod(_mainSupporterAndApproverSchema),
     );
-    
+
     if (form.valid) {
-       
+
     }
 }
 

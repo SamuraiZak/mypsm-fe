@@ -17,8 +17,6 @@
         _submitUpdateEmployeePlacementMeetingResultForm,
         _submitUpdateActingResultForm,
         _submitUpdateMainPromotionMeetingResultForm,
-        _submitUpdateMainPromotionMeetingResultDetailForm,
-        _submitUpdateMainActingEmployeeDetailForm,
         _submitMainSupporterAndApproverForm,
         _submitSupporterResultForm,
         _submitApproverResultForm,
@@ -38,6 +36,12 @@
         _fileToBase64Object,
         _submitPostponeForm,
         _submitIntegrityResultForm,
+        _submitCertifySelectedForm,
+        _submitMainMeetingResult,
+        _mainActing,
+        _submitMainMeetingDetail,
+        _submitMainSupporter,
+        _submitMainApprover,
     } from './+page';
     import type { PageData } from './$types';
     export let data: PageData;
@@ -46,8 +50,6 @@
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import { superForm } from 'sveltekit-superforms/client';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
-    import type { RadioDTO } from '$lib/dto/core/radio/radio.dto';
-    import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import {
         _updateMeetingDetailSchema,
         _updatePromotionMeetingResultSchema,
@@ -55,7 +57,6 @@
         _updateActingResultSchema,
         _mainUpdatePromotionMeetingResultSchema,
         _mainUpdatePromotionMeetingResultDetailSchema,
-        _mainUpdateActingEmployeeDetailSchema,
         _mainSupporterAndApproverSchema,
         _placementAmendmentApplication,
         _updateChosenCandidate,
@@ -63,6 +64,9 @@
         _updatePromotionDetail,
         _actingApprovalSchema,
         _postponeDetailSchema,
+        _certifySelected,
+        _mainMeetingResult,
+        _mainMeetingDetail,
     } from '$lib/schemas/mypsm/employment/acting/acting-schemas';
     import FileInputField from '$lib/components/inputs/file-input-field/FileInputField.svelte';
     import { Toaster } from 'svelte-french-toast';
@@ -86,18 +90,19 @@
     import type { MainPromotionMeeting } from '$lib/dto/mypsm/employment/acting/main-promotion-meeting-detail.dto';
     import type {
         ActingApproverApproval,
-        ActingDirectorApproval,
-        ActingIntegrityApproval,
         ActingSupportApproval,
     } from '$lib/dto/mypsm/employment/acting/acting-approval.dto';
     import type { QuarterCommonApproval } from '$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto';
+    import type {
+        MainActingDetail,
+        MainActingInfo,
+    } from '$lib/dto/mypsm/employment/acting/main-acting-info.dto';
+    import { _quarterCommonApproval } from '$lib/schemas/mypsm/quarters/quarters-schema';
 
     let employeeRoleCode: string = UserRoleConstant.kakitangan.code;
     let secretaryRoleCode: string = UserRoleConstant.urusSetiaPerjawatan.code;
-    let stateDirectorRoleCode: string = UserRoleConstant.pengarahNegeri.code;
-    let depDirectorRoleCode: string = UserRoleConstant.pengarahBahagian.code;
 
-    function uploadDocument() {
+    function uploadDocument(stepper: number) {
         if (
             files == undefined &&
             $employeeNeedPlacementAmendmentForm.postponeNeeded
@@ -106,15 +111,25 @@
         } else {
             _fileToBase64Object(files)
                 .then(async (result) => {
-                    $employeeNeedPlacementAmendmentForm.documents = result;
+                    if (stepper == 2) {
+                        $employeeNeedPlacementAmendmentForm.documents = result;
+                    } else if (stepper == 1) {
+                        $updateMeetingDetailForm.documents = result;
+                    }
                 })
                 .finally(() => {
-                    _submitEmployeeNeedPlacementAmendmentForm(
-                        $employeeNeedPlacementAmendmentForm,
-                    );
+                    if (stepper == 1) {
+                        _submitUpdateMeetingDetailForm(
+                            $updateMeetingDetailForm,
+                        );
+                    } else if (stepper == 2) {
+                        _submitEmployeeNeedPlacementAmendmentForm(
+                            $employeeNeedPlacementAmendmentForm,
+                        );
+                    }
                 })
                 .catch((error) => {
-                    console.log(error);
+                    throw new Error(error);
                 });
         }
     }
@@ -133,6 +148,7 @@
 
     let selectedCandidate: ActingChosenEmployee;
     let files: FileList;
+
     //all tables
     let chosenEmployeeTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
@@ -389,10 +405,10 @@
         exportData: [],
         hiddenColumn: ['actingId'],
         dictionary: [],
-        url: 'employment/acting/mains/promotion_meetings/list',
+        url: 'employment/acting/mains/certifications/list',
         id: 'mainCertification',
         option: {
-            checkbox: false,
+            checkbox: true,
             detail: false,
             edit: false,
             select: false,
@@ -428,19 +444,32 @@
             add: false,
         },
     };
-
-    // ================ delete this after done
-    let promotionMeetingResultOptions: RadioDTO[] = [
-        {
-            value: true,
-            name: 'Lulus',
+    let mainActingInfoTable: TableSettingDTO = {
+        param: data.chosenEmployeeParam,
+        meta: data.mainActingInfoResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
         },
-        {
-            value: false,
-            name: 'Tidak Lulus',
+        data: data.mainActingInfo,
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['actingId'],
+        dictionary: [],
+        url: 'employment/acting/mains/acting_infos/list',
+        id: 'mainActingInfoTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: false,
         },
-    ];
-    // ================ delete this after done
+        controls: {
+            add: false,
+        },
+    };
 
     // ======================= validation
     const {
@@ -507,7 +536,7 @@
         validators: zod(_updateMeetingDetailSchema),
         onSubmit() {
             $updateMeetingDetailForm.batchId = data.batchId.batchId;
-            _submitUpdateMeetingDetailForm($updateMeetingDetailForm);
+            uploadDocument(1);
         },
     });
     const {
@@ -645,7 +674,6 @@
         },
     });
 
-    // KIV
     const {
         form: updatePostponeDetail,
         errors: updatePostponeError,
@@ -684,52 +712,89 @@
         },
     });
     const {
-        form: updateMainPromotionMeetingResultDetailForm,
-        errors: updateMainPromotionMeetingResultDetailError,
-        enhance: updateMainPromotionMeetingResultDetailEnhance,
-    } = superForm(data.updateMainPromotionMeetingResultDetailForm, {
+        form: mainMeetingResultForm,
+        errors: mainMeetingResultError,
+        enhance: mainMeetingResultEnhance,
+    } = superForm(data.mainMeetingResultForm, {
         SPA: true,
         resetForm: false,
         dataType: 'json',
         invalidateAll: true,
         id: 'updateMeetingDetailForm',
-        validators: zod(_mainUpdatePromotionMeetingResultDetailSchema),
+        validators: zod(_mainMeetingResult),
         onSubmit() {
-            _submitUpdateMainPromotionMeetingResultDetailForm(
-                $updateMainPromotionMeetingResultDetailForm,
-            );
+            $mainMeetingResultForm.id = selectedCandidate.actingId;
+            _submitMainMeetingResult($mainMeetingResultForm);
+        },
+    });
+
+    const {
+        form: certifySelected,
+        errors: certifySelectedError,
+        enhance: certifySelectedEnhance,
+    } = superForm(data.certifySelected, {
+        SPA: true,
+        resetForm: false,
+        dataType: 'json',
+        invalidateAll: true,
+        id: 'certifySelected',
+        validators: zod(_certifySelected),
+        onSubmit() {
+            mainCertification.selectedData.forEach((val) => {
+                let tempVal = val as ActingChosenEmployee;
+                $certifySelected.id.push(tempVal.actingId);
+            });
+           
+            _submitCertifySelectedForm($certifySelected);
+        },
+    });
+
+    const {
+        form: mainMeetingDetailForm,
+        errors: mainMeetingDetailError,
+        enhance: mainMeetingDetailEnhance,
+    } = superForm(data.mainMeetingDetailForm, {
+        SPA: true,
+        resetForm: false,
+        dataType: 'json',
+        invalidateAll: true,
+        id: 'mainMeetingDetailForm',
+        validators: zod(_mainMeetingDetail),
+        onSubmit() {
+            $mainMeetingDetailForm.id = selectedMainActingInfo.actingId;
+            _submitMainMeetingDetail($mainMeetingDetailForm);
         },
     });
     const {
-        form: updateMainActingEmployeeDetailForm,
-        errors: updateMainActingEmployeeDetailError,
-        enhance: updateMainActingEmployeeDetailEnhance,
-    } = superForm(data.updateMainActingEmployeeDetailForm, {
+        form: mainSupporterApproval,
+        errors: mainSupporterApprovalError,
+        enhance: mainSupporterApprovalEnhance,
+    } = superForm(data.mainSupporterApproval, {
         SPA: true,
         resetForm: false,
         dataType: 'json',
         invalidateAll: true,
-        id: 'updateMeetingDetailForm',
-        validators: zod(_mainUpdateActingEmployeeDetailSchema),
+        id: 'mainSupporterApproval',
+        validators: zod(_quarterCommonApproval),
         onSubmit() {
-            _submitUpdateMainActingEmployeeDetailForm(
-                $updateMainActingEmployeeDetailForm,
-            );
+            $mainSupporterApproval.id = selectedMainActingInfo.actingId;
+            _submitMainSupporter($mainSupporterApproval);
         },
     });
     const {
-        form: mainSupporterAndApproverForm,
-        errors: mainSupporterAndApproverError,
-        enhance: mainSupporterAndApproverEnhance,
-    } = superForm(data.mainSupporterAndApproverForm, {
+        form: mainApproverApproval,
+        errors: mainApproverApprovalError,
+        enhance: mainApproverApprovalEnhance,
+    } = superForm(data.mainApproverApproval, {
         SPA: true,
         resetForm: false,
         dataType: 'json',
         invalidateAll: true,
-        id: 'updateMeetingDetailForm',
-        validators: zod(_mainSupporterAndApproverSchema),
+        id: 'mainApproverApproval',
+        validators: zod(_quarterCommonApproval),
         onSubmit() {
-            _submitMainSupporterAndApproverForm($mainSupporterAndApproverForm);
+            $mainApproverApproval.id = selectedMainActingInfo.actingId;
+            _submitMainApprover($mainApproverApproval);
         },
     });
 
@@ -754,7 +819,7 @@
                 $employeeNeedPlacementAmendmentForm.requestedReportDate = null;
                 $employeeNeedPlacementAmendmentForm.documents = null;
             }
-            uploadDocument();
+            uploadDocument(2);
         },
     });
 
@@ -786,6 +851,8 @@
     let supporterApproval = {} as ActingSupportApproval;
     let approverApproval = {} as ActingApproverApproval;
     let mainPromotionDetail = {} as MainPromotionMeeting;
+    let selectedMainActingInfo: MainActingInfo;
+    let mainActingInfoDetail = {} as MainActingDetail;
     const getTableInformation = async (index: number) => {
         switch (index) {
             case 1: {
@@ -857,29 +924,62 @@
                             ?.details as MainPromotionMeeting;
                     })
                     .finally(() => {
-                        // TODO: edit postpone result here
+                        if (
+                            mainPromotionDetail.promotionMeetingResult !== null
+                        ) {
+                            $mainMeetingResultForm.status =
+                                mainPromotionDetail.promotionMeetingResult;
+                        }
                     });
                 break;
             }
             case 6: {
-                _directorApproval(selectedCandidate.actingId)
+                _directorApproval(selectedCandidate.actingId).then((res) => {
+                    $directorResultForm = res.response.data
+                        ?.details as QuarterCommonApproval;
+                    if ($directorResultForm.remark !== null) {
+                        directorApproved = true;
+                    } else {
+                        directorApproved = false;
+                    }
+                    $integrityResultForm = res.integrityResponse.data
+                        ?.details as QuarterCommonApproval;
+                    if ($integrityResultForm.remark !== null) {
+                        integrityApproved = true;
+                    } else {
+                        integrityApproved = false;
+                    }
+                });
+                break;
+            }
+            case 7: {
+                await _mainActing(selectedMainActingInfo.actingId)
                     .then((res) => {
-                     
-                            $directorResultForm = res.response.data
-                                ?.details as QuarterCommonApproval;
-                            if($directorResultForm.remark !== null){
-                                directorApproved = true;
-                            } else {
-                                directorApproved = false;
-                            }                                       
-                            $integrityResultForm = res.integrityResponse.data
-                                ?.details as QuarterCommonApproval;
-                            if($integrityResultForm.remark !== null){
-                                integrityApproved = true;
-                            }else {
-                                integrityApproved = false;
-                            }
+                        mainActingInfoDetail = res.response.data
+                            ?.details as MainActingDetail;
                     })
+                    .finally(() => {
+                        $mainMeetingDetailForm.actingGrade =
+                            mainActingInfoDetail?.actingDetails?.actingGrade;
+                        $mainMeetingDetailForm.actingPosition =
+                            mainActingInfoDetail?.actingDetails?.actingPosition;
+                        $mainMeetingDetailForm.newPlacement =
+                            mainActingInfoDetail?.actingDetails?.newPlacement;
+                        $mainMeetingDetailForm.reportDate =
+                            mainActingInfoDetail?.actingDetails?.reportDate;
+                        $mainMeetingDetailForm.approverName =
+                            mainActingInfoDetail?.supporterApprover?.approverName;
+                        $mainMeetingDetailForm.supporterName =
+                            mainActingInfoDetail?.supporterApprover?.supporterName;
+                        $mainSupporterApproval.remark =
+                            mainActingInfoDetail?.supporter?.remark;
+                        $mainSupporterApproval.status =
+                            mainActingInfoDetail?.supporter?.status;
+                        $mainApproverApproval.remark =
+                            mainActingInfoDetail?.approver?.remark;
+                        $mainApproverApproval.status =
+                            mainActingInfoDetail?.approver?.status;
+                    });
                 break;
             }
         }
@@ -905,7 +1005,7 @@
 >
     <Stepper bind:activeIndex={stepperIndex}>
         <!-- For Gred Utama (New) Only -->
-        {#if data.currentRoleCode === secretaryRoleCode && data.actingType === 'Gred Utama'}
+        {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code || data.currentRoleCode === UserRoleConstant.urusSetiaIntegriti.code || data.currentRoleCode === UserRoleConstant.penyokong.code || data.currentRoleCode === UserRoleConstant.pelulus.code && data.actingType === 'Utama'}
             <StepperContent>
                 <StepperContentHeader title="Perakuan Pemangkuan"
                 ></StepperContentHeader>
@@ -914,22 +1014,19 @@
                         <ContentHeader
                             title="Tindakan: Tetapkan untuk semua kakitangan yang berkaitan."
                             borderClass="border-none"
-                        >
-                            <!-- <TextIconButton
-                                type="primary"
-                                label="Peraku"
-                                icon="check"
-                                onClick={() => {}}
-                            />
+                        />
+                        <div class="flex w-full items-start justify-start">
                             <TextIconButton
-                                type="danger"
-                                label="Tidak Peraku"
-                                icon="cancel"
-                                onClick={() => {}}
-                            /> -->
-                        </ContentHeader>
-                        <div
+                                label="PERAKU"
+                                icon="check"
+                                form="certifySelected"
+                            />
+                        </div>
+                        <form
                             class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                            use:certifySelectedEnhance
+                            method="POST"
+                            id="certifySelected"
                         >
                             <div class="h-fit w-full">
                                 <DataTable
@@ -937,30 +1034,10 @@
                                     bind:tableData={mainCertification}
                                 ></DataTable>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </StepperContentBody>
             </StepperContent>
-
-            <!-- <StepperContent>
-                <StepperContentHeader title="Borang Berkaitan">
-                    <TextIconButton
-                        type="neutral"
-                        label="Kembali"
-                        icon="previous"
-                        onClick={() => goPrevious()}
-                    />
-                    <TextIconButton
-                        type="primary"
-                        label="Seterusnya"
-                        icon="next"
-                        onClick={() => goNext()}
-                    />
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <DownloadAttachment></DownloadAttachment>
-                </StepperContentBody>
-            </StepperContent> -->
 
             <StepperContent>
                 <StepperContentHeader
@@ -978,7 +1055,7 @@
                             label="Simpan"
                             icon="check"
                             type="primary"
-                            form="updateMainPromotionMeetingResultDetailForm"
+                            form="mainMeetingResultForm"
                         />
                     {:else}
                         <TextIconButton
@@ -1094,9 +1171,9 @@
                     {:else}
                         <form
                             class="flex w-full flex-col justify-start px-3 pb-10"
-                            id="updateMainPromotionMeetingResultDetailForm"
+                            id="mainMeetingResultForm"
                             method="POST"
-                            use:updateMainPromotionMeetingResultDetailEnhance
+                            use:mainMeetingResultEnhance
                         >
                             <ContentHeader
                                 title="Maklumat Calon"
@@ -1167,18 +1244,18 @@
                                 val={mainPromotionDetail.candidate
                                     ?.institutionLoanAccount}
                             />
-                            <!-- <ContentHeader
+                            <ContentHeader
                                 title="Keputusan Mesyuarat Kenaikan Pangkat"
                                 borderClass="border-none"
                             />
                             <CustomRadioBoolean
-                                id="promotionMeetingResult"
+                                id="status"
                                 label="Keputusan"
                                 disabled={false}
-                                bind:val={$updateMainPromotionMeetingResultDetailForm.promotionMeetingResult}
-                                errors={$updateMainPromotionMeetingResultDetailError.promotionMeetingResult}
-                                options={promotionMeetingResultOptions}
-                            /> -->
+                                bind:val={$mainMeetingResultForm.status}
+                                errors={$mainMeetingResultError.status}
+                                options={approveOptions}
+                            />
                         </form>
                     {/if}
                 </StepperContentBody>
@@ -1195,11 +1272,25 @@
                             type="neutral"
                             onClick={() => (detailOpen = false)}
                         />
-                        <TextIconButton
-                            label="Simpan"
-                            icon="check"
-                            form="updateMainActingEmployeeDetailForm"
-                        />
+                        {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                            <TextIconButton
+                                label="Simpan"
+                                icon="check"
+                                form="mainMeetingDetailForm"
+                            />
+                        {:else if data.currentRoleCode == UserRoleConstant.penyokong.code}
+                            <TextIconButton
+                                label="Simpan"
+                                icon="check"
+                                form="mainSupporterApproval"
+                            />
+                        {:else if data.currentRoleCode == UserRoleConstant.pelulus.code}
+                            <TextIconButton
+                                label="situ"
+                                icon="check"
+                                form="mainApproverApproval"
+                            />
+                        {/if}
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -1209,18 +1300,23 @@
                         >
                             <div class="h-fit w-full">
                                 <DataTable
-                                    title=""
-                                    bind:tableData={mainCertification}
-                                    detailActions={() => (detailOpen = true)}
+                                    title="Senarai Kakitangan"
+                                    bind:tableData={mainActingInfoTable}
+                                    bind:passData={selectedMainActingInfo}
+                                    detailActions={async () => {
+                                        await getTableInformation(7).finally(
+                                            () => (detailOpen = true),
+                                        );
+                                    }}
                                 ></DataTable>
                             </div>
                         </div>
                     {:else}
                         <form
                             class="flex w-full flex-col justify-start px-2.5 pb-10"
-                            id="updateMainActingEmployeeDetailForm"
+                            id="mainMeetingDetailForm"
                             method="POST"
-                            use:updateMainActingEmployeeDetailEnhance
+                            use:mainMeetingDetailEnhance
                         >
                             <ContentHeader
                                 title="Maklumat Calon"
@@ -1230,22 +1326,22 @@
                                 label="No. Pekerja"
                                 disabled
                                 id="employeeNumber"
-                                type="text"
-                                val="001023"
+                                val={mainActingInfoDetail?.employeeDetails
+                                    ?.employeeNumber}
                             />
                             <CustomTextField
                                 label="Nama"
                                 disabled
                                 id="employeeName"
-                                type="text"
-                                val="Rosli bin Ramdan"
+                                val={mainActingInfoDetail?.employeeDetails
+                                    ?.employeeName}
                             />
                             <CustomTextField
                                 label="No. Kad Pengenalan"
                                 disabled
-                                id="identificationNumber"
-                                type="text"
-                                val="890701-13-2215"
+                                id="ICNumber"
+                                val={mainActingInfoDetail?.employeeDetails
+                                    ?.ICNumber}
                             />
                             <ContentHeader
                                 title="Butiran Pemangkuan"
@@ -1260,29 +1356,29 @@
                                 label="Jawatan Pemangkuan"
                                 id="actingPosition"
                                 options={data.lookup.positionLookup}
-                                errors={$updateMainActingEmployeeDetailError.actingPosition}
-                                bind:val={$updateMainActingEmployeeDetailForm.actingPosition}
+                                errors={$mainMeetingDetailError.actingPosition}
+                                bind:val={$mainMeetingDetailForm.actingPosition}
                             />
                             <CustomSelectField
                                 label="Gred Pemangkuan"
                                 id="actingGrade"
                                 options={data.lookup.gradeLookup}
-                                errors={$updateMainActingEmployeeDetailError.actingGrade}
-                                bind:val={$updateMainActingEmployeeDetailForm.actingGrade}
+                                errors={$mainMeetingDetailError.actingGrade}
+                                bind:val={$mainMeetingDetailForm.actingGrade}
                             />
                             <CustomSelectField
                                 label="Penempatan Baru"
                                 id="newPlacement"
                                 options={data.lookup.placementLookup}
-                                errors={$updateMainActingEmployeeDetailError.newPlacement}
-                                bind:val={$updateMainActingEmployeeDetailForm.newPlacement}
+                                errors={$mainMeetingDetailError.newPlacement}
+                                bind:val={$mainMeetingDetailForm.newPlacement}
                             />
                             <CustomTextField
                                 label="Tarikh Lapor Diri"
-                                id="reportingDate"
+                                id="reportDate"
                                 type="date"
-                                errors={$updateMainActingEmployeeDetailError.reportingDate}
-                                bind:val={$updateMainActingEmployeeDetailForm.reportingDate}
+                                errors={$mainMeetingDetailError.reportDate}
+                                bind:val={$mainMeetingDetailForm.reportDate}
                             />
                             <ContentHeader
                                 title="Pengesah Keputusan"
@@ -1291,53 +1387,61 @@
                             <CustomSelectField
                                 label="Nama Penyokong"
                                 id="supporterName"
-                                errors={$updateMainActingEmployeeDetailError.supporterName}
-                                bind:val={$updateMainActingEmployeeDetailForm.supporterName}
-                                options={successOption}
+                                errors={$mainMeetingDetailError.supporterName}
+                                bind:val={$mainMeetingDetailForm.supporterName}
+                                options={data.lookup.supporterApproverLookup}
                             />
+                            <form
+                                class="flex w-full flex-col justify-start gap-2.5"
+                                id="mainSupporterApproval"
+                                method="POST"
+                                use:mainSupporterApprovalEnhance
+                            >
+                                <CustomTextField
+                                    label="Ulasan"
+                                    id="remark"
+                                    bind:val={$mainSupporterApproval.remark}
+                                    errors={$mainSupporterApprovalError.remark}
+                                />
+                                <CustomRadioBoolean
+                                    label="Keputusan"
+                                    id="status"
+                                    options={supportOptions}
+                                    disabled={false}
+                                    bind:val={$mainSupporterApproval.status}
+                                    errors={$mainSupporterApprovalError.status}
+                                />
+                            </form>
                             <CustomSelectField
                                 label="Nama Pelulus"
                                 id="approverName"
-                                errors={$updateMainActingEmployeeDetailError.approverName}
-                                bind:val={$updateMainActingEmployeeDetailForm.approverName}
-                                options={successOption}
+                                errors={$mainMeetingDetailError.approverName}
+                                bind:val={$mainMeetingDetailForm.approverName}
+                                options={data.lookup.supporterApproverLookup}
                             />
+                            <form
+                                class="flex w-full flex-col justify-start gap-2.5"
+                                id="mainApproverApproval"
+                                method="POST"
+                                use:mainApproverApprovalEnhance
+                            >
+                                <CustomTextField
+                                    label="Ulasan"
+                                    id="remark"
+                                    bind:val={$mainApproverApproval.remark}
+                                    errors={$mainApproverApprovalError.remark}
+                                />
+                                <CustomRadioBoolean
+                                    label="Keputusan"
+                                    id="status"
+                                    disabled={false}
+                                    options={approveOptions}
+                                    bind:val={$mainApproverApproval.status}
+                                    errors={$mainApproverApprovalError.status}
+                                />
+                            </form>
                         </form>
                     {/if}
-                </StepperContentBody>
-            </StepperContent>
-
-            <StepperContent>
-                <StepperContentHeader title="Penyokong & Pelulus">
-                    <TextIconButton
-                        type="primary"
-                        label="Selesai"
-                        icon="check"
-                        form="mainSupporterAndApproverForm"
-                    />
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <form
-                        class="flex w-full flex-col justify-start px-2.5 pb-10"
-                        id="mainSupporterAndApproverForm"
-                        method="POST"
-                        use:mainSupporterAndApproverEnhance
-                    >
-                        <CustomSelectField
-                            label="Nama Penyokong"
-                            id="supporterName"
-                            options={data.lookup.supporterApproverLookup}
-                            errors={$mainSupporterAndApproverError.supporterName}
-                            bind:val={$mainSupporterAndApproverForm.supporterName}
-                        />
-                        <CustomSelectField
-                            label="Nama Pelulus"
-                            id="approverName"
-                            options={data.lookup.supporterApproverLookup}
-                            errors={$mainSupporterAndApproverError.approverName}
-                            bind:val={$mainSupporterAndApproverForm.approverName}
-                        />
-                    </form>
                 </StepperContentBody>
             </StepperContent>
             <!-- End Of For Gred Utama (New) Only -->
@@ -1419,7 +1523,7 @@
                                 use:directorResultEnhance
                             >
                                 <ContentHeader
-                                    title="Keputusan daripada Pengarah Bahagian atau Negeri"
+                                    title="Pengarah Bahagian/Negeri"
                                     borderClass="border-none"
                                 />
                                 <CustomTextField
@@ -1445,7 +1549,7 @@
                                 use:integrityResultEnhance
                             >
                                 <ContentHeader
-                                    title="Keputusan daripada Urus Setia Integriti"
+                                    title="Urus Setia Integriti"
                                     borderClass="border-none"
                                 />
                                 <CustomTextField
@@ -1610,16 +1714,20 @@
                                 options={data.lookup.placementLookup}
                             />
 
-                            <ContentHeader
-                                title="Kemaskini Senarai Calon Yang Terpilih Mengikut Keputusan Mesyuarat"
-                                borderClass="border-none"
-                            />
+                            <div class="flex w-full flex-col gap-2">
+                                <CustomFileField
+                                    label="Dokumen Sokongan"
+                                    id="postponeDocs"
+                                    bind:files
+                                ></CustomFileField>
+                            </div>
+
                             <div
                                 class="flex w-full flex-col justify-start gap-2.5 pb-10"
                             >
                                 <div class="h-fit w-full p-3">
                                     <DataTable
-                                        title=""
+                                        title="Senarai Calon Yang Terpilih Mengikut Keputusan Mesyuarat"
                                         bind:tableData={interviewInfoTable}
                                     ></DataTable>
                                 </div>
@@ -1658,7 +1766,7 @@
                             method="POST"
                             use:updateMeetingResultEnhance
                         >
-                            {#if data.actingType === 'Gred 1-54'}
+                            {#if data.actingType === '1-54'}
                                 <ContentHeader
                                     title="Maklumat Markah Keseluruhan"
                                     borderClass="border-none"
@@ -1685,64 +1793,6 @@
                                         ></DataTable>
                                     </div>
                                 </div>
-                            {:else if !detailOpen}
-                                <CustomTable
-                                    title="Senarai Calon Yang Terpilih"
-                                    enableDetail
-                                    detailActions={() => (detailOpen = true)}
-                                    bind:tableData={chosenEmployeeTable}
-                                />
-                            {:else}
-                                <ContentHeader
-                                    title="Maklumat Calon"
-                                    borderClass="border-none"
-                                />
-                                <CustomTextField
-                                    label="No. Pekerja"
-                                    disabled
-                                    id="employeeNumber"
-                                    type="text"
-                                    val="6764"
-                                />
-                                <CustomTextField
-                                    label="Nama"
-                                    disabled
-                                    id="employeeName"
-                                    type="text"
-                                    val="Gareth Bale"
-                                />
-                                <CustomTextField
-                                    label="No. Kad Pengenalan"
-                                    disabled
-                                    id="identificationNumber"
-                                    type="text"
-                                    val="991122-13-4749"
-                                />
-                                <ContentHeader
-                                    title="Keputusan Temuduga"
-                                    borderClass="border-none"
-                                />
-                                <!-- <CustomTextField
-                                    label="Tarikh Temuduga"
-                                    id="interviewDate"
-                                    type="date"
-                                    bind:val={$updateMeetingResultForm.interviewDate}
-                                    errors={$updateMeetingResultError.interviewDate}
-                                />
-                                <CustomSelectField
-                                    label="Pusat Temuduga"
-                                    id="interviewCenter"
-                                    options={data.lookup.placementLookup}
-                                    bind:val={$updateMeetingResultForm.interviewCenter}
-                                    errors={$updateMeetingResultError.interviewCenter}
-                                />
-                                <CustomTextField
-                                    label="Nama Panel"
-                                    id="panelName"
-                                    type="text"
-                                    bind:val={$updateMeetingResultForm.panelName}
-                                    errors={$updateMeetingResultError.panelName}
-                                /> -->
                             {/if}
                         </form>
                     </StepperContentBody>
@@ -2645,36 +2695,27 @@
             {/if}
             <!-- For kakitangan only -->
         {:else if data.currentRoleCode === employeeRoleCode}
-            <!-- <StepperContent>
-                <StepperContentHeader title="Panggilan Temuduga">
-                    <TextIconButton
-                        type="primary"
-                        label="Seterusnya"
-                        icon="next"
-                        onClick={() => goNext()}
-                    />
-                </StepperContentHeader>
+            <StepperContent>
+                <StepperContentHeader title="Panggilan Temuduga"
+                ></StepperContentHeader>
                 <StepperContentBody>
                     <div class="flex w-full flex-col gap-2.5 p-3">
                         <ContentHeader
                             title="Butiran Temuduga"
                             borderClass="border-none"
                         />
-                        <DownloadAttachment
-                            label="Surat Panggilan Temuduga"
-                            fileName="surat_panggilan_temuduga_irfan.pdf"
-                            triggerDownload={() => {}}
-                        />
-                        <DownloadAttachment
-                            label="Borang Perakuan Pendidikan"
-                            fileName="borang_perakuan_pendidikan.pdf"
-                            triggerDownload={() => {}}
-                        />
-                        <DownloadAttachment
-                            label="Dokumen Tambahan"
-                            fileName="dokumen_tambahan.pdf"
-                            triggerDownload={() => {}}
-                        />
+
+                        {#if data.employeeInterviewDetail.document !== undefined}
+                            {#each data.employeeInterviewDetail.document as docs}
+                                <a
+                                    href={docs.document}
+                                    target="_blank"
+                                    download={docs.name}
+                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                    >{docs.name}</a
+                                >
+                            {/each}
+                        {/if}
                         <div
                             class="flex flex-col pb-2.5 text-sm italic text-ios-labelColors-secondaryLabel-light"
                         >
@@ -2692,7 +2733,7 @@
                         </div>
                     </div>
                 </StepperContentBody>
-            </StepperContent> -->
+            </StepperContent>
 
             <StepperContent>
                 <StepperContentHeader title="Keputusan Mesyuarat">
@@ -2748,15 +2789,17 @@
                             title="Dokumen-dokumen yang perlu dimuat turun dan diisi"
                             borderClass="border-none"
                         />
-                        {#each data.employeeMeetingDetail.document as docs}
-                            <a
-                                href={docs.document}
-                                target="_blank"
-                                download={docs.name}
-                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                >{docs.name}</a
-                            >
-                        {/each}
+                        {#if data.employeeMeetingDetail.document !== undefined}
+                            {#each data.employeeMeetingDetail.document as docs}
+                                <a
+                                    href={docs.document}
+                                    target="_blank"
+                                    download={docs.name}
+                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                    >{docs.name}</a
+                                >
+                            {/each}
+                        {/if}
                     </div>
                 </StepperContentBody>
             </StepperContent>

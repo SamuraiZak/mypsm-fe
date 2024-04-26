@@ -14,12 +14,13 @@ import { ActingDetailsConvert, type ActingDetails } from "$lib/dto/mypsm/employm
 import { UpdateMainPromotionMeetingConvert, type UpdateMainPromotionMeeting } from "$lib/dto/mypsm/employment/acting/main-update-promotion-meeting.dto";
 import { QuarterCommonApprovalConvert, type QuarterCommonApproval } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto";
 import { EmployeePostponeConvert, PostponeDetailResultConvert, type EmployeePostpone, type PostponeDetailResult } from "$lib/dto/mypsm/employment/acting/acting-employee-form.dto";
+import { CertifySelectedConvert, MainActingDetailEditConvert, MainMeetingResultConvert, type CertifySelected, type MainActingDetailEdit, type MainMeetingResult } from "$lib/dto/mypsm/employment/acting/main-acting-form.dto";
 
 
 export class EmploymentActingServices {
     //table for 154
     static async get154List(param: CommonListRequestDTO) {
-        try{
+        try {
             const url: Input = 'employment/acting/154s/list';
 
             const promiseRes: Promise<Response> = http
@@ -28,15 +29,15 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await promiseRes;
+            const reponse: Response = await promiseRes;
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
@@ -44,7 +45,7 @@ export class EmploymentActingServices {
 
     //table for flexi 41
     static async getFlexi41List(param: CommonListRequestDTO) {
-        try{
+        try {
             const url: Input = 'employment/acting/flexi41s/list';
 
             const promiseRes: Promise<Response> = http
@@ -53,15 +54,15 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await promiseRes;
+            const reponse: Response = await promiseRes;
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
@@ -69,7 +70,7 @@ export class EmploymentActingServices {
 
     //table for gred utama
     static async getMainList(param: CommonListRequestDTO) {
-        try{
+        try {
             const url: Input = 'employment/acting/mains/list';
 
             const promiseRes: Promise<Response> = http
@@ -78,22 +79,22 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await promiseRes;
+            const reponse: Response = await promiseRes;
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
     //table for employee acting offer
     static async getEmployeeActingOffer(param: CommonListRequestDTO) {
-        try{
+        try {
             const url: Input = 'employment/acting/employee/list';
 
             const promiseRes: Promise<Response> = http
@@ -102,15 +103,15 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await promiseRes;
+            const reponse: Response = await promiseRes;
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
@@ -118,7 +119,7 @@ export class EmploymentActingServices {
 
     //employee list for new pemangkuan (add list)
     static async getActingEmployeeList(param: CommonListRequestDTO) {
-        try{
+        try {
             const url: Input = 'employment/acting/employee_lists/list';
 
             const promiseRes: Promise<Response> = http
@@ -127,23 +128,23 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const response: Response = await promiseRes;
+            const response: Response = await promiseRes;
 
-                const result = CommonResponseConvert.fromResponse(response);
+            const result = CommonResponseConvert.fromResponse(response);
 
-                if(result.status == 'success') {
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
-    
+
     //add employee for pemangkuan
-    static async addChosenActingEmployee (param: AddChosenActingEmployeeDTO) {
-        try{
+    static async addChosenActingEmployee(param: AddChosenActingEmployeeDTO) {
+        try {
             const url: Input = 'employment/acting/chosen_employee_lists/add';
 
             const promiseRes: Promise<Response> = http
@@ -152,16 +153,16 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getPromiseToast(promiseRes);
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
@@ -193,8 +194,8 @@ export class EmploymentActingServices {
     }
 
     //update chosen employee
-    static async updateChosenEmployee (param: UpdateChosenEmployee) {
-        try{
+    static async updateChosenEmployee(param: UpdateChosenEmployee) {
+        try {
             const url: Input = 'employment/acting/candidate_selection_meetings/edit';
 
             const promiseRes: Promise<Response> = http
@@ -203,23 +204,23 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getPromiseToast(promiseRes);
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
 
-     //get interview info
-     static async getInterviewInfo(param: CommonListRequestDTO) {
+    //get interview info
+    static async getInterviewInfo(param: CommonListRequestDTO) {
         try {
             const url: Input = 'employment/acting/interview_infos/list'
 
@@ -244,8 +245,8 @@ export class EmploymentActingServices {
     }
 
     //update interview detail
-    static async updateInterviewDetail (param: UpdateActingInterview) {
-        try{
+    static async updateInterviewDetail(param: UpdateActingInterview) {
+        try {
             const url: Input = 'employment/acting/interview_infos/edit';
 
             const promiseRes: Promise<Response> = http
@@ -254,16 +255,16 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getPromiseToast(promiseRes);
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
@@ -295,8 +296,8 @@ export class EmploymentActingServices {
     }
 
     //update interview detail
-    static async updateInterviewResult (param: UpdateInterviewResult) {
-        try{
+    static async updateInterviewResult(param: UpdateInterviewResult) {
+        try {
             const url: Input = 'employment/acting/interview_result_marks/edit';
 
             const promiseRes: Promise<Response> = http
@@ -305,24 +306,24 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getPromiseToast(promiseRes);
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
 
     //update promotion meeting
-    static async updateDirectorApproval (param: QuarterCommonApproval) {
-        try{
+    static async updateDirectorApproval(param: QuarterCommonApproval) {
+        try {
             const url: Input = 'employment/acting/director_certifies/edit';
 
             const promiseRes: Promise<Response> = http
@@ -331,23 +332,23 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getPromiseToast(promiseRes);
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
     //update integrity approval
-    static async updateIntegrityApproval (param: QuarterCommonApproval) {
-        try{
+    static async updateIntegrityApproval(param: QuarterCommonApproval) {
+        try {
             const url: Input = 'employment/acting/integrity_certifies/edit';
 
             const promiseRes: Promise<Response> = http
@@ -356,16 +357,16 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getPromiseToast(promiseRes);
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
@@ -398,8 +399,8 @@ export class EmploymentActingServices {
     }
 
     //update promotion meeting
-    static async updatePromotionMeeting (param: UpdatePromotionMeeting) {
-        try{
+    static async updatePromotionMeeting(param: UpdatePromotionMeeting) {
+        try {
             const url: Input = 'employment/acting/promotion_meeting_results/add';
 
             const promiseRes: Promise<Response> = http
@@ -408,16 +409,16 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getPromiseToast(promiseRes);
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
@@ -449,8 +450,8 @@ export class EmploymentActingServices {
     }
 
     //edit promotion result
-    static async editPromotionResult (param: PromotionMeetingResult) {
-        try{
+    static async editPromotionResult(param: PromotionMeetingResult) {
+        try {
             const url: Input = 'employment/acting/promotion_meeting_results/edit';
 
             const promiseRes: Promise<Response> = http
@@ -459,16 +460,16 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getPromiseToast(promiseRes);
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
@@ -500,8 +501,8 @@ export class EmploymentActingServices {
     }
 
     //add palcement detail
-    static async addPlacementMeeting (param: PlacementMeetingDetail) {
-        try{
+    static async addPlacementMeeting(param: PlacementMeetingDetail) {
+        try {
             const url: Input = 'employment/acting/promotion_meeting_placements/add';
 
             const promiseRes: Promise<Response> = http
@@ -510,24 +511,24 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getPromiseToast(promiseRes);
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
 
     // update placement result
-    static async editPlacementResult (param: PlacementResult) {
-        try{
+    static async editPlacementResult(param: PlacementResult) {
+        try {
             const url: Input = 'employment/acting/promotion_meeting_placements/edit';
 
             const promiseRes: Promise<Response> = http
@@ -536,16 +537,16 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getPromiseToast(promiseRes);
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
@@ -651,8 +652,8 @@ export class EmploymentActingServices {
     }
 
     // update acting result
-    static async addActingResult (param: ActingDetails) {
-        try{
+    static async addActingResult(param: ActingDetails) {
+        try {
             const url: Input = 'employment/acting/acting_results/edit';
 
             const promiseRes: Promise<Response> = http
@@ -661,16 +662,16 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getPromiseToast(promiseRes);
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
@@ -820,8 +821,8 @@ export class EmploymentActingServices {
         }
     }
     // update supporter approval
-    static async addSupporterApproval (param: QuarterCommonApproval) {
-        try{
+    static async addSupporterApproval(param: QuarterCommonApproval) {
+        try {
             const url: Input = 'employment/acting/supports/edit';
 
             const promiseRes: Promise<Response> = http
@@ -830,23 +831,23 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getPromiseToast(promiseRes);
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
     // update approver approval
-    static async addApproverApproval (param: QuarterCommonApproval) {
-        try{
+    static async addApproverApproval(param: QuarterCommonApproval) {
+        try {
             const url: Input = 'employment/acting/approves/edit';
 
             const promiseRes: Promise<Response> = http
@@ -855,41 +856,41 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getPromiseToast(promiseRes);
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
-     // update postpone result
-     static async updatePostponeResult (param: PostponeDetailResult) {
-        try{
+    // update postpone result
+    static async updatePostponeResult(param: PostponeDetailResult) {
+        try {
             const url: Input = 'employment/acting/postpones/edit';
-            
+
             const promiseRes: Promise<Response> = http
                 .put(url, {
                     body: PostponeDetailResultConvert.toJson(param),
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getPromiseToast(promiseRes);
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
@@ -970,8 +971,8 @@ export class EmploymentActingServices {
         }
     }
     // update main promotion meeting
-    static async addMainPromotionMeeting (param: UpdateMainPromotionMeeting) {
-        try{
+    static async addMainPromotionMeeting(param: UpdateMainPromotionMeeting) {
+        try {
             const url: Input = 'employment/acting/mains/promotion_meetings/add';
 
             const promiseRes: Promise<Response> = http
@@ -980,16 +981,16 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getPromiseToast(promiseRes);
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
@@ -1046,8 +1047,8 @@ export class EmploymentActingServices {
     }
 
     // update employee postpone form
-    static async editPostponeStatus (param: EmployeePostpone) {
-        try{
+    static async editPostponeStatus(param: EmployeePostpone) {
+        try {
             const url: Input = 'employment/acting/employee/postpone_detail/add';
 
             const promiseRes: Promise<Response> = http
@@ -1056,16 +1057,16 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getPromiseToast(promiseRes);
 
-                const result = CommonResponseConvert.fromResponse(reponse);
+            const result = CommonResponseConvert.fromResponse(reponse);
 
-                if(result.status == 'success') {
-                    await invalidateAll();
-                    return result;
-                } else {
-                    return CommonResponseConstant.httpError;
-                }
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
@@ -1137,6 +1138,182 @@ export class EmploymentActingServices {
             const result = CommonResponseConvert.fromResponse(reponse);
 
             if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //==================================== main v2
+    //certify selected
+    static async addCertifySelected(param: CertifySelected) {
+        try {
+            const url: Input = 'employment/acting/mains/certifications/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: CertifySelectedConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await getPromiseToast(promiseRes);
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    static async addMainMeetingResult(param: MainMeetingResult) {
+        try {
+            const url: Input = 'employment/acting/mains/promotion_meetings/edit';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: MainMeetingResultConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await getPromiseToast(promiseRes);
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get main acting details table
+    static async getMainActingInfo(param: CommonListRequestDTO) {
+        try {
+            const url: Input = 'employment/acting/mains/acting_infos/list'
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get main acting info
+    static async getMainActingDetails(param: commonIdRequestDTO) {
+        try {
+            const url: Input = 'employment/acting/mains/acting_infos/get'
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //edit main acting detail
+    static async addMainActingDetail(param: MainActingDetailEdit) {
+        try {
+            const url: Input = 'employment/acting/mains/acting_infos/edit';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: MainActingDetailEditConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await getPromiseToast(promiseRes);
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //edit main acting detail
+    static async addMainActingSupporter(param: QuarterCommonApproval) {
+        try {
+            const url: Input = 'employment/acting/mains/support/edit';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: QuarterCommonApprovalConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await getPromiseToast(promiseRes);
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //edit main acting detail
+    static async addMainActingApprover(param: QuarterCommonApproval) {
+        try {
+            const url: Input = 'employment/acting/mains/approve/edit';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: QuarterCommonApprovalConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await getPromiseToast(promiseRes);
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;

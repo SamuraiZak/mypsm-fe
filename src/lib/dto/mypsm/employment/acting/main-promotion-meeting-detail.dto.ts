@@ -1,6 +1,6 @@
 export interface MainPromotionMeeting {
     candidate:              Candidate;
-    promotionMeetingResult: string | null;
+    promotionMeetingResult: boolean | null;
 }
 
 export interface Candidate {
@@ -18,7 +18,7 @@ export interface Candidate {
 }
 
 // Converts JSON strings to/from your types
-export class Convert {
+export class CandidateConvert {
     public static toMainPromotionMeeting(json: string): MainPromotionMeeting {
         return JSON.parse(json);
     }

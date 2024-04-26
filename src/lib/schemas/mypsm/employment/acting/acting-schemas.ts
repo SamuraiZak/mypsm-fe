@@ -19,7 +19,10 @@ const stringToMaxDate = z.string({ required_error: 'Medan ini tidak boleh kosong
     const currentDate = new Date();
     return convertedStringToDate < currentDate;
 }, { message: "Tarikh tidak boleh lebih dari tarikh semasa." })
-
+const documentSchema = z.object({
+    base64: z.string(),
+    name: shortTextSchema,
+})
 // ========================
 // ============= Urus Setia 
 // ========================
@@ -42,6 +45,7 @@ export const _updateMeetingDetailSchema = z.object({
     placement: shortTextSchema,
     interviewDate: stringToMinDate,
     interviewTime: shortTextSchema,
+    documents: documentSchema.array(),
 })
 
 export const _updateMeetingResult = z.object({
@@ -94,13 +98,6 @@ export const _actingApprovalSchema = z.object({
     status: booleanSchema,
 })
 
-
-
-
-
-
-
-
 export const _postponeDetailSchema = z.object({
     id: z.number(),
     meetingResult: shortTextSchema,
@@ -111,6 +108,25 @@ export const _postponeDetailSchema = z.object({
         name: z.string()
     }).array()
 })
+
+
+// gred utamaaa =========================
+export const _certifySelected = z.object({
+    id: z.number().array(),
+})
+
+export const _mainMeetingResult = z.object({
+    id: z.number(),
+    status: booleanSchema,
+})
+
+
+
+
+
+
+
+
 
 
 
@@ -133,13 +149,14 @@ export const _mainUpdatePromotionMeetingResultDetailSchema = z.object({
     promotionMeetingResult: booleanSchema,
 })
 
-export const _mainUpdateActingEmployeeDetailSchema = z.object({
-    actingPosition: codeSchema,
-    actingGrade: codeSchema,
-    newPlacement: codeSchema,
-    reportingDate: stringToMinDate,
-    supporterName: codeSchema,
-    approverName: codeSchema,
+export const _mainMeetingDetail = z.object({
+    id:             z.number(),
+    actingPosition: z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
+    actingGrade:    z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
+    newPlacement:   z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
+    reportDate:     stringToMinDate,
+    supporterName:  shortTextSchema,
+    approverName:   shortTextSchema,
 })
 
 export const _mainSupporterAndApproverSchema = z.object({
@@ -147,10 +164,7 @@ export const _mainSupporterAndApproverSchema = z.object({
     approverName: codeSchema,
 })
 
-const documentSchema = z.object({
-    base64: z.string(),
-    name: shortTextSchema,
-})
+
 // ================== kakitangan schema
 export const _placementAmendmentApplication = z.object({
     id: z.number(),

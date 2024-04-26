@@ -59,19 +59,13 @@
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
     import {
-        kgtMonthStringLookup,
         kgtMonthValueIsStringLookup,
     } from '$lib/constants/core/dropdown.constant';
     import type { PromotionCertificationGet } from '$lib/dto/mypsm/employment/promotion/promotion-common-groupid.dto';
     import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 
     let currentRoleCode: string | null;
-    let employeeRoleCode: string = UserRoleConstant.kakitangan.code;
     let secretaryRoleCode: string = UserRoleConstant.urusSetiaPerjawatan.code;
-    let supporterRoleCode: string = UserRoleConstant.penyokong.code;
-    let approverRoleCode: string = UserRoleConstant.pelulus.code;
-    let stateDirectorRoleCode: string = UserRoleConstant.pengarahNegeri.code;
-    let depDirectorRoleCode: string = UserRoleConstant.pengarahBahagian.code;
 
     currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
@@ -485,7 +479,6 @@
                     .then((res) => {
                         certificationResult = res.response.data
                             ?.details as PromotionCertificationResult;
-                        console.log(certificationResult);
                     })
                     .finally(() => {
                         // DO SOMETHIGN HERE $certification
@@ -727,7 +720,7 @@
                                 method="POST"
                                 use:certificationEnhance
                             >
-                                {#if Object.keys(certificationResult).length < 1}
+                                {#if certificationResult.meetingRemarks == null}
                                     <span
                                         class="pb-2 text-sm italic text-ios-activeColors-activeBlue-light"
                                     >
@@ -764,7 +757,7 @@
                                         errors={$certificationError.meetingResult}
                                     />
 
-                                    {#if data.promotionType === 'Gred 1-54'}
+                                    {#if data.promotionType === '1-54'}
                                         {#if $certificationForm.meetingResult}
                                             <CustomTextField
                                                 label="Tarikh Pengesahan Kenaikan Pangkat (Jika Lulus)"
@@ -803,13 +796,6 @@
                                         {/if}
                                     {/if}
                                 {:else}
-                                    <span
-                                        class="pb-2 text-sm italic text-ios-activeColors-activeBlue-light"
-                                    >
-                                        Sekiranya kakitangan tidak lulus
-                                        mesyuarat, proses akan berakhir untuk
-                                        kakitangan tersebut.
-                                    </span>
                                     <CustomSelectField
                                         label="Nama dan Bilangan Mesyuarat"
                                         id="meetingName"

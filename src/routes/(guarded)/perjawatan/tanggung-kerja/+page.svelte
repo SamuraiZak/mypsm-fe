@@ -34,8 +34,8 @@
         hiddenColumn: ['id'],
         dictionary: [
             {
-                english: 'description',
-                malay: 'Nama',
+                english: 'icNumber',
+                malay: 'No. Kad Pengenalan',
             },
         ],
         url:
@@ -67,7 +67,12 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['id'],
-        dictionary: [],
+        dictionary: [
+            {
+                english: 'icNumber',
+                malay: 'No. Kad Pengenalan',
+            },
+        ],
         url: 'employment/interim/termination/list',
         id: 'terminationTable',
         option: {
@@ -106,46 +111,45 @@
 >
     {#if data.currentRoleCode === UserRoleConstant.kakitangan.code || data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code || data.currentRoleCode == UserRoleConstant.ketuaSeksyen.code || data.currentRoleCode == UserRoleConstant.timbalanKetuaSeksyen.code}
         <CustomTab>
-            
             {#if data.currentRoleCode !== UserRoleConstant.ketuaSeksyen.code && data.currentRoleCode !== UserRoleConstant.timbalanKetuaSeksyen.code}
-            <CustomTabContent title="Permohonan Tanggung Kerja">
-                <div class="h h-fit w-full">
-                    <DataTable
-                        title="Senarai Permohonan Tanggung Kerja"
-                        bind:tableData={employeeApplicationTable}
-                        bind:passData={rowData}
-                        detailActions={() => {
-                            goto(
-                                '/perjawatan/tanggung-kerja/butiran-' +
-                                    rowData.id,
-                            );
-                        }}
-                    >
-                        <FilterWrapper slot="filter">
-                            <FilterTextField
-                                label="Nama"
-                                bind:inputValue={employeeApplicationTable.param
-                                    .filter.name}
-                            ></FilterTextField>
-                            <FilterTextField
-                                label="No. Pekerja"
-                                bind:inputValue={employeeApplicationTable.param
-                                    .filter.employeeNumber}
-                            ></FilterTextField>
-                            <FilterTextField
-                                label="No. Kad Pengenalan"
-                                bind:inputValue={employeeApplicationTable.param
-                                    .filter.identityCardNumber}
-                            ></FilterTextField>
-                            <FilterDateField
-                                label="Tarikh Permohonan"
-                                bind:inputValue={employeeApplicationTable.param
-                                    .filter.applicationDate}
-                            ></FilterDateField>
-                        </FilterWrapper>
-                    </DataTable>
-                </div>
-            </CustomTabContent>
+                <CustomTabContent title="Permohonan Tanggung Kerja">
+                    <div class="h h-fit w-full">
+                        <DataTable
+                            title="Senarai Permohonan Tanggung Kerja"
+                            bind:tableData={employeeApplicationTable}
+                            bind:passData={rowData}
+                            detailActions={() => {
+                                goto(
+                                    '/perjawatan/tanggung-kerja/butiran-' +
+                                        rowData.id,
+                                );
+                            }}
+                        >
+                            <FilterWrapper slot="filter">
+                                <FilterTextField
+                                    label="Nama"
+                                    bind:inputValue={employeeApplicationTable
+                                        .param.filter.name}
+                                ></FilterTextField>
+                                <FilterTextField
+                                    label="No. Pekerja"
+                                    bind:inputValue={employeeApplicationTable
+                                        .param.filter.employeeNumber}
+                                ></FilterTextField>
+                                <FilterTextField
+                                    label="No. Kad Pengenalan"
+                                    bind:inputValue={employeeApplicationTable
+                                        .param.filter.identityCardNumber}
+                                ></FilterTextField>
+                                <FilterDateField
+                                    label="Tarikh Permohonan"
+                                    bind:inputValue={employeeApplicationTable
+                                        .param.filter.applicationDate}
+                                ></FilterDateField>
+                            </FilterWrapper>
+                        </DataTable>
+                    </div>
+                </CustomTabContent>
             {/if}
             <CustomTabContent title="Penamatan Tanggung Kerja">
                 <div class="h h-fit w-full">
