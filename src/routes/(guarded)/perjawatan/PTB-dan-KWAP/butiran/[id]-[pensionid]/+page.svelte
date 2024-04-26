@@ -800,6 +800,7 @@
                 <StepperContentHeader
                     title="Masukkan Maklumat Peranan - Peranan Berkaitan"
                 >
+                {#if data.assignrolesRelatedDetail == null && currentRoleCode == urusetia}
                     <TextIconButton
                         type="primary"
                         label="Simpan"
@@ -807,6 +808,7 @@
                     >
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
+                    {/if}
                 </StepperContentHeader>
                 <form
                     class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
@@ -823,7 +825,7 @@
                         ></div>
                         <!-- || data.rolesRelatedResponse.data?.details.supporterName !== null  -->
                         <CustomSelectField
-                            disabled={currentRoleCode !== urusetia}
+                            disabled={currentRoleCode !== urusetia || data.assignrolesRelatedDetail !== null}
                             id="staffSupporter"
                             label="Nama Penyokong"
                             options={data.supporterApproverLookup}
@@ -831,7 +833,7 @@
                         />
 
                         <CustomSelectField
-                            disabled={currentRoleCode !== urusetia}
+                            disabled={currentRoleCode !== urusetia || data.assignrolesRelatedDetail !== null }
                             id="staffApprover"
                             label="Nama Pelulus"
                             options={data.supporterApproverLookup}
