@@ -24,6 +24,10 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
+                            name: 'Pengesahan dalam Perkhidmatan',
+                            path: '/perjawatan/pengesahan-dalam-perkhidmatan',
+                        },
+                        {
                             name: 'PTB dan KWAP',
                             path: '/perjawatan/PTB-dan-KWAP',
                         },
