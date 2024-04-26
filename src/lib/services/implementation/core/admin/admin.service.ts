@@ -9,9 +9,9 @@ import {
     type CommonListRequestDTO,
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
+import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import type { Input } from 'ky';
 import http from '../../service-provider.service';
-import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 
 export class AdminServices {
     // get list of employee
@@ -100,6 +100,28 @@ export class AdminServices {
 
             if (result.status == 'success') {
                 await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getAuditTrail(param: CommonListRequestDTO) {
+        try {
+            let url: Input = '';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
