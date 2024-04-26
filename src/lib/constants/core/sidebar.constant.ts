@@ -1408,18 +1408,6 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Lantikan Baru',
-                            path: '/perjawatan/lantikan-baru',
-                        },
-                        {
-                            name: 'Tawaran Baru',
-                            path: '/perjawatan/tawaran-baru',
-                        },
-                        {
-                            name: 'Pengesahan dalam Perkhidmatan',
-                            path: '/perjawatan/pengesahan-dalam-perkhidmatan',
-                        },
-                        {
                             name: 'PTB dan KWAP',
                             path: '/perjawatan/PTB-dan-KWAP',
                         },
