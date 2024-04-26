@@ -206,6 +206,19 @@
                 {/if}
             </StepperContentBody>
         </StepperContent>
+
+        {#if data.currentRoleCode === UserRoleConstant.urusSetiaGaji.code && isProcessEnded === 1}
+            <StepperContent>
+                <StepperContentHeader
+                    title="Keputusan Pergerakan Gaji"
+                ></StepperContentHeader>
+                <StepperContentBody>
+                    <div
+                        class="flex w-full flex-col justify-start gap-2.5"
+                    ></div>
+                </StepperContentBody>
+            </StepperContent>
+        {/if}
     </Stepper>
 </section>
 <Toaster />
