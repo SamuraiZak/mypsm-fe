@@ -163,9 +163,6 @@
         submitDirectorApproval = true;
     }
 
-    const handleDownload = async (url: string) => {
-        await ContractEmployeeServices.downloadContractAttachment(url);
-    };
     function uploadDocument(stepper: number) {
         if (files == undefined) {
             alert('Dokumen sokongan tidak boleh kosong.');
@@ -195,7 +192,7 @@
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
+                    throw new Error(error);
                 });
         }
     }
@@ -738,18 +735,18 @@
                             >Muat turun dan isi salinan borang di bawah dan muat
                             naik pada ruangan yang disediakan.</span
                         >
-                        <DownloadAttachment
-                            fileName="Borang Akuan Keluar Kuarters.pdf"
-                            triggerDownload={() =>
-                                handleDownload(data.quartersDeclarationLetter)}
-                        />
-                        <DownloadAttachment
-                            fileName="Borang Pemeriksaan Keluar Kuarters.pdf"
-                            triggerDownload={() =>
-                                handleDownload(
-                                    data.quartersMovingOutCheckingLetter,
-                                )}
-                        />
+                        <a
+                            href={data.quartersDeclarationLetter.document}
+                            download="Borang Akuan Keluar Kuarters.pdf"
+                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                            >Borang Akuan Keluar Kuarters.pdf</a
+                        >
+                        <a
+                            href={data.quartersMovingOutCheckingLetter.document}
+                            download={data.quartersMovingOutCheckingLetter.name}
+                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                            >{data.quartersMovingOutCheckingLetter.name}</a
+                        >
                     </div>
                     <div class="flex w-full flex-col gap-2 px-3">
                         <CustomFileField
@@ -846,8 +843,9 @@
             </StepperContent>
 
             <StepperContent>
-                <StepperContentHeader title="Maklumat Permohonan">
-                </StepperContentHeader>
+                <StepperContentHeader
+                    title="Maklumat Permohonan"
+                ></StepperContentHeader>
                 <StepperContentBody paddingClass="p-none">
                     <CustomTab>
                         <CustomTabContent title="Maklumat Penempatan">
@@ -1014,7 +1012,7 @@
                 </StepperContentHeader>
                 <StepperContentBody>
                     {#if directorExist}
-                        {#if !submitDirectorApproval && (data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code)}
+                        {#if !submitDirectorApproval && data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
                             <div class="flex w-full flex-col gap-10 px-3">
                                 <Alert color="blue">
                                     <p>

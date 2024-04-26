@@ -4,6 +4,7 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type { MovingInKuarters } from '$lib/dto/mypsm/pinjaman/kuarters/moving-in-list.dto';
@@ -63,7 +64,7 @@
                     ) {
                         goto(
                             './permohonan-masuk-kuarters/butiran/' +
-                                "baru"+
+                                'baru'+
                                 '-' +
                                 'kakitangan',
                         );
@@ -73,7 +74,7 @@
                     ) {
                         goto(
                             './permohonan-masuk-kuarters/butiran/' +
-                                "baru" +
+                                'baru' +
                                 '-' +
                                 'luar',
                         );
@@ -126,6 +127,12 @@
                         label="No. Kad Pengenalan"
                         bind:inputValue={quartersTable.param.filter
                             .identityDocumentNumber}
+                    />
+                    <FilterSelectField
+                        label="Status Kediaman"
+                        options={data.occupiedStatus}
+                        bind:inputValue={quartersTable.param.filter
+                            .isOccupied}
                     />
                 </FilterWrapper>
             </DataTable>

@@ -1,5 +1,4 @@
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant"
-import { UserRoleConstant } from "$lib/constants/core/user-role.constant"
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto"
 import type { RadioDTO } from "$lib/dto/core/radio/radio.dto"
 import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto"
@@ -13,13 +12,13 @@ import type { OutsiderFamily, QuartersPartnerDetail } from "$lib/dto/mypsm/pinja
 import type { QuarterDetails, QuarterPayment } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-details.dto"
 import { superValidate } from "sveltekit-superforms"
 import { zod } from "sveltekit-superforms/adapters"
-import { _addConfirmationSchema, _moveOutQuarter, _quarterCommonApproval, _quarterSecretaryApproval, _setDirector } from "$lib/schemas/mypsm/quarters/quarters-schema.js"
-import type { MoveOutQuarters } from "$lib/dto/mypsm/pinjaman/kuarters/moving-out.dto.js"
+import { _addConfirmationSchema, _moveOutQuarter, _quarterCommonApproval, _quarterSecretaryApproval, _setDirector } from "$lib/schemas/mypsm/quarters/quarters-schema"
+import type { MoveOutQuarters } from "$lib/dto/mypsm/pinjaman/kuarters/moving-out.dto"
 import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-document-request.dto"
-import type { QuartersGetDocument } from "$lib/dto/mypsm/pinjaman/kuarters/application-get-document.dto"
+import type { QuarterDocument, QuartersGetDocument } from "$lib/dto/mypsm/pinjaman/kuarters/application-get-document.dto"
 import type { QuarterCommonApproval, QuarterSecretaryApproval } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto"
 import type { QuartersAddConfirmation } from "$lib/dto/mypsm/pinjaman/kuarters/application-confirmation.dto"
-import type { MovingOutSetDirector } from "$lib/dto/mypsm/pinjaman/kuarters/moving-out-set-director.dto.js"
+import type { MovingOutSetDirector } from "$lib/dto/mypsm/pinjaman/kuarters/moving-out-set-director.dto"
 
 export const load = async ({ params }) => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
@@ -46,11 +45,29 @@ export const load = async ({ params }) => {
     let outsiderFamily = {} as OutsiderFamily;
     let outsiderService = {} as OutsiderServiceDetail;
     let paymentDetail = {} as QuarterPayment;
-    let quartersDeclarationLetter: string = getBorangAkuanKuarters();
-    let quartersMovingOutCheckingLetter: string = getBorangPemeriksaanKuarters();
+    let quartersDeclarationLetter: QuarterDocument = {
+        name: "",
+        document: "",
+    };
+    let quartersMovingOutCheckingLetter: QuarterDocument = {
+        name: "",
+        document: "",
+    };;
 
     const setDirectorForm = await superValidate(zod(_setDirector));
     const directorApprovalForm = await superValidate(zod(_quarterCommonApproval), { errors: false });
+
+    //moving out document
+    const declarationLetter: CommonResponseDTO =
+        await QuartersServices.getCertificateDocument(currentId);
+    if (declarationLetter.status == 'success') {
+        quartersDeclarationLetter =
+            declarationLetter.data?.details as QuarterDocument;
+    }
+    const checkingDocument: CommonResponseDTO =
+        await QuartersServices.getCheckingDocument();
+    quartersMovingOutCheckingLetter =
+        checkingDocument.data?.details as QuarterDocument;
 
 
     if (applicationType == "kakitangan") {
@@ -154,6 +171,8 @@ export const load = async ({ params }) => {
         directorApprovalForm,
         paymentDetail,
         outstandingDocument,
+        declarationLetter,
+        checkingDocument,
     }
 }
 
@@ -297,18 +316,6 @@ const getLookup = async () => {
         positionLookup,
         supporterApproverLookup,
     }
-}
-
-const getBorangAkuanKuarters = () => {
-    const url: string = "http://localhost:3333/quarter/moving_out/certificate_document"
-
-    return url;
-}
-
-const getBorangPemeriksaanKuarters = () => {
-    const url: string = "http://localhost:3333/quarter/moving_out/checking_document"
-
-    return url;
 }
 
 // Create a function that returns a promise resolving to an array of DocumentBase64RequestDTO objects

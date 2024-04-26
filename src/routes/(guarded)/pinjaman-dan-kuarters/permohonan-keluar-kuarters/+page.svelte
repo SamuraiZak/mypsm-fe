@@ -1,8 +1,6 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
@@ -39,7 +37,7 @@
             detail: true,
             edit: false,
             select: false,
-            filter: false,
+            filter: true,
         },
         controls: {
             add: false,
@@ -56,13 +54,6 @@
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     <div class="flex w-full flex-col justify-start gap-2.5 p-5">
-        <FilterCard>
-            <FilterTextField label="No. Pemohon" inputValue={''} />
-            <FilterTextField label="Nama Pemohon" inputValue={''} />
-            <FilterTextField label="Jenis Pemohon" inputValue={''} />
-            <FilterTextField label="Status" inputValue={''} />
-        </FilterCard>
-
         <DataTable
             title="Rekod Permohonan"
             bind:tableData={quartersTable}
@@ -98,6 +89,12 @@
                     bind:inputValue={quartersTable.param.filter
                         .identityDocumentNumber}
                 />
+                <FilterSelectField
+                        label="Status Kediaman"
+                        options={data.occupiedStatus}
+                        bind:inputValue={quartersTable.param.filter
+                            .isOccupied}
+                    />
             </FilterWrapper></DataTable
         >
     </div>
