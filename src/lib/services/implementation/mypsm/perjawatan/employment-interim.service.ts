@@ -10,6 +10,7 @@ import { InterimChecklistConvert, type InterimChecklist } from "$lib/dto/mypsm/e
 import type { InterimApplicationResponse } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-application-response.dto";
 import { InterimCommonApprovalConvert, type InterimCommonApproval } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-common-approval.dto";
 import { TerminationSuppAppConvert, type TerminationSuppApp } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-termination.dto";
+import { commonIdRequestDTOConvert, type commonIdRequestDTO } from "$lib/dto/core/common/id-request.dto";
 
 
 export class EmploymentInterimServices {
@@ -81,6 +82,29 @@ export class EmploymentInterimServices {
 
             if (result.status == 'success') {
                 invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    static async getEmployeeDetail(param: commonIdRequestDTO) {
+        try {
+            const url: Input = 'employment/interim/application/employee_details';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
