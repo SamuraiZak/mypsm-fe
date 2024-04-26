@@ -121,8 +121,8 @@ export const _PTBPensionInfoSchema = z.object({
 export const _assignRolesRelatedSchema = z.object({
     
         id: numberSchema,
-        supporterName: shortTextSchema,
-        approverName:  shortTextSchema,
+        supporterName: z.string(),
+        approverName:  z.string(),
     
 })
 

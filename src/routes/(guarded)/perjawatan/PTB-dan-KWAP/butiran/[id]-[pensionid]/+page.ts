@@ -27,7 +27,7 @@ export async function load({ params }) {
     const suppAppResponse: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 350,
-        orderBy: "",
+        orderBy: " ",
         orderType: 0,
         filter: {
             program: "TETAP",
