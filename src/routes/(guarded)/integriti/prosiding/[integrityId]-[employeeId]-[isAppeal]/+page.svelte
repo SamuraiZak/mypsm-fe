@@ -8,6 +8,7 @@
     } from '$lib/constants/core/radio-option-constants';
     import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import { Badge, Checkbox } from 'flowbite-svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
@@ -218,13 +219,11 @@
         validationMethod: 'oninput',
         validators: zod(_proceedingAppealSchema),
         taintedMessage: false,
-        onSubmit() {
+        onChange() {
             if (!$appealMeetingForm.meetingResult) {
                 $appealMeetingForm.result =
                     $sentencingMeetingForm.meetingResult;
             } else {
-                $appealMeetingForm.result =
-                    $sentencingMeetingForm.meetingResult;
                 $appealMeetingForm.result.forEach((data, index) => {
                     if (!data.result) {
                         $appealMeetingForm.result[index].sentencing = [];
@@ -245,6 +244,8 @@
                     }
                 });
             }
+        },
+        onSubmit() {
             $appealMeetingForm.integrityId = Number(data.params.integrityId);
             $appealMeetingForm.meetingCode = '19';
 
@@ -252,10 +253,10 @@
         },
     });
 
-    if ($isReadOnlyProceedingSentencingMeeting) {
-        $appealMeetingForm.result =
-            data.view.proceedingTypeChargeDetailView.sentencingDetails.meetingResult;
-    }
+    // if ($isReadOnlyProceedingSentencingMeeting) {
+    //     $appealMeetingForm.result =
+    //         data.view.proceedingTypeChargeDetailView.sentencingDetails.meetingResult;
+    // }
 
     const {
         form: appealConfirmationForm,
@@ -971,14 +972,14 @@
                             label="Tindakan/Ulasan"
                             bind:val={$integrityDirectorApprovalForm.remark}
                         ></CustomTextField>
-                        <CustomSelectField
+                        <CustomRadioBoolean
                             disabled={$isReadOnlyProceedingChargeConfirmation}
                             errors={$integrityDirectorApprovalFormErrors.status}
                             id="approverIsApproved"
                             options={certifyOptions}
                             label={'Keputusan'}
                             bind:val={$integrityDirectorApprovalForm.status}
-                        ></CustomSelectField>
+                        ></CustomRadioBoolean>
                     </form>
                 {/if}
 
@@ -1478,14 +1479,14 @@
                                     label="Tindakan/Ulasan"
                                     bind:val={$sentencingConfirmationForm.remark}
                                 ></CustomTextField>
-                                <CustomSelectField
+                                <CustomRadioBoolean
                                     disabled={$isReadOnlyProceedingSentencingConfirmation}
                                     errors={$sentencingConfirmationFormErrors.status}
                                     id="approverIsApproved"
                                     options={certifyOptions}
                                     label={'Keputusan'}
                                     bind:val={$sentencingConfirmationForm.status}
-                                ></CustomSelectField>
+                                ></CustomRadioBoolean>
                             </form>
                         {/if}
 
@@ -1688,7 +1689,11 @@
                                                         class="flex w-full flex-row items-center gap-x-2.5 border-b text-base"
                                                     >
                                                         <CustomRadioField
-                                                            disabled={$isReadOnlyProceedingAppealMeeting}
+                                                            disabled={$isReadOnlyProceedingAppealMeeting ||
+                                                                !$sentencingMeetingForm
+                                                                    .meetingResult[
+                                                                    index
+                                                                ].result}
                                                             id="appealMeetingResult"
                                                             label="Keputusan Mesyuarat"
                                                             options={proceedingMeetingOptions}

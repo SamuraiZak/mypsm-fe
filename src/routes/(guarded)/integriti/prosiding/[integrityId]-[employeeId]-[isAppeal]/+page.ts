@@ -475,17 +475,18 @@ export const _addSentencingIntegrityDirectorApproval = async (
 export const _addSentencingAppealDetail = async (formData: object) => {
     const form = await superValidate(formData, zod(_proceedingAppealSchema));
 
-    if (!form.valid) {
-        getErrorToast();
-        error(400, { message: 'Validation Not Passed!' });
-    }
+    console.log(form);
+    // if (!form.valid) {
+    //     getErrorToast();
+    //     error(400, { message: 'Validation Not Passed!' });
+    // }
 
-    const response: CommonResponseDTO =
-        await IntegrityProceedingServices.createProceedingAppeal(
-            form.data as ProceedingAppealResultDTO,
-        );
+    // const response: CommonResponseDTO =
+    //     await IntegrityProceedingServices.createProceedingAppeal(
+    //         form.data as ProceedingAppealResultDTO,
+    //     );
 
-    return { response };
+    // return { response };
 };
 
 export const _addSentenceAppealConfirmation = async (formData: object) => {
