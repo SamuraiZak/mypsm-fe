@@ -1,5 +1,5 @@
 <script lang="ts">
-    import SvgDownload from './../../../../../lib/assets/svg/SvgDownload.svelte';
+    import SvgDownload from '$lib/assets/svg/SvgDownload.svelte';
     import { error } from '@sveltejs/kit';
     import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
     import { zod } from 'sveltekit-superforms/adapters';
@@ -23,7 +23,6 @@
     import { _editExamForm } from './+page';
     import { onMount } from 'svelte';
     export let data: PageData;
-    let showQRCode: boolean = false;
 
     let isReadonlyExamFormStepper: boolean = true;
 
@@ -98,14 +97,8 @@
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
-            <TextIconButton
-                type="neutral"
-                label="Tunjukkan Kod QR"
-                onClick={() => (showQRCode = true)}
-            />
             <div
-                class="flex w-full flex-col rounded px-10 shadow-lg"
-                hidden={!showQRCode}
+                class="mb-5 flex w-full flex-col rounded px-8 pb-3.5 shadow-[0_0_8px_0_rgba(0,0,0,0.2)]"
             >
                 <h4 class="my-4 text-center text-md">
                     Ini adalah kod QR <span class="font-bold"
@@ -143,10 +136,10 @@
                         {#if qrImageUrl}
                             <a
                                 href={qrImageUrl}
-                                class="py-4"
+                                class="py-3.5"
                                 download="qrcode-peperiksaan-{$form.examTitle}.png"
                             >
-                                <SvgDownload />
+                                <SvgDownload size="20" />
                             </a>
                         {/if}
                         <canvas bind:this={qrCanvas}></canvas>
