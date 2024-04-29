@@ -390,8 +390,12 @@
 </script>
 
 <ContentHeader title="Maklumat Prosiding Tatatertib">
-    {#if $isReadOnlyProceedingAppealMeeting}
+    {#if $isReadOnlyProceedingAppealMeeting && !$proceedingSentencingAppealIsCertified}
         <Badge color="indigo">Rayuan Dikemuka</Badge>
+    {:else if $isReadOnlyProceedingAppealConfirmation && $proceedingSentencingAppealIsCertified}
+        <Badge color="green">Rayuan Sah</Badge>
+    {:else if $isReadOnlyProceedingAppealConfirmation && !$proceedingSentencingAppealIsCertified}
+        <Badge color="red">Rayuan Tidak Sah</Badge>
     {/if}
     {#if ($isReadOnlyProceedingChargeConfirmation && !$proceedingChargeIsCertified) || ($isReadOnlyProceedingSentencingConfirmation && !$proceedingSentencingIsCertified) || ($isReadOnlyProceedingAppealConfirmation && !$proceedingSentencingAppealIsCertified)}
         <Badge color="red">Proses Prosiding Tidak Sah</Badge>
@@ -1671,9 +1675,7 @@
                                                                 .meetingResult[
                                                                 index
                                                             ].result
-                                                                ? `Tiada
-                                                        hukuman dikenakan dalam mesyuarat
-                                                        penentuan hukuman yang lepas*`
+                                                                ? `Diputuskan tidak bersalah oleh mesyuarat lepas*`
                                                                 : ''}</span
                                                         >
                                                     </ContentHeader>
@@ -2138,14 +2140,14 @@
                                     label="Tindakan/Ulasan"
                                     bind:val={$appealConfirmationForm.remark}
                                 ></CustomTextField>
-                                <CustomSelectField
+                                <CustomRadioBoolean
                                     disabled={$isReadOnlyProceedingAppealConfirmation}
                                     errors={$appealConfirmationFormErrors.status}
                                     id="approverIsApproved"
                                     options={certifyOptions}
                                     label={'Keputusan'}
                                     bind:val={$appealConfirmationForm.status}
-                                ></CustomSelectField>
+                                ></CustomRadioBoolean>
                             </form>
                         {/if}
 
