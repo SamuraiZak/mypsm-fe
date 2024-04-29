@@ -17,6 +17,7 @@
         "@sveltejs/kit": "^2.0.3",
         "@sveltejs/vite-plugin-svelte": "^3.0.1",
         "@types/path-browserify": "^1.0.2",
+        "@types/qrcode": "^1.5.5",
         "@typescript-eslint/eslint-plugin": "^6.15.0",
         "@typescript-eslint/parser": "^6.15.0",
         "autoprefixer": "^10.4.16",
@@ -48,6 +49,7 @@
         "exceljs": "^4.4.0",
         "jspdf": "^2.5.1",
         "path-browserify": "^1.0.1",
+        "qrcode": "^1.5.3",
         "svelte-french-toast": "^1.2.0"
     }
 }
