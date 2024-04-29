@@ -47,6 +47,7 @@
     import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
     import SvgMinusCircle from '$lib/assets/svg/SvgMinusCircle.svelte';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
+    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     export let data: PageData;
 
     let proceedingSuspendsIsApproved = writable<boolean>(false);
@@ -871,14 +872,14 @@
                                         label="Tindakan/Ulasan"
                                         bind:val={$sentencingConfirmationForm.remark}
                                     ></CustomTextField>
-                                    <CustomSelectField
+                                    <CustomRadioBoolean
                                         disabled={$isReadOnlyProceedingSuspendsConfirmation}
                                         errors={$sentencingConfirmationFormErrors.status}
                                         id="approverIsApproved"
                                         options={certifyOptions}
                                         label={'Keputusan'}
                                         bind:val={$sentencingConfirmationForm.status}
-                                    ></CustomSelectField>
+                                    ></CustomRadioBoolean>
                                 </form>
                             {/if}
 
@@ -1003,12 +1004,14 @@
                                     >
                                         <label
                                             for="appeal"
-                                            class="mr-2.5 flex w-fit flex-row text-sm font-medium italic text-system-primary"
+                                            class="mr-2.5 flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                         >
                                             Batal Gantung Kerja</label
                                         >
                                         <Checkbox
-                                            color="secondary"
+                                            class={$isGantungKerjaEnded
+                                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                                : ''}
                                             disabled={!$updateCrimeOffenceAppealSuspendedInfo &&
                                                 $isGantungKerjaEnded}
                                             value="cancelSuspend"
