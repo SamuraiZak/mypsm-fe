@@ -219,33 +219,34 @@
         validationMethod: 'oninput',
         validators: zod(_proceedingAppealSchema),
         taintedMessage: false,
-        onChange() {
-            if (!$appealMeetingForm.meetingResult) {
-                $appealMeetingForm.result =
-                    $sentencingMeetingForm.meetingResult;
-            } else {
-                $appealMeetingForm.result.forEach((data, index) => {
-                    if (!data.result) {
-                        $appealMeetingForm.result[index].sentencing = [];
-                    } else {
-                        $appealMeetingForm.result[index].sentencing =
-                            $sentencingMeetingForm.meetingResult[
-                                index
-                            ].sentencing;
-                    }
-                    if (data.sentencing) {
-                        data.sentencing.forEach((sentence, i) => {
-                            if (sentence.penaltyTypeCode !== '03') {
-                                $appealMeetingForm.result[index].sentencing[
-                                    i
-                                ].emolumenDate = [];
-                            }
-                        });
-                    }
-                });
-            }
-        },
         onSubmit() {
+            if (!$appealMeetingForm.meetingResult) {
+                $appealMeetingForm.result = [];
+                $appealMeetingForm.appealResult = null;
+            } else {
+                if (
+                    $appealMeetingForm.appealResult !==
+                    'Mengesahkan Keputusan JKTT tetapi Mengubah kepada Hukuman yang Lebih Ringan'
+                ) {
+                    $appealMeetingForm.result = [];
+                } else {
+                    $appealMeetingForm.result.forEach((data, index) => {
+                        if (!data.result) {
+                            $appealMeetingForm.result[index].sentencing = [];
+                        } else {
+                            if (data.sentencing) {
+                                data.sentencing.forEach((sentence, i) => {
+                                    if (sentence.penaltyTypeCode !== '03') {
+                                        $appealMeetingForm.result[
+                                            index
+                                        ].sentencing[i].emolumenDate = [];
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
             $appealMeetingForm.integrityId = Number(data.params.integrityId);
             $appealMeetingForm.meetingCode = '19';
 
@@ -253,10 +254,10 @@
         },
     });
 
-    // if ($isReadOnlyProceedingSentencingMeeting) {
-    //     $appealMeetingForm.result =
-    //         data.view.proceedingTypeChargeDetailView.sentencingDetails.meetingResult;
-    // }
+    if ($isReadOnlyProceedingSentencingMeeting) {
+        $appealMeetingForm.result =
+            data.view.proceedingTypeChargeDetailView.sentencingDetails.meetingResult;
+    }
 
     const {
         form: appealConfirmationForm,
