@@ -1481,10 +1481,6 @@ export class SidebarConstant {
                             name: 'Prosiding Tatatertib',
                             path: '/integriti/prosiding',
                         },
-                        {
-                            name: 'Prosiding Tatatertib - Rayuan',
-                            path: '/integriti/rayuan',
-                        },
                     ],
                 },
                 {
@@ -1819,10 +1815,6 @@ export class SidebarConstant {
                     name: 'Integriti',
                     path: '',
                     subItems: [
-                        {
-                            name: 'Surcaj',
-                            path: '/integriti/surcaj',
-                        },
                         {
                             name: 'Prosiding Tatatertib',
                             path: '/integriti/prosiding',
