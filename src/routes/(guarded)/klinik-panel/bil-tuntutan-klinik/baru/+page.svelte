@@ -11,6 +11,8 @@
     import { zod } from 'sveltekit-superforms/adapters';
     import { _fileToBase64Object, _submitClaimDetailForm } from './+page';
     import { Toaster } from 'svelte-french-toast';
+    import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
+
 
     export let data: PageData;
     let successSubmit: boolean = false;
@@ -65,7 +67,7 @@
 </section>
 
 <section
-    class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
+    class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     <div class="flex w-full flex-col justify-start gap-2.5 px-3 pb-10 pt-3">
         <div class="flex w-full flex-col justify-start gap-2.5 px-2 md:w-1/2">
@@ -127,14 +129,12 @@
                 title="Dokumen Sokongan Yang Berkaitan"
                 borderClass="border-none"
             />
-            <div class="flex h-fit w-full flex-col justify-center gap-2">
-                <input
-                    class="rounded-md bg-ios-systemColors-systemFill-light"
-                    accept=".pdf"
-                    type="file"
-                    multiple
+            <div class="flex w-full flex-col gap-2 px-3">
+                <CustomFileField
+                    label="Dokumen Sokongan"
+                    id="employeeClaimDocument"
                     bind:files
-                />
+                ></CustomFileField>
             </div>
         </div>
     </div>

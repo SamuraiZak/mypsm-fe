@@ -1005,7 +1005,7 @@
 >
     <Stepper bind:activeIndex={stepperIndex}>
         <!-- For Gred Utama (New) Only -->
-        {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code || data.currentRoleCode === UserRoleConstant.urusSetiaIntegriti.code || data.currentRoleCode === UserRoleConstant.penyokong.code || data.currentRoleCode === UserRoleConstant.pelulus.code && data.actingType === 'Utama'}
+        {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code && data.actingType === 'Utama'}
             <StepperContent>
                 <StepperContentHeader title="Perakuan Pemangkuan"
                 ></StepperContentHeader>
@@ -1272,21 +1272,21 @@
                             type="neutral"
                             onClick={() => (detailOpen = false)}
                         />
-                        {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                        {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code}
                             <TextIconButton
                                 label="Simpan"
                                 icon="check"
                                 form="mainMeetingDetailForm"
                             />
-                        {:else if data.currentRoleCode == UserRoleConstant.penyokong.code}
+                        {:else if data.currentRoleCode === UserRoleConstant.penyokong.code}
                             <TextIconButton
                                 label="Simpan"
                                 icon="check"
                                 form="mainSupporterApproval"
                             />
-                        {:else if data.currentRoleCode == UserRoleConstant.pelulus.code}
+                        {:else if data.currentRoleCode === UserRoleConstant.pelulus.code}
                             <TextIconButton
-                                label="situ"
+                                label="Simpan"
                                 icon="check"
                                 form="mainApproverApproval"
                             />
@@ -1447,7 +1447,7 @@
             <!-- End Of For Gred Utama (New) Only -->
 
             <!-- All involved role except for kakitangan -->
-        {:else if data.currentRoleCode !== employeeRoleCode}
+        {:else if data.currentRoleCode !== UserRoleConstant.kakitangan.code && data.actingType !== 'Utama'}
             <!-- Views will vary based on roles -->
             <StepperContent>
                 <StepperContentHeader
@@ -1714,6 +1714,7 @@
                                 options={data.lookup.placementLookup}
                             />
 
+                            {#if $updateMeetingDetailForm.placement == undefined}
                             <div class="flex w-full flex-col gap-2">
                                 <CustomFileField
                                     label="Dokumen Sokongan"
@@ -1721,7 +1722,7 @@
                                     bind:files
                                 ></CustomFileField>
                             </div>
-
+                            {/if}
                             <div
                                 class="flex w-full flex-col justify-start gap-2.5 pb-10"
                             >

@@ -161,38 +161,38 @@
                     label="Klinik"
                     disabled
                     id="clinicName"
-                    bind:val={data.claimDetail.detail.invoiceNumber}
+                    val={data.claimDetail.detail?.invoiceNumber}
                 />
                 <CustomTextField
                     label="Tarikh Invois"
                     disabled
                     id="invoiceDate"
-                    bind:val={data.claimDetail.detail.invoiceDate}
+                    val={data.claimDetail.detail?.invoiceDate}
                 />
                 <CustomTextField
                     label="No. Invois"
                     disabled
                     id="invoiceNumber"
-                    bind:val={data.claimDetail.detail.invoiceNumber}
+                    val={data.claimDetail.detail?.invoiceNumber}
                 />
                 <CustomSelectField
                     label="Bulan Rawatan"
                     disabled
                     options={monthNumberLookup}
                     id="treatmentMonth"
-                    bind:val={data.claimDetail.detail.treatmentMonth}
+                    val={data.claimDetail.detail?.treatmentMonth}
                 />
                 <CustomTextField
                     label="Tahun Rawatan"
                     disabled
                     id="treatmentYear"
-                    bind:val={data.claimDetail.detail.treatmentYear}
+                    val={data.claimDetail.detail?.treatmentYear}
                 />
                 <CustomTextField
                     label="Jumlah (RM)"
                     disabled
                     id="total"
-                    bind:val={data.claimDetail.detail.total}
+                    val={data.claimDetail.detail?.total}
                 />
             </StepperContentBody>
         </StepperContent>
@@ -202,14 +202,16 @@
             ></StepperContentHeader>
             <StepperContentBody>
                 <div class="flex w-full flex-col justify-start gap-2.5 p-3">
-                    {#each data.claimDetail.download as docs, i}
+                    {#if data.claimDetail?.download !== undefined}
+                    {#each data.claimDetail?.download as docs, i}
                         <a
-                            href={docs.document}
-                            download={docs.name}
+                            href={docs?.document}
+                            download={docs?.name}
                             class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                            >{docs.name}</a
+                            >{docs?.name}</a
                         >
                     {/each}
+                    {/if}
                 </div>
             </StepperContentBody>
         </StepperContent>

@@ -58,9 +58,7 @@
         confirmOptions,
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
-    import {
-        kgtMonthValueIsStringLookup,
-    } from '$lib/constants/core/dropdown.constant';
+    import { kgtMonthValueIsStringLookup } from '$lib/constants/core/dropdown.constant';
     import type { PromotionCertificationGet } from '$lib/dto/mypsm/employment/promotion/promotion-common-groupid.dto';
     import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 
@@ -186,9 +184,35 @@
         data: data.certificationList,
         selectedData: [],
         exportData: [],
-        hiddenColumn: [],
+        hiddenColumn: ['employeeId', 'promotionId'],
         dictionary: [],
         url: 'employment/promotion/certifications/list',
+        id: 'certificationTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
+    };
+    let promotionmeetingTable: TableSettingDTO = {
+        param: data.commonParam,
+        meta: data.promotionMeetingListResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.promotionMeetingList,
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['employeeId', 'promotionId'],
+        dictionary: [],
+        url: 'employment/promotion/promotion_meetings/list',
         id: 'certificationTable',
         option: {
             checkbox: false,
@@ -212,7 +236,7 @@
         data: data.placementList,
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['promotionId'],
+        hiddenColumn: ['employeeId', 'promotionId'],
         dictionary: [],
         url: 'employment/promotion/placement_meetings/list',
         id: 'certificationTable',
@@ -238,10 +262,41 @@
         data: data.promotionDetail,
         selectedData: [],
         exportData: [],
-        hiddenColumn: [],
+        hiddenColumn: ['promotionId'],
         dictionary: [],
         url: 'employment/promotion/employee_promotions/list',
-        id: 'certificationTable',
+        id: 'promotionEmployee',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
+    };
+    let promotionFinalResult: TableSettingDTO = {
+        param: data.commonParam,
+        meta: data.finalResultResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.finalResult,
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['promotionId'],
+        dictionary: [
+            {
+                english: 'secretariatCertification',
+                malay: 'Pengesahan Urus Setia'
+            }
+        ],
+        url: 'employment/promotion/final_result/list',
+        id: 'promotionEmployee',
         option: {
             checkbox: false,
             detail: true,
@@ -267,8 +322,6 @@
         validators: zod(_editPromotionCertification),
         onSubmit() {
             $certificationForm.promotionType = data.promotionType
-                .split(' ')
-                .slice(-1)[0];
             $certificationForm.id = employeeCertification.promotionId;
             if ($certificationForm.meetingResult) {
                 $certificationForm.actingEndDate = '';
@@ -427,12 +480,13 @@
                                 currentEmployeeDetail.salaryMovementMonth;
                             $placementForm.newPlacement =
                                 currentEmployeeDetail.newPlacement;
+                            $placementForm.newGrade =
+                                currentEmployeeDetail.newGrade;
                         }
                         salaryAdjustment = salaryAdjustmentResponse.data
                             ?.dataList as PromotionSalaryAdjustment[];
 
                         //for get director & integrity approval
-                   
                     });
                 break;
             }
@@ -442,10 +496,13 @@
                         processDetail = res.response.data
                             ?.details as PromotionProcessDetail;
 
-                        if(processDetail !== undefined){
-                            $employeePromotion.confirmedDate = processDetail.confirmedDate;
-                            $employeePromotion.approverName = processDetail.approverName;
-                            $employeePromotion.supporterName = processDetail.supporterName;
+                        if (processDetail !== undefined) {
+                            $employeePromotion.confirmedDate =
+                                processDetail.confirmedDate;
+                            $employeePromotion.approverName =
+                                processDetail.approverName;
+                            $employeePromotion.supporterName =
+                                processDetail.supporterName;
                             $employeePromotion.status = processDetail.status;
                             $employeePromotion.remark = processDetail.remark;
                         }
@@ -646,6 +703,7 @@
                                     bind:val={$integrityForm.status}
                                 />
                             </form>
+                            {#if data.promotionType !== "Utama"}
                             <ContentHeader
                                 title="Pengarah Bahagian/Negeri"
                                 borderClass="border-none"
@@ -670,6 +728,7 @@
                                     bind:val={$directorForm.status}
                                 />
                             </form>
+                            {/if}
                         </div>
                     {/if}
                 </StepperContentBody>
@@ -702,7 +761,7 @@
                             <div class="h-fit w-full">
                                 <DataTable
                                     title="Senarai Kakitangan Terpilih"
-                                    bind:tableData={certificationTable}
+                                    bind:tableData={promotionmeetingTable}
                                     bind:passData={employeeCertification}
                                     detailActions={async () => {
                                         await getTableInformation(3).finally(
@@ -757,43 +816,41 @@
                                         errors={$certificationError.meetingResult}
                                     />
 
-                                    {#if data.promotionType === '1-54'}
-                                        {#if $certificationForm.meetingResult}
-                                            <CustomTextField
-                                                label="Tarikh Pengesahan Kenaikan Pangkat (Jika Lulus)"
-                                                id="confirmedDate"
-                                                type="date"
-                                                bind:val={$certificationForm.confirmedDate}
-                                                errors={$certificationError.confirmedDate}
-                                            />
-                                        {:else}
-                                            <ContentHeader
-                                                title="Penamatan Pemangkuan (Jika Mesyuarat Tidak Lulus)"
-                                                borderClass="border-none"
-                                            />
-                                            <CustomTextField
-                                                label="Tarikh Tamat Pemangkuan"
-                                                id="actingEndDate"
-                                                type="date"
-                                                bind:val={$certificationForm.actingEndDate}
-                                                errors={$certificationError.actingEndDate}
-                                            />
-                                            <CustomTextField
-                                                label="Tarikh Kembali Ke Gred Asal"
-                                                id="gradeRevertDate"
-                                                type="date"
-                                                bind:val={$certificationForm.gradeRevertDate}
-                                                errors={$certificationError.gradeRevertDate}
-                                            />
-                                            <CustomSelectField
-                                                label="Penempatan Baru"
-                                                id="newPlacement"
-                                                options={data.lookup
-                                                    .placementLookup}
-                                                bind:val={$certificationForm.newPlacement}
-                                                errors={$certificationError.newPlacement}
-                                            />
-                                        {/if}
+                                    {#if $certificationForm.meetingResult}
+                                        <CustomTextField
+                                            label="Tarikh Pengesahan Kenaikan Pangkat (Jika Lulus)"
+                                            id="confirmedDate"
+                                            type="date"
+                                            bind:val={$certificationForm.confirmedDate}
+                                            errors={$certificationError.confirmedDate}
+                                        />
+                                    {:else}
+                                        <ContentHeader
+                                            title="Penamatan Pemangkuan (Jika Mesyuarat Tidak Lulus)"
+                                            borderClass="border-none"
+                                        />
+                                        <CustomTextField
+                                            label="Tarikh Tamat Pemangkuan"
+                                            id="actingEndDate"
+                                            type="date"
+                                            bind:val={$certificationForm.actingEndDate}
+                                            errors={$certificationError.actingEndDate}
+                                        />
+                                        <CustomTextField
+                                            label="Tarikh Kembali Ke Gred Asal"
+                                            id="gradeRevertDate"
+                                            type="date"
+                                            bind:val={$certificationForm.gradeRevertDate}
+                                            errors={$certificationError.gradeRevertDate}
+                                        />
+                                        <CustomSelectField
+                                            label="Penempatan Baru"
+                                            id="newPlacement"
+                                            options={data.lookup
+                                                .placementLookup}
+                                            bind:val={$certificationForm.newPlacement}
+                                            errors={$certificationError.newPlacement}
+                                        />
                                     {/if}
                                 {:else}
                                     <CustomSelectField
@@ -824,8 +881,6 @@
                                         options={approveOptions}
                                         val={certificationResult?.meetingResult}
                                     />
-
-                                    {#if data.promotionType === 'Gred 1-54'}
                                         {#if certificationResult?.meetingResult}
                                             <CustomTextField
                                                 label="Tarikh Pengesahan Kenaikan Pangkat (Jika Lulus)"
@@ -863,7 +918,6 @@
                                             />
                                         {/if}
                                     {/if}
-                                {/if}
                             </form>
                         </div>
                     {/if}
@@ -953,18 +1007,14 @@
                                             id="promotionDate"
                                             type="date"
                                             bind:val={$placementForm.promotionDate}
+                                            errors={$placementError.promotionDate}
                                         />
-                                        <!-- <CustomSelectField
-                                            label="Bulan Pergerakan Gaji Asal"
-                                            id="originalSalaryMovementDate"
-                                            options={kgtMonthStringLookup}
-                                            val={currentEmployeeDetail?.employeeName}
-                                        /> -->
                                         <CustomSelectField
                                             label="Bulan Pergerakan Gaji Baru"
                                             id="salaryMovementMonth"
                                             options={kgtMonthValueIsStringLookup}
                                             bind:val={$placementForm.salaryMovementMonth}
+                                            errors={$placementError.salaryMovementMonth}
                                         />
                                         <CustomTextField
                                             label="Gaji Minimum - Gaji Maksimum (Gred Lama)"
@@ -987,6 +1037,7 @@
                                             id="newGrade"
                                             options={data.lookup.gradeLookup}
                                             bind:val={$placementForm.newGrade}
+                                            errors={$placementError.newGrade}
                                         />
                                         <CustomTextField
                                             label="Gaji Minimum - Gaji Maksimum (Gred Baru)"
@@ -1017,6 +1068,7 @@
                                             options={data.lookup
                                                 .placementLookup}
                                             bind:val={$placementForm.newPlacement}
+                                            errors={$placementError.newPlacement}
                                         />
                                     </form>
                                 </div>
@@ -1161,7 +1213,6 @@
                 </StepperContentBody>
             </StepperContent>
 
-            <!-- {#if data.currentRoleCode === UserRoleConstant.penyokong.code || currentRoleCode === UserRoleConstant.pelulus.code} -->
             <StepperContent>
                 <StepperContentHeader title="Penyokongan Kenaikan Pangkat">
                     {#if openDetail}
@@ -1192,7 +1243,7 @@
                             <div class="h-fit w-full">
                                 <DataTable
                                     title="Senarai Calon Kakitangan Yang Lulus Untuk Kenaikan Pangkat"
-                                    bind:tableData={promotionEmployee}
+                                    bind:tableData={promotionFinalResult}
                                     bind:passData={finalPromotionRowData}
                                     detailActions={async () => {
                                         await getTableInformation(2).finally(
@@ -1215,12 +1266,13 @@
                                 use:supporterApprovalEnhance
                                 method="POST"
                             >
-                                <span
+                                <!-- <span
                                     class="pb-2 text-sm italic text-ios-activeColors-activeBlue-light"
                                 >
                                     Keputusan akan dihantar ke emel klinik dan
                                     Urus Setia berkaitan.
-                                </span>
+                                </span> -->
+                                <ContentHeader title="Penyokong" borderClass="border-none"/>
                                 <CustomTextField
                                     label="Tindakan/Ulasan"
                                     id="remark"
@@ -1244,12 +1296,13 @@
                                 use:approverApprovalEnhance
                                 method="POST"
                             >
-                                <span
+                                <!-- <span
                                     class="pb-2 text-sm italic text-ios-activeColors-activeBlue-light"
                                 >
                                     Keputusan akan dihantar ke emel klinik dan
                                     Urus Setia berkaitan.
-                                </span>
+                                </span> -->
+                                <ContentHeader title="Penyokong" borderClass="border-none"/>    
                                 <CustomTextField
                                     label="Tindakan/Ulasan"
                                     id="remark"
@@ -1269,7 +1322,6 @@
                     {/if}
                 </StepperContentBody>
             </StepperContent>
-            <!-- {/if} -->
         {:else if data.currentRoleCode === UserRoleConstant.kakitangan.code}
             <StepperContent>
                 <StepperContentHeader title="Butiran Kenaikan Pangkat">

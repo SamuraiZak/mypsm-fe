@@ -2,10 +2,10 @@ import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.c
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
-import type { InterimCommonApproval } from '$lib/dto/mypsm/employment/tanggung-kerja/interim-common-approval.dto.js';
+import type { InterimCommonApproval } from '$lib/dto/mypsm/employment/tanggung-kerja/interim-common-approval.dto';
 import type { EmployeeInterimApplicationDetailRequestDTO } from '$lib/dto/mypsm/employment/tanggung-kerja/interim-employee-application-detail-request.dto';
 import type { InterimTermination, TerminationApproval, TerminationSuppApp, TerminationVerify } from '$lib/dto/mypsm/employment/tanggung-kerja/interim-termination.dto';
-import { _terminationCommonApproval, _terminationSuppApp } from '$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas.js';
+import { _terminationCommonApproval, _terminationSuppApp } from '$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { EmploymentInterimServices } from '$lib/services/implementation/mypsm/perjawatan/employment-interim.service';
 import { superValidate } from 'sveltekit-superforms';
@@ -34,17 +34,16 @@ export const load = async ({ params }) => {
         await EmploymentInterimServices.getTerminationDetail(interimId)
     terminationDetail =
         terminationDetaiLResponse.data?.details as InterimTermination;
-        console.log(terminationDetail)
-    if (terminationDetail.verify !== null) {
+    if (terminationDetail?.verify !== null) {
         secretaryDetail = terminationDetail.verify;
     }
-    if (terminationDetail.supportApprover !== null) {
+    if (terminationDetail?.supportApprover !== null) {
         suppAppForm.data = terminationDetail.supportApprover;
     }
-    if (terminationDetail.support !== null) {
+    if (terminationDetail?.support !== null) {
         supporterApprovalForm.data = terminationDetail.support
     }
-    if (terminationDetail.approval !== null) {
+    if (terminationDetail?.approval !== null) {
         approverApprovalForm.data = terminationDetail.approval
     }
 

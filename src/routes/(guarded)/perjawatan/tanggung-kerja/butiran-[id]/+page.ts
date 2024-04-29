@@ -49,27 +49,27 @@ export const load = async ({ params }) => {
     interimApplicationDetail =
         employeeInterimApplicationDetailResponse.data?.details as InterimApplicationDetailDTO;
 
-    if(employeeInterimApplicationDetailResponse.status == "success"){
-    //if not null
-    if(interimApplicationDetail.download !== null){
-        uploadedDocuments = interimApplicationDetail.download;
+    if (employeeInterimApplicationDetailResponse.status == "success") {
+        //if not null
+        if (interimApplicationDetail?.download !== null) {
+            uploadedDocuments = interimApplicationDetail?.download;
+        }
+        if (interimApplicationDetail?.support !== null) {
+            interimSupportDetail = interimApplicationDetail?.support;
+        }
+        if (interimApplicationDetail?.checklist !== null) {
+            checklistForm.data = interimApplicationDetail?.checklist;
+        }
+        if (interimApplicationDetail?.skipping !== null) {
+            skippingForm.data.remark = interimApplicationDetail.skipping?.remark;
+            skippingForm.data.status = interimApplicationDetail.skipping?.status;
+        }
+        if (interimApplicationDetail?.approval !== null) {
+            interimApprovalDetail = interimApplicationDetail?.approval;
+        }
+    } else {
+        failToLoad = true;
     }
-    if(interimApplicationDetail.support !== null){
-        interimSupportDetail = interimApplicationDetail.support;
-    }
-    if(interimApplicationDetail.checklist !== null){
-        checklistForm.data = interimApplicationDetail.checklist;
-    }
-    if(interimApplicationDetail.skipping !== null){
-        skippingForm.data.remark = interimApplicationDetail.skipping.remark;
-        skippingForm.data.status = interimApplicationDetail.skipping.status;
-    }
-    if(interimApplicationDetail.approval !== null){
-        interimApprovalDetail = interimApplicationDetail.approval;
-    }
-}else {
-    failToLoad = true;
-}
     return {
         currentRoleCode,
         interimId,

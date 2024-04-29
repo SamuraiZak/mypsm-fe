@@ -59,3 +59,24 @@ export class ActingEmployeeMeetingDetailConvert {
         return JSON.stringify(value);
     }
 }
+
+export interface ActingInterviewGeneralDetail {
+    meeting:   Meeting;
+    interview: Interview;
+}
+
+export interface Interview {
+    interviewId:   number;
+    interviewDate: string;
+    interviewTime: string;
+    state:         string;
+    placement:     string;
+}
+
+export interface Meeting {
+    meetingId:   number;
+    meetingName: string;
+    meetingDate: string;
+    grade:       string;
+    position:    string;
+}

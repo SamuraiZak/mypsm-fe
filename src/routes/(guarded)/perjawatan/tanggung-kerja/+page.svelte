@@ -151,6 +151,7 @@
                     </div>
                 </CustomTabContent>
             {/if}
+            {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code}
             <CustomTabContent title="Penamatan Tanggung Kerja">
                 <div class="h h-fit w-full">
                     <DataTable
@@ -189,6 +190,7 @@
                     </DataTable>
                 </div>
             </CustomTabContent>
+            {/if}
         </CustomTab>
     {:else if data.currentRoleCode === UserRoleConstant.pengarahBahagian.code || data.currentRoleCode === UserRoleConstant.pengarahNegeri.code || data.currentRoleCode === UserRoleConstant.pengarahKhidmatPengurusan.code}
         <div class="flex w-full flex-col items-start justify-start gap-2.5 p-3">

@@ -5,7 +5,7 @@ import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto
 import type { MedicalClinicEmployeeAllocationClaimList } from "$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-allocation-list.dto";
 import type { MedicalClinicEmployeeGetAllocationList } from "$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-get-allocation.dto";
 import type { MedicalClinicEmployeePaymentList } from "$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-payments-list.dto";
-import type { ClinicAllocation, CurrentYearAllocation } from "$lib/dto/mypsm/perubatan/tuntutan-klinik/clinic-allocation.dto";
+import type { ClinicAllocation, ClinicAllocationEdit, CurrentYearAllocation } from "$lib/dto/mypsm/perubatan/tuntutan-klinik/clinic-allocation.dto";
 import { _editAllocations } from "$lib/schemas/mypsm/medical/medical-schema";
 import { MedicalServices } from "$lib/services/implementation/mypsm/perubatan/medical.service";
 import { zod } from "sveltekit-superforms/adapters";
@@ -24,6 +24,13 @@ export const load = async () => {
         orderType: 1,
         filter: {}
     };
+    const allocationParam: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: 'name',
+        orderType: 0,
+        filter: {}
+    };
     const paymentParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
@@ -34,8 +41,8 @@ export const load = async () => {
     let clinicPanelAllocations: ClinicAllocation = {
         year: 0,
         currentAllocation: 0,
-        remainingAllocation: 0,
-        newAllocation: 0,
+        cumulAlloc: 0,
+        cumulRemainder: 0,
     }
     let currentYear: CurrentYearAllocation = {
         year: Number(new Date().getFullYear())
@@ -48,7 +55,7 @@ export const load = async () => {
     employeeAllocationList =
         employeeAllocationListResponse.data?.dataList as MedicalClinicEmployeeAllocationClaimList[];
     const employeeGetAllocationResponse: CommonResponseDTO =
-        await MedicalServices.getClinicEmployeeAllocationTable(param);
+        await MedicalServices.getClinicEmployeeAllocationTable(allocationParam);
     employeeGetAllocation =
         employeeGetAllocationResponse.data?.dataList as MedicalClinicEmployeeGetAllocationList[];
     const employeePaymentListResponse: CommonResponseDTO =
@@ -60,12 +67,13 @@ export const load = async () => {
             await MedicalServices.getClinicPanelAllocations(currentYear);
         clinicPanelAllocations =
             clinicPanelAllocationResponse.data?.details as ClinicAllocation;
-        allocationForm.data = clinicPanelAllocations
+        allocationForm.data.year = currentYear.year;
     }
     return {
         currentRoleCode,
         param,
         paymentParam,
+        allocationParam,
         employeeAllocationListResponse,
         employeeAllocationList,
         employeeGetAllocationResponse,
@@ -73,29 +81,32 @@ export const load = async () => {
         employeePaymentListResponse,
         employeePaymentList,
         allocationForm,
+        clinicPanelAllocations,
+        currentYear,
     }
 }
 
-//update table pembayaran
-export async function _updatePaymentTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await MedicalServices.getClinicEmployeePaymentList(param);
-    return {
-        props: {
-            param,
-            response,
-        },
-    };
-}
 
-export const _submit = async (formData: ClinicAllocation) => {
+export const _submit = async (formData: ClinicAllocationEdit, updateTableParam: CommonListRequestDTO) => {
     const form = await superValidate(formData, zod(_editAllocations));
-
+    let employeeGetAllocation: MedicalClinicEmployeeGetAllocationList[] = [];
     if (form.valid) {
-        const { remainingAllocation, ...tempObj } = form.data;
-
         const response: CommonResponseDTO =
-            await MedicalServices.editAllocations(tempObj as ClinicAllocation)
+            await MedicalServices.editAllocations(form.data as ClinicAllocationEdit)
 
-        return { response }
+        const employeeGetAllocationResponse: CommonResponseDTO =
+            await MedicalServices.getClinicEmployeeAllocationTable(updateTableParam);
+        employeeGetAllocation =
+            employeeGetAllocationResponse.data?.dataList as MedicalClinicEmployeeGetAllocationList[];
+        return { response, employeeGetAllocation }
     }
 }
+
+// export const _getUpdatedAllocation = async (thisYear: CurrentYearAllocation) => {
+//     const clinicPanelAllocationResponse: CommonResponseDTO =
+//         await MedicalServices.getClinicPanelAllocations(thisYear);
+//     const clinicPanelAllocations =
+//         clinicPanelAllocationResponse.data?.details as ClinicAllocation;
+
+//     return { clinicPanelAllocations }
+// }

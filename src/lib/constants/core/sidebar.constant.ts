@@ -2063,7 +2063,7 @@ export class SidebarConstant {
                     subItems: [
                         {
                             name: 'Perkhidmatan (Permohonan Panel Klinik)',
-                            path: '/perubatan/permohonan-panel-klinik',
+                            path: '/perubatan/permohonan-klinik-panel',
                         },
                     ],
                 },

@@ -4,9 +4,9 @@ export interface InterimApplicationDetailDTO {
     duration:                  InterimDuration;
     download:                  InterimDownload;
     skipping:                  InterimSkipping;
-    support:                   InterimSupport;
-    approval:                  InterimSupport;
-    verification:              InterimSupport;
+    support:                   InterimSupport | null;
+    approval:                  InterimSupport | null;
+    verification:              InterimSupport | null;
     checklist:                 InterimChecklist;
 }
 

@@ -27,7 +27,10 @@ export const load = async ({ params }) => {
     let clinicSupporterAndApprover = {} as ClinicSetSupporterApprover;
     let clinicSupporterApproval = {} as ClinicCommonResult;
     let clinicApproverApproval = {} as ClinicCommonResult;
-    let applicationDoc = {} as QuartersGetDocument;
+    let applicationDoc: QuartersGetDocument = {
+        id: 0,
+        document: [],
+    };
 
     const clinicDetailResponse: CommonResponseDTO =
         await MedicalServices.getClinicApplicationDetail(clinicId);

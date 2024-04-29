@@ -46,7 +46,7 @@
 
     let selectedEmployeeTable: TableSettingDTO = {
         param: data.param,
-        meta: addActingTable.meta ?? {
+        meta: {
             pageSize: 1,
             pageNum: 1,
             totalData: 1,
@@ -108,9 +108,7 @@
 <!-- header section -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader
-        title="Pemangkuan Baru Gred {data.actingTypes
-            .replace(/f/g, 'F')
-            .replace(/_/g, '-')}"
+        title="Pemangkuan Baru Gred {data.actingTypes}"
     >
         <TextIconButton
             icon="cancel"
@@ -121,8 +119,8 @@
             }}
         />
         <TextIconButton
-            icon="next"
-            label="Seterusnya"
+            icon="add"
+            label="Tambah"
             type="primary"
             onClick={() => {
                 addChosenEmployeeToActing();

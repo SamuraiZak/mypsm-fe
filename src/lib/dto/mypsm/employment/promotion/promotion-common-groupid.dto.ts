@@ -1,5 +1,6 @@
 export interface PromotionGroupID {
     groupId: number;
+    promotionType: string;
 }
 
 // Converts JSON strings to/from your types

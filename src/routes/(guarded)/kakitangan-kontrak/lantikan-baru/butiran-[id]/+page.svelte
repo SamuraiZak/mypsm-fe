@@ -10,6 +10,7 @@
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import { superForm, superValidate } from 'sveltekit-superforms/client';
+    import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
     import type { PageData } from './$types';
     import {
         _fileToBase64Object,
@@ -2321,7 +2322,6 @@
 
                             <a
                                 href={data.getContractDocuments.attachment}
-                                target="_blank"
                                 download={data.getContractDocuments
                                     .attachmentName}
                                 class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
@@ -2359,15 +2359,12 @@
                                     handleDownload(data.contractDocLink)}
                                 fileName="Surat Setuju Terima Tawaran.pdf"
                             />
-                            <div
-                                class="flex h-fit w-full flex-col justify-center gap-2"
-                            >
-                                <input
-                                    class="rounded-md bg-ios-systemColors-systemFill-light"
-                                    accept=".pdf"
-                                    type="file"
+                            <div class="flex w-full flex-col gap-2 px-3">
+                                <CustomFileField
+                                    label="Dokumen Sokongan"
+                                    id="contractDocument"
                                     bind:files
-                                />
+                                ></CustomFileField>
                             </div>
                         </form>
                     {/if}

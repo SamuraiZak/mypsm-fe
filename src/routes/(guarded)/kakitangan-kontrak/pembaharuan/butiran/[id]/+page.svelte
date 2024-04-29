@@ -14,6 +14,7 @@
     import { Accordion, AccordionItem, Alert } from 'flowbite-svelte';
     import { ContractEmployeeServices } from '$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service';
     import ScaleInput from '$lib/components/inputs/scale-input/ScaleInput.svelte';
+    import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
     import { zod } from 'sveltekit-superforms/adapters';
     import { superForm } from 'sveltekit-superforms/client';
     import {
@@ -1864,15 +1865,12 @@
                                     triggerDownload={() =>
                                         handleDownload(data.contractDocLink)}
                                 />
-                                <div
-                                    class="flex h-fit w-full flex-col justify-center gap-2"
-                                >
-                                    <input
-                                        class="rounded-md bg-ios-systemColors-systemFill-light"
-                                        accept=".pdf"
-                                        type="file"
+                                <div class="flex w-full flex-col gap-2 px-3">
+                                    <CustomFileField
+                                        label="Dokumen Sokongan"
+                                        id="renewContractDocument"
                                         bind:files
-                                    />
+                                    ></CustomFileField>
                                 </div>
                             </form>
                         {:else if data.getRenewContractDocument.attachmentName == null && data.currentRoleCode !== UserRoleConstant.kakitanganKontrak.code}

@@ -401,6 +401,48 @@ export class QuartersServices {
     }
 
 
+    //get certificate document
+    static async getCertificateDocument(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'quarter/moving_out/certificate_document';
+
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //get checkingDocument
+    static async getCheckingDocument() {
+        try {
+            const url: Input = 'quarter/moving_out/checking_document';
+
+            const promiseRes: Promise<Response> = http.get(url).json();
+
+            const response: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
     //get employee eligibility
     static async getEligibility(param: commonIdRequestDTO) {
         try {
