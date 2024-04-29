@@ -15,6 +15,7 @@ import { UpdateMainPromotionMeetingConvert, type UpdateMainPromotionMeeting } fr
 import { QuarterCommonApprovalConvert, type QuarterCommonApproval } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto";
 import { EmployeePostponeConvert, PostponeDetailResultConvert, type EmployeePostpone, type PostponeDetailResult } from "$lib/dto/mypsm/employment/acting/acting-employee-form.dto";
 import { CertifySelectedConvert, MainActingDetailEditConvert, MainMeetingResultConvert, type CertifySelected, type MainActingDetailEdit, type MainMeetingResult } from "$lib/dto/mypsm/employment/acting/main-acting-form.dto";
+import { ActingCommonBatchIdConvert, type ActingCommonBatchId } from "$lib/dto/mypsm/employment/acting/acting-batchid.dto";
 
 
 export class EmploymentActingServices {
@@ -227,6 +228,30 @@ export class EmploymentActingServices {
             const promiseRes: Promise<Response> = http
                 .post(url, {
                     body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    // get interview general detail
+    static async getInterviewGeneralInfo(param: commonIdRequestDTO) {
+        try {
+            const url: Input = 'employment/acting/interview_infos/get'
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
                 })
                 .json();
 
