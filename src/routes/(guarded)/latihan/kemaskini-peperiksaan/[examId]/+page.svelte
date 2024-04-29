@@ -117,7 +117,7 @@
             <div
                 class="mb-5 flex w-full flex-col rounded px-6 pb-6 shadow-[0_0_8px_0_rgba(0,0,0,0.2)]"
             >
-                <h4 class="mt-5 mb-2 text-center text-md">
+                <h4 class="mb-2 mt-5 text-center text-md">
                     Ini adalah kod QR <span class="font-bold"
                         >MAKLUMAT PEPERIKSAAN</span
                     > untuk imbasan aplikasi mudah alih
@@ -142,7 +142,9 @@
                             for="name"
                             >TARIKH DIJALANKAN:
                             <span class="font-light text-black"
-                                >{$form.examDate}</span
+                                >{new Date(
+                                    $form.examDate,
+                                ).toLocaleDateString()}</span
                             >
                         </label>
                         <label
