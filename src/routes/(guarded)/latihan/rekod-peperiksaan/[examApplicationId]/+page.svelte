@@ -3,6 +3,7 @@
     import type { CourseExamApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto';
     import StepperFailStatement from '$lib/components/stepper/StepperFailStatement.svelte';
     import { writable } from 'svelte/store';
+    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import StepperOtherRolesResult from '$lib/components/stepper/StepperOtherRolesResult.svelte';
     import {
         _examApplicationApprovalSchema,
@@ -802,7 +803,7 @@
                     bind:val={$secretaryApprovalInfoForm.remark}
                 ></CustomTextField>
                 {#if data.role.isCourseSecretaryRole || $isReadonlySecretaryApprovalResult}
-                    <CustomSelectField
+                    <CustomRadioBoolean
                         disabled={!!(
                             !data.role.isCourseSecretaryRole ||
                             $isReadonlySecretaryApprovalResult
@@ -810,10 +811,9 @@
                         errors={$secretaryApprovalInfoErrors.status}
                         id="status"
                         label="Keputusan"
-                        placeholder="-"
                         bind:val={$secretaryApprovalInfoForm.status}
                         options={certifyOptions}
-                    ></CustomSelectField>
+                    ></CustomRadioBoolean>
                 {:else}
                     <StepperOtherRolesResult />
                 {/if}
