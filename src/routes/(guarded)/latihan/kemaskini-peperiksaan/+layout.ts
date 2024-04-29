@@ -1,9 +1,9 @@
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant.js';
+import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { CourseExamListResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-list-response.dto';
-import { renameExamTypeKeyValue } from '$lib/helpers/mypsm/course/exam-type.helper';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { CourseServices } from '$lib/services/implementation/mypsm/latihan/course.service';
 
@@ -14,6 +14,8 @@ export const load = async () => {
     const currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
     );
+    const isCourseSecretaryRole =
+        currentRoleCode === RoleConstant.urusSetiaLatihan.code;
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
@@ -30,8 +32,6 @@ export const load = async () => {
 
     // exam list
     examListResponse = await CourseServices.getCourseExamList(param);
-
-    await renameExamTypeKeyValue(examListResponse);
 
     examList =
         (examListResponse.data?.dataList as CourseExamListResponseDTO) ?? [];
@@ -58,7 +58,9 @@ export const load = async () => {
 
     return {
         param,
-        currentRoleCode,
+        role: {
+            isCourseSecretaryRole,
+        },
         list: {
             examList,
         },
@@ -69,16 +71,5 @@ export const load = async () => {
             examTypeLookup,
             statusLookup,
         },
-    };
-};
-
-export const _updateTable = async (param: CommonListRequestDTO) => {
-    const response: CommonResponseDTO =
-        await CourseServices.getCourseExamList(param);
-
-    await renameExamTypeKeyValue(response);
-    return {
-        param,
-        response,
     };
 };

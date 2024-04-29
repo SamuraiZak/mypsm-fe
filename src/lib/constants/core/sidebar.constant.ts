@@ -24,6 +24,10 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
+                            name: 'Pengesahan dalam Perkhidmatan',
+                            path: '/perjawatan/pengesahan-dalam-perkhidmatan',
+                        },
+                        {
                             name: 'PTB dan KWAP',
                             path: '/perjawatan/PTB-dan-KWAP',
                         },
@@ -1404,18 +1408,6 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Lantikan Baru',
-                            path: '/perjawatan/lantikan-baru',
-                        },
-                        {
-                            name: 'Tawaran Baru',
-                            path: '/perjawatan/tawaran-baru',
-                        },
-                        {
-                            name: 'Pengesahan dalam Perkhidmatan',
-                            path: '/perjawatan/pengesahan-dalam-perkhidmatan',
-                        },
-                        {
                             name: 'PTB dan KWAP',
                             path: '/perjawatan/PTB-dan-KWAP',
                         },
@@ -1489,10 +1481,6 @@ export class SidebarConstant {
                             name: 'Prosiding Tatatertib',
                             path: '/integriti/prosiding',
                         },
-                        {
-                            name: 'Prosiding Tatatertib - Rayuan',
-                            path: '/integriti/rayuan',
-                        },
                     ],
                 },
                 {
@@ -1518,20 +1506,8 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Latihan (Kemaskini Peperiksaan dalam Jabatan LKIM)',
-                            path: '/latihan/kemaskini-peperiksaan',
-                        },
-                        {
-                            name: 'Latihan (Rekod Peperiksaan)',
-                            path: '/latihan/rekod-peperiksaan',
-                        },
-                        {
                             name: 'Latihan (Permohonan Pembiayaan Pembelajaran)',
                             path: '/latihan/pembiayaan',
-                        },
-                        {
-                            name: 'Latihan (Permohonan Tuntutan Pembiayaan Yuran Pengajian)',
-                            path: '/latihan/tuntutan-yuran',
                         },
                     ],
                 },
@@ -1839,10 +1815,6 @@ export class SidebarConstant {
                     name: 'Integriti',
                     path: '',
                     subItems: [
-                        {
-                            name: 'Surcaj',
-                            path: '/integriti/surcaj',
-                        },
                         {
                             name: 'Prosiding Tatatertib',
                             path: '/integriti/prosiding',

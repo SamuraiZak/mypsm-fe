@@ -3,46 +3,59 @@
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
-    import { _updateTable } from './+layout';
-    import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
-    import type { CourseExamListResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-list-response.dto';
-    import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type { CourseExamDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam.dto';
-    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
+    import DataTable from '$lib/components/table/DataTable.svelte';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
 
     export let data: LayoutData;
     let rowData: CourseExamDetailResponseDTO;
-    let param: CommonListRequestDTO = data.param;
 
     // Table list - new application view for secretary role
-    let examTable: TableDTO = {
-        param: param,
+    let examTable: TableSettingDTO = {
+        param: data.param ?? data.param,
         meta: data.responses.examListResponse.data?.meta ?? {
+            pageSize: 1,
             pageNum: 1,
-            pageSize: 5,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
-        data: (data.list.examList as CourseExamListResponseDTO) ?? [],
-        hiddenData: ['id'],
+        data: data.responses.examListResponse.data?.dataList ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['id'],
+        dictionary: [
+            {
+                english: 'examTitle',
+                malay: 'Tajuk Peperiksaan',
+            },
+            {
+                english: 'examType',
+                malay: 'Jenis Peperiksaan',
+            },
+            {
+                english: 'examDate',
+                malay: 'Tarikh Peperiksaan',
+            },
+            {
+                english: 'examLocation',
+                malay: 'Lokasi Peperiksaan',
+            },
+        ],
+        url: 'course/exam/list',
+        id: 'examTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: data.role.isCourseSecretaryRole,
+        },
     };
-
-    async function _updateExamTable() {
-        _updateTable(examTable.param).then((value) => {
-            examTable.data = value.response.data?.dataList ?? [];
-            examTable.meta = value.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            examTable.param.pageSize = examTable.meta.pageSize;
-            examTable.param.pageNum = examTable.meta.pageNum;
-        });
-    }
 </script>
 
 <!-- content header starts here -->
@@ -58,43 +71,30 @@
     <div
         class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
     >
-        <ContentHeader
-            title="Tekan butang disebelah untuk menambah peperiksaan"
-            borderClass="border-none"
+        <DataTable
+            title="Senarai Peperiksaan"
+            bind:tableData={examTable}
+            bind:passData={rowData}
+            detailActions={() => {
+                const route = `./kemaskini-peperiksaan/${rowData.id}`;
+                goto(route);
+            }}
+            addActions={() => {
+                goto('./kemaskini-peperiksaan/tambah-peperiksaan');
+            }}
         >
-            <TextIconButton
-                label="Tambah Peperiksaan"
-                type="primary"
-                onClick={() =>
-                    goto('./kemaskini-peperiksaan/tambah-peperiksaan')}
-            ></TextIconButton>
-        </ContentHeader>
-        <!-- Table filter placeholder -->
-        <FilterCard onSearch={_updateExamTable}>
-            <FilterTextField
-                label="Tajuk Peperiksaan"
-                bind:inputValue={examTable.param.filter.examTitle}
-            ></FilterTextField>
-            <FilterSelectField
-                label="Jenis Peperiksaan"
-                options={data.selectionOptions.examTypeLookup}
-                bind:inputValue={examTable.param.filter.examTypeId}
-            ></FilterSelectField>
-        </FilterCard>
-        <div class="flex max-h-full w-full flex-col items-start justify-start">
-            <CustomTable
-                title="Senarai Peperiksaan"
-                onUpdate={_updateExamTable}
-                enableDetail
-                bind:tableData={examTable}
-                bind:passData={rowData}
-                detailActions={() => {
-                    const route = `./kemaskini-peperiksaan/${rowData.id}`;
-
-                    goto(route);
-                }}
-            ></CustomTable>
-        </div>
+            <FilterWrapper slot="filter">
+                <FilterTextField
+                    label="Tajuk Peperiksaan"
+                    bind:inputValue={examTable.param.filter.examTitle}
+                ></FilterTextField>
+                <FilterSelectField
+                    label="Jenis Peperiksaan"
+                    options={data.selectionOptions.examTypeLookup}
+                    bind:inputValue={examTable.param.filter.examTypeId}
+                ></FilterSelectField>
+            </FilterWrapper>
+        </DataTable>
     </div>
 </section>
 

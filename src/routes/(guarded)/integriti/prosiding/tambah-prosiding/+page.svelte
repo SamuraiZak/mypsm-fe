@@ -52,7 +52,15 @@
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Tambah Rekod Prosiding"></ContentHeader>
+    <ContentHeader title="Tambah Rekod Prosiding">
+        <TextIconButton
+            label="Kembali"
+            type="neutral"
+            onClick={() => {
+                goto('../prosiding');
+            }}
+        />
+    </ContentHeader>
 </section>
 
 <!-- content body starts here -->
@@ -63,59 +71,43 @@
     <div
         class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
     >
-        <ContentHeader
+        <DataTable
             title="Sila pilih kakitangan untuk ditambahkan rekod prosiding"
-            borderClass="border-none"
-        >
-            <TextIconButton
-                label="Kembali"
-                type="neutral"
-                onClick={() => {
-                    goto('../prosiding');
-                }}
-            />
-        </ContentHeader>
-        <div class="flex max-h-full w-full flex-col items-start justify-start">
-            <DataTable
-                title=""
-                bind:tableData={proceedingListTable}
-                bind:passData={rowData}
-                selectActions={() => {
-                    const route = `./tambah-prosiding/${rowData.id}`;
+            bind:tableData={proceedingListTable}
+            bind:passData={rowData}
+            selectActions={() => {
+                const route = `./tambah-prosiding/${rowData.id}`;
 
-                    goto(route);
-                }}
-            >
-                <FilterWrapper slot="filter">
-                    <FilterTextField
-                        label="No. Pekerja"
-                        bind:inputValue={proceedingListTable.param.filter
-                            .employeeNumber}
-                    ></FilterTextField>
-                    <FilterTextField
-                        label="Nama Kakitangan"
-                        bind:inputValue={proceedingListTable.param.filter.name}
-                    ></FilterTextField>
-                    <FilterTextField
-                        label="No. Kad Pengenalan"
-                        bind:inputValue={proceedingListTable.param.filter
-                            .identityCardNumber}
-                    ></FilterTextField>
-                    <FilterSelectField
-                        label="Gred"
-                        options={data.selectionOptions.gradeLookup}
-                        bind:inputValue={proceedingListTable.param.filter
-                            .grade}
-                    ></FilterSelectField>
-                    <FilterSelectField
-                        label="Jawatan"
-                        options={data.selectionOptions.positionLookup}
-                        bind:inputValue={proceedingListTable.param.filter
-                            .position}
-                    ></FilterSelectField>
-                </FilterWrapper>
-            </DataTable>
-        </div>
+                goto(route);
+            }}
+        >
+            <FilterWrapper slot="filter">
+                <FilterTextField
+                    label="No. Pekerja"
+                    bind:inputValue={proceedingListTable.param.filter
+                        .employeeNumber}
+                ></FilterTextField>
+                <FilterTextField
+                    label="Nama Kakitangan"
+                    bind:inputValue={proceedingListTable.param.filter.name}
+                ></FilterTextField>
+                <FilterTextField
+                    label="No. Kad Pengenalan"
+                    bind:inputValue={proceedingListTable.param.filter
+                        .identityCardNumber}
+                ></FilterTextField>
+                <FilterSelectField
+                    label="Gred"
+                    options={data.selectionOptions.gradeLookup}
+                    bind:inputValue={proceedingListTable.param.filter.grade}
+                ></FilterSelectField>
+                <FilterSelectField
+                    label="Jawatan"
+                    options={data.selectionOptions.positionLookup}
+                    bind:inputValue={proceedingListTable.param.filter.position}
+                ></FilterSelectField>
+            </FilterWrapper>
+        </DataTable>
     </div>
 </section>
 

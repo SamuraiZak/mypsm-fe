@@ -6,13 +6,12 @@ import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto
 import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { CourseFundReimbursementListResponseDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement.dto';
-import { renameExamTypeKeyValue } from '$lib/helpers/mypsm/course/exam-type.helper';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { CourseFundApplicationServices } from '$lib/services/implementation/mypsm/latihan/fundApplication.service';
 
 export const load = async () => {
-    let fundReimbursementResponse: CommonResponseDTO = {};
-    let fundReimbursementList = [];
+    let fundApplicationResponse: CommonResponseDTO = {};
+    let fundApplicationList = [];
 
     const currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
@@ -35,13 +34,11 @@ export const load = async () => {
     };
 
     // fund application list
-    fundReimbursementResponse =
+    fundApplicationResponse =
         await CourseFundApplicationServices.getCourseFundApplicationList(param);
 
-    await renameExamTypeKeyValue(fundReimbursementResponse);
-
-    fundReimbursementList =
-        (fundReimbursementResponse.data
+    fundApplicationList =
+        (fundApplicationResponse.data
             ?.dataList as CourseFundReimbursementListResponseDTO) ?? [];
 
     // ==========================================================================
@@ -114,10 +111,10 @@ export const load = async () => {
             isStaffRole,
         },
         list: {
-            fundReimbursementList,
+            fundApplicationList,
         },
         response: {
-            fundReimbursementResponse,
+            fundApplicationResponse,
         },
         lookups: {
             statusLookup,
@@ -128,18 +125,6 @@ export const load = async () => {
             educationTypeLookup,
             fundApplicationTypeLookup,
         },
-    };
-};
-
-export const _updateTable = async (param: CommonListRequestDTO) => {
-    const response: CommonResponseDTO =
-        await CourseFundApplicationServices.getCourseFundApplicationList(param);
-
-    await renameExamTypeKeyValue(response);
-
-    return {
-        param,
-        response,
     };
 };
 

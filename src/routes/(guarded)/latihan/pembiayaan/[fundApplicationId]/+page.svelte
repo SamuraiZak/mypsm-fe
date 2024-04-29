@@ -36,9 +36,9 @@
         _fundApplicationApprovalSchema,
         _fundApplicationDetailResponseSchema,
     } from '$lib/schemas/mypsm/course/fund-application-schema';
-    import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import { CourseFundApplicationServices } from '$lib/services/implementation/mypsm/latihan/fundApplication.service';
     import type { LayoutData } from './$types';
+    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     export let data: LayoutData;
 
     let isReadonlyStateUnitDirectorApprovalResult = writable<boolean>(false);
@@ -851,15 +851,14 @@
                                 <label
                                     for=""
                                     class="block w-[20px] min-w-[20px] text-[11px] font-medium"
-                                    >1.</label
+                                    >{i + 1}.</label
                                 >
-                                <DownloadAttachment
-                                    triggerDownload={() =>
-                                        handleDownload(
-                                            $documentsForm.document[i].document,
-                                        )}
-                                    fileName={$documentsForm.document[i].name}
-                                ></DownloadAttachment>
+                                <a
+                                    href={$documentsForm.document[i].document}
+                                    download={$documentsForm.document[i].name}
+                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                    >{$documentsForm.document[i].name}</a
+                                >
                             </div>
                         {/each}
                     </div>
@@ -913,14 +912,14 @@
                                 label="Tindakan/Ulasan"
                                 bind:val={$stateUnitDirectorApprovalInfoForm.remark}
                             ></CustomTextField>
-                            <CustomSelectField
+                            <CustomRadioBoolean
                                 disabled={$isReadonlyStateUnitDirectorApprovalResult}
                                 errors={$stateUnitDirectorApprovalInfoErrors.status}
                                 id="approverIsApproved"
                                 options={supportOptions}
                                 label={'Keputusan'}
                                 bind:val={$stateUnitDirectorApprovalInfoForm.status}
-                            ></CustomSelectField>
+                            ></CustomRadioBoolean>
                         </form>
                     {:else if !$fundApplicationIsFail && $isReadonlyStateUnitDirectorApprovalResult && !$isReadonlyIntegritySecretaryApprovalResult && data.role.isIntegritySecretaryRole}
                         <form
@@ -941,14 +940,14 @@
                                 label="Tindakan/Ulasan"
                                 bind:val={$integritySecretaryApprovalInfoForm.remark}
                             ></CustomTextField>
-                            <CustomSelectField
+                            <CustomRadioBoolean
                                 disabled={$isReadonlyIntegritySecretaryApprovalResult}
                                 errors={$integritySecretaryApprovalInfoErrors.status}
                                 id="approverIsApproved"
                                 options={integrityOptions}
                                 label={'Keputusan'}
                                 bind:val={$integritySecretaryApprovalInfoForm.status}
-                            ></CustomSelectField>
+                            ></CustomRadioBoolean>
                         </form>
                     {:else if !$fundApplicationIsFail && $isReadonlyStateUnitDirectorApprovalResult && $isReadonlyIntegritySecretaryApprovalResult && !$isReadonlyCourseSecretaryApprovalResult && data.role.isCourseSecretaryRole}
                         <form
@@ -969,21 +968,21 @@
                                 label="Tindakan/Ulasan"
                                 bind:val={$courseSecretaryApprovalInfoForm.remark}
                             ></CustomTextField>
-                            <CustomSelectField
+                            <CustomRadioBoolean
                                 disabled={$isReadonlyCourseSecretaryApprovalResult}
                                 errors={$courseSecretaryApprovalInfoErrors.status}
                                 id="supporterIsApproved"
                                 options={certifyOptions}
                                 label={'Keputusan'}
                                 bind:val={$courseSecretaryApprovalInfoForm.status}
-                            ></CustomSelectField>
+                            ></CustomRadioBoolean>
                         </form>
                     {/if}
 
                     <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
                         <div class="mb-5">
                             <b class="text-sm text-system-primary"
-                                >Pengarah Negeri/Bahagian</b
+                                >1. Pengarah Negeri/Bahagian</b
                             >
                         </div>
                         {#if $isReadonlyStateUnitDirectorApprovalResult}
@@ -1009,11 +1008,10 @@
                         {:else}
                             <StepperOtherRolesResult />
                         {/if}
-                    </div>
-                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <hr />
                         <div class="mb-5">
                             <b class="text-sm text-system-primary"
-                                >Urus Setia Integriti</b
+                                >2. Urus Setia Integriti</b
                             >
                         </div>
                         {#if $isReadonlyIntegritySecretaryApprovalResult}
@@ -1028,7 +1026,7 @@
                             <CustomSelectField
                                 disabled
                                 id="integrityCourseStatus"
-                                options={confirmOptions}
+                                options={integrityOptions}
                                 label={'Keputusan'}
                                 val={data.responses
                                     .fundApplicationIntegritySecretaryApprovalResponse
@@ -1039,11 +1037,10 @@
                         {:else}
                             <StepperOtherRolesResult />
                         {/if}
-                    </div>
-                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <hr />
                         <div class="mb-5">
                             <b class="text-sm text-system-primary"
-                                >Urus Setia Latihan</b
+                                >3. Urus Setia Latihan</b
                             >
                         </div>
                         {#if $isReadonlyCourseSecretaryApprovalResult}

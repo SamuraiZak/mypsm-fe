@@ -287,7 +287,7 @@
         data: $examsDetaiForm.examinations ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['id'],
+        hiddenColumn: ['id', 'document'],
         dictionary: [],
         url: '',
         id: 'examsListTable',
@@ -333,7 +333,7 @@
 
 <ContentHeader
     title="Maklumat Pengesahan dalam Perkhidmatan {$isTypeConfirmationExceedsThreeYears
-        ? 'Melebihi 3 Tahun'
+        ? 'Melebihi Tempoh 3 Tahun'
         : 'Rasionalisasi'}"
 >
     {#if $isReadOnlyConfirmationInServiceMeetingResult && $confirmationMeetingResultIsApproved}
@@ -495,24 +495,28 @@
 
                 {#if $form.isInternalRelationship}
                     <CustomTextField
+                        disabled
                         id="employeeNumber"
                         label="No. Pekerja LKIM"
                         bind:val={$form.employeeNumber}
                     ></CustomTextField>
 
                     <CustomTextField
+                        disabled
                         id="name"
                         label={'Nama Kakitangan LKIM'}
                         bind:val={$form.employeeName}
                     ></CustomTextField>
 
                     <CustomTextField
+                        disabled
                         id="relationDetailPosition"
                         label="Jawatan Kakitangan LKIM"
                         bind:val={$form.employeePosition}
                     ></CustomTextField>
 
                     <CustomSelectField
+                        disabled
                         id="relationDetailRelationship"
                         label="Hubungan"
                         options={data.lookups.relationshipLookup}

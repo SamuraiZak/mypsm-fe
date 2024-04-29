@@ -4,7 +4,6 @@ import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-requ
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { CourseExamApplicationListResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto';
-import { renameExamTypeKeyValue } from '$lib/helpers/mypsm/course/exam-type.helper';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { CourseServices } from '$lib/services/implementation/mypsm/latihan/course.service';
 
@@ -37,8 +36,6 @@ export const load = async () => {
     // exam application list
     examApplicationResponse =
         await CourseServices.getCourseExamApplicationList(param);
-
-    await renameExamTypeKeyValue(examApplicationResponse);
 
     examApplicationList =
         (examApplicationResponse.data
@@ -91,17 +88,5 @@ export const load = async () => {
             examTypeLookup,
             examResultLookup,
         },
-    };
-};
-
-export const _updateTable = async (param: CommonListRequestDTO) => {
-    const response: CommonResponseDTO =
-        await CourseServices.getCourseExamApplicationList(param);
-
-    await renameExamTypeKeyValue(response);
-
-    return {
-        param,
-        response,
     };
 };

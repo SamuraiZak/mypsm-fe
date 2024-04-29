@@ -8,6 +8,7 @@
     } from '$lib/constants/core/radio-option-constants';
     import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import { Badge, Checkbox } from 'flowbite-svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
@@ -220,30 +221,31 @@
         taintedMessage: false,
         onSubmit() {
             if (!$appealMeetingForm.meetingResult) {
-                $appealMeetingForm.result =
-                    $sentencingMeetingForm.meetingResult;
+                $appealMeetingForm.result = [];
+                $appealMeetingForm.appealResult = null;
             } else {
-                $appealMeetingForm.result =
-                    $sentencingMeetingForm.meetingResult;
-                $appealMeetingForm.result.forEach((data, index) => {
-                    if (!data.result) {
-                        $appealMeetingForm.result[index].sentencing = [];
-                    } else {
-                        $appealMeetingForm.result[index].sentencing =
-                            $sentencingMeetingForm.meetingResult[
-                                index
-                            ].sentencing;
-                    }
-                    if (data.sentencing) {
-                        data.sentencing.forEach((sentence, i) => {
-                            if (sentence.penaltyTypeCode !== '03') {
-                                $appealMeetingForm.result[index].sentencing[
-                                    i
-                                ].emolumenDate = [];
+                if (
+                    $appealMeetingForm.appealResult !==
+                    'Mengesahkan Keputusan JKTT tetapi Mengubah kepada Hukuman yang Lebih Ringan'
+                ) {
+                    $appealMeetingForm.result = [];
+                } else {
+                    $appealMeetingForm.result.forEach((data, index) => {
+                        if (!data.result) {
+                            $appealMeetingForm.result[index].sentencing = [];
+                        } else {
+                            if (data.sentencing) {
+                                data.sentencing.forEach((sentence, i) => {
+                                    if (sentence.penaltyTypeCode !== '03') {
+                                        $appealMeetingForm.result[
+                                            index
+                                        ].sentencing[i].emolumenDate = [];
+                                    }
+                                });
                             }
-                        });
-                    }
-                });
+                        }
+                    });
+                }
             }
             $appealMeetingForm.integrityId = Number(data.params.integrityId);
             $appealMeetingForm.meetingCode = '19';
@@ -388,8 +390,12 @@
 </script>
 
 <ContentHeader title="Maklumat Prosiding Tatatertib">
-    {#if $isReadOnlyProceedingAppealMeeting}
+    {#if $isReadOnlyProceedingAppealMeeting && !$proceedingSentencingAppealIsCertified}
         <Badge color="indigo">Rayuan Dikemuka</Badge>
+    {:else if $isReadOnlyProceedingAppealConfirmation && $proceedingSentencingAppealIsCertified}
+        <Badge color="green">Rayuan Sah</Badge>
+    {:else if $isReadOnlyProceedingAppealConfirmation && !$proceedingSentencingAppealIsCertified}
+        <Badge color="red">Rayuan Tidak Sah</Badge>
     {/if}
     {#if ($isReadOnlyProceedingChargeConfirmation && !$proceedingChargeIsCertified) || ($isReadOnlyProceedingSentencingConfirmation && !$proceedingSentencingIsCertified) || ($isReadOnlyProceedingAppealConfirmation && !$proceedingSentencingAppealIsCertified)}
         <Badge color="red">Proses Prosiding Tidak Sah</Badge>
@@ -971,14 +977,14 @@
                             label="Tindakan/Ulasan"
                             bind:val={$integrityDirectorApprovalForm.remark}
                         ></CustomTextField>
-                        <CustomSelectField
+                        <CustomRadioBoolean
                             disabled={$isReadOnlyProceedingChargeConfirmation}
                             errors={$integrityDirectorApprovalFormErrors.status}
                             id="approverIsApproved"
                             options={certifyOptions}
                             label={'Keputusan'}
                             bind:val={$integrityDirectorApprovalForm.status}
-                        ></CustomSelectField>
+                        ></CustomRadioBoolean>
                     </form>
                 {/if}
 
@@ -1478,14 +1484,14 @@
                                     label="Tindakan/Ulasan"
                                     bind:val={$sentencingConfirmationForm.remark}
                                 ></CustomTextField>
-                                <CustomSelectField
+                                <CustomRadioBoolean
                                     disabled={$isReadOnlyProceedingSentencingConfirmation}
                                     errors={$sentencingConfirmationFormErrors.status}
                                     id="approverIsApproved"
                                     options={certifyOptions}
                                     label={'Keputusan'}
                                     bind:val={$sentencingConfirmationForm.status}
-                                ></CustomSelectField>
+                                ></CustomRadioBoolean>
                             </form>
                         {/if}
 
@@ -1669,9 +1675,7 @@
                                                                 .meetingResult[
                                                                 index
                                                             ].result
-                                                                ? `Tiada
-                                                        hukuman dikenakan dalam mesyuarat
-                                                        penentuan hukuman yang lepas*`
+                                                                ? `Diputuskan tidak bersalah oleh mesyuarat lepas*`
                                                                 : ''}</span
                                                         >
                                                     </ContentHeader>
@@ -1688,7 +1692,11 @@
                                                         class="flex w-full flex-row items-center gap-x-2.5 border-b text-base"
                                                     >
                                                         <CustomRadioField
-                                                            disabled={$isReadOnlyProceedingAppealMeeting}
+                                                            disabled={$isReadOnlyProceedingAppealMeeting ||
+                                                                !$sentencingMeetingForm
+                                                                    .meetingResult[
+                                                                    index
+                                                                ].result}
                                                             id="appealMeetingResult"
                                                             label="Keputusan Mesyuarat"
                                                             options={proceedingMeetingOptions}
@@ -2132,14 +2140,14 @@
                                     label="Tindakan/Ulasan"
                                     bind:val={$appealConfirmationForm.remark}
                                 ></CustomTextField>
-                                <CustomSelectField
+                                <CustomRadioBoolean
                                     disabled={$isReadOnlyProceedingAppealConfirmation}
                                     errors={$appealConfirmationFormErrors.status}
                                     id="approverIsApproved"
                                     options={certifyOptions}
                                     label={'Keputusan'}
                                     bind:val={$appealConfirmationForm.status}
-                                ></CustomSelectField>
+                                ></CustomRadioBoolean>
                             </form>
                         {/if}
 
