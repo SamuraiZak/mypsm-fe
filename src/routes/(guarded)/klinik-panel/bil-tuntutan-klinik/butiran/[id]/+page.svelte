@@ -161,38 +161,38 @@
                     label="Klinik"
                     disabled
                     id="clinicName"
-                    bind:val={data.claimDetail.detail.invoiceNumber}
+                    val={data.claimDetail.detail?.invoiceNumber}
                 />
                 <CustomTextField
                     label="Tarikh Invois"
                     disabled
                     id="invoiceDate"
-                    bind:val={data.claimDetail.detail.invoiceDate}
+                    val={data.claimDetail.detail?.invoiceDate}
                 />
                 <CustomTextField
                     label="No. Invois"
                     disabled
                     id="invoiceNumber"
-                    bind:val={data.claimDetail.detail.invoiceNumber}
+                    val={data.claimDetail.detail?.invoiceNumber}
                 />
                 <CustomSelectField
                     label="Bulan Rawatan"
                     disabled
                     options={monthNumberLookup}
                     id="treatmentMonth"
-                    bind:val={data.claimDetail.detail.treatmentMonth}
+                    val={data.claimDetail.detail?.treatmentMonth}
                 />
                 <CustomTextField
                     label="Tahun Rawatan"
                     disabled
                     id="treatmentYear"
-                    bind:val={data.claimDetail.detail.treatmentYear}
+                    val={data.claimDetail.detail?.treatmentYear}
                 />
                 <CustomTextField
                     label="Jumlah (RM)"
                     disabled
                     id="total"
-                    bind:val={data.claimDetail.detail.total}
+                    val={data.claimDetail.detail?.total}
                 />
             </StepperContentBody>
         </StepperContent>
