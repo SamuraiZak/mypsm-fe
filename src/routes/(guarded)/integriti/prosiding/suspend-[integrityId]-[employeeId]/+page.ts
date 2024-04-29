@@ -216,7 +216,7 @@ export async function load({ params }) {
 
     for (let month = 12; month <= 36; month++) {
         const option: DropdownDTO = {
-            value: month, // Convert month to string if necessary
+            value: String(month), // Convert month to string if necessary
             name: `${month} bulan`,
         };
 
