@@ -17,6 +17,7 @@ export const load = async ({ params }) => {
     let promotionType: string = params.type;
     let currentId: PromotionGroupID = {
         groupId: 0,
+        promotionType: promotionType,
     }
     let isNewPromotion: boolean = true;
     if (params.id !== "baru") {
@@ -29,10 +30,14 @@ export const load = async ({ params }) => {
     let employeeList: PromotionCommonEmployee[] = [];
     let certificationListResponse: CommonResponseDTO = {};
     let certificationList: PromotionCertificationEmployee[] = [];
+    let promotionMeetingListResponse: CommonResponseDTO = {};
+    let promotionMeetingList: PromotionCertificationEmployee[] = [];
     let placementListResponse: CommonResponseDTO = {};
     let placementList: PromotionPlacement[] = [];
     let promotionDetailResponse: CommonResponseDTO = {};
     let promotionDetail: PromotionDetail[] = [];
+    let finalResultResponse: CommonResponseDTO = {};
+    let finalResult: PromotionDetail[] = [];
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
@@ -67,6 +72,10 @@ export const load = async ({ params }) => {
         await EmploymentPromotionServices.getCertificationList(commonParam);
     certificationList =
         certificationListResponse.data?.dataList as PromotionCertificationEmployee[];
+    promotionMeetingListResponse =
+        await EmploymentPromotionServices.getPromotionMeetingList(commonParam);
+    promotionMeetingList =
+        promotionMeetingListResponse.data?.dataList as PromotionCertificationEmployee[];
     placementListResponse =
         await EmploymentPromotionServices.getPlacementList(commonParam);
     placementList =
@@ -74,7 +83,11 @@ export const load = async ({ params }) => {
     promotionDetailResponse =
         await EmploymentPromotionServices.getPromotionEmployeeList(commonParam)
     promotionDetail =
-        promotionDetailResponse.data?.dataList as PromotionDetail[]
+        promotionDetailResponse.data?.dataList as PromotionDetail[];
+    finalResultResponse =
+        await EmploymentPromotionServices.getPromotionFinalResultList(commonParam);
+    finalResult =
+        finalResultResponse.data?.dataList as PromotionDetail[]
 
 
 
@@ -90,6 +103,8 @@ export const load = async ({ params }) => {
         commonParam,
         certificationListResponse,
         certificationList,
+        promotionMeetingListResponse,
+        promotionMeetingList,
         lookup,
         certificationForm,
         placementListResponse,
@@ -97,6 +112,8 @@ export const load = async ({ params }) => {
         placementForm,
         promotionDetailResponse,
         promotionDetail,
+        finalResultResponse,
+        finalResult,
         employeePromotion,
         directorForm,
         integrityForm,
@@ -118,7 +135,6 @@ export const _submitAddNewPromotion = async (formData: AddNewPromotion) => {
 
 export const _submitDirectorForm = async (formData: PromotionCommonApproval) => {
     const form = await superValidate(formData, zod(_promotionCommonApproval));
-    console.log(form)
     if (form.valid) {
         const response: CommonResponseDTO =
             await EmploymentPromotionServices.addDirectorApproval(form.data as PromotionCommonApproval)
@@ -139,7 +155,6 @@ export const _submitIntegrityForm = async (formData: PromotionCommonApproval) =>
 
 export const _submitCertification = async (formData: PromotionCertification) => {
     const form = await superValidate(formData, zod(_editPromotionCertification));
-
     if (form.valid) {
         const response: CommonResponseDTO =
             await EmploymentPromotionServices.editCertification(form.data as PromotionCertification)
@@ -161,7 +176,6 @@ export const _submitPlacement = async (formData: PromotionPlacementEdit) => {
 
 export const _submitEmployeePromotion = async (formData: PromotionEmployeeEdit) => {
     const form = await superValidate(formData, zod(_editEmployeePromotion));
-
     if (form.valid) {
         const response: CommonResponseDTO =
             await EmploymentPromotionServices.editEmployeePromotion(form.data as PromotionEmployeeEdit)
@@ -201,13 +215,15 @@ export const _getPlacementDetail = async (id: PromotionCertificationGet, req: Co
         await EmploymentPromotionServices.getSalaryAdjustmentTable(req);
     const salaryDetail: CommonResponseDTO =
         await EmploymentPromotionServices.getSalaryAdjustmentDetail(id)
-    const directorResponse: CommonResponseDTO = 
+    const directorResponse: CommonResponseDTO =
         await EmploymentPromotionServices.getDirectorApproval(id)
-    const integrityResponse: CommonResponseDTO = 
+    const integrityResponse: CommonResponseDTO =
         await EmploymentPromotionServices.getIntegrityApproval(id)
 
-    return { response, tableResponse, salaryDetail, directorResponse,
-        integrityResponse,}
+    return {
+        response, tableResponse, salaryDetail, directorResponse,
+        integrityResponse,
+    }
 }
 
 export const _getPromotionDetail = async (id: PromotionCertificationGet) => {
