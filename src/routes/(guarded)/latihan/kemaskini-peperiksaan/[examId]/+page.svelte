@@ -1,4 +1,5 @@
 <script lang="ts">
+    import SvgDownload from './../../../../../lib/assets/svg/SvgDownload.svelte';
     import { error } from '@sveltejs/kit';
     import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
     import { zod } from 'sveltekit-superforms/adapters';
@@ -13,15 +14,33 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
+    import QRCode from 'qrcode';
     import {
         _academicInfoSchema,
         _serviceInfoRequestSchema,
     } from '$lib/schemas/mypsm/employment/new-hire/schema';
     import { goto } from '$app/navigation';
     import { _editExamForm } from './+page';
+    import { onMount } from 'svelte';
     export let data: PageData;
+    let showQRCode: boolean = false;
 
     let isReadonlyExamFormStepper: boolean = true;
+
+    let qrData = JSON.stringify(data.examInfoForm.data);
+    let qrCanvas: HTMLCanvasElement;
+    let qrImageUrl: string;
+
+    onMount(async () => {
+        try {
+            await QRCode.toCanvas(qrCanvas, qrData);
+            const url = qrCanvas.toDataURL();
+            qrImageUrl = url;
+            console.log('QR code generated successfully!');
+        } catch (error) {
+            console.error('Error generating QR code:', error);
+        }
+    });
 
     // Superforms
     const { form, errors, enhance, isTainted } = superForm(data.examInfoForm, {
@@ -78,8 +97,62 @@
                 />
             {/if}
         </StepperContentHeader>
-        <StepperContentBody
-            ><!-- Maklumat Peperiksaan -->
+        <StepperContentBody>
+            <TextIconButton
+                type="neutral"
+                label="Tunjukkan Kod QR"
+                onClick={() => (showQRCode = true)}
+            />
+            <div
+                class="flex w-full flex-col rounded px-10 shadow-lg"
+                hidden={!showQRCode}
+            >
+                <h4 class="my-4 text-center text-md">
+                    Ini adalah kod QR <span class="font-bold"
+                        >MAKLUMAT PEPERIKSAAN</span
+                    > untuk imbasan aplikasi mudah alih
+                </h4>
+                <div class="flex w-full flex-row items-center justify-between">
+                    <div class="space-y-5 text-md">
+                        <label
+                            class="flex flex-col font-bold text-system-neutral"
+                            for="name"
+                            >TAJUK:
+                            <span class="font-light text-black"
+                                >{$form.examTitle}</span
+                            >
+                        </label>
+                        <label
+                            class="flex flex-col font-bold text-system-neutral"
+                            for="name"
+                            >TARIKH DIJALANKAN:
+                            <span class="font-light text-black"
+                                >{$form.examDate}</span
+                            >
+                        </label>
+                        <label
+                            class="flex flex-col font-bold text-system-neutral"
+                            for="name"
+                            >LOKASI:
+                            <span class="font-light text-black"
+                                >{$form.examLocation}</span
+                            >
+                        </label>
+                    </div>
+                    <span class="flex flex-row items-baseline">
+                        {#if qrImageUrl}
+                            <a
+                                href={qrImageUrl}
+                                class="py-4"
+                                download="qrcode-peperiksaan-{$form.examTitle}.png"
+                            >
+                                <SvgDownload />
+                            </a>
+                        {/if}
+                        <canvas bind:this={qrCanvas}></canvas>
+                    </span>
+                </div>
+            </div>
             <form
                 id="examFormStepper"
                 method="POST"
