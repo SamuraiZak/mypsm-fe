@@ -156,20 +156,27 @@
                 $addnewPromotionForm.employeeIds.push(val.employeeId);
             });
             $addnewPromotionForm.promotionType = data.promotionType;
-            _submitAddNewPromotion($addnewPromotionForm)
-                .then((res) => {
-                    if (res?.response.status == 'success') {
-                        tempGroupId = res.response.data?.details.groupId;
-                    }
-                })
-                .finally(() => {
-                    goto(
-                        '/perjawatan/kenaikan-pangkat/butiran/' +
-                            tempGroupId +
-                            '-' +
-                            data.promotionType,
-                    );
-                });
+
+            if ($addnewPromotionForm.employeeIds.length < 1) {
+                alert(
+                    'Sila tambah senarai calon untuk pengesahan kenaikan pangkat terlebih dahulu.',
+                );
+            } else {
+                _submitAddNewPromotion($addnewPromotionForm)
+                    .then((res) => {
+                        if (res?.response.status == 'success') {
+                            tempGroupId = res.response.data?.details.groupId;
+                        }
+                    })
+                    .finally(() => {
+                        goto(
+                            '/perjawatan/kenaikan-pangkat/butiran/' +
+                                tempGroupId +
+                                '-' +
+                                data.promotionType,
+                        );
+                    });
+            }
         },
     });
 
@@ -292,8 +299,8 @@
         dictionary: [
             {
                 english: 'secretariatCertification',
-                malay: 'Pengesahan Urus Setia'
-            }
+                malay: 'Pengesahan Urus Setia',
+            },
         ],
         url: 'employment/promotion/final_result/list',
         id: 'promotionEmployee',
@@ -321,7 +328,7 @@
         id: 'certificationForm',
         validators: zod(_editPromotionCertification),
         onSubmit() {
-            $certificationForm.promotionType = data.promotionType
+            $certificationForm.promotionType = data.promotionType;
             $certificationForm.id = employeeCertification.promotionId;
             if ($certificationForm.meetingResult) {
                 $certificationForm.actingEndDate = '';
@@ -703,31 +710,31 @@
                                     bind:val={$integrityForm.status}
                                 />
                             </form>
-                            {#if data.promotionType !== "Utama"}
-                            <ContentHeader
-                                title="Pengarah Bahagian/Negeri"
-                                borderClass="border-none"
-                            />
-                            <form
-                                class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10 md:w-1/2"
-                                id="directorForm"
-                                use:directorEnhance
-                                method="POST"
-                            >
-                                <CustomTextField
-                                    label="Ulasan/Tindakan"
-                                    id="remark"
-                                    bind:val={$directorForm.remark}
-                                    errors={$directorError.remark}
+                            {#if data.promotionType !== 'Utama'}
+                                <ContentHeader
+                                    title="Pengarah Bahagian/Negeri"
+                                    borderClass="border-none"
                                 />
-                                <CustomRadioBoolean
-                                    label="Keputusan"
-                                    id="status"
-                                    disabled={false}
-                                    options={confirmOptions}
-                                    bind:val={$directorForm.status}
-                                />
-                            </form>
+                                <form
+                                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10 md:w-1/2"
+                                    id="directorForm"
+                                    use:directorEnhance
+                                    method="POST"
+                                >
+                                    <CustomTextField
+                                        label="Ulasan/Tindakan"
+                                        id="remark"
+                                        bind:val={$directorForm.remark}
+                                        errors={$directorError.remark}
+                                    />
+                                    <CustomRadioBoolean
+                                        label="Keputusan"
+                                        id="status"
+                                        disabled={false}
+                                        options={confirmOptions}
+                                        bind:val={$directorForm.status}
+                                    />
+                                </form>
                             {/if}
                         </div>
                     {/if}
@@ -881,43 +888,43 @@
                                         options={approveOptions}
                                         val={certificationResult?.meetingResult}
                                     />
-                                        {#if certificationResult?.meetingResult}
-                                            <CustomTextField
-                                                label="Tarikh Pengesahan Kenaikan Pangkat (Jika Lulus)"
-                                                id="confirmedDate"
-                                                disabled
-                                                type="date"
-                                                val={certificationResult?.confirmedDate}
-                                            />
-                                        {:else}
-                                            <ContentHeader
-                                                title="Penamatan Pemangkuan (Jika Mesyuarat Tidak Lulus)"
-                                                borderClass="border-none"
-                                            />
-                                            <CustomTextField
-                                                label="Tarikh Tamat Pemangkuan"
-                                                id="actingEndDate"
-                                                disabled
-                                                type="date"
-                                                val={certificationResult?.actingEndDate}
-                                            />
-                                            <CustomTextField
-                                                label="Tarikh Kembali Ke Gred Asal"
-                                                id="gradeRevertDate"
-                                                disabled
-                                                type="date"
-                                                val={certificationResult?.gradeRevertDate}
-                                            />
-                                            <CustomSelectField
-                                                label="Penempatan Baru"
-                                                id="newPlacement"
-                                                disabled
-                                                options={data.lookup
-                                                    .placementLookup}
-                                                val={certificationResult?.newPlacement}
-                                            />
-                                        {/if}
+                                    {#if certificationResult?.meetingResult}
+                                        <CustomTextField
+                                            label="Tarikh Pengesahan Kenaikan Pangkat (Jika Lulus)"
+                                            id="confirmedDate"
+                                            disabled
+                                            type="date"
+                                            val={certificationResult?.confirmedDate}
+                                        />
+                                    {:else}
+                                        <ContentHeader
+                                            title="Penamatan Pemangkuan (Jika Mesyuarat Tidak Lulus)"
+                                            borderClass="border-none"
+                                        />
+                                        <CustomTextField
+                                            label="Tarikh Tamat Pemangkuan"
+                                            id="actingEndDate"
+                                            disabled
+                                            type="date"
+                                            val={certificationResult?.actingEndDate}
+                                        />
+                                        <CustomTextField
+                                            label="Tarikh Kembali Ke Gred Asal"
+                                            id="gradeRevertDate"
+                                            disabled
+                                            type="date"
+                                            val={certificationResult?.gradeRevertDate}
+                                        />
+                                        <CustomSelectField
+                                            label="Penempatan Baru"
+                                            id="newPlacement"
+                                            disabled
+                                            options={data.lookup
+                                                .placementLookup}
+                                            val={certificationResult?.newPlacement}
+                                        />
                                     {/if}
+                                {/if}
                             </form>
                         </div>
                     {/if}
@@ -1272,7 +1279,10 @@
                                     Keputusan akan dihantar ke emel klinik dan
                                     Urus Setia berkaitan.
                                 </span> -->
-                                <ContentHeader title="Penyokong" borderClass="border-none"/>
+                                <ContentHeader
+                                    title="Penyokong"
+                                    borderClass="border-none"
+                                />
                                 <CustomTextField
                                     label="Tindakan/Ulasan"
                                     id="remark"
@@ -1302,7 +1312,10 @@
                                     Keputusan akan dihantar ke emel klinik dan
                                     Urus Setia berkaitan.
                                 </span> -->
-                                <ContentHeader title="Penyokong" borderClass="border-none"/>    
+                                <ContentHeader
+                                    title="Penyokong"
+                                    borderClass="border-none"
+                                />
                                 <CustomTextField
                                     label="Tindakan/Ulasan"
                                     id="remark"
