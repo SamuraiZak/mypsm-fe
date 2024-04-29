@@ -28,9 +28,12 @@ export interface PromotionCertificationEmployee {
     employeeNo:             string;
     employeeName:           string;
     identityCardNo:         string;
-    meetingResult:          string | null;
-    integrityCertification: string;
-    directionCertification: string;
+    meetingResult?:          string | null;
+    integrityCertification?: string;
+    directionCertification?: string;
+    gradeNo?:                string;
+    positionNo?:             string;
+    currentPlacement?:       string;
 }
 
 export interface PromotionPlacement {
@@ -48,6 +51,7 @@ export interface PromotionPlacementDetail {
     employeeNumber:        string;
     employeeName:          string;
     promotionDate:         string;
+    newGrade:              string;
     salaryMovementMonth:   string;
     firstMinimumSalary:    number;
     firstMaximumSalary:    number;

@@ -161,6 +161,30 @@ export class EmploymentPromotionServices {
             return CommonResponseConstant.httpError;
         }
     }
+    // get promotion meeting table (2nd stepper)
+    static async getPromotionMeetingList(param: CommonListRequestDTO) {
+        try{
+            const url: Input = 'employment/promotion/promotion_meetings/list';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await promiseRes;
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
     //edit certification
     static async editCertification (param: PromotionCertification) {
@@ -343,6 +367,30 @@ export class EmploymentPromotionServices {
     static async getPromotionEmployeeList(param: CommonListRequestDTO) {
         try{
             const url: Input = 'employment/promotion/employee_promotions/list';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await promiseRes;
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    // get promotion final result table
+    static async getPromotionFinalResultList(param: CommonListRequestDTO) {
+        try{
+            const url: Input = 'employment/promotion/final_result/list';
 
             const promiseRes: Promise<Response> = http
                 .post(url, {
