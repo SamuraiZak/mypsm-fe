@@ -1,26 +1,19 @@
-import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
-import { SidebarConstant } from '$lib/constants/core/sidebar.constant';
+import { RoleConstant } from '$lib/constants/core/role.constant';
+import { ModuleConstant } from '$lib/constants/core/routes.constant';
 import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
-import type { NavItem, SidebarDTO } from '$lib/dto/core/sidebar/sidebar.dto';
-import { redirect } from '@sveltejs/kit';
+import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
+import type { ModuleDTO } from '$lib/dto/core/setup/setup.dto';
+import type { UserRoleDTO } from '$lib/dto/core/user-role/user-role.dto';
 
-const authorisedRoleCode: string[] = [
-    UserRoleConstant.calon.code,
-    UserRoleConstant.kakitangan.code,
-];
+export async function load() {
+    let currentRole: UserRoleDTO = UserRoleConstant.kakitangan;
 
-export const load = async () => {
-    const currentRoleCode = localStorage.getItem(
-        LocalStorageKeyConstant.currentRoleCode,
-    );
-
-    const navigationList: NavItem[] =
-        SidebarConstant.sidebar.find((item) => item.role == currentRoleCode)
-            ?.navItems ?? [];
+    let moduleList: ModuleDTO[] = ModuleConstant.moduleList;
 
     return {
         props: {
-            navigationList,
+            moduleList,
+            currentRole,
         },
     };
-};
+}
