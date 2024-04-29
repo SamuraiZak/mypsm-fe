@@ -1714,6 +1714,7 @@
                                 options={data.lookup.placementLookup}
                             />
 
+                            {#if $updateMeetingDetailForm.placement == undefined}
                             <div class="flex w-full flex-col gap-2">
                                 <CustomFileField
                                     label="Dokumen Sokongan"
@@ -1721,7 +1722,7 @@
                                     bind:files
                                 ></CustomFileField>
                             </div>
-
+                            {/if}
                             <div
                                 class="flex w-full flex-col justify-start gap-2.5 pb-10"
                             >
