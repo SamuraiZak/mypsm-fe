@@ -11,7 +11,7 @@ export async function load({ params }) {
     let auditLog: AuditTrailDTO[] = [];
 
     const auditLogFilter: AuditTrailFilterDTO = {
-        module: 0,
+        moduleId: 0,
         employeeName: null,
         date: null,
     };

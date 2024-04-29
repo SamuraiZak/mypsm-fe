@@ -111,7 +111,7 @@ export class AdminServices {
 
     static async getAuditTrail(param: CommonListRequestDTO) {
         try {
-            let url: Input = '';
+            let url: Input = 'audit/list';
 
             const response: Response = await http
                 .post(url, {
