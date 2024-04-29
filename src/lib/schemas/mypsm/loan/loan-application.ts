@@ -46,11 +46,11 @@ export const _personalDetail = z.object({
 //=====================================================
 
 export const _loanDetail = z.object({
-    id: numberIdSchema,
-    maxLoan: numberSchema,
-    requestedLoan: numberSchema,
-    paymentPeriod: numberSchema,
-    reason: shortTextSchema,
+    id: z.number(),
+    maxLoan: z.number(),
+    requestedLoan: z.number(),
+    paymentPeriod: z.number(),
+    reason: z.string(),
 
 })
 

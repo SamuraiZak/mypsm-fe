@@ -14,7 +14,7 @@
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import { superForm } from 'sveltekit-superforms';
-    import { zod } from 'sveltekit-superforms/adapters';
+    import { zod, zodClient } from 'sveltekit-superforms/adapters';
     import { Toaster } from 'svelte-french-toast';
     import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import type { UploadDocuments } from '$lib/dto/mypsm/pinjaman/document.dto';
@@ -171,11 +171,8 @@
     } = superForm(data.forms.loanDetailsForm, {
         SPA: true,
         id: 'loanDetail',
-        dataType: 'json',
-        multipleSubmits: 'allow',
-        resetForm: false,
         validationMethod: 'oninput',
-        validators: zod(_loanDetail),
+        validators: zodClient(_loanDetail),
         onSubmit() {
             _loanDetailSubmit($loanInfoForm);
         },
@@ -396,14 +393,14 @@
         $supplierForm.suppliers = [...$supplierForm.suppliers];
     }
 
-    function apply() {
-        _applyLoan().then((value) => {
+    async function apply() {
+        const response = await _applyLoan().then((value) => {
             if (value?.response.status == 'success') {
                 let applicationId: number = value?.response.data?.details.id;
                 let url =
                     '/pinjaman-dan-kuarters/pinjaman/permohonan/komputer_dan_telefon_pintar/' +
                     applicationId;
-                goto(url);
+                goto(url, {replaceState: true});
             }
         });
     }
@@ -543,20 +540,23 @@
                 <TextIconButton
                     label="Simpan"
                     icon="check"
-                    form="loanInfoForm"
+                    form="loanDetail"
                 />
             </StepperContentHeader>
             <StepperContentBody>
                 <form
-                    id="loanInfoForm"
+                    id="loanDetail"
                     method="POST"
                     use:loanInfoEnhance
                     class="flex w-full flex-col gap-2"
                 >
+                <!-- {data.props.loanDetail?.maxLoan}
+                {$loanInfoForm.maxLoan} -->
                     <CustomTextField
-                    disabled={noturusetia}
+                    
                         id="maxLoan"
                         label={'Had Permohonan'}
+                        type="number"
                         errors={$loanInfoError.maxLoan}
                         bind:val={$loanInfoForm.maxLoan}
                     ></CustomTextField>

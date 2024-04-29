@@ -557,7 +557,7 @@ static async addLoan(param: addLoan) {
         const result = CommonResponseConvert.fromResponse(response);
 
         if (result.status == 'success') {
-            invalidateAll()
+            await invalidateAll()
             return result;
         } else {
             return CommonResponseConstant.httpError;

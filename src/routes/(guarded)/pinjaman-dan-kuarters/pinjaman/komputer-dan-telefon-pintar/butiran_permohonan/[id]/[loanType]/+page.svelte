@@ -136,6 +136,7 @@
         isTainted: personalDetailTainted,
     } = superForm(data.forms.personalDetailForm, {
         SPA: true,
+        invalidateAll:true,
         id: 'personalDetail',
         dataType: 'json',
         multipleSubmits: 'allow',
@@ -153,6 +154,7 @@
         SPA: true,
         id: 'loanDetail',
         dataType: 'json',
+        invalidateAll:true,
         multipleSubmits: 'allow',
         resetForm: false,
         validationMethod: 'oninput',
@@ -384,7 +386,7 @@
                 
                 let applicationId: number = value?.response.data?.details.id;
                 let url = '/pinjaman-dan-kuarters/pinjaman/komputer-dan-telefon-pintar/butiran_permohonan/' +applicationId+'/komputer-dan-telefon-pintar';
-                goto(url);
+                goto(url, );
             }
         })
     }

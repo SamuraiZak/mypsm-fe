@@ -167,6 +167,7 @@
                     id="alternativeName"
                     label={'Nama Lain'}
                     type="text"
+                    placeholder=""
                     bind:val={data.personalInfoForm.employeeDetail.details
                         .alternativeName}
                 ></CustomTextField>
@@ -400,6 +401,7 @@
                 disabled
                 id="EPFNumber"
                 label={'No. KWSP'}
+                placeholder=""
                 type="text"
                 bind:val={data.personalInfoForm.serviceDetail.details.EPFNumber}
             ></CustomTextField>
@@ -407,6 +409,7 @@
                 disabled
                 id="SOCSO"
                 label={'No. SOCSO'}
+                placeholder=""
                 type="text"
                 bind:val={data.personalInfoForm.serviceDetail.details.SOCSO}
             ></CustomTextField>
@@ -414,6 +417,7 @@
                 disabled
                 id="taxIncome"
                 label={'No. Cukai (LHDN)'}
+                placeholder=""
                 type="text"
                 bind:val={data.personalInfoForm.serviceDetail.details.taxIncome}
             ></CustomTextField>
@@ -422,6 +426,7 @@
                 id="bankName"
                 label={'Bank'}
                 type="text"
+                placeholder=""
                 bind:val={data.personalInfoForm.serviceDetail.details.bankName}
             ></CustomTextField>
             <CustomTextField
@@ -429,6 +434,7 @@
                 id="accountNumber"
                 label={'No. Akaun'}
                 type="text"
+                placeholder=""
                 bind:val={data.personalInfoForm.serviceDetail.details
                     .accountNumber}
             ></CustomTextField>
@@ -437,6 +443,7 @@
                 id="program"
                 label={'Program'}
                 type="text"
+                placeholder=""
                 bind:val={data.personalInfoForm.serviceDetail.details.program}
             ></CustomTextField>
             <CustomTextField

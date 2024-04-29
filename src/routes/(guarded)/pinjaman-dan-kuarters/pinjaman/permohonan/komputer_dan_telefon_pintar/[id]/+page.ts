@@ -176,7 +176,7 @@ const schemeLookup: DropdownDTO[] =
         _personalDetail))
         ;
 
-    const loanDetailsForm = await superValidate(zod(
+    let loanDetailsForm = await superValidate(zod(
         _loanDetail))
         ;
 
@@ -273,7 +273,7 @@ const schemeLookup: DropdownDTO[] =
         let loanDetailRequestBody: loanIdRequestDTO = {
             id: currentApplicationId
         }
-
+        
         const loanDetailResponse: CommonResponseDTO =
             await LoanServices.getLoanDetails
                 (loanDetailRequestBody);
@@ -281,7 +281,13 @@ const schemeLookup: DropdownDTO[] =
         if (loanDetailResponse.status == 'success') {
             loanDetail = loanDetailResponse.data?.details as loanDetail;
 
-            loanDetailsForm.data = loanDetail;
+            try {
+                loanDetailsForm.data = loanDetail;
+                loanDetailsForm.data.maxLoan = loanDetail.maxLoan;
+               
+            } catch (error) {
+                console.log(error);
+            }
         }
     }
 

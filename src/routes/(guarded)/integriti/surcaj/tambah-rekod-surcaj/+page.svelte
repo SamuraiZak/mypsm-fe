@@ -53,30 +53,39 @@
    
 </script>
 
-<section class="flex w-full flex-col items-start justify-start">
+<section class="flex w-full flex-col items-start justify-start overflow-y-auto">
+    <ContentHeader title="">
+        <TextIconButton
+            type="primary"
+            label="Kembali"
+            onClick={() => goto('/integriti/surcaj/')}
+            form="form"
+        />
+    </ContentHeader>
     <CustomTabContent title="Senarai Tindakan/Ulasan Tatatertib">
-        <div class="flex max-h-full w-full flex-col items-start justify-start">
+        <div class="flex max-h-full w-full flex-col items-start justify-start pb-10">
 
             <FilterCard onSearch={_search}>
                 <FilterTextField
                     label="Gred"
-                    inputValue={addSurcajtable.param.filter.grade}
+                    bind:inputValue={addSurcajtable.param.filter.grade}
                 />
                 <FilterTextField
                     label="Jawatan"
-                    inputValue={addSurcajtable.param.filter.position}
+                    bind:inputValue={addSurcajtable.param.filter.position}
                 />
                 <FilterTextField
                     label="Tahun"
-                    inputValue={addSurcajtable.param.filter.year}
+                    bind:inputValue={addSurcajtable.param.filter.year}
                 />
                 <FilterTextField
                     label="Nama"
-                    inputValue={addSurcajtable.param.filter.name}
+                    bind:inputValue={addSurcajtable.param.filter.name}
                 />
             </FilterCard>
             
             <CustomTable
+            title="Rekod Pekerja"
                 enableDetail
                 bind:passData={rowData}
                 bind:tableData={addSurcajtable}

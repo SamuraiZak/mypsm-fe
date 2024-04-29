@@ -24,9 +24,9 @@
     import { _tableInformation } from './butiran/[id]-[pensionid]/+page';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
-
+ 
     export let data: PageData;
-
+ 
     let param: CommonListRequestDTO = data.param;
     let paramNo: CommonListRequestDTO = data.paramNo;
     let paramEmp: CommonListRequestDTO = data.paramEmp;

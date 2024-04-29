@@ -7,7 +7,7 @@
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import { Checkbox, Modal } from 'flowbite-svelte';
-    
+
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import SuperDebug, { superForm } from 'sveltekit-superforms';
     import { zod } from 'sveltekit-superforms/adapters';
@@ -19,11 +19,19 @@
     } from '$lib/schemas/mypsm/integrity/surcaj-scheme';
     import toast from 'svelte-french-toast';
     import { error } from '@sveltejs/kit';
-    import { _applicationDetailSubmit, _confirmationDetailSubmit, _meetingDetailSubmit } from './+page';
+    import {
+        _applicationDetailSubmit,
+        _confirmationDetailSubmit,
+        _meetingDetailSubmit,
+    } from './+page';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import { Toaster } from 'svelte-french-toast';
     import type { PageData } from './$types';
-    import { certifyOptions, certifySurcajOptions } from '$lib/constants/core/radio-option-constants';
+    import {
+        certifyOptions,
+        certifySurcajOptions,
+    } from '$lib/constants/core/radio-option-constants';
+    import { goto } from '$app/navigation';
     export let data: PageData;
 
     let isReadonlyActionFormStepper: boolean = true;
@@ -47,7 +55,7 @@
                     toast('Tiada perubahan data dikesan.');
                     error(400);
                 }
-                $form.employeeId = data.employeeID.employeeId
+                $form.employeeId = data.employeeID.employeeId;
                 const result = await _applicationDetailSubmit($form);
                 if (result.response.status === 'success')
                     isReadonlyActionFormStepper = true;
@@ -78,14 +86,12 @@
                 error(400);
             }
             const result = await _meetingDetailSubmit($meetingForm);
-            console.log(result)
+            console.log(result);
             if (result.response.status === 'success')
                 isReadonlyMeetingFormStepper = true;
         },
         taintedMessage: false,
     });
-
-    
 
     const {
         form: confirmationForm,
@@ -103,11 +109,11 @@
         validators: zod(_confirmationDetail),
 
         async onSubmit() {
-            $confirmationForm.surchargeId = data.currentID.surchargeId;;
+            $confirmationForm.surchargeId = data.currentID.surchargeId;
             const result = await _confirmationDetailSubmit($confirmationForm);
-            console.log(result)
+            console.log(result);
             if (result.response.status === 'success')
-            isReadonlyConfirmFormStepper = true;
+                isReadonlyConfirmFormStepper = true;
         },
         taintedMessage: false,
     });
@@ -119,8 +125,13 @@
 
 <Stepper>
     <StepperContent>
-        <StepperContentHeader title="Maklumat Kakitangan"
-        ></StepperContentHeader>
+        <StepperContentHeader title="Maklumat Kakitangan">
+            <TextIconButton
+                type="primary"
+                label="Kembali"
+                onClick={() => goto('/integriti/surcaj/')}
+            /></StepperContentHeader
+        >
         <StepperContentBody
             ><!-- Maklumat Peribadi -->
             <!-- <form
@@ -335,7 +346,11 @@
 
     <StepperContent>
         <StepperContentHeader title="Maklumat Perkhidmatan"
-        ></StepperContentHeader>
+        > <TextIconButton
+        type="primary"
+        label="Kembali"
+        onClick={() => goto('/integriti/surcaj/')}
+    /></StepperContentHeader>
         <StepperContentBody>
             <CustomTextField
                 disabled
@@ -602,10 +617,12 @@
                 bind:val={data.personalInfoForm.serviceDetail.details
                     .salaryEffectiveDate}
             ></CustomTextField>
-            <p class="text-sm text-system-primary font-semibold text-start w-full"
-            >Maklumat Gaji dan Elaun - Elaun</p
-        >
-        <div class="grid grid-cols-2 gap-10 w-full">
+            <p
+                class="w-full text-start text-sm font-semibold text-system-primary"
+            >
+                Maklumat Gaji dan Elaun - Elaun
+            </p>
+            <div class="grid w-full grid-cols-2 gap-10">
                 <div class="space-y-2.5">
                     <!-- <CustomTextField
                                 id="tarikhBerkuatkuasa"
@@ -680,9 +697,11 @@
     </StepperContent>
 
     <StepperContent>
-        <StepperContentHeader title="Butiran Surcaj">
-        
-        </StepperContentHeader>
+        <StepperContentHeader title="Butiran Surcaj"> <TextIconButton
+            type="primary"
+            label="Kembali"
+            onClick={() => goto('/integriti/surcaj/')}
+        /></StepperContentHeader>
         <StepperContentBody>
             <form
                 id="form"
@@ -715,8 +734,11 @@
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Butiran Mesyuarat">
-        </StepperContentHeader>
+        <StepperContentHeader title="Butiran Mesyuarat"> <TextIconButton
+            type="primary"
+            label="Kembali"
+            onClick={() => goto('/integriti/surcaj/')}
+        /></StepperContentHeader>
         <StepperContentBody>
             <form
                 id="meetingForm"
@@ -790,18 +812,19 @@
         >
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Pengesahan Pengarah Integriti"
-        >
-    
-        <TextIconButton
-            type="primary"
-            label="Simpan"
-            onClick={() => (isReadonlyConfirmFormStepper = false)}
-            form="confirmationForm"
-        />
- 
-    
-    </StepperContentHeader>
+        <StepperContentHeader title="Pengesahan Pengarah Integriti">
+            <TextIconButton
+                type="primary"
+                label="Kembali"
+                onClick={() => goto('/integriti/surcaj/')}
+            />
+            <TextIconButton
+                type="primary"
+                label="Simpan"
+                onClick={() => (isReadonlyConfirmFormStepper = false)}
+                form="confirmationForm"
+            />
+        </StepperContentHeader>
         <StepperContentBody>
             <div class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5">
                 <div class="mb-5">
@@ -810,54 +833,51 @@
                 </div>
 
                 <form
-                id="confirmationForm"
-                method="POST"
-                use:confirmationEnhance
-                class="flex w-full flex-col gap-2"
-            >
-
-                <CustomTextField
+                    id="confirmationForm"
+                    method="POST"
+                    use:confirmationEnhance
+                    class="flex w-full flex-col gap-2"
+                >
+                    <!-- <CustomTextField
                
                     type="text"
                     id="name"
                     label="Nama"
                     bind:val={$confirmationForm.name}
-                ></CustomTextField>
-                <CustomTextField
-               
-                    id="remark"
-                    label="Tindakan/Ulasan"
-                    bind:val={$confirmationForm.remark}
-                ></CustomTextField>
-                <div class="flex w-full flex-row text-sm">
-                    <label for="integrity-director-result" class="w-[220px]"
-                        >Keputusan</label
-                    >
-                    <!-- <Badge
+                ></CustomTextField> -->
+                    <CustomTextField
+                        id="remark"
+                        label="Tindakan/Ulasan"
+                        bind:val={$confirmationForm.remark}
+                    ></CustomTextField>
+                    <div class="flex w-full flex-row text-sm">
+                        <label for="integrity-director-result" class="w-[220px]"
+                            >Keputusan</label
+                        >
+                        <!-- <Badge
                                 border
                                 color={integrityDirectorResult == 'free'
                                     ? 'green'
                                     : 'red'}
                                 >{integrityDirectorOptions[0].label}</Badge
                             > -->
-                </div>
+                    </div>
 
-                <CustomSelectField
+                    <CustomSelectField
+                        id="status"
+                        label="status"
+                        options={certifySurcajOptions}
+                        bind:val={$confirmationForm.status}
+                    ></CustomSelectField>
 
-                    id="status"
-                    label="status"
-                    options = {certifySurcajOptions}
-                    bind:val={$confirmationForm.status}
-                ></CustomSelectField>
-
-                <!-- <CustomTextField
+                    <!-- <CustomTextField
                 disabled={isReadonlyConfirmFormStepper}
                     id="statusDescription"
                     label="Ulasan status"
                     bind:val={data.personalInfoForm.confirmation.details
                         .statusDescription}
                 ></CustomTextField> -->
-                
+                </form>
             </div>
         </StepperContentBody>
     </StepperContent>

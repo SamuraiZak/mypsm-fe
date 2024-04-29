@@ -27,8 +27,8 @@ export const load = async () => {
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: "id",
+        orderType: 1,
         filter: {
             dataType: 1,
             staffName: "",
@@ -43,8 +43,8 @@ export const load = async () => {
     const paramUrusSetia: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: "id",
+        orderType: 1,
         filter: {
             employeeNumber: null,
             name: null,

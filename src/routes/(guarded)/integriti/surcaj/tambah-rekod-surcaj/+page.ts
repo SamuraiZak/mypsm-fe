@@ -13,14 +13,10 @@ export const load = async () => {
         orderBy: null,
         orderType: null,
         filter: {
-            dataType: 1,
-            staffName: "",
-            staffNo: "",
-            identityCard: "",
-           applicationDate: null,
-            grade: "",
-            position: "",
-            status: "" // status code from lookup | null | undefined;
+            grade: null,
+            position: null,
+            year: null,
+            name: null,
         },
     };
 

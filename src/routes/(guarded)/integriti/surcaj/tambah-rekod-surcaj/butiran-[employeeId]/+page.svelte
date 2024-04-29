@@ -27,6 +27,7 @@
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import { Toaster } from 'svelte-french-toast';
     import type { PageData } from './$types';
+    import { goto } from '$app/navigation';
     export let data: PageData;
 
     let isReadonlyActionFormStepper: boolean = true;
@@ -135,7 +136,14 @@
 <Stepper>
     <StepperContent>
         <StepperContentHeader title="Maklumat Kakitangan"
-        ></StepperContentHeader>
+        > <TextIconButton
+        type="primary"
+        label="Kembali"
+        onClick={() => goto('/integriti/surcaj/')}
+        form="form"
+    /></StepperContentHeader>
+        
+        
         <StepperContentBody
             ><!-- Maklumat Peribadi -->
             <!-- <form
@@ -350,7 +358,13 @@
 
     <StepperContent>
         <StepperContentHeader title="Maklumat Perkhidmatan"
-        ></StepperContentHeader>
+        >
+        <TextIconButton
+        type="primary"
+        label="Kembali"
+        onClick={() => goto('/integriti/surcaj/')}
+        form="form"
+    /></StepperContentHeader>
         <StepperContentBody>
             <CustomTextField
                 disabled
@@ -699,6 +713,12 @@
     <StepperContent>
         <StepperContentHeader title="Butiran Surcaj">
             
+            <TextIconButton
+            type="primary"
+            label="Kembali"
+            onClick={() => goto('/integriti/surcaj/')}
+            form="form"
+        />
                 <TextIconButton
                     type="primary"
                     label="Simpan"
@@ -740,7 +760,12 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Butiran Mesyuarat">
-                <TextIconButton
+            <TextIconButton
+            type="primary"
+            label="Kembali"
+            onClick={() => goto('/integriti/surcaj/')}
+
+        /> <TextIconButton
                     type="primary"
                     label="Simpan"
                     onClick={() => (isReadonlyMeetingFormStepper = false)}
