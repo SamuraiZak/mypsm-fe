@@ -846,6 +846,7 @@
                     bind:val={$confirmationForm.name}
                 ></CustomTextField> -->
                     <CustomTextField
+                    disabled={data.confirmationDetail == null}
                         id="remark"
                         label="Tindakan/Ulasan"
                         bind:val={$confirmationForm.remark}
@@ -864,6 +865,7 @@
                     </div>
 
                     <CustomSelectField
+                    disabled={data.confirmationDetail == null}
                         id="status"
                         label="status"
                         options={certifySurcajOptions}

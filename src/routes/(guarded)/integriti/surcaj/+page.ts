@@ -52,6 +52,18 @@ export const load = async () => {
             applicationDate: null,
         },
     };
+    const paramEmployee: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: "surchageId",
+        orderType: 1,
+        filter: {
+            employeeNumber: null,
+            name: null,
+            identityCardNumber: null,
+            applicationDate: null,
+        },
+    };
 
     
     let directorSurcajViewResponse: CommonResponseDTO;
@@ -76,10 +88,10 @@ export const load = async () => {
 
     else if (currentRoleCode === kakitangan) {
 
-    employeeSurcajViewResponse = await IntegrityServices.getEmployeeSurcajListDetails(param);
+    employeeSurcajViewResponse = await IntegrityServices.getEmployeeSurcajListDetails(paramEmployee);
     employeeSurcajViewTable = employeeSurcajViewResponse.data?.dataList ?? [];
     }
-    return { param,paramUrusSetia,surcajViewResponse,surcajViewTable,directorSurcajViewTable,employeeSurcajViewTable };
+    return { param,paramUrusSetia,surcajViewResponse,surcajViewTable,directorSurcajViewTable,employeeSurcajViewTable,paramEmployee };
 };
 
 export async function _updateTable(param: CommonListRequestDTO) {

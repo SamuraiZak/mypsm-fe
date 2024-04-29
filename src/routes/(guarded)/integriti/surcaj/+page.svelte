@@ -61,7 +61,7 @@
     };
 
     let employeeSurcajtable: TableDTO = {
-        param: param,
+        param: data.paramEmployee,
         meta: {
             pageSize: 5,
             pageNum: 1,
