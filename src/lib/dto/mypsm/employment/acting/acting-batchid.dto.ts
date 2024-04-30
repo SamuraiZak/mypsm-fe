@@ -13,7 +13,7 @@ export class ActingCommonBatchIdConvert {
 }
 
 export type ActingCommonId = {
-    actingIds: number[];
+    actingIds: number;
 }
 
 export class ActingCommonIdConvert {

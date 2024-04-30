@@ -6,7 +6,6 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
     import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
@@ -17,7 +16,6 @@
         _submitUpdateEmployeePlacementMeetingResultForm,
         _submitUpdateActingResultForm,
         _submitUpdateMainPromotionMeetingResultForm,
-        _submitMainSupporterAndApproverForm,
         _submitSupporterResultForm,
         _submitApproverResultForm,
         _submitDirectorResultForm,
@@ -57,7 +55,6 @@
         _updateActingResultSchema,
         _mainUpdatePromotionMeetingResultSchema,
         _mainUpdatePromotionMeetingResultDetailSchema,
-        _mainSupporterAndApproverSchema,
         _placementAmendmentApplication,
         _updateChosenCandidate,
         _updateMeetingResult,
@@ -68,7 +65,6 @@
         _mainMeetingResult,
         _mainMeetingDetail,
     } from '$lib/schemas/mypsm/employment/acting/acting-schemas';
-    import FileInputField from '$lib/components/inputs/file-input-field/FileInputField.svelte';
     import { Toaster } from 'svelte-french-toast';
     import { zod } from 'sveltekit-superforms/adapters';
     import type {
@@ -161,8 +157,13 @@
         data: data.chosenEmployee,
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['employeeId'],
-        dictionary: [],
+        hiddenColumn: ['employeeId','actingId'],
+        dictionary: [
+            {
+                english: 'programme',
+                malay: 'Program'
+            }
+        ],
         url: 'employment/acting/chosen_employee_lists/list',
         id: 'chosenEmployeeTable',
         option: {
@@ -194,7 +195,12 @@
             'currentPlacement',
             'ICNumber',
         ],
-        dictionary: [],
+        dictionary: [
+            {
+                english: 'programme',
+                malay: 'Program'
+            }
+        ],
         url: 'employment/acting/chosen_employee_lists/list',
         id: 'updatedChosenEmployeeTable',
         option: {
@@ -220,7 +226,16 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['actingId'],
-        dictionary: [],
+        dictionary: [
+            {
+                english: 'selectionResult',
+                malay: 'Keputusan Pemilihan'
+            },
+            {
+                english: 'programme',
+                malay: 'Program'
+            }
+        ],
         url: 'employment/acting/interview_infos/list',
         id: 'interviewInfoTable',
         option: {
@@ -235,7 +250,7 @@
         },
     };
     let interviewResultTable: TableSettingDTO = {
-        param: data.interviewResultParam,
+        param: data.chosenEmployeeParam,
         meta: data.interviewResultResponse.data?.meta ?? {
             pageSize: 1,
             pageNum: 1,
@@ -246,11 +261,24 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['actingId'],
-        dictionary: [],
+        dictionary: [
+            {
+                english: 'marks',
+                malay: 'Markah Temuduga'
+            },
+            {
+                english: 'secretariatStatus',
+                malay: 'Urus Setia'
+            },
+            {
+                english: 'directorStatus',
+                malay: 'Pengarah Bahagian/Negeri'
+            }
+        ],
         url: 'employment/acting/interview_result_marks/list',
         id: 'interviewResultTable',
         option: {
-            checkbox: false,
+            checkbox: true,
             detail: false,
             edit: false,
             select: false,
@@ -298,7 +326,16 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['actingId'],
-        dictionary: [],
+        dictionary: [
+            {
+                english: 'promotionMeetingResult',
+                malay: 'Keputusan Mesyuarat Kenaikan Pangkat'
+            },
+            {
+                english: 'placementMeetingResult',
+                malay: 'Keputusan Mesyuarat Penempatan'
+            }
+        ],
         url: 'employment/acting/promotion_meeting_placements/list',
         id: 'placementTable',
         option: {
@@ -324,7 +361,16 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['actingId'],
-        dictionary: [],
+        dictionary: [
+            {
+                english: 'programme',
+                malay: 'Program'
+            },
+            {
+                english: 'postponeApplication',
+                malay: 'Permohonan Penangguhan/Pindaan'
+            }
+        ],
         url: 'employment/acting/postpones/list',
         id: 'postponeTable',
         option: {
@@ -350,7 +396,20 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['actingId'],
-        dictionary: [],
+        dictionary: [
+            {
+                english: 'postponeApplication',
+                malay: 'Permohonan Penangguhan/Pindaan'
+            },
+            {
+                english: 'postponeResult',
+                malay: 'Keputusan Penangguhan/Pindaan'
+            },
+            {
+                english: 'programme',
+                malay: 'Program'
+            }
+        ],
         url: 'employment/acting/postpone_results/list',
         id: 'postponeResultTable',
         option: {
@@ -376,7 +435,16 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['actingId'],
-        dictionary: [],
+        dictionary: [
+            {
+                english: 'actingGrade',
+                malay: 'Gred Pemangkuan'
+            },
+            {
+                english: 'actingResult',
+                malay: 'Keputusan Pemangkuan'
+            }
+        ],
         url: 'employment/acting/acting_confirmations/list',
         id: 'actingConfirmationTable',
         option: {
@@ -551,9 +619,10 @@
         id: 'updateMeetingResultForm',
         validators: zod(_updateMeetingResult),
         onSubmit() {
-            data.interviewResult.forEach((val) =>
-                $updateMeetingResultForm.actingIds.push(Number(val.actingId)),
-            );
+            
+            interviewResultTable.selectedData.forEach((val:any) => {
+                $updateMeetingResultForm.actingIds.push(Number(val?.actingId))
+            });
             _submitUpdateMeetingResultForm($updateMeetingResultForm);
         },
     });
@@ -1455,9 +1524,9 @@
                 />
                 <StepperContentBody>
                     <div
-                        class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                        class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
                     >
-                        <div class="h-fit w-full p-3">
+                        <div class="h-fit w-full">
                             <DataTable
                                 title="Senarai Kakitangan Dipilih"
                                 bind:tableData={chosenEmployeeTable}
@@ -1498,9 +1567,9 @@
                     {#if data.currentRoleCode === UserRoleConstant.pengarahNegeri.code || data.currentRoleCode === UserRoleConstant.pengarahNegeri.code || data.currentRoleCode === UserRoleConstant.urusSetiaIntegriti.code}
                         {#if !detailOpen}
                             <div
-                                class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                                class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
                             >
-                                <div class="h-fit w-full p-3">
+                                <div class="h-fit w-full">
                                     <DataTable
                                         title="Senarai Kakitangan Dipilih"
                                         bind:tableData={updatedChosenEmployeeTable}
@@ -1571,7 +1640,7 @@
                         {/if}
                     {:else}
                         <form
-                            class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                            class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
                             id="updateChosenCandidateForm"
                             method="POST"
                             use:updateChosenCandidateEnhance
@@ -1621,6 +1690,7 @@
                                     <DataTable
                                         title="Senarai Kakitangan Dipilih"
                                         bind:tableData={updatedChosenEmployeeTable}
+                                        bind:passData={selectedCandidate}
                                         detailActions={async () => {
                                             await getTableInformation(
                                                 6,
@@ -1647,7 +1717,7 @@
                     </StepperContentHeader>
                     <StepperContentBody>
                         <form
-                            class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                            class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
                             id="updateMeetingDetailForm"
                             method="POST"
                             use:updateMeetingDetailEnhance
@@ -1762,7 +1832,7 @@
                     </StepperContentHeader>
                     <StepperContentBody>
                         <form
-                            class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                            class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
                             id="updateMeetingResultForm"
                             method="POST"
                             use:updateMeetingResultEnhance
@@ -1825,7 +1895,7 @@
                     </StepperContentHeader>
                     <StepperContentBody>
                         {#if !detailOpen}
-                            {#if data.actingType === 'Gred 1-54'}
+                            {#if data.actingType === '1-54'}
                                 <form
                                     class="flex w-full flex-col justify-start gap-2.5 p-3"
                                     id="updatePromotionMeetingForm"
@@ -2545,7 +2615,7 @@
                     </StepperContentBody>
                 </StepperContent>
 
-                {#if data.currentRoleCode === secretaryRoleCode}
+                {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code}
                     <StepperContent>
                         <StepperContentHeader
                             title="Semak Pengesahan Keputusan Pemangkuan"

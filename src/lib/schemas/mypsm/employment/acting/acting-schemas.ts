@@ -120,18 +120,6 @@ export const _mainMeetingResult = z.object({
     status: booleanSchema,
 })
 
-
-
-
-
-
-
-
-
-
-
-
-// =============== gred utama validation 
 export const _mainUpdatePromotionMeetingResultSchema = z.object({
     batchId: z.number(),
     actingPosition: z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
@@ -158,12 +146,6 @@ export const _mainMeetingDetail = z.object({
     supporterName:  shortTextSchema,
     approverName:   shortTextSchema,
 })
-
-export const _mainSupporterAndApproverSchema = z.object({
-    supporterName: codeSchema,
-    approverName: codeSchema,
-})
-
 
 // ================== kakitangan schema
 export const _placementAmendmentApplication = z.object({
