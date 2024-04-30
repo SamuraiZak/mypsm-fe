@@ -8,7 +8,7 @@ import { LoanServices } from "$lib/services/implementation/mypsm/pinjaman/loan.s
 
 export const load = async () => {
 
-     // =============================
+    // =============================
     // set mode
     // =============================
 
@@ -37,17 +37,33 @@ export const load = async () => {
             break;
     }
 
+    // const param: CommonListRequestDTO = {
+    //     pageNum: 1,
+    //     pageSize: 5,
+    //     orderBy: null,
+    //     orderType: null,
+    //     filter: {
+    //         dataType: 1,
+    //         staffName: "",
+    //         staffNo: "",
+    //         identityCard: "",
+    //        applicationDate: null,
+    //         grade: "",
+    //         position: "",
+    //         status: "" // status code from lookup | null | undefined;
+    //     },
+    // };
+
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: "id",
+        orderType: 1,
         filter: {
-            dataType: 1,
             staffName: "",
             staffNo: "",
             identityCard: "",
-           applicationDate: null,
+            applicationDate: null,
             grade: "",
             position: "",
             status: "" // status code from lookup | null | undefined;
@@ -61,31 +77,32 @@ export const load = async () => {
     loanViewResponse = await LoanServices.getLoanListDetails(param);
     loanViewTable = loanViewResponse.data?.dataList ?? [];
 
-    return{
-        param,loanViewResponse,loanViewTable,userMode}
+    return {
+        param, loanViewResponse, loanViewTable, userMode
+    }
 
 };
 
-export async function _updateTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await LoanServices.getLoanListDetails(param);
-    return {
-        props: {
-            param,
-            response,
-        },
-    };
-}
+// export async function _updateTable(param: CommonListRequestDTO) {
+//     const response: CommonResponseDTO = await LoanServices.getLoanListDetails(param);
+//     return {
+//         props: {
+//             param,
+//             response,
+//         },
+//     };
+// }
 
 
 export const _applyLoan = async (loanType: string) => {
-    
+
     let selectedType: addLoan = {
         loanType: loanType,
     }
-   
+
     const response: CommonResponseDTO =
         await LoanServices.addLoan(selectedType);
- 
+
     if (response.status == "success") {
         return { response }
     } else {

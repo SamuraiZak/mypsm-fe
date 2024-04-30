@@ -6,7 +6,7 @@
     import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type { TableDTO, TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { PageData } from './$types';
@@ -14,7 +14,9 @@
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
     import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterDateField from '$lib/components/table/filter/FilterDateField.svelte';
-    import { _applyLoan, _updateTable } from './+page';
+    import { _applyLoan,  } from './+page';
+    import DataTable from '$lib/components/table/DataTable.svelte';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     export let data: PageData;
     let param: CommonListRequestDTO = data.param;
     let rowData: any;
@@ -31,19 +33,50 @@
         data: data.loanViewTable ?? [],
     };
 
-    async function _search() {
-        _updateTable(employeeLoantable.param).then((value) => {
-            employeeLoantable.data = value.props.response.data?.dataList ?? [];
-            employeeLoantable.meta = value.props.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            employeeLoantable.param.pageSize = value.props.param.pageSize;
-            employeeLoantable.param.pageNum = value.props.param.pageNum;
-        });
-    }
+     // Table list - New Offer Meeting
+     let loanListTable: TableSettingDTO = {
+        param: data.param ?? data.param,
+        meta: data.loanViewResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data:
+            (data.loanViewResponse.data
+                ?.dataList ) ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['meetingId'],
+        dictionary: [
+        ],
+        url: 'loan/list',
+        id: 'loanListTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
+    };
+
+    // async function _search() {
+    //     _updateTable(employeeLoantable.param).then((value) => {
+    //         employeeLoantable.data = value.props.response.data?.dataList ?? [];
+    //         employeeLoantable.meta = value.props.response.data?.meta ?? {
+    //             pageSize: 1,
+    //             pageNum: 1,
+    //             totalData: 1,
+    //             totalPage: 1,
+    //         };
+    //         employeeLoantable.param.pageSize = value.props.param.pageSize;
+    //         employeeLoantable.param.pageNum = value.props.param.pageNum;
+    //     });
+    // }
 
     const newLoanType: IntDropdownOption[] = [
         {
@@ -91,7 +124,7 @@
 
     <CustomTabContent title="Senarai Tindakan/Ulasan Tatatertib">
         <div class="flex max-h-full w-full flex-col items-start justify-start">
-            <FilterCard onSearch={_search}>
+            <!-- <FilterCard onSearch={_search}>
                 <FilterTextField
                     label="Nama"
                     bind:inputValue={employeeLoantable.param.filter
@@ -125,7 +158,43 @@
                     viewDetails();
                 }}
                 onUpdate={_search}
-            ></CustomTable>
+            ></CustomTable> -->
+
+            <DataTable
+            title="Senarai Permohonan"
+            bind:tableData={loanListTable}
+            bind:passData={rowData}
+            detailActions={() => {
+                viewDetails();
+            }}
+         
+        >
+            <FilterWrapper slot="filter">
+                <FilterTextField
+                    label="Nama"
+                    bind:inputValue={loanListTable.param.filter
+                        .employeeName}
+                />
+                <FilterTextField
+                    label="Jenis Pinjaman"
+                    bind:inputValue={loanListTable.param.filter.loanType}
+                />
+                <FilterDateField
+                    label="Tarikh Permohonan"
+                    bind:inputValue={loanListTable.param.filter
+                        .applicationDate}
+                />
+                <FilterTextField
+                    label="No Pekerja"
+                    bind:inputValue={loanListTable.param.filter
+                        .employeeNumber}
+                />
+                <FilterTextField
+                    label="Status"
+                    bind:inputValue={loanListTable.param.filter.status}
+                />
+            </FilterWrapper>
+        </DataTable>
         </div>
     </CustomTabContent>
 </section>

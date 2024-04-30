@@ -13,7 +13,7 @@ import { loanIdRequestDTOConvert, type loanIdRequestDTO } from '$lib/dto/mypsm/p
 import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import { vechicalDetailConvert, type vechicalDetail } from '$lib/dto/mypsm/pinjaman/vehical-detail.dto';
 import { OfferedLoanConvert, type OfferedLoan } from '$lib/dto/mypsm/pinjaman/offered-loan-detail.dto';
-import { suppliersConvert, type Supplier,  } from '$lib/dto/mypsm/pinjaman/supplier-detail.dto';
+import { suppliersConvert, type Supplier, } from '$lib/dto/mypsm/pinjaman/supplier-detail.dto';
 import { VehicleFirstScheduleConvert, type VehicleFirstSchedule } from '$lib/dto/mypsm/pinjaman/car-first-schedule-detail.dto';
 import { FirstScheduleConvert, type FirstSchedule } from '$lib/dto/mypsm/pinjaman/first-schedule.dto';
 import { SecondScheduleConvert, type SecondSchedule } from '$lib/dto/mypsm/pinjaman/second-schedule.dto';
@@ -24,7 +24,7 @@ import { EligibilityConvert, type Eligibility } from '$lib/dto/mypsm/pinjaman/el
 import { DocumentCheckConvert, type DocumentCheck } from '$lib/dto/mypsm/pinjaman/document-check.dto';
 import { addLoanConvert, type addLoan } from '$lib/dto/mypsm/pinjaman/add-loan.dto';
 
-export class LoanServices{
+export class LoanServices {
     // table
 
     static async getLoanListDetails(
@@ -80,7 +80,7 @@ export class LoanServices{
             return CommonResponseConstant.httpError;
         }
     }
-      //============================================
+    //============================================
     //========= Get Personal Detail ==============
     //============================================
     static async getOwnProfilePersonalDetails() {
@@ -102,7 +102,7 @@ export class LoanServices{
             return CommonResponseConstant.httpError;
         }
     }
-     //============================================
+    //============================================
     //========= Loan Detail==============
     //============================================
 
@@ -132,7 +132,7 @@ export class LoanServices{
     //============================================
     //=========Vehicle Detail==============
     //============================================
-    
+
     static async getVehicleDetails(param: loanIdRequestDTO) {
         try {
             let url: Input = 'loan/vehicle_detail/get';
@@ -158,7 +158,7 @@ export class LoanServices{
     //============================================
     //=========Get Document==============
     //============================================
-    
+
     static async getDocument(param: loanIdRequestDTO) {
         try {
             let url: Input = 'loan/document/get';
@@ -183,7 +183,7 @@ export class LoanServices{
 
 
 
-     //============================================
+    //============================================
     //========= Offer Loan Detail==============
     //============================================
 
@@ -211,7 +211,7 @@ export class LoanServices{
     }
 
 
-     //============================================
+    //============================================
     //========= Supplier ==============
     //============================================
 
@@ -264,14 +264,14 @@ export class LoanServices{
         }
     }
 
-     //============================================
+    //============================================
     //========= Agreement Form ==============
     //============================================
 
     static async getAgreementForm(param: string) {
         try {
             const url: Input = param;
- 
+
             // get the promise response
             const promiseRes = await http.get(url, {
                 prefixUrl: '',
@@ -280,7 +280,7 @@ export class LoanServices{
                     'Content-type': 'application/pdf',
                 },
             });
- 
+
             if (promiseRes.status == 200) {
                 window.open(promiseRes.url);
                 return promiseRes.url;
@@ -400,7 +400,7 @@ export class LoanServices{
         }
     }
 
-     //============================================
+    //============================================
     //========= Document Check =======
     //============================================
 
@@ -455,9 +455,9 @@ export class LoanServices{
         }
     }
 
-///=====================================================
-//================ Supporter approval =================
-//=====================================================
+    ///=====================================================
+    //================ Supporter approval =================
+    //=====================================================
 
 
     static async getSupporterApprovalDetails(param: loanIdRequestDTO) {
@@ -482,273 +482,107 @@ export class LoanServices{
         }
     }
 
-///=====================================================
-//================ Approver ======================
-//=====================================================
+    ///=====================================================
+    //================ Approver ======================
+    //=====================================================
 
 
-static async getApproverDetails(param: loanIdRequestDTO) {
-    try {
-        let url: Input = 'loan/get_approver';
-
-        const response: Response = await http
-            .post(url, {
-                body: loanIdRequestDTOConvert.toJson(param),
-            })
-            .json();
-
-        const result = CommonResponseConvert.fromResponse(response);
-
-        if (result.status == 'success') {
-            return result;
-        } else {
-            return CommonResponseConstant.httpError;
-        }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
-    }
-}
-
-//=====================================================
-//================ Approver approval ==================
-//=====================================================
-
-static async getApproverApprovalDetails(param: loanIdRequestDTO) {
-    try {
-        let url: Input = 'loan/approver_approval/get';
-
-        const response: Response = await http
-            .post(url, {
-                body: loanIdRequestDTOConvert.toJson(param),
-            })
-            .json();
-
-        const result = CommonResponseConvert.fromResponse(response);
-
-        if (result.status == 'success') {
-            return result;
-        } else {
-            return CommonResponseConstant.httpError;
-        }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
-    }
-}
-
-// ==========================================================================================
-// ======================================= Add ==============================================
-// ==========================================================================================
-
-//============================================
- //========= Add Loan ==================
-//============================================
-
-static async addLoan(param: addLoan) {
-    try {
-        let url: Input = 'loan/add';
-
-        const promiseRes: Promise<Response> = http
-            .post(url, {
-                body: addLoanConvert.toJson(param),
-            })
-            .json();
-
-        const response: Response = await getPromiseToast(promiseRes);
-        const result = CommonResponseConvert.fromResponse(response);
-
-        if (result.status == 'success') {
-            await invalidateAll()
-            return result;
-        } else {
-            return CommonResponseConstant.httpError;
-        }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
-    }
-}
- //============================================
- //========= Add Loan Detail==================
-//============================================
-
-static async addLoanDetail(param: loanIdRequestDTO) {
-    try {
-        let url: Input = 'loan/detail/add';
-
-        const promiseRes: Promise<Response> = http
-            .post(url, {
-                body: loanIdRequestDTOConvert.toJson(param),
-            })
-            .json();
-
-        const response: Response = await getPromiseToast(promiseRes);
-        const result = CommonResponseConvert.fromResponse(response);
-
-        if (result.status == 'success') {
-            invalidateAll()
-            return result;
-        } else {
-            return CommonResponseConstant.httpError;
-        }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
-    }
-}
-
- //============================================
- //========= Add Vehicle Detail==================
-//============================================
-
-static async addVehicleDetail(param:vechicalDetail) {
-    try {
-        let url: Input = 'loan/vehicle_detail/add';
-
-        const promiseRes: Promise<Response> = http
-            .post(url, {
-                body: vechicalDetailConvert.toJson(param),
-            })
-            .json();
-
-        const response: Response = await getPromiseToast(promiseRes);
-        const result = CommonResponseConvert.fromResponse(response);
-
-        if (result.status == 'success') {
-            invalidateAll()
-            return result;
-        } else {
-            return CommonResponseConstant.httpError;
-        }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
-    }
-}
- //============================================
- //========= Add Document ====================
-//============================================
-
-static async addDocument(param: string) {
-    try {
-        let url: Input = 'loan/document/add';
-        const promiseRes: Promise<Response> = http
-            .post(url, {
-                body: param,
-            })
-            .json();
-
-        const response: Response = await getPromiseToast(promiseRes);
-        const result = CommonResponseConvert.fromResponse(response);
-
-        if (result.status == 'success') {
-            invalidateAll()
-            return result;
-        } else {
-            return CommonResponseConstant.httpError;
-        }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
-    }
-}
-
- //============================================
- //========= Add offer Loan Detail ============
-//============================================
-
-static async offerLoanDetail(param: OfferedLoan) {
-    try {
-        let url: Input = 'loan/offered_loan/add';
-
-        const promiseRes: Promise<Response> = http
-            .post(url, {
-                body: OfferedLoanConvert.toJson(param),
-            })
-            .json();
-
-        const response: Response = await getPromiseToast(promiseRes);
-        const result = CommonResponseConvert.fromResponse(response);
-
-        if (result.status == 'success') {
-            invalidateAll()
-            return result;
-        } else {
-            return CommonResponseConstant.httpError;
-        }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
-    }
-}
-
- //============================================
- //========= Add Supplier Detail ============
-//============================================
-
-static async supplierDetail(param: Supplier) {
-    try {
-        let url: Input = 'loan/supplier/add';
-
-        const promiseRes: Promise<Response> = http
-            .post(url, {
-                body: suppliersConvert.toJson(param),
-            })
-            .json();
-
-        const response: Response = await getPromiseToast(promiseRes);
-        const result = CommonResponseConvert.fromResponse(response);
-
-        if (result.status == 'success') {
-            invalidateAll()
-            return result;
-        } else {
-            return CommonResponseConstant.httpError;
-        }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
-    }
-}
-
- //============================================
- //========= Add Agreement Letter ============
-//============================================
-
-
-static async addAgreementLetter(param: string) {
-    try {
-        let url: Input = 'loan/agreement_letter/add';
-        const promiseRes: Promise<Response> = http
-            .post(url, {
-                body: param,
-            })
-            .json();
-
-        const response: Response = await getPromiseToast(promiseRes);
-        const result = CommonResponseConvert.fromResponse(response);
-
-        if (result.status == 'success') {
-            invalidateAll()
-            return result;
-        } else {
-            return CommonResponseConstant.httpError;
-        }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
-    }
-}
-
- //============================================
- //========= Add Jadual Pertama (Kenderaan) =======
- //============================================
-
-    static async addVehicleFirstScheduleDetail(param: VehicleFirstSchedule) {
+    static async getApproverDetails(param: loanIdRequestDTO) {
         try {
-            let url: Input = 'loan/first_schedule/vehicle/add';
-    
-            const promiseRes: Promise<Response> = http
+            let url: Input = 'loan/get_approver';
+
+            const response: Response = await http
                 .post(url, {
-                    body: VehicleFirstScheduleConvert.toJson(param),
+                    body: loanIdRequestDTOConvert.toJson(param),
                 })
                 .json();
-    
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //=====================================================
+    //================ Approver approval ==================
+    //=====================================================
+
+    static async getApproverApprovalDetails(param: loanIdRequestDTO) {
+        try {
+            let url: Input = 'loan/approver_approval/get';
+
+            const response: Response = await http
+                .post(url, {
+                    body: loanIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // ==========================================================================================
+    // ======================================= Add ==============================================
+    // ==========================================================================================
+
+    //============================================
+    //========= Add Loan ==================
+    //============================================
+
+    static async addLoan(param: addLoan) {
+        try {
+            let url: Input = 'loan/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: addLoanConvert.toJson(param),
+                })
+                .json();
+
             const response: Response = await getPromiseToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
-    
+
+            if (result.status == 'success') {
+                await invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //============================================
+    //========= Add Loan Detail==================
+    //============================================
+
+    static async addLoanDetail(param: loanIdRequestDTO) {
+        try {
+            let url: Input = 'loan/detail/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: loanIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
             if (result.status == 'success') {
                 invalidateAll()
                 return result;
@@ -760,236 +594,533 @@ static async addAgreementLetter(param: string) {
         }
     }
 
-//============================================
- //========= Add Jadual Pertama ===============
- //============================================
+    //============================================
+    //========= Add Vehicle Detail==================
+    //============================================
 
- static async addFirstScheduleDetail(param: FirstSchedule) {
-    try {
-        let url: Input = 'loan/first_schedule/add';
+    static async addVehicleDetail(param: vechicalDetail) {
+        try {
+            let url: Input = 'loan/vehicle_detail/add';
 
-        const promiseRes: Promise<Response> = http
-            .post(url, {
-                body: FirstScheduleConvert.toJson(param),
-            })
-            .json();
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: vechicalDetailConvert.toJson(param),
+                })
+                .json();
 
-        const response: Response = await getPromiseToast(promiseRes);
-        const result = CommonResponseConvert.fromResponse(response);
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
 
-        if (result.status == 'success') {
-            invalidateAll()
-            return result;
-        } else {
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
             return CommonResponseConstant.httpError;
         }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
     }
-}
+    //============================================
+    //========= Add Document ====================
+    //============================================
 
-//============================================
- //========= Add Jadual Kedua ===============
- //============================================
+    static async addDocument(param: string) {
+        try {
+            let url: Input = 'loan/document/add';
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: param,
+                })
+                .json();
 
- static async addSecondScheduleDetail(param: SecondSchedule) {
-    try {
-        let url: Input = 'loan/second_schedule/add';
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
 
-        const promiseRes: Promise<Response> = http
-            .post(url, {
-                body: SecondScheduleConvert.toJson(param),
-            })
-            .json();
-
-        const response: Response = await getPromiseToast(promiseRes);
-        const result = CommonResponseConvert.fromResponse(response);
-
-        if (result.status == 'success') {
-            invalidateAll()
-            return result;
-        } else {
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
             return CommonResponseConstant.httpError;
         }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
     }
-}
 
-//============================================
- //=========Add Eligibility ===============
- //============================================
+    //============================================
+    //========= Add offer Loan Detail ============
+    //============================================
 
- static async addEligibilityDetail(param: Eligibility) {
-    try {
-        let url: Input = 'loan/eligibility/add';
+    static async offerLoanDetail(param: OfferedLoan) {
+        try {
+            let url: Input = 'loan/offered_loan/add';
 
-        const promiseRes: Promise<Response> = http
-            .post(url, {
-                body: EligibilityConvert.toJson(param),
-            })
-            .json();
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: OfferedLoanConvert.toJson(param),
+                })
+                .json();
 
-        const response: Response = await getPromiseToast(promiseRes);
-        const result = CommonResponseConvert.fromResponse(response);
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
 
-        if (result.status == 'success') {
-            invalidateAll()
-            return result;
-        } else {
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
             return CommonResponseConstant.httpError;
         }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
     }
-}
 
-//============================================
- //=========Add Document Check ===============
- //============================================
+    //============================================
+    //========= Add Supplier Detail ============
+    //============================================
 
- static async addDocumentCheckDetail(param: DocumentCheck) {
-    try {
-        let url: Input = 'loan/document/check/add';
+    static async supplierDetail(param: Supplier) {
+        try {
+            let url: Input = 'loan/supplier/add';
 
-        const promiseRes: Promise<Response> = http
-            .post(url, {
-                body: DocumentCheckConvert.toJson(param),
-            })
-            .json();
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: suppliersConvert.toJson(param),
+                })
+                .json();
 
-        const response: Response = await getPromiseToast(promiseRes);
-        const result = CommonResponseConvert.fromResponse(response);
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
 
-        if (result.status == 'success') {
-            invalidateAll()
-            return result;
-        } else {
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
             return CommonResponseConstant.httpError;
         }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
     }
-}
 
-//============================================
- //========= Add Payment Document ===============
- //============================================
+    //============================================
+    //========= Add Agreement Letter ============
+    //============================================
 
-static async addPaymentDocument(param: string) {
-    try {
-        let url: Input = 'loan/payment_document/add';
-        const promiseRes: Promise<Response> = http
-            .post(url, {
-                body: param,
-            })
-            .json();
 
-        const response: Response = await getPromiseToast(promiseRes);
-        const result = CommonResponseConvert.fromResponse(response);
+    static async addAgreementLetter(param: string) {
+        try {
+            let url: Input = 'loan/agreement_letter/add';
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: param,
+                })
+                .json();
 
-        if (result.status == 'success') {
-            invalidateAll()
-            return result;
-        } else {
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
             return CommonResponseConstant.httpError;
         }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
     }
-}
 
-//============================================
- //========= Add Support Approval ===============
- //============================================
+    //============================================
+    //========= Add Jadual Pertama (Kenderaan) =======
+    //============================================
 
- static async addSupportApproval(param: SupportApprover) {
-    try {
-        let url: Input = 'loan/supporter_approval/add';
+    static async addVehicleFirstScheduleDetail(param: VehicleFirstSchedule) {
+        try {
+            let url: Input = 'loan/first_schedule/vehicle/add';
 
-        const promiseRes: Promise<Response> = http
-            .post(url, {
-                body: SupportApproverConvert.toJson(param),
-            })
-            .json();
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: VehicleFirstScheduleConvert.toJson(param),
+                })
+                .json();
 
-        const response: Response = await getPromiseToast(promiseRes);
-        const result = CommonResponseConvert.fromResponse(response);
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
 
-        if (result.status == 'success') {
-            invalidateAll()
-            return result;
-        } else {
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
             return CommonResponseConstant.httpError;
         }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
     }
-}
 
-//============================================
- //========= Add Approver ===============
- //============================================
+    //============================================
+    //========= Add Jadual Pertama ===============
+    //============================================
 
- static async addApprover(param: Approver) {
-    try {
-        let url: Input = 'loan/add_approver';
+    static async addFirstScheduleDetail(param: FirstSchedule) {
+        try {
+            let url: Input = 'loan/first_schedule/add';
 
-        const promiseRes: Promise<Response> = http
-            .post(url, {
-                body: ApproverConvert.toJson(param),
-            })
-            .json();
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: FirstScheduleConvert.toJson(param),
+                })
+                .json();
 
-        const response: Response = await getPromiseToast(promiseRes);
-        const result = CommonResponseConvert.fromResponse(response);
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
 
-        if (result.status == 'success') {
-            invalidateAll()
-            return result;
-        } else {
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
             return CommonResponseConstant.httpError;
         }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
     }
-}
 
-//============================================
- //========= Add Approver Approval ===============
- //============================================
+    //============================================
+    //========= Add Jadual Kedua ===============
+    //============================================
 
- static async addApproverApproval(param: ApproverApproval) {
-    try {
-        let url: Input = 'loan/approver_approval/add';
+    static async addSecondScheduleDetail(param: SecondSchedule) {
+        try {
+            let url: Input = 'loan/second_schedule/add';
 
-        const promiseRes: Promise<Response> = http
-            .post(url, {
-                body: ApproverApprovalConvert.toJson(param),
-            })
-            .json();
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: SecondScheduleConvert.toJson(param),
+                })
+                .json();
 
-        const response: Response = await getPromiseToast(promiseRes);
-        const result = CommonResponseConvert.fromResponse(response);
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
 
-        if (result.status == 'success') {
-            invalidateAll()
-            return result;
-        } else {
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
             return CommonResponseConstant.httpError;
         }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
     }
-}
+
+    //============================================
+    //=========Add Eligibility ===============
+    //============================================
+
+    static async addEligibilityDetail(param: Eligibility) {
+        try {
+            let url: Input = 'loan/eligibility/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: EligibilityConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //============================================
+    //=========Add Document Check ===============
+    //============================================
+
+    static async addDocumentCheckDetail(param: DocumentCheck) {
+        try {
+            let url: Input = 'loan/document/check/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: DocumentCheckConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //============================================
+    //========= Add Payment Document ===============
+    //============================================
+
+    static async addPaymentDocument(param: string) {
+        try {
+            let url: Input = 'loan/payment_document/add';
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: param,
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //============================================
+    //========= Add Support Approval ===============
+    //============================================
+
+    static async addSupportApproval(param: SupportApprover) {
+        try {
+            let url: Input = 'loan/supporter_approval/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: SupportApproverConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //============================================
+    //========= Add Approver ===============
+    //============================================
+
+    static async addApprover(param: Approver) {
+        try {
+            let url: Input = 'loan/add_approver';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: ApproverConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //============================================
+    //========= Add Approver Approval ===============
+    //============================================
+
+    static async addApproverApproval(param: ApproverApproval) {
+        try {
+            let url: Input = 'loan/approver_approval/add';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: ApproverApprovalConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
 
 
-// ==========================================================================================
-// ======================================= Edit =============================================
-// ==========================================================================================
+    // ==========================================================================================
+    // ======================================= Download =============================================
+    // ==========================================================================================
+    static async getLetterComputerForm(
+    ) {
+        try {
+            const url: Input = 'loan/agreement_letter/computer_form';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .get(url)
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getLetterVehicleForm(
+    ) {
+        try {
+            const url: Input = 'loan/agreement_letter/vehicle_form';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .get(url)
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getLoanDocument(
+        param: loanIdRequestDTO
+    ) {
+        try {
+            const url: Input = 'loan/document/get';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, { body: JSON.stringify(param) })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getLoanAgreementLetter(
+        param: loanIdRequestDTO
+    ) {
+        try {
+            const url: Input = 'loan/agreement_letter/get';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+            .post(url, { body: JSON.stringify(param) })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getLoanPayment(
+        param: loanIdRequestDTO
+    ) {
+        try {
+            const url: Input = 'loan/payment_document/get';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+            .post(url, { body: JSON.stringify(param) })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
 
 
-    
 }

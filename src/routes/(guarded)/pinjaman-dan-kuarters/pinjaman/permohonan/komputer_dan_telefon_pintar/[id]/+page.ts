@@ -36,6 +36,10 @@ export async function load({ params }) {
     // set default application id
     let currentApplicationId: number = 0;
 
+    const loanIDRequest: loanIdRequestDTO = {
+        id: Number(params.id)
+    }
+
     if (params.id !== "Baru") {
         // reset application id to actual application id if not new
         currentApplicationId = parseInt(params.id);
@@ -57,19 +61,19 @@ export async function load({ params }) {
         serviceGroupLookupResponse,
     );
     // -------------------------------------------------------
-     
-      const gradeLookupResponse: CommonResponseDTO =
-      await LookupServices.getServiceGradeEnums();
 
-  const gradeLookup: DropdownDTO[] =
-      LookupServices.setSelectOptions(gradeLookupResponse);
+    const gradeLookupResponse: CommonResponseDTO =
+        await LookupServices.getServiceGradeEnums();
 
-// -------------------------------------------------------
+    const gradeLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(gradeLookupResponse);
+
+    // -------------------------------------------------------
     const schemeLookupResponse: CommonResponseDTO =
-    await LookupServices.getSchemeEnums();
+        await LookupServices.getSchemeEnums();
 
-const schemeLookup: DropdownDTO[] =
-    LookupServices.setSelectOptions(schemeLookupResponse);
+    const schemeLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(schemeLookupResponse);
 
 
     // -------------------------------------------------------
@@ -169,6 +173,25 @@ const schemeLookup: DropdownDTO[] =
         }
     }
 
+    // ================================================
+    //  doean letter computer
+    const documentDetailsComputer: CommonResponseDTO =
+        await LoanServices.getLetterComputerForm();
+
+    // ================================================
+    //  download letter computer
+    const loanDocument: CommonResponseDTO =
+        await LoanServices.getLoanDocument(loanIDRequest);
+
+    // ================================================
+    //  download letter computer
+    const loanAgreementLetter: CommonResponseDTO =
+        await LoanServices.getLoanAgreementLetter(loanIDRequest);
+    // ================================================
+    //  download letter computer
+    const loanPayment: CommonResponseDTO =
+        await LoanServices.getLoanPayment(loanIDRequest);
+
 
     // =========================================
     // =========== Form ========================
@@ -188,7 +211,7 @@ const schemeLookup: DropdownDTO[] =
     const offerLoanForm = await superValidate(zod(
         _offerLoan))
         ;
-        offerLoanForm.data.loanType = loan;
+    offerLoanForm.data.loanType = loan;
 
     const vehicleFirstScheduleDetailsForm = await superValidate(zod(
         _vehicleFirstSchedule))
@@ -247,7 +270,7 @@ const schemeLookup: DropdownDTO[] =
 
             personalDetailForm.data = personalDetail;
         }
-    }else{
+    } else {
         // if application is new
         let personalDetailRequestBody: loanIdRequestDTO = {
             id: currentApplicationId
@@ -273,7 +296,7 @@ const schemeLookup: DropdownDTO[] =
         let loanDetailRequestBody: loanIdRequestDTO = {
             id: currentApplicationId
         }
-        
+
         const loanDetailResponse: CommonResponseDTO =
             await LoanServices.getLoanDetails
                 (loanDetailRequestBody);
@@ -284,7 +307,7 @@ const schemeLookup: DropdownDTO[] =
             try {
                 loanDetailsForm.data = loanDetail;
                 loanDetailsForm.data.maxLoan = loanDetail.maxLoan;
-               
+
             } catch (error) {
                 console.log(error);
             }
@@ -334,7 +357,7 @@ const schemeLookup: DropdownDTO[] =
             offerLoanForm.data = offerLoanDetail;
 
             let tempString: string;
-            tempString = (offerLoanForm.data.loanType).split("_").map((word) => word.charAt(0).toUpperCase()+word.slice(1)).join(' ')
+            tempString = (offerLoanForm.data.loanType).split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
             offerLoanForm.data.loanType = tempString;
         }
     }
@@ -425,7 +448,7 @@ const schemeLookup: DropdownDTO[] =
             eligibilityDetailsForm.data = eligibilityDetail;
         }
     }
- 
+
     // ===============
     // Document Check
     // ===============
@@ -610,7 +633,11 @@ const schemeLookup: DropdownDTO[] =
         serviceGroupLookup,
         gradeLookup,
         schemeLookup,
-        
+        documentDetailsComputer,
+        loanDocument,
+        loanAgreementLetter,
+        loanPayment,
+
     }
 }
 
@@ -864,19 +891,19 @@ function fetchBase64Data(file: File): Promise<DocumentBase64RequestDTO> {
 
 const getAgreementLetter = () => {
     const url = "http://localhost:3333/loan/agreement_letter/computer_form"
-    
+
     return url
 }
 
 export const _applyLoan = async () => {
-    
+
     let selectedType: addLoan = {
         loanType: 'komputer-dan-telefon-pintar',
     }
-   
+
     const response: CommonResponseDTO =
         await LoanServices.addLoan(selectedType);
- 
+
     if (response.status == "success") {
 
         return { response }

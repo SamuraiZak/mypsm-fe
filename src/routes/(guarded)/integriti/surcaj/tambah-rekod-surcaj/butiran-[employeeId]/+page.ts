@@ -270,7 +270,7 @@ export async function load({ params }) {
         {
             errors: false
         })
-
+console.log(applicationDetail)
     const meetingDetail = await superValidate(zod(_meetingDetail),
         {
             errors: false
