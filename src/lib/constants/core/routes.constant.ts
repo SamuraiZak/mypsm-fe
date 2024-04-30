@@ -111,7 +111,7 @@ export class ModuleConstant {
 
     public static leave: ModuleDTO = {
         name: 'Cuti',
-        url: '',
+        url: '/cuti/permohonan',
         description: 'Lihat laporan cuti, memohon cuti dan pengeluaran GCR.',
         icon: 'calendar',
         roles: [
