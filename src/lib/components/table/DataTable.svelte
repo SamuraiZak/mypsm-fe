@@ -231,18 +231,39 @@
                 filter: tableData.param.filter,
             };
 
-            const response: Response = await http
-                .post(tableData.url, {
-                    body: CommonListRequestConvert.toJson(printParam),
-                })
-                .json();
+            if (tableData.url !== '') {
+                const response: Response = await http
+                    .post(tableData.url, {
+                        body: CommonListRequestConvert.toJson(printParam),
+                    })
+                    .json();
 
-            const result = CommonResponseConvert.fromResponse(response);
+                const result = CommonResponseConvert.fromResponse(response);
 
-            if (result.status == 'success') {
-                let tempData: object[] = result.data?.dataList as object[];
+                if (result.status == 'success') {
+                    let tempData: object[] = result.data?.dataList as object[];
 
-                tableData.exportData = tempData;
+                    tableData.exportData = tempData;
+
+                    let printElement = document.getElementById(elementId);
+
+                    let printWindow = window.open('', 'PRINT');
+                    printWindow?.document.write(
+                        document.documentElement.innerHTML,
+                    );
+                    setTimeout(() => {
+                        // Needed for large documents
+                        printWindow!.document.body.style.margin = '0 0';
+                        printWindow!.document.body.innerHTML =
+                            printElement!.outerHTML;
+                        printWindow!.document.close(); // necessary for IE >= 10
+                        printWindow!.focus(); // necessary for IE >= 10*/
+                        printWindow!.print();
+                        printWindow!.close();
+                    }, 1000);
+                }
+            } else if (tableData.url == '') {
+                tableData.exportData = tableData.data;
 
                 let printElement = document.getElementById(elementId);
 
@@ -280,20 +301,34 @@
                     filter: tableData.param.filter,
                 };
 
-                const response: Response = await http
-                    .post(tableData.url, {
-                        body: CommonListRequestConvert.toJson(printParam),
-                    })
-                    .json();
+                if (tableData.url !== '') {
+                    const response: Response = await http
+                        .post(tableData.url, {
+                            body: CommonListRequestConvert.toJson(printParam),
+                        })
+                        .json();
 
-                const result = CommonResponseConvert.fromResponse(response);
+                    const result = CommonResponseConvert.fromResponse(response);
 
-                if (result.status == 'success') {
-                    let tempData: object[] = result.data?.dataList as object[];
+                    if (result.status == 'success') {
+                        let tempData: object[] = result.data
+                            ?.dataList as object[];
 
-                    tableData.exportData = tempData;
+                        tableData.exportData = tempData;
 
-                    ExportHelper.excel(title, tableData, tableData.dictionary);
+                        ExportHelper.excel(
+                            title,
+                            tableData,
+                            tableData.dictionary,
+                        );
+                    }
+                } else if(tableData.url == ''){
+                    tableData.exportData = tableData.data;
+                    ExportHelper.excel(
+                            title,
+                            tableData,
+                            tableData.dictionary,
+                        );
                 }
 
                 loading = false;
