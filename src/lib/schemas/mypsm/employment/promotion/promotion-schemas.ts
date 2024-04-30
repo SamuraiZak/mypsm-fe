@@ -42,8 +42,8 @@ export const _editPromotionPlacement = z.object({
     promotionType: shortTextSchema,
     promotionDate: shortTextSchema,
     salaryMovementMonth: shortTextSchema,
-    newGrade: z.string(),
-    newPlacement: shortTextSchema,
+    newGrade: z.string({invalid_type_error: "Medan ini tidak boleh kosong."}),
+    newPlacement: z.string({invalid_type_error: "Medan ini tidak boleh kosong."}),
 })
 
 export const _editEmployeePromotion = z.object({

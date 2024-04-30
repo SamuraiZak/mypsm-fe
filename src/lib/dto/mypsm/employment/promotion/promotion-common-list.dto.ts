@@ -1,8 +1,9 @@
 export interface PromotionCommonList {
-    groupId:        number;
+    groupId?:        number;
+    promotionId?:    number;
     promotionType:  string;
     date:           string;
-    candidateCount: number;
+    candidateCount?: number;
     status:         string;
 }
 
