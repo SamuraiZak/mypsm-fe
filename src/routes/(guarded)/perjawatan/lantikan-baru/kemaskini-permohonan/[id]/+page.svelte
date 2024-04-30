@@ -804,7 +804,7 @@
                     disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.identityDocumentColor}
                     id="identityDocumentColor"
-                    label="Warna Kad Pengenalan"
+                    label="Jenis Kad Pengenalan"
                     bind:val={$form.identityDocumentColor}
                     options={data.selectionOptions.identityCardColorLookup}
                 ></CustomSelectField>
@@ -1528,7 +1528,7 @@
                                 ></CustomTextField>
                                 <CustomSelectField
                                     id="addIdentityDocumentColor"
-                                    label={'Warna Kad Pengenalan'}
+                                    label={'Jenis Kad Pengenalan'}
                                     options={data.selectionOptions
                                         .identityCardColorLookup}
                                     disabled={$isReadonlyFamilyFormStepper}
@@ -1792,7 +1792,7 @@
                                 ></CustomTextField>
                                 <CustomSelectField
                                     id="addIdentityDocumentColor"
-                                    label={'Warna Kad Pengenalan'}
+                                    label={'Jenis Kad Pengenalan'}
                                     options={data.selectionOptions
                                         .identityCardColorLookup}
                                     disabled={$isReadonlyFamilyFormStepper}
@@ -2070,7 +2070,7 @@
                                 ></CustomTextField>
                                 <CustomSelectField
                                     id="addIdentityDocumentColor"
-                                    label={'Warna Kad Pengenalan'}
+                                    label={'Jenis Kad Pengenalan'}
                                     options={data.selectionOptions
                                         .identityCardColorLookup}
                                     disabled={$isReadonlyFamilyFormStepper}
@@ -3282,7 +3282,7 @@
         <CustomSelectField
             errors={$addFamilyErrors.identityDocumentColor}
             id="identityDocumentColor"
-            label={'Warna Kad Pengenalan'}
+            label={'Jenis Kad Pengenalan'}
             options={data.selectionOptions.identityCardColorLookup}
             bind:val={$addFamilyModal.identityDocumentColor}
         ></CustomSelectField>
@@ -3472,7 +3472,7 @@
         <CustomSelectField
             errors={$addNonFamilyErrors.identityDocumentColor}
             id="identityDocumentColor"
-            label={'Warna Kad Pengenalan'}
+            label={'Jenis Kad Pengenalan'}
             options={data.selectionOptions.identityCardColorLookup}
             bind:val={$addNonFamilyModal.identityDocumentColor}
         ></CustomSelectField>
@@ -3664,7 +3664,7 @@
         <CustomSelectField
             errors={$addNextOfKinErrors.identityDocumentColor}
             id="identityDocumentColor"
-            label={'Warna Kad Pengenalan'}
+            label={'Jenis Kad Pengenalan'}
             options={data.selectionOptions.identityCardColorLookup}
             bind:val={$addNextOfKinModal.identityDocumentColor}
         ></CustomSelectField>
