@@ -17,71 +17,96 @@
     let selectedData: any;
 
     // set the table
-    let leaveListTable: TableSettingDTO = {
-        param: data.props.leaveListRequest,
-        meta: data.props.leaveListResponse.data?.meta ?? {
+    let applicationListTable: TableSettingDTO = {
+        param: data.props.applicationListRequest,
+        meta: data.props.applicationListResponse.data?.meta ?? {
             pageSize: 1,
             pageNum: 1,
             totalData: 1,
             totalPage: 1,
         },
-        data: data.props.leaveListResponse.data?.dataList ?? [],
+        data: data.props.applicationListResponse.data?.dataList ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['hrmisLeaveId', 'employeeNo'],
+        hiddenColumn: ['leaveId', 'employeeNumber', 'leaveCode'],
         dictionary: [
             {
-                english: 'leaveRequestDate',
-                malay: 'Tarikh Permohonan',
+                english: 'identityCardNumber',
+                malay: 'No. Kad Pengenalan',
             },
             {
-                english: 'approverName',
-                malay: 'Nama Pelulus',
+                english: 'durationDays',
+                malay: 'Jumlah Hari',
             },
         ],
-        url: 'leave/hrmis/leave',
-        id: 'leaveListTable',
+        url: 'leave/application_list',
+        id: 'leaveApplicationTable',
         option: {
             checkbox: false,
-            detail: false,
+            detail: true,
             edit: false,
             select: false,
-            filter:
-                data.props.currentRoleCode !== UserRoleConstant.kakitangan.code,
+            filter: true,
         },
         controls: {
-            add: false,
+            add: data.props.currentRoleCode == UserRoleConstant.kakitangan.code,
         },
     };
+
+    function addApplication() {
+        let url = '/cuti/permohonan_cuti/baru';
+
+        goto(url);
+    }
+
+    function viewDetails() {
+        let currentType: LookupDTO =
+            LeaveTypeConstant.list.find(
+                (item) => item.code == selectedData.leaveCode,
+            ) ?? LeaveTypeConstant.unrecordedLeave;
+
+        let url =
+            '/cuti/permohonan_cuti/' +
+            currentType.description +
+            '/' +
+            selectedData.leaveId;
+
+        goto(url);
+    }
 </script>
 
 <div
     class="flex h-full max-h-full w-full flex-col overflow-y-hidden bg-ios-basic-lightBackgroundGray"
 >
     <section class="flex w-full flex-col items-start justify-start">
-        <ContentHeader title="Cuti Rehat, Kecemasan dan Sakit (HRMIS)"
-        ></ContentHeader>
+        <ContentHeader title="Permohonan Cuti"></ContentHeader>
     </section>
     <div
         class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-10 py-4"
     >
         <div class="h h-fit w-full">
             <DataTable
-                title="Senarai Permohonan Cuti Dari HRMIS"
-                bind:tableData={leaveListTable}
+                title="Senarai Permohonan Cuti"
+                bind:tableData={applicationListTable}
                 bind:passData={selectedData}
+                addActions={() => {
+                    addApplication();
+                }}
+                detailActions={() => {
+                    viewDetails();
+                }}
             >
                 <FilterWrapper slot="filter">
+                    <FilterNumberField
+                        label="Tahun"
+                        bind:inputValue={applicationListTable.param.filter.year}
+                    ></FilterNumberField>
+
                     {#if data.props.currentRoleCode !== UserRoleConstant.kakitangan.code}
                         <FilterTextField
                             label="Nama"
-                            bind:inputValue={leaveListTable.param.filter
-                                .staffName}
-                        ></FilterTextField>
-                        <FilterTextField
-                            label="No. Kad Pengenalan"
-                            bind:inputValue={leaveListTable.param.filter
-                                .identityCard}
+                            bind:inputValue={applicationListTable.param.filter
+                                .employeeName}
                         ></FilterTextField>
                     {/if}
                 </FilterWrapper>

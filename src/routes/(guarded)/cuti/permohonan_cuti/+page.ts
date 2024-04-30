@@ -4,10 +4,10 @@ import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-requ
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { UserRoleDTO } from '$lib/dto/core/user-role/user-role.dto';
 import type {
-    HRMISLeaveDTO,
-    HRMISLeaveFilterDTO,
-} from '$lib/dto/mypsm/leave/hrmis-leave.dto';
-import { HRMISLeaveServices } from '$lib/services/implementation/mypsm/leave/hrmis-leave.service';
+    LeaveApplicationDTO,
+    LeaveApplicationFilterDTO,
+} from '$lib/dto/mypsm/leave/leave.dto';
+import { LeaveServices } from '$lib/services/implementation/mypsm/leave/leave.service';
 
 export async function load() {
     // ============================================================
@@ -27,32 +27,33 @@ export async function load() {
     // FECTHING DATA
     // ============================================================
     // set default value
-    let leaveList: HRMISLeaveDTO[] = [];
+    let applicationList: LeaveApplicationDTO[] = [];
 
     // set the filter
-    const leaveListFilter: HRMISLeaveFilterDTO = {
-        identityCard: null,
-        staffNo: null,
-        staffName: null,
-        position: null,
+    const applicationListFilter: LeaveApplicationFilterDTO = {
+        year: new Date().getFullYear(),
+        employeeName: null,
+        leaveType: null,
         status: null,
     };
 
     // set the request body
-    const leaveListRequest: CommonListRequestDTO = {
+    const applicationListRequest: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
         orderBy: null,
         orderType: null,
-        filter: leaveListFilter,
+        filter: applicationListFilter,
     };
 
     // fetch the data
-    const leaveListResponse: CommonResponseDTO =
-        await HRMISLeaveServices.getLeaveApplicationList(leaveListRequest);
+    const applicationListResponse: CommonResponseDTO =
+        await LeaveServices.getLeaveApplicationList(applicationListRequest);
 
-    if (leaveListResponse.status == 'success') {
-        leaveList = leaveListResponse.data?.dataList as HRMISLeaveDTO[];
+    // assign the new value to application list
+    if (applicationListResponse.status == 'success') {
+        applicationList = applicationListResponse.data
+            ?.dataList as LeaveApplicationDTO[];
     }
 
     // ============================================================
@@ -62,10 +63,10 @@ export async function load() {
         props: {
             currentRoleCode,
             currentRole,
-            leaveList,
-            leaveListFilter,
-            leaveListRequest,
-            leaveListResponse,
+            applicationList,
+            applicationListFilter,
+            applicationListRequest,
+            applicationListResponse,
         },
     };
 }
