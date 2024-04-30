@@ -77,7 +77,7 @@ export const load = async () => {
     };
 
     // List
-    if (isEmploymentSecretaryRole) {
+    if (isEmploymentSecretaryRole || isStaffRole) {
         confirmationInServiceListResponse =
             await ConfirmationServices.getConfirmationList(param);
         confirmationInServiceExceedsThreeYearsListResponse =
