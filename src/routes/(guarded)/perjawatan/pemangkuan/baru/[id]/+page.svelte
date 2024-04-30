@@ -29,7 +29,12 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['employeeId', 'homeAddress'],
-        dictionary: [],
+        dictionary: [
+            {
+                english: 'programme',
+                malay: 'program'
+            }
+        ],
         url: 'employment/acting/employee_lists/list',
         id: 'addActingTable',
         option: {
@@ -56,8 +61,13 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['employeeId', 'homeAddress'],
-        dictionary: [],
-        url: "",
+        dictionary: [
+            {
+                english: 'programme',
+                malay: 'program'
+            }
+        ],
+        url: '',
         id: 'selectedEmployeeTable',
         option: {
             checkbox: false,
