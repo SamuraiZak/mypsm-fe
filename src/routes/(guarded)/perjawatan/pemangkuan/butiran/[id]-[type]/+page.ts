@@ -209,6 +209,7 @@ export const load = async ({ params }) => {
             await EmploymentActingServices.getEmployeeInterviewDetail(currentId);
         employeeInterviewDetail =
             employeeInterviewResponse.data?.details as ActingEmployeeInterviewDetail;
+            console.log(employeeInterviewDetail)
         const employeeMeetingResponse: CommonResponseDTO =
             await EmploymentActingServices.getEmployeeMeetingDetail(currentId);
         employeeMeetingDetail =

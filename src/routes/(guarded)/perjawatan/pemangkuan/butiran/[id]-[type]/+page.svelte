@@ -85,8 +85,7 @@
     } from '$lib/constants/core/radio-option-constants';
     import type { MainPromotionMeeting } from '$lib/dto/mypsm/employment/acting/main-promotion-meeting-detail.dto';
     import type {
-        ActingApproverApproval,
-        ActingSupportApproval,
+        ActingFinalApproval,
     } from '$lib/dto/mypsm/employment/acting/acting-approval.dto';
     import type { QuarterCommonApproval } from '$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto';
     import type {
@@ -472,7 +471,16 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['actingId'],
-        dictionary: [],
+        dictionary: [
+            {
+                english: 'propertyDeclaration',
+                malay: 'Pengisytiharan Harta'
+            },
+            {
+                english: 'certificateOfIntegrity',
+                malay: 'Perakuan Urus Setia Integriti'
+            }
+        ],
         url: 'employment/acting/mains/certifications/list',
         id: 'mainCertification',
         option: {
@@ -498,7 +506,12 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['actingId'],
-        dictionary: [],
+        dictionary: [
+            {
+                english: 'promotionMeetingResult',
+                malay: 'Keputusan Mesyuarat Kenaikan Pangkat'
+            },
+        ],
         url: 'employment/acting/mains/promotion_meetings/list',
         id: 'mainPromotionTable',
         option: {
@@ -524,7 +537,24 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['actingId'],
-        dictionary: [],
+        dictionary: [
+            {
+                english: 'acceptingLetter',
+                malay: 'Surat Setuju Terima'
+            },
+            {
+                english: 'reportingForm',
+                malay: 'Borang Lapor Diri'
+            },
+            {
+                english: 'handoverNote',
+                malay: 'Nota Serah Tugas'
+            },
+            {
+                english: 'actingResult',
+                malay: 'Keputusan Pemangkuan'
+            },
+        ],
         url: 'employment/acting/mains/acting_infos/list',
         id: 'mainActingInfoTable',
         option: {
@@ -917,8 +947,8 @@
     let directorApproved: boolean = false;
     let integrityApproved: boolean = false;
 
-    let supporterApproval = {} as ActingSupportApproval;
-    let approverApproval = {} as ActingApproverApproval;
+    let supporterApproval = {} as ActingFinalApproval;
+    let approverApproval = {} as ActingFinalApproval;
     let mainPromotionDetail = {} as MainPromotionMeeting;
     let selectedMainActingInfo: MainActingInfo;
     let mainActingInfoDetail = {} as MainActingDetail;
@@ -954,6 +984,14 @@
                     .then((res) => {
                         employeeActingResult = res.response.data
                             ?.details as ActingResult;
+
+                            _supportApproval(selectedCandidate.actingId).then((res) => {
+                    supporterApproval = res.response.data
+                        ?.details as ActingFinalApproval;
+
+                        _approverApproval(selectedCandidate.actingId).then((res) => {
+                    approverApproval = res.response.data
+                        ?.details as ActingFinalApproval;
                     })
                     .finally(() => {
                         $updateActingResultForm.id =
@@ -968,15 +1006,24 @@
                             employeeActingResult.actingDetails?.newPlacement;
                         $updateActingResultForm.reportDate =
                             employeeActingResult.actingDetails?.reportDate;
+                            $updateActingResultForm.supporterName = employeeActingResult.confirmation?.supporterName;
+                            $updateActingResultForm.approverName = employeeActingResult.confirmation?.approverName;
+                        
+                            //supporter
+                            if (supporterApproval.remark !== null){
+                                $supporterResultForm.remark = supporterApproval.remark;
+                                $supporterResultForm.status = supporterApproval.status;
+                            }
+                            //approver
+                            if (approverApproval.remark !== null){
+                                $approverResultForm.remark = approverApproval.remark;
+                                $approverResultForm.status = approverApproval.status;
+                            }
                     })
-                    .catch((e) => console.log(e));
-                _supportApproval(selectedCandidate.actingId).then((res) => {
-                    supporterApproval = res.response.data
-                        ?.details as ActingSupportApproval;
+                    .catch((e) => {throw new Error(e)});
+                
                 });
-                _approverApproval(selectedCandidate.actingId).then((res) => {
-                    approverApproval = res.response.data
-                        ?.details as ActingApproverApproval;
+                
                 });
                 break;
             }
@@ -2235,7 +2282,6 @@
                                     title="Butiran Penangguhan/Pindaan Penempatan"
                                     borderClass="border-none"
                                 />
-                                {#if data.actingType === 'Gred 1-54'}
                                     <CustomTextField
                                         label="Tarikh Asal Lapor Diri"
                                         disabled
@@ -2315,7 +2361,6 @@
                                             .supporterApproverLookup}
                                         val={$updatePostponeDetail.approverName}
                                     /> -->
-                                {/if}
                             </form>
                         {/if}
                     </StepperContentBody>
@@ -2475,11 +2520,12 @@
                                         errors={$updateActingResultError.reportDate}
                                         bind:val={$updateActingResultForm.reportDate}
                                     />
-                                    {#if Object.values(approverApproval).length < 1}
+                                    {#if $updateActingResultForm.approverName == "Tiada Maklumat"}
                                         <ContentHeader
                                             title="Pengesah Keputusan"
                                             borderClass="border-none"
                                         />
+                                        
                                         <CustomSelectField
                                             label="Nama Penyokong"
                                             id="supporterName"
@@ -2508,7 +2554,6 @@
                                         title="Penyokong"
                                         borderClass="border-none"
                                     />
-                                    {#if Object.values(supporterApproval).length > 0}
                                         <CustomSelectField
                                             label="Nama Penyokong"
                                             id="supporterName"
@@ -2518,26 +2563,6 @@
                                             options={data.lookup
                                                 .supporterApproverLookup}
                                         />
-
-                                        <CustomTextField
-                                            label="Tindakan/Ulasan"
-                                            id="supportedRemark"
-                                            disabled
-                                            bind:val={supporterApproval.supportedRemark}
-                                        />
-                                        <CustomTextField
-                                            label="Keputusan"
-                                            id="supportedStatus"
-                                            disabled
-                                            bind:val={supporterApproval.supportedStatus}
-                                        />
-                                        <CustomTextField
-                                            label="Tarikh Disokong"
-                                            id="supportedDate"
-                                            disabled
-                                            bind:val={supporterApproval.supportedDate}
-                                        />
-                                    {:else}
                                         <CustomTextField
                                             label="Tindakan/Ulasan"
                                             id="remark"
@@ -2552,7 +2577,13 @@
                                             errors={$supporterResultError.status}
                                             options={supportOptions}
                                         />
-                                    {/if}
+                                        <CustomTextField
+                                            label="Tarikh Disokong"
+                                            id="supportedDate"
+                                            disabled
+                                            placeholder="Menunggu keputusan daripada penyokong..."
+                                            bind:val={supporterApproval.supportedDate}
+                                        />
                                 </form>
                                 <form
                                     class="flex w-full flex-col justify-start gap-2.5 rounded-md border border-ios-activeColors-activeBlue-light p-3 md:w-1/2"
@@ -2564,7 +2595,6 @@
                                         title="Pelulus"
                                         borderClass="border-none"
                                     />
-                                    {#if Object.values(approverApproval).length > 0}
                                         <CustomSelectField
                                             label="Nama Pelulus"
                                             id="approverName"
@@ -2576,25 +2606,6 @@
                                         />
                                         <CustomTextField
                                             label="Tindakan/Ulasan"
-                                            id="approvedRemark"
-                                            disabled
-                                            bind:val={approverApproval.approvedRemark}
-                                        />
-                                        <CustomTextField
-                                            label="Keputusan"
-                                            id="approvedStatus"
-                                            disabled
-                                            bind:val={approverApproval.approvedStatus}
-                                        />
-                                        <CustomTextField
-                                            label="Tarikh Diluluskan"
-                                            id="approvedDate"
-                                            disabled
-                                            bind:val={approverApproval.approvedDate}
-                                        />
-                                    {:else}
-                                        <CustomTextField
-                                            label="Tindakan/Ulasan"
                                             id="remark"
                                             type="text"
                                             bind:val={$approverResultForm.remark}
@@ -2602,13 +2613,20 @@
                                         />
                                         <CustomRadioBoolean
                                             id="approverResult"
-                                            label="status"
+                                            label="Keputusan"
                                             disabled={false}
                                             bind:val={$approverResultForm.status}
                                             errors={$approverResultError.status}
                                             options={approveOptions}
                                         />
-                                    {/if}
+                                        <CustomTextField
+                                            label="Tarikh Diluluskan"
+                                            id="approvedDate"
+                                            disabled
+                                            placeholder="Menunggu keputusan daripada pelulus..."
+                                            bind:val={approverApproval.approvedDate}
+                                        />
+                                        
                                 </form>
                             </div>
                         {/if}
@@ -2776,11 +2794,10 @@
                             borderClass="border-none"
                         />
 
-                        {#if data.employeeInterviewDetail.document !== undefined}
+                        {#if data.employeeInterviewDetail.document !== null}
                             {#each data.employeeInterviewDetail.document as docs}
                                 <a
                                     href={docs.document}
-                                    target="_blank"
                                     download={docs.name}
                                     class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
                                     >{docs.name}</a
