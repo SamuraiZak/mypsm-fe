@@ -6,9 +6,7 @@
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
-    import type {
-        TableSettingDTO,
-    } from '$lib/dto/core/table/table.dto';
+    import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type { PromotionCommonList } from '$lib/dto/mypsm/employment/promotion/promotion-common-list.dto';
     import type { PageData } from './$types';
     export let data: PageData;
@@ -117,7 +115,7 @@
     };
 
     let employeeTable: TableSettingDTO = {
-        param: data.param,
+        param: data.employeeParam,
         meta: data.employeePromotionResponse.data?.meta ?? {
             pageSize: 1,
             pageNum: 1,
@@ -127,13 +125,13 @@
         data: data.employeePromotion,
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['groupId'],
+        hiddenColumn: ['promotionId'],
         dictionary: [],
         url: 'employment/promotion/employee/list',
-        id: 'table154',
+        id: 'employeeTable',
         option: {
             checkbox: false,
-            detail: false,
+            detail: true,
             edit: false,
             select: false,
             filter: false,
@@ -142,6 +140,7 @@
             add: false,
         },
     };
+    let tempPromotionType: string = '';
 </script>
 
 <!-- content header starts here -->
@@ -246,6 +245,24 @@
                     <DataTable
                         title="Rekod Kenaikan Pangkat"
                         bind:tableData={employeeTable}
+                        bind:passData={rowData}
+                        detailActions={() => {
+                            if (rowData.promotionType == 'Gred 1-54') {
+                                tempPromotionType = '1-54';
+                            } else if (
+                                rowData.promotionType == 'Gred TBK 1 dan 2'
+                            ) {
+                                tempPromotionType = 'TBK 1 dan 2';
+                            } else if (rowData.promotionType == 'Gred Utama') {
+                                tempPromotionType = 'Utama';
+                            }
+                            goto(
+                                '/perjawatan/kenaikan-pangkat/butiran/' +
+                                    rowData.groupId +
+                                    '-' +
+                                    tempPromotionType,
+                            );
+                        }}
                     ></DataTable>
                 </div>
             </div>

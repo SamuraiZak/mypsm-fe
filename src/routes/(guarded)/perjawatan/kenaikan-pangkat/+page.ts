@@ -15,6 +15,13 @@ export const load = async () => {
         orderType: 1,
         filter: {},
     };
+    const employeeParam = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: "promotionId",
+        orderType: 1,
+        filter: {},
+    };
 
     let table154: PromotionCommonList[] = [];
     let table154Response: CommonResponseDTO = {};
@@ -42,7 +49,7 @@ export const load = async () => {
     }
     else if (currentRoleCode === UserRoleConstant.kakitangan.code) {
         employeePromotionResponse =
-            await EmploymentPromotionServices.getEmployeePromotionOffer(param)
+            await EmploymentPromotionServices.getEmployeePromotionOffer(employeeParam)
         employeePromotion =
             employeePromotionResponse.data?.dataList as PromotionCommonList[];
     }
@@ -56,6 +63,7 @@ export const load = async () => {
         tableTbk12,
         tableMainResponse,
         tableMain,
+        employeeParam,
         employeePromotionResponse,
         employeePromotion,
     };

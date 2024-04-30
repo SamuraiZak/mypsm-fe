@@ -1,11 +1,12 @@
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
+import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { AddNewPromotion } from '$lib/dto/mypsm/employment/promotion/add-promotion.dto';
-import type { PromotionCertificationEmployee, PromotionCommonEmployee, PromotionDetail, PromotionPlacement } from '$lib/dto/mypsm/employment/promotion/promotion-common-employee.dto';
+import type { PromotionCertificationEmployee, PromotionCommonEmployee, PromotionDetail, PromotionPlacement, PromotionPlacementDetail } from '$lib/dto/mypsm/employment/promotion/promotion-common-employee.dto';
 import type { PromotionCertificationGet, PromotionGroupID } from '$lib/dto/mypsm/employment/promotion/promotion-common-groupid.dto';
-import type { PromotionCertification, PromotionCommonApproval, PromotionEmployeeEdit, PromotionPlacementEdit } from '$lib/dto/mypsm/employment/promotion/promotion-form.dto.js';
+import type { PromotionCertification, PromotionCommonApproval, PromotionEmployeeEdit, PromotionPlacementEdit } from '$lib/dto/mypsm/employment/promotion/promotion-form.dto';
 import { _addNewPromotion, _editEmployeePromotion, _editPromotionCertification, _editPromotionPlacement, _promotionCommonApproval } from '$lib/schemas/mypsm/employment/promotion/promotion-schemas';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { EmploymentPromotionServices } from '$lib/services/implementation/mypsm/perjawatan/employment-promotion.service';
@@ -24,6 +25,10 @@ export const load = async ({ params }) => {
         currentId.groupId = Number(params.id);
         isNewPromotion = false;
     }
+    let employeeIdRequest: PromotionCertificationGet = {
+        id: Number(params.id),
+        promotionType: params.type,
+    }
     let lookup = await getLookup();
 
     let employeeListResponse: CommonResponseDTO = {};
@@ -38,6 +43,8 @@ export const load = async ({ params }) => {
     let promotionDetail: PromotionDetail[] = [];
     let finalResultResponse: CommonResponseDTO = {};
     let finalResult: PromotionDetail[] = [];
+
+    let employeePromotionInfo = {} as PromotionPlacementDetail;
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
@@ -64,30 +71,40 @@ export const load = async ({ params }) => {
     const supporterApproval = await superValidate(zod(_promotionCommonApproval));
     const approverApproval = await superValidate(zod(_promotionCommonApproval));
 
-    employeeListResponse =
-        await EmploymentPromotionServices.getEmployeeList(param);
-    employeeList =
-        employeeListResponse.data?.dataList as PromotionCommonEmployee[];
-    certificationListResponse =
-        await EmploymentPromotionServices.getCertificationList(commonParam);
-    certificationList =
-        certificationListResponse.data?.dataList as PromotionCertificationEmployee[];
-    promotionMeetingListResponse =
-        await EmploymentPromotionServices.getPromotionMeetingList(commonParam);
-    promotionMeetingList =
-        promotionMeetingListResponse.data?.dataList as PromotionCertificationEmployee[];
-    placementListResponse =
-        await EmploymentPromotionServices.getPlacementList(commonParam);
-    placementList =
-        placementListResponse.data?.dataList as PromotionPlacement[];
-    promotionDetailResponse =
-        await EmploymentPromotionServices.getPromotionEmployeeList(commonParam)
-    promotionDetail =
-        promotionDetailResponse.data?.dataList as PromotionDetail[];
-    finalResultResponse =
-        await EmploymentPromotionServices.getPromotionFinalResultList(commonParam);
-    finalResult =
-        finalResultResponse.data?.dataList as PromotionDetail[]
+    if (currentRoleCode !== UserRoleConstant.kakitangan.code && params.id !== 'baru') {
+        certificationListResponse =
+            await EmploymentPromotionServices.getCertificationList(commonParam);
+        certificationList =
+            certificationListResponse.data?.dataList as PromotionCertificationEmployee[];
+        promotionMeetingListResponse =
+            await EmploymentPromotionServices.getPromotionMeetingList(commonParam);
+        promotionMeetingList =
+            promotionMeetingListResponse.data?.dataList as PromotionCertificationEmployee[];
+        placementListResponse =
+            await EmploymentPromotionServices.getPlacementList(commonParam);
+        placementList =
+            placementListResponse.data?.dataList as PromotionPlacement[];
+        promotionDetailResponse =
+            await EmploymentPromotionServices.getPromotionEmployeeList(commonParam)
+        promotionDetail =
+            promotionDetailResponse.data?.dataList as PromotionDetail[];
+        finalResultResponse =
+            await EmploymentPromotionServices.getPromotionFinalResultList(commonParam);
+        finalResult =
+            finalResultResponse.data?.dataList as PromotionDetail[]
+    }
+    else if(currentRoleCode == UserRoleConstant.kakitangan.code){
+        const employeePromotionInfoResponse: CommonResponseDTO = 
+            await EmploymentPromotionServices.getPlacementDetail(employeeIdRequest);
+        employeePromotionInfo = 
+            employeePromotionInfoResponse.data?.details as PromotionPlacementDetail;
+    } else if (params.id == 'baru'){
+        employeeListResponse =
+            await EmploymentPromotionServices.getEmployeeList(param);
+        employeeList =
+            employeeListResponse.data?.dataList as PromotionCommonEmployee[];
+    }
+
 
 
 
@@ -119,6 +136,10 @@ export const load = async ({ params }) => {
         integrityForm,
         supporterApproval,
         approverApproval,
+
+        employeePOV: {
+            employeePromotionInfo,
+        }
     };
 
 };
