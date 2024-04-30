@@ -7,9 +7,9 @@ import { PTBKWAPServices } from "$lib/services/implementation/mypsm/PTB-KWAP/PTB
 import { EmploymentActingServices } from "$lib/services/implementation/mypsm/perjawatan/employment-acting.service";
 
 export const load = async () => {
-    
 
-    
+
+
     let currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
     );
@@ -17,8 +17,11 @@ export const load = async () => {
     // urusetia
     let urusetia = UserRoleConstant.urusSetiaPerjawatan.code;
 
-     // employee NO PTB
-     const paramEm = {
+
+
+
+    // employee NO PTB
+    const paramEm = {
         pageNum: 1,
         pageSize: 5,
         orderBy: null,
@@ -26,21 +29,38 @@ export const load = async () => {
         filter: {},
     };
     const actingEmployeeListResponse: CommonResponseDTO =
-    await EmploymentActingServices.getActingEmployeeList(paramEm);
+        await EmploymentActingServices.getActingEmployeeList(paramEm);
 
-let actingEmployeeList: CommonEmployeeDTO[] = [];
+    let actingEmployeeList: CommonEmployeeDTO[] = [];
 
-if (actingEmployeeListResponse.status == "success") {
-    actingEmployeeList = actingEmployeeListResponse.data?.dataList as CommonEmployeeDTO[];
-}
- 
+    if (actingEmployeeListResponse.status == "success") {
+        actingEmployeeList = actingEmployeeListResponse.data?.dataList as CommonEmployeeDTO[];
+    }
+
+    // const param: CommonListRequestDTO = {
+    //     pageNum: 1,
+    //     pageSize: 5,
+    //     orderBy: "id",
+    //     orderType: 1,
+    //     filter: {
+    //         dataType: 1,
+    //         staffName: "",
+    //         staffNo: "",
+    //         identityCard: "",
+    //         applicationDate: null,
+    //         grade: "",
+    //         position: "",
+    //         status: "" // status code from lookup | null | undefined;
+    //     },
+    // };
+
+    // new table
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
         orderBy: "id",
         orderType: 1,
         filter: {
-            dataType: 1,
             staffName: "",
             staffNo: "",
             identityCard: "",
@@ -50,6 +70,7 @@ if (actingEmployeeListResponse.status == "success") {
             status: "" // status code from lookup | null | undefined;
         },
     };
+
 
     const paramNo: CommonListRequestDTO = {
         pageNum: 1,
@@ -156,7 +177,7 @@ if (actingEmployeeListResponse.status == "success") {
 
 
     return {
-        param, paramUrusSetia,paramEmp, ptbViewResponse, ptbViewTable, ptbNoViewResponse, ptbNoViewTable, paramNo,ptbEmployeeTable,ptbEmployeeResponse,actingEmployeeListResponse,actingEmployeeList,
+        param, paramUrusSetia, paramEmp, ptbViewResponse, ptbViewTable, ptbNoViewResponse, ptbNoViewTable, paramNo, ptbEmployeeTable, ptbEmployeeResponse, actingEmployeeListResponse, actingEmployeeList,
     };
 
 };

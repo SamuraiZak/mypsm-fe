@@ -36,7 +36,7 @@
 
     let isReadonlyActionFormStepper: boolean = true;
     let isReadonlyMeetingFormStepper: boolean = true;
-    let isReadonlyConfirmFormStepper: boolean = true;
+    let isReadonlyConfirmFormStepper: boolean = false;
 
     const { form, errors, enhance, isTainted } = superForm(
         data.applicationDetail,
@@ -818,12 +818,13 @@
                 label="Kembali"
                 onClick={() => goto('/integriti/surcaj/')}
             />
+            {#if ! isReadonlyConfirmFormStepper}
             <TextIconButton
                 type="primary"
                 label="Simpan"
-                onClick={() => (isReadonlyConfirmFormStepper = false)}
                 form="confirmationForm"
             />
+            {/if}
         </StepperContentHeader>
         <StepperContentBody>
             <div class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5">
@@ -846,7 +847,7 @@
                     bind:val={$confirmationForm.name}
                 ></CustomTextField> -->
                     <CustomTextField
-                    disabled={data.confirmationDetail == null}
+                    disabled={isReadonlyConfirmFormStepper}
                         id="remark"
                         label="Tindakan/Ulasan"
                         bind:val={$confirmationForm.remark}
@@ -864,13 +865,13 @@
                             > -->
                     </div>
 
-                    <CustomSelectField
-                    disabled={data.confirmationDetail == null}
+                    <CustomRadioBoolean
+                    disabled={isReadonlyConfirmFormStepper}
                         id="status"
                         label="status"
                         options={certifySurcajOptions}
                         bind:val={$confirmationForm.status}
-                    ></CustomSelectField>
+                    ></CustomRadioBoolean>
 
                     <!-- <CustomTextField
                 disabled={isReadonlyConfirmFormStepper}

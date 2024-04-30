@@ -30,10 +30,11 @@
     import { goto } from '$app/navigation';
     export let data: PageData;
 
-    let isReadonlyActionFormStepper: boolean = true;
-    let isReadonlyMeetingFormStepper: boolean = true;
+    let isReadonlyActionFormStepper: boolean = false;
+    let isReadonlyMeetingFormStepper: boolean = false;
     let isReadonlyConfirmFormStepper: boolean = true;
     let newSurchargeId: number = 0;
+   
     const { form: personalForm, enhance: personalEnhance } = superForm(
         data.personalInfoForm,
         {
@@ -94,7 +95,7 @@
             }
             $meetingForm.surchargeId = newSurchargeId;
             const result = await _meetingDetailSubmit($meetingForm);
-            console.log(result);
+            
             if (result.response.status === 'success')
                 isReadonlyMeetingFormStepper = true;
         },
@@ -719,12 +720,13 @@
             onClick={() => goto('/integriti/surcaj/')}
             form="form"
         />
+        {#if !isReadonlyActionFormStepper }
                 <TextIconButton
                     type="primary"
                     label="Simpan"
-                    onClick={() => (isReadonlyActionFormStepper = false)}
                     form="form"
                 />
+                {/if}
                
         </StepperContentHeader>
         <StepperContentBody>
@@ -736,6 +738,7 @@
             >
                 <div class="flex w-full flex-col gap-2.5">
                     <CustomTextField
+                    disabled={isReadonlyActionFormStepper}
                     type="date"
                     id="reportDate"
                     label={'Tarikh Dilaporkan'}
@@ -743,12 +746,14 @@
                         bind:val={$form.reportDate}
                     ></CustomTextField>
                     <CustomTextField
+                    disabled={isReadonlyActionFormStepper}
                     id="surchargeAction"
                     label={'Tindakan Surcaj'}
                     errors={$errors.surchargeAction}
                         bind:val={$form.surchargeAction}
                     ></CustomTextField>
                     <CustomTextField
+                    disabled={isReadonlyActionFormStepper}
                     id="remark"
                     label={'Ulasan'}
                     errors={$errors.remark}
@@ -758,6 +763,7 @@
             </form>
         </StepperContentBody>
     </StepperContent>
+    {#if isReadonlyActionFormStepper }
     <StepperContent>
         <StepperContentHeader title="Butiran Mesyuarat">
             <TextIconButton
@@ -765,13 +771,14 @@
             label="Kembali"
             onClick={() => goto('/integriti/surcaj/')}
 
-        /> <TextIconButton
+        /> 
+        {#if !isReadonlyMeetingFormStepper }<TextIconButton
                     type="primary"
                     label="Simpan"
                     onClick={() => (isReadonlyMeetingFormStepper = false)}
                     form="meetingForm"
                 />
-
+{/if}
         </StepperContentHeader>
         <StepperContentBody>
             <form
@@ -781,20 +788,21 @@
                 class="flex w-full flex-col gap-2"
             >
                 <CustomTextField
+                disabled={isReadonlyMeetingFormStepper}
                 id="meetingType"
                 label="Jenis Mesyuarat"
                 errors={$meetingError.meetingType}
                     bind:val={$meetingForm.meetingType}
                 ></CustomTextField>
                 <CustomTextField
-
+                disabled={isReadonlyMeetingFormStepper}
                     id="meetingName"
                     label="Nama Mesyuarat"
                     errors={$meetingError.meetingName}
                     bind:val={$meetingForm.meetingName}
                 ></CustomTextField>
                 <CustomTextField
-
+                disabled={isReadonlyMeetingFormStepper}
                     type=number
                     id="meetingCount"
                     label="Bilangan Mesyuarat"
@@ -803,14 +811,14 @@
                 ></CustomTextField>
                 <CustomTextField
                     type="date"
-
+                    disabled={isReadonlyMeetingFormStepper}
                     id="meetingDate"
                     label="Tarikh Mesyuarat"
                     errors={$meetingError.meetingDate}
                     bind:val={$meetingForm.meetingDate}
                 />
                 <CustomTextField
-
+                disabled={isReadonlyMeetingFormStepper}
                     id="amount"
                     type="number"
                     label={'Jumlah Bayaran (RM)'}
@@ -818,14 +826,14 @@
                     bind:val={$meetingForm.amount}
                 ></CustomTextField>
                 <CustomTextField
-
+                disabled={isReadonlyMeetingFormStepper}
                     id="paymentType"
                     label="Cara Bayaran Balik"
                     errors={$meetingError.paymentType}
                     bind:val={$meetingForm.paymentType}
                 ></CustomTextField>
                 <CustomTextField
-
+                disabled={isReadonlyMeetingFormStepper}
                     id="duration"
                     label="Tempoh Bayaran Balik (bulan)"
                     errors={$meetingError.duration}
@@ -833,21 +841,21 @@
                 ></CustomTextField>
                 <CustomTextField
                 type=date
-
+                disabled={isReadonlyMeetingFormStepper}
                     id="effectiveDate"
                     label="Tarikh Berkuatkuasa"
                     errors={$meetingError.effectiveDate}
                     bind:val={$meetingForm.effectiveDate}
                 />
                 <CustomTextField
-
+                disabled={isReadonlyMeetingFormStepper}
                     id="meetingResult"
                     label="Keputusan Mesyuarat"
                     errors={$meetingError.meetingResult}
                     bind:val={$meetingForm.meetingResult}
                 />
                 <CustomTextField
-
+                disabled={isReadonlyMeetingFormStepper}
                     id="remark"
                     label="Ulasan"
                     errors={$meetingError.remark}
@@ -856,6 +864,7 @@
             </form></StepperContentBody
         >
     </StepperContent>
+   {/if}
     <!-- <StepperContent>
         <StepperContentHeader title="Pengesahan Pengarah Integriti">
             {#if isReadonlyConfirmFormStepper}

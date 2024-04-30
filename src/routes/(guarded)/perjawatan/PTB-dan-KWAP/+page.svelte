@@ -26,7 +26,7 @@
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
  
     export let data: PageData;
- 
+  
     let param: CommonListRequestDTO = data.param;
     let paramNo: CommonListRequestDTO = data.paramNo;
     let paramEmp: CommonListRequestDTO = data.paramEmp;
@@ -43,6 +43,8 @@
     let penyokong = UserRoleConstant.penyokong.code;
 
     let rowData: any;
+
+    // list employee
 
     let addActingTable: TableSettingDTO = {
         param: data.param,
@@ -104,19 +106,63 @@
         data: data.ptbEmployeeTable ?? [],
     };
 
-    async function _search() {
-        _updateTable(PTBtable.param).then((value) => {
-            PTBtable.data = value.props.response.data?.dataList ?? [];
-            PTBtable.meta = value.props.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            PTBtable.param.pageSize = PTBtable.meta.pageSize;
-            PTBtable.param.pageNum = PTBtable.meta.pageNum;
-        });
-    }
+    // async function _search() {
+    //     _updateTable(PTBtable.param).then((value) => {
+    //         PTBtable.data = value.props.response.data?.dataList ?? [];
+    //         PTBtable.meta = value.props.response.data?.meta ?? {
+    //             pageSize: 1,
+    //             pageNum: 1,
+    //             totalData: 1,
+    //             totalPage: 1,
+    //         };
+    //         PTBtable.param.pageSize = PTBtable.meta.pageSize;
+    //         PTBtable.param.pageNum = PTBtable.meta.pageNum;
+    //     });
+    // }
+
+     // Table list - New Offer Meeting
+
+     let employeeLoantable: TableDTO = {
+        param: param,
+        meta: {
+            pageSize: 5,
+            pageNum: 1,
+            totalData: 4,
+            totalPage: 1,
+        },
+        data: data.ptbViewTable ?? [],
+    };
+
+    // new table
+     let PTBListTable: TableSettingDTO = {
+        param: data.param ?? data.param,
+        meta: data.ptbViewResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data:
+            (data.ptbViewResponse.data
+                ?.dataList ) ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['id',"employeeId"],
+        dictionary: [
+        ],
+        url: 'employment/pension_detail/list',
+        id: 'PTBListTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
+    };
     async function _searchNo() {
         _updateTableNo(PTBtableNo.param).then((value) => {
             PTBtableNo.data = value.props.response.data?.dataList ?? [];
@@ -198,7 +244,7 @@
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
                 >
-                <FilterCard onSearch={_search}>
+                <!-- <FilterCard onSearch={_search}>
                     <FilterTextField
                         label="Nama"
                         bind:inputValue={PTBtable.param.filter
@@ -237,8 +283,70 @@
                             );
                         }}
                         bind:tableData={PTBtable}
-                    ></CustomTable>
+                    ></CustomTable> -->
+
+                    <DataTable
+                    title="Senarai Permohonan"
+                    bind:tableData={PTBListTable}
+                    bind:passData={rowData}
+                    detailActions={() => {
+                        goto(
+                            `/perjawatan/PTB-dan-KWAP/butiran/` +
+                                rowData.employeeId +
+                                '-' +
+                                rowData.id,
+                        );
+                    }}
+                 
+                >
+                    <FilterWrapper slot="filter">
+                        <FilterTextField
+                            label="Nama"
+                            bind:inputValue={PTBListTable.param.filter
+                                .staffName}
+                        />
+                        <FilterTextField
+                        label="No. Pekerja"
+                        bind:inputValue={PTBtable.param.filter.staffNo}
+                    />
+                    <FilterTextField
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={PTBtable.param.filter
+                            .identityCard}
+                    />
+                    <FilterTextField
+                        label="Jawatan"
+                        bind:inputValue={PTBtable.param.filter
+                            .position}
+                    />
+                    <FilterTextField
+                        label="Gred"
+                        bind:inputValue={PTBtable.param.filter.grade}
+                    />
+                    </FilterWrapper>
+                </DataTable>
+
+
+
+
                 </div>
+
+<!-- new -->
+
+
+
+<!--  -->
+
+
+
+
+
+
+
+
+
+
+
             </CustomTabContent>
 
             <CustomTabContent title="Senarai Kakitangan TIADA No. Pencen">

@@ -16,7 +16,10 @@
     import { zod } from 'sveltekit-superforms/adapters';
     import { Toaster } from 'svelte-french-toast';
     import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
-    import type { UploadDocuments } from '$lib/dto/mypsm/pinjaman/document.dto';
+    import type {
+        LoanDownload,
+        UploadDocuments,
+    } from '$lib/dto/mypsm/pinjaman/document.dto';
     import { LoanServices } from '$lib/services/implementation/mypsm/pinjaman/loan.service';
     import {
         _applyLoan,
@@ -55,6 +58,10 @@
 
     export let data: PageData;
     let files: FileList;
+    const loanVehicleDocument: LoanDownload = data.loanDocument.data?.details;
+    const loanAgreementDocument: LoanDownload =
+        data.loanAgreementLetter.data?.details;
+    const loanPaymentDocument: LoanDownload = data.loanPayment.data?.details;
     let filesPayment: FileList;
 
     let notpelulus: boolean = true;
@@ -374,10 +381,8 @@
 
 <Stepper>
     <StepperContent>
-        <StepperContentHeader
-            title="Maklumat Peminjam"
-        >
-        <!-- {data.props.currentApplicationId} -->
+        <StepperContentHeader title="Maklumat Peminjam">
+            <!-- {data.props.currentApplicationId} -->
             <TextIconButton
                 label="Kembali"
                 onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
@@ -396,16 +401,16 @@
             <div
                 class="flex h-fit w-full flex-col items-start justify-start gap-4 p-4"
             >
-            {#if data.props.currentApplicationId == 0}
-                <div class="flex w-full flex-col gap-10 lg:w-1/2">
-                    <Alert color="blue">
-                        <p>
-                            <span class="font-medium">Arahan :</span>
-                            Sila isi semak butiran anda dan klik butang Teruskan
-                            untuk meneruskan proses permohonan pinjaman anda.
-                        </p>
-                    </Alert>
-                </div>
+                {#if data.props.currentApplicationId == 0}
+                    <div class="flex w-full flex-col gap-10 lg:w-1/2">
+                        <Alert color="blue">
+                            <p>
+                                <span class="font-medium">Arahan :</span>
+                                Sila isi semak butiran anda dan klik butang Teruskan
+                                untuk meneruskan proses permohonan pinjaman anda.
+                            </p>
+                        </Alert>
+                    </div>
                 {/if}
                 <form
                     id="personalFormStepper"
@@ -646,11 +651,11 @@
                         <div
                             class="flex h-fit w-full flex-col justify-center gap-2"
                         >
-                        <CustomFileField
-                        label="Dokumen Sokongan"
-                        id="employeeClaimDocument"
-                        bind:files
-                    ></CustomFileField>
+                            <CustomFileField
+                                label="Dokumen Sokongan"
+                                id="employeeClaimDocument"
+                                bind:files
+                            ></CustomFileField>
                         </div>
                     {/if}
 
@@ -666,15 +671,24 @@
                             >Borang-borang yang telah dimuat naik oleh
                             kakitangan:</span
                         >
-
-                        {#each data.props.loanDocumentDetail.document as docs}
-                            <a
-                                href={docs.document}
-                                download={docs.name}
-                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                >{docs.name}</a
-                            >
-                        {/each}
+                        {#if loanVehicleDocument.document !== null}
+                            {#each loanVehicleDocument.document as docs}
+                                <div
+                                    class="flex w-full flex-row items-center justify-between space-y-2.5"
+                                >
+                                    <label
+                                        for=""
+                                        class="block w-[20px] min-w-[20px] text-[11px] font-medium"
+                                    ></label>
+                                    <a
+                                        href={docs.document}
+                                        download={docs.name}
+                                        class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                        >{docs.name}</a
+                                    >
+                                </div>
+                            {/each}
+                        {/if}
                     </div>
                 </form>
             </StepperContentBody>
@@ -796,7 +810,9 @@
         </StepperContent>
         {#if data.props.userMode == 'urusetia' || data.props.userMode == 'pelulus' || data.props.userMode == 'ketua Seksyen'}
             <StepperContent>
-                <StepperContentHeader title="Kemaskini Jadual Pertama Dan Jadual Kedua">
+                <StepperContentHeader
+                    title="Kemaskini Jadual Pertama Dan Jadual Kedua"
+                >
                     <TextIconButton
                         label="Kembali"
                         onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
@@ -956,72 +972,72 @@
                     <CustomTabContent title="Jadual Kedua">
                         <!-- {#if currEmpLoanRec[0].typeOfLoan == 'Kenderaan'} -->
                         <div class="h-full w-full overflow-y-auto pb-10">
-                        <ContentHeader
-                            title="Masukkan Maklumat Harga Jualan (RM)"
-                        >
-                            <TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                form="secondScheduleDetail"
-                            ></TextIconButton>
-                        </ContentHeader>
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2.5"
-                        >
-                            <form
-                                id="secondScheduleDetail"
-                                method="POST"
-                                use:secondScheduleEnhance
-                                class="flex w-full flex-col gap-2"
+                            <ContentHeader
+                                title="Masukkan Maklumat Harga Jualan (RM)"
                             >
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="sellingPrice"
-                                    label="Jumlah Harga Belian (RM)"
-                                    errors={$secondScheduleError.sellingPrice}
-                                    bind:val={$secondScheduleForm.sellingPrice}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="sellingBalance"
-                                    label="Bayaran Baki (RM)"
-                                    errors={$secondScheduleError.sellingBalance}
-                                    bind:val={$secondScheduleForm.sellingBalance}
-                                ></CustomTextField>
-
-                                <CustomTextField
-                                    disabled={noturusetia}
-                                    id="govFund"
-                                    label="Amaun Pembiayaan dan Keuntungan Kerajaan (RM)"
-                                    errors={$secondScheduleError.govFund}
-                                    bind:val={$secondScheduleForm.govFund}
-                                ></CustomTextField>
-
-                                <ContentHeader
-                                    title="Masukkan Amaun dan Tempoh Bayaran Balik Harga Jualan"
-                                ></ContentHeader>
-                                <div
-                                    class="flex w-full flex-col items-start justify-start gap-2.5"
+                                <TextIconButton
+                                    type="primary"
+                                    label="Simpan"
+                                    form="secondScheduleDetail"
+                                ></TextIconButton>
+                            </ContentHeader>
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2.5"
+                            >
+                                <form
+                                    id="secondScheduleDetail"
+                                    method="POST"
+                                    use:secondScheduleEnhance
+                                    class="flex w-full flex-col gap-2"
                                 >
                                     <CustomTextField
                                         disabled={noturusetia}
-                                        id="installment"
-                                        label="Amaun Bulanan (RM)"
-                                        errors={$secondScheduleError.installment}
-                                        bind:val={$secondScheduleForm.installment}
+                                        id="sellingPrice"
+                                        label="Jumlah Harga Belian (RM)"
+                                        errors={$secondScheduleError.sellingPrice}
+                                        bind:val={$secondScheduleForm.sellingPrice}
                                     ></CustomTextField>
 
                                     <CustomTextField
                                         disabled={noturusetia}
-                                        id="paymentPeriod"
-                                        label={'Tempoh Pembayaran'}
-                                        errors={$secondScheduleError.paymentPeriod}
-                                        bind:val={$secondScheduleForm.paymentPeriod}
+                                        id="sellingBalance"
+                                        label="Bayaran Baki (RM)"
+                                        errors={$secondScheduleError.sellingBalance}
+                                        bind:val={$secondScheduleForm.sellingBalance}
                                     ></CustomTextField>
-                                </div>
-                            </form>
-                        </div>
+
+                                    <CustomTextField
+                                        disabled={noturusetia}
+                                        id="govFund"
+                                        label="Amaun Pembiayaan dan Keuntungan Kerajaan (RM)"
+                                        errors={$secondScheduleError.govFund}
+                                        bind:val={$secondScheduleForm.govFund}
+                                    ></CustomTextField>
+
+                                    <ContentHeader
+                                        title="Masukkan Amaun dan Tempoh Bayaran Balik Harga Jualan"
+                                    ></ContentHeader>
+                                    <div
+                                        class="flex w-full flex-col items-start justify-start gap-2.5"
+                                    >
+                                        <CustomTextField
+                                            disabled={noturusetia}
+                                            id="installment"
+                                            label="Amaun Bulanan (RM)"
+                                            errors={$secondScheduleError.installment}
+                                            bind:val={$secondScheduleForm.installment}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled={noturusetia}
+                                            id="paymentPeriod"
+                                            label={'Tempoh Pembayaran'}
+                                            errors={$secondScheduleError.paymentPeriod}
+                                            bind:val={$secondScheduleForm.paymentPeriod}
+                                        ></CustomTextField>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </CustomTabContent>
                 </CustomTab>
@@ -1059,11 +1075,29 @@
                                 dihantar kepada Urus Setia:</span
                             >
 
-                            <DownloadAttachment
+                            <!-- <DownloadAttachment
                                 triggerDownload={() =>
                                     handleDownload(data.props.agreementLetter)}
                                 fileName="Surat Perjanjian Pinjaman Kenderaan.pdf"
-                            />
+                            /> -->
+
+                            <div
+                                class="flex w-full flex-row items-center justify-between space-y-2.5"
+                            >
+                                <label
+                                    for=""
+                                    class="block w-[20px] min-w-[20px] text-[11px] font-medium"
+                                ></label>
+                                <a
+                                    href={data.documentDetailsVehicle.data
+                                        ?.details.document}
+                                    download={data.documentDetailsVehicle.data
+                                        ?.details.name}
+                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                    >{data.documentDetailsVehicle.data?.details
+                                        .name}</a
+                                >
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -1097,11 +1131,11 @@
                         <div
                             class="flex h-fit w-full flex-col justify-center gap-2"
                         >
-                        <CustomFileField
-                        label="Dokumen Sokongan"
-                        id="employeeClaimDocument"
-                        bind:files
-                    ></CustomFileField>
+                            <CustomFileField
+                                label="Dokumen Sokongan"
+                                id="employeeClaimDocument"
+                                bind:files
+                            ></CustomFileField>
                         </div>
                     {/if}
 
@@ -1117,14 +1151,24 @@
                             >Borang-borang yang telah dimuat naik oleh
                             kakitangan:</span
                         >
-                        {#each data.props.agreementLetterDetail.document as docs}
-                            <a
-                                href={docs.document}
-                                download={docs.name}
-                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                >{docs.name}</a
-                            >
-                        {/each}
+                        {#if loanAgreementDocument.document  !== null}
+                            {#each loanAgreementDocument.document as docs}
+                                <div
+                                    class="flex w-full flex-row items-center justify-between space-y-2.5"
+                                >
+                                    <label
+                                        for=""
+                                        class="block w-[20px] min-w-[20px] text-[11px] font-medium"
+                                    ></label>
+                                    <a
+                                        href={docs.document}
+                                        download={docs.name}
+                                        class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                        >{docs.name}</a
+                                    >
+                                </div>
+                            {/each}
+                        {/if}
                     </div>
                 </form>
             </StepperContentBody>
@@ -1377,11 +1421,11 @@
                         <div
                             class="flex h-fit w-full flex-col justify-center gap-2"
                         >
-                        <CustomFileField
-                        label="Dokumen Sokongan"
-                        id="employeeClaimDocument"
-                        bind:files
-                    ></CustomFileField>
+                            <CustomFileField
+                                label="Dokumen Sokongan"
+                                id="employeeClaimDocument"
+                                bind:files
+                            ></CustomFileField>
                         </div>
                     {/if}
 
@@ -1397,15 +1441,24 @@
                             >Borang-borang yang telah dimuat naik oleh
                             kakitangan:</span
                         >
-
-                        {#each data.props.loanPaymentDocumentDetail.document as docs}
-                            <a
-                                href={docs.document}
-                                download={docs.name}
-                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                >{docs.name}</a
-                            >
-                        {/each}
+                        {#if loanPaymentDocument.document  !== null}
+                            {#each loanPaymentDocument.document as docs}
+                                <div
+                                    class="flex w-full flex-row items-center justify-between space-y-2.5"
+                                >
+                                    <label
+                                        for=""
+                                        class="block w-[20px] min-w-[20px] text-[11px] font-medium"
+                                    ></label>
+                                    <a
+                                        href={docs.document}
+                                        download={docs.name}
+                                        class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                        >{docs.name}</a
+                                    >
+                                </div>
+                            {/each}
+                        {/if}
                     </div>
                 </form>
             </StepperContentBody>
