@@ -1263,7 +1263,7 @@
                         </div>
                     {:else}
                         <ContentHeader
-                            title="Keputusan daripada Penyokong"
+                            title="Keputusan daripada Penyokong dan Pelulus"
                             borderClass="border-none"
                         />
                         <div class="flex w-full flex-col gap-2.5 pb-10">
@@ -1313,7 +1313,7 @@
                                     Urus Setia berkaitan.
                                 </span> -->
                                 <ContentHeader
-                                    title="Penyokong"
+                                    title="Pelulus"
                                     borderClass="border-none"
                                 />
                                 <CustomTextField
