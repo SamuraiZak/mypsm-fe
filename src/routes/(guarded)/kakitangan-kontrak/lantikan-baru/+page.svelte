@@ -1,53 +1,52 @@
 <script lang="ts">
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { PageData } from './$types';
     import { goto } from '$app/navigation';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
-    import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
-    import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
-    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
-    import { _updateContractEmployeeListTable } from './+page';
+    import type {
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
     import { Modal } from 'flowbite-svelte';
     import type { ContractEmployeeListDTO } from '$lib/dto/mypsm/kakitangan-kontrak/contract-employee-list.dto';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import DataTable from '$lib/components/table/DataTable.svelte';
     export let data: PageData;
     let selectedRow = {} as ContractEmployeeListDTO;
     let openModal: boolean = false;
     //table for urus setia/penyokong/pelulus
-    let param: CommonListRequestDTO = data.contractEmployeeListParam;
-    let contractEmployeeListTable: TableDTO = {
-        param: param,
+
+    let contractEmployeeListTable: TableSettingDTO = {
+        param: data.contractEmployeeListParam,
         meta: data.contractEmployeeListResponse.data?.meta ?? {
-            pageSize: 5,
+            pageSize: 1,
             pageNum: 1,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
         data: data.contractEmployeeList ?? [],
-        hiddenData: ['candidateId'],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['candidateId'],
+        dictionary: [],
+        url:
+            data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code
+                ? 'contracts/list'
+                : data.currentRoleCode == UserRoleConstant.penyokong.code
+                  ? 'contracts/supporter_approval/list'
+                  : 'contracts/approver_approval/list',
+        id: 'contractEmployeeListTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
     };
-
-    async function _searchFilterContractEmployeeList() {
-        _updateContractEmployeeListTable(contractEmployeeListTable.param, data.currentRoleCode).then(
-            (value) => {
-                contractEmployeeListTable.data =
-                    value.response.data?.dataList ?? [];
-                contractEmployeeListTable.meta = value.response.data?.meta ?? {
-                    pageSize: 1,
-                    pageNum: 1,
-                    totalData: 1,
-                    totalPage: 1,
-                };
-                contractEmployeeListTable.param.pageSize =
-                    contractEmployeeListTable.meta.pageSize;
-                contractEmployeeListTable.param.pageNum =
-                    contractEmployeeListTable.meta.pageNum;
-            },
-        );
-    }
 </script>
 
 <!-- content header starts here -->
@@ -62,7 +61,11 @@
             />
         {:else if data.currentRoleCode === UserRoleConstant.calonKontrak.code}
             <TextIconButton
-                onClick={() => goto('./lantikan-baru/butiran-'+data.employeeContractOffer[0].candidateId)}
+                onClick={() =>
+                    goto(
+                        './lantikan-baru/butiran-' +
+                            data.employeeContractOffer[0].candidateId,
+                    )}
                 type="primary"
                 label="Kemaskini Maklumat"
             />
@@ -75,47 +78,30 @@
 >
     <div class="flex w-full flex-col justify-start gap-2.5 p-5">
         {#if data.currentRoleCode !== UserRoleConstant.calonKontrak.code}
-            <!-- <FilterCard onSearch={_searchFilterContractEmployeeList}>
-                <FilterTextField
-                    label="ID Kakitangan Kontrak"
-                    bind:inputValue={contractEmployeeListTable.param.filter
-                        .temporaryId}
-                ></FilterTextField>
-                <FilterTextField
-                    label="Nama"
-                    bind:inputValue={contractEmployeeListTable.param.filter
-                        .candidateName}
-                ></FilterTextField>
-                <FilterTextField
-                    label="No. Kad Pengenalan"
-                    bind:inputValue={contractEmployeeListTable.param.filter
-                        .identityCardNo}
-                ></FilterTextField>
-            </FilterCard> -->
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
-                <CustomTable
-                    title="Senarai Rekod Kakitangan Kontrak"
-                    onUpdate={_searchFilterContractEmployeeList}
-                    enableDetail
-                    bind:tableData={contractEmployeeListTable}
-                    bind:passData={selectedRow}
-                    detailActions={() => {
-                        if (selectedRow.status == 'Baru') {
-                            openModal = true;
-                        } else if (selectedRow.status !== 'Baru') {
-                            goto(
-                                './lantikan-baru/butiran-' +
-                                    selectedRow.candidateId,
-                            );
-                        }
-                    }}
-                />
+                <div class="h h-fit w-full p-3">
+                    <DataTable
+                        title="Senarai Rekod Kakitangan Kontrak"
+                        bind:tableData={contractEmployeeListTable}
+                        bind:passData={selectedRow}
+                        detailActions={() => {
+                            if (selectedRow.status == 'Baru') {
+                                openModal = true;
+                            } else if (selectedRow.status !== 'Baru') {
+                                goto(
+                                    './lantikan-baru/butiran-' +
+                                        selectedRow.candidateId,
+                                );
+                            }
+                        }}
+                    />
+                </div>
             </div>
         {:else if data.currentRoleCode === UserRoleConstant.calonKontrak.code}
             <div
-                class="flex max-h-full w-full flex-col items-start justify-start p-4 gap-5"
+                class="flex max-h-full w-full flex-col items-start justify-start gap-5 p-4"
             >
                 <CustomTextField
                     label="Nama"

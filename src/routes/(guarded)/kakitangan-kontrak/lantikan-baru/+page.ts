@@ -53,26 +53,3 @@ export const load = async () => {
         employeeContractOffer,
     }
 }
-
-export async function _updateContractEmployeeListTable(param: CommonListRequestDTO, role: string | null) {
-    let response: CommonResponseDTO = {};
-
-    if (role === UserRoleConstant.urusSetiaPerjawatan.code) {
-        response =
-            await ContractEmployeeServices.getContractEmployeeList(param);
-
-    } else if (role === UserRoleConstant.penyokong.code) {
-        response =
-            await ContractEmployeeServices.getContractSupporterTable(param);
-
-    } else if (role === UserRoleConstant.pelulus.code) {
-        response =
-            await ContractEmployeeServices.getContractApproverTable(param);
-
-    }
-
-    return {
-        param,
-        response,
-    };
-}

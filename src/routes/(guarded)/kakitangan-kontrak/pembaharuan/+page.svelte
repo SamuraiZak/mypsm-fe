@@ -3,19 +3,18 @@
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
-    import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
-    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type {
         Contractor,
         RenewContractAddDTO,
     } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-add.dto';
     import type { RenewContractListResponseDTO } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-list-response.dto';
     import { Toaster } from 'svelte-french-toast';
-    import { _addSelectedContractForRenew, _updateApproverTable, _updateSupporterTable, _updateTable } from './+page';
+    import { _addSelectedContractForRenew } from './+page';
     import type { PageData } from './$types';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { RenewContractEmployeeTable } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-employee-table.dto';
+    import DataTable from '$lib/components/table/DataTable.svelte';
 
     export let data: PageData;
     let rowData = {} as RenewContractListResponseDTO;
@@ -25,118 +24,123 @@
     };
 
     // table for near expired contract
-    let nearExpiredContractTable: TableDTO = {
+    let nearExpiredContractTable: TableSettingDTO = {
         param: data.nearExpiredContractParam,
         meta: data.nearExpiredContractListResponse.data?.meta ?? {
-            pageSize: 5,
+            pageSize: 1,
             pageNum: 1,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
         data: data.nearExpiredContractList ?? [],
         selectedData: [],
+        exportData: [],
+        hiddenColumn: [],
+        dictionary: [],
+        url: 'contracts/renew/list',
+        id: 'nearExpiredContractTable',
+        option: {
+            checkbox: true,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
     };
 
     //table for renewing contract
-    let renewContractTable: TableDTO = {
+    let renewContractTable: TableSettingDTO = {
         param: data.renewContractParam,
         meta: data.renewContractListResponse.data?.meta ?? {
-            pageSize: 5,
+            pageSize: 1,
             pageNum: 1,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
         data: data.renewContractList ?? [],
-        hiddenData: ['contractId'],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['contractId'],
+        dictionary: [],
+        url: 'contracts/renew/list',
+        id: 'renewContractTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
     };
 
     //table for penyokong/pelulus
-    let supporterApproverTable: TableDTO = {
+    let supporterApproverTable: TableSettingDTO = {
         param: data.supporterApproverParam,
         meta: data.supporterApproverTableResponse.data?.meta ?? {
-            pageSize: 5,
+            pageSize: 1,
             pageNum: 1,
-            totalData: 4,
+            totalData: 1,
             totalPage: 1,
         },
         data: data.supporterApproverTable ?? [],
-        hiddenData: ['contractId'],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['contractId'],
+        dictionary: [],
+        url:
+            data.currentRoleCode == UserRoleConstant.penyokong.code
+                ? 'contracts/renew/supporter/list'
+                : 'contracts/renew/approver/list',
+        id: 'supporterApproverTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
     };
 
     //table for kakitangan kontrak
-    let contractEmployeeTable: TableDTO = {
+    let contractEmployeeTable: TableSettingDTO = {
         param: data.supporterApproverParam,
         meta: data.employeeTableResponse.data?.meta ?? {
-            pageSize: 5,
+            pageSize: 1,
             pageNum: 1,
-            totalData: 0,
+            totalData: 1,
             totalPage: 1,
         },
         data: data.employeeTable ?? [],
-        hiddenData: ['contractId'],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['contractId'],
+        dictionary: [],
+        url: '',
+        id: 'contractEmployeeTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
     };
 
     $: selectedContract.contractors =
         (nearExpiredContractTable.selectedData as Contractor[]) ?? [];
-
-    async function _search() {
-        _updateTable(nearExpiredContractTable.param).then((value) => {
-            nearExpiredContractTable.data =
-                value.props.response.data?.dataList ?? [];
-            nearExpiredContractTable.meta = value.props.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            nearExpiredContractTable.param.pageSize =
-                value.props.param.pageSize;
-            nearExpiredContractTable.param.pageNum = value.props.param.pageNum;
-        });
-    }
-
-    async function _searchRenewTable() {
-        _updateTable(renewContractTable.param).then((value) => {
-            renewContractTable.data = value.props.response.data?.dataList ?? [];
-            renewContractTable.meta = value.props.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            renewContractTable.param.pageSize = value.props.param.pageSize;
-            renewContractTable.param.pageNum = value.props.param.pageNum;
-        });
-    }
-    async function _searchSuppAppTable() {
-        if (data.currentRoleCode == UserRoleConstant.penyokong.code) {
-            _updateSupporterTable(supporterApproverTable.param).then((value) => {
-                supporterApproverTable.data =
-                    value.props.response.data?.dataList ?? [];
-                supporterApproverTable.meta = value.props.response.data?.meta ?? {
-                    pageSize: 1,
-                    pageNum: 1,
-                    totalData: 1,
-                    totalPage: 1,
-                };
-                supporterApproverTable.param.pageSize = value.props.param.pageSize;
-                supporterApproverTable.param.pageNum = value.props.param.pageNum;
-            });
-        } else if (data.currentRoleCode == UserRoleConstant.pelulus.code){
-            _updateApproverTable(supporterApproverTable.param).then((value) => {
-                supporterApproverTable.data =
-                    value.props.response.data?.dataList ?? [];
-                supporterApproverTable.meta = value.props.response.data?.meta ?? {
-                    pageSize: 1,
-                    pageNum: 1,
-                    totalData: 1,
-                    totalPage: 1,
-                };
-                supporterApproverTable.param.pageSize = value.props.param.pageSize;
-                supporterApproverTable.param.pageNum = value.props.param.pageNum;
-            });
-        }
-    }
+    $: nearExpiredContractTable.data = data.nearExpiredContractList;
 </script>
 
 <!-- content header starts here -->
@@ -145,34 +149,26 @@
 </section>
 
 <section
-    class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
+    class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     {#if data.currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code || data.currentRoleCode === UserRoleConstant.pengarahBahagian.code || data.currentRoleCode === UserRoleConstant.pengarahNegeri.code}
-        <div class="flex w-full flex-col justify-start gap-2.5 p-5">
-            <!-- <FilterCard onSearch={() => {}}>
-                <FilterTextField
-                    label="ID Kakitangan Kontrak"
-                    inputValue={''}
-                />
-                <FilterTextField label="Nama" inputValue={''} />
-                <FilterTextField label="No. Kad Pengenalan" inputValue={''} />
-            </FilterCard> -->
+        <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
             >
-                <CustomTable
-                    title="Senarai Kontrak Dalam Proses Pembaharuan"
-                    onUpdate={_searchRenewTable}
-                    bind:tableData={renewContractTable}
-                    bind:passData={rowData}
-                    enableDetail
-                    detailActions={() =>
-                        goto('./pembaharuan/butiran/' + rowData.contractId)}
-                />
+                <div class="h h-fit w-full">
+                    <DataTable
+                        title="Senarai Pembaharuan Kontrak"
+                        bind:tableData={renewContractTable}
+                        bind:passData={rowData}
+                        detailActions={() =>
+                            goto('./pembaharuan/butiran/' + rowData.contractId)}
+                    />
+                </div>
 
                 {#if data.currentRoleCode == UserRoleConstant.urusSetiaKhidmatSokongan.code}
                     <ContentHeader
-                        title="Tindakan: Pilih Kakitangan Untuk Dinilai Dalam Proses Pembaharuan Kontrak"
+                        title="Arahan: Pilih Kakitangan Untuk Dinilai Dalam Proses Pembaharuan Kontrak"
                         borderClass="border-none"
                     >
                         {#if selectedContract.contractors.length > 0}
@@ -183,43 +179,45 @@
                                     _addSelectedContractForRenew(
                                         selectedContract,
                                     );
-                                    _search;
                                 }}
                             />
                         {/if}
                     </ContentHeader>
 
-                    <CustomTable
-                        title="Senarai Kontrak Yang Hampir Tamat"
-                        onUpdate={_search}
-                        bind:tableData={nearExpiredContractTable}
-                        enableAdd
-                    />
+                    <div class="h h-fit w-full">
+                        <DataTable
+                            title="Senarai Kontrak Yang Hampir Tamat"
+                            bind:tableData={nearExpiredContractTable}
+                        />
+                    </div>
                 {/if}
             </div>
         </div>
     {:else if data.currentRoleCode == UserRoleConstant.penyokong.code || data.currentRoleCode == UserRoleConstant.pelulus.code}
         <div class="flex w-full flex-col justify-start gap-2.5 p-5">
-            <CustomTable
-                title="Senarai Kontrak Dalam Proses Pembaharuan"
-                onUpdate={_searchSuppAppTable}
-                bind:tableData={supporterApproverTable}
-                bind:passData={rowData}
-                enableDetail
-                detailActions={() =>
-                    goto('./pembaharuan/butiran/' + rowData.contractId)}
-            />
+            <div class="h h-fit w-full">
+                <DataTable
+                    title="Senarai Kontrak Dalam Proses Pembaharuan"
+                    bind:tableData={supporterApproverTable}
+                    bind:passData={rowData}
+                    detailActions={() =>
+                        goto('./pembaharuan/butiran/' + rowData.contractId)}
+                />
+            </div>
         </div>
     {:else if data.currentRoleCode == UserRoleConstant.kakitanganKontrak.code}
         <div class="flex w-full flex-col justify-start gap-2.5 p-5">
-            <CustomTable
-                title="Senarai Tawaran Pembaharuan Kontrak"
-                bind:tableData={contractEmployeeTable}
-                bind:passData={employeeData}
-                enableDetail
-                detailActions={() =>
-                    goto('./pembaharuan/butiran/' + employeeData.contractId)}
-            />
+            <div class="h h-fit w-full">
+                <DataTable
+                    title="Senarai Tawaran Pembaharuan Kontrak"
+                    bind:tableData={contractEmployeeTable}
+                    bind:passData={employeeData}
+                    detailActions={() =>
+                        goto(
+                            './pembaharuan/butiran/' + employeeData.contractId,
+                        )}
+                />
+            </div>
         </div>
     {/if}
 </section>
