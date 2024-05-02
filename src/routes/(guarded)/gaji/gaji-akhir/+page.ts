@@ -42,14 +42,3 @@ export const load = async () => {
         param,
     }
 }
-
-//update employee list table
-export async function _updateTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await SalaryServices.getFinalPayslipList(param);
-    return {
-        props: {
-            param,
-            response,
-        },
-    };
-}
