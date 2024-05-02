@@ -250,6 +250,7 @@
         validationMethod: 'oninput',
         validators: zod(_vehicleFirstSchedule),
         onSubmit() {
+            $vehicleFirstScheduleForm.id = data.props.currentApplicationId;
             _vehicleFirstScheduleDetailSubmit($vehicleFirstScheduleForm);
         },
     });
@@ -268,6 +269,7 @@
         validationMethod: 'oninput',
         validators: zod(_firstSchedule),
         onSubmit() {
+            $firstScheduleForm.id = data.props.currentApplicationId;
             _firstScheduleDetailSubmit($firstScheduleForm);
         },
     });
@@ -286,6 +288,7 @@
         validationMethod: 'oninput',
         validators: zod(_secondSchedule),
         onSubmit() {
+            $secondScheduleForm.id = data.props.currentApplicationId;
             _secondScheduleDetailSubmit($secondScheduleForm);
         },
     });
@@ -304,6 +307,7 @@
         validationMethod: 'oninput',
         validators: zod(_eligibility),
         onSubmit() {
+            $eligibilityForm.id = data.props.currentApplicationId;
             _eligibilityDetailSubmit($eligibilityForm);
         },
     });
@@ -322,6 +326,7 @@
         validationMethod: 'oninput',
         validators: zod(_documentCheck),
         onSubmit() {
+            $documentCheckForm.id = data.props.currentApplicationId;
             _documentCheckDetailSubmit($documentCheckForm);
         },
     });
@@ -358,6 +363,7 @@
         validationMethod: 'oninput',
         validators: zod(_approverApproval),
         onSubmit() {
+            $approverApprovalForm.id = data.props.currentApplicationId;
             _approverApprovalSubmit($approverApprovalForm);
         },
     });
@@ -742,73 +748,74 @@
                 <div
                     class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
                 >
-                    <ContentHeader title="Keputusan Dari Pelulus">
-                        {#if notpelulus}
-                        <TextIconButton
-                            type="primary"
-                            label="Simpan"
-                            form="approverApprovalDetail"
-                        ></TextIconButton>
-                        {/if}
-                    </ContentHeader>
-                    <form
-                        id="approverApprovalDetail"
-                        method="POST"
-                        use:approverApprovalEnhance
-                        class="flex w-full flex-col gap-2"
-                    >
-                        <CustomTextField
-                            disabled={notpelulus}
-                            id="remark"
-                            label="Tindakan / Ulasan"
-                            errors={$approverApprovalError.remark}
-                            bind:val={$approverApprovalForm.remark}
-                        />
+                <ContentHeader title="Keputusan Dari Ketua Seksyen">
+                    {#if data.props.userMode == 'ketua Seksyen'}
+                    <TextIconButton
+                        type="primary"
+                        label="Simpan"
+                        form="supporterApprovalDetail"
+                    ></TextIconButton>
+                    {/if}
+                </ContentHeader>
 
-                        <CustomRadioBoolean
-                            disabled={notpelulus}
-                            id="status"
-                            label="Status"
-                            errors={$approverApprovalError.status}
-                            bind:val={$approverApprovalForm.status}
-                        />
-                    </form>
+                <form
+                    id="supporterApprovalDetail"
+                    method="POST"
+                    use:supporterApprovalEnhance
+                    class="flex w-full flex-col gap-2"
+                >
+                    <CustomTextField
+                        disabled={notketuaSeksyen}
+                        id="remark"
+                        label="Tindakan/ Ulasan"
+                        errors={$supporterApprovalError.remark}
+                        bind:val={$supporterApprovalForm.remark}
+                    />
+
+                    <CustomRadioBoolean
+                        disabled={notketuaSeksyen}
+                        id="status"
+                        label="Status"
+                        errors={$supporterApprovalError.status}
+                        bind:val={$supporterApprovalForm.status}
+                    />
+                </form>
+                   
                 </div>
                 <div
                     class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
                 >
-                    <ContentHeader title="Keputusan Dari Ketua Seksyen">
-                        {#if notketuaSeksyen }
-                        <TextIconButton
-                            type="primary"
-                            label="Simpan"
-                            form="supporterApprovalDetail"
-                        ></TextIconButton>
-                        {/if}
-                    </ContentHeader>
+                <ContentHeader title="Keputusan Dari Pelulus">
+                    {#if data.props.userMode == 'pelulus'}
+                    <TextIconButton
+                        type="primary"
+                        label="Simpan"
+                        form="approverApprovalDetail"
+                    ></TextIconButton>
+                    {/if}
+                </ContentHeader>
+                <form
+                    id="approverApprovalDetail"
+                    method="POST"
+                    use:approverApprovalEnhance
+                    class="flex w-full flex-col gap-2"
+                >
+                    <CustomTextField
+                        disabled={notpelulus}
+                        id="remark"
+                        label="Tindakan / Ulasan"
+                        errors={$approverApprovalError.remark}
+                        bind:val={$approverApprovalForm.remark}
+                    />
 
-                    <form
-                        id="supporterApprovalDetail"
-                        method="POST"
-                        use:supporterApprovalEnhance
-                        class="flex w-full flex-col gap-2"
-                    >
-                        <CustomTextField
-                            disabled={notketuaSeksyen}
-                            id="remark"
-                            label="Tindakan/ Ulasan"
-                            errors={$supporterApprovalError.remark}
-                            bind:val={$supporterApprovalForm.remark}
-                        />
-
-                        <CustomRadioBoolean
-                            disabled={notketuaSeksyen}
-                            id="status"
-                            label="Status"
-                            errors={$supporterApprovalError.status}
-                            bind:val={$supporterApprovalForm.status}
-                        />
-                    </form>
+                    <CustomRadioBoolean
+                        disabled={notpelulus}
+                        id="status"
+                        label="Status"
+                        errors={$approverApprovalError.status}
+                        bind:val={$approverApprovalForm.status}
+                    />
+                </form>
                 </div></StepperContentBody
             >
         </StepperContent>
@@ -1345,7 +1352,7 @@
                                     <CustomTextField
                                         disabled={noturusetia}
                                         id="paymentPeriod"
-                                        label="Tempoh"
+                                        label="Tempoh (Bulan)"
                                         errors={$approvalAndOfferDetailError.paymentPeriod}
                                         bind:val={$approvalAndOfferDetailForm.paymentPeriod}
                                     ></CustomTextField>

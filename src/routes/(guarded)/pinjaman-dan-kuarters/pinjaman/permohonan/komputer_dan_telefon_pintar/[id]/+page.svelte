@@ -701,73 +701,73 @@
                 <div
                     class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
                 >
-                    <ContentHeader title="Keputusan Dari Pelulus">
-                        {#if notpelulus }
-                        <TextIconButton
-                            type="primary"
-                            label="Simpan"
-                            form="approverApprovalDetail"
-                        ></TextIconButton>
-                        {/if}
-                    </ContentHeader>
-                    <form
-                        id="approverApprovalDetail"
-                        method="POST"
-                        use:approverApprovalEnhance
-                        class="flex w-full flex-col gap-2"
-                    >
-                        <CustomTextField
-                            disabled={notpelulus}
-                            id="remark"
-                            label="Tindakan / Ulasan"
-                            errors={$approverApprovalError.remark}
-                            bind:val={$approverApprovalForm.remark}
-                        />
+                <ContentHeader title="Keputusan Dari Ketua Seksyen">
+                    {#if data.props.userMode == 'ketua Seksyen'}
+                    <TextIconButton
+                        type="primary"
+                        label="Simpan"
+                        form="supporterApprovalDetail"
+                    ></TextIconButton>
+                    {/if}
+                </ContentHeader>
 
-                        <CustomRadioBoolean
-                            disabled={notpelulus}
-                            id="status"
-                            label="Status"
-                            errors={$approverApprovalError.status}
-                            bind:val={$approverApprovalForm.status}
-                        />
-                    </form>
+                <form
+                    id="supporterApprovalDetail"
+                    method="POST"
+                    use:supporterApprovalEnhance
+                    class="flex w-full flex-col gap-2"
+                >
+                    <CustomTextField
+                        disabled={notketuaSeksyen}
+                        id="remark"
+                        label="Tindakan/ Ulasan"
+                        errors={$supporterApprovalError.remark}
+                        bind:val={$supporterApprovalForm.remark}
+                    />
+
+                    <CustomRadioBoolean
+                        disabled={notketuaSeksyen}
+                        id="status"
+                        label="Status"
+                        errors={$supporterApprovalError.status}
+                        bind:val={$supporterApprovalForm.status}
+                    />
+                </form>
                 </div>
                 <div
                     class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
                 >
-                    <ContentHeader title="Keputusan Dari Ketua Seksyen">
-                        {#if notketuaSeksyen }
-                        <TextIconButton
-                            type="primary"
-                            label="Simpan"
-                            form="supporterApprovalDetail"
-                        ></TextIconButton>
-                        {/if}
-                    </ContentHeader>
+                <ContentHeader title="Keputusan Dari Pelulus">
+                    {#if data.props.userMode == 'pelulus'}
+                    <TextIconButton
+                        type="primary"
+                        label="Simpan"
+                        form="approverApprovalDetail"
+                    ></TextIconButton>
+                    {/if}
+                </ContentHeader>
+                <form
+                    id="approverApprovalDetail"
+                    method="POST"
+                    use:approverApprovalEnhance
+                    class="flex w-full flex-col gap-2"
+                >
+                    <CustomTextField
+                        disabled={notpelulus}
+                        id="remark"
+                        label="Tindakan / Ulasan"
+                        errors={$approverApprovalError.remark}
+                        bind:val={$approverApprovalForm.remark}
+                    />
 
-                    <form
-                        id="supporterApprovalDetail"
-                        method="POST"
-                        use:supporterApprovalEnhance
-                        class="flex w-full flex-col gap-2"
-                    >
-                        <CustomTextField
-                            disabled={notketuaSeksyen}
-                            id="remark"
-                            label="Tindakan/ Ulasan"
-                            errors={$supporterApprovalError.remark}
-                            bind:val={$supporterApprovalForm.remark}
-                        />
-
-                        <CustomRadioBoolean
-                            disabled={notketuaSeksyen}
-                            id="status"
-                            label="Status"
-                            errors={$supporterApprovalError.status}
-                            bind:val={$supporterApprovalForm.status}
-                        />
-                    </form>
+                    <CustomRadioBoolean
+                        disabled={notpelulus}
+                        id="status"
+                        label="Status"
+                        errors={$approverApprovalError.status}
+                        bind:val={$approverApprovalForm.status}
+                    />
+                </form>
                 </div></StepperContentBody
             >
         </StepperContent>
@@ -1092,7 +1092,7 @@
                                     class="flex w-full flex-col gap-2"
                                 >
                                     <CustomTextField
-                                        disabled
+                                        disabled={noturusetia}
                                         id="baseSalary"
                                         label={'Gaji Pokok (RM)'}
                                         errors={$eligibilityError.baseSalary}
@@ -1107,7 +1107,7 @@
                                     ></CustomTextField>
 
                                     <CustomTextField
-                                        disabled
+                                        disabled={noturusetia}
                                         id="balance"
                                         type="number"
                                         label={'Baki (RM)'}
@@ -1118,7 +1118,7 @@
                                         Gaji Pokok dan Elaun
                                     </p>
                                     <CustomTextField
-                                        disabled
+                                        disabled={noturusetia}
                                         id="salaryAndAllowance"
                                         label={'Gaji Pokok dan Elaun (RM)'}
                                         errors={$eligibilityError.salaryAndAllowance}
@@ -1133,7 +1133,7 @@
                                         bind:val={$eligibilityForm.newSalaryCut}
                                     ></CustomTextField>
                                     <CustomTextField
-                                        disabled
+                                        disabled={noturusetia}
                                         type="number"
                                         id="newBalance"
                                         label={'Baki (RM)'}
@@ -1221,7 +1221,7 @@
                                     ></CustomTextField>
                                     <CustomTextField
                                         id="paymentPeriod"
-                                        label="Tempoh"
+                                        label="Tempoh (Bulan)"
                                         errors={$approvalAndOfferDetailError.paymentPeriod}
                                         bind:val={$approvalAndOfferDetailForm.paymentPeriod}
                                     ></CustomTextField>
