@@ -66,7 +66,7 @@ export const _vehicleDetail = z.object({
     brandModel: shortTextSchema,
     engineNumber: shortTextSchema,
     registrationNumber: shortTextSchema,
-    registrationDate: stringToMinDate,
+    registrationDate: stringToMaxDate,
     nettPrice: numberSchema,
 })
 

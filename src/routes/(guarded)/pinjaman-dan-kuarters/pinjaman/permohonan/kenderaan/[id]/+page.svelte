@@ -743,11 +743,13 @@
                     class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
                 >
                     <ContentHeader title="Keputusan Dari Pelulus">
+                        {#if notpelulus}
                         <TextIconButton
                             type="primary"
                             label="Simpan"
                             form="approverApprovalDetail"
                         ></TextIconButton>
+                        {/if}
                     </ContentHeader>
                     <form
                         id="approverApprovalDetail"
@@ -776,11 +778,13 @@
                     class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
                 >
                     <ContentHeader title="Keputusan Dari Ketua Seksyen">
+                        {#if notketuaSeksyen }
                         <TextIconButton
                             type="primary"
                             label="Simpan"
                             form="supporterApprovalDetail"
                         ></TextIconButton>
+                        {/if}
                     </ContentHeader>
 
                     <form
@@ -1045,7 +1049,7 @@
         {/if}
 
         <StepperContent>
-            <StepperContentHeader title="Muat Turun Surat Tawaran">
+            <StepperContentHeader title="Surat Tawaran">
                 <TextIconButton
                     label="Kembali"
                     onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
@@ -1105,7 +1109,7 @@
         </StepperContent>
 
         <StepperContent>
-            <StepperContentHeader title="Muat Naik Surat Perjanjian">
+            <StepperContentHeader title="Surat Perjanjian">
                 <TextIconButton
                     label="Kembali"
                     onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
@@ -1395,7 +1399,7 @@
             >
         </StepperContent>
         <StepperContent>
-            <StepperContentHeader title="Muat Turun Resit dan Invois">
+            <StepperContentHeader title="Resit dan Invois">
                 <TextIconButton
                     label="Kembali"
                     onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
