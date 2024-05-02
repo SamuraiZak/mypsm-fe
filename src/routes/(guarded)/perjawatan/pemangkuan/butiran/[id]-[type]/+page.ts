@@ -209,7 +209,6 @@ export const load = async ({ params }) => {
             await EmploymentActingServices.getEmployeeInterviewDetail(currentId);
         employeeInterviewDetail =
             employeeInterviewResponse.data?.details as ActingEmployeeInterviewDetail;
-            console.log(employeeInterviewDetail)
         const employeeMeetingResponse: CommonResponseDTO =
             await EmploymentActingServices.getEmployeeMeetingDetail(currentId);
         employeeMeetingDetail =
@@ -691,9 +690,9 @@ const getLookup = async () => {
     ]
     const suppAppResponse: CommonListRequestDTO = {
         pageNum: 1,
-        pageSize: 350,
-        orderBy: null,
-        orderType: null,
+        pageSize: 10000,
+        orderBy: 'name',
+        orderType: 0,
         filter: {
             program: "TETAP",
             employeeNumber: null,

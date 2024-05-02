@@ -1884,7 +1884,6 @@
                             method="POST"
                             use:updateMeetingResultEnhance
                         >
-                            {#if data.actingType === '1-54'}
                                 <ContentHeader
                                     title="Maklumat Markah Keseluruhan"
                                     borderClass="border-none"
@@ -1911,7 +1910,6 @@
                                         ></DataTable>
                                     </div>
                                 </div>
-                            {/if}
                         </form>
                     </StepperContentBody>
                 </StepperContent>
