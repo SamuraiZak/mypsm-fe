@@ -40,11 +40,21 @@
         form: loginCommonForm,
         errors: loginCommonErrors,
         enhance: loginCommonEnhance,
+        options: loginCommonOption,
     } = superForm(data.forms.loginCommonForm, {
         id: 'loginCommonForm',
         SPA: true,
+        resetForm: false,
+        validationMethod: 'onsubmit',
         validators: zodClient(LoginCommonSchema),
-        onSubmit(input) {
+        onChange(event) {
+            if (event.target) {
+                if (event.path == 'username' || event.path == 'password') {
+                    loginCommonOption.validationMethod = 'auto';
+                }
+            }
+        },
+        onSubmit() {
             _submitLoginForm($loginCommonForm);
         },
     });
@@ -53,11 +63,21 @@
         form: loginClinicForm,
         errors: loginClinicErrors,
         enhance: loginClinicEnhance,
+        options: loginClinicOption,
     } = superForm(data.forms.loginClinicForm, {
         id: 'loginClinicForm',
         SPA: true,
+        resetForm: false,
+        validationMethod: 'onsubmit',
         validators: zodClient(LoginClinicSchema),
-        onSubmit(input) {
+        onChange(event) {
+            if (event.target) {
+                if (event.path == 'username' || event.path == 'password') {
+                    loginClinicOption.validationMethod = 'auto';
+                }
+            }
+        },
+        onSubmit() {
             _submitLoginClinicForm($loginClinicForm);
         },
     });
