@@ -101,7 +101,7 @@
             }
         },
     });
-    if ($skippingForm.remark !== null) {
+    if (data.interimApplicationDetail?.skipping !== null) {
         submitSkip = true;
     }
     const {
@@ -217,7 +217,7 @@
                         disabled
                         val={data.interimApplicationDetail.applicationDetail
                             .placement}
-                        options={data.lookup.departmentLookup}
+                        options={data.lookup.placementLookup}
                     />
                     <CustomTextField
                         id="referenceNumber"
@@ -490,7 +490,7 @@
                 <StepperContentHeader
                     title="Sokongan dari Pengarah Bahagian/Negeri"
                 >
-                    {#if (!submitDirector && data.currentRoleCode == UserRoleConstant.pengarahBahagian.code) || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code}
+                    {#if !submitDirector && data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code}
                         <TextIconButton
                             label="Simpan"
                             icon="check"
@@ -503,7 +503,7 @@
                         title="Ulasan Keputusan Daripada Pengarah Bahagian/Negeri"
                         borderClass="border-none"
                     />
-                    {#if (data.interimSupportDetail.name == '' && data.currentRoleCode == UserRoleConstant.pengarahBahagian.code) || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code}
+                    {#if data.interimSupportDetail.name == '' && data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code}
                         <form
                             class="flex w-full flex-col justify-start gap-2.5"
                             method="POST"
@@ -533,28 +533,28 @@
                                 disabled
                                 placeholder="Menunggu keputusan..."
                                 id="name"
-                                bind:val={data.interimSupportDetail.name}
+                                val={data.interimSupportDetail?.name}
                             />
                             <CustomTextField
                                 label="Ulasan"
                                 disabled
                                 placeholder="Menunggu keputusan..."
                                 id="remark"
-                                bind:val={data.interimSupportDetail.remark}
+                                val={data.interimSupportDetail?.remark}
                             />
                             <CustomTextField
                                 label="Keputusan"
                                 disabled
                                 placeholder="Menunggu keputusan..."
                                 id="status"
-                                bind:val={data.interimSupportDetail.status}
+                                val={data.interimSupportDetail?.status}
                             />
                         </div>
                     {/if}
                 </StepperContentBody>
             </StepperContent>
 
-            {#if data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code || data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
+            {#if data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
             <StepperContent>
                 <StepperContentHeader
                     title="Senarai Semak Permohonan Penangguhan/Pindaan Penempatan Kerja"
