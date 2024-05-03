@@ -350,8 +350,8 @@ export async function load({ params }) {
                 directorFeedbackForm.data =
                     currentApplicationDetail.directorFeedback as LeaveEndorsmentDTO;
 
-                directorFeedbackForm.data.status =
-                    currentApplicationDetail.directorFeedback?.status ?? false;
+                // directorFeedbackForm.data.status =
+                //     currentApplicationDetail.directorFeedback?.status ?? false;
             } else {
                 directorFeedbackForm.data.leaveId = currentApplicationId;
                 directorFeedbackForm.data.leaveTypeCode = currentLeaveType.code;
@@ -366,10 +366,10 @@ export async function load({ params }) {
                 secretaryVerificationForm.data =
                     currentApplicationDetail.secretaryVerification as LeaveEndorsmentDTO;
 
-                secretaryVerificationForm = await superValidate(
-                    currentApplicationDetail.secretaryVerification,
-                    zod(LeaveEndorsementSchema),
-                );
+                // secretaryVerificationForm = await superValidate(
+                //     currentApplicationDetail.secretaryVerification,
+                //     zod(LeaveEndorsementSchema),
+                // );
             } else {
                 secretaryVerificationForm.data.leaveId = currentApplicationId;
                 secretaryVerificationForm.data.leaveTypeCode =
