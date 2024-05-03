@@ -1038,7 +1038,7 @@
         {#if data.props.currentApplicationProcess.meeting}
             <StepperContent>
                 <StepperContentHeader
-                    title="Maklum Balas Pengarah Khidmat Pengurusan"
+                    title="Maklumat Mesyuarat"
                 >
                     {#if data.props.currentApplicationDetail.meeting == null && data.props.userMode == 'secretary'}
                         <TextIconButton
@@ -1383,7 +1383,7 @@
 
         {#if data.props.currentApplicationProcess.headOfDirectorFeedback}
             <StepperContent>
-                <StepperContentHeader title="Maklum Balas Pengarah">
+                <StepperContentHeader title="Maklum Balas Ketua Pengarah">
                     {#if data.props.currentApplicationDetail.headOfDirectorFeedback == null && data.props.userMode == 'headOfDirector'}
                         <TextIconButton
                             label="Hantar"
