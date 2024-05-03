@@ -658,7 +658,7 @@ export function _convertToBase64(file: File): Promise<LeaveDocumentAddDTO> {
         const reader = new FileReader();
 
         reader.onload = (event) => {
-            const base64String = event.target?.result as string;
+            const base64String = event.target?.result.toString().split(',')[1];
             const fileName = file.name;
             const fileObject: LeaveDocumentAddDTO = {
                 name: fileName,
