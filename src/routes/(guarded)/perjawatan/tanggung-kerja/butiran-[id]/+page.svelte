@@ -490,7 +490,7 @@
                 <StepperContentHeader
                     title="Sokongan dari Pengarah Bahagian/Negeri"
                 >
-                    {#if !submitDirector && data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code}
+                    {#if !submitDirector && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
                         <TextIconButton
                             label="Simpan"
                             icon="check"
@@ -503,7 +503,7 @@
                         title="Ulasan Keputusan Daripada Pengarah Bahagian/Negeri"
                         borderClass="border-none"
                     />
-                    {#if data.interimSupportDetail.name == '' && data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code}
+                    {#if data.interimSupportDetail.name == '' && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
                         <form
                             class="flex w-full flex-col justify-start gap-2.5"
                             method="POST"
