@@ -301,6 +301,8 @@ export async function load({ params }) {
         ) {
             if (currentApplicationDetail.applicationDetail.isMoreThan14Days) {
                 currentApplicationProcess.meeting = true;
+                currentApplicationProcess.headOfDirectorFeedback = false;
+                currentApplicationProcess.secretaryVerification = false;
             } else {
                 currentApplicationProcess.meeting = false;
             }
