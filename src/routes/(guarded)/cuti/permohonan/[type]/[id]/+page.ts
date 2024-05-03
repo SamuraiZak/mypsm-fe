@@ -35,7 +35,6 @@ import {
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { LeaveApplicationServices } from '$lib/services/implementation/mypsm/leave/leave-application.service.js';
 import { error } from '@sveltejs/kit';
-import { resolve } from 'path-browserify';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
@@ -341,7 +340,7 @@ export async function load({ params }) {
                 headOfDirectorFeedbackForm.data.leaveTypeCode =
                     currentLeaveType.code;
 
-                if (currentApplicationDetail.status == "inactive") {
+                if (currentApplicationDetail.status == 'inactive') {
                     currentApplicationProcess.headOfDirectorFeedback = false;
                 }
             }
@@ -351,13 +350,13 @@ export async function load({ params }) {
                 directorFeedbackForm.data =
                     currentApplicationDetail.directorFeedback as LeaveEndorsmentDTO;
 
-                directorFeedbackForm.data.status =
-                    currentApplicationDetail.directorFeedback?.status ?? false;
+                // directorFeedbackForm.data.status =
+                //     currentApplicationDetail.directorFeedback?.status ?? false;
             } else {
                 directorFeedbackForm.data.leaveId = currentApplicationId;
                 directorFeedbackForm.data.leaveTypeCode = currentLeaveType.code;
 
-                if (currentApplicationDetail.status == "inactive") {
+                if (currentApplicationDetail.status == 'inactive') {
                     currentApplicationProcess.directorFeedback = false;
                 }
             }
@@ -367,18 +366,18 @@ export async function load({ params }) {
                 secretaryVerificationForm.data =
                     currentApplicationDetail.secretaryVerification as LeaveEndorsmentDTO;
 
-                secretaryVerificationForm = await superValidate(
-                    currentApplicationDetail.secretaryVerification,
-                    zod(LeaveEndorsementSchema),
-                );
+                // secretaryVerificationForm = await superValidate(
+                //     currentApplicationDetail.secretaryVerification,
+                //     zod(LeaveEndorsementSchema),
+                // );
             } else {
                 secretaryVerificationForm.data.leaveId = currentApplicationId;
                 secretaryVerificationForm.data.leaveTypeCode =
                     currentLeaveType.code;
 
-                    if (currentApplicationDetail.status == "inactive") {
-                        currentApplicationProcess.secretaryVerification = false;
-                    }
+                if (currentApplicationDetail.status == 'inactive') {
+                    currentApplicationProcess.secretaryVerification = false;
+                }
             }
 
             // fit data into supporter feedback form
@@ -390,9 +389,9 @@ export async function load({ params }) {
                 supporterFeedbackForm.data.leaveTypeCode =
                     currentLeaveType.code;
 
-                    if (currentApplicationDetail.status == "inactive") {
-                        currentApplicationProcess.supporterFeedback = false;
-                    }
+                if (currentApplicationDetail.status == 'inactive') {
+                    currentApplicationProcess.supporterFeedback = false;
+                }
             }
 
             // fit data into approver feedback form
@@ -403,7 +402,7 @@ export async function load({ params }) {
                 approverFeedbackForm.data.leaveId = currentApplicationId;
                 approverFeedbackForm.data.leaveTypeCode = currentLeaveType.code;
 
-                if (currentApplicationDetail.status == "inactive") {
+                if (currentApplicationDetail.status == 'inactive') {
                     currentApplicationProcess.approverFeedback = false;
                 }
             }
@@ -417,9 +416,9 @@ export async function load({ params }) {
                 managementFeedbackForm.data.leaveTypeCode =
                     currentLeaveType.code;
 
-                    if (currentApplicationDetail.status == "inactive") {
-                        currentApplicationProcess.managementFeedback = false;
-                    }
+                if (currentApplicationDetail.status == 'inactive') {
+                    currentApplicationProcess.managementFeedback = false;
+                }
             }
 
             // fit data into meeting form
@@ -430,7 +429,7 @@ export async function load({ params }) {
                 meetingResultForm.data.leaveId = currentApplicationId;
                 meetingResultForm.data.leaveTypeCode = currentLeaveType.code;
 
-                if (currentApplicationDetail.status == "inactive") {
+                if (currentApplicationDetail.status == 'inactive') {
                     currentApplicationProcess.meeting = false;
                 }
             }
@@ -443,14 +442,14 @@ export async function load({ params }) {
                 endorserDetailForm.data.leaveId = currentApplicationId;
                 endorserDetailForm.data.leaveTypeCode = currentLeaveType.code;
 
-                if (currentApplicationDetail.status == "inactive") {
+                if (currentApplicationDetail.status == 'inactive') {
                     currentApplicationProcess.endorserDetail = false;
                 }
             }
 
-            if (currentApplicationDetail.document !== null) {
-                documents = currentApplicationDetail.document;
-            }
+            // if (currentApplicationDetail.document !== null) {
+            //     documents = currentApplicationDetail.document;
+            // }
         }
     }
 
@@ -658,14 +657,18 @@ export function _convertToBase64(file: File): Promise<LeaveDocumentAddDTO> {
         const reader = new FileReader();
 
         reader.onload = (event) => {
-            const base64String = event.target?.result as string;
-            const fileName = file.name;
-            const fileObject: LeaveDocumentAddDTO = {
-                name: fileName,
-                base64: base64String,
-            };
-
-            resolve(fileObject);
+            if (event.target && event.target.result) {
+                const base64String = event.target.result
+                    .toString()
+                    .split(',')[1];
+                const resultObject: LeaveDocumentAddDTO = {
+                    base64: base64String,
+                    name: file.name,
+                };
+                resolve(resultObject);
+            } else {
+                reject(new Error('Failed to read file.'));
+            }
         };
 
         reader.onerror = (error) => {
