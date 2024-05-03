@@ -261,10 +261,10 @@
                                             .halfDayOptionDropdown}
                                     ></CustomSelectField>
                                     <CustomSelectField
-                                        id="startHalfDayOption"
+                                        id="startHalfDayType"
                                         label={'Pagi / Petang'}
-                                        bind:val={$leaveUnrecordedForm.startHalfDayOption}
-                                        errors={$leaveUnrecordedErrors.startHalfDayOption}
+                                        bind:val={$leaveUnrecordedForm.startHalfDayType}
+                                        errors={$leaveUnrecordedErrors.startHalfDayType}
                                         options={data.props.halfDayTypeDropdown}
                                     ></CustomSelectField>
                                 </div>
@@ -288,10 +288,10 @@
                                             .halfDayOptionDropdown}
                                     ></CustomSelectField>
                                     <CustomSelectField
-                                        id="startHalfDayOption"
+                                        id="endHalfDayType"
                                         label={'Pagi / Petang'}
-                                        bind:val={$leaveUnrecordedForm.startHalfDayOption}
-                                        errors={$leaveUnrecordedErrors.startHalfDayOption}
+                                        bind:val={$leaveUnrecordedForm.endHalfDayType}
+                                        errors={$leaveUnrecordedErrors.endHalfDayType}
                                         options={data.props.halfDayTypeDropdown}
                                     ></CustomSelectField>
                                 </div>
@@ -342,10 +342,10 @@
                                             .halfDayOptionDropdown}
                                     ></CustomSelectField>
                                     <CustomSelectField
-                                        id="startHalfDayOption"
+                                        id="startHalfDayType"
                                         label={'Pagi / Petang'}
-                                        bind:val={$leaveDeliveryForm.startHalfDayOption}
-                                        errors={$leaveDeliveryErrors.startHalfDayOption}
+                                        bind:val={$leaveDeliveryForm.startHalfDayType}
+                                        errors={$leaveDeliveryErrors.startHalfDayType}
                                         options={data.props.halfDayTypeDropdown}
                                     ></CustomSelectField>
                                 </div>
@@ -369,10 +369,10 @@
                                             .halfDayOptionDropdown}
                                     ></CustomSelectField>
                                     <CustomSelectField
-                                        id="startHalfDayOption"
+                                        id="endHalfDayType"
                                         label={'Pagi / Petang'}
-                                        bind:val={$leaveDeliveryForm.startHalfDayOption}
-                                        errors={$leaveDeliveryErrors.startHalfDayOption}
+                                        bind:val={$leaveDeliveryForm.endHalfDayType}
+                                        errors={$leaveDeliveryErrors.endHalfDayType}
                                         options={data.props.halfDayTypeDropdown}
                                     ></CustomSelectField>
                                 </div>
@@ -450,10 +450,10 @@
                                             .halfDayOptionDropdown}
                                     ></CustomSelectField>
                                     <CustomSelectField
-                                        id="startHalfDayOption"
+                                        id="startHalfDayType"
                                         label={'Pagi / Petang'}
-                                        bind:val={$leaveStudyForm.startHalfDayOption}
-                                        errors={$leaveStudyErrors.startHalfDayOption}
+                                        bind:val={$leaveStudyForm.startHalfDayType}
+                                        errors={$leaveStudyErrors.startHalfDayType}
                                         options={data.props.halfDayTypeDropdown}
                                     ></CustomSelectField>
                                 </div>
@@ -477,10 +477,10 @@
                                             .halfDayOptionDropdown}
                                     ></CustomSelectField>
                                     <CustomSelectField
-                                        id="startHalfDayOption"
+                                        id="endHalfDayType"
                                         label={'Pagi / Petang'}
-                                        bind:val={$leaveStudyForm.startHalfDayOption}
-                                        errors={$leaveStudyErrors.startHalfDayOption}
+                                        bind:val={$leaveStudyForm.endHalfDayType}
+                                        errors={$leaveStudyErrors.endHalfDayType}
                                         options={data.props.halfDayTypeDropdown}
                                     ></CustomSelectField>
                                 </div>
@@ -595,10 +595,10 @@
                                             .halfDayOptionDropdown}
                                     ></CustomSelectField>
                                     <CustomSelectField
-                                        id="startHalfDayOption"
+                                        id="startHalfDayType"
                                         label={'Pagi / Petang'}
-                                        bind:val={$leaveReplacementForm.startHalfDayOption}
-                                        errors={$leaveReplacementErrors.startHalfDayOption}
+                                        bind:val={$leaveReplacementForm.startHalfDayType}
+                                        errors={$leaveReplacementErrors.startHalfDayType}
                                         options={data.props.halfDayTypeDropdown}
                                     ></CustomSelectField>
                                 </div>
@@ -624,10 +624,10 @@
                                             .halfDayOptionDropdown}
                                     ></CustomSelectField>
                                     <CustomSelectField
-                                        id="startHalfDayOption"
+                                        id="endHalfDayType"
                                         label={'Pagi / Petang'}
-                                        bind:val={$leaveReplacementForm.startHalfDayOption}
-                                        errors={$leaveReplacementErrors.startHalfDayOption}
+                                        bind:val={$leaveReplacementForm.endHalfDayType}
+                                        errors={$leaveReplacementErrors.endHalfDayType}
                                         options={data.props.halfDayTypeDropdown}
                                     ></CustomSelectField>
                                 </div>
