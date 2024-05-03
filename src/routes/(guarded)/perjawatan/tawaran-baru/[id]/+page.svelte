@@ -290,7 +290,7 @@
     {#if $isReadOnlyNewOfferApprovalResult && $newOfferApproverIsApproved}
         <Badge color="dark">Proses Tawaran Baru Tamat</Badge>
     {/if}
-    {#if ($isReadOnlyNewOfferMeetingResult && $newOfferMeetingResultsAreNotApproved) || ($isReadOnlyNewOfferSupporterResult && !$newOfferSupporterIsApproved) || ($isReadOnlyNewOfferApprovalResult && !newOfferApproverIsApproved)}
+    {#if ($isReadOnlyNewOfferMeetingResult && $newOfferMeetingResultsAreNotApproved) || ($isReadOnlyNewOfferSupporterResult && !$newOfferSupporterIsApproved) || ($isReadOnlyNewOfferApprovalResult && !$newOfferApproverIsApproved)}
         <Badge color="red">Proses Tawaran Baru Diberhentikan</Badge>
     {/if}
 
