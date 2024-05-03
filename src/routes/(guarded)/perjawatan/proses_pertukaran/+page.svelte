@@ -169,6 +169,14 @@
 
         goto(url);
     }
+    
+    function viewDetailsTypeSelf() {
+        let url =
+            '/perjawatan/proses_pertukaran/permohonan_sendiri/' +
+            selectedData.id;
+
+        goto(url);
+    }
 </script>
 
 <div
@@ -192,7 +200,7 @@
                             addApplication();
                         }}
                         detailActions={() => {
-                            viewDetails();
+                            viewDetailsTypeSelf();
                         }}
                     >
                         <FilterWrapper slot="filter">
@@ -260,7 +268,9 @@
                         addActions={() => {
                             addApplication();
                         }}
-                        detailActions={() => {}}
+                        detailActions={() => {
+                            viewDetails();
+                        }}
                     >
                         <FilterWrapper slot="filter">
                             <FilterTextField

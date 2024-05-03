@@ -210,6 +210,32 @@ export class LeaveApplicationServices {
         }
     }
 
+    // director feedback
+    static async addMeetingResult(param: LeaveEndorsmentDTO) {
+        try {
+            let url: Input = 'leave/update_meeting';
+
+            const promiseResponse: Promise<Response> = http
+                .put(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await getPromiseToast(promiseResponse);
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     // secretary verification
     static async addSecretaryVerification(param: LeaveEndorsmentDTO) {
         try {

@@ -66,6 +66,10 @@ export class SidebarConstant {
                             path: '/cuti/permohonan',
                         },
                         {
+                            name: 'Cuti Rehat, Kecemasan dan Sakit (HRMIS)',
+                            path: '/cuti/cuti_rehat,_kecemasan_dan_sakit',
+                        },
+                        {
                             name: 'Pengumpulan GCR',
                             path: '/cuti/pengumpulan_GCR',
                         },
@@ -1294,6 +1298,10 @@ export class SidebarConstant {
                         {
                             name: 'Permohonan',
                             path: '/cuti/permohonan',
+                        },
+                        {
+                            name: 'Cuti Rehat, Kecemasan dan Sakit (HRMIS)',
+                            path: '/cuti/cuti_rehat,_kecemasan_dan_sakit',
                         },
                         {
                             name: 'Pengumpulan GCR',

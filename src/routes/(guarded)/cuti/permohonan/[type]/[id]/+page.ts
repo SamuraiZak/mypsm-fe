@@ -295,6 +295,19 @@ export async function load({ params }) {
         currentApplicationDetail = applicationDetailResponse.data
             ?.details as LeaveApplicationDetailDTO;
 
+        if (
+            currentApplicationDetail.applicationDetail.isMoreThan14Days !==
+            undefined
+        ) {
+            if (currentApplicationDetail.applicationDetail.isMoreThan14Days) {
+                currentApplicationProcess.meeting = true;
+                currentApplicationProcess.headOfDirectorFeedback = false;
+                currentApplicationProcess.secretaryVerification = false;
+            } else {
+                currentApplicationProcess.meeting = false;
+            }
+        }
+
         // fit data into detail form
         if (currentApplicationDetail.applicationDetail !== null) {
             switch (currentLeaveType.code) {
@@ -596,8 +609,8 @@ export async function _submitMeetingResultForm(formData: LeaveEndorsmentDTO) {
     const form = await superValidate(formData, zod(LeaveEndorsementSchema));
 
     if (form.valid) {
-        // const response =
-        //     await LeaveApplicationServices.addManagementFeedback(formData);
+        const response =
+            await LeaveApplicationServices.addMeetingResult(formData);
     } else {
         getErrorToast('Sila semak semula maklumat anda.');
         error(400, { message: '' });

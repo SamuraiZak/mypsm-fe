@@ -446,7 +446,7 @@ export async function _submitApplicationDetailForm(
 }
 
 export async function _submitReasonForm(formData: TransferSelfReason) {
-    console.log("before submit" + formData.id)
+    console.log('before submit' + formData.id);
     const form = await superValidate(formData, zod(TransferSelfReasonSchema));
 
     if (form.valid) {
@@ -675,7 +675,7 @@ export async function _submitApproverFeedbackForm(
 
 export const _submitDocument = async (formData: string) => {
     const response: CommonResponseDTO =
-        await TransferApplicationServices.uploadCommonTransferDocument(
+        await TransferApplicationServices.addSelfTransferDocument(
             formData,
         );
 
@@ -696,14 +696,18 @@ export function _convertToBase64(file: File): Promise<TransferDocumentDTO> {
         const reader = new FileReader();
 
         reader.onload = (event) => {
-            const base64String = event.target?.result as string;
-            const fileName = file.name;
-            const fileObject: TransferDocumentDTO = {
-                name: fileName,
-                base64: base64String,
-            };
-
-            resolve(fileObject);
+            if (event.target && event.target.result) {
+                const base64String = event.target.result
+                    .toString()
+                    .split(',')[1];
+                const resultObject: TransferDocumentDTO = {
+                    base64: base64String,
+                    name: file.name,
+                };
+                resolve(resultObject);
+            } else {
+                reject(new Error('Failed to read file.'));
+            }
         };
 
         reader.onerror = (error) => {
