@@ -609,8 +609,8 @@ export async function _submitMeetingResultForm(formData: LeaveEndorsmentDTO) {
     const form = await superValidate(formData, zod(LeaveEndorsementSchema));
 
     if (form.valid) {
-        // const response =
-        //     await LeaveApplicationServices.addManagementFeedback(formData);
+        const response =
+            await LeaveApplicationServices.addMeetingResult(formData);
     } else {
         getErrorToast('Sila semak semula maklumat anda.');
         error(400, { message: '' });
