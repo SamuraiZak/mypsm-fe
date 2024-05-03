@@ -1395,6 +1395,31 @@ export class SidebarConstant {
                 },
             ],
         },
+
+
+
+        //  Unit Integriti
+
+        {
+            role: RoleConstant.unitIntegriti.code,
+            navItems: [
+                {
+                    name: 'Halaman Utama',
+                    path: '/halaman-utama',
+                },
+                {
+                    name: 'Perjawatan',
+                    path: '',
+                    subItems: [
+                        {
+                            name: 'Persaraan',
+                            path: '/perjawatan/persaraan',
+                        },
+                    ],
+                },
+            ],
+        },
+        
         // Urus Setia Integriti
         {
             role: RoleConstant.urusSetiaIntegriti.code,

@@ -1101,13 +1101,14 @@
                                     class="flex w-full flex-col gap-2"
                                 >
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled
                                         id="baseSalary"
                                         label={'Gaji Pokok (RM)'}
                                         errors={$eligibilityError.baseSalary}
                                         bind:val={$eligibilityForm.baseSalary}
                                     ></CustomTextField>
                                     <CustomTextField
+                                    disabled={noturusetia}
                                         type="number"
                                         id="salaryCut"
                                         label={'Potongan (RM)'}
@@ -1116,7 +1117,7 @@
                                     ></CustomTextField>
 
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled
                                         id="balance"
                                         type="number"
                                         label={'Baki (RM)'}
@@ -1127,7 +1128,7 @@
                                         Gaji Pokok dan Elaun
                                     </p>
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled
                                         id="salaryAndAllowance"
                                         label={'Gaji Pokok dan Elaun (RM)'}
                                         errors={$eligibilityError.salaryAndAllowance}
@@ -1135,6 +1136,7 @@
                                     ></CustomTextField>
 
                                     <CustomTextField
+                                    disabled={noturusetia}
                                         type="number"
                                         id="newSalaryCut"
                                         label={'Potongan Baru (RM)'}
@@ -1142,7 +1144,7 @@
                                         bind:val={$eligibilityForm.newSalaryCut}
                                     ></CustomTextField>
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled
                                         type="number"
                                         id="newBalance"
                                         label={'Baki (RM)'}
