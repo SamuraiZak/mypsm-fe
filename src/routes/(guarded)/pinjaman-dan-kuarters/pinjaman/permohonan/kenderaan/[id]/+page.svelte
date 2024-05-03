@@ -213,6 +213,7 @@
         validationMethod: 'oninput',
         validators: zod(_approver),
         onSubmit() {
+            $approverInfoForm.id = data.props.currentApplicationId;
             _approverSubmit($approverInfoForm);
         },
     });
@@ -345,6 +346,7 @@
         validationMethod: 'oninput',
         validators: zod(_supportApproval),
         onSubmit() {
+            $supporterApprovalForm.id = data.props.currentApplicationId;
             _supportApprovalSubmit($supporterApprovalForm);
         },
     });

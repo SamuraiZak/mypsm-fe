@@ -24,7 +24,71 @@ export const load = async () => {
     // pengarah Integriti
     let pengarah = UserRoleConstant.pengarahIntegriti.code;
 
+    // const param: CommonListRequestDTO = {
+    //     pageNum: 1,
+    //     pageSize: 5,
+    //     orderBy: "id",
+    //     orderType: 1,
+    //     filter: {
+    //         dataType: 1,
+    //         staffName: "",
+    //         staffNo: "",
+    //         identityCard: "",
+    //        applicationDate: null,
+    //         grade: "",
+    //         position: "",
+    //         status: "" // status code from lookup | null | undefined;
+    //     },
+    // };
+    // const paramUrusSetia: CommonListRequestDTO = {
+    //     pageNum: 1,
+    //     pageSize: 5,
+    //     orderBy: "id",
+    //     orderType: 1,
+    //     filter: {
+    //         employeeNumber: null,
+    //         name: null,
+    //         identityCardNumber: null,
+    //         applicationDate: null,
+    //     },
+    // };
+    // const paramEmployee: CommonListRequestDTO = {
+    //     pageNum: 1,
+    //     pageSize: 5,
+    //     orderBy: "surchageId",
+    //     orderType: 1,
+    //     filter: {
+    //         employeeNumber: null,
+    //         name: null,
+    //         identityCardNumber: null,
+    //         applicationDate: null,
+    //     },
+    // };
+
+    // ==========================================
+    // ============= new Table ==================
+    // ==========================================
+
+
+    // ============== pengarah ==================
+
     const param: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: "id",
+        orderType: 1,
+        filter: {
+            employeeNumber: null,
+            name: null,
+            identityCardNumber: null,
+            applicationDate: null,
+        },
+    };
+
+    // =============== urusetia ====================
+
+
+    const paramUrusSetia: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
         orderBy: "id",
@@ -40,39 +104,34 @@ export const load = async () => {
             status: "" // status code from lookup | null | undefined;
         },
     };
-    const paramUrusSetia: CommonListRequestDTO = {
+
+    // ================== employee ===================
+
+    const paramEmployee: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
         orderBy: "id",
         orderType: 1,
         filter: {
-            employeeNumber: null,
-            name: null,
-            identityCardNumber: null,
-            applicationDate: null,
-        },
-    };
-    const paramEmployee: CommonListRequestDTO = {
-        pageNum: 1,
-        pageSize: 5,
-        orderBy: "surchageId",
-        orderType: 1,
-        filter: {
-            employeeNumber: null,
-            name: null,
-            identityCardNumber: null,
-            applicationDate: null,
+            dataType: 1,
+            staffName: "",
+            staffNo: "",
+            identityCard: "",
+           applicationDate: null,
+            grade: "",
+            position: "",
+            status: "" // status code from lookup | null | undefined;
         },
     };
 
     
-    let directorSurcajViewResponse: CommonResponseDTO;
+    let directorSurcajViewResponse: CommonResponseDTO = {};
     let directorSurcajViewTable = [];
 
     let surcajViewResponse: CommonResponseDTO = {};
     let surcajViewTable = [];
 
-    let employeeSurcajViewResponse: CommonResponseDTO;
+    let employeeSurcajViewResponse: CommonResponseDTO = {};
     let employeeSurcajViewTable = [];
     
     if (currentRoleCode === pengarah){
@@ -91,7 +150,8 @@ export const load = async () => {
     employeeSurcajViewResponse = await IntegrityServices.getEmployeeSurcajListDetails(paramEmployee);
     employeeSurcajViewTable = employeeSurcajViewResponse.data?.dataList ?? [];
     }
-    return { param,paramUrusSetia,surcajViewResponse,surcajViewTable,directorSurcajViewTable,employeeSurcajViewTable,paramEmployee };
+
+    return { param,paramUrusSetia,surcajViewResponse,surcajViewTable,directorSurcajViewResponse,directorSurcajViewTable,employeeSurcajViewResponse,employeeSurcajViewTable,paramEmployee };
 };
 
 export async function _updateTable(param: CommonListRequestDTO) {

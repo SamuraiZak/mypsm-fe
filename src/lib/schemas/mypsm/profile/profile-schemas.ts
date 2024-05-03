@@ -241,7 +241,7 @@ export const _academicInfoSchema = z
         name: codeSchema,
         completionDate: dateStringSchema,
         finalGrade: codeSchema,
-        field: shortTextSchema,
+        field: z.string().nullable(),
     });
 
 export const _academicListResponseSchema = z.object({
@@ -318,14 +318,14 @@ export const _activityEditRequestSchema = _activityListResponseSchema.pick({
 
 export const _relationsSchema = z
     .object({
-        familyId: numberIdSchema,
+        familyId: z.number(),
         birthCountryId: numberIdSchema,
         birthStateId: numberIdSchema,
         relationshipId: numberIdSchema,
         educationLevelId: numberIdSchema,
         raceId: numberIdSchema,
         nationalityId: numberIdSchema,
-        maritalId: numberIdSchema.nullish(),
+        maritalId: z.number().nullish(),
         genderId: numberIdSchema,
         name: shortTextSchema,
         alternativeName: z.string().nullish(),
@@ -334,10 +334,10 @@ export const _relationsSchema = z
         address: shortTextSchema,
         postcode: shortTextSchema,
         birthDate: dateStringSchema,
-        workAddress: shortTextSchema.nullish(),
-        workPostcode: shortTextSchema.nullish(),
-        phoneNumber: shortTextSchema.nullish(),
-        marriageDate: dateStringSchema.nullish(),
+        workAddress: z.string().nullish(),
+        workPostcode: z.string().nullish(),
+        phoneNumber: z.string().nullish(),
+        marriageDate:z.string().nullish(),
         inSchool: booleanSchema,
     })
 // .partial({

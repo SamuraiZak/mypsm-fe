@@ -47,7 +47,7 @@
     // list employee
 
     let addActingTable: TableSettingDTO = {
-        param: data.param,
+        param: data.paramEm,
         meta: data.actingEmployeeListResponse.data?.meta ?? {
             pageSize: 1,
             pageNum: 1,
@@ -59,7 +59,7 @@
         exportData: [],
         hiddenColumn: ['employeeId', 'homeAddress'],
         dictionary: [],
-        url: 'employment/acting/employee_lists/list',
+        url: 'employee/list',
         id: 'addActingTable',
         option: {
             checkbox: false,
@@ -303,7 +303,7 @@
                         <FilterTextField
                             label="Nama"
                             bind:inputValue={PTBListTable.param.filter
-                                .staffName}
+                                .employeeName}
                         />
                         <FilterTextField
                         label="No. Pekerja"
@@ -336,16 +336,6 @@
 
 
 <!--  -->
-
-
-
-
-
-
-
-
-
-
 
             </CustomTabContent>
 
@@ -381,23 +371,23 @@
                             <FilterTextField
                                 label="Nama"
                                 bind:inputValue={addActingTable.param
-                                    .filter.employeeName}
+                                    .filter.name}
                             ></FilterTextField>
                             <FilterTextField
                                 label="No. Pekerja"
                                 bind:inputValue={addActingTable.param
-                                    .filter.employeeNo}
+                                    .filter.employeeNumber}
                             ></FilterTextField>
                             <FilterTextField
                                 label="No. Kad Pengenalan"
                                 bind:inputValue={addActingTable.param
-                                    .filter.identityCardNo}
+                                    .filter.identityCard}
                             ></FilterTextField>
-                            <FilterDateField
-                                label="Tarikh Permohonan"
+                            <FilterTextField
+                                label="Jawatan"
                                 bind:inputValue={addActingTable.param
-                                    .filter.applicationDate}
-                            ></FilterDateField>
+                                    .filter.position}
+                            ></FilterTextField>
                         </FilterWrapper>
                     </DataTable>
                     </div>

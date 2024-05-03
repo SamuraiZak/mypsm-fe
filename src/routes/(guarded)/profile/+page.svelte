@@ -756,7 +756,7 @@
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     <CustomTab>
-        <CustomTabContent title="MaklumatPeribadi" paddingClass="">
+        <CustomTabContent title="Maklumat Peribadi" paddingClass="">
             <Stepper>
                 <!------------------------------------------------------>
                 <!---------------Maklumat Peribadi---------------------->
@@ -840,7 +840,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.alternativeName}
                                     id="alternativeName"
-                                    label={'Nama Lain'}
+                                    label={'Nama Lain *'}
                                     type="text"
                                     bind:val={$personalInfoForm.alternativeName}
                                 ></CustomTextField>
@@ -849,7 +849,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.email}
                                     id="email"
-                                    label="Emel Pekerja"
+                                    label="Emel Pekerja *"
                                     bind:val={$personalInfoForm.email}
                                 ></CustomTextField>
 
@@ -868,14 +868,14 @@
                                     errors={$personalInfoError.birthDate}
                                     type="date"
                                     id="birthDate"
-                                    label="Tarikh Lahir"
+                                    label="Tarikh Lahir *"
                                     bind:val={$personalInfoForm.birthDate}
                                 ></CustomTextField>
                                 <CustomSelectField
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.birthStateId}
                                     id="birthStateId"
-                                    label="Tempat Lahir"
+                                    label="Tempat Lahir *"
                                     bind:val={$personalInfoForm.birthStateId}
                                     options={data.selectionOptions.stateLookup}
                                 ></CustomSelectField>
@@ -884,7 +884,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.birthCountryId}
                                     id="birthCountryId"
-                                    label="Tempat Lahir"
+                                    label="Tempat Lahir *"
                                     bind:val={$personalInfoForm.birthCountryId}
                                     options={data.selectionOptions
                                         .countryLookup}
@@ -894,7 +894,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.nationalityId}
                                     id="nationalityId"
-                                    label="Warganegara"
+                                    label="Warganegara *"
                                     bind:val={$personalInfoForm.nationalityId}
                                     options={data.selectionOptions
                                         .nationalityLookup}
@@ -904,7 +904,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.raceId}
                                     id="raceId"
-                                    label="Bangsa"
+                                    label="Bangsa *"
                                     bind:val={$personalInfoForm.raceId}
                                     options={data.selectionOptions.raceLookup}
                                 ></CustomSelectField>
@@ -913,7 +913,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.ethnicId}
                                     id="ethnicId"
-                                    label="Etnik"
+                                    label="Etnik *"
                                     bind:val={$personalInfoForm.ethnicId}
                                     options={data.selectionOptions
                                         .ethnicityLookup}
@@ -923,7 +923,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.religionId}
                                     id="religionId"
-                                    label="Agama"
+                                    label="Agama *"
                                     bind:val={$personalInfoForm.religionId}
                                     options={data.selectionOptions
                                         .religionLookup}
@@ -933,7 +933,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.genderId}
                                     id="genderId"
-                                    label="Jantina"
+                                    label="Jantina *"
                                     bind:val={$personalInfoForm.genderId}
                                     options={data.selectionOptions.genderLookup}
                                 ></CustomSelectField>
@@ -942,7 +942,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.maritalId}
                                     id="maritalId"
-                                    label="Status Perkahwinan"
+                                    label="Status Perkahwinan *"
                                     bind:val={$personalInfoForm.maritalId}
                                     options={data.selectionOptions
                                         .maritalLookup}
@@ -961,7 +961,7 @@
                                     errors={$personalInfoError.homeAddress}
                                     disabled={isReadonlyPersonalFormStepper}
                                     id="homeAddress"
-                                    label="Alamat Rumah"
+                                    label="Alamat Rumah *"
                                     bind:val={$personalInfoForm.homeAddress}
                                 />
 
@@ -969,7 +969,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.homeCountryId}
                                     id="homeCountryId"
-                                    label="Negara Kediaman"
+                                    label="Negara Kediaman *"
                                     bind:val={$personalInfoForm.homeCountryId}
                                     options={data.selectionOptions
                                         .countryLookup}
@@ -979,7 +979,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.homeStateId}
                                     id="homeStateId"
-                                    label="Negeri Kediaman"
+                                    label="Negeri Kediaman *"
                                     bind:val={$personalInfoForm.homeStateId}
                                     options={data.selectionOptions.stateLookup}
                                 ></CustomSelectField>
@@ -988,7 +988,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.homeCityId}
                                     id="homeCityId"
-                                    label="Daerah Kediaman"
+                                    label="Daerah Kediaman *"
                                     bind:val={$personalInfoForm.homeCityId}
                                     options={data.selectionOptions.cityLookup}
                                 ></CustomSelectField>
@@ -998,7 +998,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     type="text"
                                     id="homePostcode"
-                                    label="Poskod Rumah"
+                                    label="Poskod Rumah *"
                                     bind:val={$personalInfoForm.homePostcode}
                                 />
 
@@ -1006,7 +1006,7 @@
                                     errors={$personalInfoError.mailAddress}
                                     disabled={isReadonlyPersonalFormStepper}
                                     id="mailAddress"
-                                    label="Alamat Surat Menyurat"
+                                    label="Alamat Surat Menyurat *"
                                     bind:val={$personalInfoForm.mailAddress}
                                 />
 
@@ -1014,7 +1014,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.mailCountryId}
                                     id="mailCountryId"
-                                    label="Negara Surat Menyurat"
+                                    label="Negara Surat Menyurat *"
                                     bind:val={$personalInfoForm.mailCountryId}
                                     options={data.selectionOptions
                                         .countryLookup}
@@ -1024,7 +1024,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.mailStateId}
                                     id="mailStateId"
-                                    label="Negeri Surat Menyurat"
+                                    label="Negeri Surat Menyurat *"
                                     bind:val={$personalInfoForm.mailStateId}
                                     options={data.selectionOptions.stateLookup}
                                 ></CustomSelectField>
@@ -1033,7 +1033,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.mailCityId}
                                     id="mailCityId"
-                                    label="Daerah Surat Menyurat"
+                                    label="Daerah Surat Menyurat *"
                                     bind:val={$personalInfoForm.mailCityId}
                                     options={data.selectionOptions.cityLookup}
                                 ></CustomSelectField>
@@ -1043,7 +1043,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     type="text"
                                     id="mailPostcode"
-                                    label="Poskod Surat Menyurat"
+                                    label="Poskod Surat Menyurat *"
                                     bind:val={$personalInfoForm.mailPostcode}
                                 />
                                 <!-- <CustomSelectField
@@ -1083,7 +1083,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.isExPoliceOrSoldier}
                                     id="isExPoliceOrSoldier"
-                                    label="Bekas Polis / Tentera"
+                                    label="Bekas Polis / Tentera *"
                                     bind:val={$personalInfoForm.isExPoliceOrSoldier}
                                     options={data.selectionOptions
                                         .generalLookup}
@@ -1117,7 +1117,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.isInternalRelationship}
                                     id="isInternalRelationship"
-                                    label="Perhubungan Dengan Kakitangan LKIM"
+                                    label="Perhubungan Dengan Kakitangan LKIM *"
                                     bind:val={$personalInfoForm.isInternalRelationship}
                                     options={data.selectionOptions
                                         .generalLookup}
@@ -1139,7 +1139,7 @@
                                         employeeNumber}
                                     id="employeeNumber"
                                     placeholder=""
-                                    label="ID Kakitangan LKIM"
+                                    label="ID Kakitangan LKIM "
                                     bind:val={$personalInfoForm.relationDetail.employeeNumber}
                                 ></CustomTextField>
 
@@ -1167,7 +1167,7 @@
                                     errors={$personalInfoError.relationDetail?.relationshipId}
                                     id="relationshipId"
                                     placeholder=""
-                                    label="Hubungan"
+                                    label="Hubungan "
                                     bind:val={$personalInfoForm.relationDetail.relationshipId}
                                     options={data.selectionOptions
                                         .relationshipLookup}
@@ -1276,7 +1276,7 @@
                                 disabled={isReadonlyServiceFormStepper}
                                 errors={$serviceInfoError.EPFNumber}
                                 id="EPFNumber"
-                                label={'No. KWSP'}
+                                label={'No. KWSP *'}
                                 type="text"
                                 bind:val={$serviceInfoForm.EPFNumber}
                             ></CustomTextField>
@@ -1284,7 +1284,7 @@
                                 disabled={isReadonlyServiceFormStepper}
                                 errors={$serviceInfoError.SOCSO}
                                 id="SOCSO"
-                                label={'No. SOCSO'}
+                                label={'No. SOCSO *'}
                                 type="text"
                                 bind:val={$serviceInfoForm.SOCSO}
                             ></CustomTextField>
@@ -1292,7 +1292,7 @@
                                 disabled={isReadonlyServiceFormStepper}
                                 errors={$serviceInfoError.taxIncome}
                                 id="taxIncome"
-                                label={'No. Cukai (LHDN)'}
+                                label={'No. Cukai (LHDN) *'}
                                 type="text"
                                 bind:val={$serviceInfoForm.taxIncome}
                             ></CustomTextField>
@@ -1300,7 +1300,7 @@
                                 disabled={isReadonlyServiceFormStepper}
                                 errors={$serviceInfoError.bankName}
                                 id="bankName"
-                                label={'Bank'}
+                                label={'Bank *'}
                                 type="text"
                                 bind:val={$serviceInfoForm.bankName}
                             ></CustomTextField>
@@ -1308,7 +1308,7 @@
                                 disabled={isReadonlyServiceFormStepper}
                                 errors={$serviceInfoError.accountNumber}
                                 id="accountNumber"
-                                label={'No. Akaun'}
+                                label={'No. Akaun *'}
                                 type="text"
                                 bind:val={$serviceInfoForm.accountNumber}
                             ></CustomTextField>
@@ -1566,7 +1566,7 @@
                             />
                             <TextIconButton
                                 type="neutral"
-                                label="Batal"
+                                label="Kembali"
                                 onClick={() => (isEditableAcademic = false)}
                             />
                         {/if}
@@ -1632,7 +1632,7 @@
                                             <CustomSelectField
                                                 disabled={!isEditableAcademic}
                                                 id="majorId"
-                                                label={'Jurusan'}
+                                                label={'Jurusan *'}
                                                 options={data.selectionOptions
                                                     .majorMinorLookup}
                                                 bind:val={$academicInfoForm
@@ -1642,7 +1642,7 @@
                                             <CustomSelectField
                                                 disabled={!isEditableAcademic}
                                                 id="minorId"
-                                                label={'Bidang'}
+                                                label={'Bidang *'}
                                                 bind:val={$academicInfoForm
                                                     .academics[i].minorId}
                                                 options={data.selectionOptions
@@ -1652,7 +1652,7 @@
                                             <CustomSelectField
                                                 disabled={!isEditableAcademic}
                                                 id="countryId"
-                                                label={'Negara'}
+                                                label={'Negara *'}
                                                 bind:val={$academicInfoForm
                                                     .academics[i].countryId}
                                                 options={data.selectionOptions
@@ -1662,7 +1662,7 @@
                                             <CustomSelectField
                                                 disabled={!isEditableAcademic}
                                                 id="institutionId"
-                                                label={'Institusi'}
+                                                label={'Institusi *'}
                                                 bind:val={$academicInfoForm
                                                     .academics[i].institutionId}
                                                 options={data.selectionOptions
@@ -1672,7 +1672,7 @@
                                             <CustomSelectField
                                                 disabled={!isEditableAcademic}
                                                 id="educationLevelId"
-                                                label={'Taraf Pendidikan'}
+                                                label={'Taraf Pendidikan *'}
                                                 bind:val={$academicInfoForm
                                                     .academics[i]
                                                     .educationLevelId}
@@ -1683,7 +1683,7 @@
                                             <CustomSelectField
                                                 disabled={!isEditableAcademic}
                                                 id="sponsorshipId"
-                                                label={'Penajaan'}
+                                                label={'Penajaan *'}
                                                 bind:val={$academicInfoForm
                                                     .academics[i].sponsorshipId}
                                                 options={data.selectionOptions
@@ -1693,7 +1693,7 @@
                                             <CustomTextField
                                                 disabled={!isEditableAcademic}
                                                 id="name"
-                                                label={'Nama Sijil/Pencapaian'}
+                                                label={'Nama Sijil/Pencapaian *'}
                                                 type="text"
                                                 bind:val={$academicInfoForm
                                                     .academics[i].name}
@@ -1702,7 +1702,7 @@
                                             <CustomTextField
                                                 disabled={!isEditableAcademic}
                                                 id="completionDate"
-                                                label="Tarikh Tamat Pembelajaran"
+                                                label="Tarikh Tamat Pembelajaran *"
                                                 type="date"
                                                 bind:val={$academicInfoForm
                                                     .academics[i]
@@ -1712,7 +1712,7 @@
                                             <CustomTextField
                                                 disabled={!isEditableAcademic}
                                                 id="finalGrade"
-                                                label={'Ijazah/ CGPA/ Gred'}
+                                                label={'Ijazah/ CGPA/ Gred *'}
                                                 type="text"
                                                 bind:val={$academicInfoForm
                                                     .academics[i].finalGrade}
@@ -1721,7 +1721,7 @@
                                             <CustomTextField
                                                 disabled={!isEditableAcademic}
                                                 id="field"
-                                                label={'Bidang'}
+                                                label={'Bidang *'}
                                                 type="text"
                                                 bind:val={$academicInfoForm
                                                     .academics[i].field}
@@ -1834,7 +1834,7 @@
                                             <CustomTextField
                                                 disabled={!isEditableExperience}
                                                 id="company"
-                                                label={'Nama Majikan'}
+                                                label={'Nama Majikan *'}
                                                 type="text"
                                                 bind:val={$experienceInfoForm
                                                     .experiences[i].company}
@@ -1843,7 +1843,7 @@
                                             <CustomTextField
                                                 disabled={!isEditableExperience}
                                                 id="address"
-                                                label={'Alamat Majikan'}
+                                                label={'Alamat Majikan *'}
                                                 type="text"
                                                 bind:val={$experienceInfoForm
                                                     .experiences[i].address}
@@ -1852,7 +1852,7 @@
                                             <CustomTextField
                                                 disabled={!isEditableExperience}
                                                 id="position"
-                                                label={'Jawatan'}
+                                                label={'Jawatan *'}
                                                 type="text"
                                                 bind:val={$experienceInfoForm
                                                     .experiences[i].position}
@@ -1870,7 +1870,7 @@
                                             <CustomTextField
                                                 disabled={!isEditableExperience}
                                                 id="description"
-                                                label={'Keterangan'}
+                                                label={'Keterangan *'}
                                                 type="text"
                                                 bind:val={$experienceInfoForm
                                                     .experiences[i].description}
@@ -1879,7 +1879,7 @@
                                                 type="date"
                                                 disabled={!isEditableExperience}
                                                 id="startDate"
-                                                label="Tarikh Mula Bekerja"
+                                                label="Tarikh Mula Bekerja *"
                                                 bind:val={$experienceInfoForm
                                                     .experiences[i].startDate}
                                             ></CustomTextField>
@@ -1888,7 +1888,7 @@
                                                 type="date"
                                                 disabled={!isEditableExperience}
                                                 id="endDate"
-                                                label="Tarikh Tamat Bekerja"
+                                                label="Tarikh Tamat Bekerja *"
                                                 bind:val={$experienceInfoForm
                                                     .experiences[i].endDate}
                                             ></CustomTextField>
@@ -1896,7 +1896,7 @@
                                             <CustomTextField
                                                 disabled={!isEditableExperience}
                                                 id="grade"
-                                                label={'Gred'}
+                                                label={'Gred *'}
                                                 bind:val={$experienceInfoForm
                                                     .experiences[i].grade}
                                             ></CustomTextField>
@@ -2009,7 +2009,7 @@
                                             <CustomTextField
                                                 disabled={!isEditableActivity}
                                                 id="name"
-                                                label={'Nama Kegiatan'}
+                                                label={'Nama Kegiatan *'}
                                                 type="text"
                                                 bind:val={$activityInfoForm
                                                     .activities[i].name}
@@ -2019,7 +2019,7 @@
                                                 disabled={!isEditableActivity}
                                                 type="date"
                                                 id="joinDate"
-                                                label={'Tarikh Keahlian'}
+                                                label={'Tarikh Keahlian *'}
                                                 bind:val={$activityInfoForm
                                                     .activities[i].joinDate}
                                             ></CustomTextField>
@@ -2027,7 +2027,7 @@
                                             <CustomTextField
                                                 disabled={!isEditableActivity}
                                                 id="position"
-                                                label={'Jawatan'}
+                                                label={'Jawatan *'}
                                                 type="text"
                                                 bind:val={$activityInfoForm
                                                     .activities[i].position}
@@ -2036,7 +2036,7 @@
                                             <CustomTextField
                                                 disabled={!isEditableActivity}
                                                 id="description"
-                                                label={'Catatan'}
+                                                label={'Catatan *'}
                                                 type="text"
                                                 bind:val={$activityInfoForm
                                                     .activities[i].description}
@@ -2151,7 +2151,7 @@
                                         >
                                             <CustomTextField
                                                 id="name"
-                                                label={'Nama'}
+                                                label={'Nama *'}
                                                 type="text"
                                                 disabled={!isEditableFamily}
                                                 bind:val={$familyInfoForm
@@ -2160,7 +2160,7 @@
 
                                             <CustomTextField
                                                 id="alternativeName"
-                                                label={'Nama Lain'}
+                                                label={'Nama Lain *'}
                                                 type="text"
                                                 disabled={!isEditableFamily}
                                                 bind:val={$familyInfoForm
@@ -2169,7 +2169,7 @@
                                             ></CustomTextField>
                                             <CustomSelectField
                                                 id="identityDocumentColor"
-                                                label={'Jenis Kad Pengenalan'}
+                                                label={'Jenis Kad Pengenalan *'}
                                                 disabled={!isEditableFamily}
                                                 options={data.selectionOptions
                                                     .identityCardColorLookup}
@@ -2189,7 +2189,7 @@
 
                                             <CustomTextField
                                                 id="address"
-                                                label={'Alamat'}
+                                                label={'Alamat *'}
                                                 disabled={!isEditableFamily}
                                                 bind:val={$familyInfoForm
                                                     .families[i].address}
@@ -2197,7 +2197,7 @@
 
                                             <CustomTextField
                                                 id="postcode"
-                                                label={'Poskod'}
+                                                label={'Poskod  *'}
                                                 type="text"
                                                 disabled={!isEditableFamily}
                                                 bind:val={$familyInfoForm
@@ -2208,14 +2208,14 @@
                                                 disabled={!isEditableFamily}
                                                 type="date"
                                                 id="birthDate"
-                                                label={'Tarikh Lahir'}
+                                                label={'Tarikh Lahir *'}
                                                 bind:val={$familyInfoForm
                                                     .families[i].birthDate}
                                             ></CustomTextField>
 
                                             <CustomSelectField
                                                 id="birthCountryId"
-                                                label={'Negara Kelahiran'}
+                                                label={'Negara Kelahiran  *'}
                                                 disabled={!isEditableFamily}
                                                 options={data.selectionOptions
                                                     .countryLookup}
@@ -2225,7 +2225,7 @@
 
                                             <CustomSelectField
                                                 id="birthStateId"
-                                                label={'Negeri Kelahiran'}
+                                                label={'Negeri Kelahiran *'}
                                                 options={data.selectionOptions
                                                     .stateLookup}
                                                 disabled={!isEditableFamily}
@@ -2235,7 +2235,7 @@
 
                                             <CustomSelectField
                                                 id="relationshipId"
-                                                label={'Hubungan'}
+                                                label={'Hubungan *'}
                                                 disabled={!isEditableFamily}
                                                 options={data.selectionOptions
                                                     .relationshipIsFamily}
@@ -2245,7 +2245,7 @@
 
                                             <CustomSelectField
                                                 id="educationLevelId"
-                                                label={'Taraf Pendidikan'}
+                                                label={'Taraf Pendidikan *'}
                                                 options={data.selectionOptions
                                                     .educationLookup}
                                                 disabled={!isEditableFamily}
@@ -2256,7 +2256,7 @@
 
                                             <CustomSelectField
                                                 id="raceId"
-                                                label={'Bangsa'}
+                                                label={'Bangsa *'}
                                                 disabled={!isEditableFamily}
                                                 options={data.selectionOptions
                                                     .raceLookup}
@@ -2266,7 +2266,7 @@
 
                                             <CustomSelectField
                                                 id="nationalityId"
-                                                label={'Kewarganegaraan'}
+                                                label={'Kewarganegaraan *'}
                                                 disabled={!isEditableFamily}
                                                 options={data.selectionOptions
                                                     .nationalityLookup}
@@ -2276,7 +2276,7 @@
 
                                             <CustomSelectField
                                                 id="maritalId"
-                                                label={'Status Perkhahwinan'}
+                                                label={'Status Perkhahwinan *'}
                                                 disabled={!isEditableFamily}
                                                 options={data.selectionOptions
                                                     .maritalLookup}
@@ -2286,7 +2286,7 @@
 
                                             <CustomSelectField
                                                 id="genderId"
-                                                label={'Jantina'}
+                                                label={'Jantina *'}
                                                 options={data.selectionOptions
                                                     .genderLookup}
                                                 disabled={!isEditableFamily}
@@ -2296,7 +2296,7 @@
 
                                             <CustomTextField
                                                 id="workAddress"
-                                                label={'Alamat Majikan'}
+                                                label={'Alamat Majikan *'}
                                                 type="text"
                                                 disabled={!isEditableFamily}
                                                 bind:val={$familyInfoForm
@@ -2332,7 +2332,7 @@
 
                                             <CustomSelectField
                                                 id="inSchool"
-                                                label={'Bersekolah'}
+                                                label={'Bersekolah *'}
                                                 disabled={!isEditableFamily}
                                                 options={data.selectionOptions
                                                     .generalLookup}
@@ -3779,7 +3779,7 @@
         <CustomSelectField
             errors={$addAcademicInfoErrors.majorId}
             id="majorId"
-            label={'Jenis Jurusan'}
+            label={'Jenis Jurusan *'}
             bind:val={$addAcademicInfoModal.majorId}
             options={data.selectionOptions.majorMinorLookup}
         ></CustomSelectField>
@@ -3787,7 +3787,7 @@
         <CustomSelectField
             errors={$addAcademicInfoErrors.minorId}
             id="minorId"
-            label={'Jenis Bidang'}
+            label={'Jenis Bidang *'}
             bind:val={$addAcademicInfoModal.minorId}
             options={data.selectionOptions.majorMinorLookup}
         ></CustomSelectField>
@@ -3795,7 +3795,7 @@
         <CustomSelectField
             errors={$addAcademicInfoErrors.countryId}
             id="countryId"
-            label={'Negara'}
+            label={'Negara *'}
             bind:val={$addAcademicInfoModal.countryId}
             options={data.selectionOptions.countryLookup}
         ></CustomSelectField>
@@ -3803,7 +3803,7 @@
         <CustomSelectField
             errors={$addAcademicInfoErrors.institutionId}
             id="institutionId"
-            label={'Institusi'}
+            label={'Institusi *'}
             bind:val={$addAcademicInfoModal.institutionId}
             options={data.selectionOptions.institutionLookup}
         ></CustomSelectField>
@@ -3811,7 +3811,7 @@
         <CustomSelectField
             errors={$addAcademicInfoErrors.educationLevelId}
             id="educationLevelId"
-            label={'Taraf Pembelajaran'}
+            label={'Taraf Pembelajaran *'}
             val=""
             options={data.selectionOptions.educationLookup}
         ></CustomSelectField>
@@ -3819,7 +3819,7 @@
         <CustomSelectField
             errors={$addAcademicInfoErrors.sponsorshipId}
             id="sponsorshipId"
-            label={'Penajaan'}
+            label={'Penajaan *'}
             bind:val={$addAcademicInfoModal.sponsorshipId}
             options={data.selectionOptions.sponsorshipLookup}
         ></CustomSelectField>
@@ -3827,26 +3827,26 @@
         <CustomTextField
             errors={$addAcademicInfoErrors.name}
             id="name"
-            label={'Nama Pencapaian/Sijil'}
+            label={'Nama Pencapaian/Sijil *'}
             bind:val={$addAcademicInfoModal.name}
         ></CustomTextField>
         <CustomTextField
             errors={$addAcademicInfoErrors.completionDate}
             id="completionDate"
-            label="Tarikh Kelulusan"
+            label="Tarikh Kelulusan *"
             type="date"
             bind:val={$addAcademicInfoModal.completionDate}
         ></CustomTextField>
         <CustomTextField
             errors={$addAcademicInfoErrors.finalGrade}
             id="finalGrade"
-            label={'Pencapaian Akhir (Gred)'}
+            label={'Pencapaian Akhir (Gred) *'}
             bind:val={$addAcademicInfoModal.finalGrade}
         ></CustomTextField>
         <CustomTextField
             errors={$addAcademicInfoErrors.field}
             id="field"
-            label={'Bidang'}
+            label={'Bidang *'}
             bind:val={$addAcademicInfoModal.field}
         ></CustomTextField>
         <TextIconButton
@@ -3868,7 +3868,7 @@
         <CustomTextField
             errors={$addExperienceModalErrors.company}
             id="company"
-            label={'Nama Majikan'}
+            label={'Nama Majikan *'}
             type="text"
             bind:val={$addExperienceModalForm.company}
         ></CustomTextField>
@@ -3876,7 +3876,7 @@
         <CustomTextField
             errors={$addExperienceModalErrors.address}
             id="address"
-            label={'Alamat Majikan'}
+            label={'Alamat Majikan *'}
             type="text"
             bind:val={$addExperienceModalForm.address}
         ></CustomTextField>
@@ -3884,7 +3884,7 @@
         <CustomTextField
             errors={$addExperienceModalErrors.position}
             id="position"
-            label={'Jawatan'}
+            label={'Jawatan *'}
             type="text"
             bind:val={$addExperienceModalForm.position}
         ></CustomTextField>
@@ -3900,7 +3900,7 @@
         <CustomTextField
             errors={$addExperienceModalErrors.description}
             id="description"
-            label={'Keterangan'}
+            label={'Keterangan *'}
             type="text"
             bind:val={$addExperienceModalForm.description}
         ></CustomTextField>
@@ -3909,21 +3909,21 @@
             errors={$addExperienceModalErrors.startDate}
             type="date"
             id="startDate"
-            label={'Tarikh Mula Bekerja'}
+            label={'Tarikh Mula Bekerja *'}
             bind:val={$addExperienceModalForm.startDate}
         ></CustomTextField>
         <CustomTextField
             errors={$addExperienceModalErrors.endDate}
             type="date"
             id="endDate"
-            label={'Tarikh Tamat Bekerja'}
+            label={'Tarikh Tamat Bekerja *'}
             bind:val={$addExperienceModalForm.endDate}
         ></CustomTextField>
 
         <CustomTextField
             errors={$addExperienceModalErrors.grade}
             id="grade"
-            label={'Gred'}
+            label={'Gred *'}
             type="text"
             bind:val={$addExperienceModalForm.grade}
         ></CustomTextField>
@@ -3956,14 +3956,14 @@
             errors={$addActivityModalErrors.joinDate}
             id="joinDate"
             type="date"
-            label={'Tarikh Keahlian'}
+            label={'Tarikh Keahlian *'}
             bind:val={$addActivityModal.joinDate}
         ></CustomTextField>
 
         <CustomTextField
             errors={$addActivityModalErrors.position}
             id="position"
-            label={'Jawatan'}
+            label={'Jawatan *'}
             type="text"
             bind:val={$addActivityModal.position}
         ></CustomTextField>
@@ -3971,7 +3971,7 @@
         <CustomTextField
             errors={$addActivityModalErrors.description}
             id="description"
-            label={'Catatan'}
+            label={'Catatan *'}
             type="text"
             bind:val={$addActivityModal.description}
         ></CustomTextField>
@@ -3997,7 +3997,7 @@
         <CustomTextField
             errors={$addFamilyErrors.name}
             id="name"
-            label={'Nama'}
+            label={'Nama *'}
             type="text"
             bind:val={$addFamilyModal.name}
         ></CustomTextField>
@@ -4005,14 +4005,14 @@
         <CustomTextField
             errors={$addFamilyErrors.alternativeName}
             id="alternativeName"
-            label={'Nama Lain'}
+            label={'Nama Lain *'}
             type="text"
             bind:val={$addFamilyModal.alternativeName}
         ></CustomTextField>
         <CustomSelectField
             errors={$addFamilyErrors.identityDocumentColor}
             id="identityDocumentColor"
-            label={'Jenis Kad Pengenalan'}
+            label={'Jenis Kad Pengenalan *'}
             options={data.selectionOptions.identityCardColorLookup}
             bind:val={$addFamilyModal.identityDocumentColor}
         ></CustomSelectField>
@@ -4020,21 +4020,21 @@
             errors={$addFamilyErrors.identityDocumentNumber}
             id="identityDocumentNumber"
             type="text"
-            label={'Nombor Kad Pengenalan'}
+            label={'Nombor Kad Pengenalan *'}
             bind:val={$addFamilyModal.identityDocumentNumber}
         ></CustomTextField>
 
         <CustomTextField
             errors={$addFamilyErrors.address}
             id="address"
-            label={'Alamat'}
+            label={'Alamat *'}
             bind:val={$addFamilyModal.address}
         ></CustomTextField>
 
         <CustomTextField
             errors={$addFamilyErrors.postcode}
             id="postcode"
-            label={'Poskod'}
+            label={'Poskod *'}
             type="text"
             bind:val={$addFamilyModal.postcode}
         ></CustomTextField>
@@ -4043,14 +4043,14 @@
             errors={$addFamilyErrors.birthDate}
             type="date"
             id="birthDate"
-            label={'Tarikh Lahir'}
+            label={'Tarikh Lahir *'}
             bind:val={$addFamilyModal.birthDate}
         ></CustomTextField>
 
         <CustomSelectField
             errors={$addFamilyErrors.birthCountryId}
             id="birthCountryId"
-            label={'Negara Kelahiran'}
+            label={'Negara Kelahiran *'}
             bind:val={$addFamilyModal.birthCountryId}
             options={data.selectionOptions.countryLookup}
         ></CustomSelectField>
@@ -4058,7 +4058,7 @@
         <CustomSelectField
             errors={$addFamilyErrors.birthStateId}
             id="birthStateId"
-            label={'Negeri Kelahiran'}
+            label={'Negeri Kelahiran *'}
             bind:val={$addFamilyModal.birthStateId}
             options={data.selectionOptions.stateLookup}
         ></CustomSelectField>
@@ -4066,7 +4066,7 @@
         <CustomSelectField
             errors={$addFamilyErrors.relationshipId}
             id="relationshipId"
-            label={'Hubungan'}
+            label={'Hubungan *'}
             bind:val={$addFamilyModal.relationshipId}
             options={data.selectionOptions.relationshipIsFamily}
         ></CustomSelectField>
@@ -4074,7 +4074,7 @@
         <CustomSelectField
             errors={$addFamilyErrors.educationLevelId}
             id="educationLevelId"
-            label={'Taraf Pendidikan'}
+            label={'Taraf Pendidikan *'}
             bind:val={$addFamilyModal.educationLevelId}
             options={data.selectionOptions.educationLookup}
         ></CustomSelectField>
@@ -4082,7 +4082,7 @@
         <CustomSelectField
             errors={$addFamilyErrors.raceId}
             id="raceId"
-            label={'Bangsa'}
+            label={'Bangsa *'}
             bind:val={$addFamilyModal.raceId}
             options={data.selectionOptions.raceLookup}
         ></CustomSelectField>
@@ -4090,7 +4090,7 @@
         <CustomSelectField
             errors={$addFamilyErrors.nationalityId}
             id="nationalityId"
-            label={'Kewarganegaraan'}
+            label={'Kewarganegaraan *'}
             bind:val={$addFamilyModal.nationalityId}
             options={data.selectionOptions.nationalityLookup}
         ></CustomSelectField>
@@ -4098,7 +4098,7 @@
         <CustomSelectField
             errors={$addFamilyErrors.genderId}
             id="genderId"
-            label={'Jantina'}
+            label={'Jantina *'}
             bind:val={$addFamilyModal.genderId}
             options={data.selectionOptions.genderLookup}
         ></CustomSelectField>
@@ -4130,7 +4130,7 @@
         <CustomSelectField
             errors={$addFamilyErrors.maritalId}
             id="maritalId"
-            label={'Status Perkhahwinan'}
+            label={'Status Perkhahwinan *'}
             bind:val={$addFamilyModal.maritalId}
             options={data.selectionOptions.maritalLookup}
         ></CustomSelectField>
@@ -4145,7 +4145,7 @@
 
         <div class="flex flex-row">
             <label for="addInSchool" class="w-[70px] text-sm text-black"
-                >Bersekolah</label
+                >Bersekolah *</label
             >
             <Checkbox id="inSchool" bind:checked={$addFamilyModal.inSchool} />
         </div>
@@ -4173,7 +4173,7 @@
         <CustomTextField
             errors={$addNonFamilyErrors.name}
             id="name"
-            label={'Nama'}
+            label={'Nama *'}
             type="text"
             bind:val={$addNonFamilyModal.name}
         ></CustomTextField>
@@ -4181,14 +4181,14 @@
         <CustomTextField
             errors={$addNonFamilyErrors.alternativeName}
             id="alternativeName"
-            label={'Nama Lain'}
+            label={'Nama Lain *'}
             type="text"
             bind:val={$addNonFamilyModal.alternativeName}
         ></CustomTextField>
         <CustomSelectField
             errors={$addNonFamilyErrors.identityDocumentColor}
             id="identityDocumentColor"
-            label={'Jenis Kad Pengenalan'}
+            label={'Jenis Kad Pengenalan *'}
             options={data.selectionOptions.identityCardColorLookup}
             bind:val={$addNonFamilyModal.identityDocumentColor}
         ></CustomSelectField>
@@ -4196,21 +4196,21 @@
             errors={$addNonFamilyErrors.identityDocumentNumber}
             id="identityDocumentNumber"
             type="text"
-            label={'Nombor Kad Pengenalan'}
+            label={'Nombor Kad Pengenalan *'}
             bind:val={$addNonFamilyModal.identityDocumentNumber}
         ></CustomTextField>
 
         <CustomTextField
             errors={$addNonFamilyErrors.address}
             id="address"
-            label={'Alamat'}
+            label={'Alamat *'}
             bind:val={$addNonFamilyModal.address}
         ></CustomTextField>
 
         <CustomTextField
             errors={$addNonFamilyErrors.postcode}
             id="postcode"
-            label={'Poskod'}
+            label={'Poskod *'}
             type="text"
             bind:val={$addNonFamilyModal.postcode}
         ></CustomTextField>
@@ -4219,14 +4219,14 @@
             errors={$addNonFamilyErrors.birthDate}
             type="date"
             id="birthDate"
-            label={'Tarikh Lahir'}
+            label={'Tarikh Lahir *'}
             bind:val={$addNonFamilyModal.birthDate}
         ></CustomTextField>
 
         <CustomSelectField
             errors={$addNonFamilyErrors.birthCountryId}
             id="birthCountryId"
-            label={'Negara Kelahiran'}
+            label={'Negara Kelahiran *'}
             bind:val={$addNonFamilyModal.birthCountryId}
             options={data.selectionOptions.countryLookup}
         ></CustomSelectField>
@@ -4234,7 +4234,7 @@
         <CustomSelectField
             errors={$addNonFamilyErrors.birthStateId}
             id="birthStateId"
-            label={'Negeri Kelahiran'}
+            label={'Negeri Kelahiran *'}
             bind:val={$addNonFamilyModal.birthStateId}
             options={data.selectionOptions.stateLookup}
         ></CustomSelectField>
@@ -4242,7 +4242,7 @@
         <CustomSelectField
             errors={$addNonFamilyErrors.relationshipId}
             id="relationshipId"
-            label={'Hubungan'}
+            label={'Hubungan *'}
             bind:val={$addNonFamilyModal.relationshipId}
             options={data.selectionOptions.relationshipIsNonFamily}
         ></CustomSelectField>
@@ -4250,7 +4250,7 @@
         <CustomSelectField
             errors={$addNonFamilyErrors.educationLevelId}
             id="educationLevelId"
-            label={'Taraf Pendidikan'}
+            label={'Taraf Pendidikan *'}
             bind:val={$addNonFamilyModal.educationLevelId}
             options={data.selectionOptions.educationLookup}
         ></CustomSelectField>
@@ -4258,7 +4258,7 @@
         <CustomSelectField
             errors={$addNonFamilyErrors.raceId}
             id="raceId"
-            label={'Bangsa'}
+            label={'Bangsa *'}
             bind:val={$addNonFamilyModal.raceId}
             options={data.selectionOptions.raceLookup}
         ></CustomSelectField>
@@ -4266,7 +4266,7 @@
         <CustomSelectField
             errors={$addNonFamilyErrors.nationalityId}
             id="nationalityId"
-            label={'Kewarganegaraan'}
+            label={'Kewarganegaraan *'}
             bind:val={$addNonFamilyModal.nationalityId}
             options={data.selectionOptions.nationalityLookup}
         ></CustomSelectField>
@@ -4274,7 +4274,7 @@
         <CustomSelectField
             errors={$addNonFamilyErrors.genderId}
             id="genderId"
-            label={'Jantina'}
+            label={'Jantina *'}
             bind:val={$addNonFamilyModal.genderId}
             options={data.selectionOptions.genderLookup}
         ></CustomSelectField>
@@ -4306,7 +4306,7 @@
         <CustomSelectField
             errors={$addNonFamilyErrors.maritalId}
             id="maritalId"
-            label={'Status Perkhahwinan'}
+            label={'Status Perkhahwinan *'}
             val=""
             options={data.selectionOptions.maritalLookup}
         ></CustomSelectField>
@@ -4320,7 +4320,7 @@
 
         <div class="flex flex-row">
             <label for="addInSchool" class="w-[70px] text-sm text-black"
-                >Bersekolah</label
+                >Bersekolah *</label
             >
             <Checkbox
                 id="inSchool"
@@ -4348,7 +4348,7 @@
         <CustomTextField
             errors={$addNextOfKinErrors.name}
             id="name"
-            label={'Nama'}
+            label={'Nama *'}
             type="text"
             bind:val={$addNextOfKinModal.name}
         ></CustomTextField>
@@ -4356,14 +4356,14 @@
         <CustomTextField
             errors={$addNextOfKinErrors.alternativeName}
             id="alternativeName"
-            label={'Nama Lain'}
+            label={'Nama Lain *'}
             type="text"
             bind:val={$addNextOfKinModal.alternativeName}
         ></CustomTextField>
         <CustomSelectField
             errors={$addNextOfKinErrors.identityDocumentColor}
             id="identityDocumentColor"
-            label={'Jenis Kad Pengenalan'}
+            label={'Jenis Kad Pengenalan *'}
             options={data.selectionOptions.identityCardColorLookup}
             bind:val={$addNextOfKinModal.identityDocumentColor}
         ></CustomSelectField>
@@ -4371,21 +4371,21 @@
             errors={$addNextOfKinErrors.identityDocumentNumber}
             id="identityDocumentNumber"
             type="text"
-            label={'Nombor Kad Pengenalan'}
+            label={'Nombor Kad Pengenalan *'}
             bind:val={$addNextOfKinModal.identityDocumentNumber}
         ></CustomTextField>
 
         <CustomTextField
             errors={$addNextOfKinErrors.address}
             id="address"
-            label={'Alamat'}
+            label={'Alamat *'}
             bind:val={$addNextOfKinModal.address}
         ></CustomTextField>
 
         <CustomTextField
             errors={$addNextOfKinErrors.postcode}
             id="postcode"
-            label={'Poskod'}
+            label={'Poskod *'}
             type="text"
             bind:val={$addNextOfKinModal.postcode}
         ></CustomTextField>
@@ -4394,14 +4394,14 @@
             errors={$addNextOfKinErrors.birthDate}
             type="date"
             id="birthDate"
-            label={'Tarikh Lahir'}
+            label={'Tarikh Lahir *'}
             bind:val={$addNextOfKinModal.birthDate}
         ></CustomTextField>
 
         <CustomSelectField
             errors={$addNextOfKinErrors.birthCountryId}
             id="birthCountryId"
-            label={'Negara Kelahiran'}
+            label={'Negara Kelahiran *'}
             bind:val={$addNextOfKinModal.birthCountryId}
             options={data.selectionOptions.countryLookup}
         ></CustomSelectField>
@@ -4409,7 +4409,7 @@
         <CustomSelectField
             errors={$addNextOfKinErrors.birthStateId}
             id="birthStateId"
-            label={'Negeri Kelahiran'}
+            label={'Negeri Kelahiran *'}
             bind:val={$addNextOfKinModal.birthStateId}
             options={data.selectionOptions.stateLookup}
         ></CustomSelectField>
@@ -4417,7 +4417,7 @@
         <CustomSelectField
             errors={$addNextOfKinErrors.relationshipId}
             id="relationshipId"
-            label={'Hubungan'}
+            label={'Hubungan *'}
             bind:val={$addNextOfKinModal.relationshipId}
             options={data.selectionOptions.relationshipLookup}
         ></CustomSelectField>
@@ -4425,7 +4425,7 @@
         <CustomSelectField
             errors={$addNextOfKinErrors.educationLevelId}
             id="educationLevelId"
-            label={'Taraf Pendidikan'}
+            label={'Taraf Pendidikan *'}
             bind:val={$addNextOfKinModal.educationLevelId}
             options={data.selectionOptions.educationLookup}
         ></CustomSelectField>
@@ -4433,7 +4433,7 @@
         <CustomSelectField
             errors={$addNextOfKinErrors.raceId}
             id="raceId"
-            label={'Bangsa'}
+            label={'Bangsa *'}
             bind:val={$addNextOfKinModal.raceId}
             options={data.selectionOptions.raceLookup}
         ></CustomSelectField>
@@ -4441,7 +4441,7 @@
         <CustomSelectField
             errors={$addNextOfKinErrors.nationalityId}
             id="nationalityId"
-            label={'Kewarganegaraan'}
+            label={'Kewarganegaraan *'}
             bind:val={$addNextOfKinModal.nationalityId}
             options={data.selectionOptions.nationalityLookup}
         ></CustomSelectField>
@@ -4449,7 +4449,7 @@
         <CustomSelectField
             errors={$addNextOfKinErrors.genderId}
             id="genderId"
-            label={'Jantina'}
+            label={'Jantina *'}
             bind:val={$addNextOfKinModal.genderId}
             options={data.selectionOptions.genderLookup}
         ></CustomSelectField>
@@ -4481,7 +4481,7 @@
         <CustomSelectField
             errors={$addNextOfKinErrors.maritalId}
             id="maritalId"
-            label={'Status Perkhahwinan'}
+            label={'Status Perkhahwinan *'}
             bind:val={$addNextOfKinModal.maritalId}
             options={data.selectionOptions.maritalLookup}
         ></CustomSelectField>
@@ -4506,7 +4506,7 @@
 
         <CustomSelectField
             id="inSchool"
-            label={'Bersekolah'}
+            label={'Bersekolah *'}
             errors={$addNextOfKinErrors.inSchool}
             bind:val={$addNextOfKinModal.inSchool}
             options={data.selectionOptions.generalLookup}

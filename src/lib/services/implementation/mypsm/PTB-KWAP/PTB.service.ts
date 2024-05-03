@@ -79,6 +79,32 @@ export class PTBKWAPServices {
             return CommonResponseConstant.httpError;
         }
     }
+    // no pencen
+    static async getActingEmployeeList(param: CommonListRequestDTO) {
+        try {
+            const url: Input = 'employee/list';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+
     // list kakitangn
     static async getPTBKWAPEmployeeDocuments(
     ) {

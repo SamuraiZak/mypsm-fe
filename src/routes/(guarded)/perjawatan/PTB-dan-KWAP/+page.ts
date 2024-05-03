@@ -26,10 +26,16 @@ export const load = async () => {
         pageSize: 5,
         orderBy: null,
         orderType: null,
-        filter: {},
+        filter: {program:"SEMUA", // 'TETAP' | 'PERCUBAAN' | 'SEMENTARA' | 'KONTRAK' | 'PROJEK' | 'SAMBILAN' | 'PINJAMAN' | 'LAIN-LAIN' | 'SEMUA',
+        employeeNumber:null,
+        name:null,
+        identityCard:null,
+        scheme:"",
+        grade:null,
+        position:null},
     };
     const actingEmployeeListResponse: CommonResponseDTO =
-        await EmploymentActingServices.getActingEmployeeList(paramEm);
+        await PTBKWAPServices.getActingEmployeeList(paramEm);
 
     let actingEmployeeList: CommonEmployeeDTO[] = [];
 
@@ -177,7 +183,7 @@ export const load = async () => {
 
 
     return {
-        param, paramUrusSetia, paramEmp, ptbViewResponse, ptbViewTable, ptbNoViewResponse, ptbNoViewTable, paramNo, ptbEmployeeTable, ptbEmployeeResponse, actingEmployeeListResponse, actingEmployeeList,
+        param, paramUrusSetia, paramEmp,paramEm, ptbViewResponse, ptbViewTable, ptbNoViewResponse, ptbNoViewTable, paramNo, ptbEmployeeTable, ptbEmployeeResponse, actingEmployeeListResponse, actingEmployeeList,
     };
 
 };

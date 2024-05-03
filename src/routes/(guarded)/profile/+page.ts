@@ -829,6 +829,7 @@ export const _submitFamilyForm = async (formData: object) => {
 
 export const _submitEditFamilyForm = async (formData: object) => {
     const familyInfoform = await superValidate(formData, (zod)(_familyEditRequestSchema));
+    console.log(familyInfoform)
     if (!familyInfoform.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
@@ -846,6 +847,7 @@ export const _submitEditFamilyForm = async (formData: object) => {
 
 export const _submitDependencyForm = async (formData: object) => {
     const dependencyInfoform = await superValidate(formData, (zod)(_dependencyListRequestSchema));
+    console.log(dependencyInfoform)
 
     if (!dependencyInfoform.valid) {
         getErrorToast();

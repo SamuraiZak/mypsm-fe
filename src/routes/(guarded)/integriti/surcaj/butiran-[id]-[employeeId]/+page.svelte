@@ -28,6 +28,7 @@
     import { Toaster } from 'svelte-french-toast';
     import type { PageData } from './$types';
     import { certifyOptions } from '$lib/constants/core/radio-option-constants';
+    import { goto } from '$app/navigation';
     export let data: PageData;
 
     let isReadonlyActionFormStepper: boolean = true;
@@ -124,7 +125,13 @@
 <Stepper>
     <StepperContent>
         <StepperContentHeader title="Maklumat Kakitangan"
-        ></StepperContentHeader>
+        >
+        <TextIconButton
+        type="primary"
+        label="Kembali"
+        onClick={() => goto('/integriti/surcaj/')}
+       
+    /></StepperContentHeader>
         <StepperContentBody
             ><!-- Maklumat Peribadi -->
             <!-- <form
@@ -340,7 +347,13 @@
 
     <StepperContent>
         <StepperContentHeader title="Maklumat Perkhidmatan"
-        ></StepperContentHeader>
+        > <TextIconButton
+        type="primary"
+        label="Kembali"
+        onClick={() => goto('/integriti/surcaj/')}
+       
+    />
+    </StepperContentHeader>
         <StepperContentBody>
             <CustomTextField
                 disabled
@@ -691,7 +704,12 @@
     </StepperContent>
 
     <StepperContent>
-        <StepperContentHeader title="Butiran Surcaj"></StepperContentHeader>
+        <StepperContentHeader title="Butiran Surcaj"> <TextIconButton
+            type="primary"
+            label="Kembali"
+            onClick={() => goto('/integriti/surcaj/')}
+           
+        /></StepperContentHeader>
         <StepperContentBody>
             <form
                 id="form"
@@ -724,7 +742,14 @@
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Butiran Mesyuarat"></StepperContentHeader>
+        <StepperContentHeader title="Butiran Mesyuarat">
+            <TextIconButton
+        type="primary"
+        label="Kembali"
+        onClick={() => goto('/integriti/surcaj/')}
+       
+    />
+        </StepperContentHeader>
         <StepperContentBody>
             <form
                 id="meetingForm"
@@ -801,7 +826,13 @@
     <StepperContent>
         <StepperContentHeader
             title="Pengesahan Pengarah Integriti"
-        ></StepperContentHeader>
+        > <TextIconButton
+        type="primary"
+        label="Kembali"
+        onClick={() => goto('/integriti/surcaj/')}
+       
+    /></StepperContentHeader>
+       
         <StepperContentBody>
             <div class="h-fit w-full space-y-2.5 rounded-[3px] border p-2.5">
                 <div class="mb-5">

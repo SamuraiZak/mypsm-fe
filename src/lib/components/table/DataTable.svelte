@@ -426,7 +426,7 @@
             </div>
         {/if}
         <div
-            class="flex h-fit {maxheight} w-full flex-col items-center justify-start overflow-auto"
+            class="flex h-fit {maxheight} w-full flex-col items-start justify-start overflow-auto"
         >
             {#if tableData.data.length == 0}
                 <div

@@ -7,11 +7,24 @@ import { IntegrityServices } from "$lib/services/implementation/mypsm/integriti/
 
 export const load = async () => {
 
+    // const param: CommonListRequestDTO = {
+    //     pageNum: 1,
+    //     pageSize: 5,
+    //     orderBy: null,
+    //     orderType: null,
+    //     filter: {
+    //         grade: null,
+    //         position: null,
+    //         year: null,
+    //         name: null,
+    //     },
+    // };
+    // new table
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: null,
-        orderType: null,
+        orderBy: "id",
+        orderType: 1,
         filter: {
             grade: null,
             position: null,
@@ -20,8 +33,11 @@ export const load = async () => {
         },
     };
 
+
+
+
     
-    let addSurcajViewResponse: CommonResponseDTO;
+    let addSurcajViewResponse: CommonResponseDTO = {};
     let addSurcajViewTable = [];
 
 
@@ -30,7 +46,7 @@ export const load = async () => {
 
 
 
-    return { param,addSurcajViewTable };
+    return { param,addSurcajViewTable,addSurcajViewResponse };
 };
 
 export async function _updateTable(param: CommonListRequestDTO) {
