@@ -172,7 +172,7 @@ export interface LeaveDocumentViewDTO {
 
 export interface LeaveDocumentWrapperDTO {
     leaveId: number;
-    document: LeaveDocumentViewDTO[];
+    document: LeaveDocumentAddDTO[];
 }
 
 // document add

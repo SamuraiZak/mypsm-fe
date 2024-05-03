@@ -866,7 +866,7 @@
                             </p>
                             {#each data.props.currentApplicationDetail.document.document as item}
                                 <a
-                                    href={item.document}
+                                    href={item.base64}
                                     target="_blank"
                                     download={item.name}
                                     class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
@@ -895,7 +895,6 @@
                 </StepperContentBody>
             </StepperContent>
         {/if}
-        
 
         <!-- ================================================================ -->
         <!-- DIRECTOR FEEDBACK -->
@@ -1037,9 +1036,7 @@
         <!-- ================================================================ -->
         {#if data.props.currentApplicationProcess.meeting}
             <StepperContent>
-                <StepperContentHeader
-                    title="Maklumat Mesyuarat"
-                >
+                <StepperContentHeader title="Maklumat Mesyuarat">
                     {#if data.props.currentApplicationDetail.meeting == null && data.props.userMode == 'secretary'}
                         <TextIconButton
                             label="Hantar"
@@ -1447,8 +1444,6 @@
                 </StepperContentBody>
             </StepperContent>
         {/if}
-
-        
     </Stepper>
 </section>
 
