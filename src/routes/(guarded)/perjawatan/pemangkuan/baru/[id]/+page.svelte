@@ -4,9 +4,7 @@
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-    import type {
-        TableSettingDTO,
-    } from '$lib/dto/core/table/table.dto';
+    import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
     import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
     import { EmploymentActingServices } from '$lib/services/implementation/mypsm/perjawatan/employment-acting.service';
@@ -15,8 +13,10 @@
     import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import { Toaster } from 'svelte-french-toast';
+    import { Alert, Modal } from 'flowbite-svelte';
     export let data: PageData;
 
+    let confirmModal: boolean = false;
     let addActingTable: TableSettingDTO = {
         param: data.param,
         meta: data.actingEmployeeListResponse.data?.meta ?? {
@@ -32,8 +32,8 @@
         dictionary: [
             {
                 english: 'programme',
-                malay: 'program'
-            }
+                malay: 'program',
+            },
         ],
         url: 'employment/acting/employee_lists/list',
         id: 'addActingTable',
@@ -64,8 +64,8 @@
         dictionary: [
             {
                 english: 'programme',
-                malay: 'program'
-            }
+                malay: 'program',
+            },
         ],
         url: '',
         id: 'selectedEmployeeTable',
@@ -105,9 +105,15 @@
             );
 
         if (response.status == 'success') {
+            confirmModal = false;
             setTimeout(
                 () =>
-                    goto('/perjawatan/pemangkuan/butiran/'+response.data?.details.batchId+'-'+ data.actingTypes),
+                    goto(
+                        '/perjawatan/pemangkuan/butiran/' +
+                            response.data?.details.batchId +
+                            '-' +
+                            data.actingTypes,
+                    ),
                 1000,
             );
         }
@@ -117,9 +123,7 @@
 
 <!-- header section -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader
-        title="Pemangkuan Baru Gred {data.actingTypes}"
-    >
+    <ContentHeader title="Pemangkuan Baru Gred {data.actingTypes}">
         <TextIconButton
             icon="cancel"
             type="neutral"
@@ -132,9 +136,7 @@
             icon="add"
             label="Tambah"
             type="primary"
-            onClick={() => {
-                addChosenEmployeeToActing();
-            }}
+            onClick={() => (confirmModal = true)}
         />
     </ContentHeader>
 </section>
@@ -167,17 +169,38 @@
         <!-- Senarai Kakitangan Yang Dipilih -->
         <CustomTabContent title="Senarai Kakitangan Yang Dipilih">
             <div
-            class="flex max-h-full w-full flex-col items-start justify-start"
-        >
-            <div class="h-fit w-full p-3">
-                <DataTable
-                    title="Senarai calon yang dipilih untuk dipangku."
-                    bind:tableData={selectedEmployeeTable}
-                ></DataTable>
+                class="flex max-h-full w-full flex-col items-start justify-start"
+            >
+                <div class="h-fit w-full p-3">
+                    <DataTable
+                        title="Senarai calon yang dipilih untuk dipangku."
+                        bind:tableData={selectedEmployeeTable}
+                    ></DataTable>
+                </div>
             </div>
-        </div>
         </CustomTabContent>
     </CustomTab>
 </section>
-
-<Toaster/>
+<Modal title="" bind:open={confirmModal} size="sm" dismissable={false}>
+    <Alert color="blue">
+        <p>
+            <span class="font-medium">Arahan: </span>
+            Masukkan senarai kakitangan yang dipilih ke proses pemangkuan?
+        </p>
+    </Alert>
+    <div class="flex gap-3 justify-center">
+        <TextIconButton
+            label="Tambah"
+            type="primary"
+            onClick={() => {
+                addChosenEmployeeToActing();
+            }}
+        />
+        <TextIconButton
+            label="Batal"
+            type="neutral"
+            onClick={() => (confirmModal = false)}
+        />
+    </div>
+</Modal>
+<Toaster />
