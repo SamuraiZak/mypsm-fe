@@ -895,76 +895,7 @@
                 </StepperContentBody>
             </StepperContent>
         {/if}
-        <!-- ================================================================ -->
-        <!-- HEAD OF DIRECTOR FEEDBACK -->
-        <!-- ================================================================ -->
-
-        {#if data.props.currentApplicationProcess.headOfDirectorFeedback}
-            <StepperContent>
-                <StepperContentHeader title="Maklum Balas Pengarah">
-                    {#if data.props.currentApplicationDetail.headOfDirectorFeedback == null && data.props.userMode == 'headOfDirector'}
-                        <TextIconButton
-                            label="Hantar"
-                            icon="check"
-                            form="headOfDirectorFeedbackForm"
-                        ></TextIconButton>
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    {#if data.props.currentApplicationDetail.headOfDirectorFeedback == null && data.props.userMode !== 'headOfDirector'}
-                        <div class="flex w-full flex-col gap-10 px-3 pb-10">
-                            <Alert color="blue">
-                                <p>
-                                    <span class="font-medium"
-                                        >Tiada Maklumat!</span
-                                    >
-                                    Menunggu maklum balas dari pihak berkenaan.
-                                </p>
-                            </Alert>
-                        </div>
-                    {:else}
-                        <div
-                            class="flex h-full w-full flex-col items-start justify-start"
-                        >
-                            <form
-                                id="headOfDirectorFeedbackForm"
-                                method="POST"
-                                use:headOfDirectorFeedbackEnhance
-                                class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
-                            >
-                                <div class="flex w-full flex-col gap-2">
-                                    <CustomSelectField
-                                        disabled={data.props
-                                            .currentApplicationDetail
-                                            .headOfDirectorFeedback !== null ||
-                                            data.props.userMode !=
-                                                'headOfDirector'}
-                                        id="directorApprove"
-                                        label={'Adakah Permohonan Ini Sah?'}
-                                        bind:val={$headOfDirectorFeedbackForm.status}
-                                        options={data.props
-                                            .leaveEndorsementDropdown}
-                                    ></CustomSelectField>
-                                </div>
-                                <div class="flex w-full flex-col gap-2">
-                                    <CustomTextField
-                                        disabled={data.props
-                                            .currentApplicationDetail
-                                            .headOfDirectorFeedback !== null ||
-                                            data.props.userMode !=
-                                                'headOfDirector'}
-                                        id="remark"
-                                        label={'Ulasan'}
-                                        errors={$headOfDirectorFeedbackErrors.remark}
-                                        bind:val={$headOfDirectorFeedbackForm.remark}
-                                    ></CustomTextField>
-                                </div>
-                            </form>
-                        </div>
-                    {/if}
-                </StepperContentBody>
-            </StepperContent>
-        {/if}
+        
 
         <!-- ================================================================ -->
         <!-- DIRECTOR FEEDBACK -->
@@ -1092,6 +1023,76 @@
                                         label={'Ulasan'}
                                         errors={$secretaryVerificationErrors.remark}
                                         bind:val={$secretaryVerificationForm.remark}
+                                    ></CustomTextField>
+                                </div>
+                            </form>
+                        </div>
+                    {/if}
+                </StepperContentBody>
+            </StepperContent>
+        {/if}
+
+        <!-- ================================================================ -->
+        <!-- MEETING RESULT -->
+        <!-- ================================================================ -->
+        {#if data.props.currentApplicationProcess.meeting}
+            <StepperContent>
+                <StepperContentHeader
+                    title="Maklum Balas Pengarah Khidmat Pengurusan"
+                >
+                    {#if data.props.currentApplicationDetail.meeting == null && data.props.userMode == 'secretary'}
+                        <TextIconButton
+                            label="Hantar"
+                            icon="check"
+                            form="meetingResult"
+                        ></TextIconButton>
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
+                    {#if data.props.currentApplicationDetail.meeting == null && data.props.userMode !== 'secretary'}
+                        <div class="flex w-full flex-col gap-10 px-3 pb-10">
+                            <Alert color="blue">
+                                <p>
+                                    <span class="font-medium"
+                                        >Tiada Maklumat!</span
+                                    >
+                                    Menunggu maklum balas dari pihak berkenaan.
+                                </p>
+                            </Alert>
+                        </div>
+                    {:else}
+                        <div
+                            class="flex h-full w-full flex-col items-start justify-start"
+                        >
+                            <form
+                                id="meetingResult"
+                                method="POST"
+                                use:meetingResultEnhance
+                                class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
+                            >
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomSelectField
+                                        disabled={data.props
+                                            .currentApplicationDetail
+                                            .meeting !== null ||
+                                            data.props.userMode != 'secretary'}
+                                        id="status"
+                                        label={'Adakah Anda Sokong Permohonan Ini?'}
+                                        bind:val={$meetingResultForm.status}
+                                        options={data.props
+                                            .leaveEndorsementDropdown}
+                                    ></CustomSelectField>
+                                </div>
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomTextField
+                                        disabled={data.props
+                                            .currentApplicationDetail
+                                            .meeting !== null ||
+                                            data.props.userMode != 'secretary'}
+                                        id="remark"
+                                        label={'Ulasan'}
+                                        errors={$meetingResultErrors.remark}
+                                        bind:val={$meetingResultForm.remark}
                                     ></CustomTextField>
                                 </div>
                             </form>
@@ -1377,23 +1378,22 @@
         {/if}
 
         <!-- ================================================================ -->
-        <!-- MEETING RESULT -->
+        <!-- HEAD OF DIRECTOR FEEDBACK -->
         <!-- ================================================================ -->
-        {#if data.props.currentApplicationProcess.meeting}
+
+        {#if data.props.currentApplicationProcess.headOfDirectorFeedback}
             <StepperContent>
-                <StepperContentHeader
-                    title="Maklum Balas Pengarah Khidmat Pengurusan"
-                >
-                    {#if data.props.currentApplicationDetail.meeting == null && data.props.userMode == 'secretary'}
+                <StepperContentHeader title="Maklum Balas Pengarah">
+                    {#if data.props.currentApplicationDetail.headOfDirectorFeedback == null && data.props.userMode == 'headOfDirector'}
                         <TextIconButton
                             label="Hantar"
                             icon="check"
-                            form="meetingResult"
+                            form="headOfDirectorFeedbackForm"
                         ></TextIconButton>
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
-                    {#if data.props.currentApplicationDetail.meeting == null && data.props.userMode !== 'secretary'}
+                    {#if data.props.currentApplicationDetail.headOfDirectorFeedback == null && data.props.userMode !== 'headOfDirector'}
                         <div class="flex w-full flex-col gap-10 px-3 pb-10">
                             <Alert color="blue">
                                 <p>
@@ -1409,20 +1409,21 @@
                             class="flex h-full w-full flex-col items-start justify-start"
                         >
                             <form
-                                id="meetingResult"
+                                id="headOfDirectorFeedbackForm"
                                 method="POST"
-                                use:meetingResultEnhance
+                                use:headOfDirectorFeedbackEnhance
                                 class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
                             >
                                 <div class="flex w-full flex-col gap-2">
                                     <CustomSelectField
                                         disabled={data.props
                                             .currentApplicationDetail
-                                            .meeting !== null ||
-                                            data.props.userMode != 'secretary'}
-                                        id="status"
-                                        label={'Adakah Anda Sokong Permohonan Ini?'}
-                                        bind:val={$meetingResultForm.status}
+                                            .headOfDirectorFeedback !== null ||
+                                            data.props.userMode !=
+                                                'headOfDirector'}
+                                        id="directorApprove"
+                                        label={'Adakah Permohonan Ini Sah?'}
+                                        bind:val={$headOfDirectorFeedbackForm.status}
                                         options={data.props
                                             .leaveEndorsementDropdown}
                                     ></CustomSelectField>
@@ -1431,12 +1432,13 @@
                                     <CustomTextField
                                         disabled={data.props
                                             .currentApplicationDetail
-                                            .meeting !== null ||
-                                            data.props.userMode != 'secretary'}
+                                            .headOfDirectorFeedback !== null ||
+                                            data.props.userMode !=
+                                                'headOfDirector'}
                                         id="remark"
                                         label={'Ulasan'}
-                                        errors={$meetingResultErrors.remark}
-                                        bind:val={$meetingResultForm.remark}
+                                        errors={$headOfDirectorFeedbackErrors.remark}
+                                        bind:val={$headOfDirectorFeedbackForm.remark}
                                     ></CustomTextField>
                                 </div>
                             </form>
@@ -1445,6 +1447,8 @@
                 </StepperContentBody>
             </StepperContent>
         {/if}
+
+        
     </Stepper>
 </section>
 
