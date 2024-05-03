@@ -4,7 +4,7 @@ import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-requ
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { AddNewPromotion } from '$lib/dto/mypsm/employment/promotion/add-promotion.dto';
-import type { PromotionCertificationEmployee, PromotionCommonEmployee, PromotionDetail, PromotionPlacement, PromotionPlacementDetail } from '$lib/dto/mypsm/employment/promotion/promotion-common-employee.dto';
+import type { PromotionCertificationEmployee, PromotionCommonEmployee, PromotionDetail, PromotionPlacement, PromotionPlacementDetail, PromotionSalaryAdjustment } from '$lib/dto/mypsm/employment/promotion/promotion-common-employee.dto';
 import type { PromotionCertificationGet, PromotionGroupID } from '$lib/dto/mypsm/employment/promotion/promotion-common-groupid.dto';
 import type { PromotionCertification, PromotionCommonApproval, PromotionEmployeeEdit, PromotionPlacementEdit } from '$lib/dto/mypsm/employment/promotion/promotion-form.dto';
 import { _addNewPromotion, _editEmployeePromotion, _editPromotionCertification, _editPromotionPlacement, _promotionCommonApproval } from '$lib/schemas/mypsm/employment/promotion/promotion-schemas';
@@ -45,6 +45,8 @@ export const load = async ({ params }) => {
     let finalResult: PromotionDetail[] = [];
 
     let employeePromotionInfo = {} as PromotionPlacementDetail;
+    let employeeSalaryAdjustmentRes: CommonResponseDTO = {};
+    let employeeSalaryAdjustment: PromotionSalaryAdjustment[] = [];
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
@@ -93,12 +95,15 @@ export const load = async ({ params }) => {
         finalResult =
             finalResultResponse.data?.dataList as PromotionDetail[]
     }
-    else if(currentRoleCode == UserRoleConstant.kakitangan.code){
-        const employeePromotionInfoResponse: CommonResponseDTO = 
+    else if (currentRoleCode == UserRoleConstant.kakitangan.code) {
+        const employeePromotionInfoResponse: CommonResponseDTO =
             await EmploymentPromotionServices.getPlacementDetail(employeeIdRequest);
-        employeePromotionInfo = 
+        employeePromotionInfo =
             employeePromotionInfoResponse.data?.details as PromotionPlacementDetail;
-    } else if (params.id == 'baru'){
+        // employeeSalaryAdjustmentRes =
+        //     await EmploymentPromotionServices.getSalaryAdjustmentTable(req);
+        // employeeSalaryAdjustment =
+    } else if (params.id == 'baru') {
         employeeListResponse =
             await EmploymentPromotionServices.getEmployeeList(param);
         employeeList =

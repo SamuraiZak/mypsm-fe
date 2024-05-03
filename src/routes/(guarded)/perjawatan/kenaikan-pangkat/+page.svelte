@@ -258,7 +258,7 @@
                             }
                             goto(
                                 '/perjawatan/kenaikan-pangkat/butiran/' +
-                                    rowData.groupId +
+                                    rowData.promotionId +
                                     '-' +
                                     tempPromotionType,
                             );
