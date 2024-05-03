@@ -35,7 +35,6 @@ import {
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { LeaveApplicationServices } from '$lib/services/implementation/mypsm/leave/leave-application.service.js';
 import { error } from '@sveltejs/kit';
-import { resolve } from 'path-browserify';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
@@ -448,9 +447,9 @@ export async function load({ params }) {
                 }
             }
 
-            if (currentApplicationDetail.document !== null) {
-                documents = currentApplicationDetail.document;
-            }
+            // if (currentApplicationDetail.document !== null) {
+            //     documents = currentApplicationDetail.document;
+            // }
         }
     }
 
@@ -658,14 +657,18 @@ export function _convertToBase64(file: File): Promise<LeaveDocumentAddDTO> {
         const reader = new FileReader();
 
         reader.onload = (event) => {
-            const base64String = event.target?.result.toString().split(',')[1];
-            const fileName = file.name;
-            const fileObject: LeaveDocumentAddDTO = {
-                name: fileName,
-                base64: base64String,
-            };
-
-            resolve(fileObject);
+            if (event.target && event.target.result) {
+                const base64String = event.target.result
+                    .toString()
+                    .split(',')[1];
+                const resultObject: LeaveDocumentAddDTO = {
+                    base64: base64String,
+                    name: file.name,
+                };
+                resolve(resultObject);
+            } else {
+                reject(new Error('Failed to read file.'));
+            }
         };
 
         reader.onerror = (error) => {
