@@ -295,6 +295,17 @@ export async function load({ params }) {
         currentApplicationDetail = applicationDetailResponse.data
             ?.details as LeaveApplicationDetailDTO;
 
+        if (
+            currentApplicationDetail.applicationDetail.isMoreThan14Days !==
+            undefined
+        ) {
+            if (currentApplicationDetail.applicationDetail.isMoreThan14Days) {
+                currentApplicationProcess.meeting = true;
+            } else {
+                currentApplicationProcess.meeting = false;
+            }
+        }
+
         // fit data into detail form
         if (currentApplicationDetail.applicationDetail !== null) {
             switch (currentLeaveType.code) {
