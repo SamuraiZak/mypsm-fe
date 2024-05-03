@@ -16,9 +16,6 @@ export const load = async () => {
         month: Number(currentDate.getMonth() + 1),
         year: Number(currentDate.getFullYear()),
     }
-    if (salaryAllowanceFilter.month !== 1 && salaryAllowanceFilter.month !== 4 && salaryAllowanceFilter.month !== 7 && salaryAllowanceFilter.month !== 10) {
-        salaryAllowanceFilter.month = 1;
-    }
     let param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
@@ -46,15 +43,4 @@ export const load = async () => {
         salaryAllowanceListResponse,
         salaryAllowanceList,
     }
-}
-
-//update salary allowance list table
-export async function _updateTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await SalaryServices.getSalaryAllowanceList(param);
-    return {
-        props: {
-            param,
-            response,
-        },
-    };
 }

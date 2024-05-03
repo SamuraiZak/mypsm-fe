@@ -128,7 +128,6 @@
             _submitApprovalForm($approvalForm);
         },
     });
-    console.log($approvalForm)
 </script>
 
 <!-- content header starts here -->
@@ -218,36 +217,42 @@
                             label="Tangga Gaji (RM)"
                             id="salaryLevel"
                             disabled
+                            placeholder=""
                             bind:val={data.salaryDetail.salaryLevel}
                         />
                         <CustomTextField
                             label="Gaji Pokok (RM)"
                             id="baseSalary"
                             disabled
+                            placeholder=""
                             bind:val={data.salaryDetail.baseSalary}
                         />
                         <CustomTextField
                             label="ITKA"
                             id="itka"
                             disabled
+                            placeholder=""
                             bind:val={data.salaryDetail.itka}
                         />
                         <CustomTextField
                             label="ITP"
                             id="itp"
                             disabled
+                            placeholder=""
                             bind:val={data.salaryDetail.itp}
                         />
                         <CustomTextField
                             label="COLA"
                             id="cola"
                             disabled
+                            placeholder=""
                             bind:val={data.salaryDetail.cola}
                         />
                         <CustomSelectField
                             label="Bulan Pergerakan Gaji"
                             id="salaryMovementMonth"
                             disabled
+                            placeholder=""
                             options={kgtMonthLookup}
                             val={data.salaryDetail.salaryMovementMonth}
                         />
@@ -255,6 +260,7 @@
                             label="Jumlah (RM)"
                             id="salaryMovementTotal"
                             disabled
+                            placeholder=""
                             bind:val={data.salaryDetail.salaryMovementTotal}
                         />
                     </div>
@@ -353,8 +359,7 @@
                                         <span class="font-medium"
                                             >Tiada Maklumat!</span
                                         >
-                                        Menunggu keputusan daripada Pengarah Khidmat
-                                        Pengurusan.
+                                        Kakitangan tidak mempunyai maklumat potongan.
                                     </p>
                                 </Alert>
                             </div>

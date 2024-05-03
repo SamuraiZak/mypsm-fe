@@ -504,6 +504,7 @@
                             <CustomTextField
                                 label="Jabatan / Jawatan"
                                 id="position"
+                                placeholder=""
                                 disabled
                                 bind:val={data.partnerDetail.position}
                             />

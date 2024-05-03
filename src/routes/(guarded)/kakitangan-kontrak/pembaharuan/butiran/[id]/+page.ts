@@ -390,9 +390,9 @@ const getInputOption = async () => {
     // -------------------------------------------------------
     const suppAppResponse: CommonListRequestDTO = {
         pageNum: 1,
-        pageSize: 350,
-        orderBy: null,
-        orderType: null,
+        pageSize: 10000,
+        orderBy: "name",
+        orderType: 0,
         filter: {
             program: "TETAP",
             employeeNumber: null,
@@ -435,7 +435,7 @@ const getInputOption = async () => {
 
     const scaleLabel = [
         { name: 'Integriti' },
-        { name: 'Kepimpinan/Penyeliaanm' },
+        { name: 'Kepimpinan/Penyeliaan' },
         { name: 'Kreatif dan Proaktif' },
         { name: 'Kawalan Diri' },
         { name: 'Jalinan Hubungan dan Kerjasama' },

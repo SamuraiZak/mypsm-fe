@@ -22,6 +22,7 @@ export interface ActingChosenEmployee {
     actingResult?:   string;
     propertyDeclaration?: string;
     certificateOfIntegrity?: string;
+    marks?: number;
 }
 
 // Converts JSON strings to/from your types
@@ -69,7 +70,7 @@ export interface PostponeDetail {
     requestedReportDate: string | null;
     requestedPlacement:  string;
     meetingResult:       string;
-    newReportDutyDate:   string | null;
+    newReportDutyDate:   string;
     newPlacement:        string;
     documents:           ActingDocs[];  
 }

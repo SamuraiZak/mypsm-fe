@@ -178,7 +178,7 @@
         }
     }
 
-        if(data.applicationDoc.document.length > 0){
+        if(data.applicationDoc?.document?.length > 0){
             successUpload = true;
         }
     $: {
@@ -198,6 +198,7 @@
             notEditingApproverForm = true;
         }
     }
+    console.log(data.applicationDoc.document)
 </script>
 
 <!-- content header starts here -->
@@ -347,7 +348,7 @@
                 <div
                     class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
                 >
-                    {#if data.applicationDoc.document.length < 1 && (data.currentRoleCode == UserRoleConstant.unitBahagian.code || data.currentRoleCode == UserRoleConstant.unitNegeri.code)}
+                    {#if (data.applicationDoc?.document?.length < 1 || data.applicationDoc?.document == null)  && (data.currentRoleCode == UserRoleConstant.unitBahagian.code || data.currentRoleCode == UserRoleConstant.unitNegeri.code)}
                         <div
                             class="flex h-fit w-full flex-col justify-start gap-2 px-3 pb-5 text-sm text-ios-labelColors-secondaryLabel-light"
                         >
@@ -370,7 +371,7 @@
                                 >Dokumen-dokumen sokongan yang telah dimuat naik
                                 :</span
                             >
-                            {#if data.applicationDoc.document.length > 0}
+                            {#if data.applicationDoc?.document?.length > 0}
                                 {#each data.applicationDoc?.document as documents}
                                     <a
                                         href={documents.document}

@@ -210,9 +210,9 @@ const getLookup = async () => {
     ];// -------------------------------------------------------
     const suppAppResponse: CommonListRequestDTO = {
         pageNum: 1,
-        pageSize: 350,
-        orderBy: null,
-        orderType: null,
+        pageSize: 10000,
+        orderBy: "name",
+        orderType: 0,
         filter: {
             program: "TETAP",
             employeeNumber: null,

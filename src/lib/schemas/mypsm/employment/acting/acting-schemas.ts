@@ -40,7 +40,7 @@ export const _updateMeetingDetailSchema = z.object({
     grade: z.string().min(1, {message: "Ruangan ini tidak boleh kosong."}),
     position: shortTextSchema,
     meetingName: shortTextSchema,
-    meetingDate: stringToMinDate,
+    meetingDate: stringToMaxDate,
     state: shortTextSchema,
     placement: shortTextSchema,
     interviewDate: stringToMinDate,
@@ -58,7 +58,7 @@ export const _updatePromotionDetail = z.object({
     actingPosition: shortTextSchema,
     actingGrade: z.string().min(1, {message: "Ruangan ini tidak boleh kosong."}),
     meetingName: shortTextSchema,
-    meetingDate: stringToMinDate,
+    meetingDate: stringToMaxDate,
 })
 
 export const _updatePromotionMeetingResultSchema = z.object({
@@ -101,7 +101,7 @@ export const _actingApprovalSchema = z.object({
 export const _postponeDetailSchema = z.object({
     id: z.number(),
     meetingResult: shortTextSchema,
-    newReportDutyDate: shortTextSchema,
+    newReportDutyDate: z.string().min(1, {message: "Ruangan ini tidak boleh kosong."}),
     newPlacement: shortTextSchema,
     approvalLetter: z.object({
         base64: z.string(),
@@ -126,7 +126,7 @@ export const _mainUpdatePromotionMeetingResultSchema = z.object({
     actingGrade: z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
     placement: z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
     meetingName: shortTextSchema,
-    meetingDate: shortTextSchema,
+    meetingDate: z.string().min(1, {message: "Ruangan ini tidak boleh kosong."}),
     referenceTitle: shortTextSchema,
     referenceNo: shortTextSchema,
     referenceDate: stringToMinDate,

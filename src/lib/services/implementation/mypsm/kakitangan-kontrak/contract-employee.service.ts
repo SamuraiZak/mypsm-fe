@@ -29,7 +29,6 @@ import type { Input } from 'ky';
 import { RenewContractMeetingConvert, type RenewContractMeeting } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-meeting.dto';
 import { RenewContractSupporterApproverConvert, type RenewContractSupporterApprover, type RenewContractSuppAppApproval, RenewContractSuppAppApprovalConvert } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-supp-app.dto';
 import { RenewContractSecretaryUpdateConvert, type RenewContractSecretaryUpdate } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-secretary-update.dto';
-import { ContractEmployeeDocumentConvert, type ContractEmployeeDocument } from '$lib/dto/mypsm/kakitangan-kontrak/contract-document.dto';
 
 export class ContractEmployeeServices {
 

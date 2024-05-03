@@ -106,25 +106,28 @@
                     salaryMovementListTable.hiddenData = ['meetingId'];
                 },
             );
-        } else if (data.currentRoleCode == UserRoleConstant.pengarahKhidmatPengurusan.code){
-            _updateDirectorSalaryMovementTable(salaryMovementListTable.param).then(
-                (value) => {
-                    salaryMovementListTable.data =
-                        value.props.response.data?.dataList ?? [];
-                    salaryMovementListTable.meta = value.props.response.data
-                        ?.meta ?? {
-                        pageSize: 1,
-                        pageNum: 1,
-                        totalData: 1,
-                        totalPage: 1,
-                    };
-                    salaryMovementListTable.param.pageSize =
-                        value.props.param.pageSize;
-                    salaryMovementListTable.param.pageNum =
-                        value.props.param.pageNum;
-                    salaryMovementListTable.hiddenData = ['meetingId'];
-                },
-            );
+        } else if (
+            data.currentRoleCode ==
+            UserRoleConstant.pengarahKhidmatPengurusan.code
+        ) {
+            _updateDirectorSalaryMovementTable(
+                salaryMovementListTable.param,
+            ).then((value) => {
+                salaryMovementListTable.data =
+                    value.props.response.data?.dataList ?? [];
+                salaryMovementListTable.meta = value.props.response.data
+                    ?.meta ?? {
+                    pageSize: 1,
+                    pageNum: 1,
+                    totalData: 1,
+                    totalPage: 1,
+                };
+                salaryMovementListTable.param.pageSize =
+                    value.props.param.pageSize;
+                salaryMovementListTable.param.pageNum =
+                    value.props.param.pageNum;
+                salaryMovementListTable.hiddenData = ['meetingId'];
+            });
         }
     }
 
@@ -147,10 +150,10 @@
             $addNewSalaryMovementForm.employees = tempChosenEmployee.map(
                 (employee) => ({ employeeId: employee.employeeId }),
             );
-            if($addNewSalaryMovementForm.employees.length > 0){
+            if ($addNewSalaryMovementForm.employees.length > 0) {
                 _submitAddNewSalaryMovement($addNewSalaryMovementForm);
             } else {
-                alert("Senarai Kakitangan Yang Dipilih Tidak Boleh Kosong.")
+                alert('Senarai Kakitangan Yang Dipilih Tidak Boleh Kosong.');
             }
         },
     });
@@ -168,31 +171,6 @@
         {#if data.currentRoleCode == UserRoleConstant.urusSetiaGaji.code}
             <CustomTabContent title="Pergerakan Gaji Baru">
                 <div class="flex w-full flex-col justify-start gap-2.5 p-5">
-                    <FilterCard onSearch={_search}>
-                        <FilterSelectField
-                            options={ProgramDropdownConstant.list}
-                            label="Program"
-                            bind:inputValue={employeeListTable.param.filter
-                                .program}
-                        />
-                        <FilterSelectField
-                            label="Jawatan"
-                            options={data.lookup.positionLookup}
-                            bind:inputValue={employeeListTable.param.filter
-                                .position}
-                        />
-                        <FilterTextField
-                            label="Nama"
-                            bind:inputValue={employeeListTable.param.filter
-                                .name}
-                        />
-                        <FilterTextField
-                            label="No. Kad Pengenalan"
-                            bind:inputValue={employeeListTable.param.filter
-                                .identityCard}
-                        />
-                    </FilterCard>
-
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
                     >
@@ -274,6 +252,30 @@
                                 />
                             </div>
                         </div>
+                        <FilterCard onSearch={_search}>
+                            <FilterSelectField
+                                options={ProgramDropdownConstant.list}
+                                label="Program"
+                                bind:inputValue={employeeListTable.param.filter
+                                    .program}
+                            />
+                            <FilterSelectField
+                                label="Jawatan"
+                                options={data.lookup.positionLookup}
+                                bind:inputValue={employeeListTable.param.filter
+                                    .position}
+                            />
+                            <FilterTextField
+                                label="Nama"
+                                bind:inputValue={employeeListTable.param.filter
+                                    .name}
+                            />
+                            <FilterTextField
+                                label="No. Kad Pengenalan"
+                                bind:inputValue={employeeListTable.param.filter
+                                    .identityCard}
+                            />
+                        </FilterCard>
                         <CustomTable
                             title="Senarai Kakitangan Yang Layak Mengikut Proses Pergerakan Gaji"
                             onUpdate={_search}

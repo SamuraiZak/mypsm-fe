@@ -118,10 +118,11 @@
         validators: zod(_terminationCommonApproval),
         async onSubmit() {
             $approverApprovalForm.interimId = data.interimId.interimId;
-            const res = await _submitApproverApproval($approverApprovalForm);
-            if (res?.response.status == 'success') {
-                submitApprover = true;
-            }
+            await _submitApproverApproval($approverApprovalForm).then((res) => {
+                if(res?.response.status == "success"){
+                    submitApprover = true;
+                }
+            });
         },
     });
     if ($approverApprovalForm?.remark !== '') {
