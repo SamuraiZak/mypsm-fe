@@ -158,14 +158,14 @@
                 malay: 'Nombor Mesyuarat',
             },
         ],
-        url: 'employment/new_hire/personal_detail/list',
+        url: '',
         id: 'newCandidateListTable',
         option: {
             checkbox: false,
             detail: true,
             edit: false,
             select: false,
-            filter: true,
+            filter: false,
         },
         controls: {
             add: false,
@@ -219,22 +219,22 @@
                 }}
             >
                 <FilterWrapper slot="filter">
-                    <FilterTextField
+                    <!-- <FilterTextField
                         label="Nama Mesyuarat"
                         bind:inputValue={newCandidateListTable.param.filter
                             .meetingName}
-                    ></FilterTextField>
+                    ></FilterTextField> -->
                     <!-- <FilterDateField
                             label="Tarikh Mesyuarat"
                             bind:inputValue={newCandidateListTable.param
                                 .filter.meetingDate}
                         ></FilterDateField> -->
-                    <FilterSelectField
+                    <!-- <FilterSelectField
                         label="Status"
                         options={data.selectionOptions.statusLookup}
                         bind:inputValue={newCandidateListTable.param.filter
                             .status}
-                    ></FilterSelectField>
+                    ></FilterSelectField> -->
                 </FilterWrapper>
             </DataTable>
         </div>

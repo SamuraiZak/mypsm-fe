@@ -1106,7 +1106,7 @@
             <div class="flex w-full flex-col gap-2">
                 {#if $academicInfoForm.academics.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
-                        Tiada maklumat.
+                        Sila lengkapkan butiran sebelumnya.
                     </div>
                 {:else}
                     <CustomTab pill={true} id="academics">
@@ -1265,7 +1265,7 @@
             <div class="flex w-full flex-col gap-2">
                 {#if $experienceInfoForm.experiences.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
-                        Tiada maklumat.
+                        Sila lengkapkan butiran sebelumnya.
                     </div>
                 {:else}
                     <CustomTab pill={true} id="experiences">
@@ -1394,7 +1394,7 @@
             <div class="flex w-full flex-col gap-2">
                 {#if $activityInfoForm.activities.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
-                        Tiada maklumat.
+                        Sila lengkapkan butiran sebelumnya.
                     </div>
                 {:else}
                     <CustomTab pill={true} id="activities">
@@ -1496,7 +1496,7 @@
             <div class="flex w-full flex-col gap-2">
                 {#if $familyInfoForm.dependencies.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
-                        Tiada maklumat.
+                        Sila lengkapkan butiran sebelumnya.
                     </div>
                 {:else}
                     <CustomTab pill={true} id="families">
@@ -1758,7 +1758,7 @@
             <div class="flex w-full flex-col gap-2">
                 {#if $dependencyInfoForm.dependencies.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
-                        Tiada maklumat.
+                        Sila lengkapkan butiran sebelumnya.
                     </div>
                 {:else}
                     <CustomTab pill={true} id="dependencies">
@@ -2038,7 +2038,7 @@
             <div class="flex w-full flex-col gap-2">
                 {#if $nextOfKinInfoForm.dependencies.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
-                        Tiada maklumat.
+                        Sila lengkapkan butiran sebelumnya.
                     </div>
                 {:else}
                     <CustomTab pill={true} id="nextOfKins">
@@ -2252,7 +2252,7 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Dokumen - Dokumen Sokongan yang Berkaitan">
-            {#if !$isReadonlyDocumentFormStepper && data.isCandidateRole}
+            {#if !$isReadonlyDocumentFormStepper && data.isCandidateRole && data.newHireFullDetailView.nextOfKin.dependencies.length > 0}
                 <TextIconButton
                     type="primary"
                     label="Simpan"
@@ -2264,7 +2264,7 @@
             ><div class="flex w-full flex-col gap-2">
                 {#if data.newHireFullDetailView.nextOfKin.dependencies.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
-                        Tiada maklumat.
+                        Sila lengkapkan butiran sebelumnya.
                     </div>
                 {:else if !$isReadonlyDocumentFormStepper && data.isCandidateRole}
                     <p class="text-sm">

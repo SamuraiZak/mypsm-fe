@@ -90,10 +90,12 @@ export const load = async () => {
             );
     } else if (isStateDirectorRole) {
         confirmationInServiceListResponse =
-            await ConfirmationServices.getConfirmationStateDirectorList(param);
+            await ConfirmationServices.getConfirmationStateDirectorList(
+                rationalisationParam,
+            );
         confirmationInServiceExceedsThreeYearsListResponse =
             await ConfirmationServices.getConfirmationStateDirectorList(
-                exceedsThreeYearsParam,
+                rationalisationParam,
             );
         confirmationInServiceRationalisationListResponse =
             await ConfirmationServices.getConfirmationStateDirectorList(
@@ -102,11 +104,11 @@ export const load = async () => {
     } else if (isIntegrityDirectorRole) {
         confirmationInServiceListResponse =
             await ConfirmationServices.getConfirmationIntegrityDirectorList(
-                param,
+                rationalisationParam,
             );
         confirmationInServiceExceedsThreeYearsListResponse =
             await ConfirmationServices.getConfirmationIntegrityDirectorList(
-                exceedsThreeYearsParam,
+                rationalisationParam,
             );
         confirmationInServiceRationalisationListResponse =
             await ConfirmationServices.getConfirmationIntegrityDirectorList(
@@ -114,10 +116,12 @@ export const load = async () => {
             );
     } else if (isAuditDirectorRole) {
         confirmationInServiceListResponse =
-            await ConfirmationServices.getConfirmationAuditDirectorList(param);
+            await ConfirmationServices.getConfirmationAuditDirectorList(
+                rationalisationParam,
+            );
         confirmationInServiceExceedsThreeYearsListResponse =
             await ConfirmationServices.getConfirmationAuditDirectorList(
-                exceedsThreeYearsParam,
+                rationalisationParam,
             );
         confirmationInServiceRationalisationListResponse =
             await ConfirmationServices.getConfirmationAuditDirectorList(
