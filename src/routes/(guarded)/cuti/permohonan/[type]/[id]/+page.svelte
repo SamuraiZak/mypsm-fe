@@ -221,9 +221,13 @@
     } = superForm(data.forms.meetingResultForm, {
         id: 'meetingResultForm',
         SPA: true,
+        taintedMessage: false,
+        resetForm: false,
+        validationMethod: 'oninput',
+        invalidateAll: true,
         validators: zodClient(LeaveEndorserDetailsSchema),
-        onSubmit(input) {
-            _submitMeetingResultForm($managementFeedbackForm);
+        async onSubmit(input) {
+            _submitMeetingResultForm($meetingResultForm);
         },
     });
 
