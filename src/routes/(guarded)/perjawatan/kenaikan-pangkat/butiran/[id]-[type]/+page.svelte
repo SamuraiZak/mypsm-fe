@@ -1533,7 +1533,7 @@
                 </StepperContentBody>
             </StepperContent>
 
-            <StepperContent>
+            <!-- <StepperContent>
                 <StepperContentHeader title="Jadual Pergerakan Gaji">
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -1542,7 +1542,7 @@
                         tableData={salaryAdjustTable}
                     />
                 </StepperContentBody>
-            </StepperContent>
+            </StepperContent> -->
         {/if}
     </Stepper>
 </section>

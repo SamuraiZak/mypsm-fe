@@ -291,7 +291,7 @@
         url: 'employment/acting/interview_result_marks/list',
         id: 'interviewResultTable',
         option: {
-            checkbox: allMarked,
+            checkbox: !allMarked ? true : false,
             detail: false,
             edit: false,
             select: false,
@@ -302,7 +302,8 @@
         },
     };
     $:interviewResultTable.data = data.interviewResult;
-    $: allMarked = data.interviewResult.every((item) => item.marks !== null)
+    $: allMarked = data.interviewResult.every((item) => item.marks !== null);
+    $:interviewResultTable.option.checkbox = !allMarked;
     let promotionMeetingResultTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.promotionMeetingResponse.data?.meta ?? {
@@ -432,7 +433,7 @@
         id: 'postponeResultTable',
         option: {
             checkbox: false,
-            detail: true,
+            detail: false,
             edit: false,
             select: false,
             filter: false,
@@ -441,6 +442,12 @@
             add: false,
         },
     };
+    $: if(stepperIndex !== 6 && UserRoleConstant.urusSetiaPerjawatan.code){
+        postponeResultTable.option.detail = true;
+    }else {
+        postponeResultTable.option.detail = false;
+    }
+
     let actingConfirmationTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.actingConfirmationResponse.data?.meta ?? {
@@ -476,8 +483,9 @@
             add: false,
         },
     };
-    
+
     //gred utama table starts here
+    let isMainChecked: boolean = true;
     let mainCertification: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.mainActingCertificationResponse.data?.meta ?? {
@@ -503,7 +511,7 @@
         url: 'employment/acting/mains/certifications/list',
         id: 'mainCertification',
         option: {
-            checkbox: true,
+            checkbox: false,
             detail: false,
             edit: false,
             select: false,
@@ -544,6 +552,15 @@
             add: false,
         },
     };
+    $: mainPromotionTable.data = data.mainActingPromotionList;
+    $: mainCertification.data = data.mainActingCertification;
+    $:{ if(data.currentRoleCode == UserRoleConstant.urusSetiaIntegriti.code && mainPromotionTable.data.length < 1){
+        mainCertification.option.checkbox = true;
+        isMainChecked = false;
+    }else {
+        mainCertification.option.checkbox = false;
+    }}
+
     let mainActingInfoTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.mainActingInfoResponse.data?.meta ?? {
@@ -587,7 +604,7 @@
             add: false,
         },
     };
-
+    $: mainActingInfoTable.data = data.mainActingInfo;
     // ======================= validation
     const {
         form: updateChosenCandidateForm,
@@ -684,11 +701,14 @@
         id: 'updateMeetingResultForm',
         validators: zod(_updateMeetingResult),
         onSubmit() {
-            
-            interviewResultTable.selectedData.forEach((val:any) => {
+            if(interviewResultTable.selectedData.length < 1){
+                alert('Sila pilih kakitangan terlebih dahulu untuk masukkan keputusan temuduga.')
+            } else {
+                interviewResultTable.selectedData.forEach((val:any) => {
                 $updateMeetingResultForm.actingIds.push(Number(val?.actingId))
             });
             _submitUpdateMeetingResultForm($updateMeetingResultForm);
+            } 
         },
     });
     const {
@@ -793,7 +813,11 @@
         validators: zod(_actingApprovalSchema),
         onSubmit() {
             $supporterResultForm.id = selectedCandidate.actingId;
-            _submitSupporterResultForm($supporterResultForm);
+            _submitSupporterResultForm($supporterResultForm).then((res) => {
+                if(res?.response.status == 'success'){
+                    supporterApproved = true;
+                }
+            });;
         },
     });
     const {
@@ -809,7 +833,11 @@
         validators: zod(_actingApprovalSchema),
         onSubmit() {
             $approverResultForm.id = selectedCandidate.actingId;
-            _submitApproverResultForm($approverResultForm);
+            _submitApproverResultForm($approverResultForm).then((res) => {
+                if(res?.response.status == 'success'){
+                    approverApproved = true;
+                }
+            });
         },
     });
 
@@ -884,7 +912,11 @@
                 $certifySelected.id.push(tempVal.actingId);
             });
            
-            _submitCertifySelectedForm($certifySelected);
+            _submitCertifySelectedForm($certifySelected).then((res) => {
+                if(res?.response.status == 'success'){
+                    isMainChecked = true;
+                }
+            });
         },
     });
 
@@ -1053,6 +1085,8 @@
                         
                         if($updateActingResultForm.approverName === "Tiada Maklumat"){
                             suppAppExist = false;
+                        } else {
+                            suppAppExist = true;
                         }
                             //supporter
                             if (supporterApproval.remark !== null){
@@ -1180,6 +1214,7 @@
                             title="Tindakan: Tetapkan untuk semua kakitangan yang berkaitan."
                             borderClass="border-none"
                         />
+                        {#if !isMainChecked && data.currentRoleCode == UserRoleConstant.urusSetiaIntegriti.code}
                         <div class="flex w-full items-start justify-start">
                             <TextIconButton
                                 label="PERAKU"
@@ -1187,6 +1222,7 @@
                                 form="certifySelected"
                             />
                         </div>
+                        {/if}
                         <form
                             class="flex w-full flex-col justify-start gap-2.5 pb-10"
                             use:certifySelectedEnhance
@@ -1223,12 +1259,14 @@
                             form="mainMeetingResultForm"
                         />
                     {:else}
+                        {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                         <TextIconButton
                             label="Simpan"
                             icon="check"
                             type="primary"
                             form="updateMainPromotionMeetingResultForm"
                         />
+                        {/if}
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -1894,7 +1932,7 @@
                                 bind:val={$updateMeetingDetailForm.placement}
                                 options={data.lookup.placementLookup}
                             />
-                            {#if $updateMeetingDetailForm.interviewTime == undefined}
+                            {#if !meetingDetailExist}
                             <div class="flex w-full flex-col gap-2">
                                 <CustomFileField
                                     label="Dokumen Sokongan"
@@ -2179,19 +2217,19 @@
                                     label="No. Pekerja"
                                     disabled
                                     id="employeeNumber"
-                                    bind:val={selectedCandidate.employeeNumber}
+                                    val={selectedCandidate?.employeeNumber}
                                 />
                                 <CustomTextField
                                     label="Nama"
                                     disabled
                                     id="employeeName"
-                                    bind:val={selectedCandidate.employeeName}
+                                    val={selectedCandidate?.employeeName}
                                 />
                                 <CustomTextField
                                     label="No. Kad Pengenalan"
                                     disabled
                                     id="ICNumber"
-                                    bind:val={selectedCandidate.ICNumber}
+                                    val={selectedCandidate?.ICNumber}
                                 />
                                 <ContentHeader
                                     title="Keputusan Mesyuarat"
@@ -2594,7 +2632,7 @@
                                             label="Tindakan/Ulasan"
                                             id="remark"
                                             disabled={supporterApproved}
-                                            placeholder="Menunggu keputusan daripada pelulus..."
+                                            placeholder="Menunggu keputusan daripada penyokong..."
                                             errors={$supporterResultError.remark}
                                             bind:val={$supporterResultForm.remark}
                                         />
