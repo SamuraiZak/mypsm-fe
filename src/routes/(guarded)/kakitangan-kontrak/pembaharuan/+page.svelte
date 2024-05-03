@@ -123,7 +123,12 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['contractId'],
-        dictionary: [],
+        dictionary: [
+            {
+                english: 'Remark',
+                malay: 'Ulasan'
+            }
+        ],
         url: '',
         id: 'contractEmployeeTable',
         option: {
