@@ -158,7 +158,7 @@
                 malay: 'Nombor Mesyuarat',
             },
         ],
-        url: 'employment/new_hire/personal_detail/list',
+        url: '',
         id: 'newCandidateListTable',
         option: {
             checkbox: false,
