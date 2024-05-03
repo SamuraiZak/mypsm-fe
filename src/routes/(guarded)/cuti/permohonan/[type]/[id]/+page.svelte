@@ -864,13 +864,13 @@
                             >
                                 Dokumen Sokongan
                             </p>
-                            {#each data.props.documents as doc}
+                            {#each data.props.currentApplicationDetail.document.document as item}
                                 <a
-                                    href={doc.document}
+                                    href={item.document}
                                     target="_blank"
-                                    download={doc.name}
+                                    download={item.name}
                                     class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                    >{doc.name}</a
+                                    >{item.name}</a
                                 >
                             {/each}
                         </div>

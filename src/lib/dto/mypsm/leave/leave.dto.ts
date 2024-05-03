@@ -170,6 +170,11 @@ export interface LeaveDocumentViewDTO {
     document: string;
 }
 
+export interface LeaveDocumentWrapperDTO {
+    leaveId: number;
+    document: LeaveDocumentViewDTO[];
+}
+
 // document add
 export interface LeaveDocumentAddDTO {
     name: string;
@@ -275,7 +280,7 @@ export interface LeaveApplicationDetailDTO {
     approverFeedback?: LeaveEndorsmentDTO | null;
     managementFeedback?: LeaveEndorsmentDTO | null;
     meeting?: LeaveEndorsmentDTO | null;
-    document: LeaveDocumentViewDTO[] | null;
+    document: LeaveDocumentWrapperDTO | null;
 }
 
 export interface LeaveApplicationProcessDTO {

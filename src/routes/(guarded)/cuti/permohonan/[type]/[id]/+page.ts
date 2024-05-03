@@ -341,7 +341,7 @@ export async function load({ params }) {
                 headOfDirectorFeedbackForm.data.leaveTypeCode =
                     currentLeaveType.code;
 
-                if (currentApplicationDetail.status == "inactive") {
+                if (currentApplicationDetail.status == 'inactive') {
                     currentApplicationProcess.headOfDirectorFeedback = false;
                 }
             }
@@ -357,7 +357,7 @@ export async function load({ params }) {
                 directorFeedbackForm.data.leaveId = currentApplicationId;
                 directorFeedbackForm.data.leaveTypeCode = currentLeaveType.code;
 
-                if (currentApplicationDetail.status == "inactive") {
+                if (currentApplicationDetail.status == 'inactive') {
                     currentApplicationProcess.directorFeedback = false;
                 }
             }
@@ -376,9 +376,9 @@ export async function load({ params }) {
                 secretaryVerificationForm.data.leaveTypeCode =
                     currentLeaveType.code;
 
-                    if (currentApplicationDetail.status == "inactive") {
-                        currentApplicationProcess.secretaryVerification = false;
-                    }
+                if (currentApplicationDetail.status == 'inactive') {
+                    currentApplicationProcess.secretaryVerification = false;
+                }
             }
 
             // fit data into supporter feedback form
@@ -390,9 +390,9 @@ export async function load({ params }) {
                 supporterFeedbackForm.data.leaveTypeCode =
                     currentLeaveType.code;
 
-                    if (currentApplicationDetail.status == "inactive") {
-                        currentApplicationProcess.supporterFeedback = false;
-                    }
+                if (currentApplicationDetail.status == 'inactive') {
+                    currentApplicationProcess.supporterFeedback = false;
+                }
             }
 
             // fit data into approver feedback form
@@ -403,7 +403,7 @@ export async function load({ params }) {
                 approverFeedbackForm.data.leaveId = currentApplicationId;
                 approverFeedbackForm.data.leaveTypeCode = currentLeaveType.code;
 
-                if (currentApplicationDetail.status == "inactive") {
+                if (currentApplicationDetail.status == 'inactive') {
                     currentApplicationProcess.approverFeedback = false;
                 }
             }
@@ -417,9 +417,9 @@ export async function load({ params }) {
                 managementFeedbackForm.data.leaveTypeCode =
                     currentLeaveType.code;
 
-                    if (currentApplicationDetail.status == "inactive") {
-                        currentApplicationProcess.managementFeedback = false;
-                    }
+                if (currentApplicationDetail.status == 'inactive') {
+                    currentApplicationProcess.managementFeedback = false;
+                }
             }
 
             // fit data into meeting form
@@ -430,7 +430,7 @@ export async function load({ params }) {
                 meetingResultForm.data.leaveId = currentApplicationId;
                 meetingResultForm.data.leaveTypeCode = currentLeaveType.code;
 
-                if (currentApplicationDetail.status == "inactive") {
+                if (currentApplicationDetail.status == 'inactive') {
                     currentApplicationProcess.meeting = false;
                 }
             }
@@ -443,7 +443,7 @@ export async function load({ params }) {
                 endorserDetailForm.data.leaveId = currentApplicationId;
                 endorserDetailForm.data.leaveTypeCode = currentLeaveType.code;
 
-                if (currentApplicationDetail.status == "inactive") {
+                if (currentApplicationDetail.status == 'inactive') {
                     currentApplicationProcess.endorserDetail = false;
                 }
             }
