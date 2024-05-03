@@ -271,7 +271,7 @@
         exportData: [],
         hiddenColumn: ['id'],
         dictionary: [],
-        url: 'employment/new_offer/detail',
+        url: '',
         id: 'includedEmployeesListTable',
         option: {
             checkbox: false,
