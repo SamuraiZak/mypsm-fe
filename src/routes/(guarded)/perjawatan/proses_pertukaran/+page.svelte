@@ -167,6 +167,14 @@
             '/' +
             selectedData.id;
 
+        // goto(url);
+        alert(selectedApplicationType.description);
+    }
+    function viewDetailsTypeSelf() {
+        let url =
+            '/perjawatan/proses_pertukaran/permohonan_sendiri/' +
+            selectedData.id;
+
         goto(url);
     }
 </script>
@@ -192,7 +200,7 @@
                             addApplication();
                         }}
                         detailActions={() => {
-                            viewDetails();
+                            viewDetailsTypeSelf();
                         }}
                     >
                         <FilterWrapper slot="filter">

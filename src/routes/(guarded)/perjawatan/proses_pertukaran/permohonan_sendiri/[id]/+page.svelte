@@ -592,7 +592,7 @@
                                                     .currentApplicationDetail
                                                     .confirmation !== null}
                                                 id="applicationDate"
-                                                label={'Ulasan'}
+                                                label={'Tarikh Pengesahan Permohonan'}
                                                 errors={$employeeConfirmationErrors.applicationDate}
                                                 bind:val={$employeeConfirmationForm.applicationDate}
                                             ></CustomTextField>
