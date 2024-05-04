@@ -793,16 +793,16 @@
 
                 <input hidden bind:value={$secretaryApprovalInfoForm.id} />
 
-                <CustomTextField
-                    disabled={!data.role.isCourseSecretaryRole ||
-                        $isReadonlySecretaryApprovalResult}
-                    errors={$secretaryApprovalInfoErrors.remark}
-                    id="remark"
-                    label="Tindakan/Ulasan"
-                    placeholder="-"
-                    bind:val={$secretaryApprovalInfoForm.remark}
-                ></CustomTextField>
                 {#if data.role.isCourseSecretaryRole || $isReadonlySecretaryApprovalResult}
+                    <CustomTextField
+                        disabled={!data.role.isCourseSecretaryRole ||
+                            $isReadonlySecretaryApprovalResult}
+                        errors={$secretaryApprovalInfoErrors.remark}
+                        id="remark"
+                        label="Tindakan/Ulasan"
+                        placeholder="-"
+                        bind:val={$secretaryApprovalInfoForm.remark}
+                    ></CustomTextField>
                     <CustomRadioBoolean
                         disabled={!!(
                             !data.role.isCourseSecretaryRole ||
