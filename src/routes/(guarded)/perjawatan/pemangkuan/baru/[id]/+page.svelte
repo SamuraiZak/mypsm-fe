@@ -14,6 +14,9 @@
     import DataTable from '$lib/components/table/DataTable.svelte';
     import { Toaster } from 'svelte-french-toast';
     import { Alert, Modal } from 'flowbite-svelte';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     export let data: PageData;
 
     let confirmModal: boolean = false;
@@ -32,7 +35,7 @@
         dictionary: [
             {
                 english: 'programme',
-                malay: 'program',
+                malay: 'Program',
             },
         ],
         url: 'employment/acting/employee_lists/list',
@@ -54,7 +57,7 @@
         meta: {
             pageSize: 1,
             pageNum: 1,
-            totalData: 1,
+            totalData: 0,
             totalPage: 1,
         },
         data: addActingTable.selectedData ?? [],
@@ -64,7 +67,7 @@
         dictionary: [
             {
                 english: 'programme',
-                malay: 'program',
+                malay: 'Program',
             },
         ],
         url: '',
@@ -82,6 +85,8 @@
     };
 
     $: selectedEmployeeTable.data = addActingTable.selectedData ?? [];
+    $: selectedEmployeeTable.meta.totalData =
+        addActingTable.selectedData.length;
 
     const addChosenEmployeeToActing = async () => {
         let tempEmployeeIdList: number[] = [];
@@ -150,18 +155,45 @@
     <CustomTab>
         <!-- Senarai Semua Kakitangan -->
         <CustomTabContent title="Senarai Semua Kakitangan">
-            <ContentHeader
-                title="Tindakan: Tekan tombol tambah untuk masukkan kakitangan ke senarai calon yang dipilih untuk dipangku."
-                borderClass="border-none"
-            />
             <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
+                class="flex max-h-full w-full flex-col items-start justify-start gap-3 p-3"
             >
-                <div class="h-fit w-full p-3">
+                <Alert color="blue">
+                    <p>
+                        <span class="font-medium">Arahan: </span>
+                        Tekan tombol tambah untuk masukkan kakitangan ke senarai
+                        calon yang dipilih untuk dipangku.
+                    </p>
+                </Alert>
+                <div class="h-fit w-full">
                     <DataTable
                         title="Senarai Kakitangan"
                         bind:tableData={addActingTable}
-                    ></DataTable>
+                    >
+                        <FilterWrapper slot="filter">
+                            <FilterTextField
+                                label="No. Pekerja"
+                                bind:inputValue={addActingTable.param.filter
+                                    .employeeNumber}
+                            />
+                            <FilterTextField
+                                label="Nama"
+                                bind:inputValue={addActingTable.param.filter
+                                    .name}
+                            />
+                            <FilterTextField
+                                label="No. Kad Pengenalan"
+                                bind:inputValue={addActingTable.param.filter
+                                    .ICNumber}
+                            />
+                            <FilterSelectField
+                                label="Gred"
+                                options={data.gradeLookup}
+                                bind:inputValue={addActingTable.param.filter
+                                    .grade}
+                            />
+                        </FilterWrapper>
+                    </DataTable>
                 </div>
             </div>
         </CustomTabContent>
@@ -169,11 +201,11 @@
         <!-- Senarai Kakitangan Yang Dipilih -->
         <CustomTabContent title="Senarai Kakitangan Yang Dipilih">
             <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
+                class="flex max-h-full w-full flex-col items-start justify-start p-3"
             >
-                <div class="h-fit w-full p-3">
+                <div class="h-fit w-full">
                     <DataTable
-                        title="Senarai calon yang dipilih untuk dipangku."
+                        title="Senarai Calon Yang Dipilih Untuk Pemangkuan Gred {data.actingTypes}"
                         bind:tableData={selectedEmployeeTable}
                     ></DataTable>
                 </div>
@@ -188,9 +220,9 @@
             Masukkan senarai kakitangan yang dipilih ke proses pemangkuan?
         </p>
     </Alert>
-    <div class="flex gap-3 justify-center">
+    <div class="flex justify-center gap-3">
         <TextIconButton
-            label="Tambah"
+            label="Hantar"
             type="primary"
             onClick={() => {
                 addChosenEmployeeToActing();

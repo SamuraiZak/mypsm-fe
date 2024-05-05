@@ -55,7 +55,7 @@
             detail: true,
             edit: false,
             select: false,
-            filter: true,
+            filter: false,
         },
         controls: {
             add: false,
@@ -83,7 +83,7 @@
             detail: true,
             edit: false,
             select: false,
-            filter: true,
+            filter: false,
         },
         controls: {
             add: false,
@@ -111,7 +111,7 @@
             detail: true,
             edit: false,
             select: false,
-            filter: true,
+            filter: false,
         },
         controls: {
             add: false,

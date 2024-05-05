@@ -63,8 +63,10 @@ export const load = async ({ params }) => {
     let interviewGeneral = {} as ActingInterviewGeneralDetail;
     let interviewResultResponse: CommonResponseDTO = {};
     let interviewResult: ActingChosenEmployee[] = [];
+    let promotionMeetingDetail = {} as UpdatePromotionMeeting;
     let promotionMeetingResponse: CommonResponseDTO = {};
     let promotionMeetingResult: ActingChosenEmployee[] = [];
+    let placementMeetingDetail = {} as PlacementMeetingDetail;
     let placementDetail: ActingChosenEmployee[] = [];
     let placementDetailResponse: CommonResponseDTO = {};
     let postponeList: ActingChosenEmployee[] = [];
@@ -74,6 +76,8 @@ export const load = async ({ params }) => {
     let actingConfirmation: ActingChosenEmployee[] = [];
     let actingConfirmationResponse: CommonResponseDTO = {};
     const updateMeetingDetailForm = await superValidate(zod(_updateMeetingDetailSchema));
+    const updatePromotionMeetingForm = await superValidate(zod(_updatePromotionDetail))
+
 
 
     // gred utama
@@ -89,7 +93,8 @@ export const load = async ({ params }) => {
     const mainMeetingDetailForm = await superValidate(zod(_mainMeetingDetail));
     const mainSupporterApproval = await superValidate(zod(_quarterCommonApproval));
     const mainApproverApproval = await superValidate(zod(_quarterCommonApproval));
-    const updateMainPromotionMeetingResultForm = await superValidate(zod(_mainUpdatePromotionMeetingResultSchema))
+    const updateMainPromotionMeetingResultForm = await superValidate(zod(_mainUpdatePromotionMeetingResultSchema));
+    const updatePlacementMeeting = await superValidate(zod(_updatePlacementMeeting));
 
 
 
@@ -131,7 +136,22 @@ export const load = async ({ params }) => {
         interviewResult =
             interviewResultResponse.data?.dataList as ActingChosenEmployee[];
 
+        const promotionMeetingDetailResponse: CommonResponseDTO =
+            await EmploymentActingServices.getPromotionMeetingDetail(commonId);
+        promotionMeetingDetail =
+            promotionMeetingDetailResponse.data?.details as UpdatePromotionMeeting;
+        if(promotionMeetingDetail.meetingName !== null){
+            updatePromotionMeetingForm.data = promotionMeetingDetail;
+        }
         //fifth stepper and so on
+        const placementMeetingDetailResponse: CommonResponseDTO =
+            await EmploymentActingServices.getPlacementMeetingResultDetail(commonId);
+            placementMeetingDetail  =
+                placementMeetingDetailResponse.data?.details as PlacementMeetingDetail;
+            if(placementMeetingDetail.meetingName !== null){
+                updatePlacementMeeting.data = placementMeetingDetail;
+            }
+
         promotionMeetingResponse =
             await EmploymentActingServices.getPromotionMeetingResult(chosenEmployeeParam);
         promotionMeetingResult =
@@ -183,8 +203,6 @@ export const load = async ({ params }) => {
     const directorResultForm = await superValidate(zod(_actingApprovalSchema))
     const integrityResultForm = await superValidate(zod(_actingApprovalSchema))
     const updateMeetingResultForm = await superValidate(zod(_updateMeetingResult))
-    const updatePromotionMeetingForm = await superValidate(zod(_updatePromotionDetail))
-    const updatePlacementMeeting = await superValidate(zod(_updatePlacementMeeting))
     const updatePromotionMeetingResultForm = await superValidate(zod(_updatePromotionMeetingResultSchema))
     const updateEmployeePlacementMeetingResultForm = await superValidate(zod(_updateEmployeePlacementMeetingResultSchema))
     const updateActingResultForm = await superValidate(zod(_updateActingResultSchema))
@@ -383,6 +401,8 @@ export const _submitUpdatePromotionMeetingResultForm = async (formData: Promotio
     if (form.valid) {
         const response: CommonResponseDTO =
             await EmploymentActingServices.editPromotionResult(form.data as PromotionMeetingResult)
+
+        return { response }
     }
 }
 export const _submitUpdatePlacementMeeting = async (formData: PlacementMeetingDetail) => {
@@ -611,6 +631,15 @@ export const _mainActing = async (id: number) => {
     return { response }
 }
 
+export const _placementMeetingResult = async (id: number) => {
+    let currentId: commonIdRequestDTO = {
+        id: id,
+    }
+    const response: CommonResponseDTO = 
+        await EmploymentActingServices.getPlacementMeetingResult(currentId)
+
+    return { response }
+}
 
 
 

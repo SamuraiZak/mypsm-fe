@@ -1,7 +1,8 @@
-import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto.js';
-import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto.js';
-import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto.js';
-import { EmploymentActingServices } from '$lib/services/implementation/mypsm/perjawatan/employment-acting.service.js';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
+import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
+import { EmploymentActingServices } from '$lib/services/implementation/mypsm/perjawatan/employment-acting.service';
 
 export const load = async ({ params }) => {
     const param = {
@@ -9,7 +10,13 @@ export const load = async ({ params }) => {
         pageSize: 5,
         orderBy: null,
         orderType: null,
-        filter: {},
+        filter: {
+            employeeNumber: "",
+            name: "",
+            ICNumber: "",
+            grade: null,
+            position: null
+        },
     };  
 
     const actingEmployeeListResponse: CommonResponseDTO = 
@@ -21,12 +28,27 @@ export const load = async ({ params }) => {
         actingEmployeeList = actingEmployeeListResponse.data?.dataList as CommonEmployeeDTO[];
     }
 
+    //lookup
+    const gradeLookupResponse: CommonResponseDTO =
+        await LookupServices.getServiceGradeEnums();
+
+    const gradeLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsBothAreCode(gradeLookupResponse);
+
+    let nullGrade: DropdownDTO = {
+        value: null,
+        name: "Semua"
+    }
+
+    gradeLookup.push(nullGrade)
+
     const actingTypes: string = params.id;
     return {
         actingEmployeeList,
         actingEmployeeListResponse,
         param,
-        actingTypes
+        actingTypes,
+        gradeLookup,
     };
 
 };
