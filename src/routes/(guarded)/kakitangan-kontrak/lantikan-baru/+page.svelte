@@ -138,10 +138,11 @@
     </div>
 </section>
 
-<Modal class="flex w-[200px]" bind:open={openModal}>
+<Modal title="Sistem MyPSM" size="xs" bind:open={openModal}>
     <div class="flex flex-row justify-center gap-2.5">
         <TextIconButton
-            label="Kemaskini Semula"
+            label="Kemaskini"
+            icon="reset"
             type="primary"
             onClick={() =>
                 goto('./lantikan-baru/permohonan-' + selectedRow.candidateId)}

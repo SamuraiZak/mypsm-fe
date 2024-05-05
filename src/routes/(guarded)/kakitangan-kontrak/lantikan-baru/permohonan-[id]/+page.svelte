@@ -9,17 +9,23 @@
     import { _submit } from "./+page";
     import { zod } from "sveltekit-superforms/adapters";
     import { Toaster } from "svelte-french-toast";
+    import { Alert, Modal } from "flowbite-svelte";
 
     export let data: PageData;
-    
+    let existingEmail: boolean = false;
+    // let errorMessage: string = "insert into";
     const { form, errors, enhance } = superForm(data.form, {
         SPA: true,
         taintedMessage: false,
+        resetForm: false,
         id: "addContractForm",
         validators: zod(_addNewContractEmployeeSchema),
-        onSubmit() {
+        async onSubmit() {
             if(data.isEditing == "baru"){
-                _submit($form, data.isEditing);
+                const res = await _submit($form, data.isEditing);
+                if(res?.message?.includes("Terdapat masalah")){
+                    existingEmail = true;
+                }
             } else {
                 $form.candidateId = data.contractId.id;
                 _submit($form, data.isEditing)
@@ -92,7 +98,7 @@
             bind:val={$form.endContract}
         />
         <CustomTextField
-            label="Kadar Upah"
+            label="Kadar Upah (RM)"
             id="wageRate"
             type="number"
             errors={$errors.wageRate}
@@ -115,3 +121,19 @@
     </form>
 </section>
 <Toaster/>
+<Modal title="Sistem MyPSM" bind:open={existingEmail} dismissable={false} size="sm">
+    <Alert color="red">
+        <p>
+            <span class="font-medium">Ralat! </span>
+            Emel yang digunakan telah wujud dalam pangkalan data. Sila guna emel yang lain.
+        </p>
+    </Alert>
+    <div class="flex gap-3 justify-center">
+        <TextIconButton
+            label="Kembali"
+            icon="previous"
+            type="neutral"
+            onClick={() => (existingEmail = false)}
+        />
+    </div>
+</Modal>

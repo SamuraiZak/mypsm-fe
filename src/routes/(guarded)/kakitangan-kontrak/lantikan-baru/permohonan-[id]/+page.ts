@@ -59,7 +59,9 @@ export const _submit = async (formData: AddNewContractEmployeeDTO, submitType: s
 
         if (response.status == 'success') {
             goto('./');
-            return response
+            return response;
+        } else if(response.status == 'error'){
+            return response;
         }
     }
 };
