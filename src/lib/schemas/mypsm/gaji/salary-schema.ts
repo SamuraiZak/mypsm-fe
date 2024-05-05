@@ -32,7 +32,7 @@ export const _addNewSalaryMovementSchema = z.object({
     meetingDate:         stringToMinDate,
     salaryMovementMonth: numberSchema.default(1),
     specialAid:          numberSchema,
-    specialRaiseType:    z.string().default("fixed"),
+    specialRaiseType:    z.string().default("Peratusan Daripada KGT"),
     specialRaise:        numberSchema,
     employees:           employeesListSchema.array(),
 })

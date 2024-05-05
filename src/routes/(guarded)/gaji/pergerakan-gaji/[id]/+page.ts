@@ -2,6 +2,7 @@ import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.c
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto"
 import type { commonIdRequestDTO } from "$lib/dto/core/common/id-request.dto"
 import type { SalaryMovementDirectorApproval } from "$lib/dto/mypsm/gaji/pergerakan-gaji/add-salary-movement-director-approval.dto"
+import type { SalaryMovementLetter } from "$lib/dto/mypsm/gaji/pergerakan-gaji/salary-movement-approval-letter.dto.js"
 import type { SalaryMovementDetail } from "$lib/dto/mypsm/gaji/pergerakan-gaji/salary-movement-detail.dto"
 import type { SalaryMovementSchedule } from "$lib/dto/mypsm/gaji/pergerakan-gaji/salary-movement-schedule.dto"
 import { _directorApprovalSchema } from "$lib/schemas/mypsm/gaji/salary-schema.js"
@@ -22,6 +23,7 @@ export const load = async ({ params }) => {
     let salaryMovementSchedule: SalaryMovementSchedule[] = [];
     let SalaryMovementApprovalResponse: CommonResponseDTO = {};
     let salaryMovementApproval = {} as SalaryMovementDirectorApproval;
+    let salaryMovementLetter: SalaryMovementLetter[] = [];
 
 
     //get meeting detail
@@ -40,6 +42,11 @@ export const load = async ({ params }) => {
     salaryMovementApproval =
         SalaryMovementApprovalResponse.data?.details as SalaryMovementDirectorApproval;
 
+    const salaryMovementLetterResponse: CommonResponseDTO = 
+        await SalaryServices.getSalaryMovementLetter(meetingId);
+    salaryMovementLetter = 
+        salaryMovementLetterResponse.data?.dataList as SalaryMovementLetter[];
+
     const directorApprovalForm = await superValidate(salaryMovementApproval,zod(_directorApprovalSchema), {errors: false})
 
     return {
@@ -48,6 +55,7 @@ export const load = async ({ params }) => {
         salaryMovementSchedule,
         directorApprovalForm,
         meetingId,
+        salaryMovementLetter,
     }
 }
 
