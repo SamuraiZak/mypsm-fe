@@ -531,6 +531,9 @@ const dictionary: { [key: string]: string } = {
     totalLeave: "Jumlah Cuti (Hari)",
     fromDate: "Dari",
     toDate: "Hingga",
+    Payment: "Pembayaran",
+    Loan: "Pinjaman",
+
 
     //pemangkuan
     candidateCount: "Jumlah Calon",

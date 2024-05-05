@@ -56,9 +56,9 @@ export const mesyuaratNameLookup: DropdownDTO[] = [
 ]
 
 export const kgtSpecialRaiseType: DropdownDTO [] = [
-    { value: 'fixed', name: 'Ditetapkan Sekali Sepanjang Tahun Pergerakan Gaji' },
-    { value: 'specialByGrossPay', name: 'Peratusan Daripada Jumlah Gaji Pokok' },
-    { value: 'KGT', name: 'Peratusan Daripada KGT' },
+    { value: 'Ditetapkan Sekali Sepanjang Tahun Pergerakan Gaji', name: 'Ditetapkan Sekali Sepanjang Tahun Pergerakan Gaji' },
+    { value: 'Peratusan Daripada Jumlah Gaji Pokok', name: 'Peratusan Daripada Jumlah Gaji Pokok' },
+    { value: 'Peratusan Daripada KGT', name: 'Peratusan Daripada KGT' },
 ]
 
 export const successOption: DropdownDTO[] = [
