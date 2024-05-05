@@ -397,8 +397,33 @@ export class EmploymentActingServices {
         }
     }
 
+    //get promotion meeting detail
+    static async getPromotionMeetingDetail(param: commonIdRequestDTO) {
+        try {
+            const url: Input = 'employment/acting/promotion_meeting_results/detail'
 
-    //get promotion meeting table
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+
+    //get promotion meeting result table
     static async getPromotionMeetingResult(param: CommonListRequestDTO) {
         try {
             const url: Input = 'employment/acting/promotion_meeting_results/list'
@@ -406,6 +431,31 @@ export class EmploymentActingServices {
             const promiseRes: Promise<Response> = http
                 .post(url, {
                     body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //get placement meeting  detail
+    static async getPlacementMeetingResultDetail(param: commonIdRequestDTO) {
+        try {
+            const url: Input = 'employment/acting/promotion_meeting_placements/detail'
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
                 })
                 .json();
 
@@ -568,6 +618,31 @@ export class EmploymentActingServices {
 
             if (result.status == 'success') {
                 await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+     //get placement result detail
+    static async getPlacementMeetingResult(param: commonIdRequestDTO) {
+        try {
+            const url: Input = 'employment/acting/promotion_meeting_placements/get'
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const reponse: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(reponse);
+
+            if (result.status == 'success') {
                 return result;
             } else {
                 return CommonResponseConstant.httpError;

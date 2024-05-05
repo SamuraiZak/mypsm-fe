@@ -1,4 +1,5 @@
 export interface CertifySelected {
+    batchId: number;
     id: number[];
 }
 

@@ -49,7 +49,7 @@ export const _updateMeetingDetailSchema = z.object({
 })
 
 export const _updateMeetingResult = z.object({
-    marks: numberSchema,
+    marks: z.number({required_error: "Ruangan ini tidak boleh kosong.", invalid_type_error: "Ruangan ini tidak boleh kosong."}).lte(100, {message: "Hanya 0 hingga 100 sahaja dibenarkan."}),
     actingIds: z.number().array(),
 })
 
@@ -67,7 +67,7 @@ export const _updatePromotionMeetingResultSchema = z.object({
 })
 
 export const _updatePlacementMeeting = z.object({
-    batchId: z.number(),
+    batchId: z.number().optional(),
     meetingName: shortTextSchema,
     meetingDate: shortTextSchema,
 })
@@ -75,9 +75,9 @@ export const _updatePlacementMeeting = z.object({
 export const _updateEmployeePlacementMeetingResultSchema = z.object({
     id: z.number(),
     meetingResult: shortTextSchema,
-    newPlacement: shortTextSchema,
-    newDirector: shortTextSchema,
-    reportDate: stringToMinDate,
+    newPlacement: shortTextSchema.nullable(),
+    newDirector: shortTextSchema.nullable(),
+    reportDate: stringToMinDate.nullable(),
 })
 
 export const _updateActingResultSchema = z.object({
@@ -112,6 +112,7 @@ export const _postponeDetailSchema = z.object({
 
 // gred utamaaa =========================
 export const _certifySelected = z.object({
+    batchId: z.number(),
     id: z.number().array(),
 })
 

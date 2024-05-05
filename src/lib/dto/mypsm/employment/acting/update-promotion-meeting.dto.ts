@@ -34,9 +34,10 @@ export class PromotionMeetingResultConvert {
 }
 
 export interface PlacementMeetingDetail {
-    batchId:     number;
+    batchId?:     number;
     meetingName: string;
     meetingDate: string;
+    meetingId?: number;
 }
 
 // Converts JSON strings to/from your types
@@ -53,9 +54,9 @@ export class PlacementMeetingDetailConvert {
 export interface PlacementResult {
     id:            number;
     meetingResult: string;
-    newPlacement:  string;
-    reportDate:    string;
-    newDirector:   string;
+    newPlacement:  string | null;
+    reportDate:    string | null;
+    newDirector:   string | null;
 }
 
 // Converts JSON strings to/from your types
