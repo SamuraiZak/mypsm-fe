@@ -60,7 +60,7 @@ export const load = async ({ params }) => {
             paymentDocumentsResponse.data?.details as QuartersGetDocument;
     }
     const paymentForm = await superValidate(zod(_clinicPaymentSchema))
-    const secretaryApprovalForm = await superValidate(secretaryApproval, zod(_clinicCommonResultSchema))
+    const secretaryApprovalForm = await superValidate(secretaryApproval, zod(_clinicCommonResultSchema), {errors: false})
     return {
         currentRoleCode,
         currentId,

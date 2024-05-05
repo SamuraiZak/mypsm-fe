@@ -28,8 +28,8 @@ export const load = async () => {
         param = {
             pageNum: 1,
             pageSize: 5,
-            orderBy: null,
-            orderType: null,
+            orderBy: "id",
+            orderType: 1,
             filter: {}
         }
         medicalClaimListResponse =

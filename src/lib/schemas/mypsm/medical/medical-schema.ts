@@ -169,9 +169,9 @@ const uploadDocument = z.object({
 export const _clinicPaymentSchema = z.object({
     id: z.number(),
     paymentType: shortTextSchema,
-    transactionNumber: shortTextSchema,
-    transactionDate: stringToMaxDate,
-    documents: uploadDocument.array(),
+    transactionNumber: shortTextSchema.nullable(),
+    transactionDate: stringToMaxDate.nullable(),
+    documents: uploadDocument.array().nullable(),
 })
 
 export const _editAllocations = z.object({

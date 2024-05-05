@@ -3,9 +3,9 @@ import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-docu
 export interface MedicalEmployeeMakePayment {
     id:                number;
     paymentType:       string;
-    transactionNumber: string;
-    transactionDate:   string;
-    documents: DocumentBase64RequestDTO[];
+    transactionNumber: string | null;
+    transactionDate:   string | null;
+    documents: DocumentBase64RequestDTO[] | null;
 }
 
 // Converts JSON strings to/from your types

@@ -19,7 +19,7 @@
     import type { MedicalClinicEmployeePaymentList } from '$lib/dto/mypsm/perubatan/tuntutan-kakitangan/clinic-employee-payments-list.dto';
     import Alert from 'flowbite-svelte/Alert.svelte';
     import type { PageData } from './$types';
-    import { _submit} from './+page';
+    import { _submit } from './+page';
     import { superForm } from 'sveltekit-superforms/client';
     import { _editAllocations } from '$lib/schemas/mypsm/medical/medical-schema';
     import { zod } from 'sveltekit-superforms/adapters';
@@ -127,7 +127,6 @@
             if (res?.response.status == 'success') {
                 employeeAllocationTable.data = res.employeeGetAllocation;
                 readOnly = true;
-                
             }
         },
     });
@@ -178,7 +177,7 @@
         </CustomTabContent>
         {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code}
             <CustomTabContent
-                title="Senarai Kakitangan - Peruntukan"
+                title="Senarai Kakitangan - Peruntukkan"
                 paddingClass="p-none"
             >
                 <div
@@ -237,7 +236,7 @@
                             type="number"
                             val={data.clinicPanelAllocations?.cumulAlloc}
                         />
-                        <div class="flex flex-row w-full gap-10">
+                        <div class="flex w-full flex-row gap-10">
                             {#if !readOnly}
                                 <CustomTextField
                                     label="Peruntukkan Baru (RM)"
@@ -264,10 +263,10 @@
                         />
                     </form>
                 </div>
-                <div class="flex w-full flex-col justify-start p-5 pb-10">
+                <div class="flex w-full flex-col justify-start p-5 pb-12">
                     <div class="h h-fit w-full">
                         <DataTable
-                            title="Rekod Peruntukan bagi Kakitangan"
+                            title="Rekod Peruntukkan bagi Kakitangan"
                             bind:tableData={employeeAllocationTable}
                             bind:passData={rowData}
                         >

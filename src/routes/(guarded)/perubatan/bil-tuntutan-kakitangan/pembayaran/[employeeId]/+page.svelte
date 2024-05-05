@@ -2,7 +2,6 @@
     import { goto } from '$app/navigation';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
-    import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
@@ -23,6 +22,7 @@
     import { Toaster } from 'svelte-french-toast';
     import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
     import Alert from 'flowbite-svelte/Alert.svelte';
+    import Error from '../../../../../+error.svelte';
 
     export let data: PageData;
 
@@ -30,8 +30,13 @@
     let submitSecretary: boolean = false;
     let files: FileList;
     if (
-        data.paymentDetail.transactionNumber !== null &&
-        data.paymentDetail.transactionNumber !== undefined &&
+        (data.paymentDetail?.paymentMethod !== undefined ||
+            data.paymentDetail?.paymentMethod !== null) &&
+        data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code
+    ) {
+        submitSuccess = true;
+    } else if (
+        data.employeePaymentDetail?.paymentMethod !== null &&
         data.currentRoleCode == UserRoleConstant.kakitangan.code
     ) {
         submitSuccess = true;
@@ -49,8 +54,20 @@
         resetForm: false,
         async onSubmit() {
             $paymentForm.id = data.currentId.id;
-            if (files == undefined) {
+            if (
+                files == undefined &&
+                $paymentForm.paymentType == 'Transaksi Atas Talian'
+            ) {
                 alert('Dokumen sokongan tidak boleh kosong.');
+            } else if ($paymentForm.paymentType == 'Penolakan Gaji') {
+                $paymentForm.documents = null;
+                $paymentForm.transactionDate = null;
+                $paymentForm.transactionNumber = null;
+                const res = await _submitPaymentForm($paymentForm);
+
+                if (res?.response.status == 'success') {
+                    submitSuccess = true;
+                }
             } else {
                 _fileToBase64Object(files)
                     .then((result) => {
@@ -64,7 +81,7 @@
                         }
                     })
                     .catch((error) => {
-                        console.log(error);
+                        throw new Error(error);
                     });
             }
         },
@@ -94,20 +111,6 @@
     if ($secretaryApprovalForm.remark !== '') {
         submitSecretary = true;
     }
-
-    // function uploadDocument() {
-    //     if (files == undefined) {
-    //         alert('Dokumen sokongan tidak boleh kosong.');
-    //     } else {
-    //         _fileToBase64Object(files)
-    //             .then((result) => {
-    //                 $paymentForm.documents = result;
-    //             })
-    //             .catch((error) => {
-    //                 console.log(error);
-    //             });
-    //     }
-    // }
 </script>
 
 <!-- content header starts here -->
@@ -138,96 +141,98 @@
                 label="No. Pekerja"
                 disabled
                 id="employeeNumber"
-                bind:val={data.paymentPersonalDetail.employeeNumber}
+                val={data.paymentPersonalDetail?.employeeNumber}
             />
             <CustomTextField
                 label="Nama"
                 disabled
                 id="name"
-                bind:val={data.paymentPersonalDetail.name}
+                val={data.paymentPersonalDetail?.name}
             />
             <CustomTextField
                 label="No. Kad Pengenalan"
                 disabled
                 id="ICNumber"
-                bind:val={data.paymentPersonalDetail.ICNumber}
+                val={data.paymentPersonalDetail?.ICNumber}
             />
             <CustomTextField
                 label="Jawatan"
                 disabled
                 id="position"
-                bind:val={data.paymentPersonalDetail.position}
+                val={data.paymentPersonalDetail?.position}
             />
             <CustomTextField
                 label="Penempatan"
                 disabled
                 id="placement"
-                bind:val={data.paymentPersonalDetail.placement}
+                val={data.paymentPersonalDetail?.placement}
             />
             <ContentHeader
                 title="Maklumat  Pembayaran"
                 borderClass="border-none"
             />
-            {#if data.paymentDocuments.document !== null}
+            {#if data.paymentDetail?.paymentMethod !== null}
                 <CustomTextField
                     label="Jumlah Tunggakan (RM)"
                     disabled
                     id="amountToPay"
-                    bind:val={data.paymentDetail.amountToPay}
+                    val={data.paymentDetail?.amountToPay}
                 />
                 <CustomTextField
                     label="Kaedah Pembayaran"
                     disabled
                     id="paymentMethod"
-                    bind:val={data.paymentDetail.paymentMethod}
+                    val={data.paymentDetail?.paymentMethod}
                 />
-                <CustomTextField
-                    label="No. Rujukan Transaksi"
-                    disabled
-                    id="transactionNumber"
-                    bind:val={data.paymentDetail.transactionNumber}
-                />
-                <CustomTextField
-                    label="Bank Penerima"
-                    disabled
-                    id="receiverBank"
-                    bind:val={data.paymentDetail.receiverBank}
-                />
-                <CustomTextField
-                    label="No. Akaun Bank Penerima"
-                    disabled
-                    id="receiverBankAcc"
-                    bind:val={data.paymentDetail.receiverBankAcc}
-                />
-                <CustomTextField
-                    label="Tarikh Transaksi"
-                    disabled
-                    type="date"
-                    id="transactionDate"
-                    bind:val={data.paymentDetail.transactionDate}
-                />
+                {#if data.paymentDetail?.paymentMethod == 'Transaksi Atas Talian'}
+                    <CustomTextField
+                        label="No. Rujukan Transaksi"
+                        disabled
+                        id="transactionNumber"
+                        val={data.paymentDetail?.transactionNumber}
+                    />
+                    <CustomTextField
+                        label="Bank Penerima"
+                        disabled
+                        id="receiverBank"
+                        val={data.paymentDetail?.receiverBank}
+                    />
+                    <CustomTextField
+                        label="No. Akaun Bank Penerima"
+                        disabled
+                        id="receiverBankAcc"
+                        val={data.paymentDetail?.receiverBankAcc}
+                    />
+                    <CustomTextField
+                        label="Tarikh Transaksi"
+                        disabled
+                        type="date"
+                        id="transactionDate"
+                        val={data.paymentDetail?.transactionDate}
+                    />
 
-                <ContentHeader
-                    title="Bukti Pembayaran"
-                    borderClass="border-none"
-                />
-                <div
-                    class="flex h-fit w-full flex-col justify-start gap-2 pb-5 text-sm text-ios-labelColors-secondaryLabel-light"
-                >
-                    <span
-                        >Dokumen-dokumen sokongan yang telah dimuat naik oleh
-                        kakitangan :</span
+                    <ContentHeader
+                        title="Bukti Pembayaran"
+                        borderClass="border-none"
+                    />
+                    <div
+                        class="flex h-fit w-full flex-col justify-start gap-2 pb-5 text-sm text-ios-labelColors-secondaryLabel-light"
                     >
-
-                    {#each data?.paymentDocuments.document as documents}
-                        <a
-                            href={documents.document}
-                            download={documents.name}
-                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                            >{documents.name}</a
+                        <span
+                            >Dokumen-dokumen sokongan yang telah dimuat naik
+                            oleh kakitangan :</span
                         >
-                    {/each}
-                </div>
+
+                        {#each data?.paymentDocuments?.document as documents}
+                            <a
+                                href={documents.document}
+                                download={documents.name}
+                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                >{documents.name}</a
+                            >
+                        {/each}
+                    </div>
+                {/if}
 
                 <ContentHeader
                     title="Keputusan Urus Setia"
@@ -299,35 +304,37 @@
                             bind:val={$paymentForm.paymentType}
                             errors={$paymentError.paymentType}
                         />
-                        <CustomTextField
-                            label="No. Rujukan Transaksi"
-                            id="transactionNumber"
-                            bind:val={$paymentForm.transactionNumber}
-                            errors={$paymentError.transactionNumber}
-                        />
-                        <CustomTextField
-                            label="Tarikh Transaksi"
-                            id="transactionDate"
-                            type="date"
-                            bind:val={$paymentForm.transactionDate}
-                            errors={$paymentError.transactionDate}
-                        />
+                        {#if $paymentForm.paymentType == 'Transaksi Atas Talian'}
+                            <CustomTextField
+                                label="No. Rujukan Transaksi"
+                                id="transactionNumber"
+                                bind:val={$paymentForm.transactionNumber}
+                                errors={$paymentError.transactionNumber}
+                            />
+                            <CustomTextField
+                                label="Tarikh Transaksi"
+                                id="transactionDate"
+                                type="date"
+                                bind:val={$paymentForm.transactionDate}
+                                errors={$paymentError.transactionDate}
+                            />
 
-                        <div
-                            class="flex h-fit w-full flex-col justify-start gap-2 pb-5 text-sm text-ios-labelColors-secondaryLabel-light"
-                        >
-                            <span
-                                >Muat turun resit dan dokumen-dokumen sokongan
-                                yang berkaitan.</span
+                            <div
+                                class="flex h-fit w-full flex-col justify-start gap-2 pb-5 text-sm text-ios-labelColors-secondaryLabel-light"
                             >
-                        </div>
-                        <div class="flex w-full flex-col gap-2">
-                            <CustomFileField
-                                label="Dokumen Sokongan"
-                                id="employeeClaimDocument"
-                                bind:files
-                            ></CustomFileField>
-                        </div>
+                                <span
+                                    >Muat turun resit dan dokumen-dokumen
+                                    sokongan yang berkaitan.</span
+                                >
+                            </div>
+                            <div class="flex w-full flex-col gap-2">
+                                <CustomFileField
+                                    label="Dokumen Sokongan"
+                                    id="employeeClaimDocument"
+                                    bind:files
+                                ></CustomFileField>
+                            </div>
+                        {/if}
                     </form>
                 {:else if submitSuccess}
                     <ContentHeader
@@ -338,58 +345,61 @@
                         label="Jumlah Dibayar (RM)"
                         disabled
                         id="totalPayment"
-                        bind:val={data.employeePaymentDetail.totalPayment}
+                        val={data.employeePaymentDetail?.totalPayment}
                     />
                     <CustomTextField
                         label="Kaedah Pembayaran"
                         disabled
                         id="paymentMethod"
-                        bind:val={data.employeePaymentDetail.paymentMethod}
-                    />
-                    <CustomTextField
-                        label="No. Rujukan Transaksi"
-                        disabled
-                        id="transactionNumber"
-                        bind:val={data.employeePaymentDetail.transactionNumber}
-                    />
-                    <CustomTextField
-                        label="Bank Penerima"
-                        disabled
-                        id="receiverBank"
-                        bind:val={data.employeePaymentDetail.receiverBank}
-                    />
-                    <CustomTextField
-                        label="No. Akaun Bank Penerima"
-                        disabled
-                        id="receiverAcc"
-                        bind:val={data.employeePaymentDetail.receiverAcc}
-                    />
-                    <CustomTextField
-                        label="Tarikh Transaksi"
-                        disabled
-                        type="date"
-                        id="transactionDate"
-                        bind:val={data.employeePaymentDetail.transactionDate}
+                        val={data.employeePaymentDetail?.paymentMethod}
                     />
 
-                    <div
-                        class="flex h-fit w-full flex-col justify-start gap-2 pb-5 text-sm text-ios-labelColors-secondaryLabel-light"
-                    >
-                        <span
-                            >Dokumen-dokumen sokongan yang telah dimuat naik
-                            oleh kakitangan :</span
+                    {#if data.employeePaymentDetail?.paymentMethod == 'Transaksi Atas Talian'}
+                        <CustomTextField
+                            label="No. Rujukan Transaksi"
+                            disabled
+                            id="transactionNumber"
+                            val={data.employeePaymentDetail?.transactionNumber}
+                        />
+                        <CustomTextField
+                            label="Bank Penerima"
+                            disabled
+                            id="receiverBank"
+                            val={data.employeePaymentDetail?.receiverBank}
+                        />
+                        <CustomTextField
+                            label="No. Akaun Bank Penerima"
+                            disabled
+                            id="receiverAcc"
+                            val={data.employeePaymentDetail?.receiverAcc}
+                        />
+                        <CustomTextField
+                            label="Tarikh Transaksi"
+                            disabled
+                            type="date"
+                            id="transactionDate"
+                            val={data.employeePaymentDetail?.transactionDate}
+                        />
+
+                        <div
+                            class="flex h-fit w-full flex-col justify-start gap-2 pb-5 text-sm text-ios-labelColors-secondaryLabel-light"
                         >
-                        <!-- {#if data.paymentDocuments.document !== null} -->
-                        {#each data.paymentDocuments.document as documents}
-                            <a
-                                href={documents.document}
-                                download={documents.name}
-                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                >{documents.name}</a
+                            <span
+                                >Dokumen-dokumen sokongan yang telah dimuat naik
+                                oleh kakitangan :</span
                             >
-                        {/each}
-                        <!-- {/if} -->
-                    </div>
+                            <!-- {#if data.paymentDocuments.document !== null} -->
+                            {#each data.paymentDocuments?.document as documents}
+                                <a
+                                    href={documents.document}
+                                    download={documents.name}
+                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                    >{documents.name}</a
+                                >
+                            {/each}
+                            <!-- {/if} -->
+                        </div>
+                    {/if}
                 {/if}
             </div>
         </div>
