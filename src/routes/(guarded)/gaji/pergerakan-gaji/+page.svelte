@@ -1,15 +1,13 @@
 <script lang="ts">
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
-    import FilterCard from '$lib/components/table/filter/FilterCard.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import type { PageData } from './$types';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
-    import CustomTable from '$lib/components/table/CustomTable.svelte';
+    import type {
+        TableDTO,
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
     import {
         _submitAddNewSalaryMovement,
-        _updateDirectorSalaryMovementTable,
-        _updateSalaryMovementTable,
-        _updateTable,
     } from './+page';
     import { Toaster } from 'svelte-french-toast';
     import {
@@ -32,104 +30,95 @@
     import { goto } from '$app/navigation';
     import FilterNumberField from '$lib/components/table/filter/FilterNumberField.svelte';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
+    import { Alert, Modal } from 'flowbite-svelte';
+    import DataTable from '$lib/components/table/DataTable.svelte';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     export let data: PageData;
 
     let selectedSalaryMovementDetail = {} as SalaryMovementList;
-    let employeeListTable: TableDTO = {
+    let selectedEmployee: boolean = false;
+
+    let employeeListTable: TableSettingDTO = {
         param: data.employeeListParam,
         meta: data.employeeListResponse.data?.meta ?? {
-            pageSize: 5,
+            pageSize: 1,
             pageNum: 1,
-            totalData: 4,
+            totalData: 0,
             totalPage: 1,
         },
-        data: data.employeeList ?? [],
-        selectedData: [] as CommonEmployeeDTO[],
-        hiddenData: ['employeeId'],
+        data: data.employeeList,
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['employeeId'],
+        dictionary: [],
+        url: 'employee/list',
+        id: 'employeeListTable',
+        option: {
+            checkbox: true,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
     };
 
-    let selectedEmployeeTable: TableDTO = {
-        param: {},
+    let selectedEmployeeTable: TableSettingDTO = {
+        param: data.employeeListParam,
         meta: {
-            pageSize: 5,
+            pageSize: 1,
             pageNum: 1,
-            totalData: 4,
+            totalData: employeeListTable.selectedData.length,
             totalPage: 1,
         },
         data: employeeListTable.selectedData ?? [],
-        hiddenData: ['employeeId'],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['employeeId'],
+        dictionary: [],
+        url: '',
+        id: 'selectedEmployeeTable',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: false,
+            footer: false,
+        },
+        controls: {
+            add: false,
+        },
     };
 
-    let salaryMovementListTable: TableDTO = {
+    let salaryMovementListTable: TableSettingDTO = {
         param: data.salaryMovementParam,
         meta: data.salaryMovementListResponse.data?.meta ?? {
-            pageSize: 5,
+            pageSize: 1,
             pageNum: 1,
-            totalData: 4,
+            totalData: 0,
             totalPage: 1,
         },
-        data: data.salaryMovementList ?? [],
-        hiddenData: ['meetingId'],
+        data: data.salaryMovementList,
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['meetingId'],
+        dictionary: [],
+        url: data.currentRoleCode == UserRoleConstant.urusSetiaGaji.code ? 'salary/movement/list' : 'salary/movement/approval/list',
+        id: 'salaryMovementListTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
     };
-
-    async function _search() {
-        _updateTable(employeeListTable.param).then((value) => {
-            employeeListTable.data = value.props.response.data?.dataList ?? [];
-            employeeListTable.meta = value.props.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            employeeListTable.param.pageSize = value.props.param.pageSize;
-            employeeListTable.param.pageNum = value.props.param.pageNum;
-            employeeListTable.hiddenData = ['employeeId'];
-        });
-    }
-    async function _searchSalaryMovement() {
-        if (data.currentRoleCode == UserRoleConstant.urusSetiaGaji.code) {
-            _updateSalaryMovementTable(salaryMovementListTable.param).then(
-                (value) => {
-                    salaryMovementListTable.data =
-                        value.props.response.data?.dataList ?? [];
-                    salaryMovementListTable.meta = value.props.response.data
-                        ?.meta ?? {
-                        pageSize: 1,
-                        pageNum: 1,
-                        totalData: 1,
-                        totalPage: 1,
-                    };
-                    salaryMovementListTable.param.pageSize =
-                        value.props.param.pageSize;
-                    salaryMovementListTable.param.pageNum =
-                        value.props.param.pageNum;
-                    salaryMovementListTable.hiddenData = ['meetingId'];
-                },
-            );
-        } else if (
-            data.currentRoleCode ==
-            UserRoleConstant.pengarahKhidmatPengurusan.code
-        ) {
-            _updateDirectorSalaryMovementTable(
-                salaryMovementListTable.param,
-            ).then((value) => {
-                salaryMovementListTable.data =
-                    value.props.response.data?.dataList ?? [];
-                salaryMovementListTable.meta = value.props.response.data
-                    ?.meta ?? {
-                    pageSize: 1,
-                    pageNum: 1,
-                    totalData: 1,
-                    totalPage: 1,
-                };
-                salaryMovementListTable.param.pageSize =
-                    value.props.param.pageSize;
-                salaryMovementListTable.param.pageNum =
-                    value.props.param.pageNum;
-                salaryMovementListTable.hiddenData = ['meetingId'];
-            });
-        }
-    }
 
     $: selectedEmployeeTable.data =
         (employeeListTable.selectedData as CommonEmployeeDTO[]) ?? [];
@@ -151,9 +140,13 @@
                 (employee) => ({ employeeId: employee.employeeId }),
             );
             if ($addNewSalaryMovementForm.employees.length > 0) {
-                _submitAddNewSalaryMovement($addNewSalaryMovementForm);
+                _submitAddNewSalaryMovement($addNewSalaryMovementForm).then((res) => {
+                    if(res?.response.status == 'success'){
+                        employeeListTable.selectedData = [];
+                    }
+                });
             } else {
-                alert('Senarai Kakitangan Yang Dipilih Tidak Boleh Kosong.');
+                selectedEmployee = true;
             }
         },
     });
@@ -252,41 +245,43 @@
                                 />
                             </div>
                         </div>
-                        <FilterCard onSearch={_search}>
-                            <FilterSelectField
-                                options={ProgramDropdownConstant.list}
-                                label="Program"
-                                bind:inputValue={employeeListTable.param.filter
-                                    .program}
+                        <div class="h-fit w-full">
+                            <DataTable
+                                title="Senarai Kakitangan"
+                                bind:tableData={employeeListTable}
+                            >
+                                <FilterWrapper slot="filter">
+                                    <FilterSelectField
+                                        options={ProgramDropdownConstant.list}
+                                        label="Program"
+                                        bind:inputValue={employeeListTable.param
+                                            .filter.program}
+                                    />
+                                    <FilterSelectField
+                                        label="Jawatan"
+                                        options={data.lookup.positionLookup}
+                                        bind:inputValue={employeeListTable.param
+                                            .filter.position}
+                                    />
+                                    <FilterTextField
+                                        label="Nama"
+                                        bind:inputValue={employeeListTable.param
+                                            .filter.name}
+                                    />
+                                    <FilterTextField
+                                        label="No. Kad Pengenalan"
+                                        bind:inputValue={employeeListTable.param
+                                            .filter.identityCard}
+                                    />
+                                </FilterWrapper>
+                            </DataTable>
+                        </div>
+                        <div class="h-fit w-full">
+                            <DataTable
+                                title="Senarai Kakitangan Yang Dipilih"
+                                bind:tableData={selectedEmployeeTable}
                             />
-                            <FilterSelectField
-                                label="Jawatan"
-                                options={data.lookup.positionLookup}
-                                bind:inputValue={employeeListTable.param.filter
-                                    .position}
-                            />
-                            <FilterTextField
-                                label="Nama"
-                                bind:inputValue={employeeListTable.param.filter
-                                    .name}
-                            />
-                            <FilterTextField
-                                label="No. Kad Pengenalan"
-                                bind:inputValue={employeeListTable.param.filter
-                                    .identityCard}
-                            />
-                        </FilterCard>
-                        <CustomTable
-                            title="Senarai Kakitangan Yang Layak Mengikut Proses Pergerakan Gaji"
-                            onUpdate={_search}
-                            bind:tableData={employeeListTable}
-                            enableAdd
-                        />
-                        <CustomTable
-                            title="Senarai Kakitangan Yang Dipilih"
-                            bind:tableData={selectedEmployeeTable}
-                            hiddenFooter
-                        />
+                        </div>
                     </div>
                 </div>
             </CustomTabContent>
@@ -294,34 +289,56 @@
 
         <CustomTabContent title="Rekod Pergerakan Gaji">
             <div class="flex w-full flex-col justify-start gap-2.5 p-5">
-                <FilterCard onSearch={_searchSalaryMovement}>
-                    <FilterSelectField
-                        options={kgtMonthLookup}
-                        label="Bulan"
-                        bind:inputValue={salaryMovementListTable.param.filter
-                            .month}
-                    />
-                    <FilterNumberField
-                        label="Tahun"
-                        bind:inputValue={salaryMovementListTable.param.filter
-                            .year}
-                    />
-                </FilterCard>
-                <CustomTable
-                    title="Rekod Pergerakan Gaji Dalam Proses"
-                    onUpdate={_searchSalaryMovement}
-                    bind:tableData={salaryMovementListTable}
-                    bind:passData={selectedSalaryMovementDetail}
-                    enableDetail
-                    detailActions={() => {
-                        goto(
-                            '/gaji/pergerakan-gaji/' +
-                                selectedSalaryMovementDetail.meetingId,
-                        );
-                    }}
-                />
+                <div class="h-fit w-full">
+                    <DataTable
+                        title="Rekod Pergerakan Gaji"
+                        bind:tableData={salaryMovementListTable}
+                        bind:passData={selectedSalaryMovementDetail}
+                        detailActions={() => {
+                            goto(
+                                '/gaji/pergerakan-gaji/' +
+                                    selectedSalaryMovementDetail.meetingId,
+                            );
+                        }}
+                    >
+                        <FilterWrapper slot="filter">
+                            <FilterSelectField
+                                options={kgtMonthLookup}
+                                label="Bulan"
+                                bind:inputValue={salaryMovementListTable.param
+                                    .filter.month}
+                            />
+                            <FilterNumberField
+                                label="Tahun"
+                                bind:inputValue={salaryMovementListTable.param
+                                    .filter.year}
+                            />
+                        </FilterWrapper>
+                    </DataTable>
+                </div>
             </div>
         </CustomTabContent>
     </CustomTab>
 </section>
 <Toaster />
+<Modal
+    title="Sistem MyPSM"
+    bind:open={selectedEmployee}
+    dismissable={false}
+    size="sm"
+>
+    <Alert color="red">
+        <p>
+            <span class="font-medium">Ralat! </span>
+            Senarai kakitangan yang dipilih untuk pergerakan gaji tidak boleh kosong.
+        </p>
+    </Alert>
+    <div class="flex justify-center gap-3">
+        <TextIconButton
+            label="Kembali"
+            icon="previous"
+            type="neutral"
+            onClick={() => (selectedEmployee = false)}
+        />
+    </div>
+</Modal>

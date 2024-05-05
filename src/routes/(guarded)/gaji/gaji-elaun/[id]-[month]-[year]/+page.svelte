@@ -14,7 +14,10 @@
     import type { PageData } from './$types';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type {
+        TableDTO,
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
     import { goto } from '$app/navigation';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import { approveOptions } from '$lib/constants/core/radio-option-constants';
@@ -35,6 +38,8 @@
     import { Toaster } from 'svelte-french-toast';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import Alert from 'flowbite-svelte/Alert.svelte';
+    import { translate } from '$lib/config/dictionary';
+    import DataTable from '$lib/components/table/DataTable.svelte';
     export let data: PageData;
 
     let isEditingPublicIndex: number = -1;
@@ -47,15 +52,37 @@
     ) {
         hideHeaderButton = true;
     }
-    let umumTable: TableDTO = {
+    let umumTable: TableSettingDTO = {
         param: data.param,
         meta: {
+            pageSize: 1,
             pageNum: 1,
-            pageSize: 5,
-            totalData: data.publicDetail.leaves.length ?? 4,
+            totalData: data.publicDetail.leaves.length ?? 0,
             totalPage: 1,
         },
         data: data.publicDetail.leaves ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: [],
+        dictionary: [
+            {
+                english: 'amount',
+                malay: 'Jumlah (RM)'
+            }
+        ],
+        url: '',
+        id: 'umumTable',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: false,
+            footer: false,
+        },
+        controls: {
+            add: false,
+        },
     };
 
     const {
@@ -341,12 +368,13 @@
             <StepperContentBody paddingClass="p-0">
                 <CustomTab>
                     <CustomTabContent title="Umum">
-                        <div class="w-full border-b pb-5">
-                            <CustomTable
-                                title="Rekod Cuti Kakitangan"
-                                hiddenFooter
-                                tableData={umumTable}
-                            />
+                        <div class="w-full border-b px-3 pb-5">
+                            <div class="h-fit w-full">
+                                <DataTable
+                                    title="Senarai Cuti"
+                                    tableData={umumTable}
+                                />
+                            </div>
                         </div>
                         <ContentHeader
                             title="Senarai Potongan"
@@ -382,9 +410,10 @@
                                             >
                                                 <span
                                                     class="text-base font-semibold text-ios-labelColors-link-light"
-                                                    >{i + 1}. {$publicDetailForm
-                                                        .deduction[i]
-                                                        .type}</span
+                                                    >{i + 1}. {translate(
+                                                        $publicDetailForm
+                                                            .deduction[i].type,
+                                                    )}</span
                                                 >
                                                 <div
                                                     class=" flex flex-row gap-2.5"
@@ -455,10 +484,6 @@
                     </CustomTabContent>
 
                     <CustomTabContent title="Pemangkuan">
-                        <ContentHeader
-                            title="Senarai Pemangkuan"
-                            borderClass="border-none"
-                        />
                         {#if $actingDetailForm.acting.length < 1}
                             <div class="flex w-full flex-col gap-10 px-3">
                                 <Alert color="blue">
@@ -703,7 +728,9 @@
                         <CustomTextField
                             label="Ulasan/Tindakan"
                             id="remark"
-                            disabled={$approvalForm.month !== undefined || data.currentRoleCode == UserRoleConstant.urusSetiaGaji.code}
+                            disabled={$approvalForm.month !== undefined ||
+                                data.currentRoleCode ==
+                                    UserRoleConstant.urusSetiaGaji.code}
                             bind:val={$approvalForm.remark}
                             errors={$approvalError.remark}
                         />
@@ -711,7 +738,9 @@
                             label="Keputusan"
                             options={approveOptions}
                             id="status"
-                            disabled={$approvalForm.month !== undefined || data.currentRoleCode == UserRoleConstant.urusSetiaGaji.code}
+                            disabled={$approvalForm.month !== undefined ||
+                                data.currentRoleCode ==
+                                    UserRoleConstant.urusSetiaGaji.code}
                             bind:val={$approvalForm.status}
                             errors={$approvalError.status}
                         />

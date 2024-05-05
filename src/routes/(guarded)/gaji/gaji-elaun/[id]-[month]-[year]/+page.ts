@@ -76,6 +76,7 @@ export const load = async ({ params }) => {
         orderBy: null,
         orderType: null,
         pageSize: 5,
+        filter: {}
     }
     return {
         currentRoleCode,

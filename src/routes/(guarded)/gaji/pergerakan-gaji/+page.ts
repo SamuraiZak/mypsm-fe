@@ -95,38 +95,9 @@ export const _submitAddNewSalaryMovement = async (formData: AddNewSalaryMovement
     if (form.valid) {
         const response: CommonResponseDTO =
             await SalaryServices.addNewSalaryMovement(form.data as AddNewSalaryMovement)
-    }
-}
 
-//update employee list table
-export async function _updateTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await EmployeeServices.getEmployeeList(param);
-    return {
-        props: {
-            param,
-            response,
-        },
-    };
-}
-//update salary movement in process table
-export async function _updateSalaryMovementTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await SalaryServices.getSalaryMovementList(param);
-    return {
-        props: {
-            param,
-            response,
-        },
-    };
-}
-//update salary movement in process table
-export async function _updateDirectorSalaryMovementTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await SalaryServices.getDirectorSalaryMovementList(param);
-    return {
-        props: {
-            param,
-            response,
-        },
-    };
+        return { response }
+    }
 }
 
 //get lookup
