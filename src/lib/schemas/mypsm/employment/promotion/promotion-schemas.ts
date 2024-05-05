@@ -50,8 +50,8 @@ export const _editEmployeePromotion = z.object({
     id: z.number(),
     promotionType: shortTextSchema,
     confirmedDate: shortTextSchema,
-    supporterName: shortTextSchema,
-    approverName: shortTextSchema,
+    supporterName: shortTextSchema.nullable(),
+    approverName: shortTextSchema.nullable(),
     status: booleanSchema,
     remark: shortTextSchema,
 })

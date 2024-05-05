@@ -64,7 +64,10 @@
     import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
     import Alert from 'flowbite-svelte/Alert.svelte';
 
-    let openDetail: boolean = false;
+    //stepper control
+    let stepperControl: boolean[] = [false, false, false, false, false];
+
+    //view control
     let directorApproved: boolean = true;
     let integrityApproved: boolean = true;
     let promotionMeetingExist: boolean = true;
@@ -72,6 +75,8 @@
     let employeePromotionExist: boolean = true;
     let supporterApproved: boolean = true;
     let approverApproved: boolean = true;
+
+
     let employeeListTable: TableSettingDTO = {
         param: data.param,
         meta: data.employeeListResponse.data?.meta ?? {
@@ -218,6 +223,7 @@
             add: false,
         },
     };
+
     let promotionmeetingTable: TableSettingDTO = {
         param: data.commonParam,
         meta: data.promotionMeetingListResponse.data?.meta ?? {
@@ -253,6 +259,8 @@
             add: false,
         },
     };
+    $: promotionmeetingTable.data = data.promotionMeetingList;
+
     let promotionTable: TableSettingDTO = {
         param: data.commonParam,
         meta: data.placementListResponse.data?.meta ?? {
@@ -288,6 +296,8 @@
             add: false,
         },
     };
+    $: promotionTable.data = data.placementList;
+
     let promotionEmployee: TableSettingDTO = {
         param: data.commonParam,
         meta: data.promotionDetailResponse.data?.meta ?? {
@@ -319,6 +329,8 @@
             add: false,
         },
     };
+    $: promotionEmployee.data = data.promotionDetail;
+
     let promotionFinalResult: TableSettingDTO = {
         param: data.commonParam,
         meta: data.finalResultResponse.data?.meta ?? {
@@ -350,6 +362,7 @@
             add: false,
         },
     };
+    $: promotionFinalResult.data = data.finalResult;
 
     const {
         form: certificationForm,
@@ -452,6 +465,10 @@
         id: 'employeePromotion',
         validators: zod(_editEmployeePromotion),
         onSubmit() {
+            if(!$employeePromotion.status){
+                $employeePromotion.supporterName = null;
+                $employeePromotion.approverName = null;
+            }
             _submitEmployeePromotion($employeePromotion).then((res) => {
                 if (res?.response.status == 'success') {
                     employeePromotionExist = true;
@@ -791,12 +808,12 @@
             {:else if !data.isNewPromotion}
                 <StepperContent>
                     <StepperContentHeader title="Status Perakuan">
-                        {#if openDetail}
+                        {#if stepperControl[0]}
                             <TextIconButton
                                 type="neutral"
                                 label="Kembali"
-                                icon="cancel"
-                                onClick={() => (openDetail = false)}
+                                icon="previous"
+                                onClick={() => (stepperControl[0] = false)}
                             />
                             {#if !directorApproved || !integrityApproved}
                                 <TextIconButton
@@ -811,23 +828,31 @@
                         {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
-                        {#if !openDetail}
+                        {#if !stepperControl[0]}
                             <div
                                 class="flex w-full flex-col justify-start gap-2.5 p-3"
                             >
                                 <div
-                                    class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                                    class="flex w-full flex-col gap-2.5 pb-10"
                                 >
+                                {#if data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code}
+                                <Alert color="blue">
+                                    <p>
+                                        <span class="font-medium">Arahan:  </span>
+                                        Tetapkan untuk semua kakitangan berkaitan.
+                                    </p>
+                                </Alert>
+                                {/if}
                                     <div class="h-fit w-full">
                                         <DataTable
-                                            title=""
+                                            title="Senarai Kakitangan"
                                             bind:tableData={certificationTable}
                                             bind:passData={rowData}
                                             detailActions={async () => {
                                                 await getTableInformation(
                                                     1,
                                                 ).finally(
-                                                    () => (openDetail = true),
+                                                    () => (stepperControl[0] = true),
                                                 );
                                             }}
                                         ></DataTable>
@@ -899,12 +924,12 @@
                     <StepperContentHeader
                         title="Keputusan Mesyuarat Kenaikan Pangkat"
                     >
-                        {#if openDetail}
+                        {#if stepperControl[1]}
                             <TextIconButton
                                 type="netural"
                                 label="Kembali"
-                                icon="cancel"
-                                onClick={() => (openDetail = false)}
+                                icon="previous"
+                                onClick={() => (stepperControl[1] = false)}
                             />
                             {#if !promotionMeetingExist && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
@@ -917,10 +942,18 @@
                         {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
-                        {#if !openDetail}
+                        {#if !stepperControl[1]}
                             <div
-                                class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
+                                class="flex w-full flex-col justify-center gap-2.5 p-3 pb-10"
                             >
+                            {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                                <Alert color="blue">
+                                    <p>
+                                        <span class="font-medium">Arahan:  </span>
+                                        Tetapkan untuk semua kakitangan berkaitan.
+                                    </p>
+                                </Alert>
+                                {/if}
                                 <div class="h-fit w-full">
                                     <DataTable
                                         title="Senarai Kakitangan Terpilih"
@@ -930,7 +963,7 @@
                                             await getTableInformation(
                                                 3,
                                             ).finally(
-                                                () => (openDetail = true),
+                                                () => (stepperControl[1] = true),
                                             );
                                         }}
                                     ></DataTable>
@@ -979,7 +1012,7 @@
                                         <CustomRadioBoolean
                                             label="Keputusan"
                                             id="meetingResult"
-                                            disabled={false}
+                                            disabled={promotionMeetingExist}
                                             options={approveOptions}
                                             bind:val={$certificationForm.meetingResult}
                                             errors={$certificationError.meetingResult}
@@ -1102,12 +1135,12 @@
                     <StepperContentHeader
                         title="Keputusan Mesyuarat Penempatan Kakitangan"
                     >
-                        {#if openDetail}
+                        {#if stepperControl[2]}
                             <TextIconButton
                                 type="netural"
                                 label="Kembali"
-                                icon="cancel"
-                                onClick={() => (openDetail = false)}
+                                icon="previous"
+                                onClick={() => (stepperControl[2] = false)}
                             />
                             {#if !placementMeetingExist && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
@@ -1120,10 +1153,18 @@
                         {/if}
                     </StepperContentHeader>
                     <StepperContentBody paddingClass="p-none">
-                        {#if !openDetail}
+                        {#if !stepperControl[2]}
                             <div
-                                class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10"
+                                class="flex w-full flex-col gap-2.5 p-5 pb-10"
                             >
+                            {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                                <Alert color="blue">
+                                    <p>
+                                        <span class="font-medium">Arahan:  </span>
+                                        Tetapkan untuk semua kakitangan berkaitan.
+                                    </p>
+                                </Alert>
+                                {/if}
                                 <div class="h-fit w-full">
                                     <DataTable
                                         title="Senarai Calon Kakitangan Yang Dibawa Ke Mesyuarat Penempatan Kakitangan"
@@ -1133,7 +1174,7 @@
                                             await getTableInformation(
                                                 1,
                                             ).finally(
-                                                () => (openDetail = true),
+                                                () => (stepperControl[2] = true),
                                             );
                                         }}
                                     ></DataTable>
@@ -1318,12 +1359,12 @@
                     <StepperContentHeader
                         title="Maklumat Kenaikan Pangkat Kakitangan"
                     >
-                        {#if openDetail}
+                        {#if stepperControl[3]}
                             <TextIconButton
                                 type="netural"
                                 label="Kembali"
-                                icon="cancel"
-                                onClick={() => (openDetail = false)}
+                                icon="previous"
+                                onClick={() => (stepperControl[3] = false)}
                             />
                             {#if !employeePromotionExist && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
@@ -1336,10 +1377,18 @@
                         {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
-                        {#if !openDetail}
+                        {#if !stepperControl[3]}
                             <div
-                                class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10"
+                                class="flex w-full flex-col gap-2.5 p-3 pb-10"
                             >
+                            {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                                <Alert color="blue">
+                                    <p>
+                                        <span class="font-medium">Arahan:  </span>
+                                        Tetapkan untuk semua kakitangan berkaitan.
+                                    </p>
+                                </Alert>
+                                {/if}
                                 <div class="h-fit w-full">
                                     <DataTable
                                         title="Senarai Calon Kakitangan Yang Lulus Untuk Kenaikan Pangkat"
@@ -1349,9 +1398,8 @@
                                             await getTableInformation(
                                                 2,
                                             ).finally(
-                                                () => (openDetail = true),
+                                                () => (stepperControl[3] = true),
                                             );
-                                            openDetail = true;
                                         }}
                                     ></DataTable>
                                 </div>
@@ -1370,20 +1418,24 @@
                                         disabled={employeePromotionExist}
                                         type="date"
                                         bind:val={$employeePromotion.confirmedDate}
-                                    />
-                                    <CustomRadioBoolean
-                                        label="Status"
-                                        id="status"
-                                        disabled={employeePromotionExist}
-                                        options={approveOptions}
-                                        bind:val={$employeePromotion.status}
+                                        errors={$employeePromotionError.confirmedDate}
                                     />
                                     <CustomTextField
                                         label="Ulasan"
                                         id="remark"
                                         disabled={employeePromotionExist}
                                         bind:val={$employeePromotion.remark}
+                                        errors={$employeePromotionError.remark}
+                                    />  
+                                    <CustomRadioBoolean
+                                        label="Status"
+                                        id="status"
+                                        disabled={employeePromotionExist}
+                                        options={approveOptions}
+                                        bind:val={$employeePromotion.status}
+                                        errors={$employeePromotionError.status}
                                     />
+                                    {#if $employeePromotion.status}
                                     <CustomSelectField
                                         label="Nama Penyokong"
                                         id="supporterName"
@@ -1391,6 +1443,7 @@
                                         options={data.lookup
                                             .supporterApproverLookup}
                                         bind:val={$employeePromotion.supporterName}
+                                        errors={$employeePromotionError.supporterName}
                                     />
                                     <CustomSelectField
                                         label="Nama Pelulus"
@@ -1399,7 +1452,9 @@
                                         options={data.lookup
                                             .supporterApproverLookup}
                                         bind:val={$employeePromotion.approverName}
+                                        errors={$employeePromotionError.approverName}
                                     />
+                                    {/if}
                                 </form>
                             </div>
                         {/if}
@@ -1408,12 +1463,12 @@
 
                 <StepperContent>
                     <StepperContentHeader title="Penyokongan Kenaikan Pangkat">
-                        {#if openDetail}
+                        {#if stepperControl[4]}
                             <TextIconButton
                                 type="netural"
                                 label="Kembali"
-                                icon="cancel"
-                                onClick={() => (openDetail = false)}
+                                icon="previous"
+                                onClick={() => (stepperControl[4] = false)}
                             />
                             {#if (data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code && !supporterApproved) || !approverApproved}
                                 <TextIconButton
@@ -1429,10 +1484,18 @@
                         {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
-                        {#if !openDetail}
+                        {#if !stepperControl[4]}
                             <div
-                                class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10"
+                                class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
                             >
+                            {#if data.currentRoleCode == UserRoleConstant.penyokong.code || data.currentRoleCode == UserRoleConstant.pelulus.code}
+                                <Alert color="blue">
+                                    <p>
+                                        <span class="font-medium">Arahan:  </span>
+                                        Tetapkan untuk semua kakitangan berkaitan.
+                                    </p>
+                                </Alert>
+                                {/if}
                                 <div class="h-fit w-full">
                                     <DataTable
                                         title="Senarai Calon Kakitangan Yang Lulus Untuk Kenaikan Pangkat"
@@ -1442,9 +1505,8 @@
                                             await getTableInformation(
                                                 2,
                                             ).finally(
-                                                () => (openDetail = true),
+                                                () => (stepperControl[4] = true),
                                             );
-                                            openDetail = true;
                                         }}
                                     ></DataTable>
                                 </div>

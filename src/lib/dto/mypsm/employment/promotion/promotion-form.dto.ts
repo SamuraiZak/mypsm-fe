@@ -46,8 +46,8 @@ export interface PromotionEmployeeEdit {
     id:            number;
     promotionType: string;
     confirmedDate: string;
-    supporterName: string;
-    approverName:  string;
+    supporterName: string | null;
+    approverName:  string | null;
     status:  boolean;
     remark:        string;
 }
