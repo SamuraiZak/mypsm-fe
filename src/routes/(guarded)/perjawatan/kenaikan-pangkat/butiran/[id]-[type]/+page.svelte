@@ -199,7 +199,7 @@
         data: data.certificationList,
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['employeeId', 'promotionId'],
+        hiddenColumn: ['employeeId', 'promotionId', data.promotionType == "Utama" ? 'directionCertification' : ""],
         dictionary: [
             {
                 english: 'integrityCertification',
@@ -468,6 +468,7 @@
             if(!$employeePromotion.status){
                 $employeePromotion.supporterName = null;
                 $employeePromotion.approverName = null;
+                $employeePromotion.remark = "Tidak Lulus";
             }
             _submitEmployeePromotion($employeePromotion).then((res) => {
                 if (res?.response.status == 'success') {
