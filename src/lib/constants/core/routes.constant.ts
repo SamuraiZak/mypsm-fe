@@ -2,12 +2,14 @@ import type { ModuleDTO } from '$lib/dto/core/setup/setup.dto';
 import { UserRoleConstant } from './user-role.constant';
 
 export class ModuleConstant {
+    // halaman utama
     public static homePage: ModuleDTO = {
         name: 'Halaman Utama',
         url: '/halaman-utama',
         roles: [],
     };
 
+    // tetapan akaun
     public static accountSetting: ModuleDTO = {
         name: 'Tetapan Akaun',
         url: 'abc',
@@ -16,14 +18,20 @@ export class ModuleConstant {
         icon: 'preference',
     };
 
+    // pengurusan sistem
     public static systemManagement: ModuleDTO = {
         name: 'Pengurusan Sistem',
         url: 'abc',
-        roles: [UserRoleConstant.admin],
+        roles: [
+            UserRoleConstant.admin,
+            UserRoleConstant.superAdmin,
+            UserRoleConstant.audit,
+        ],
         description: 'Kemaskini tetapan sistem atau lihat log audit sistem.',
         icon: 'setting',
     };
 
+    // profil
     public static profile: ModuleDTO = {
         name: 'Profil',
         url: '/profile',
@@ -32,6 +40,7 @@ export class ModuleConstant {
         icon: 'user',
     };
 
+    // perjawatan
     public static employment: ModuleDTO = {
         name: 'Perjawatan',
         url: 'abc',
@@ -42,6 +51,8 @@ export class ModuleConstant {
             UserRoleConstant.urusSetiaPerjawatan,
             UserRoleConstant.pelulus,
             UserRoleConstant.penyokong,
+            UserRoleConstant.calon,
+            UserRoleConstant.ketuaSeksyen,
         ],
         subModules: [
             {
@@ -52,51 +63,50 @@ export class ModuleConstant {
             {
                 name: 'Pengesahan Dalam Perkhidmatan',
                 url: 'abc',
-                roles: [],
+                roles: [UserRoleConstant.kakitangan],
             },
             {
-                name: 'Lantikan Baru',
+                name: 'Pemangkuan',
+                url: 'abc',
+                roles: [UserRoleConstant.kakitangan],
+            },
+            {
+                name: 'Pengesahan Kenaikan Pangkat',
+                url: 'abc',
+                roles: [UserRoleConstant.kakitangan],
+            },
+            {
+                name: 'Tawaran Baru',
                 url: 'abc',
                 roles: [],
             },
             {
-                name: 'Lantikan Baru',
+                name: 'Tanggung Kerja',
                 url: 'abc',
-                roles: [],
+                roles: [
+                    UserRoleConstant.ketuaSeksyen,
+                    UserRoleConstant.kakitangan,
+                ],
             },
             {
-                name: 'Lantikan Baru',
+                name: 'Pertukaran',
                 url: 'abc',
-                roles: [],
+                roles: [UserRoleConstant.kakitangan],
             },
             {
-                name: 'Lantikan Baru',
+                name: 'PTB dan KWAP',
                 url: 'abc',
-                roles: [],
+                roles: [UserRoleConstant.kakitangan],
             },
             {
-                name: 'Lantikan Baru',
+                name: 'Persaraan',
                 url: 'abc',
-                roles: [],
-            },
-            {
-                name: 'Lantikan Baru',
-                url: 'abc',
-                roles: [],
-            },
-            {
-                name: 'Lantikan Baru',
-                url: 'abc',
-                roles: [],
-            },
-            {
-                name: 'Lantikan Baru',
-                url: 'abc',
-                roles: [],
+                roles: [UserRoleConstant.kakitangan],
             },
         ],
     };
 
+    // kontrak
     public static contract: ModuleDTO = {
         name: 'Kontrak',
         url: '',
@@ -109,6 +119,7 @@ export class ModuleConstant {
         ],
     };
 
+    // cuti
     public static leave: ModuleDTO = {
         name: 'Cuti',
         url: '/cuti/permohonan',
@@ -122,6 +133,7 @@ export class ModuleConstant {
         ],
     };
 
+    // integriti
     public static integrity: ModuleDTO = {
         name: 'Integriti',
         url: '',
@@ -133,6 +145,7 @@ export class ModuleConstant {
         ],
     };
 
+    // lnpt
     public static performance: ModuleDTO = {
         name: 'Laporan Nilaian Prestasi Tahunan (LNPT)',
         url: '',
@@ -141,6 +154,7 @@ export class ModuleConstant {
         roles: [UserRoleConstant.urusSetiaLnpt],
     };
 
+    // Elaun
     public static allowance: ModuleDTO = {
         name: 'Elaun',
         url: '',
@@ -152,6 +166,7 @@ export class ModuleConstant {
         ],
     };
 
+    // pinjaman dan kuarters
     public static loan: ModuleDTO = {
         name: 'Pinjaman dan Kuarters',
         url: '',
@@ -163,6 +178,7 @@ export class ModuleConstant {
         ],
     };
 
+    // gaji
     public static salary: ModuleDTO = {
         name: 'Gaji',
         url: '',
@@ -172,6 +188,7 @@ export class ModuleConstant {
         roles: [UserRoleConstant.kakitangan, UserRoleConstant.urusSetiaGaji],
     };
 
+    // perubatan
     public static medical: ModuleDTO = {
         name: 'Perubatan',
         url: '',
@@ -184,6 +201,7 @@ export class ModuleConstant {
         ],
     };
 
+    // latihan
     public static training: ModuleDTO = {
         name: 'Latihan',
         url: '',
@@ -193,6 +211,7 @@ export class ModuleConstant {
         roles: [],
     };
 
+    // rekod perkhidmatan
     public static record: ModuleDTO = {
         name: 'Rekod Perkhidmatan',
         url: '',
@@ -201,6 +220,7 @@ export class ModuleConstant {
         roles: [],
     };
 
+    // list
     public static moduleList: ModuleDTO[] = [
         this.accountSetting,
         this.systemManagement,
