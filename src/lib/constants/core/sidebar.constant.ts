@@ -264,7 +264,7 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Perlantikan Baru (Kontrak)',
+                            name: 'Pelantikan Baru (Kontrak)',
                             path: '/kakitangan-kontrak/lantikan-baru',
                         },
                     ],
@@ -457,7 +457,7 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Perlantikan Baru (Kontrak)',
+                            name: 'Pelantikan Baru (Kontrak)',
                             path: '/kakitangan-kontrak/lantikan-baru',
                         },
                         {
@@ -941,7 +941,7 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: ' Perlantikan Baru (Kontrak)',
+                            name: ' Pelantikan Baru (Kontrak)',
                             path: '/kakitangan-kontrak/lantikan-baru',
                         },
                         {
@@ -1193,7 +1193,7 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Perlantikan Baru (Kontrak)',
+                            name: 'Pelantikan Baru (Kontrak)',
                             path: '/kakitangan-kontrak/perlantikan',
                         },
                         {
@@ -1547,7 +1547,7 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Perlantikan Baru (Kontrak)',
+                            name: 'Pelantikan Baru (Kontrak)',
                             path: '/kakitangan-kontrak/perlantikan',
                         },
                         {
@@ -1714,7 +1714,7 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Perlantikan Baru (Kontrak)',
+                            name: 'Pelantikan Baru (Kontrak)',
                             path: '/kakitangan-kontrak/lantikan-baru',
                         },
                     ],
@@ -2033,7 +2033,7 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Perlantikan Baru (Kontrak)',
+                            name: 'Pelantikan Baru (Kontrak)',
                             path: '/kakitangan-kontrak/perlantikan',
                         },
                         {
