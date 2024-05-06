@@ -219,6 +219,10 @@
         validationMethod: 'oninput',
         validators: zod(_proceedingAppealSchema),
         taintedMessage: false,
+        onUpdated() {
+            $appealMeetingForm.result =
+                data.view.proceedingTypeChargeDetailView.sentencingDetails.meetingResult;
+        },
         onSubmit() {
             if (!$appealMeetingForm.meetingResult) {
                 $appealMeetingForm.result = [];
@@ -253,11 +257,6 @@
             _addSentencingAppealDetail($appealMeetingForm);
         },
     });
-
-    if ($isReadOnlyProceedingSentencingMeeting) {
-        $appealMeetingForm.result =
-            data.view.proceedingTypeChargeDetailView.sentencingDetails.meetingResult;
-    }
 
     const {
         form: appealConfirmationForm,
@@ -390,14 +389,15 @@
 </script>
 
 <ContentHeader title="Maklumat Prosiding Tatatertib">
-    {#if $isReadOnlyProceedingAppealMeeting && !$proceedingSentencingAppealIsCertified}
+    {#if $isReadOnlyProceedingAppealMeeting && !$isReadOnlyProceedingAppealConfirmation && !$proceedingSentencingAppealIsCertified}
         <Badge color="indigo">Rayuan Dikemuka</Badge>
-    {:else if $isReadOnlyProceedingAppealConfirmation && $proceedingSentencingAppealIsCertified}
+    {/if}
+    {#if $isReadOnlyProceedingAppealConfirmation && $proceedingSentencingAppealIsCertified}
         <Badge color="green">Rayuan Sah</Badge>
     {:else if $isReadOnlyProceedingAppealConfirmation && !$proceedingSentencingAppealIsCertified}
         <Badge color="red">Rayuan Tidak Sah</Badge>
     {/if}
-    {#if ($isReadOnlyProceedingChargeConfirmation && !$proceedingChargeIsCertified) || ($isReadOnlyProceedingSentencingConfirmation && !$proceedingSentencingIsCertified) || ($isReadOnlyProceedingAppealConfirmation && !$proceedingSentencingAppealIsCertified)}
+    {#if ($isReadOnlyProceedingChargeConfirmation && !$proceedingChargeIsCertified) || ($isReadOnlyProceedingSentencingConfirmation && !$proceedingSentencingIsCertified)}
         <Badge color="red">Proses Prosiding Tidak Sah</Badge>
     {:else if $proceedingSentencingIsCertified}
         <Badge color="dark">Proses Prosiding Tamat</Badge>

@@ -822,7 +822,7 @@
                     disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.birthStateId}
                     id="birthStateId"
-                    label="Tempat Lahir"
+                    label="Negeri Kelahiran"
                     bind:val={$form.birthStateId}
                     options={data.selectionOptions.stateLookup}
                 ></CustomSelectField>
@@ -831,7 +831,7 @@
                     disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.birthCountryId}
                     id="birthCountryId"
-                    label="Tempat Lahir"
+                    label="Negara Kelahiran"
                     bind:val={$form.birthCountryId}
                     options={data.selectionOptions.countryLookup}
                 ></CustomSelectField>
@@ -1634,7 +1634,7 @@
 
                                 <CustomSelectField
                                     id="addMaritalId"
-                                    label={'Status Perkhahwinan'}
+                                    label={'Status Perkahwinan'}
                                     options={data.selectionOptions
                                         .maritalLookup}
                                     disabled={$isReadonlyFamilyFormStepper}
@@ -1674,7 +1674,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     id="addPhoneNumber"
-                                    label={'Nombor Mobil'}
+                                    label={'Nombor Telefon'}
                                     type="text"
                                     disabled={$isReadonlyFamilyFormStepper}
                                     bind:val={$familyInfoForm.dependencies[i]
@@ -1909,7 +1909,7 @@
 
                                 <CustomSelectField
                                     id="addMaritalId"
-                                    label={'Status Perkhahwinan'}
+                                    label={'Status Perkahwinan'}
                                     options={data.selectionOptions
                                         .maritalLookup}
                                     disabled={$isReadonlyFamilyFormStepper}
@@ -1953,7 +1953,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     id="addPhoneNumber"
-                                    label={'Nombor Mobil'}
+                                    label={'Nombor Telefon'}
                                     type="text"
                                     disabled={$isReadonlyFamilyFormStepper}
                                     bind:val={$dependencyInfoForm.dependencies[
@@ -2176,7 +2176,7 @@
 
                                 <CustomSelectField
                                     id="addMaritalId"
-                                    label={'Status Perkhahwinan'}
+                                    label={'Status Perkahwinan'}
                                     options={data.selectionOptions
                                         .maritalLookup}
                                     disabled={$isReadonlyFamilyFormStepper}
@@ -2216,7 +2216,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     id="addPhoneNumber"
-                                    label={'Nombor Mobil'}
+                                    label={'Nombor Telefon'}
                                     type="text"
                                     disabled={$isReadonlyFamilyFormStepper}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
@@ -3401,7 +3401,7 @@
             placeholder="-"
             errors={$addFamilyErrors.phoneNumber}
             id="phoneNumber"
-            label={'Nombor Mobil'}
+            label={'Nombor Telefon'}
             type="text"
             bind:val={$addFamilyModal.phoneNumber}
         ></CustomTextField>
@@ -3409,7 +3409,7 @@
         <CustomSelectField
             errors={$addFamilyErrors.maritalId}
             id="maritalId"
-            label={'Status Perkhahwinan'}
+            label={'Status Perkahwinan'}
             options={data.selectionOptions.maritalLookup}
             bind:val={$addFamilyModal.maritalId}
         ></CustomSelectField>
@@ -3593,7 +3593,7 @@
             placeholder="-"
             errors={$addNonFamilyErrors.phoneNumber}
             id="phoneNumber"
-            label={'Nombor Mobil'}
+            label={'Nombor Telefon'}
             type="text"
             bind:val={$addNonFamilyModal.phoneNumber}
         ></CustomTextField>
@@ -3601,7 +3601,7 @@
         <CustomSelectField
             errors={$addNonFamilyErrors.maritalId}
             id="maritalId"
-            label={'Status Perkhahwinan'}
+            label={'Status Perkahwinan'}
             options={data.selectionOptions.maritalLookup}
             bind:val={$addNonFamilyModal.maritalId}
         ></CustomSelectField>
@@ -3781,7 +3781,7 @@
             placeholder="-"
             errors={$addNextOfKinErrors.phoneNumber}
             id="phoneNumber"
-            label={'Nombor Mobil'}
+            label={'Nombor Telefon'}
             type="text"
             bind:val={$addNextOfKinModal.phoneNumber}
         ></CustomTextField>
@@ -3789,7 +3789,7 @@
         <CustomSelectField
             errors={$addNextOfKinErrors.maritalId}
             id="maritalId"
-            label={'Status Perkhahwinan'}
+            label={'Status Perkahwinan'}
             options={data.selectionOptions.maritalLookup}
             bind:val={$addNextOfKinModal.maritalId}
         ></CustomSelectField>

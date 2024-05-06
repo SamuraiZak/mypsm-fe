@@ -209,20 +209,20 @@ export class SidebarConstant {
                     name: 'Lantikan Baru',
                     path: ' /perjawatan/lantikan-baru ',
                 },
-                {
-                    name: 'Maklumat Kontrak',
-                    path: '',
-                    subItems: [
-                        {
-                            name: 'Perlantikan Baru (Kontrak)',
-                            path: '/maklumat-kontrak/lantikan-baru',
-                        },
-                        {
-                            name: 'Pembaharuan Kontrak',
-                            path: '/maklumat-kontrak/pembaharuan',
-                        },
-                    ],
-                },
+                // {
+                //     name: 'Maklumat Kontrak',
+                //     path: '',
+                //     subItems: [
+                //         {
+                //             name: 'Perlantikan Baru (Kontrak)',
+                //             path: '/maklumat-kontrak/lantikan-baru',
+                //         },
+                //         {
+                //             name: 'Pembaharuan Kontrak',
+                //             path: '/maklumat-kontrak/pembaharuan',
+                //         },
+                //     ],
+                // },
                 {
                     name: 'Tetapan Akaun',
                     path: '/tetapan',

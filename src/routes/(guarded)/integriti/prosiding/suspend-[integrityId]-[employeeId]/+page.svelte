@@ -66,10 +66,16 @@
         if (data.view.proceedingTypeSuspensionView.cancelCriminalDetail) {
             isReadOnlyProceedingEndedGantungKerja.set(true);
 
-            data.view.proceedingTypeSuspensionView.cancelCriminalDetail
-                .cancelSuspend === true
-                ? isGantungKerjaEnded.set(true)
-                : isGantungKerjaEnded.set(false);
+            if (
+                data.view.proceedingTypeSuspensionView.cancelCriminalDetail
+                    .cancelSuspend === true
+            ) {
+                isReadOnlyProceedingEndedGantungKerja.set(true);
+                isGantungKerjaEnded.set(true);
+            } else {
+                isReadOnlyProceedingEndedGantungKerja.set(false);
+                isGantungKerjaEnded.set(false);
+            }
         } else {
             isReadOnlyProceedingEndedGantungKerja.set(false);
         }
@@ -230,7 +236,7 @@
         <Badge color="indigo">Dikemaskini</Badge>
     {/if}
     {#if $isReadOnlyProceedingSuspendsConfirmation && $proceedingSuspendsIsApproved && !$isReadOnlyProceedingEndedGantungKerja}
-        <Badge color="dark">Proses Prosiding - Tahan Kerja Sah</Badge>
+        <Badge color="green">Proses Prosiding - Tahan Kerja Sah</Badge>
     {:else if $isReadOnlyProceedingEndedGantungKerja}
         <Badge color="dark">Proses Prosiding - Gantung Kerja Tamat</Badge>
     {:else if $isReadOnlyProceedingSuspendsConfirmation && !$proceedingSuspendsIsApproved}
@@ -946,7 +952,7 @@
                                         borderClass="border-none"
                                         titlePadding={false}
                                     >
-                                        {#if $isReadOnlyProceedingSuspensionCriminal && $isReadOnlyProceedingEndedGantungKerja && !$isGantungKerjaEnded}
+                                        {#if $isReadOnlyProceedingSuspensionCriminal && !$isReadOnlyProceedingEndedGantungKerja && !$isGantungKerjaEnded}
                                             {#if !$updateCrimeOffenceAppealSuspendedInfo}
                                                 <TextIconButton
                                                     type="primary"
@@ -1012,7 +1018,7 @@
                                             class={$isGantungKerjaEnded
                                                 ? 'text-ios-labelColors-secondaryLabel-light'
                                                 : ''}
-                                            disabled={!$updateCrimeOffenceAppealSuspendedInfo &&
+                                            disabled={!$updateCrimeOffenceAppealSuspendedInfo ||
                                                 $isGantungKerjaEnded}
                                             value="cancelSuspend"
                                             bind:checked={$endGantungKerjaForm.cancelSuspend}

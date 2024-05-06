@@ -110,7 +110,7 @@
                         .employeeName}
                 ></FilterTextField>
                 <FilterDateField
-                    label="Tarikh Kemasukan Pelajaran"
+                    label="Tarikh Permohonan"
                     bind:inputValue={fundApplicationTable.param.filter
                         .courseApplicationDate}
                 ></FilterDateField>

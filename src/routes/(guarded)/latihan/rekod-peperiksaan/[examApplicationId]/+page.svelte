@@ -785,24 +785,24 @@
                 use:secretaryApprovalInfoEnhance
                 class="flex w-full flex-col gap-2.5"
             >
-                <div class="mb-5">
-                    <b class="text-sm text-system-primary"
-                        >Keputusan Urus Setia Latihan</b
-                    >
-                </div>
-
-                <input hidden bind:value={$secretaryApprovalInfoForm.id} />
-
-                <CustomTextField
-                    disabled={!data.role.isCourseSecretaryRole ||
-                        $isReadonlySecretaryApprovalResult}
-                    errors={$secretaryApprovalInfoErrors.remark}
-                    id="remark"
-                    label="Tindakan/Ulasan"
-                    placeholder="-"
-                    bind:val={$secretaryApprovalInfoForm.remark}
-                ></CustomTextField>
                 {#if data.role.isCourseSecretaryRole || $isReadonlySecretaryApprovalResult}
+                    <div class="mb-5">
+                        <b class="text-sm text-system-primary"
+                            >Keputusan Urus Setia Latihan</b
+                        >
+                    </div>
+
+                    <input hidden bind:value={$secretaryApprovalInfoForm.id} />
+
+                    <CustomTextField
+                        disabled={!data.role.isCourseSecretaryRole ||
+                            $isReadonlySecretaryApprovalResult}
+                        errors={$secretaryApprovalInfoErrors.remark}
+                        id="remark"
+                        label="Tindakan/Ulasan"
+                        placeholder="-"
+                        bind:val={$secretaryApprovalInfoForm.remark}
+                    ></CustomTextField>
                     <CustomRadioBoolean
                         disabled={!!(
                             !data.role.isCourseSecretaryRole ||
