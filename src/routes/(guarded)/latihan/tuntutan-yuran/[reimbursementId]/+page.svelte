@@ -741,7 +741,7 @@
                 <CustomTextField
                     disabled={true}
                     id="finalResult"
-                    label="Keputusan Akhir (CGPA)"
+                    label="Keputusan Akhir (CGPA/skema pemarkahan berkaitan)"
                     type="text"
                     placeholder="-"
                     bind:val={$form.finalResult}
