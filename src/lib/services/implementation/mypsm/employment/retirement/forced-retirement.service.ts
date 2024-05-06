@@ -130,7 +130,7 @@ export class ForcedRetirementServices {
     }
 
     // upload competed form
-    static async method(param: string) {
+    static async uploadForms(param: string) {
         try {
             let url: Input = 'employment/retirement/force/upload';
 
