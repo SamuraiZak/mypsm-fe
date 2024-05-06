@@ -64,12 +64,16 @@
             : isReadOnlyProceedingSuspensionCriminal.set(false);
 
         if (data.view.proceedingTypeSuspensionView.cancelCriminalDetail) {
-            isReadOnlyProceedingEndedGantungKerja.set(true);
-
-            data.view.proceedingTypeSuspensionView.cancelCriminalDetail
-                .cancelSuspend === true
-                ? isGantungKerjaEnded.set(true)
-                : isGantungKerjaEnded.set(false);
+            if (
+                data.view.proceedingTypeSuspensionView.cancelCriminalDetail
+                    .cancelSuspend === true
+            ) {
+                isReadOnlyProceedingEndedGantungKerja.set(true);
+                isGantungKerjaEnded.set(true);
+            } else {
+                isReadOnlyProceedingEndedGantungKerja.set(false);
+                isGantungKerjaEnded.set(false);
+            }
         } else {
             isReadOnlyProceedingEndedGantungKerja.set(false);
         }
@@ -1012,7 +1016,7 @@
                                             class={$isGantungKerjaEnded
                                                 ? 'text-ios-labelColors-secondaryLabel-light'
                                                 : ''}
-                                            disabled={!$updateCrimeOffenceAppealSuspendedInfo &&
+                                            disabled={!$updateCrimeOffenceAppealSuspendedInfo ||
                                                 $isGantungKerjaEnded}
                                             value="cancelSuspend"
                                             bind:checked={$endGantungKerjaForm.cancelSuspend}
