@@ -3,8 +3,6 @@
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
-    import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
-    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type {
         TableSettingDTO,
     } from '$lib/dto/core/table/table.dto';
@@ -80,9 +78,6 @@
     <CustomTab>
         <CustomTabContent title="Tuntutan Perubatan">
             <div class="flex w-full flex-col justify-start gap-5 p-5">
-                <!-- <FilterCard>
-                    <FilterTextField label="Nama" inputValue={''} />
-                </FilterCard> -->
                 <div class="flex w-full items-end justify-end">
                     <TextIconButton
                         label="Tuntutan Baru"
@@ -100,12 +95,6 @@
                         title="Senarai Rekod Tuntutan"
                         bind:tableData={medicalClaimTable}
                     >
-                        <!-- <FilterWrapper slot="filter">
-                            <FilterTextField
-                                label="Nama Klinik"
-                                bind:inputValue={clinicApplicationTable.param.filter.name}
-                            />
-                        </FilterWrapper> -->
                     </DataTable>
                 </div>
             </div>
