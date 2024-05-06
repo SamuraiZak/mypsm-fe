@@ -3013,7 +3013,7 @@
                                 placeholder="-"
                                 disabled
                                 id="employeeNumber"
-                                label="Nombor Pekerja (Dijana secara automatik oleh sistem setelah lulus."
+                                label="Nombor Pekerja (Dijana secara automatik oleh sistem setelah lulus)"
                                 bind:val={data.newHireFullDetailView
                                     .employeeNumber.employeeNumber}
                             ></CustomTextField>
