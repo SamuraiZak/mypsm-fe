@@ -85,9 +85,7 @@
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
     import type { MainPromotionMeeting } from '$lib/dto/mypsm/employment/acting/main-promotion-meeting-detail.dto';
-    import type {
-        ActingFinalApproval,
-    } from '$lib/dto/mypsm/employment/acting/acting-approval.dto';
+    import type { ActingFinalApproval } from '$lib/dto/mypsm/employment/acting/acting-approval.dto';
     import type { QuarterCommonApproval } from '$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto';
     import type {
         MainActingDetail,
@@ -97,7 +95,6 @@
     import Alert from 'flowbite-svelte/Alert.svelte';
     import type { PlacementMeetingResult } from '$lib/dto/mypsm/employment/acting/acting-placement-meeting-result.dto';
     import { Modal } from 'flowbite-svelte';
-
 
     function uploadDocument(stepper: number) {
         if (
@@ -119,7 +116,7 @@
                         _submitUpdateMeetingDetailForm(
                             $updateMeetingDetailForm,
                         ).then((res) => {
-                            if(res?.response.status == 'success'){
+                            if (res?.response.status == 'success') {
                                 meetingDetailExist = true;
                             }
                         });
@@ -127,7 +124,7 @@
                         _submitEmployeeNeedPlacementAmendmentForm(
                             $employeeNeedPlacementAmendmentForm,
                         ).then((res) => {
-                            if(res?.response.status == 'success'){
+                            if (res?.response.status == 'success') {
                                 employeePostponeNeeded = true;
                             }
                         });
@@ -151,7 +148,7 @@
     }
 
     //each stepper condition
-    let stepperDetail: boolean[] = [false, false, false, false, false]
+    let stepperDetail: boolean[] = [false, false, false, false, false];
 
     //disable condition
     let checkPhaseTwo: boolean = true;
@@ -162,7 +159,6 @@
     let approverApproved: boolean = true;
     let meetingResultModal: boolean = false;
     let chosenEmployeeModal: boolean = false;
-
 
     let selectedCandidate: ActingChosenEmployee;
     let files: FileList;
@@ -179,12 +175,12 @@
         data: data.chosenEmployee,
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['employeeId','actingId'],
+        hiddenColumn: ['employeeId', 'actingId'],
         dictionary: [
             {
                 english: 'programme',
-                malay: 'Program'
-            }
+                malay: 'Program',
+            },
         ],
         url: 'employment/acting/chosen_employee_lists/list',
         id: 'chosenEmployeeTable',
@@ -220,14 +216,22 @@
         dictionary: [
             {
                 english: 'programme',
-                malay: 'Program'
-            }
+                malay: 'Program',
+            },
         ],
         url: 'employment/acting/chosen_employee_lists/list',
         id: 'updatedChosenEmployeeTable',
         option: {
-            checkbox: data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code ? false : true,
-            detail: data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code ? true : false,
+            checkbox:
+                data.currentRoleCode !==
+                UserRoleConstant.urusSetiaPerjawatan.code
+                    ? false
+                    : true,
+            detail:
+                data.currentRoleCode !==
+                UserRoleConstant.urusSetiaPerjawatan.code
+                    ? true
+                    : false,
             edit: false,
             select: false,
             filter: false,
@@ -251,12 +255,12 @@
         dictionary: [
             {
                 english: 'selectionResult',
-                malay: 'Keputusan Pemilihan'
+                malay: 'Keputusan Pemilihan',
             },
             {
                 english: 'programme',
-                malay: 'Program'
-            }
+                malay: 'Program',
+            },
         ],
         url: 'employment/acting/interview_infos/list',
         id: 'interviewInfoTable',
@@ -272,9 +276,16 @@
         },
     };
     $: interviewInfoTable.data = data.interviewInfo;
-    if(interviewInfoTable.data.length < 1 && data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code){
+    if (
+        interviewInfoTable.data.length < 1 &&
+        data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code
+    ) {
         checkPhaseTwo = false;
-    } else if (data.currentRoleCode == UserRoleConstant.urusSetiaIntegriti.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code || data.currentRoleCode == UserRoleConstant.pengarahBahagian.code){
+    } else if (
+        data.currentRoleCode == UserRoleConstant.urusSetiaIntegriti.code ||
+        data.currentRoleCode == UserRoleConstant.pengarahNegeri.code ||
+        data.currentRoleCode == UserRoleConstant.pengarahBahagian.code
+    ) {
         checkPhaseTwo = false;
     }
     let interviewResultTable: TableSettingDTO = {
@@ -292,16 +303,16 @@
         dictionary: [
             {
                 english: 'marks',
-                malay: 'Markah Temuduga'
+                malay: 'Markah Temuduga',
             },
             {
                 english: 'secretariatStatus',
-                malay: 'Urus Setia'
+                malay: 'Urus Setia',
             },
             {
                 english: 'directorStatus',
-                malay: 'Pengarah Bahagian/Negeri'
-            }
+                malay: 'Pengarah Bahagian/Negeri',
+            },
         ],
         url: 'employment/acting/interview_result_marks/list',
         id: 'interviewResultTable',
@@ -316,9 +327,9 @@
             add: false,
         },
     };
-    $:interviewResultTable.data = data.interviewResult;
+    $: interviewResultTable.data = data.interviewResult;
     $: allMarked = data.interviewResult.every((item) => item.marks !== null);
-    $:interviewResultTable.option.checkbox = !allMarked;
+    $: interviewResultTable.option.checkbox = !allMarked;
     let promotionMeetingResultTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.promotionMeetingResponse.data?.meta ?? {
@@ -345,7 +356,7 @@
             add: false,
         },
     };
-    $:promotionMeetingResultTable.data = data.promotionMeetingResult;
+    $: promotionMeetingResultTable.data = data.promotionMeetingResult;
     let placementTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.placementDetailResponse.data?.meta ?? {
@@ -361,12 +372,12 @@
         dictionary: [
             {
                 english: 'promotionMeetingResult',
-                malay: 'Keputusan Mesyuarat Kenaikan Pangkat'
+                malay: 'Keputusan Mesyuarat Kenaikan Pangkat',
             },
             {
                 english: 'placementMeetingResult',
-                malay: 'Keputusan Mesyuarat Penempatan'
-            }
+                malay: 'Keputusan Mesyuarat Penempatan',
+            },
         ],
         url: 'employment/acting/promotion_meeting_placements/list',
         id: 'placementTable',
@@ -397,12 +408,12 @@
         dictionary: [
             {
                 english: 'programme',
-                malay: 'Program'
+                malay: 'Program',
             },
             {
                 english: 'postponeApplication',
-                malay: 'Permohonan Penangguhan/Pindaan'
-            }
+                malay: 'Permohonan Penangguhan/Pindaan',
+            },
         ],
         url: 'employment/acting/postpones/list',
         id: 'postponeTable',
@@ -433,16 +444,16 @@
         dictionary: [
             {
                 english: 'postponeApplication',
-                malay: 'Permohonan Penangguhan/Pindaan'
+                malay: 'Permohonan Penangguhan/Pindaan',
             },
             {
                 english: 'postponeResult',
-                malay: 'Keputusan Penangguhan/Pindaan'
+                malay: 'Keputusan Penangguhan/Pindaan',
             },
             {
                 english: 'programme',
-                malay: 'Program'
-            }
+                malay: 'Program',
+            },
         ],
         url: 'employment/acting/postpone_results/list',
         id: 'postponeResultTable',
@@ -457,9 +468,9 @@
             add: false,
         },
     };
-    $: if(stepperIndex !== 6 && UserRoleConstant.urusSetiaPerjawatan.code){
+    $: if (stepperIndex !== 6 && UserRoleConstant.urusSetiaPerjawatan.code) {
         postponeResultTable.option.detail = true;
-    }else {
+    } else {
         postponeResultTable.option.detail = false;
     }
     $: postponeResultTable.data = data.postponeResult;
@@ -478,12 +489,12 @@
         dictionary: [
             {
                 english: 'actingGrade',
-                malay: 'Gred Pemangkuan'
+                malay: 'Gred Pemangkuan',
             },
             {
                 english: 'actingResult',
-                malay: 'Keputusan Pemangkuan'
-            }
+                malay: 'Keputusan Pemangkuan',
+            },
         ],
         url: 'employment/acting/acting_confirmations/list',
         id: 'actingConfirmationTable',
@@ -517,12 +528,12 @@
         dictionary: [
             {
                 english: 'propertyDeclaration',
-                malay: 'Pengisytiharan Harta'
+                malay: 'Pengisytiharan Harta',
             },
             {
                 english: 'certificateOfIntegrity',
-                malay: 'Perakuan Urus Setia Integriti'
-            }
+                malay: 'Perakuan Urus Setia Integriti',
+            },
         ],
         url: 'employment/acting/mains/certifications/list',
         id: 'mainCertification',
@@ -553,7 +564,7 @@
         dictionary: [
             {
                 english: 'promotionMeetingResult',
-                malay: 'Keputusan Mesyuarat Kenaikan Pangkat'
+                malay: 'Keputusan Mesyuarat Kenaikan Pangkat',
             },
         ],
         url: 'employment/acting/mains/promotion_meetings/list',
@@ -571,12 +582,17 @@
     };
     $: mainPromotionTable.data = data.mainActingPromotionList;
     $: mainCertification.data = data.mainActingCertification;
-    $:{ if(data.currentRoleCode == UserRoleConstant.urusSetiaIntegriti.code && mainPromotionTable.data.length < 1){
-        mainCertification.option.checkbox = true;
-        isMainChecked = false;
-    }else {
-        mainCertification.option.checkbox = false;
-    }}
+    $: {
+        if (
+            data.currentRoleCode == UserRoleConstant.urusSetiaIntegriti.code &&
+            mainPromotionTable.data.length < 1
+        ) {
+            mainCertification.option.checkbox = true;
+            isMainChecked = false;
+        } else {
+            mainCertification.option.checkbox = false;
+        }
+    }
 
     let mainActingInfoTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
@@ -589,23 +605,28 @@
         data: data.mainActingInfo,
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['actingId'],
+        hiddenColumn: [
+            'actingId',
+            'acceptingLetter',
+            'reportingForm',
+            'handoverNote',
+        ],
         dictionary: [
             {
                 english: 'acceptingLetter',
-                malay: 'Surat Setuju Terima'
+                malay: 'Surat Setuju Terima',
             },
             {
                 english: 'reportingForm',
-                malay: 'Borang Lapor Diri'
+                malay: 'Borang Lapor Diri',
             },
             {
                 english: 'handoverNote',
-                malay: 'Nota Serah Tugas'
+                malay: 'Nota Serah Tugas',
             },
             {
                 english: 'actingResult',
-                malay: 'Keputusan Pemangkuan'
+                malay: 'Keputusan Pemangkuan',
             },
         ],
         url: 'employment/acting/mains/acting_infos/list',
@@ -635,18 +656,20 @@
         id: 'updateChosenCandidateForm',
         validators: zod(_updateChosenCandidate),
         onSubmit() {
-            if(updatedChosenEmployeeTable.selectedData.length < 1){
+            if (updatedChosenEmployeeTable.selectedData.length < 1) {
                 chosenEmployeeModal = true;
             } else {
                 updatedChosenEmployeeTable.selectedData.forEach((val: any) => {
-                $updateChosenCandidateForm.actingIds.push(val.actingId);
-            });
-            _submitUpdateChosenCandidateForm($updateChosenCandidateForm).then((res) => {
-                if(res?.response.status == 'success'){
-                    checkPhaseTwo = true;
-                }
-            });
-            }     
+                    $updateChosenCandidateForm.actingIds.push(val.actingId);
+                });
+                _submitUpdateChosenCandidateForm(
+                    $updateChosenCandidateForm,
+                ).then((res) => {
+                    if (res?.response.status == 'success') {
+                        checkPhaseTwo = true;
+                    }
+                });
+            }
         },
     });
     let directorApproved: boolean = true;
@@ -665,7 +688,7 @@
         onSubmit() {
             $directorResultForm.id = selectedCandidate.actingId;
             _submitDirectorResultForm($directorResultForm).then((res) => {
-                if(res?.response.status == 'success'){
+                if (res?.response.status == 'success') {
                     directorApproved = true;
                 }
             });
@@ -685,7 +708,7 @@
         onSubmit() {
             $integrityResultForm.id = selectedCandidate.actingId;
             _submitIntegrityResultForm($integrityResultForm).then((res) => {
-                if(res?.response.status == 'success'){
+                if (res?.response.status == 'success') {
                     integrityApproved = true;
                 }
             });
@@ -707,7 +730,7 @@
             uploadDocument(1);
         },
     });
-    if($updateMeetingDetailForm.interviewTime == undefined){
+    if ($updateMeetingDetailForm.interviewTime == undefined) {
         meetingDetailExist = false;
     }
     const {
@@ -722,18 +745,22 @@
         id: 'updateMeetingResultForm',
         validators: zod(_updateMeetingResult),
         onSubmit() {
-            if(interviewResultTable.selectedData.length < 1){
+            if (interviewResultTable.selectedData.length < 1) {
                 meetingResultModal = true;
             } else {
-                interviewResultTable.selectedData.forEach((val:any) => {
-                $updateMeetingResultForm.actingIds.push(Number(val?.actingId))
-            });
-            _submitUpdateMeetingResultForm($updateMeetingResultForm).then((res) => {
-                if(res?.response.status == 'success'){
-                    interviewResultTable.selectedData = [];
-                }
-            });
-            } 
+                interviewResultTable.selectedData.forEach((val: any) => {
+                    $updateMeetingResultForm.actingIds.push(
+                        Number(val?.actingId),
+                    );
+                });
+                _submitUpdateMeetingResultForm($updateMeetingResultForm).then(
+                    (res) => {
+                        if (res?.response.status == 'success') {
+                            interviewResultTable.selectedData = [];
+                        }
+                    },
+                );
+            }
         },
     });
     let updatedPromotionMeeting: boolean = false;
@@ -750,14 +777,16 @@
         validators: zod(_updatePromotionDetail),
         onSubmit() {
             $updatePromotionMeetingForm.batchId = data.batchId.batchId;
-            _submitUpdatePromotionMeetingForm($updatePromotionMeetingForm).then((res) => {
-                if(res?.response.status == 'success'){
-                    updatedPromotionMeeting = true;
-                }
-            });
+            _submitUpdatePromotionMeetingForm($updatePromotionMeetingForm).then(
+                (res) => {
+                    if (res?.response.status == 'success') {
+                        updatedPromotionMeeting = true;
+                    }
+                },
+            );
         },
     });
-    if($updatePromotionMeetingForm.meetingDate !== ""){
+    if ($updatePromotionMeetingForm.meetingDate !== '') {
         updatedPromotionMeeting = true;
     }
     let updatedPromotionMeetingResult: boolean = true;
@@ -776,7 +805,7 @@
             _submitUpdatePromotionMeetingResultForm(
                 $updatePromotionMeetingResultForm,
             ).then((res) => {
-                if(res?.response.status == 'success'){
+                if (res?.response.status == 'success') {
                     updatedPromotionMeetingResult = true;
                 }
             });
@@ -797,14 +826,16 @@
         validators: zod(_updatePromotionDetail),
         onSubmit() {
             $updatePlacementMeeting.batchId = data.batchId.batchId;
-            _submitUpdatePlacementMeeting($updatePlacementMeeting).then((res) => {
-                if(res?.response.status == 'success'){
-                    updatedPlacementMeeting = true;
-                }
-            });
+            _submitUpdatePlacementMeeting($updatePlacementMeeting).then(
+                (res) => {
+                    if (res?.response.status == 'success') {
+                        updatedPlacementMeeting = true;
+                    }
+                },
+            );
         },
     });
-    if($updatePlacementMeeting.meetingDate !== undefined){
+    if ($updatePlacementMeeting.meetingDate !== undefined) {
         updatedPlacementMeeting = true;
     }
 
@@ -823,7 +854,10 @@
         async onSubmit() {
             $updateEmployeePlacementMeetingResultForm.id =
                 selectedCandidate.actingId;
-            if($updateEmployeePlacementMeetingResultForm.meetingResult == "Tidak Berjaya"){
+            if (
+                $updateEmployeePlacementMeetingResultForm.meetingResult ==
+                'Tidak Berjaya'
+            ) {
                 $updateEmployeePlacementMeetingResultForm.newDirector = null;
                 $updateEmployeePlacementMeetingResultForm.newPlacement = null;
                 $updateEmployeePlacementMeetingResultForm.reportDate = null;
@@ -831,7 +865,7 @@
             await _submitUpdateEmployeePlacementMeetingResultForm(
                 $updateEmployeePlacementMeetingResultForm,
             ).then((res) => {
-                if(res?.response.status == 'success'){
+                if (res?.response.status == 'success') {
                     updatedPlacementResult = true;
                 }
             });
@@ -849,12 +883,22 @@
         id: 'updateActingResultForm',
         validators: zod(_updateActingResultSchema),
         onSubmit() {
-            // if()
-            _submitUpdateActingResultForm($updateActingResultForm).then((res) => {
-                if(res?.response.status == 'success'){
-                    suppAppExist = true;
-                }
-            });
+            if ($updateActingResultForm.actingResult == 'Tidak Berjaya') {
+                $updateActingResultForm.actingPosition = null;
+                $updateActingResultForm.actingGrade = null;
+                $updateActingResultForm.newPlacement = null;
+                $updateActingResultForm.reportDate = null;
+                $updateActingResultForm.actingEndDate = null;
+                $updateActingResultForm.supporterName = null;
+                $updateActingResultForm.approverName = null;
+            }
+            _submitUpdateActingResultForm($updateActingResultForm).then(
+                (res) => {
+                    if (res?.response.status == 'success') {
+                        suppAppExist = true;
+                    }
+                },
+            );
         },
     });
     let supporterApproval = {} as ActingFinalApproval;
@@ -873,11 +917,12 @@
         onSubmit() {
             $supporterResultForm.id = selectedCandidate.actingId;
             _submitSupporterResultForm($supporterResultForm).then((res) => {
-                if(res?.response.status == 'success'){
-                    supporterApproval.supportedDate = res.response.data?.details.supportedDate;
+                if (res?.response.status == 'success') {
+                    supporterApproval.supportedDate =
+                        res.response.data?.details.supportedDate;
                     supporterApproved = true;
                 }
-            });;
+            });
         },
     });
     const {
@@ -894,8 +939,9 @@
         onSubmit() {
             $approverResultForm.id = selectedCandidate.actingId;
             _submitApproverResultForm($approverResultForm).then((res) => {
-                if(res?.response.status == 'success'){
-                    approverApproval.approvedDate = res.response.data?.details.approvedDate;
+                if (res?.response.status == 'success') {
+                    approverApproval.approvedDate =
+                        res.response.data?.details.approvedDate;
                     approverApproved = true;
                 }
             });
@@ -917,7 +963,7 @@
         onSubmit() {
             $updatePostponeDetail.id = selectedCandidate.actingId;
             _submitPostponeForm($updatePostponeDetail).then((res) => {
-                if(res?.response.status == "success"){
+                if (res?.response.status == 'success') {
                     updatedPostpone = true;
                 }
             });
@@ -943,13 +989,13 @@
             _submitUpdateMainPromotionMeetingResultForm(
                 $updateMainPromotionMeetingResultForm,
             ).then((res) => {
-                if(res?.response.status == 'success'){
+                if (res?.response.status == 'success') {
                     updateMainPromotionMeetingResultChecked = true;
                 }
-            });;
+            });
         },
     });
-    if($updateMainPromotionMeetingResultForm.referenceTitle !== undefined){
+    if ($updateMainPromotionMeetingResultForm.referenceTitle !== undefined) {
         updateMainPromotionMeetingResultChecked = true;
     }
 
@@ -968,10 +1014,10 @@
         onSubmit() {
             $mainMeetingResultForm.id = selectedCandidate.actingId;
             _submitMainMeetingResult($mainMeetingResultForm).then((res) => {
-                if(res?.response.status == 'success'){
+                if (res?.response.status == 'success') {
                     mainMeetingResultChecked = true;
                 }
-            })
+            });
         },
     });
 
@@ -987,20 +1033,20 @@
         id: 'certifySelected',
         validators: zod(_certifySelected),
         onSubmit() {
-            if(mainCertification.selectedData.length < 1){
-                meetingResultModal = true
+            if (mainCertification.selectedData.length < 1) {
+                meetingResultModal = true;
             } else {
                 mainCertification.selectedData.forEach((val) => {
-                let tempVal = val as ActingChosenEmployee;
-                $certifySelected.id.push(tempVal.actingId);
-            });
-            $certifySelected.batchId = data.batchId.batchId;
-            _submitCertifySelectedForm($certifySelected).then((res) => {
-                if(res?.response.status == 'success'){
-                    isMainChecked = true;
-                }
-            });
-            }  
+                    let tempVal = val as ActingChosenEmployee;
+                    $certifySelected.id.push(tempVal.actingId);
+                });
+                $certifySelected.batchId = data.batchId.batchId;
+                _submitCertifySelectedForm($certifySelected).then((res) => {
+                    if (res?.response.status == 'success') {
+                        isMainChecked = true;
+                    }
+                });
+            }
         },
     });
 
@@ -1019,7 +1065,7 @@
         onSubmit() {
             $mainMeetingDetailForm.id = selectedMainActingInfo.actingId;
             _submitMainMeetingDetail($mainMeetingDetailForm).then((res) => {
-                if(res?.response.status =='success'){
+                if (res?.response.status == 'success') {
                     mainMeetingDetailChecked = true;
                 }
             });
@@ -1041,10 +1087,10 @@
         onSubmit() {
             $mainSupporterApproval.id = selectedMainActingInfo.actingId;
             _submitMainSupporter($mainSupporterApproval).then((res) => {
-                if(res?.response.status == 'success'){
+                if (res?.response.status == 'success') {
                     mainSupporterApproved = true;
                 }
-            });;
+            });
         },
     });
 
@@ -1063,7 +1109,7 @@
         onSubmit() {
             $mainApproverApproval.id = selectedMainActingInfo.actingId;
             _submitMainApprover($mainApproverApproval).then((res) => {
-                if(res?.response.status == 'success'){
+                if (res?.response.status == 'success') {
                     mainApproverApproved = true;
                 }
             });
@@ -1095,7 +1141,7 @@
             uploadDocument(2);
         },
     });
-    if($employeeNeedPlacementAmendmentForm.postponeNeeded !== null){
+    if ($employeeNeedPlacementAmendmentForm.postponeNeeded !== null) {
         employeePostponeNeeded = true;
     }
 
@@ -1139,12 +1185,14 @@
                         $updatePromotionMeetingResultForm.meetingResult =
                             employeePromotionDetail.meetingResult;
 
-                        if($updatePromotionMeetingResultForm.meetingResult == "Sedang Diproses"){
+                        if (
+                            $updatePromotionMeetingResultForm.meetingResult ==
+                            'Sedang Diproses'
+                        ) {
                             updatedPromotionMeetingResult = false;
                         } else {
                             updatedPromotionMeetingResult = true;
                         }
-                            
                     });
                 break;
             }
@@ -1155,11 +1203,21 @@
                             ?.details as PostponeDetail;
                     })
                     .finally(() => {
-                        if(employeePostponeDetail?.newReportDutyDate !== null){
-                            $updatePostponeDetail.meetingResult = employeePostponeDetail?.meetingResult;
-                            $updatePostponeDetail.newReportDutyDate = employeePostponeDetail?.newReportDutyDate;
-                            $updatePostponeDetail.newPlacement = employeePostponeDetail?.newPlacement;
-                        } else if ((employeePostponeDetail?.postponeNeeded == "Ya" && employeePostponeDetail?.newReportDutyDate == null) && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code){
+                        if (
+                            employeePostponeDetail?.newReportDutyDate !== null
+                        ) {
+                            $updatePostponeDetail.meetingResult =
+                                employeePostponeDetail?.meetingResult;
+                            $updatePostponeDetail.newReportDutyDate =
+                                employeePostponeDetail?.newReportDutyDate;
+                            $updatePostponeDetail.newPlacement =
+                                employeePostponeDetail?.newPlacement;
+                        } else if (
+                            employeePostponeDetail?.postponeNeeded == 'Ya' &&
+                            employeePostponeDetail?.newReportDutyDate == null &&
+                            data.currentRoleCode ==
+                                UserRoleConstant.urusSetiaPerjawatan.code
+                        ) {
                             updatedPostpone = false;
                         } else {
                             updatedPostpone = true;
@@ -1168,58 +1226,86 @@
                 break;
             }
             case 3: {
-                _actingResult(selectedCandidate.actingId)
-                    .then((res) => {
-                        employeeActingResult = res.response.data
-                            ?.details as ActingResult;
+                _actingResult(selectedCandidate.actingId).then((res) => {
+                    employeeActingResult = res.response.data
+                        ?.details as ActingResult;
 
-                            _supportApproval(selectedCandidate.actingId).then((res) => {
-                    supporterApproval = res.response.data
-                        ?.details as ActingFinalApproval;
+                    _supportApproval(selectedCandidate.actingId).then((res) => {
+                        supporterApproval = res.response.data
+                            ?.details as ActingFinalApproval;
 
-                        _approverApproval(selectedCandidate.actingId).then((res) => {
-                    approverApproval = res.response.data
-                        ?.details as ActingFinalApproval;
-                    })
-                    .finally(() => {
-                        $updateActingResultForm.id =
-                            employeeActingResult.actingDetails?.actingId;
-                        $updateActingResultForm.actingResult =
-                            employeeActingResult.actingDetails?.actingResult;
-                        $updateActingResultForm.actingPosition =
-                            employeeActingResult.actingDetails?.actingPosition;
-                        $updateActingResultForm.actingGrade =
-                            employeeActingResult.actingDetails?.actingGrade;
-                        $updateActingResultForm.newPlacement =
-                            employeeActingResult.actingDetails?.newPlacement;
-                        $updateActingResultForm.reportDate =
-                            employeeActingResult.actingDetails?.reportDate;
-                        $updateActingResultForm.supporterName = employeeActingResult.confirmation?.supporterName;
-                        $updateActingResultForm.approverName = employeeActingResult.confirmation?.approverName;
-                        
-                        if($updateActingResultForm.approverName === "Tiada Maklumat"){
-                            suppAppExist = false;
-                        } else {
-                            suppAppExist = true;
-                        }
-                            //supporter
-                            if (supporterApproval.remark !== null){
-                                $supporterResultForm.remark = supporterApproval.remark;
-                                $supporterResultForm.status = supporterApproval.status;
-                            } else if(supporterApproval.remark == null && data.currentRoleCode == UserRoleConstant.penyokong.code){
-                                supporterApproved = false;
-                            }
-                            //approver
-                            if (approverApproval.remark !== null){
-                                $approverResultForm.remark = approverApproval.remark;
-                                $approverResultForm.status = approverApproval.status;
-                            } else if(approverApproval.remark == null && data.currentRoleCode == UserRoleConstant.pelulus.code){
-                                approverApproved = false;
-                            }
-                    })
-                    .catch((e) => {throw new Error(e)});      
-                });
-                
+                        _approverApproval(selectedCandidate.actingId)
+                            .then((res) => {
+                                approverApproval = res.response.data
+                                    ?.details as ActingFinalApproval;
+                            })
+                            .finally(() => {
+                                $updateActingResultForm.id =
+                                    employeeActingResult.actingDetails?.actingId;
+                                $updateActingResultForm.actingResult =
+                                    employeeActingResult.actingDetails?.actingResult;
+                                $updateActingResultForm.actingPosition =
+                                    employeeActingResult.actingDetails?.actingPosition;
+                                $updateActingResultForm.actingGrade =
+                                    employeeActingResult.actingDetails?.actingGrade;
+                                $updateActingResultForm.newPlacement =
+                                    employeeActingResult.actingDetails?.newPlacement;
+                                $updateActingResultForm.reportDate =
+                                    employeeActingResult.actingDetails?.reportDate;
+                                $updateActingResultForm.actingEndDate =
+                                    employeeActingResult.actingDetails?.actingEndDate;
+                                $updateActingResultForm.supporterName =
+                                    employeeActingResult.confirmation?.supporterName;
+                                $updateActingResultForm.approverName =
+                                    employeeActingResult.confirmation?.approverName;
+
+                                if (
+                                    $updateActingResultForm.actingResult ===
+                                    null
+                                ) {
+                                    suppAppExist = false;
+                                } else {
+                                    suppAppExist = true;
+                                }
+                                //supporter
+                                if (supporterApproval.remark !== null) {
+                                    $supporterResultForm.remark =
+                                        supporterApproval.remark;
+                                    $supporterResultForm.status =
+                                        supporterApproval.status;
+                                } else if (
+                                    supporterApproval.remark == null &&
+                                    data.currentRoleCode ==
+                                        UserRoleConstant.penyokong.code &&
+                                    $updateActingResultForm.actingResult ==
+                                        'Berjaya'
+                                ) {
+                                    supporterApproved = false;
+                                } else {
+                                    supporterApproved = true;
+                                }
+                                //approver
+                                if (approverApproval.remark !== null) {
+                                    $approverResultForm.remark =
+                                        approverApproval.remark;
+                                    $approverResultForm.status =
+                                        approverApproval.status;
+                                } else if (
+                                    approverApproval.remark == null &&
+                                    data.currentRoleCode ==
+                                        UserRoleConstant.pelulus.code &&
+                                    $updateActingResultForm.actingResult ==
+                                        'Berjaya'
+                                ) {
+                                    approverApproved = false;
+                                } else {
+                                    approverApproved = true;
+                                }
+                            })
+                            .catch((e) => {
+                                throw new Error(e);
+                            });
+                    });
                 });
                 break;
             }
@@ -1242,7 +1328,12 @@
                         ) {
                             $mainMeetingResultForm.status =
                                 mainPromotionDetail.promotionMeetingResult;
-                        } else if(mainPromotionDetail.promotionMeetingResult == null && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code){
+                        } else if (
+                            mainPromotionDetail.promotionMeetingResult ==
+                                null &&
+                            data.currentRoleCode ==
+                                UserRoleConstant.urusSetiaPerjawatan.code
+                        ) {
                             mainMeetingResultChecked = false;
                         }
                     });
@@ -1252,14 +1343,24 @@
                 _directorApproval(selectedCandidate.actingId).then((res) => {
                     $directorResultForm = res.response.data
                         ?.details as QuarterCommonApproval;
-                    if ($directorResultForm.remark == null && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)) {
+                    if (
+                        $directorResultForm.remark == null &&
+                        (data.currentRoleCode ==
+                            UserRoleConstant.pengarahBahagian.code ||
+                            data.currentRoleCode ==
+                                UserRoleConstant.pengarahNegeri.code)
+                    ) {
                         directorApproved = false;
                     } else {
                         directorApproved = true;
                     }
                     $integrityResultForm = res.integrityResponse.data
                         ?.details as QuarterCommonApproval;
-                    if ($integrityResultForm.remark == null && data.currentRoleCode == UserRoleConstant.urusSetiaIntegriti.code) {
+                    if (
+                        $integrityResultForm.remark == null &&
+                        data.currentRoleCode ==
+                            UserRoleConstant.urusSetiaIntegriti.code
+                    ) {
                         integrityApproved = false;
                     } else {
                         integrityApproved = true;
@@ -1282,6 +1383,8 @@
                             mainActingInfoDetail?.actingDetails?.newPlacement;
                         $mainMeetingDetailForm.reportDate =
                             mainActingInfoDetail?.actingDetails?.reportDate;
+                        $mainMeetingDetailForm.actingEndDate =
+                            mainActingInfoDetail?.actingDetails?.actingEndDate;
                         $mainMeetingDetailForm.approverName =
                             mainActingInfoDetail?.supporterApprover?.approverName;
                         $mainMeetingDetailForm.supporterName =
@@ -1294,40 +1397,62 @@
                             mainActingInfoDetail?.approver?.remark;
                         $mainApproverApproval.status =
                             mainActingInfoDetail?.approver?.status;
-                        
-                            if($mainMeetingDetailForm.approverName == null && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code){
-                                mainMeetingDetailChecked = false;
-                            } else {
-                                mainMeetingDetailChecked = true;
-                            }
-                        if($mainSupporterApproval.remark == null && data.currentRoleCode == UserRoleConstant.penyokong.code){
-                                mainSupporterApproved = false;
-                        }else {
+
+                        if (
+                            $mainMeetingDetailForm.approverName == null &&
+                            data.currentRoleCode ==
+                                UserRoleConstant.urusSetiaPerjawatan.code
+                        ) {
+                            mainMeetingDetailChecked = false;
+                        } else {
+                            mainMeetingDetailChecked = true;
+                        }
+                        if (
+                            $mainSupporterApproval.remark == null &&
+                            data.currentRoleCode ==
+                                UserRoleConstant.penyokong.code
+                        ) {
+                            mainSupporterApproved = false;
+                        } else {
                             mainSupporterApproved = true;
                         }
-                        if($mainApproverApproval.remark == null && data.currentRoleCode == UserRoleConstant.pelulus.code){
-                                mainApproverApproved = false;
-                        }else {
+                        if (
+                            $mainApproverApproval.remark == null &&
+                            data.currentRoleCode ==
+                                UserRoleConstant.pelulus.code
+                        ) {
+                            mainApproverApproved = false;
+                        } else {
                             mainApproverApproved = true;
                         }
                     });
                 break;
             }
             case 8: {
-                await _placementMeetingResult(selectedCandidate.actingId).then((res) => {
-                    employeePlacementResult = res.response.data?.details as PlacementMeetingResult;
-                }).finally(() => {
-                    $updateEmployeePlacementMeetingResultForm.meetingResult = employeePlacementResult?.meetingResult?.meetingResult;
-                    $updateEmployeePlacementMeetingResultForm.newDirector = employeePlacementResult?.meetingResult?.newDirector;
-                    $updateEmployeePlacementMeetingResultForm.newPlacement = employeePlacementResult?.meetingResult?.newPlacement;
-                    $updateEmployeePlacementMeetingResultForm.reportDate = employeePlacementResult?.meetingResult?.reportDate;
+                await _placementMeetingResult(selectedCandidate.actingId)
+                    .then((res) => {
+                        employeePlacementResult = res.response.data
+                            ?.details as PlacementMeetingResult;
+                    })
+                    .finally(() => {
+                        $updateEmployeePlacementMeetingResultForm.meetingResult =
+                            employeePlacementResult?.meetingResult?.meetingResult;
+                        $updateEmployeePlacementMeetingResultForm.newDirector =
+                            employeePlacementResult?.meetingResult?.newDirector;
+                        $updateEmployeePlacementMeetingResultForm.newPlacement =
+                            employeePlacementResult?.meetingResult?.newPlacement;
+                        $updateEmployeePlacementMeetingResultForm.reportDate =
+                            employeePlacementResult?.meetingResult?.reportDate;
 
-                    if($updateEmployeePlacementMeetingResultForm.meetingResult == null){
-                        updatedPlacementResult = false;
-                    } else {
-                        updatedPlacementResult = true;
-                    }
-                })
+                        if (
+                            $updateEmployeePlacementMeetingResultForm.meetingResult ==
+                            null
+                        ) {
+                            updatedPlacementResult = false;
+                        } else {
+                            updatedPlacementResult = true;
+                        }
+                    });
                 break;
             }
         }
@@ -1360,19 +1485,20 @@
                 <StepperContentBody>
                     <div class="flex h-full w-full flex-col gap-2.5 px-3">
                         {#if !isMainChecked && data.currentRoleCode == UserRoleConstant.urusSetiaIntegriti.code}
-                        <Alert color="blue">
-                            <p>
-                                <span class="font-medium">Arahan:  </span>
-                                Klik pada tombol tambah dan butang peraku untuk menetapkan perakuan bagi kakitangan yang dipilih.
-                            </p>
-                        </Alert>
-                        <div class="flex w-full items-start justify-start">
-                            <TextIconButton
-                                label="PERAKU"
-                                icon="check"
-                                form="certifySelected"
-                            />
-                        </div>
+                            <Alert color="blue">
+                                <p>
+                                    <span class="font-medium">Arahan: </span>
+                                    Klik pada tombol tambah dan butang peraku untuk
+                                    menetapkan perakuan bagi kakitangan yang dipilih.
+                                </p>
+                            </Alert>
+                            <div class="flex w-full items-start justify-start">
+                                <TextIconButton
+                                    label="PERAKU"
+                                    icon="check"
+                                    form="certifySelected"
+                                />
+                            </div>
                         {/if}
                         <form
                             class="flex w-full flex-col justify-start gap-2.5 pb-10"
@@ -1390,444 +1516,484 @@
                     </div>
                 </StepperContentBody>
             </StepperContent>
-            
-            {#if data.currentRoleCode !== UserRoleConstant.urusSetiaIntegriti.code}
-            <StepperContent>
-                <StepperContentHeader
-                    title="Kemaskini Keputusan Mesyuarat Kenaikan Pangkat"
-                >
-                    {#if stepperDetail[0]}
-                        <TextIconButton
-                            label="Kembali"
-                            icon="previous"
-                            type="neutral"
-                            onClick={() => (stepperDetail[0] = false)}
-                        />
 
-                        {#if !mainMeetingResultChecked && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
-                        <TextIconButton
-                            label="Simpan"
-                            icon="check"
-                            type="primary"
-                            form="mainMeetingResultForm"
-                        />
-                        {/if}
-                    {:else}
-                        {#if !updateMainPromotionMeetingResultChecked && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
-                        <TextIconButton
-                            label="Simpan"
-                            icon="check"
-                            type="primary"
-                            form="updateMainPromotionMeetingResultForm"
-                        />
-                        {/if}
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    {#if !stepperDetail[0]}
-                        <ContentHeader
-                            title="Keputusan Mesyuarat"
-                            borderClass="border-none"
-                        />
-                        <form
-                            class="flex w-full flex-col justify-start gap-2.5 border-b p-3 pb-5"
-                            id="updateMainPromotionMeetingResultForm"
-                            method="POST"
-                            use:updateMainPromotionMeetingResultEnhance
-                        >
-                            <CustomSelectField
-                                label="Name Mesyuarat"
-                                id="meetingName"
-                                disabled={updateMainPromotionMeetingResultChecked}
-                                options={data.lookup.meetingNameLookup}
-                                bind:val={$updateMainPromotionMeetingResultForm.meetingName}
-                                errors={$updateMainPromotionMeetingResultError.meetingName}
+            {#if data.currentRoleCode !== UserRoleConstant.urusSetiaIntegriti.code}
+                <StepperContent>
+                    <StepperContentHeader
+                        title="Kemaskini Keputusan Mesyuarat Kenaikan Pangkat"
+                    >
+                        {#if stepperDetail[0]}
+                            <TextIconButton
+                                label="Kembali"
+                                icon="previous"
+                                type="neutral"
+                                onClick={() => (stepperDetail[0] = false)}
                             />
-                            <CustomTextField
-                                label="Tarikh Mesyuarat"
-                                id="meetingDate"
-                                disabled={updateMainPromotionMeetingResultChecked}
-                                type="date"
-                                bind:val={$updateMainPromotionMeetingResultForm.meetingDate}
-                                errors={$updateMainPromotionMeetingResultError.meetingDate}
-                            />
-                            <CustomSelectField
-                                label="Jawatan Pemangkuan"
-                                id="actingPosition"
-                                disabled={updateMainPromotionMeetingResultChecked}
-                                options={data.lookup.positionLookup}
-                                errors={$updateMainPromotionMeetingResultError.actingPosition}
-                                bind:val={$updateMainPromotionMeetingResultForm.actingPosition}
-                            />
-                            <CustomSelectField
-                                label="Gred Pemangkuan"
-                                id="actingGrade"
-                                disabled={updateMainPromotionMeetingResultChecked}
-                                options={data.lookup.gradeLookup}
-                                errors={$updateMainPromotionMeetingResultError.actingGrade}
-                                bind:val={$updateMainPromotionMeetingResultForm.actingGrade}
-                            />
-                            <CustomSelectField
-                                label="Penempatan"
-                                id="placement"
-                                disabled={updateMainPromotionMeetingResultChecked}
-                                errors={$updateMainPromotionMeetingResultError.placement}
-                                bind:val={$updateMainPromotionMeetingResultForm.placement}
-                                options={data.lookup.placementLookup}
-                            />
-                            <CustomTextField
-                                label="Tarikh Kuatkuasa Lapor Diri"
-                                id="reportDate"
-                                disabled={updateMainPromotionMeetingResultChecked}
-                                type="date"
-                                errors={$updateMainPromotionMeetingResultError.reportDate}
-                                bind:val={$updateMainPromotionMeetingResultForm.reportDate}
-                            />
-                            <CustomTextField
-                                label="No. Rujukan Surat"
-                                id="referenceNo"
-                                disabled={updateMainPromotionMeetingResultChecked}
-                                errors={$updateMainPromotionMeetingResultError.referenceNo}
-                                bind:val={$updateMainPromotionMeetingResultForm.referenceNo}
-                            />
-                            <CustomTextField
-                                label="Tarikh Surat"
-                                id="referenceDate"
-                                disabled={updateMainPromotionMeetingResultChecked}
-                                type="date"
-                                errors={$updateMainPromotionMeetingResultError.referenceDate}
-                                bind:val={$updateMainPromotionMeetingResultForm.referenceDate}
-                            />
-                            <CustomTextField
-                                label="Tajuk Surat"
-                                id="referenceTitle"
-                                disabled={updateMainPromotionMeetingResultChecked}
-                                errors={$updateMainPromotionMeetingResultError.referenceTitle}
-                                bind:val={$updateMainPromotionMeetingResultForm.referenceTitle}
-                            />
-                        </form>
-                        <div
-                            class="flex w-full flex-col justify-start gap-2.5 px-3 pb-10"
-                        >
-                        {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
-                            <Alert color="blue">
-                                <p>
-                                    <span class="font-medium">Arahan:  </span>
-                                    Tetapkan untuk semua kakitangan berkaitan.
-                                </p>
-                            </Alert>
+
+                            {#if !mainMeetingResultChecked && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                                <TextIconButton
+                                    label="Simpan"
+                                    icon="check"
+                                    type="primary"
+                                    form="mainMeetingResultForm"
+                                />
                             {/if}
-                            <div
-                                class="flex w-full flex-col justify-start gap-2.5"
+                        {:else if !updateMainPromotionMeetingResultChecked && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                            <TextIconButton
+                                label="Simpan"
+                                icon="check"
+                                type="primary"
+                                form="updateMainPromotionMeetingResultForm"
+                            />
+                        {/if}
+                    </StepperContentHeader>
+                    <StepperContentBody>
+                        {#if !stepperDetail[0]}
+                            <ContentHeader
+                                title="Keputusan Mesyuarat"
+                                borderClass="border-none"
+                            />
+                            <form
+                                class="flex w-full flex-col justify-start gap-2.5 border-b p-3 pb-5"
+                                id="updateMainPromotionMeetingResultForm"
+                                method="POST"
+                                use:updateMainPromotionMeetingResultEnhance
                             >
+                                <CustomSelectField
+                                    label="Name Mesyuarat"
+                                    id="meetingName"
+                                    disabled={updateMainPromotionMeetingResultChecked}
+                                    options={data.lookup.meetingNameLookup}
+                                    bind:val={$updateMainPromotionMeetingResultForm.meetingName}
+                                    errors={$updateMainPromotionMeetingResultError.meetingName}
+                                />
+                                <CustomTextField
+                                    label="Tarikh Mesyuarat"
+                                    id="meetingDate"
+                                    disabled={updateMainPromotionMeetingResultChecked}
+                                    type="date"
+                                    bind:val={$updateMainPromotionMeetingResultForm.meetingDate}
+                                    errors={$updateMainPromotionMeetingResultError.meetingDate}
+                                />
+                                <CustomSelectField
+                                    label="Jawatan Pemangkuan"
+                                    id="actingPosition"
+                                    disabled={updateMainPromotionMeetingResultChecked}
+                                    options={data.lookup.positionLookup}
+                                    errors={$updateMainPromotionMeetingResultError.actingPosition}
+                                    bind:val={$updateMainPromotionMeetingResultForm.actingPosition}
+                                />
+                                <CustomSelectField
+                                    label="Gred Pemangkuan"
+                                    id="actingGrade"
+                                    disabled={updateMainPromotionMeetingResultChecked}
+                                    options={data.lookup.gradeLookup}
+                                    errors={$updateMainPromotionMeetingResultError.actingGrade}
+                                    bind:val={$updateMainPromotionMeetingResultForm.actingGrade}
+                                />
+                                <CustomSelectField
+                                    label="Penempatan"
+                                    id="placement"
+                                    disabled={updateMainPromotionMeetingResultChecked}
+                                    errors={$updateMainPromotionMeetingResultError.placement}
+                                    bind:val={$updateMainPromotionMeetingResultForm.placement}
+                                    options={data.lookup.placementLookup}
+                                />
+                                <CustomTextField
+                                    label="Tarikh Kuatkuasa Lapor Diri"
+                                    id="reportDate"
+                                    disabled={updateMainPromotionMeetingResultChecked}
+                                    type="date"
+                                    errors={$updateMainPromotionMeetingResultError.reportDate}
+                                    bind:val={$updateMainPromotionMeetingResultForm.reportDate}
+                                />
+                                <CustomTextField
+                                    label="No. Rujukan Surat"
+                                    id="referenceNo"
+                                    disabled={updateMainPromotionMeetingResultChecked}
+                                    errors={$updateMainPromotionMeetingResultError.referenceNo}
+                                    bind:val={$updateMainPromotionMeetingResultForm.referenceNo}
+                                />
+                                <CustomTextField
+                                    label="Tarikh Surat"
+                                    id="referenceDate"
+                                    disabled={updateMainPromotionMeetingResultChecked}
+                                    type="date"
+                                    errors={$updateMainPromotionMeetingResultError.referenceDate}
+                                    bind:val={$updateMainPromotionMeetingResultForm.referenceDate}
+                                />
+                                <CustomTextField
+                                    label="Tajuk Surat"
+                                    id="referenceTitle"
+                                    disabled={updateMainPromotionMeetingResultChecked}
+                                    errors={$updateMainPromotionMeetingResultError.referenceTitle}
+                                    bind:val={$updateMainPromotionMeetingResultForm.referenceTitle}
+                                />
+                            </form>
+                            <div
+                                class="flex w-full flex-col justify-start gap-2.5 px-3 pb-10"
+                            >
+                                {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                                    <Alert color="blue">
+                                        <p>
+                                            <span class="font-medium"
+                                                >Arahan:
+                                            </span>
+                                            Tetapkan untuk semua kakitangan berkaitan.
+                                        </p>
+                                    </Alert>
+                                {/if}
+                                <div
+                                    class="flex w-full flex-col justify-start gap-2.5"
+                                >
+                                    <div class="h-fit w-full">
+                                        <DataTable
+                                            title="Senarai Kakitangan"
+                                            bind:tableData={mainPromotionTable}
+                                            bind:passData={selectedCandidate}
+                                            detailActions={async () => {
+                                                await getTableInformation(
+                                                    5,
+                                                ).finally(
+                                                    () =>
+                                                        (stepperDetail[0] = true),
+                                                );
+                                            }}
+                                        ></DataTable>
+                                    </div>
+                                </div>
+                            </div>
+                        {:else}
+                            <form
+                                class="flex w-full flex-col justify-start px-3 pb-10"
+                                id="mainMeetingResultForm"
+                                method="POST"
+                                use:mainMeetingResultEnhance
+                            >
+                                <ContentHeader
+                                    title="Maklumat Calon"
+                                    borderClass="border-none"
+                                />
+                                <CustomTextField
+                                    label="No. Pekerja"
+                                    disabled
+                                    id="employeeNumber"
+                                    val={mainPromotionDetail.candidate
+                                        ?.employeeNumber}
+                                />
+                                <CustomTextField
+                                    label="Nama"
+                                    id="employeeName"
+                                    disabled
+                                    val={mainPromotionDetail.candidate
+                                        ?.employeeName}
+                                />
+                                <CustomTextField
+                                    label="No. Kad Pengenalan"
+                                    disabled
+                                    id="ICNumber"
+                                    val={mainPromotionDetail.candidate
+                                        ?.ICNumber}
+                                />
+                                <CustomTextField
+                                    label="Program"
+                                    disabled
+                                    id="programme"
+                                    val={mainPromotionDetail.candidate
+                                        ?.programme}
+                                />
+                                <CustomTextField
+                                    label="Skim"
+                                    disabled
+                                    id="scheme"
+                                    val={mainPromotionDetail.candidate?.scheme}
+                                />
+                                <CustomTextField
+                                    label="Gred"
+                                    disabled
+                                    id="grade"
+                                    val={mainPromotionDetail.candidate?.grade}
+                                />
+                                <CustomTextField
+                                    label="Nama Jawatan"
+                                    disabled
+                                    id="position"
+                                    val={mainPromotionDetail.candidate
+                                        ?.position}
+                                />
+                                <CustomTextField
+                                    label="Penempatan Sekarang"
+                                    disabled
+                                    id="currentPlacement"
+                                    val={mainPromotionDetail.candidate
+                                        ?.currentPlacement}
+                                />
+                                <CustomTextField
+                                    label="Kumpulan"
+                                    disabled
+                                    id="serviceGroup"
+                                    val={mainPromotionDetail.candidate
+                                        ?.serviceGroup}
+                                />
+                                <CustomTextField
+                                    label="Akuan Pinjaman Pendidikan / Institusi"
+                                    disabled
+                                    id="institutionLoanAccount"
+                                    val={mainPromotionDetail.candidate
+                                        ?.institutionLoanAccount}
+                                />
+                                <ContentHeader
+                                    title="Keputusan Mesyuarat Kenaikan Pangkat"
+                                    borderClass="border-none"
+                                />
+                                <CustomRadioBoolean
+                                    id="status"
+                                    label="Keputusan"
+                                    disabled={mainMeetingResultChecked}
+                                    options={approveOptions}
+                                    bind:val={$mainMeetingResultForm.status}
+                                    errors={$mainMeetingResultError.status}
+                                />
+                            </form>
+                        {/if}
+                    </StepperContentBody>
+                </StepperContent>
+
+                <StepperContent>
+                    <StepperContentHeader
+                        title="Kemaskini Maklumat Pemangkuan Kakitangan"
+                    >
+                        {#if stepperDetail[1]}
+                            <TextIconButton
+                                label="Kembali"
+                                icon="previous"
+                                type="neutral"
+                                onClick={() => (stepperDetail[1] = false)}
+                            />
+                            {#if !mainMeetingDetailChecked && data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code}
+                                <TextIconButton
+                                    label="Simpan"
+                                    icon="check"
+                                    form="mainMeetingDetailForm"
+                                />
+                            {:else if !mainSupporterApproved && data.currentRoleCode === UserRoleConstant.penyokong.code}
+                                <TextIconButton
+                                    label="Simpan"
+                                    icon="check"
+                                    form="mainSupporterApproval"
+                                />
+                            {:else if !mainApproverApproved && data.currentRoleCode === UserRoleConstant.pelulus.code}
+                                <TextIconButton
+                                    label="Simpan"
+                                    icon="check"
+                                    form="mainApproverApproval"
+                                />
+                            {/if}
+                        {/if}
+                    </StepperContentHeader>
+                    <StepperContentBody>
+                        {#if !stepperDetail[1]}
+                            <div
+                                class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
+                            >
+                                <Alert color="blue">
+                                    <p>
+                                        <span class="font-medium"
+                                            >Arahan:
+                                        </span>
+                                        Tetapkan untuk semua kakitangan berkaitan.
+                                    </p>
+                                </Alert>
                                 <div class="h-fit w-full">
                                     <DataTable
-                                        title=""
-                                        bind:tableData={mainPromotionTable}
-                                        bind:passData={selectedCandidate}
+                                        title="Senarai Kakitangan"
+                                        bind:tableData={mainActingInfoTable}
+                                        bind:passData={selectedMainActingInfo}
                                         detailActions={async () => {
                                             await getTableInformation(
-                                                5,
+                                                7,
                                             ).finally(
-                                                () => (stepperDetail[0] = true),
+                                                () => (stepperDetail[1] = true),
                                             );
                                         }}
                                     ></DataTable>
                                 </div>
                             </div>
-                        </div>
-                    {:else}
-                        <form
-                            class="flex w-full flex-col justify-start px-3 pb-10"
-                            id="mainMeetingResultForm"
-                            method="POST"
-                            use:mainMeetingResultEnhance
-                        >
-                            <ContentHeader
-                                title="Maklumat Calon"
-                                borderClass="border-none"
-                            />
-                            <CustomTextField
-                                label="No. Pekerja"
-                                disabled
-                                id="employeeNumber"
-                                val={mainPromotionDetail.candidate
-                                    ?.employeeNumber}
-                            />
-                            <CustomTextField
-                                label="Nama"
-                                id="employeeName"
-                                disabled
-                                val={mainPromotionDetail.candidate
-                                    ?.employeeName}
-                            />
-                            <CustomTextField
-                                label="No. Kad Pengenalan"
-                                disabled
-                                id="ICNumber"
-                                val={mainPromotionDetail.candidate?.ICNumber}
-                            />
-                            <CustomTextField
-                                label="Program"
-                                disabled
-                                id="programme"
-                                val={mainPromotionDetail.candidate?.programme}
-                            />
-                            <CustomTextField
-                                label="Skim"
-                                disabled
-                                id="scheme"
-                                val={mainPromotionDetail.candidate?.scheme}
-                            />
-                            <CustomTextField
-                                label="Gred"
-                                disabled
-                                id="grade"
-                                val={mainPromotionDetail.candidate?.grade}
-                            />
-                            <CustomTextField
-                                label="Nama Jawatan"
-                                disabled
-                                id="position"
-                                val={mainPromotionDetail.candidate?.position}
-                            />
-                            <CustomTextField
-                                label="Penempatan Sekarang"
-                                disabled
-                                id="currentPlacement"
-                                val={mainPromotionDetail.candidate
-                                    ?.currentPlacement}
-                            />
-                            <CustomTextField
-                                label="Kumpulan"
-                                disabled
-                                id="serviceGroup"
-                                val={mainPromotionDetail.candidate
-                                    ?.serviceGroup}
-                            />
-                            <CustomTextField
-                                label="Akuan Pinjaman Pendidikan / Institusi"
-                                disabled
-                                id="institutionLoanAccount"
-                                val={mainPromotionDetail.candidate
-                                    ?.institutionLoanAccount}
-                            />
-                            <ContentHeader
-                                title="Keputusan Mesyuarat Kenaikan Pangkat"
-                                borderClass="border-none"
-                            />
-                            <CustomRadioBoolean
-                                id="status"
-                                label="Keputusan"
-                                disabled={mainMeetingResultChecked}
-                                options={approveOptions}
-                                bind:val={$mainMeetingResultForm.status}
-                                errors={$mainMeetingResultError.status}
-                            />
-                        </form>
-                    {/if}
-                </StepperContentBody>
-            </StepperContent>
-
-            <StepperContent>
-                <StepperContentHeader
-                    title="Kemaskini Maklumat Pemangkuan Kakitangan"
-                >
-                    {#if stepperDetail[1]}
-                        <TextIconButton
-                            label="Kembali"
-                            icon="previous"
-                            type="neutral"
-                            onClick={() => (stepperDetail[1] = false)}
-                        />
-                        {#if !mainMeetingDetailChecked && data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code}
-                            <TextIconButton
-                                label="Simpan"
-                                icon="check"
-                                form="mainMeetingDetailForm"
-                            />
-                        {:else if !mainSupporterApproved && data.currentRoleCode === UserRoleConstant.penyokong.code}
-                            <TextIconButton
-                                label="Simpan"
-                                icon="check"
-                                form="mainSupporterApproval"
-                            />
-                        {:else if !mainApproverApproved && data.currentRoleCode === UserRoleConstant.pelulus.code}
-                            <TextIconButton
-                                label="Simpan"
-                                icon="check"
-                                form="mainApproverApproval"
-                            />
+                        {:else}
+                            <form
+                                class="flex w-full flex-col justify-start px-2.5 pb-10"
+                                id="mainMeetingDetailForm"
+                                method="POST"
+                                use:mainMeetingDetailEnhance
+                            >
+                                <ContentHeader
+                                    title="Maklumat Calon"
+                                    borderClass="border-none"
+                                />
+                                <CustomTextField
+                                    label="No. Pekerja"
+                                    disabled
+                                    id="employeeNumber"
+                                    val={mainActingInfoDetail?.employeeDetails
+                                        ?.employeeNumber}
+                                />
+                                <CustomTextField
+                                    label="Nama"
+                                    disabled
+                                    id="employeeName"
+                                    val={mainActingInfoDetail?.employeeDetails
+                                        ?.employeeName}
+                                />
+                                <CustomTextField
+                                    label="No. Kad Pengenalan"
+                                    disabled
+                                    id="ICNumber"
+                                    val={mainActingInfoDetail?.employeeDetails
+                                        ?.ICNumber}
+                                />
+                                <ContentHeader
+                                    title="Butiran Pemangkuan"
+                                    borderClass="border-none"
+                                />
+                                <span
+                                    class="pb-2.5 text-sm italic text-ios-activeColors-activeBlue-light"
+                                    >Sekiranya tidak lulus, jawatan dan gred
+                                    akan dikembalikan ke butiran asal.</span
+                                >
+                                <CustomSelectField
+                                    label="Jawatan Pemangkuan"
+                                    id="actingPosition"
+                                    disabled={mainMeetingDetailChecked}
+                                    options={data.lookup.positionLookup}
+                                    errors={$mainMeetingDetailError.actingPosition}
+                                    bind:val={$mainMeetingDetailForm.actingPosition}
+                                />
+                                <CustomSelectField
+                                    label="Gred Pemangkuan"
+                                    id="actingGrade"
+                                    disabled={mainMeetingDetailChecked}
+                                    options={data.lookup.gradeLookup}
+                                    errors={$mainMeetingDetailError.actingGrade}
+                                    bind:val={$mainMeetingDetailForm.actingGrade}
+                                />
+                                <CustomSelectField
+                                    label="Penempatan Baru"
+                                    id="newPlacement"
+                                    disabled={mainMeetingDetailChecked}
+                                    options={data.lookup.placementLookup}
+                                    errors={$mainMeetingDetailError.newPlacement}
+                                    bind:val={$mainMeetingDetailForm.newPlacement}
+                                />
+                                <CustomTextField
+                                    label="Tarikh Lapor Diri"
+                                    id="reportDate"
+                                    type="date"
+                                    disabled={mainMeetingDetailChecked}
+                                    errors={$mainMeetingDetailError.reportDate}
+                                    bind:val={$mainMeetingDetailForm.reportDate}
+                                />
+                                <CustomTextField
+                                    label="Tarikh Tamat Pemangkuan"
+                                    id="actingEndDate"
+                                    type="date"
+                                    disabled={mainMeetingDetailChecked}
+                                    errors={$mainMeetingDetailError.actingEndDate}
+                                    bind:val={$mainMeetingDetailForm.actingEndDate}
+                                />
+                                <ContentHeader
+                                    title="Pengesah Keputusan"
+                                    borderClass="border-none"
+                                />
+                                <CustomSelectField
+                                    label="Nama Penyokong"
+                                    id="supporterName"
+                                    disabled={mainMeetingDetailChecked}
+                                    errors={$mainMeetingDetailError.supporterName}
+                                    bind:val={$mainMeetingDetailForm.supporterName}
+                                    options={data.lookup
+                                        .supporterApproverLookup}
+                                />
+                                <form
+                                    class="flex w-full flex-col justify-start gap-2.5 pb-3"
+                                    id="mainSupporterApproval"
+                                    method="POST"
+                                    use:mainSupporterApprovalEnhance
+                                >
+                                    {#if $mainSupporterApproval.remark == null && data.currentRoleCode !== UserRoleConstant.penyokong.code}
+                                        <Alert color="blue">
+                                            <p>
+                                                <span class="font-medium"
+                                                    >Tiada Maklumat!</span
+                                                >
+                                                Menunggu keputusan daripada penyokong.
+                                            </p>
+                                        </Alert>
+                                    {:else}
+                                        <CustomTextField
+                                            label="Ulasan"
+                                            id="remark"
+                                            disabled={mainSupporterApproved}
+                                            placeholder="Menunggu keputusan penyokong..."
+                                            bind:val={$mainSupporterApproval.remark}
+                                            errors={$mainSupporterApprovalError.remark}
+                                        />
+                                        <CustomRadioBoolean
+                                            label="Keputusan"
+                                            id="status"
+                                            options={supportOptions}
+                                            disabled={mainSupporterApproved}
+                                            bind:val={$mainSupporterApproval.status}
+                                            errors={$mainSupporterApprovalError.status}
+                                        />
+                                    {/if}
+                                </form>
+                                <CustomSelectField
+                                    label="Nama Pelulus"
+                                    id="approverName"
+                                    disabled={mainMeetingDetailChecked}
+                                    errors={$mainMeetingDetailError.approverName}
+                                    bind:val={$mainMeetingDetailForm.approverName}
+                                    options={data.lookup
+                                        .supporterApproverLookup}
+                                />
+                                <form
+                                    class="flex w-full flex-col justify-start gap-2.5"
+                                    id="mainApproverApproval"
+                                    method="POST"
+                                    use:mainApproverApprovalEnhance
+                                >
+                                    {#if $mainApproverApproval.remark == null && data.currentRoleCode !== UserRoleConstant.pelulus.code}
+                                        <Alert color="blue">
+                                            <p>
+                                                <span class="font-medium"
+                                                    >Tiada Maklumat!</span
+                                                >
+                                                Menunggu keputusan daripada penyokong.
+                                            </p>
+                                        </Alert>
+                                    {:else}
+                                        <CustomTextField
+                                            label="Ulasan"
+                                            id="remark"
+                                            disabled={mainApproverApproved}
+                                            placeholder="Menunggu keputusan pelulus..."
+                                            bind:val={$mainApproverApproval.remark}
+                                            errors={$mainApproverApprovalError.remark}
+                                        />
+                                        <CustomRadioBoolean
+                                            label="Keputusan"
+                                            id="status"
+                                            disabled={mainApproverApproved}
+                                            options={approveOptions}
+                                            bind:val={$mainApproverApproval.status}
+                                            errors={$mainApproverApprovalError.status}
+                                        />
+                                    {/if}
+                                </form>
+                            </form>
                         {/if}
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    {#if !stepperDetail[1]}
-                        <div
-                            class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
-                        >
-                            <Alert color="blue">
-                                <p>
-                                    <span class="font-medium">Arahan:  </span>
-                                    Tetapkan untuk semua kakitangan berkaitan.
-                                </p>
-                            </Alert>
-                            <div class="h-fit w-full">
-                                <DataTable
-                                    title="Senarai Kakitangan"
-                                    bind:tableData={mainActingInfoTable}
-                                    bind:passData={selectedMainActingInfo}
-                                    detailActions={async () => {
-                                        await getTableInformation(7).finally(
-                                            () => (stepperDetail[1] = true),
-                                        );
-                                    }}
-                                ></DataTable>
-                            </div>
-                        </div>
-                    {:else}
-                        <form
-                            class="flex w-full flex-col justify-start px-2.5 pb-10"
-                            id="mainMeetingDetailForm"
-                            method="POST"
-                            use:mainMeetingDetailEnhance
-                        >
-                            <ContentHeader
-                                title="Maklumat Calon"
-                                borderClass="border-none"
-                            />
-                            <CustomTextField
-                                label="No. Pekerja"
-                                disabled
-                                id="employeeNumber"
-                                val={mainActingInfoDetail?.employeeDetails
-                                    ?.employeeNumber}
-                            />
-                            <CustomTextField
-                                label="Nama"
-                                disabled
-                                id="employeeName"
-                                val={mainActingInfoDetail?.employeeDetails
-                                    ?.employeeName}
-                            />
-                            <CustomTextField
-                                label="No. Kad Pengenalan"
-                                disabled
-                                id="ICNumber"
-                                val={mainActingInfoDetail?.employeeDetails
-                                    ?.ICNumber}
-                            />
-                            <ContentHeader
-                                title="Butiran Pemangkuan"
-                                borderClass="border-none"
-                            />
-                            <span
-                                class="pb-2.5 text-sm italic text-ios-activeColors-activeBlue-light"
-                                >Sekiranya tidak lulus, jawatan dan gred akan
-                                dikembalikan ke butiran asal.</span
-                            >
-                            <CustomSelectField
-                                label="Jawatan Pemangkuan"
-                                id="actingPosition"
-                                disabled={mainMeetingDetailChecked}
-                                options={data.lookup.positionLookup}
-                                errors={$mainMeetingDetailError.actingPosition}
-                                bind:val={$mainMeetingDetailForm.actingPosition}
-                            />
-                            <CustomSelectField
-                                label="Gred Pemangkuan"
-                                id="actingGrade"
-                                disabled={mainMeetingDetailChecked}
-                                options={data.lookup.gradeLookup}
-                                errors={$mainMeetingDetailError.actingGrade}
-                                bind:val={$mainMeetingDetailForm.actingGrade}
-                            />
-                            <CustomSelectField
-                                label="Penempatan Baru"
-                                id="newPlacement"
-                                disabled={mainMeetingDetailChecked}
-                                options={data.lookup.placementLookup}
-                                errors={$mainMeetingDetailError.newPlacement}
-                                bind:val={$mainMeetingDetailForm.newPlacement}
-                            />
-                            <CustomTextField
-                                label="Tarikh Lapor Diri"
-                                id="reportDate"
-                                type="date"
-                                disabled={mainMeetingDetailChecked}
-                                errors={$mainMeetingDetailError.reportDate}
-                                bind:val={$mainMeetingDetailForm.reportDate}
-                            />
-                            <ContentHeader
-                                title="Pengesah Keputusan"
-                                borderClass="border-none"
-                            />
-                            <CustomSelectField
-                                label="Nama Penyokong"
-                                id="supporterName"
-                                disabled={mainMeetingDetailChecked}
-                                errors={$mainMeetingDetailError.supporterName}
-                                bind:val={$mainMeetingDetailForm.supporterName}
-                                options={data.lookup.supporterApproverLookup}
-                            />
-                            <form
-                                class="flex w-full flex-col justify-start gap-2.5"
-                                id="mainSupporterApproval"
-                                method="POST"
-                                use:mainSupporterApprovalEnhance
-                            >
-                                <CustomTextField
-                                    label="Ulasan"
-                                    id="remark"
-                                    disabled={mainSupporterApproved}
-                                    placeholder="Menunggu keputusan penyokong..."
-                                    bind:val={$mainSupporterApproval.remark}
-                                    errors={$mainSupporterApprovalError.remark}
-                                />
-                                <CustomRadioBoolean
-                                    label="Keputusan"
-                                    id="status"
-                                    options={supportOptions}
-                                    disabled={mainSupporterApproved}
-                                    bind:val={$mainSupporterApproval.status}
-                                    errors={$mainSupporterApprovalError.status}
-                                />
-                            </form>
-                            <CustomSelectField
-                                label="Nama Pelulus"
-                                id="approverName"
-                                disabled={mainMeetingDetailChecked}
-                                errors={$mainMeetingDetailError.approverName}
-                                bind:val={$mainMeetingDetailForm.approverName}
-                                options={data.lookup.supporterApproverLookup}
-                            />
-                            <form
-                                class="flex w-full flex-col justify-start gap-2.5"
-                                id="mainApproverApproval"
-                                method="POST"
-                                use:mainApproverApprovalEnhance
-                            >
-                                <CustomTextField
-                                    label="Ulasan"
-                                    id="remark"
-                                    disabled={mainApproverApproved}
-                                    placeholder="Menunggu keputusan pelulus..."
-                                    bind:val={$mainApproverApproval.remark}
-                                    errors={$mainApproverApprovalError.remark}
-                                />
-                                <CustomRadioBoolean
-                                    label="Keputusan"
-                                    id="status"
-                                    disabled={mainApproverApproved}
-                                    options={approveOptions}
-                                    bind:val={$mainApproverApproval.status}
-                                    errors={$mainApproverApprovalError.status}
-                                />
-                            </form>
-                        </form>
-                    {/if}
-                </StepperContentBody>
-            </StepperContent>
+                    </StepperContentBody>
+                </StepperContent>
             {/if}
             <!-- End Of For Gred Utama (New) Only -->
 
@@ -1853,195 +2019,202 @@
             </StepperContent>
 
             {#if !checkPhaseTwo}
-            <StepperContent>
-                <StepperContentHeader
-                    title="Kemaskini Keputusan Mesyuarat Pemilihan Calon"
-                >
-                    {#if stepperDetail[0] && data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code}
-                    <TextIconButton
-                        label="Kembali"
-                        icon="previous"
-                        type="neutral"
-                        onClick={() => (stepperDetail[0] = false)}
-                    />
-                    {#if !directorApproved && (data.currentRoleCode == UserRoleConstant.pengarahNegeri.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
-                        <TextIconButton
-                            label="Simpan"
-                            icon="check"
-                            type="primary"
-                            form="directorResultForm"
-                        />
-                    {/if}
-                    {#if !integrityApproved && data.currentRoleCode === UserRoleConstant.urusSetiaIntegriti.code}
-                        <TextIconButton
-                            label="Simpan"
-                            icon="check"
-                            type="primary"
-                            form="integrityResultForm"
-                        />
-                    {/if}
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    {#if data.currentRoleCode === UserRoleConstant.pengarahNegeri.code || data.currentRoleCode === UserRoleConstant.pengarahNegeri.code || data.currentRoleCode === UserRoleConstant.urusSetiaIntegriti.code}
-                        {#if !stepperDetail[0]}
-                            <div
-                                class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
-                            >
-                            <Alert color="blue">
-                                <p>
-                                    <span class="font-medium">Arahan:  </span>
-                                    Tetapkan perakuan untuk semua calon yang terpilih.
-                                </p>
-                            </Alert>
-                                <div class="h-fit w-full">
-                                    <DataTable
-                                        title="Senarai Kakitangan"
-                                        bind:tableData={updatedChosenEmployeeTable}
-                                        bind:passData={selectedCandidate}
-                                        detailActions={async () => {
-                                            await getTableInformation(
-                                                6,
-                                            ).finally(
-                                                () => (stepperDetail[0] = true),
-                                            );
-                                        }}
-                                    ></DataTable>
-                                </div>
-                            </div>
-                        {:else}
-                            <form
-                                class="flex w-full flex-col justify-start gap-2.5 p-3"
-                                id="integrityResultForm"
-                                method="POST"
-                                use:integrityResultEnhance
-                            >
-                                <ContentHeader
-                                    title="Urus Setia Integriti"
-                                    borderClass="border-none"
-                                />
-                                <CustomTextField
-                                    label="Tindakan/Ulasan"
-                                    id="remark"
-                                    placeholder="Menunggu keputusan daripada Urus Setia Integriti..."
-                                    disabled={integrityApproved}
-                                    bind:val={$integrityResultForm.remark}
-                                    errors={$integrityResultError.remark}
-                                />
-                                <CustomRadioBoolean
-                                    id="status"
-                                    label="Keputusan"
-                                    disabled={integrityApproved}
-                                    options={confirmOptions}
-                                    bind:val={$integrityResultForm.status}
-                                    errors={$integrityResultError.status}
-                                />
-                            </form>
-                            <form
-                                class="flex w-full flex-col justify-start gap-2.5 p-3"
-                                id="directorResultForm"
-                                method="POST"
-                                use:directorResultEnhance
-                            >
-                                <ContentHeader
-                                    title="Pengarah Bahagian/Negeri"
-                                    borderClass="border-none"
-                                />
-                                <CustomTextField
-                                    label="Tindakan/Ulasan"
-                                    id="remark"
-                                    placeholder="Menunggu keputusan daripada Pengarah Bahagian/Negeri..."
-                                    disabled={directorApproved}
-                                    errors={$directorResultError.remark}
-                                    bind:val={$directorResultForm.remark}
-                                />
-                                <CustomRadioBoolean
-                                    id="status"
-                                    label="Keputusan"
-                                    disabled={directorApproved}
-                                    bind:val={$directorResultForm.status}
-                                    errors={$directorResultError.status}
-                                    options={confirmOptions}
-                                />
-                            </form>
-                        {/if}
-                    {:else}
-                        <form
-                            class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
-                            id="updateChosenCandidateForm"
-                            method="POST"
-                            use:updateChosenCandidateEnhance
-                        >
-                            <!-- Urus Setia and Penyokong POV-->
-                            <ContentHeader
-                                title="Maklumat Peraku Keputusan Mesyuarat"
-                                borderClass="border-none"
+                <StepperContent>
+                    <StepperContentHeader
+                        title="Kemaskini Keputusan Mesyuarat Pemilihan Calon"
+                    >
+                        {#if stepperDetail[0] && data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code}
+                            <TextIconButton
+                                label="Kembali"
+                                icon="previous"
+                                type="neutral"
+                                onClick={() => (stepperDetail[0] = false)}
                             />
-                            <CustomSelectField
-                                disabled={false}
-                                label="Nama Urus Setia Integriti"
-                                id="secretaryName"
-                                options={data.lookup.supporterApproverLookup}
-                                bind:val={$updateChosenCandidateForm.secretaryName}
-                                errors={$updateChosenCandidateError.secretaryName}
-                            />
-
-                            <CustomSelectField
-                                disabled={false}
-                                label="Nama Pengarah Bahagian / Negeri"
-                                id="directorName"
-                                options={data.lookup.supporterApproverLookup}
-                                bind:val={$updateChosenCandidateForm.directorName}
-                                errors={$updateChosenCandidateError.directorName}
-                            />
-
-                            <ContentHeader
-                                title="Kemaskini Senarai Calon Yang Terpilih Mengikut Keputusan Mesyuarat"
-                                borderClass="border-none"
-                            />
-                            <ContentHeader
-                                title="Tindakan: Tetapkan untuk semua calon yang berkaitan."
-                                borderClass="border-none"
-                            >
+                            {#if !directorApproved && (data.currentRoleCode == UserRoleConstant.pengarahNegeri.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
                                 <TextIconButton
-                                    label="Lulus"
+                                    label="Simpan"
                                     icon="check"
                                     type="primary"
-                                    form="updateChosenCandidateForm"
+                                    form="directorResultForm"
                                 />
-                            </ContentHeader>
-                            <div
-                                class="flex w-full flex-col justify-start gap-2.5 pb-10"
-                            >
-                                <div class="h-fit w-full p-3">
-                                    <DataTable
-                                        title="Senarai Kakitangan"
-                                        bind:tableData={updatedChosenEmployeeTable}
-                                        bind:passData={selectedCandidate}
-                                        detailActions={async () => {
-                                            await getTableInformation(
-                                                6,
-                                            ).finally(
-                                                () => (stepperDetail[0] = true),
-                                            );
-                                        }}
-                                    ></DataTable>
+                            {/if}
+                            {#if !integrityApproved && data.currentRoleCode === UserRoleConstant.urusSetiaIntegriti.code}
+                                <TextIconButton
+                                    label="Simpan"
+                                    icon="check"
+                                    type="primary"
+                                    form="integrityResultForm"
+                                />
+                            {/if}
+                        {/if}
+                    </StepperContentHeader>
+                    <StepperContentBody>
+                        {#if data.currentRoleCode === UserRoleConstant.pengarahNegeri.code || data.currentRoleCode === UserRoleConstant.pengarahNegeri.code || data.currentRoleCode === UserRoleConstant.urusSetiaIntegriti.code}
+                            {#if !stepperDetail[0]}
+                                <div
+                                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
+                                >
+                                    <Alert color="blue">
+                                        <p>
+                                            <span class="font-medium"
+                                                >Arahan:
+                                            </span>
+                                            Tetapkan perakuan untuk semua calon yang
+                                            terpilih.
+                                        </p>
+                                    </Alert>
+                                    <div class="h-fit w-full">
+                                        <DataTable
+                                            title="Senarai Kakitangan"
+                                            bind:tableData={updatedChosenEmployeeTable}
+                                            bind:passData={selectedCandidate}
+                                            detailActions={async () => {
+                                                await getTableInformation(
+                                                    6,
+                                                ).finally(
+                                                    () =>
+                                                        (stepperDetail[0] = true),
+                                                );
+                                            }}
+                                        ></DataTable>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
-                    {/if}
-                </StepperContentBody>
-            </StepperContent>
+                            {:else}
+                                <form
+                                    class="flex w-full flex-col justify-start gap-2.5 p-3"
+                                    id="integrityResultForm"
+                                    method="POST"
+                                    use:integrityResultEnhance
+                                >
+                                    <ContentHeader
+                                        title="Urus Setia Integriti"
+                                        borderClass="border-none"
+                                    />
+                                    <CustomTextField
+                                        label="Tindakan/Ulasan"
+                                        id="remark"
+                                        placeholder="Menunggu keputusan daripada Urus Setia Integriti..."
+                                        disabled={integrityApproved}
+                                        bind:val={$integrityResultForm.remark}
+                                        errors={$integrityResultError.remark}
+                                    />
+                                    <CustomRadioBoolean
+                                        id="status"
+                                        label="Keputusan"
+                                        disabled={integrityApproved}
+                                        options={confirmOptions}
+                                        bind:val={$integrityResultForm.status}
+                                        errors={$integrityResultError.status}
+                                    />
+                                </form>
+                                <form
+                                    class="flex w-full flex-col justify-start gap-2.5 p-3"
+                                    id="directorResultForm"
+                                    method="POST"
+                                    use:directorResultEnhance
+                                >
+                                    <ContentHeader
+                                        title="Pengarah Bahagian/Negeri"
+                                        borderClass="border-none"
+                                    />
+                                    <CustomTextField
+                                        label="Tindakan/Ulasan"
+                                        id="remark"
+                                        placeholder="Menunggu keputusan daripada Pengarah Bahagian/Negeri..."
+                                        disabled={directorApproved}
+                                        errors={$directorResultError.remark}
+                                        bind:val={$directorResultForm.remark}
+                                    />
+                                    <CustomRadioBoolean
+                                        id="status"
+                                        label="Keputusan"
+                                        disabled={directorApproved}
+                                        bind:val={$directorResultForm.status}
+                                        errors={$directorResultError.status}
+                                        options={confirmOptions}
+                                    />
+                                </form>
+                            {/if}
+                        {:else}
+                            <form
+                                class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
+                                id="updateChosenCandidateForm"
+                                method="POST"
+                                use:updateChosenCandidateEnhance
+                            >
+                                <!-- Urus Setia and Penyokong POV-->
+                                <ContentHeader
+                                    title="Maklumat Peraku Keputusan Mesyuarat"
+                                    borderClass="border-none"
+                                />
+                                <CustomSelectField
+                                    disabled={false}
+                                    label="Nama Urus Setia Integriti"
+                                    id="secretaryName"
+                                    options={data.lookup
+                                        .supporterApproverLookup}
+                                    bind:val={$updateChosenCandidateForm.secretaryName}
+                                    errors={$updateChosenCandidateError.secretaryName}
+                                />
+
+                                <CustomSelectField
+                                    disabled={false}
+                                    label="Nama Pengarah Bahagian / Negeri"
+                                    id="directorName"
+                                    options={data.lookup
+                                        .supporterApproverLookup}
+                                    bind:val={$updateChosenCandidateForm.directorName}
+                                    errors={$updateChosenCandidateError.directorName}
+                                />
+
+                                <ContentHeader
+                                    title="Kemaskini Senarai Calon Yang Terpilih Mengikut Keputusan Mesyuarat"
+                                    borderClass="border-none"
+                                />
+                                <ContentHeader
+                                    title="Tindakan: Tetapkan untuk semua calon yang berkaitan."
+                                    borderClass="border-none"
+                                >
+                                    <TextIconButton
+                                        label="Lulus"
+                                        icon="check"
+                                        type="primary"
+                                        form="updateChosenCandidateForm"
+                                    />
+                                </ContentHeader>
+                                <div
+                                    class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                                >
+                                    <div class="h-fit w-full p-3">
+                                        <DataTable
+                                            title="Senarai Kakitangan"
+                                            bind:tableData={updatedChosenEmployeeTable}
+                                            bind:passData={selectedCandidate}
+                                            detailActions={async () => {
+                                                await getTableInformation(
+                                                    6,
+                                                ).finally(
+                                                    () =>
+                                                        (stepperDetail[0] = true),
+                                                );
+                                            }}
+                                        ></DataTable>
+                                    </div>
+                                </div>
+                            </form>
+                        {/if}
+                    </StepperContentBody>
+                </StepperContent>
             {/if}
             {#if data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code && data.currentRoleCode !== UserRoleConstant.urusSetiaIntegriti.code}
                 <StepperContent>
                     <StepperContentHeader title="Kemaskini Maklumat Temuduga">
                         {#if !meetingDetailExist && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
-                        <TextIconButton
-                            label="Simpan"
-                            icon="check"
-                            form="updateMeetingDetailForm"
-                        />
+                            <TextIconButton
+                                label="Simpan"
+                                icon="check"
+                                form="updateMeetingDetailForm"
+                            />
                         {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
@@ -2121,13 +2294,13 @@
                                 options={data.lookup.placementLookup}
                             />
                             {#if !meetingDetailExist}
-                            <div class="flex w-full flex-col gap-2">
-                                <CustomFileField
-                                    label="Dokumen Sokongan"
-                                    id="postponeDocs"
-                                    bind:files
-                                ></CustomFileField>
-                            </div>
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomFileField
+                                        label="Dokumen Sokongan"
+                                        id="postponeDocs"
+                                        bind:files
+                                    ></CustomFileField>
+                                </div>
                             {/if}
                             <div
                                 class="flex w-full flex-col justify-start gap-2.5 pb-10"
@@ -2151,7 +2324,7 @@
                                 icon="check"
                                 form="updateMeetingResultForm"
                             />
-                            {/if}
+                        {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
                         <form
@@ -2160,13 +2333,16 @@
                             method="POST"
                             use:updateMeetingResultEnhance
                         >
-                        {#if !allMarked}
-                        <Alert color="blue">
-                            <p>
-                                <span class="font-medium">Arahan:  </span>
-                                Tekan tombol tambah untuk tetapkan markah temuduga kakitangan yang dikehendaki.
-                            </p>
-                        </Alert>
+                            {#if !allMarked}
+                                <Alert color="blue">
+                                    <p>
+                                        <span class="font-medium"
+                                            >Arahan:
+                                        </span>
+                                        Tekan tombol tambah untuk tetapkan markah
+                                        temuduga kakitangan yang dikehendaki.
+                                    </p>
+                                </Alert>
                                 <ContentHeader
                                     title="Maklumat Markah Keseluruhan"
                                     borderClass="border-none"
@@ -2180,17 +2356,17 @@
                                     bind:val={$updateMeetingResultForm.marks}
                                     errors={$updateMeetingResultError.marks}
                                 />
-                                {/if}
-                                <div
-                                    class="flex w-full flex-col justify-start gap-2.5 pb-10"
-                                >
-                                    <div class="h-fit w-full p-3">
-                                        <DataTable
-                                            title="Keputusan Temuduga Untuk Calon Terpilih"
-                                            bind:tableData={interviewResultTable}
-                                        ></DataTable>
-                                    </div>
+                            {/if}
+                            <div
+                                class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                            >
+                                <div class="h-fit w-full p-3">
+                                    <DataTable
+                                        title="Keputusan Temuduga Untuk Calon Terpilih"
+                                        bind:tableData={interviewResultTable}
+                                    ></DataTable>
                                 </div>
+                            </div>
                         </form>
                     </StepperContentBody>
                 </StepperContent>
@@ -2207,63 +2383,61 @@
                                 onClick={() => (stepperDetail[0] = false)}
                             />
                             {#if !updatedPromotionMeetingResult && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
-                            <TextIconButton
-                                label="Simpan"
-                                icon="check"
-                                form="updatePromotionMeetingResultForm"
-                            />
+                                <TextIconButton
+                                    label="Simpan"
+                                    icon="check"
+                                    form="updatePromotionMeetingResultForm"
+                                />
                             {/if}
-                        {:else}
-                            {#if !updatedPromotionMeeting && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                        {:else if !updatedPromotionMeeting && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                             <TextIconButton
                                 label="Simpan"
                                 icon="check"
                                 form="updatePromotionMeetingForm"
                             />
-                            {/if}
                         {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
                         {#if !stepperDetail[0]}
-                                <form
-                                    class="flex w-full flex-col justify-start gap-2.5 p-3"
-                                    id="updatePromotionMeetingForm"
-                                    method="POST"
-                                    use:updatePromotionMeetingEnhance
-                                >
-                                    <CustomSelectField
-                                        label="Nama Mesyuarat"
-                                        id="meetingName"
-                                        disabled={updatedPromotionMeeting}
-                                        options={data.lookup.meetingNameLookup}
-                                        bind:val={$updatePromotionMeetingForm.meetingName}
-                                        errors={$updatePromotionMeetingError.meetingName}
-                                    />
-                                    <CustomTextField
-                                        label="Tarikh Mesyuarat"
-                                        id="meetingDate"
-                                        disabled={updatedPromotionMeeting}
-                                        type="date"
-                                        bind:val={$updatePromotionMeetingForm.meetingDate}
-                                        errors={$updatePromotionMeetingError.meetingDate}
-                                    />
-                                    <CustomSelectField
-                                        label="Jawatan Pemangkuan"
-                                        id="actingPosition"
-                                        disabled={updatedPromotionMeeting}
-                                        options={data.lookup.positionLookup}
-                                        bind:val={$updatePromotionMeetingForm.actingPosition}
-                                        errors={$updatePromotionMeetingError.actingPosition}
-                                    />
-                                    <CustomSelectField
-                                        label="Gred Pemangkuan"
-                                        id="actingGrade"
-                                        disabled={updatedPromotionMeeting}
-                                        options={data.lookup.gradeLookup}
-                                        bind:val={$updatePromotionMeetingForm.actingGrade}
-                                        errors={$updatePromotionMeetingError.actingGrade}
-                                    />
-                                </form>
+                            <form
+                                class="flex w-full flex-col justify-start gap-2.5 p-3"
+                                id="updatePromotionMeetingForm"
+                                method="POST"
+                                use:updatePromotionMeetingEnhance
+                            >
+                                <CustomSelectField
+                                    label="Nama Mesyuarat"
+                                    id="meetingName"
+                                    disabled={updatedPromotionMeeting}
+                                    options={data.lookup.meetingNameLookup}
+                                    bind:val={$updatePromotionMeetingForm.meetingName}
+                                    errors={$updatePromotionMeetingError.meetingName}
+                                />
+                                <CustomTextField
+                                    label="Tarikh Mesyuarat"
+                                    id="meetingDate"
+                                    disabled={updatedPromotionMeeting}
+                                    type="date"
+                                    bind:val={$updatePromotionMeetingForm.meetingDate}
+                                    errors={$updatePromotionMeetingError.meetingDate}
+                                />
+                                <CustomSelectField
+                                    label="Jawatan Pemangkuan"
+                                    id="actingPosition"
+                                    disabled={updatedPromotionMeeting}
+                                    options={data.lookup.positionLookup}
+                                    bind:val={$updatePromotionMeetingForm.actingPosition}
+                                    errors={$updatePromotionMeetingError.actingPosition}
+                                />
+                                <CustomSelectField
+                                    label="Gred Pemangkuan"
+                                    id="actingGrade"
+                                    disabled={updatedPromotionMeeting}
+                                    options={data.lookup.gradeLookup}
+                                    bind:val={$updatePromotionMeetingForm.actingGrade}
+                                    errors={$updatePromotionMeetingError.actingGrade}
+                                />
+                            </form>
 
                             <div
                                 class="flex w-full flex-col justify-start gap-2.5 pb-10"
@@ -2346,20 +2520,18 @@
                                 }}
                             />
                             {#if !updatedPlacementResult && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
-                            <TextIconButton
-                                label="Simpan"
-                                icon="check"
-                                form="updateEmployeePlacementMeetingResultForm"
-                            />
+                                <TextIconButton
+                                    label="Simpan"
+                                    icon="check"
+                                    form="updateEmployeePlacementMeetingResultForm"
+                                />
                             {/if}
-                        {:else}
-                        {#if !updatedPlacementMeeting && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                        {:else if !updatedPlacementMeeting && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                             <TextIconButton
                                 label="Simpan"
                                 icon="check"
                                 form="updatePlacementMeeting"
                             />
-                            {/if}
                         {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
@@ -2392,23 +2564,23 @@
                                 />
                             </form>
                             <div
-                                    class="flex w-full flex-col justify-start gap-2.5 pb-10"
-                                >
-                                    <div class="h-fit w-full p-3">
-                                        <DataTable
-                                            title="Senarai Kakitangan"
-                                            bind:tableData={placementTable}
-                                            bind:passData={selectedCandidate}
-                                            detailActions={async () => {
-                                                await getTableInformation(
-                                                    8
-                                                ).finally(
-                                                    () => (stepperDetail[1] = true),
-                                                );
-                                            }}
-                                        ></DataTable>
-                                    </div>
+                                class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                            >
+                                <div class="h-fit w-full p-3">
+                                    <DataTable
+                                        title="Senarai Kakitangan"
+                                        bind:tableData={placementTable}
+                                        bind:passData={selectedCandidate}
+                                        detailActions={async () => {
+                                            await getTableInformation(
+                                                8,
+                                            ).finally(
+                                                () => (stepperDetail[1] = true),
+                                            );
+                                        }}
+                                    ></DataTable>
                                 </div>
+                            </div>
                         {:else}
                             <ContentHeader
                                 title="Maklumat Calon"
@@ -2450,32 +2622,32 @@
                                     bind:val={$updateEmployeePlacementMeetingResultForm.meetingResult}
                                     errors={$updateEmployeePlacementMeetingResultError.meetingResult}
                                 />
-                                {#if $updateEmployeePlacementMeetingResultForm.meetingResult == "Berjaya"}
-                                <CustomSelectField
-                                    label="Penempatan Baru"
-                                    id="newPlacement"
-                                    disabled={updatedPlacementResult}
-                                    options={data.lookup.placementLookup}
-                                    bind:val={$updateEmployeePlacementMeetingResultForm.newPlacement}
-                                    errors={$updateEmployeePlacementMeetingResultError.newPlacement}
-                                />
-                                <CustomSelectField
-                                    label="Pengarah Baru"
-                                    id="newDirector"
-                                    disabled={updatedPlacementResult}
-                                    options={data.lookup
-                                        .supporterApproverLookup}
-                                    bind:val={$updateEmployeePlacementMeetingResultForm.newDirector}
-                                    errors={$updateEmployeePlacementMeetingResultError.newDirector}
-                                />
-                                <CustomTextField
-                                    label="Tarikh Lapor Diri"
-                                    id="reportDate"
-                                    disabled={updatedPlacementResult}
-                                    type="date"
-                                    bind:val={$updateEmployeePlacementMeetingResultForm.reportDate}
-                                    errors={$updateEmployeePlacementMeetingResultError.reportDate}
-                                />
+                                {#if $updateEmployeePlacementMeetingResultForm.meetingResult == 'Berjaya'}
+                                    <CustomSelectField
+                                        label="Penempatan Baru"
+                                        id="newPlacement"
+                                        disabled={updatedPlacementResult}
+                                        options={data.lookup.placementLookup}
+                                        bind:val={$updateEmployeePlacementMeetingResultForm.newPlacement}
+                                        errors={$updateEmployeePlacementMeetingResultError.newPlacement}
+                                    />
+                                    <CustomSelectField
+                                        label="Pengarah Baru"
+                                        id="newDirector"
+                                        disabled={updatedPlacementResult}
+                                        options={data.lookup
+                                            .supporterApproverLookup}
+                                        bind:val={$updateEmployeePlacementMeetingResultForm.newDirector}
+                                        errors={$updateEmployeePlacementMeetingResultError.newDirector}
+                                    />
+                                    <CustomTextField
+                                        label="Tarikh Lapor Diri"
+                                        id="reportDate"
+                                        disabled={updatedPlacementResult}
+                                        type="date"
+                                        bind:val={$updateEmployeePlacementMeetingResultForm.reportDate}
+                                        errors={$updateEmployeePlacementMeetingResultError.reportDate}
+                                    />
                                 {/if}
                             </form>
                         {/if}
@@ -2496,11 +2668,11 @@
                                 }}
                             />
                             {#if !updatedPostpone && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
-                            <TextIconButton
-                                label="Simpan"
-                                icon="check"
-                                form="updatePostponeDetail"
-                            />
+                                <TextIconButton
+                                    label="Simpan"
+                                    icon="check"
+                                    form="updatePostponeDetail"
+                                />
                             {/if}
                         {/if}
                     </StepperContentHeader>
@@ -2535,28 +2707,31 @@
                                 method="POST"
                                 use:updatePostponeEnhance
                             >
-                                {#if employeePostponeDetail?.postponeNeeded == "Tidak"}
-                                <Alert color="blue">
-                                <p>
-                                    <span class="font-medium">Arahan: </span>
-                                    Sekiranya kakitangan memilih untuk
-                                        tidak membuat Permohonan
-                                        Penangguhan/Pindaan Penempatan sila
-                                        terus ke langkah berikut: Kemaskini Keputusan Pemangkuan.
-                                </p>
-                                </Alert>
-                                {:else if employeePostponeDetail?.postponeNeeded == "Ya"}
-                                <Alert>
-                                <p>
-                                    <span class="font-medium">Arahan: </span>
-                                    Sekiranya kakitangan memilih untuk membuat
-                                    Permohonan Penangguhan/Pindaan Penempatan,
-                                    sila isi butiran penangguhan berikut
-                                    mengikut surat penangguhan yang disediakan
-                                    oleh kakitangan.
-                                </p>
-                            </Alert>
-
+                                {#if employeePostponeDetail?.postponeNeeded == 'Tidak'}
+                                    <Alert color="blue">
+                                        <p>
+                                            <span class="font-medium"
+                                                >Arahan:
+                                            </span>
+                                            Sekiranya kakitangan memilih untuk tidak
+                                            membuat Permohonan Penangguhan/Pindaan
+                                            Penempatan sila terus ke langkah berikut:
+                                            Kemaskini Keputusan Pemangkuan.
+                                        </p>
+                                    </Alert>
+                                {:else if employeePostponeDetail?.postponeNeeded == 'Ya'}
+                                    <Alert color="blue">
+                                        <p>
+                                            <span class="font-medium"
+                                                >Arahan:
+                                            </span>
+                                            Sekiranya kakitangan memilih untuk membuat
+                                            Permohonan Penangguhan/Pindaan Penempatan,
+                                            sila isi butiran penangguhan berikut
+                                            mengikut surat penangguhan yang disediakan
+                                            oleh kakitangan.
+                                        </p>
+                                    </Alert>
                                 {/if}
                                 <CustomTextField
                                     label="Kakitangan Memerlukan Penangguhan/Pindaan Penempatan?"
@@ -2564,29 +2739,29 @@
                                     id="postponeNeeded"
                                     val={employeePostponeDetail?.postponeNeeded}
                                 />
-                                {#if employeePostponeDetail?.postponeNeeded == "Ya"}
-                                <ContentHeader
-                                    title="Dokumen Sokongan"
-                                    borderClass="border-none"
-                                />
-                                <div
-                                    class="flex w-full flex-col justify-start gap-2.5 px-2"
-                                >
-                                    {#if employeePostponeDetail?.documents !== null}
-                                        {#each employeePostponeDetail?.documents as docs}
-                                            <a
-                                                href={docs.document}
-                                                download={docs.name}
-                                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                                >{docs.name}</a
-                                            >
-                                        {/each}
-                                    {/if}
-                                </div>
-                                <ContentHeader
-                                    title="Butiran Penangguhan/Pindaan Penempatan"
-                                    borderClass="border-none"
-                                />
+                                {#if employeePostponeDetail?.postponeNeeded == 'Ya'}
+                                    <ContentHeader
+                                        title="Dokumen Sokongan"
+                                        borderClass="border-none"
+                                    />
+                                    <div
+                                        class="flex w-full flex-col justify-start gap-2.5 px-2"
+                                    >
+                                        {#if employeePostponeDetail?.documents !== null}
+                                            {#each employeePostponeDetail?.documents as docs}
+                                                <a
+                                                    href={docs.document}
+                                                    download={docs.name}
+                                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                                    >{docs.name}</a
+                                                >
+                                            {/each}
+                                        {/if}
+                                    </div>
+                                    <ContentHeader
+                                        title="Butiran Penangguhan/Pindaan Penempatan"
+                                        borderClass="border-none"
+                                    />
                                     <CustomTextField
                                         label="Tarikh Asal Lapor Diri"
                                         disabled
@@ -2637,7 +2812,7 @@
                                         bind:val={$updatePostponeDetail.newPlacement}
                                         options={data.lookup.placementLookup}
                                     />
-                                    {/if}
+                                {/if}
                             </form>
                         {/if}
                     </StepperContentBody>
@@ -2701,31 +2876,37 @@
                     <StepperContentBody>
                         {#if !stepperDetail[3]}
                             <div
-                                class="flex w-full flex-col gap-2.5 justify-center p-3 pb-10"
+                                class="flex w-full flex-col justify-center gap-2.5 p-3 pb-10"
                             >
-                            {#if data.currentRoleCode === UserRoleConstant.penyokong.code || data.currentRoleCode === UserRoleConstant.pelulus.code}
-                            <Alert color="blue">
-                                <p>
-                                    <span class="font-medium">Arahan:  </span>
-                                    Kemaskini pengesahan keputusan pemangkuan untuk setiap kakitangan.
-                                </p>
-                            </Alert>
-                            {/if}
+                                {#if data.currentRoleCode === UserRoleConstant.penyokong.code || data.currentRoleCode === UserRoleConstant.pelulus.code}
+                                    <Alert color="blue">
+                                        <p>
+                                            <span class="font-medium"
+                                                >Arahan:
+                                            </span>
+                                            Kemaskini pengesahan keputusan pemangkuan
+                                            untuk setiap kakitangan.
+                                        </p>
+                                    </Alert>
+                                {/if}
                                 <div class="h-fit w-full">
                                     <DataTable
                                         title="Senarai Kakitangan"
                                         bind:tableData={postponeResultTable}
                                         bind:passData={selectedCandidate}
                                         detailActions={async () => {
-
-                                            if(selectedCandidate.postponeApplication == "Belum Dipohon"){
+                                            if (
+                                                selectedCandidate.postponeApplication ==
+                                                'Belum Dipohon'
+                                            ) {
                                                 finalResultModal = true;
                                             } else {
                                                 await getTableInformation(
-                                                3,
-                                            ).finally(
-                                                () => (stepperDetail[3] = true),
-                                            );
+                                                    3,
+                                                ).finally(
+                                                    () =>
+                                                        (stepperDetail[3] = true),
+                                                );
                                             }
                                         }}
                                     ></DataTable>
@@ -2783,117 +2964,137 @@
                                         errors={$updateActingResultError.actingResult}
                                         options={successOption}
                                     />
-                                    {#if $updateActingResultForm.actingResult == "Berjaya"}
-                                    <CustomSelectField
-                                        label="Jawatan Pemangkuan"
-                                        id="actingPosition"
-                                        disabled={suppAppExist}
-                                        options={data.lookup.positionLookup}
-                                        errors={$updateActingResultError.actingPosition}
-                                        bind:val={$updateActingResultForm.actingPosition}
-                                    />
-                                    <CustomSelectField
-                                        label="Gred Pemangkuan"
-                                        id="actingGrade"
-                                        disabled={suppAppExist}
-                                        options={data.lookup.gradeLookup}
-                                        errors={$updateActingResultError.actingGrade}
-                                        bind:val={$updateActingResultForm.actingGrade}
-                                    />
-                                    <CustomSelectField
-                                        label="Penempatan Baru"
-                                        id="newPlacement"
-                                        disabled={suppAppExist}
-                                        options={data.lookup.placementLookup}
-                                        errors={$updateActingResultError.newPlacement}
-                                        bind:val={$updateActingResultForm.newPlacement}
-                                    />
-                                    <CustomTextField
-                                        label="Tarikh Lapor Diri"
-                                        id="reportDate"
-                                        type="date"
-                                        disabled={suppAppExist}
-                                        errors={$updateActingResultError.reportDate}
-                                        bind:val={$updateActingResultForm.reportDate}
-                                    />
-                                    {#if !suppAppExist}
+                                    {#if $updateActingResultForm.actingResult == 'Berjaya'}
+                                        <CustomSelectField
+                                            label="Jawatan Pemangkuan"
+                                            id="actingPosition"
+                                            disabled={suppAppExist}
+                                            options={data.lookup.positionLookup}
+                                            errors={$updateActingResultError.actingPosition}
+                                            bind:val={$updateActingResultForm.actingPosition}
+                                        />
+                                        <CustomSelectField
+                                            label="Gred Pemangkuan"
+                                            id="actingGrade"
+                                            disabled={suppAppExist}
+                                            options={data.lookup.gradeLookup}
+                                            errors={$updateActingResultError.actingGrade}
+                                            bind:val={$updateActingResultForm.actingGrade}
+                                        />
+                                        <CustomSelectField
+                                            label="Penempatan Baru"
+                                            id="newPlacement"
+                                            disabled={suppAppExist}
+                                            options={data.lookup
+                                                .placementLookup}
+                                            errors={$updateActingResultError.newPlacement}
+                                            bind:val={$updateActingResultForm.newPlacement}
+                                        />
+                                        <CustomTextField
+                                            label="Tarikh Lapor Diri"
+                                            id="reportDate"
+                                            type="date"
+                                            disabled={suppAppExist}
+                                            errors={$updateActingResultError.reportDate}
+                                            bind:val={$updateActingResultForm.reportDate}
+                                        />
+                                        <CustomTextField
+                                            label="Tarikh Tamat Pemangkuan"
+                                            id="actingEndDate"
+                                            type="date"
+                                            disabled={suppAppExist}
+                                            errors={$updateActingResultError.actingEndDate}
+                                            bind:val={$updateActingResultForm.actingEndDate}
+                                        />
+                                        {#if !suppAppExist}
+                                            <ContentHeader
+                                                title="Pengesah Keputusan"
+                                                borderClass="border-none"
+                                            />
+                                            <CustomSelectField
+                                                label="Nama Penyokong"
+                                                id="supporterName"
+                                                bind:val={$updateActingResultForm.supporterName}
+                                                errors={$updateActingResultError.supporterName}
+                                                options={data.lookup
+                                                    .supporterApproverLookup}
+                                            />
+                                            <CustomSelectField
+                                                label="Nama Pelulus"
+                                                id="approverName"
+                                                bind:val={$updateActingResultForm.approverName}
+                                                errors={$updateActingResultError.approverName}
+                                                options={data.lookup
+                                                    .supporterApproverLookup}
+                                            />
+                                        {/if}
+                                    {/if}
+                                </form>
+                                {#if $updateActingResultForm.actingResult == 'Berjaya'}
+                                    <form
+                                        class="flex w-full flex-col justify-start gap-2.5 rounded-md border border-ios-activeColors-activeBlue-light p-3"
+                                        id="supporterResultForm"
+                                        method="POST"
+                                        use:supporterResultEnhance
+                                    >
                                         <ContentHeader
-                                            title="Pengesah Keputusan"
+                                            title="Penyokong"
                                             borderClass="border-none"
                                         />
                                         <CustomSelectField
                                             label="Nama Penyokong"
                                             id="supporterName"
+                                            disabled
                                             bind:val={$updateActingResultForm.supporterName}
                                             errors={$updateActingResultError.supporterName}
                                             options={data.lookup
                                                 .supporterApproverLookup}
                                         />
-                                        <CustomSelectField
-                                            label="Nama Pelulus"
-                                            id="approverName"
-                                            bind:val={$updateActingResultForm.approverName}
-                                            errors={$updateActingResultError.approverName}
-                                            options={data.lookup
-                                                .supporterApproverLookup}
-                                        />
+                                        {#if supporterApproval.remark == null && data.currentRoleCode !== UserRoleConstant.penyokong.code}
+                                            <Alert color="blue">
+                                                <p>
+                                                    <span class="font-medium"
+                                                        >Tiada Maklumat!
+                                                    </span>
+                                                    Menunggu keputusan daripada penyokong.
+                                                </p>
+                                            </Alert>
+                                        {:else}
+                                            <CustomTextField
+                                                label="Tindakan/Ulasan"
+                                                id="remark"
+                                                disabled={supporterApproved}
+                                                placeholder="Menunggu keputusan daripada penyokong..."
+                                                errors={$supporterResultError.remark}
+                                                bind:val={$supporterResultForm.remark}
+                                            />
+                                            <CustomRadioBoolean
+                                                id="status"
+                                                label="Keputusan"
+                                                disabled={supporterApproved}
+                                                bind:val={$supporterResultForm.status}
+                                                errors={$supporterResultError.status}
+                                                options={supportOptions}
+                                            />
+                                            <CustomTextField
+                                                label="Tarikh Disokong"
+                                                id="supportedDate"
+                                                disabled
+                                                placeholder="Menunggu keputusan daripada penyokong..."
+                                                val={supporterApproval?.supportedDate}
+                                            />
                                         {/if}
-                                    {/if}
-                                </form>
-                                {#if $updateActingResultForm.actingResult == "Berjaya"}
-                                <form
-                                    class="flex w-full flex-col justify-start gap-2.5 rounded-md border border-ios-activeColors-activeBlue-light p-3"
-                                    id="supporterResultForm"
-                                    method="POST"
-                                    use:supporterResultEnhance
-                                >
-                                    <ContentHeader
-                                        title="Penyokong"
-                                        borderClass="border-none"
-                                    />
-                                        <CustomSelectField
-                                            label="Nama Penyokong"
-                                            id="supporterName"
-                                            disabled
-                                            bind:val={$updateActingResultForm.supporterName}
-                                            errors={$updateActingResultError.supporterName}
-                                            options={data.lookup
-                                                .supporterApproverLookup}
+                                    </form>
+                                    <form
+                                        class="flex w-full flex-col justify-start gap-2.5 rounded-md border border-ios-activeColors-activeBlue-light p-3"
+                                        id="approverResultForm"
+                                        method="POST"
+                                        use:approverResultEnhance
+                                    >
+                                        <ContentHeader
+                                            title="Pelulus"
+                                            borderClass="border-none"
                                         />
-                                        <CustomTextField
-                                            label="Tindakan/Ulasan"
-                                            id="remark"
-                                            disabled={supporterApproved}
-                                            placeholder="Menunggu keputusan daripada penyokong..."
-                                            errors={$supporterResultError.remark}
-                                            bind:val={$supporterResultForm.remark}
-                                        />
-                                        <CustomRadioBoolean
-                                            id="status"
-                                            label="Keputusan"
-                                            disabled={supporterApproved}
-                                            bind:val={$supporterResultForm.status}
-                                            errors={$supporterResultError.status}
-                                            options={supportOptions}
-                                        />
-                                        <CustomTextField
-                                            label="Tarikh Disokong"
-                                            id="supportedDate"
-                                            disabled
-                                            placeholder="Menunggu keputusan daripada penyokong..."
-                                            val={supporterApproval?.supportedDate}
-                                        />
-                                </form>
-                                <form
-                                    class="flex w-full flex-col justify-start gap-2.5 rounded-md border border-ios-activeColors-activeBlue-light p-3"
-                                    id="approverResultForm"
-                                    method="POST"
-                                    use:approverResultEnhance
-                                >
-                                    <ContentHeader
-                                        title="Pelulus"
-                                        borderClass="border-none"
-                                    />
                                         <CustomSelectField
                                             label="Nama Pelulus"
                                             id="approverName"
@@ -2903,31 +3104,41 @@
                                             options={data.lookup
                                                 .supporterApproverLookup}
                                         />
-                                        <CustomTextField
-                                            label="Tindakan/Ulasan"
-                                            id="remark"
-                                            disabled={approverApproved}
-                                            placeholder="Menunggu keputusan daripada pelulus..."
-                                            bind:val={$approverResultForm.remark}
-                                            errors={$approverResultError.remark}
-                                        />
-                                        <CustomRadioBoolean
-                                            id="approverResult"
-                                            label="Keputusan"
-                                            disabled={approverApproved}
-                                            bind:val={$approverResultForm.status}
-                                            errors={$approverResultError.status}
-                                            options={approveOptions}
-                                        />
-                                        <CustomTextField
-                                            label="Tarikh Diluluskan"
-                                            id="approvedDate"
-                                            disabled
-                                            placeholder="Menunggu keputusan daripada pelulus..."
-                                            val={approverApproval?.approvedDate}
-                                        />
-                                        
-                                </form>
+                                        {#if approverApproval.remark == null && data.currentRoleCode !== UserRoleConstant.pelulus.code}
+                                            <Alert color="blue">
+                                                <p>
+                                                    <span class="font-medium"
+                                                        >Tiada Maklumat!
+                                                    </span>
+                                                    Menunggu keputusan daripada pelulus.
+                                                </p>
+                                            </Alert>
+                                        {:else}
+                                            <CustomTextField
+                                                label="Tindakan/Ulasan"
+                                                id="remark"
+                                                disabled={approverApproved}
+                                                placeholder="Menunggu keputusan daripada pelulus..."
+                                                bind:val={$approverResultForm.remark}
+                                                errors={$approverResultError.remark}
+                                            />
+                                            <CustomRadioBoolean
+                                                id="approverResult"
+                                                label="Keputusan"
+                                                disabled={approverApproved}
+                                                bind:val={$approverResultForm.status}
+                                                errors={$approverResultError.status}
+                                                options={approveOptions}
+                                            />
+                                            <CustomTextField
+                                                label="Tarikh Diluluskan"
+                                                id="approvedDate"
+                                                disabled
+                                                placeholder="Menunggu keputusan daripada pelulus..."
+                                                val={approverApproval?.approvedDate}
+                                            />
+                                        {/if}
+                                    </form>
                                 {/if}
                             </div>
                         {/if}
@@ -3085,321 +3296,393 @@
             {/if}
             <!-- For kakitangan only -->
         {:else if data.currentRoleCode === UserRoleConstant.kakitangan.code}
-            {#if data.actingType !== "Utama"}
-            <StepperContent>
-                <StepperContentHeader title="Panggilan Temuduga"
-                ></StepperContentHeader>
-                <StepperContentBody>
-                    <div class="flex w-full flex-col gap-2.5 p-3">
-                        <ContentHeader
-                            title="Butiran Temuduga"
-                            borderClass="border-none"
-                        />
-
-                        {#if data.employeeInterviewDetail.document !== null}
-                            {#each data.employeeInterviewDetail.document as docs}
-                                <a
-                                    href={docs.document}
-                                    download={docs.name}
-                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                    >{docs.name}</a
-                                >
-                            {/each}
-                        {/if}
-                        <div
-                            class="flex flex-col pb-2.5 text-sm italic text-ios-labelColors-secondaryLabel-light"
-                        >
-                            <span
-                                >Tahniah! Anda berjaya dipanggil untuk temuduga.</span
-                            >
-                            <span>
-                                Sila hadirkan diri ke temuduga mengikut butiran
-                                temuduga seperti yang tertera di atas.
-                            </span>
-                            <span
-                                >Sila bawa dokumen yang berkaitan ke temuduga
-                                tersebut.</span
-                            >
-                        </div>
-                    </div>
-                </StepperContentBody>
-            </StepperContent>
-
-            <StepperContent>
-                <StepperContentHeader title="Keputusan Mesyuarat">
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <div class="flex w-full flex-col gap-2.5 p-3 pb-10">
-                        <ContentHeader
-                            title="Butiran Pemangkuan"
-                            borderClass="border-none"
-                        />
-                        <CustomTextField
-                            label="Gred"
-                            placeholder=""
-                            disabled
-                            id="grade"
-                            val={data.employeeMeetingDetail.grade}
-                        />
-                        <CustomTextField
-                            label="Jawatan"
-                            placeholder=""
-                            disabled
-                            id="position"
-                            val={data.employeeMeetingDetail.position}
-                        />
-                        <CustomTextField
-                            label="Tarikh Berkuatkuasa"
-                            placeholder=""
-                            disabled
-                            id="date"
-                            val={data.employeeMeetingDetail.date}
-                        />
-                        <CustomTextField
-                            label="Penempatan Baru"
-                            placeholder=""
-                            disabled
-                            id="newPlacement"
-                            val={data.employeeMeetingDetail.newPlacement}
-                        />
-
-                        <ContentHeader
-                            title="Dokumen-dokumen yang perlu dimuat turun dan diisi"
-                            borderClass="border-none"
-                        />
-                        {#if data.employeeMeetingDetail.document !== undefined}
-                            {#each data.employeeMeetingDetail.document as docs}
-                                <a
-                                    href={docs.document}
-                                    target="_blank"
-                                    download={docs.name}
-                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                    >{docs.name}</a
-                                >
-                            {/each}
-                        {/if}
-                    </div>
-                </StepperContentBody>
-            </StepperContent>
-
-            <StepperContent>
-                <StepperContentHeader
-                    title="Permohonan Penangguhan/Pindaan Penempatan"
-                >
-                    {#if !employeePostponeNeeded}
-                    <TextIconButton
-                        type="primary"
-                        label="Simpan"
-                        icon="check"
-                        form="employeeNeedPlacementAmendmentForm"
-                    />
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <form
-                        class="flex w-full flex-col gap-2.5 p-3 pb-10"
-                        id="employeeNeedPlacementAmendmentForm"
-                        method="POST"
-                        use:employeeNeedPlacementAmendmentEnhance
-                    >
-                        <ContentHeader
-                            title="Permohonan Penangguhan/Pindaan Penempatan"
-                            borderClass="border-none"
-                        />
-                        <CustomSelectField
-                            label="Adakah anda memerlukan penangguhan/pindaan penempatan?"
-                            id="postponeNeeded"
-                            disabled={employeePostponeNeeded}
-                            options={dropdownCommonOption}
-                            bind:val={$employeeNeedPlacementAmendmentForm.postponeNeeded}
-                            errors={$employeeNeedPlacementAmendmentError.postponeNeeded}
-                        />
-                        {#if $employeeNeedPlacementAmendmentForm.postponeNeeded}
-                            <CustomTextField
-                                label="Tarikh Lapor Diri yang Dipohon"
-                                id="requestedReportDate"
-                                disabled={employeePostponeNeeded}
-                                type="date"
-                                bind:val={$employeeNeedPlacementAmendmentForm.requestedReportDate}
-                                errors={$employeeNeedPlacementAmendmentError.requestedReportDate}
-                            />
-                            <CustomSelectField
-                                label="Pindaan Penempatan Dipohon"
-                                id="requestedPlacement"
-                                disabled={employeePostponeNeeded}
-                                errors={$employeeNeedPlacementAmendmentError.requestedPlacement}
-                                bind:val={$employeeNeedPlacementAmendmentForm.requestedPlacement}
-                                options={data.lookup.placementLookup}
-                            />
-                            <CustomTextField
-                                label="Sebab-sebab penangguhan/pindaan"
-                                id="postponeReason"
-                                disabled={employeePostponeNeeded}
-                                bind:val={$employeeNeedPlacementAmendmentForm.postponeReason}
-                                errors={$employeeNeedPlacementAmendmentError.postponeReason}
-                            />
+            {#if data.actingType !== 'Utama'}
+                <StepperContent>
+                    <StepperContentHeader title="Panggilan Temuduga"
+                    ></StepperContentHeader>
+                    <StepperContentBody>
+                        <div class="flex w-full flex-col gap-2.5 p-3">
                             <ContentHeader
-                                title="Dokumen-Dokumen yang Berkaitan"
+                                title="Butiran Temuduga"
                                 borderClass="border-none"
                             />
-                            <div class="flex w-full flex-col gap-2">
-                                <CustomFileField
-                                    label="Dokumen Sokongan"
-                                    id="postponeDocs"
-                                    bind:files
-                                ></CustomFileField>
+
+                            {#if data.employeeInterviewDetail.document !== null}
+                                {#each data.employeeInterviewDetail.document as docs}
+                                    <a
+                                        href={docs.document}
+                                        download={docs.name}
+                                        class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                        >{docs.name}</a
+                                    >
+                                {/each}
+                            {/if}
+                            <div
+                                class="flex flex-col pb-2.5 text-sm italic text-ios-labelColors-secondaryLabel-light"
+                            >
+                                <span
+                                    >Tahniah! Anda berjaya dipanggil untuk
+                                    temuduga.</span
+                                >
+                                <span>
+                                    Sila hadirkan diri ke temuduga mengikut
+                                    butiran temuduga seperti yang tertera di
+                                    atas.
+                                </span>
+                                <span
+                                    >Sila bawa dokumen yang berkaitan ke
+                                    temuduga tersebut.</span
+                                >
+                            </div>
+                        </div>
+                    </StepperContentBody>
+                </StepperContent>
+
+                <StepperContent>
+                    <StepperContentHeader
+                        title="Keputusan Mesyuarat"
+                    ></StepperContentHeader>
+                    <StepperContentBody>
+                        <div class="flex w-full flex-col gap-2.5 p-3 pb-10">
+                            <ContentHeader
+                                title="Butiran Pemangkuan"
+                                borderClass="border-none"
+                            />
+                            <CustomTextField
+                                label="Gred"
+                                placeholder=""
+                                disabled
+                                id="grade"
+                                val={data.employeeMeetingDetail.grade}
+                            />
+                            <CustomTextField
+                                label="Jawatan"
+                                placeholder=""
+                                disabled
+                                id="position"
+                                val={data.employeeMeetingDetail.position}
+                            />
+                            <CustomTextField
+                                label="Tarikh Berkuatkuasa"
+                                placeholder=""
+                                disabled
+                                id="date"
+                                val={data.employeeMeetingDetail.date}
+                            />
+                            <CustomTextField
+                                label="Penempatan Baru"
+                                placeholder=""
+                                disabled
+                                id="newPlacement"
+                                val={data.employeeMeetingDetail.newPlacement}
+                            />
+
+                            <ContentHeader
+                                title="Dokumen-dokumen yang perlu dimuat turun dan diisi"
+                                borderClass="border-none"
+                            />
+                            {#if data.employeeMeetingDetail.document !== undefined}
+                                {#each data.employeeMeetingDetail.document as docs}
+                                    <a
+                                        href={docs.document}
+                                        target="_blank"
+                                        download={docs.name}
+                                        class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                        >{docs.name}</a
+                                    >
+                                {/each}
+                            {/if}
+                        </div>
+                    </StepperContentBody>
+                </StepperContent>
+
+                <StepperContent>
+                    <StepperContentHeader
+                        title="Permohonan Penangguhan/Pindaan Penempatan"
+                    >
+                        {#if !employeePostponeNeeded}
+                            <TextIconButton
+                                type="primary"
+                                label="Simpan"
+                                icon="check"
+                                form="employeeNeedPlacementAmendmentForm"
+                            />
+                        {/if}
+                    </StepperContentHeader>
+                    <StepperContentBody>
+                        <form
+                            class="flex w-full flex-col gap-2.5 p-3 pb-10"
+                            id="employeeNeedPlacementAmendmentForm"
+                            method="POST"
+                            use:employeeNeedPlacementAmendmentEnhance
+                        >
+                            <ContentHeader
+                                title="Permohonan Penangguhan/Pindaan Penempatan"
+                                borderClass="border-none"
+                            />
+                            <CustomSelectField
+                                label="Adakah anda memerlukan penangguhan/pindaan penempatan?"
+                                id="postponeNeeded"
+                                disabled={employeePostponeNeeded}
+                                options={dropdownCommonOption}
+                                bind:val={$employeeNeedPlacementAmendmentForm.postponeNeeded}
+                                errors={$employeeNeedPlacementAmendmentError.postponeNeeded}
+                            />
+                            {#if $employeeNeedPlacementAmendmentForm.postponeNeeded}
+                                <CustomTextField
+                                    label="Tarikh Lapor Diri yang Dipohon"
+                                    id="requestedReportDate"
+                                    disabled={employeePostponeNeeded}
+                                    type="date"
+                                    bind:val={$employeeNeedPlacementAmendmentForm.requestedReportDate}
+                                    errors={$employeeNeedPlacementAmendmentError.requestedReportDate}
+                                />
+                                <CustomSelectField
+                                    label="Pindaan Penempatan Dipohon"
+                                    id="requestedPlacement"
+                                    disabled={employeePostponeNeeded}
+                                    errors={$employeeNeedPlacementAmendmentError.requestedPlacement}
+                                    bind:val={$employeeNeedPlacementAmendmentForm.requestedPlacement}
+                                    options={data.lookup.placementLookup}
+                                />
+                                <CustomTextField
+                                    label="Sebab-sebab penangguhan/pindaan"
+                                    id="postponeReason"
+                                    disabled={employeePostponeNeeded}
+                                    bind:val={$employeeNeedPlacementAmendmentForm.postponeReason}
+                                    errors={$employeeNeedPlacementAmendmentError.postponeReason}
+                                />
+
+                                {#if !employeePostponeNeeded}
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomFileField
+                                            label="Dokumen Sokongan"
+                                            id="postponeDocs"
+                                            bind:files
+                                        ></CustomFileField>
+                                    </div>
+                                {/if}
+                            {/if}
+                        </form>
+                    </StepperContentBody>
+                </StepperContent>
+
+                {#if $employeeNeedPlacementAmendmentForm.postponeNeeded == true}
+                    <StepperContent>
+                        <StepperContentHeader
+                            title="Keputusan Permohonan Penangguhan/Pindaan Penempatan"
+                        ></StepperContentHeader>
+                        <StepperContentBody>
+                            <div class="flex w-full flex-col gap-2.5 p-3 pb-10">
+                                <ContentHeader
+                                    title="Keputusan Mesyuarat"
+                                    borderClass="border-none"
+                                />
+                                <CustomTextField
+                                    label="Keputusan"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak yang berkenaan..."
+                                    id="meetingResult"
+                                    val={data.employeePostponeResult
+                                        .meetingResult}
+                                />
+                                <CustomTextField
+                                    label="Kelulusan Pindaan Penempatan Dipohon"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak yang berkenaan..."
+                                    id="postponeApproval"
+                                    val={data.employeePostponeResult
+                                        .postponeApproval}
+                                />
+                                <CustomTextField
+                                    label="Kelulusan Tarikh Lapor Diri Baru"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak yang berkenaan..."
+                                    id="newReportDate"
+                                    val={data.employeePostponeResult
+                                        .newReportDate}
+                                />
+                            </div>
+                        </StepperContentBody>
+                    </StepperContent>
+                {/if}
+            {/if}
+            {#if data.employeeFinalResult?.approver !== 'Tiada Maklumat' && data.employeeFinalResult?.approver !== null}
+                <StepperContent>
+                    <StepperContentHeader title="Keputusan Akhir Pemangkuan">
+                        <TextIconButton
+                            type="primary"
+                            label="Selesai"
+                            icon="check"
+                            onClick={() => {
+                                goto('/perjawatan/pemangkuan');
+                            }}
+                        />
+                    </StepperContentHeader>
+                    <StepperContentBody>
+                        {#if data.actingType !== 'Utama'}
+                            <div class="flex w-full flex-col gap-2.5 p-3 pb-10">
+                                <ContentHeader
+                                    title="Butiran Pemangkuan"
+                                    borderClass="border-none"
+                                />
+                                <CustomTextField
+                                    label="Gred"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="grade"
+                                    val={data.employeeFinalResult?.grade}
+                                />
+                                <CustomTextField
+                                    label="Jawatan"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="position"
+                                    val={data.employeeFinalResult?.position}
+                                />
+                                <CustomTextField
+                                    label="Tarikh Berkuatkuasa"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="meetingDate"
+                                    val={data.employeeFinalResult?.meetingDate}
+                                />
+                                <CustomTextField
+                                    label="Penempatan Baru"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="newPlacement"
+                                    val={data.employeeFinalResult?.newPlacement}
+                                />
+                                <CustomTextField
+                                    label="Pengarah Baru"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="newDirector"
+                                    val={data.employeeFinalResult?.newDirector}
+                                />
+                                <CustomTextField
+                                    label="Tarikh Lapor Diri"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="reportingDate"
+                                    val={data.employeeFinalResult
+                                        ?.reportDutyDate}
+                                />
+                                <ContentHeader
+                                    title="Pengesah Keputusan"
+                                    borderClass="border-none"
+                                />
+                                <CustomTextField
+                                    label="Nama Penyokong"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="supporterName"
+                                    val={data.employeeFinalResult?.supporter}
+                                />
+                                <CustomTextField
+                                    label="Nama Pelulus"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="approverName"
+                                    val={data.employeeFinalResult?.approver}
+                                />
+                                {#if data.employeeFinalResult?.approver !== undefined}
+                                    <span
+                                        class="text-sm italic text-ios-labelColors-secondaryLabel-light"
+                                        >Tahniah! Anda telah berjaya dalam
+                                        proses pemangkuan. Sila hubungi Urus
+                                        Setia berkaitan jika ada sebarang
+                                        pertanyaan mengenai perubahan tersebut.</span
+                                    >
+                                {/if}
+                            </div>
+                        {:else}
+                            <div class="flex w-full flex-col gap-2.5 p-3 pb-10">
+                                <ContentHeader
+                                    title="Butiran Pemangkuan"
+                                    borderClass="border-none"
+                                />
+                                <CustomTextField
+                                    label="Gred"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="grade"
+                                    val={data.employeeMainFinalResult
+                                        ?.actingGrade}
+                                />
+                                <CustomTextField
+                                    label="Jawatan"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="position"
+                                    val={data.employeeMainFinalResult
+                                        ?.actingPosition}
+                                />
+                                <CustomTextField
+                                    label="Tarikh Berkuatkuasa"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="meetingDate"
+                                    val={data.employeeMainFinalResult
+                                        ?.meetingDate}
+                                />
+                                <CustomTextField
+                                    label="Penempatan Baru"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="newPlacement"
+                                    val={data.employeeMainFinalResult
+                                        ?.newPlacement}
+                                />
+                                <CustomTextField
+                                    label="Tarikh Lapor Diri"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="reportDate"
+                                    val={data.employeeMainFinalResult
+                                        ?.reportDate}
+                                />
+                                <CustomTextField
+                                    label="Tarikh Tamat Pemangkuan"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="actingEndDate"
+                                    val={data.employeeMainFinalResult
+                                        ?.actingEndDate}
+                                />
+                                <ContentHeader
+                                    title="Pengesah Keputusan"
+                                    borderClass="border-none"
+                                />
+                                <CustomTextField
+                                    label="Nama Penyokong"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="supporterName"
+                                    val={data.employeeMainFinalResult
+                                        ?.supporter}
+                                />
+                                <CustomTextField
+                                    label="Nama Pelulus"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="approverName"
+                                    val={data.employeeMainFinalResult?.approver}
+                                />
+                                {#if data.employeeMainFinalResult   ?.approver !== undefined}
+                                    <span
+                                        class="text-sm italic text-ios-labelColors-secondaryLabel-light"
+                                        >Tahniah! Anda telah berjaya dalam
+                                        proses pemangkuan. Sila hubungi Urus
+                                        Setia berkaitan jika ada sebarang
+                                        pertanyaan mengenai perubahan tersebut.</span
+                                    >
+                                {/if}
                             </div>
                         {/if}
-                    </form>
-                </StepperContentBody>
-            </StepperContent>
-
-            {#if $employeeNeedPlacementAmendmentForm.postponeNeeded == true}
-            <StepperContent>
-                <StepperContentHeader
-                    title="Keputusan Permohonan Penangguhan/Pindaan Penempatan"
-                >
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <div class="flex w-full flex-col gap-2.5 p-3 pb-10">
-                        <ContentHeader
-                            title="Keputusan Mesyuarat"
-                            borderClass="border-none"
-                        />
-                        <CustomTextField
-                            label="Keputusan"
-                            disabled
-                            placeholder="Menunggu keputusan daripada pihak yang berkenaan..."
-                            id="meetingResult"
-                            val={data.employeePostponeResult.meetingResult}
-                        />
-                        <CustomTextField
-                            label="Kelulusan Pindaan Penempatan Dipohon"
-                            disabled
-                            placeholder="Menunggu keputusan daripada pihak yang berkenaan..."
-                            id="postponeApproval"
-                            val={data.employeePostponeResult.postponeApproval}
-                        />
-                        <CustomTextField
-                            label="Kelulusan Tarikh Lapor Diri Baru"
-                            disabled
-                            placeholder="Menunggu keputusan daripada pihak yang berkenaan..."
-                            id="newReportDate"
-                            val={data.employeePostponeResult.newReportDate}
-                        />
-                        <!-- <DownloadAttachment
-                            label="Surat Penangguhan Rayuan"
-                            fileName="surat_kelulusan_penangguhan_rayuan.pdf"
-                            triggerDownload={() => {}}
-                        /> -->
-                    </div>
-                </StepperContentBody>
-            </StepperContent>
-            {/if}
-            {/if}
-            {#if data.employeeFinalResult?.approver !== "Tiada Maklumat"}
-            <StepperContent>
-                <StepperContentHeader title="Keputusan Akhir Pemangkuan">
-                    <TextIconButton
-                        type="primary"
-                        label="Selesai"
-                        icon="check"
-                        onClick={() => {
-                            goto('/perjawatan/pemangkuan');
-                        }}
-                    />
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <form class="flex w-full flex-col gap-2.5 p-3 pb-10">
-                        <ContentHeader
-                            title="Butiran Pemangkuan"
-                            borderClass="border-none"
-                        />
-                        <CustomTextField
-                            label="Gred"
-                            disabled
-                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
-                            id="grade"
-                            val={data.employeeFinalResult?.grade}
-                        />
-                        <CustomTextField
-                            label="Jawatan"
-                            disabled
-                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
-                            id="position"
-                            val={data.employeeFinalResult?.position}
-                        />
-                        <CustomTextField
-                            label="Tarikh Berkuatkuasa"
-                            disabled
-                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
-                            id="meetingDate"
-                            val={data.employeeFinalResult?.meetingDate}
-                        />
-                        <CustomTextField
-                            label="Penempatan Baru"
-                            disabled
-                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
-                            id="newPlacement"
-                            val={data.employeeFinalResult?.newPlacement}
-                        />
-                        <CustomTextField
-                            label="Pengarah Baru"
-                            disabled
-                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
-                            id="newDirector"
-                            val={data.employeeFinalResult?.newDirector}
-                        />
-                        <CustomTextField
-                            label="Tarikh Lapor Diri"
-                            disabled
-                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
-                            id="reportingDate"
-                            val={data.employeeFinalResult?.reportDutyDate}
-                        />
-                        <ContentHeader
-                            title="Pengesah Keputusan"
-                            borderClass="border-none"
-                        />
-                        <CustomTextField
-                            label="Nama Penyokong"
-                            disabled
-                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
-                            id="supporterName"
-                            val={data.employeeFinalResult?.supporter}
-                        />
-                        <!-- <CustomTextField
-                            label="Keputusan"
-                            disabled
-                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
-                            id="supporterResult"
-                            val={data.employeeFinalResult?.}
-                            /> -->
-                        <CustomTextField
-                            label="Nama Pelulus"
-                            disabled
-                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
-                            id="approverName"
-                            val={data.employeeFinalResult?.approver}
-                        />
-                        <!-- <CustomTextField
-                            label="Keputusan"
-                            disabled
-                            placeholder="Menunggu keputusan daripada pihak berkaitan.."
-                            id="approverResult"
-                            val={data.employeeFinalResult?.}
-                            /> -->
-                            {#if data.employeeFinalResult?.approver !== undefined}
-                        <span
-                            class="text-sm italic text-ios-labelColors-secondaryLabel-light"
-                            >Tahniah! Anda telah berjaya dalam proses pemangkuan. Sila hubungi Urus
-                            Setia berkenaan jika ada sebarang pertanyaan
-                            mengenai perubahan tersebut.</span
-                        >
-                        {/if}
-                    </form>
-                </StepperContentBody>
-            </StepperContent>
+                    </StepperContentBody>
+                </StepperContent>
             {/if}
         {/if}
     </Stepper>
@@ -3413,7 +3696,7 @@
             Kakitangan belum membuat keputusan untuk Pindaan/Penangguhan Penempatan.
         </p>
     </Alert>
-    <div class="flex gap-3 justify-center">
+    <div class="flex justify-center gap-3">
         <TextIconButton
             label="Kembali"
             icon="previous"
@@ -3429,7 +3712,7 @@
             Senarai kakitangan yang dipilih tidak boleh kosong.
         </p>
     </Alert>
-    <div class="flex gap-3 justify-center">
+    <div class="flex justify-center gap-3">
         <TextIconButton
             label="Kembali"
             icon="previous"
@@ -3440,19 +3723,19 @@
 </Modal>
 <Modal title="Sistem MyPSM" bind:open={meetingResultModal} size="sm">
     <Alert color="red">
-        {#if data.actingType == "Utama"}
-        <p>
-            <span class="font-medium">Ralat! </span>
-            Sila pilih kakitangan terlebih dahulu untuk menetapkan perakuan.
-        </p>
+        {#if data.actingType == 'Utama'}
+            <p>
+                <span class="font-medium">Ralat! </span>
+                Sila pilih kakitangan terlebih dahulu untuk menetapkan perakuan.
+            </p>
         {:else}
-        <p>
-            <span class="font-medium">Ralat! </span>
-            Sila pilih kakitangan terlebih dahulu untuk menetapkan markah temuduga.
-        </p>
+            <p>
+                <span class="font-medium">Ralat! </span>
+                Sila pilih kakitangan terlebih dahulu untuk menetapkan markah temuduga.
+            </p>
         {/if}
     </Alert>
-    <div class="flex gap-3 justify-center">
+    <div class="flex justify-center gap-3">
         <TextIconButton
             label="Kembali"
             icon="previous"

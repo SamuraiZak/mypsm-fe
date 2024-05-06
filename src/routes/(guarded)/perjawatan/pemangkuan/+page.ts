@@ -27,12 +27,12 @@ export const load = async () => {
     const employeeParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: "actingId",
+        orderBy: "createdAt",
         orderType: 1,
         filter: {},
     };
 
-    //table for urus setia
+    //table for urus setia/penyokong/pelulus/pengarah
     if (currentRoleCode !== UserRoleConstant.kakitangan.code) {
         //154
         tableList154Response = await EmploymentActingServices.get154List(param);

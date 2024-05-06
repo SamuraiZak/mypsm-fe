@@ -129,7 +129,7 @@
         data: data.employeeOffer ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['actingId'],
+        hiddenColumn: ['actingId','createdAt'],
         dictionary: [],
         url: 'employment/acting/employee/list',
         id: 'tableListMain',

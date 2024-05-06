@@ -15,7 +15,7 @@ import {
     _mainMeetingDetail
 } from "$lib/schemas/mypsm/employment/acting/acting-schemas";
 import { zod } from "sveltekit-superforms/adapters";
-import type { ActingCommonBatchId } from "$lib/dto/mypsm/employment/acting/acting-batchid.dto";
+import type { ActingCommonBatchId, ActingFinalResultId } from "$lib/dto/mypsm/employment/acting/acting-batchid.dto";
 import type { ActingChosenEmployee } from "$lib/dto/mypsm/employment/acting/acting-chosen-employee.dto";
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
 import { EmploymentActingServices } from "$lib/services/implementation/mypsm/perjawatan/employment-acting.service";
@@ -30,7 +30,7 @@ import type { UpdateMainPromotionMeeting } from "$lib/dto/mypsm/employment/actin
 import type { EmployeePostpone, PostponeDetailResult, PostponeResult } from "$lib/dto/mypsm/employment/acting/acting-employee-form.dto";
 import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-document-request.dto";
 import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
-import type { ActingFinalResult } from "$lib/dto/mypsm/employment/acting/acting-final-result.dto";
+import type { ActingFinalResult, ActingMainFinalResult } from "$lib/dto/mypsm/employment/acting/acting-final-result.dto";
 import type { CertifySelected, MainActingDetailEdit, MainMeetingResult } from "$lib/dto/mypsm/employment/acting/main-acting-form.dto.js";
 import type { MainActingInfo } from "$lib/dto/mypsm/employment/acting/main-acting-info.dto.js";
 import { _quarterCommonApproval } from "$lib/schemas/mypsm/quarters/quarters-schema.js";
@@ -53,6 +53,10 @@ export const load = async ({ params }) => {
         actingType = "Flexi 41"
     } else if (params.type == "Gred Utama") {
         actingType = "Utama"
+    }
+    let finalResultId: ActingFinalResultId = {
+        id: Number(params.id),
+        actingType: actingType,
     }
     let lookup = await getLookup();
     let chosenEmployee: ActingChosenEmployee[] = [];
@@ -120,16 +124,16 @@ export const load = async ({ params }) => {
             await EmploymentActingServices.getInterviewGeneralInfo(commonId);
         interviewGeneral =
             interviewGeneralResponse.data?.details as ActingInterviewGeneralDetail;
-            if(interviewGeneral.meeting?.grade !== null){
-                updateMeetingDetailForm.data.grade = interviewGeneral?.meeting?.grade;
-                updateMeetingDetailForm.data.meetingName = interviewGeneral?.meeting?.meetingName;
-                updateMeetingDetailForm.data.meetingDate = interviewGeneral?.meeting?.meetingDate;
-                updateMeetingDetailForm.data.position = interviewGeneral?.meeting?.position;
-                updateMeetingDetailForm.data.interviewDate = interviewGeneral?.interview?.interviewDate;
-                updateMeetingDetailForm.data.interviewTime = interviewGeneral?.interview?.interviewTime;
-                updateMeetingDetailForm.data.state = interviewGeneral?.interview?.state;
-                updateMeetingDetailForm.data.placement = interviewGeneral?.interview?.placement;
-            }
+        if (interviewGeneral.meeting?.grade !== null) {
+            updateMeetingDetailForm.data.grade = interviewGeneral?.meeting?.grade;
+            updateMeetingDetailForm.data.meetingName = interviewGeneral?.meeting?.meetingName;
+            updateMeetingDetailForm.data.meetingDate = interviewGeneral?.meeting?.meetingDate;
+            updateMeetingDetailForm.data.position = interviewGeneral?.meeting?.position;
+            updateMeetingDetailForm.data.interviewDate = interviewGeneral?.interview?.interviewDate;
+            updateMeetingDetailForm.data.interviewTime = interviewGeneral?.interview?.interviewTime;
+            updateMeetingDetailForm.data.state = interviewGeneral?.interview?.state;
+            updateMeetingDetailForm.data.placement = interviewGeneral?.interview?.placement;
+        }
 
         interviewResultResponse =
             await EmploymentActingServices.getInterviewResult(chosenEmployeeParam);
@@ -140,17 +144,17 @@ export const load = async ({ params }) => {
             await EmploymentActingServices.getPromotionMeetingDetail(commonId);
         promotionMeetingDetail =
             promotionMeetingDetailResponse.data?.details as UpdatePromotionMeeting;
-        if(promotionMeetingDetail.meetingName !== null){
+        if (promotionMeetingDetail.meetingName !== null) {
             updatePromotionMeetingForm.data = promotionMeetingDetail;
         }
         //fifth stepper and so on
         const placementMeetingDetailResponse: CommonResponseDTO =
             await EmploymentActingServices.getPlacementMeetingResultDetail(commonId);
-            placementMeetingDetail  =
-                placementMeetingDetailResponse.data?.details as PlacementMeetingDetail;
-            if(placementMeetingDetail.meetingName !== null){
-                updatePlacementMeeting.data = placementMeetingDetail;
-            }
+        placementMeetingDetail =
+            placementMeetingDetailResponse.data?.details as PlacementMeetingDetail;
+        if (placementMeetingDetail.meetingName !== null) {
+            updatePlacementMeeting.data = placementMeetingDetail;
+        }
 
         promotionMeetingResponse =
             await EmploymentActingServices.getPromotionMeetingResult(chosenEmployeeParam);
@@ -221,35 +225,43 @@ export const load = async ({ params }) => {
     let employeePostponeDetail = {} as PostponeResult;
     let employeePostponeResult = {} as PostponeResult;
     let employeeFinalResult = {} as ActingFinalResult;
+    let employeeMainFinalResult = {} as ActingMainFinalResult;
 
     if (currentRoleCode == UserRoleConstant.kakitangan.code) {
-        const employeeInterviewResponse: CommonResponseDTO =
-            await EmploymentActingServices.getEmployeeInterviewDetail(currentId);
-        employeeInterviewDetail =
-            employeeInterviewResponse.data?.details as ActingEmployeeInterviewDetail;
-        const employeeMeetingResponse: CommonResponseDTO =
-            await EmploymentActingServices.getEmployeeMeetingDetail(currentId);
-        employeeMeetingDetail =
-            employeeMeetingResponse.data?.details as ActingEmployeeMeetingDetail;
-        const employeePostponeDetailResponse: CommonResponseDTO =
-            await EmploymentActingServices.getEmployeePostponeDetail(currentId);
-        employeePostponeDetail =
-            employeePostponeDetailResponse.data?.details as PostponeResult;
-        if (employeePostponeDetailResponse.status == "success") {
-            employeeNeedPlacementAmendmentForm.data.postponeNeeded = employeePostponeDetail?.postponeNeeded;
-            employeeNeedPlacementAmendmentForm.data.postponeReason = employeePostponeDetail?.postponeReason;
-            employeeNeedPlacementAmendmentForm.data.requestedReportDate = employeePostponeDetail?.requestedReportDate;
-            employeeNeedPlacementAmendmentForm.data.requestedPlacement = employeePostponeDetail?.requestedPlacement;
-        }
 
-        const employeePostponeResultRespone: CommonResponseDTO =
-            await EmploymentActingServices.getEmployeePostponeResult(currentId);
-        employeePostponeResult =
-            employeePostponeResultRespone.data?.details as PostponeResult;
-        const employeeFinalResultResponse: CommonResponseDTO =
-            await EmploymentActingServices.getEmployeeActingResult(currentId);
-        employeeFinalResult =
-            employeeFinalResultResponse.data?.details as ActingFinalResult;
+        if (actingType !== "Utama") {
+            const employeeInterviewResponse: CommonResponseDTO =
+                await EmploymentActingServices.getEmployeeInterviewDetail(currentId);
+            employeeInterviewDetail =
+                employeeInterviewResponse.data?.details as ActingEmployeeInterviewDetail;
+            const employeeMeetingResponse: CommonResponseDTO =
+                await EmploymentActingServices.getEmployeeMeetingDetail(currentId);
+            employeeMeetingDetail =
+                employeeMeetingResponse.data?.details as ActingEmployeeMeetingDetail;
+            const employeePostponeDetailResponse: CommonResponseDTO =
+                await EmploymentActingServices.getEmployeePostponeDetail(currentId);
+            employeePostponeDetail =
+                employeePostponeDetailResponse.data?.details as PostponeResult;
+            if (employeePostponeDetailResponse.status == "success") {
+                employeeNeedPlacementAmendmentForm.data.postponeNeeded = employeePostponeDetail?.postponeNeeded;
+                employeeNeedPlacementAmendmentForm.data.postponeReason = employeePostponeDetail?.postponeReason;
+                employeeNeedPlacementAmendmentForm.data.requestedReportDate = employeePostponeDetail?.requestedReportDate;
+                employeeNeedPlacementAmendmentForm.data.requestedPlacement = employeePostponeDetail?.requestedPlacement;
+            }
+            const employeePostponeResultRespone: CommonResponseDTO =
+                await EmploymentActingServices.getEmployeePostponeResult(currentId);
+            employeePostponeResult =
+                employeePostponeResultRespone.data?.details as PostponeResult;
+            const employeeFinalResultResponse: CommonResponseDTO =
+                await EmploymentActingServices.getEmployeeActingResult(finalResultId);
+            employeeFinalResult =
+                employeeFinalResultResponse.data?.details as ActingFinalResult;
+        } else {
+            const employeeFinalResultResponse: CommonResponseDTO =
+                await EmploymentActingServices.getEmployeeActingResult(finalResultId);
+            employeeMainFinalResult =
+                employeeFinalResultResponse.data?.details as ActingMainFinalResult;
+        }
     }
 
     const updatePostponeDetail = await superValidate(zod(_postponeDetailSchema))
@@ -311,6 +323,7 @@ export const load = async ({ params }) => {
         employeePostponeResult,
         employeePostponeDetail,
         employeeFinalResult,
+        employeeMainFinalResult,
 
 
         updateMeetingResultForm,
@@ -635,7 +648,7 @@ export const _placementMeetingResult = async (id: number) => {
     let currentId: commonIdRequestDTO = {
         id: id,
     }
-    const response: CommonResponseDTO = 
+    const response: CommonResponseDTO =
         await EmploymentActingServices.getPlacementMeetingResult(currentId)
 
     return { response }
@@ -667,7 +680,6 @@ export const _submitEmployeeNeedPlacementAmendmentForm = async (formData: Employ
     const form = await superValidate(
         formData,
         zod(_placementAmendmentApplication)
-
     );
 
     if (form.valid) {
