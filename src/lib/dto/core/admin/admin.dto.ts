@@ -58,7 +58,7 @@ export interface AuditTrailDTO {
 }
 
 export interface AuditTrailFilterDTO{
-    moduleId: number;
+    moduleId: number | null;
     employeeName: string | null;
     date: string | null;
 }

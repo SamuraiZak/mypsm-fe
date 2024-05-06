@@ -112,7 +112,9 @@
             filter: true,
         },
         controls: {
-            add: data.props.currentRoleCode == UserRoleConstant.urusSetiaPersaraan.code,
+            add:
+                data.props.currentRoleCode ==
+                UserRoleConstant.urusSetiaPersaraan.code,
         },
     };
 
@@ -298,11 +300,15 @@
                             // let url =
                             //     '/perjawatan/persaraan/persaraan_paksaan/Baru';
                             // goto(url);
-                            forceAddNew()
+                            forceAddNew();
                         }}
                         detailActions={() => {
+                            // let url =
+                            //     '/perjawatan/persaraan/persaraan_paksaan/' +
+                            //     rowData.retirementId;
+
                             let url =
-                                '/perjawatan/persaraan/persaraan_paksaan/' +
+                                '/perjawatan/persaraan/persaraan_paksa/' +
                                 rowData.retirementId;
                             goto(url);
                         }}

@@ -3,6 +3,7 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterNumberField from '$lib/components/table/filter/FilterNumberField.svelte';
+    import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
@@ -87,6 +88,11 @@
                         label="Tarikh"
                         bind:inputValue={auditLogTable.param.filter.date}
                     ></FilterTextField>
+                    <FilterSelectField
+                        label="Modul"
+                        bind:inputValue={auditLogTable.param.filter.moduleId}
+                        options={data.props.moduleDropdown}
+                    ></FilterSelectField>
                 </FilterWrapper>
             </DataTable>
         </div>
