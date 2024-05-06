@@ -139,7 +139,7 @@ export const _checkIfDocumentExist = async (isStaff: boolean, id: number) => {
             requestBody,
         );
 
-    if (fundReimbursementDocumentInfoResponse.status === 'error') {
+    if (fundReimbursementDocumentInfoResponse.data?.details.document === null) {
         if (isStaff) {
             goto(`./tuntutan-yuran/${id}/document-upload`);
         } else {

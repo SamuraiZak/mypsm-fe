@@ -34,7 +34,7 @@
 
     let fundReimbursementNotUploaded = writable<boolean>(false);
     $: {
-        data.responses.fundReimbursementDocumentInfoResponse.status === 'error'
+        data.responses.fundReimbursementDocumentInfoResponse.data?.details.document === null
             ? fundReimbursementNotUploaded.set(true)
             : fundReimbursementNotUploaded.set(false);
         data.responses.fundReimbursementSecretaryApprovalResponse.data?.details
