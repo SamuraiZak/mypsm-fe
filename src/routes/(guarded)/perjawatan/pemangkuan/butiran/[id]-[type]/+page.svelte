@@ -2293,19 +2293,10 @@
                                 bind:val={$updateMeetingDetailForm.placement}
                                 options={data.lookup.placementLookup}
                             />
-                            {#if !meetingDetailExist}
-                                <div class="flex w-full flex-col gap-2">
-                                    <CustomFileField
-                                        label="Dokumen Sokongan"
-                                        id="postponeDocs"
-                                        bind:files
-                                    ></CustomFileField>
-                                </div>
-                            {/if}
                             <div
                                 class="flex w-full flex-col justify-start gap-2.5 pb-10"
                             >
-                                <div class="h-fit w-full p-3">
+                                <div class="h-fit w-full">
                                     <DataTable
                                         title="Senarai Calon Yang Terpilih Mengikut Keputusan Mesyuarat"
                                         bind:tableData={interviewInfoTable}
