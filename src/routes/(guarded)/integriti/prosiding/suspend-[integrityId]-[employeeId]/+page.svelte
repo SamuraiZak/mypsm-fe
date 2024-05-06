@@ -73,7 +73,7 @@
                 isReadOnlyProceedingEndedGantungKerja.set(true);
                 isGantungKerjaEnded.set(true);
             } else {
-                isReadOnlyProceedingEndedGantungKerja.set(true);
+                isReadOnlyProceedingEndedGantungKerja.set(false);
                 isGantungKerjaEnded.set(false);
             }
         } else {
@@ -952,7 +952,7 @@
                                         borderClass="border-none"
                                         titlePadding={false}
                                     >
-                                        {#if $isReadOnlyProceedingSuspensionCriminal && $isReadOnlyProceedingEndedGantungKerja && !$isGantungKerjaEnded}
+                                        {#if $isReadOnlyProceedingSuspensionCriminal && !$isReadOnlyProceedingEndedGantungKerja && !$isGantungKerjaEnded}
                                             {#if !$updateCrimeOffenceAppealSuspendedInfo}
                                                 <TextIconButton
                                                     type="primary"
