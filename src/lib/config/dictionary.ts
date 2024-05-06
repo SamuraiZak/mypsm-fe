@@ -499,6 +499,7 @@ const dictionary: { [key: string]: string } = {
     identityCardNo: 'No. Kad Pengenalan',
     startContract: 'Tarikh Mula Kontrak',
     endContract: 'Tarikh Tamat Kontrak',
+    Remark: 'Ulasan',
 
     // lookup
     ssmCode: 'Kod SSM',
