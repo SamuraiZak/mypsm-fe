@@ -40,10 +40,10 @@ export class ModuleConstant {
         icon: 'user',
     };
 
-    // perjawatan
+    // perjawatan (checked)
     public static employment: ModuleDTO = {
         name: 'Perjawatan',
-        url: 'abc',
+        url: '/perjawatan',
         description: 'Uruskan perihal perjawatan kakitangan.',
         icon: 'tie',
         roles: [
@@ -52,61 +52,131 @@ export class ModuleConstant {
             UserRoleConstant.pelulus,
             UserRoleConstant.penyokong,
             UserRoleConstant.calon,
+            //tanggung kerja
             UserRoleConstant.ketuaSeksyen,
+            UserRoleConstant.timbalanKetuaSeksyen,
+            UserRoleConstant.pengarahKhidmatPengurusan,
+            //acting and promotion
+            UserRoleConstant.urusSetiaIntegriti,
+            UserRoleConstant.pengarahBahagian,
+            UserRoleConstant.pengarahNegeri,
+            //pengesahan dalam perkhidmatan
+            UserRoleConstant.pengarahIntegriti,
+            UserRoleConstant.pengarahAudit,
+            //persaraan
+            UserRoleConstant.urusSetiaPersaraan,
+            UserRoleConstant.unitIntegriti,
         ],
         subModules: [
             {
                 name: 'Lantikan Baru',
-                url: 'abc',
-                roles: [],
+                url: '/perjawatan/lantikan-baru',
+                roles: [
+                    UserRoleConstant.urusSetiaPerjawatan,
+                    UserRoleConstant.calon,
+                    UserRoleConstant.penyokong,
+                    UserRoleConstant.pelulus,
+                ],
             },
             {
                 name: 'Pengesahan Dalam Perkhidmatan',
-                url: 'abc',
-                roles: [UserRoleConstant.kakitangan],
+                url: '/perjawatan/pengesahan-dalam-perkhidmatan',
+                roles: [
+                    UserRoleConstant.kakitangan,
+                    UserRoleConstant.urusSetiaPerjawatan,
+                    UserRoleConstant.pengarahIntegriti,
+                    UserRoleConstant.pengarahAudit,
+                    UserRoleConstant.pengarahBahagian,
+                    UserRoleConstant.pengarahNegeri,
+                ],
             },
             {
                 name: 'Pemangkuan',
-                url: 'abc',
-                roles: [UserRoleConstant.kakitangan],
+                url: '/perjawatan/pemangkuan',
+                roles: [
+                    UserRoleConstant.kakitangan,
+                    UserRoleConstant.urusSetiaPerjawatan,
+                    UserRoleConstant.urusSetiaIntegriti,
+                    UserRoleConstant.pengarahBahagian,
+                    UserRoleConstant.pengarahNegeri,
+                    UserRoleConstant.penyokong,
+                    UserRoleConstant.pelulus,
+                ],
             },
             {
                 name: 'Pengesahan Kenaikan Pangkat',
-                url: 'abc',
-                roles: [UserRoleConstant.kakitangan],
+                url: '/perjawatan/kenaikan-pangkat',
+                roles: [
+                    UserRoleConstant.kakitangan,
+                    UserRoleConstant.urusSetiaPerjawatan,
+                    UserRoleConstant.urusSetiaIntegriti,
+                    UserRoleConstant.pengarahBahagian,
+                    UserRoleConstant.pengarahNegeri,
+                    UserRoleConstant.penyokong,
+                    UserRoleConstant.pelulus,
+                ],
             },
             {
                 name: 'Tawaran Baru',
-                url: 'abc',
-                roles: [],
+                url: '/perjawatan/tawaran-baru',
+                roles: [
+                    UserRoleConstant.kakitangan,
+                    UserRoleConstant.urusSetiaPerjawatan,
+                    UserRoleConstant.penyokong,
+                    UserRoleConstant.pelulus,
+                ],
             },
             {
                 name: 'Tanggung Kerja',
-                url: 'abc',
+                url: '/perjawatan/tanggung-kerja',
                 roles: [
-                    UserRoleConstant.ketuaSeksyen,
                     UserRoleConstant.kakitangan,
+                    UserRoleConstant.urusSetiaPerjawatan,
+                    UserRoleConstant.pengarahBahagian,
+                    UserRoleConstant.pengarahNegeri,
+                    UserRoleConstant.timbalanKetuaSeksyen,
+                    UserRoleConstant.ketuaSeksyen,
+                    UserRoleConstant.pengarahKhidmatPengurusan,
                 ],
             },
             {
                 name: 'Pertukaran',
-                url: 'abc',
-                roles: [UserRoleConstant.kakitangan],
+                url: '/perjawatan/proses_pertukaran',
+                roles: [
+                    UserRoleConstant.kakitangan,
+                    UserRoleConstant.urusSetiaPerjawatan,
+                    UserRoleConstant.pengarahBahagian,
+                    UserRoleConstant.pengarahNegeri,
+                    UserRoleConstant.penyokong,
+                    UserRoleConstant.pelulus,
+                ],
             },
             {
                 name: 'PTB dan KWAP',
-                url: 'abc',
-                roles: [UserRoleConstant.kakitangan],
+                url: '/perjawatan/PTB-dan-KWAP',
+                roles: [
+                    UserRoleConstant.kakitangan,
+                    UserRoleConstant.penyokong,
+                    UserRoleConstant.pelulus,
+                    UserRoleConstant.urusSetiaPerjawatan,
+                ],
             },
             {
                 name: 'Persaraan',
-                url: 'abc',
-                roles: [UserRoleConstant.kakitangan],
+                url: '/perjawatan/persaraan',
+                roles: [
+                    UserRoleConstant.kakitangan,
+                    UserRoleConstant.unitIntegriti,
+                    UserRoleConstant.urusSetiaPersaraan,
+                    UserRoleConstant.penyokong,
+                    UserRoleConstant.pelulus,
+                    UserRoleConstant.urusSetiaIntegriti,
+                ],
             },
         ],
     };
 
-    // kontrak
+    // kontrak (checked)
     public static contract: ModuleDTO = {
         name: 'Kontrak',
         url: '',
@@ -116,7 +186,35 @@ export class ModuleConstant {
         roles: [
             UserRoleConstant.kakitanganKontrak,
             UserRoleConstant.calonKontrak,
+            UserRoleConstant.urusSetiaPerjawatan,
+            UserRoleConstant.urusSetiaKhidmatSokongan,
+            UserRoleConstant.penyokong,
+            UserRoleConstant.pelulus,
+            UserRoleConstant.pengarahKhidmatPengurusan,
         ],
+        subModules: [
+            {
+                name: 'Pelantikan Baru (Kontrak)',
+                url: '/kakitangan-kontrak/lantikan-baru',
+                roles: [
+                    UserRoleConstant.calonKontrak,
+                    UserRoleConstant.urusSetiaPerjawatan,
+                    UserRoleConstant.penyokong,
+                    UserRoleConstant.pelulus,
+                ],
+            },
+            {
+                name: 'Pembaharuan Kontrak',
+                url: '/kakitangan-kontrak/pembaharuan',
+                roles: [
+                    UserRoleConstant.kakitanganKontrak,
+                    UserRoleConstant.urusSetiaKhidmatSokongan,
+                    UserRoleConstant.penyokong,
+                    UserRoleConstant.pelulus,
+                    UserRoleConstant.pengarahKhidmatPengurusan,
+                ],
+            },
+        ]
     };
 
     // cuti
@@ -133,7 +231,7 @@ export class ModuleConstant {
         ],
     };
 
-    // integriti
+    // integriti (checked)
     public static integrity: ModuleDTO = {
         name: 'Integriti',
         url: '',
@@ -142,16 +240,67 @@ export class ModuleConstant {
         roles: [
             UserRoleConstant.kakitangan,
             UserRoleConstant.urusSetiaIntegriti,
+            UserRoleConstant.urusSetiaTatatertib,
         ],
+        subModules: [
+            {
+                name: 'Surcaj',
+                url: '/integriti/surcaj',
+                roles: [
+                    UserRoleConstant.kakitangan,
+                    UserRoleConstant.urusSetiaIntegriti,
+                ],
+            },
+            {
+                name: 'Prosiding',
+                url: '/integriti/prosiding',
+                roles: [
+                    UserRoleConstant.kakitangan,
+                    UserRoleConstant.urusSetiaTatatertib,
+                    UserRoleConstant.urusSetiaIntegriti,
+                ],
+            },
+            {
+                name: 'Rayuan',
+                url: '/integriti/rayuan',
+                roles: [
+                    UserRoleConstant.kakitangan,
+                    UserRoleConstant.urusSetiaTatatertib,
+                ],
+            },
+        ]
     };
 
-    // lnpt
+    // lnpt (checked)
     public static performance: ModuleDTO = {
         name: 'Laporan Nilaian Prestasi Tahunan (LNPT)',
         url: '',
         description: 'Nilaian Prestasi dan Anugerah Pekerja Cemerlang.',
         icon: 'performance',
         roles: [UserRoleConstant.urusSetiaLnpt],
+        subModules: [
+            {
+                name: 'Pengesahan Lantikan Baharu',
+                url: '/lnpt/pengesahan-lantikan-baharu',
+                roles: [
+                    UserRoleConstant.urusSetiaLnpt
+                ],
+            },
+            {
+                name: 'Purata LNPT',
+                url: '/lnpt/purata-lnpt',
+                roles: [
+                    UserRoleConstant.urusSetiaLnpt
+                ],
+            },
+            {
+                name: 'Sejarah APC',
+                url: '/lnpt/sejarah-apc',
+                roles: [
+                    UserRoleConstant.urusSetiaLnpt
+                ],
+            },
+        ]
     };
 
     // Elaun
@@ -166,7 +315,7 @@ export class ModuleConstant {
         ],
     };
 
-    // pinjaman dan kuarters
+    // pinjaman dan kuarters (checked)
     public static loan: ModuleDTO = {
         name: 'Pinjaman dan Kuarters',
         url: '',
@@ -175,20 +324,94 @@ export class ModuleConstant {
         roles: [
             UserRoleConstant.kakitangan,
             UserRoleConstant.urusSetiaPentadbiran,
+            UserRoleConstant.urusSetiaPeringkatNegeri,
+            UserRoleConstant.unitPengurusanFasiliti,
+            UserRoleConstant.pengarahBahagian,
+            UserRoleConstant.pengarahNegeri,
+            UserRoleConstant.ketuaSeksyen,
+            UserRoleConstant.pelulus,
         ],
+        subModules: [
+            {
+                name: 'Permohonan Masuk Kuarters',
+                url: '/pinjaman-dan-kuarters/permohonan-masuk-kuarters',
+                roles: [
+                    UserRoleConstant.urusSetiaPeringkatNegeri,
+                    UserRoleConstant.unitPengurusanFasiliti,
+                    UserRoleConstant.kakitangan,
+                    UserRoleConstant.pengarahBahagian,
+                    UserRoleConstant.pengarahNegeri,
+                ],
+            },
+            {
+                name: 'Permohonan Keluar Kuarters',
+                url: '/pinjaman-dan-kuarters/permohonan-keluar-kuarters',
+                roles: [
+                    UserRoleConstant.urusSetiaPeringkatNegeri,
+                    UserRoleConstant.kakitangan,
+                    UserRoleConstant.pengarahBahagian,
+                    UserRoleConstant.pengarahNegeri,
+                ],
+            },
+            {
+                name: 'Pinjaman',
+                url: '/pinjaman-dan-kuarters/pinjaman',
+                roles: [
+                    UserRoleConstant.kakitangan,
+                    UserRoleConstant.urusSetiaPentadbiran,
+                    UserRoleConstant.ketuaSeksyen,
+                    UserRoleConstant.pelulus,
+                ],
+            },
+        ]
     };
 
-    // gaji
+    // gaji (checked)
     public static salary: ModuleDTO = {
         name: 'Gaji',
-        url: '',
+        url: '/gaji',
         description:
             'Lihat pergerakan gaji, gaji dan elaun atau sijil gaji akhir kakitangan.',
         icon: 'salary',
-        roles: [UserRoleConstant.kakitangan, UserRoleConstant.urusSetiaGaji],
+        roles: [
+            UserRoleConstant.urusSetiaGaji,
+            UserRoleConstant.pengarahKhidmatPengurusan,
+        ],
+        subModules: [
+            {
+                name: 'Pergerakan Gaji',
+                url: '/gaji/pergerakan-gaji',
+                roles: [
+                    UserRoleConstant.urusSetiaGaji,
+                    UserRoleConstant.pengarahKhidmatPengurusan,
+                ],
+            },
+            {
+                name: 'Gaji Elaun',
+                url: '/gaji/gaji-elaun',
+                roles: [
+                    UserRoleConstant.urusSetiaGaji,
+                    UserRoleConstant.pengarahKhidmatPengurusan,
+                ],
+            },
+            {
+                name: 'Gaji Akir',
+                url: '/gaji/gaji-akhir',
+                roles: [
+                    UserRoleConstant.urusSetiaGaji,
+                ],
+            },
+            {
+                name: 'Sijil Gaji Akhir',
+                url: '/gaji/sijil-gaji-akhir',
+                roles: [
+                    UserRoleConstant.urusSetiaGaji,
+                ],
+            },
+        ]
     };
 
-    // perubatan
+    // perubatan (checked)
     public static medical: ModuleDTO = {
         name: 'Perubatan',
         url: '',
@@ -198,26 +421,134 @@ export class ModuleConstant {
             UserRoleConstant.klinikPanel,
             UserRoleConstant.unitBahagian,
             UserRoleConstant.unitNegeri,
+            UserRoleConstant.urusSetiaPerubatan,
+            UserRoleConstant.kakitangan,
+            UserRoleConstant.penyokong,
+            UserRoleConstant.pelulus,
         ],
+        subModules: [
+            {
+                name: 'Permohonan Klinik Panel',
+                url: '/perubatan/permohonan-klinik-panel',
+                roles: [
+                    UserRoleConstant.urusSetiaPerubatan,
+                    UserRoleConstant.unitBahagian,
+                    UserRoleConstant.unitNegeri,
+                    UserRoleConstant.penyokong,
+                    UserRoleConstant.pelulus,
+                ],
+            },
+            {
+                name: 'Bil Tuntutan Kakitangan',
+                url: '/perubatan/bil-tuntutan-kakitangan',
+                roles: [
+                    UserRoleConstant.urusSetiaPerubatan,
+                    UserRoleConstant.penyokong,
+                    UserRoleConstant.pelulus,
+                ],
+            },
+            {
+                name: 'Perubatan',
+                url: '/perubatan',
+                roles: [
+                    UserRoleConstant.kakitangan,
+                ],
+            },
+            {
+                name: 'Bil Tuntutan Klinik',
+                url: '/klinik-panel/bil-tuntutan-klinik',
+                roles: [
+                    UserRoleConstant.klinikPanel,
+                    UserRoleConstant.urusSetiaPerubatan,
+                    UserRoleConstant.pelulus,
+                    UserRoleConstant.penyokong,
+                ],
+            },
+            {
+                name: 'Maklumat Bil Rawatan',
+                url: '/klinik-panel/maklumat-bil-rawatan',
+                roles: [
+                    UserRoleConstant.klinikPanel,
+                ],
+            },
+            {
+                name: 'Maklumat Kakitangan',
+                url: '/klinik-panel/maklumat-kakitangan',
+                roles: [
+                    UserRoleConstant.klinikPanel,
+                ],
+            },
+            {
+                name: 'Sejarah Tuntutan',
+                url: '/klinik-panel/sejarah-tuntutan',
+                roles: [
+                    UserRoleConstant.klinikPanel,
+                ],
+            },
+        ]
     };
 
-    // latihan
+    // latihan (checked)
     public static training: ModuleDTO = {
         name: 'Latihan',
         url: '',
         description:
             'Uruskan perihal permohonan pembiayaan atau pendaftaran peperiksaan.',
         icon: 'academic',
-        roles: [],
+        roles: [
+            UserRoleConstant.urusSetiaLatihan,
+            UserRoleConstant.kakitangan,
+            UserRoleConstant.urusSetiaIntegriti,
+            UserRoleConstant.pengarahBahagian,
+            UserRoleConstant.pengarahNegeri,
+        ],
+        subModules: [
+            {
+                name: 'Kemaskini Peperiksaan',
+                url: '/latihan/kemaskini-peperiksaan',
+                roles: [
+                    UserRoleConstant.urusSetiaLatihan,
+                ],
+            },
+            {
+                name: 'Rekod Peperiksaan',
+                url: '/latihan/rekod-peperiksaan',
+                roles: [
+                    UserRoleConstant.urusSetiaLatihan,
+                    UserRoleConstant.kakitangan,
+                ],
+            },
+            {
+                name: 'Pembiayaan Pembelajaran',
+                url: '/latihan/pembiayaan',
+                roles: [
+                    UserRoleConstant.urusSetiaLatihan,
+                    UserRoleConstant.kakitangan,
+                    UserRoleConstant.urusSetiaIntegriti,
+                    UserRoleConstant.pengarahBahagian,
+                    UserRoleConstant.pengarahNegeri,
+                ],
+            },
+            {
+                name: 'Tuntutan Yuran',
+                url: '/latihan/pembiayaan',
+                roles: [
+                    UserRoleConstant.urusSetiaLatihan,
+                    UserRoleConstant.kakitangan,
+                ],
+            },
+        ]
     };
 
-    // rekod perkhidmatan
+    // rekod perkhidmatan (checked)
     public static record: ModuleDTO = {
         name: 'Rekod Perkhidmatan',
-        url: '',
+        url: '/rekod-perkhidmatan',
         description: 'Lihat rekod perkhidmatan kakitangan.',
         icon: 'record',
-        roles: [],
+        roles: [
+            UserRoleConstant.kakitangan
+        ],
     };
 
     // list
