@@ -15,7 +15,7 @@ import { UpdateMainPromotionMeetingConvert, type UpdateMainPromotionMeeting } fr
 import { QuarterCommonApprovalConvert, type QuarterCommonApproval } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto";
 import { EmployeePostponeConvert, PostponeDetailResultConvert, type EmployeePostpone, type PostponeDetailResult } from "$lib/dto/mypsm/employment/acting/acting-employee-form.dto";
 import { CertifySelectedConvert, MainActingDetailEditConvert, MainMeetingResultConvert, type CertifySelected, type MainActingDetailEdit, type MainMeetingResult } from "$lib/dto/mypsm/employment/acting/main-acting-form.dto";
-import { ActingCommonBatchIdConvert, type ActingCommonBatchId } from "$lib/dto/mypsm/employment/acting/acting-batchid.dto";
+import { ActingCommonBatchIdConvert, ActingFinalResultIdConvert, type ActingCommonBatchId, type ActingFinalResultId } from "$lib/dto/mypsm/employment/acting/acting-batchid.dto";
 
 
 export class EmploymentActingServices {
@@ -1223,13 +1223,13 @@ export class EmploymentActingServices {
     }
 
     //get employee acting final result
-    static async getEmployeeActingResult(param: commonIdRequestDTO) {
+    static async getEmployeeActingResult(param: ActingFinalResultId) {
         try {
             const url: Input = 'employment/acting/employee/final_result/get'
 
             const promiseRes: Promise<Response> = http
                 .post(url, {
-                    body: commonIdRequestDTOConvert.toJson(param),
+                    body: ActingFinalResultIdConvert.toJson(param),
                 })
                 .json();
 

@@ -2,7 +2,7 @@ import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-docu
 
 export interface EmployeePostpone {
     id:                  number;
-    postponeNeeded:      boolean;
+    postponeNeeded:      boolean | null;
     postponeReason:      string | null;
     requestedPlacement:  string | null;
     requestedReportDate: string | null;

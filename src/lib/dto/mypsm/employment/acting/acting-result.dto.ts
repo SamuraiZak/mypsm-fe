@@ -8,12 +8,13 @@ export interface ActingDetails {
     actingId?:       number;
     id?:            number;
     actingResult:   string;
-    actingPosition: string;
-    actingGrade:    string;
-    newPlacement:   string;
-    reportDate:     string;
-    supporterName?: string;
-    approverName?:  string;
+    actingPosition: string | null;
+    actingGrade:    string | null;
+    newPlacement:   string | null;
+    reportDate:     string | null;
+    actingEndDate:     string | null;
+    supporterName?: string | null;
+    approverName?:  string | null;
 }
 
 export interface Candidate {

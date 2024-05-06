@@ -84,12 +84,13 @@ export const _updateActingResultSchema = z.object({
     id: z.number().optional(),
     actingId: z.number().optional(),
     actingResult: shortTextSchema,
-    actingPosition: shortTextSchema,
-    actingGrade: z.string().min(1, {message: "Ruangan ini tidak boleh kosong."}),
-    newPlacement: shortTextSchema,
-    reportDate: stringToMinDate,
-    supporterName: shortTextSchema.optional(),
-    approverName: shortTextSchema.optional(),
+    actingPosition: shortTextSchema.nullable().default(null),
+    actingGrade: z.string().min(1, {message: "Ruangan ini tidak boleh kosong."}).nullish().default(null),
+    newPlacement: shortTextSchema.nullish().default(null),
+    reportDate: stringToMinDate.nullish().default(null),
+    actingEndDate: stringToMinDate.nullish().default(null),
+    supporterName: shortTextSchema.nullish().default(null),
+    approverName: shortTextSchema.nullish().default(null),
 })
 
 export const _actingApprovalSchema = z.object({
@@ -144,6 +145,7 @@ export const _mainMeetingDetail = z.object({
     actingGrade:    z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
     newPlacement:   z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
     reportDate:     stringToMinDate,
+    actingEndDate:  stringToMinDate,
     supporterName:  shortTextSchema,
     approverName:   shortTextSchema,
 })
@@ -151,7 +153,7 @@ export const _mainMeetingDetail = z.object({
 // ================== kakitangan schema
 export const _placementAmendmentApplication = z.object({
     id: z.number(),
-    postponeNeeded: booleanSchema,
+    postponeNeeded: booleanSchema.nullable().default(null),
     postponeReason: shortTextSchema.nullable(),
     requestedPlacement: shortTextSchema.nullable(),
     requestedReportDate: stringToMinDate.nullable(),

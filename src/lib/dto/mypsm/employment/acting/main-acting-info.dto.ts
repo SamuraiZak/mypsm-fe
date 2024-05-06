@@ -21,6 +21,7 @@ export interface ActingDetails {
     actingGrade:    string;
     newPlacement:   string;
     reportDate:     string;
+    actingEndDate:  string;
 }
 
 export interface MainActingApprover {

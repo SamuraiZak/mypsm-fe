@@ -25,3 +25,18 @@ export class ActingCommonIdConvert {
         return JSON.stringify(value);
     }
 }
+
+export type ActingFinalResultId = {
+    id: number;
+    actingType: string;
+};
+
+export class ActingFinalResultIdConvert {
+    public static fromJson(json: string): ActingFinalResultId {
+        return JSON.parse(json);
+    }
+
+    public static toJson(value: ActingFinalResultId): string {
+        return JSON.stringify(value);
+    }
+}

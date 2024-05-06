@@ -36,6 +36,7 @@ export interface MainActingDetailEdit {
     actingGrade:    string;
     newPlacement:   string;
     reportDate:     string;
+    actingEndDate:  string;
     supporterName:  string;
     approverName:   string;
 }
