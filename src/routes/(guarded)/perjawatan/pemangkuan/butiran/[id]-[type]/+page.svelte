@@ -139,14 +139,6 @@
     let finalResultModal: boolean = false;
     let stepperIndex: number = 0;
 
-    function goNext() {
-        stepperIndex += 1;
-    }
-
-    function goPrevious() {
-        stepperIndex -= 1;
-    }
-
     //each stepper condition
     let stepperDetail: boolean[] = [false, false, false, false, false];
 
