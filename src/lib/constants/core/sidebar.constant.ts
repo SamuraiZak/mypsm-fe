@@ -883,7 +883,7 @@ export class SidebarConstant {
                     path: '',
                     subItems: [
                         {
-                            name: 'Latihan Baru',
+                            name: 'Lantikan Baru',
                             path: '/perjawatan/lantikan-baru',
                         },
                         {
@@ -1404,8 +1404,6 @@ export class SidebarConstant {
             ],
         },
 
-
-
         //  Unit Integriti
 
         {
@@ -1427,7 +1425,7 @@ export class SidebarConstant {
                 },
             ],
         },
-        
+
         // Urus Setia Integriti
         {
             role: RoleConstant.urusSetiaIntegriti.code,
