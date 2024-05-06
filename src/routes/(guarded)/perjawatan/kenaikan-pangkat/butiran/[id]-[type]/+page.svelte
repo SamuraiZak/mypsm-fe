@@ -588,11 +588,12 @@
                         }
                         if ($placementForm.newGrade == null) {
                             placementMeetingExist = false;
+                            $placementForm.newGrade = "VU1"
+                        } else {
+                            placementMeetingExist = true;
                         }
-
                         salaryAdjustment = salaryAdjustmentResponse.data
                             ?.dataList as PromotionSalaryAdjustment[];
-
                         //for get director & integrity approval
                     });
                 break;
@@ -613,8 +614,10 @@
                             $employeePromotion.status = processDetail.status;
                             $employeePromotion.remark = processDetail.remark;
                         }
-                        if ($employeePromotion.remark == null) {
+                        if ($employeePromotion.status == null) {
                             employeePromotionExist = false;
+                        } else {
+                            employeePromotionExist = true;
                         }
 
                         $supporterApproval = res.suppResponse.data?.details;
@@ -678,7 +681,7 @@
         meta: salaryAdjustmentResponse.data?.meta ?? {
             pageSize: 1,
             pageNum: 1,
-            totalData: 1,
+            totalData: 0,
             totalPage: 1,
         },
         data: salaryAdjustment,
@@ -690,16 +693,20 @@
         id: 'salaryAdjustTable',
         option: {
             checkbox: false,
-            detail: true,
+            detail: false,
             edit: false,
             select: false,
             filter: false,
+            footer: false,
         },
         controls: {
             add: false,
         },
     };
     $: certificationTable.data = data.certificationList;
+    $: {
+        salaryAdjustTable.data = salaryAdjustment;
+    }
 </script>
 
 <!-- content header starts here -->
@@ -1269,17 +1276,15 @@
                                                 id="minMaxSalaryNewGrade"
                                                 placeholder=""
                                                 disabled
-                                                val={'RM ' +
-                                                    currentEmployeeDetail?.secondMinimumSalary +
-                                                    ' -  RM ' +
-                                                    currentEmployeeDetail?.secondMaximumSalary}
+                                                val={(currentEmployeeDetail?.secondMinimumSalary !== null ? "RM "+currentEmployeeDetail?.secondMinimumSalary+" - RM "+currentEmployeeDetail?.secondMaximumSalary : "")
+                                            }
                                             />
                                             <CustomTextField
                                                 label="Kenaikan Gaji Tahunan (Gred Baru)"
                                                 id="secondSalaryRaise"
                                                 disabled
                                                 placeholder=""
-                                                val={currentEmployeeDetail?.secondSalaryRaise}
+                                                val={currentEmployeeDetail?.secondSalaryRaise !== null ? 'RM '+ currentEmployeeDetail?.secondSalaryRaise : ""}
                                             />
                                             <CustomTextField
                                                 label="Penempatan Sekarang"
@@ -1343,7 +1348,7 @@
                                         >
                                             <div class="h-fit w-full">
                                                 <DataTable
-                                                    title=""
+                                                    title="Jadual Pelarasan Gaji"
                                                     bind:tableData={salaryAdjustTable}
                                                 ></DataTable>
                                             </div>
@@ -1420,13 +1425,6 @@
                                         bind:val={$employeePromotion.confirmedDate}
                                         errors={$employeePromotionError.confirmedDate}
                                     />
-                                    <CustomTextField
-                                        label="Ulasan"
-                                        id="remark"
-                                        disabled={employeePromotionExist}
-                                        bind:val={$employeePromotion.remark}
-                                        errors={$employeePromotionError.remark}
-                                    />  
                                     <CustomRadioBoolean
                                         label="Status"
                                         id="status"
@@ -1436,6 +1434,13 @@
                                         errors={$employeePromotionError.status}
                                     />
                                     {#if $employeePromotion.status}
+                                    <CustomTextField
+                                        label="Ulasan"
+                                        id="remark"
+                                        disabled={employeePromotionExist}
+                                        bind:val={$employeePromotion.remark}
+                                        errors={$employeePromotionError.remark}
+                                    /> 
                                     <CustomSelectField
                                         label="Nama Penyokong"
                                         id="supporterName"
@@ -1516,9 +1521,9 @@
                                 title="Keputusan daripada Penyokong dan Pelulus"
                                 borderClass="border-none"
                             />
-                            <div class="flex w-full flex-col gap-2.5 pb-10">
+                            <div class="flex w-full flex-col gap-2.5 pb-5">
                                 <form
-                                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10 md:w-1/2"
+                                    class="flex w-full flex-col justify-start gap-2.5 px-2 md:w-1/2"
                                     id="supporterApproval"
                                     use:supporterApprovalEnhance
                                     method="POST"
@@ -1552,7 +1557,7 @@
                             </div>
                             <div class="flex w-full flex-col gap-2.5 pb-10">
                                 <form
-                                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10 md:w-1/2"
+                                    class="flex w-full flex-col justify-start gap-2.5 px-2 md:w-1/2"
                                     id="approverApproval"
                                     use:approverApprovalEnhance
                                     method="POST"

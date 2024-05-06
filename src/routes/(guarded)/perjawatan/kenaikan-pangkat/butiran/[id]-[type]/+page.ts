@@ -281,6 +281,14 @@ const getLookup = async () => {
 
     const gradeLookup: DropdownDTO[] =
         LookupServices.setSelectOptionsBothAreCode(gradeLookupResponse);
+    
+    const nullGrade: DropdownDTO = {
+        value: null,
+        name: "Semua"
+    }
+
+    gradeLookup.push(nullGrade);
+
     // -------------------------------------------------------
     const stateLookupResponse: CommonResponseDTO =
         await LookupServices.getStateEnums();
