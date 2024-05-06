@@ -64,6 +64,8 @@
             : isReadOnlyProceedingSuspensionCriminal.set(false);
 
         if (data.view.proceedingTypeSuspensionView.cancelCriminalDetail) {
+            isReadOnlyProceedingEndedGantungKerja.set(true);
+
             if (
                 data.view.proceedingTypeSuspensionView.cancelCriminalDetail
                     .cancelSuspend === true
@@ -71,7 +73,7 @@
                 isReadOnlyProceedingEndedGantungKerja.set(true);
                 isGantungKerjaEnded.set(true);
             } else {
-                isReadOnlyProceedingEndedGantungKerja.set(false);
+                isReadOnlyProceedingEndedGantungKerja.set(true);
                 isGantungKerjaEnded.set(false);
             }
         } else {
