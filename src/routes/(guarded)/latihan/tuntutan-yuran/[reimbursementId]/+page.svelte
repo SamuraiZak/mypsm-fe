@@ -34,7 +34,8 @@
 
     let fundReimbursementNotUploaded = writable<boolean>(false);
     $: {
-        data.responses.fundReimbursementDocumentInfoResponse.data?.details.document === null
+        data.responses.fundReimbursementDocumentInfoResponse.data?.details
+            .document === null
             ? fundReimbursementNotUploaded.set(true)
             : fundReimbursementNotUploaded.set(false);
         data.responses.fundReimbursementSecretaryApprovalResponse.data?.details
@@ -820,13 +821,13 @@
                     use:secretaryApprovalInfoEnhance
                     class="flex w-full flex-col gap-2.5"
                 >
-                    <div class="mb-5">
-                        <b class="text-sm text-system-primary"
-                            >Keputusan Urus Setia Latihan</b
-                        >
-                    </div>
-
                     {#if $isReadonlySecretaryApprovalResult || data.role.isCourseSecretaryRole}
+                        <div class="mb-5">
+                            <b class="text-sm text-system-primary"
+                                >Keputusan Urus Setia Latihan</b
+                            >
+                        </div>
+
                         <input
                             hidden
                             bind:value={$secretaryApprovalInfoForm.id}
