@@ -230,7 +230,7 @@
         <Badge color="indigo">Dikemaskini</Badge>
     {/if}
     {#if $isReadOnlyProceedingSuspendsConfirmation && $proceedingSuspendsIsApproved && !$isReadOnlyProceedingEndedGantungKerja}
-        <Badge color="dark">Proses Prosiding - Tahan Kerja Sah</Badge>
+        <Badge color="green">Proses Prosiding - Tahan Kerja Sah</Badge>
     {:else if $isReadOnlyProceedingEndedGantungKerja}
         <Badge color="dark">Proses Prosiding - Gantung Kerja Tamat</Badge>
     {:else if $isReadOnlyProceedingSuspendsConfirmation && !$proceedingSuspendsIsApproved}
