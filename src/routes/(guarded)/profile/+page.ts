@@ -1,13 +1,8 @@
-import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
-import { RoleConstant } from '$lib/constants/core/role.constant';
-import type { CandidateIDRequestBody } from '$lib/dto/core/common/candidate-id-request.view-dto';
 import type { CommonFilterDTO } from '$lib/dto/core/common/common-filter.dto';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
-import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
-import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto.js';
+import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { Academic, academicRequestDTO, academicResponseDTO, editAcademicRequestDTO } from '$lib/dto/mypsm/profile/academic-detail.dto';
-import type { profileIDRequestBody } from '$lib/dto/mypsm/profile/profile-employeeid-request.view-dto';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _academicEditRequestSchema,
@@ -42,10 +37,8 @@ import {
     _serviceInfoResponseSchema,
     type DiseaseInfoDTO,
 } from '$lib/schemas/mypsm/profile/profile-schemas';
-import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service.js';
-import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawatan/employment.service';
+import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { ProfileServices } from '$lib/services/implementation/mypsm/profile/profile.service';
-import { EmployeeServices } from '$lib/services/implementation/mypsm/shared/employee.service';
 import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { fail } from '@sveltejs/kit';
@@ -58,8 +51,7 @@ import type { serviceRequestDTO, serviceResponseDTO } from '$lib/dto/mypsm/profi
 import type { diseaseInfoDTO, medicalAssessmentRequestDTO, medicalAssessmentResponseDTO } from '$lib/dto/mypsm/profile/medical-assessment.dto';
 import type { generalAssessmentRequestDTO, generalAssessmentResponseDTO } from '$lib/dto/mypsm/profile/general-assessment.dto';
 import type { MedicalDiseaseListDTO } from '$lib/dto/mypsm/profile/medical-disease-list.dto';
-import { z } from 'zod';
-import type { GetMedicalHistoryResponseDTO, MedicalHistoryItem, MedicalHistoryResponseItemDTO } from '$lib/dto/mypsm/profile/medical-history.dto';
+import type { GetMedicalHistoryResponseDTO, MedicalHistoryItem } from '$lib/dto/mypsm/profile/medical-history.dto';
 import { invalidateAll } from '$app/navigation';
 
 
@@ -428,57 +420,57 @@ const relationshipIsNonFamilyResponse: CommonResponseDTO =
         await medicalDiseaseList.data?.details as MedicalDiseaseListDTO;
 
     const personalDetail = await superValidate(personalDetailResponse.data?.details as CandidatePersonalResponseDTO, zod(
-        _personalInfoResponseSchema))
+        _personalInfoResponseSchema), {errors: false})
         ;
 
     const serviceInfoForm = await superValidate(serviceDetailResponse.data?.details as serviceResponseDTO, zod(
-        _serviceInfoResponseSchema))
+        _serviceInfoResponseSchema), {errors: false})
         ;
 
     const academicInfoForm = await superValidate(academicInfoResponse.data?.details as academicResponseDTO, zod(
-        _academicListResponseSchema))
+        _academicListResponseSchema), {errors: false})
         ;
 
     const experienceInfoForm = await superValidate(experienceInfoResponse.data?.details as experiencesResponseDTO, zod(
-        _experienceListResponseSchema))
+        _experienceListResponseSchema), {errors: false})
         ;
 
     const activityInfoForm = await superValidate(activityInfoResponse.data?.details as activityResponseDTO, zod(
-        _activityListResponseSchema))
+        _activityListResponseSchema), {errors: false})
         ;
 
     const relationInfoForm = await superValidate(relationInfoResponse.data?.details as dependencResponseDTO, zod(
-        _dependencyListResponseSchema))
+        _dependencyListResponseSchema), {errors: false})
         ;
 
     const familyInfoForm = await superValidate(familyInfoResponse.data?.details as familyResponseDTO, zod(
-        _familyListResponseSchema))
+        _familyListResponseSchema), {errors: false})
         ;
 
     const nextOFKInInfoForm = await superValidate(nextOfKinInfoResponse.data?.details as nextOfKinResponseDTO, zod(
-        _nextOfKinListResponseSchema))
+        _nextOfKinListResponseSchema), {errors: false})
         ;
     const medicalHistoryForm = await superValidate(medicalHistoryResponse.data?.details as medicalAssessmentResponseDTO, zod(
-        _diseaseInfoCollectionSchema))
+        _diseaseInfoCollectionSchema), {errors: false})
         ;
 
     const medicalGeneralForm = await superValidate(medicalGeneralResponse.data?.details as generalAssessmentResponseDTO, zod(
-        _generalAssessmentListResponseSchema))
+        _generalAssessmentListResponseSchema), {errors: false})
         ;
 
     // ========Modal===========
-    const addAcademicModal = await superValidate(zod(_academicInfoSchema));
-    const addExperienceModal = await superValidate((zod)(_experienceInfoSchema));
-    const addActivityModal = await superValidate((zod)(_activityInfoSchema));
-    const addFamilyModal = await superValidate((zod)(_relationsSchema));
-    const addNonFamilyModal = await superValidate((zod)(_relationsSchema));
-    const addNextOfKinModal = await superValidate((zod)(_relationsSchema));
+    const addAcademicModal = await superValidate(zod(_academicInfoSchema), {errors: false});
+    const addExperienceModal = await superValidate((zod)(_experienceInfoSchema), {errors: false});
+    const addActivityModal = await superValidate((zod)(_activityInfoSchema), {errors: false});
+    const addFamilyModal = await superValidate((zod)(_relationsSchema), {errors: false});
+    const addNonFamilyModal = await superValidate((zod)(_relationsSchema), {errors: false});
+    const addNextOfKinModal = await superValidate((zod)(_relationsSchema), {errors: false});
 
 
     // ==========================================================================
     // ========================= Disease History ================================
     // ==========================================================================
-    const diseaseCollectionForm = await superValidate(medicalHistoryResponse.data?.details as medicalAssessmentResponseDTO, zod(_diseaseInfoCollectionSchema));
+    const diseaseCollectionForm = await superValidate(medicalHistoryResponse.data?.details as medicalAssessmentResponseDTO, zod(_diseaseInfoCollectionSchema) , {errors: false});
 
     // diseaseList.disease.forEach(element => {
     //     diseaseCollectionForm.data.medicalHistory.push({
@@ -572,7 +564,7 @@ const relationshipIsNonFamilyResponse: CommonResponseDTO =
 
 
     const personalMedicalHistoryForm = await superValidate(personalMedicalHistoryResponse.data?.details as medicalAssessmentResponseDTO, zod(
-        _diseaseInfoCollectionSchemaRequest))
+        _diseaseInfoCollectionSchemaRequest), {errors: false})
         ;
 
 
@@ -596,6 +588,7 @@ const relationshipIsNonFamilyResponse: CommonResponseDTO =
         addNextOfKinModal,
         medicalHistoryForm,
         salaryViewTable,
+        salaryViewResponse,
         salaryListParam,
         medicalGeneralForm,
         diseaseList,

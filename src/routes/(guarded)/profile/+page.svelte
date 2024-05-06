@@ -1,14 +1,10 @@
 <script lang="ts">
-    import { goto, invalidateAll } from '$app/navigation';
-    import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import CustomTable from '$lib/components/table/CustomTable.svelte';
-    import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
-    import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type { TableDTO, TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
-    import { dateProxy, superValidate } from 'sveltekit-superforms/client';
+    import { superValidate } from 'sveltekit-superforms/client';
     import type { PageData } from './$types';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import SvgPlus from '$lib/assets/svg/SvgPlus.svelte';
@@ -20,7 +16,6 @@
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import { Checkbox, Modal } from 'flowbite-svelte';
-    import type { RadioDTO } from '$lib/dto/core/radio/radio.dto';
     import {
         _academicInfoSchema,
         _academicListResponseSchema,
@@ -39,7 +34,7 @@
         _serviceDetailSchema,
         _serviceInfoResponseSchema,
     } from '$lib/schemas/mypsm/profile/profile-schemas';
-    import SuperDebug, { superForm } from 'sveltekit-superforms';
+    import { superForm } from 'sveltekit-superforms';
     import { zod } from 'sveltekit-superforms/adapters';
     import {
         _personalInfoSubmit,
@@ -67,7 +62,6 @@
     } from './+page';
     import {
         getErrorToast,
-        getLoginSuccessToast,
     } from '$lib/helpers/core/toast.helper';
     import { error } from '@sveltejs/kit';
     import type { Academic } from '$lib/dto/mypsm/profile/academic-detail.dto';
@@ -80,7 +74,7 @@
     } from '$lib/dto/mypsm/profile/relation-detail.dto';
     import toast, { Toaster } from 'svelte-french-toast';
     import { commonOptions } from '$lib/constants/core/radio-option-constants';
-    import type { generalMedical } from '$lib/dto/mypsm/profile/general-assessment.dto';
+    import DataTable from '$lib/components/table/DataTable.svelte';
 
     export let openMembershipInfoModal: boolean = false;
     export let openFamilyInfoModal: boolean = false;
@@ -91,30 +85,9 @@
     export let data: PageData;
     let param: CommonListRequestDTO = data.salaryListParam;
 
-    console.log(data.diseaseCollectionForm.data.medicalHistory);
-
-    const handleOnInput = (e: Event) => {
-        // $documentForm.document =
-        //     ((e.currentTarget as HTMLInputElement)?.files?.item(0) as File) ??
-        //     null;
-    };
-
     // Stepper Classes
     let stepperFormTitleClass =
         'w-full h-fit mt-2 bg-bgr-primary text-system-primary text-sm font-medium';
-
-    let ResultOptions: RadioDTO[] = [
-        {
-            value: true,
-            name: 'YA',
-        },
-        {
-            value: false,
-            name: 'TIDAK',
-        },
-    ];
-
-    console.log(data.personalDetail);
 
     const triggerSubmitAcademicTempData = () => {
         _submitAcademicInfoForm(tempAcademicRecord);
@@ -277,7 +250,6 @@
             },
         },
     );
-    let isReadonlyExperienceFormStepper: boolean = true;
     const {
         form: experienceInfoForm,
         errors: experienceInfoError,
@@ -617,8 +589,6 @@
                 zod(_relationsSchema),
             );
 
-            console.log('Result: ', result);
-
             if (!result.valid) {
                 getErrorToast();
                 error(400, 'Validation not passed, please check every fields.');
@@ -690,14 +660,6 @@
         validationMethod: 'oninput',
         validators: zod(_diseaseInfoCollectionSchema),
         async onSubmit(formData) {
-            // if (!medicalHistoryTainted()) {
-            //     toast('Tiada perubahan data dikesan.');
-            //     error(400);
-            // }
-
-            // const result = await _submitMedicalHistoryForm($medicalHistoryForm);
-            // if (result.response.status === 'success')
-            //     isReadonlyHistoryMedicalFormStepper = true;
             $medicalHistoryForm.medicalHistory.forEach((element) => {
                 element.diseases = element.diseases;
             });
@@ -738,25 +700,39 @@
         },
     });
 
-    let salaryTable: TableDTO = {
+    let salaryTable: TableSettingDTO = {
         param: data.salaryListParam,
-        meta: {
-            pageSize: 5,
+        meta: data.salaryViewResponse.data?.meta ?? {
+            pageSize: 1,
             pageNum: 1,
-            totalData: 4,
+            totalData: 0,
             totalPage: 1,
         },
         data: data.salaryViewTable ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: [],
+        dictionary: [],
+        url: 'profile/salary_allowance',
+        id: 'salaryTable',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
     };
-
-    console.log($medicalHistoryForm);
 </script>
 
 <section
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     <CustomTab>
-        <CustomTabContent title="Maklumat Peribadi" paddingClass="">
+        <CustomTabContent title="Maklumat Peribadi">
             <Stepper>
                 <!------------------------------------------------------>
                 <!---------------Maklumat Peribadi---------------------->
@@ -2958,8 +2934,14 @@
         </CustomTabContent>
 
         <CustomTabContent title="Gaji Elaun">
-            <CustomTable enableDetail bind:tableData={salaryTable}
-            ></CustomTable>
+            <div class="w-full flex px-3 pb-10">
+            <div class="h h-fit w-full">
+                <DataTable
+                    title="Rekod Gaji Elaun"
+                    bind:tableData={salaryTable}
+                />
+            </div>
+            </div>
         </CustomTabContent>
 
         <CustomTabContent title="Rekod Kesihatan">
@@ -3481,15 +3463,6 @@
                                                 Leher
                                             </p></td
                                         >
-                                        <!-- <td>
-                                            <CustomRadioBoolean
-                                                errors={$generalMedicalErrors.neck}
-                                                disabled={isGeneralMedicalFormStepper}
-                                                id="neck"
-                                                label=""
-                                                bind:val={$generalMedicalForm.neck}
-                                            ></CustomRadioBoolean>
-                                        </td> -->
 
                                         <td colspan="2">
                                             <CustomTextField
@@ -3508,15 +3481,6 @@
                                                 Kardiovaskular
                                             </p></td
                                         >
-                                        <!-- <td> -->
-                                        <!-- <CustomRadioBoolean
-                                                errors={$generalMedicalErrors.cardiovascular}
-                                                disabled={isGeneralMedicalFormStepper}
-                                                id="cardiovascular"
-                                                label=""
-                                                bind:val={$generalMedicalForm.cardiovascular}
-                                            ></CustomRadioBoolean> -->
-                                        <!-- </td> -->
 
                                         <td colspan="2">
                                             <CustomTextField
@@ -3543,17 +3507,6 @@
                                             class="w-[220px] min-w-[220px] max-w-[220px]"
                                             >Pemeriksaan</td
                                         >
-                                        <!-- <td
-                                            class="w-[160px] min-w-[160px] max-w-[160px]"
-                                        > -->
-                                        <!-- <CustomRadioBoolean
-                                                errors={$generalMedicalErrors.breathingExam}
-                                                disabled={isGeneralMedicalFormStepper}
-                                                id="breathingExam"
-                                                label=""
-                                                bind:val={$generalMedicalForm.breathingExam}
-                                            ></CustomRadioBoolean> -->
-                                        <!-- </td> -->
 
                                         <td colspan="2">
                                             <CustomTextField
