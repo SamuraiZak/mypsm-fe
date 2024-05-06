@@ -1,82 +1,93 @@
 import * as z from 'zod';
+// ============================================================
+// Allowance Detail By Type
+// ============================================================
 
-export const AllowanceEndorsementSchema = z.object({
-    allowanceId: z.number(),
+// 1. Ceremony Clothing
+export const AllowanceDetailCeremonyClothingSchema = z.object({
     allowanceTypeCode: z.string(),
-    remark: z.string(),
-    status: z.boolean(),
+    reason: z.string(),
+    personal: z.number(),
+    partner: z.number(),
 });
+export type AllowanceDetailCeremonyClothing = z.infer<
+    typeof AllowanceDetailCeremonyClothingSchema
+>;
 
-export const AllowanceEndorserDetailSchema = z.object({
-    allowanceId: z.number(),
+// 2. Warm Clothing
+export const AllowanceDetailWarmClothingSchema = z.object({
     allowanceTypeCode: z.string(),
-    supporter: z.string(),
-    approver: z.string(),
+    reason: z.string(),
+    personal: z.number(),
+    partner: z.number(),
 });
+export type AllowanceDetailWarmClothing = z.infer<
+    typeof AllowanceDetailWarmClothingSchema
+>;
 
-// family detail schema
-export const AllowanceFamilyDetailSchema = z.object({
+// 3. Hometown Visit
+export const AllowanceDetailHometownVisitFamilyDetailSchema = z.object({
     name: z.string(),
     age: z.number(),
     relationshipCode: z.string(),
 });
+export type AllowanceDetailHometownVisitFamilyDetail = z.infer<
+    typeof AllowanceDetailHometownVisitFamilyDetailSchema
+>;
 
-
-// Schema by type
-//  1. ceremony clothing
-export const AllowanceCeremonyClothingSchema = z.object({
-    allowanceTypeCode: z.string(),
-    reason: z.string(),
-    personal: z.number().multipleOf(0.01),
-    partner: z.number().multipleOf(0.01),
-});
-
-//  2. winter clothing
-export const AllowanceWinterClothingSchema = z.object({
-    allowanceTypeCode: z.string(),
-    reason: z.string(),
-    personal: z.number().multipleOf(0.01),
-    partner: z.number().multipleOf(0.01),
-});
-
-//  3. state visit
-export const AllowanceStateVisitSchema = z.object({
+export const AllowanceDetailHometownVisitSchema = z.object({
     allowanceTypeCode: z.string(),
     applyCode: z.string(),
     stateCode: z.string(),
-    familyDetail: z.array(AllowanceFamilyDetailSchema),
+    familyDetail: z.array(AllowanceDetailHometownVisitFamilyDetailSchema),
 });
+export type AllowanceDetailHometownVisit = z.infer<
+    typeof AllowanceDetailHometownVisitSchema
+>;
 
-//  4. funeral arrangement
-export const AllowanceFuneralArrangementSchema = z.object({
+// 4. Funeral Fund
+export const AllowanceDetailFuneralFundSchema = z.object({
     allowanceTypeCode: z.string(),
+    identityCardNumber: z.string(),
     deathDate: z.string(),
     deathTime: z.string(),
 });
+export type AllowanceDetailFuneralFund = z.infer<
+    typeof AllowanceDetailFuneralFundSchema
+>;
 
-//  5. welfare fund
-export const AllowanceWelfareFundSchema = z.object({
+// 5. Welfare Fund
+export const AllowanceDetailWelfareFundSchema = z.object({
     allowanceTypeCode: z.string(),
     welfareTypeCode: z.string(),
 });
+export type AllowanceDetailWelfareFund = z.infer<
+    typeof AllowanceDetailWelfareFundSchema
+>;
 
-//  6. house moving
-export const AllowanceHouseMovingSchema = z.object({
+// 6. House Moving
+export const AllowanceDetailHouseMovingSchema = z.object({
     allowanceTypeCode: z.string(),
     movingDate: z.string(),
     oldAddress: z.string(),
     newAddress: z.string(),
 });
+export type AllowanceDetailHouseMoving = z.infer<
+    typeof AllowanceDetailHouseMovingSchema
+>;
 
-//  7. passport payment details
-export const AllowancePassportPaymentSchema = z.object({
+// 7. Passport Claim
+export const AllowanceDetailPassportClaimSchema = z.object({
     allowanceTypeCode: z.string(),
     renewDate: z.string(),
     reason: z.string(),
 });
+export type AllowanceDetailPassportClaim = z.infer<
+    typeof AllowanceDetailPassportClaimSchema
+>;
 
-//  8. insurance payment
-export const AllowanceInsurancePaymentSchema = z.object({
+// 8. Health Insurance
+export const AllowanceDetailHealthInsuranceSchema = z.object({
     allowanceTypeCode: z.string(),
     regionCode: z.string(),
     insuranceType: z.string(),
@@ -84,5 +95,32 @@ export const AllowanceInsurancePaymentSchema = z.object({
     endDate: z.string(),
     reason: z.string(),
 });
+export type AllowanceDetailHealthInsurance = z.infer<
+    typeof AllowanceDetailHealthInsuranceSchema
+>;
 
-//  9. cargo shipping
+// 9. Shipping Claim
+
+// ============================================================
+// Allowance Shared Schema
+// ============================================================
+
+// allowance endorsement schema
+export const AllowanceEndorsementSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    remark: z.string(),
+    status: z.boolean(),
+});
+export type AllowanceEndorsement = z.infer<typeof AllowanceEndorsementSchema>;
+
+// allowance endorser detail
+export const AllowanceEndorserDetailSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    supporter: z.string(),
+    approver: z.string(),
+});
+export type AllowanceEndorserDetail = z.infer<
+    typeof AllowanceEndorserDetailSchema
+>;
