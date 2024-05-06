@@ -1102,7 +1102,7 @@
         {/if}
     </Stepper>
     {:else}
-        <Modal title="Harap Maaf." open={data.failToLoad} dismissable={false}>
+        <Modal title="Sistem MyPSM" open={data.failToLoad} dismissable={false}>
             <Alert color="red" class="w-full">
                 <p>
                     <span class="font-medium">Gagal mengesan data.</span>
