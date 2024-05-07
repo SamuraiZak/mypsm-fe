@@ -17,7 +17,7 @@
         class="flex h-20 max-h-20 min-h-20 w-full flex-col items-start justify-center bg-ios-basic-white px-10"
     >
         <div class="flex w-full flex-row items-center justify-start">
-            <p class="text-xl font-semibold">Halaman Utama</p>
+            <p class="text-xl font-semibold">Halaman Utama {data.props.currentRole.description}</p>
         </div>
     </div>
 
@@ -35,13 +35,13 @@
                         title={module.name}
                         subtitle={module.description}
                     ></RouterCard>
-                {:else if module.roles.length < 1}
+                <!-- {:else if module.roles.length < 1}
                     <RouterCard
                         url={module.url}
                         icon={module.icon}
                         title={module.name}
                         subtitle={module.description}
-                    ></RouterCard>
+                    ></RouterCard> -->
                 {/if}
             {/each}
         </div>
