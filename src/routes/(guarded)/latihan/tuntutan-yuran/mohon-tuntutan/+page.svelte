@@ -246,7 +246,7 @@
                             <span
                                 class="font-sans text-sm italic text-system-danger"
                                 >Sila muat naik dokumen barkaitan dan pastikan
-                                tidak melebihi 4MB.</span
+                                tidak melebihi 10MB.</span
                             >
                         {/if}
                         <ContentHeader

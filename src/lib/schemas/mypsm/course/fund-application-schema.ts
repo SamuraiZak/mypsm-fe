@@ -153,6 +153,6 @@ export const _fundApplicationUploadDocSchema = z.object({
     // id: numberIdSchema,
     documents: z
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
-        .refine((f) => f.size < 4_000_000, 'Maximum 4 MB saiz muat naik.')
+        .refine((f) => f.size < 10_000_000, 'Maximum 10 MB saiz muat naik.')
         .array(),
 });

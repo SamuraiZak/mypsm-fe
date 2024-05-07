@@ -164,7 +164,7 @@ export const _commonContractDependencySchema = z.object({
 export const _uploadDocSchema = z.object({
     document: z
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
-        .refine((f) => f.size < 1_000_000, 'Maximum 1 MB saiz muat naik.')
+        .refine((f) => f.size < 10_000_000, 'Maximum 10 MB saiz muat naik.')
         .nullable(),
 });
 
