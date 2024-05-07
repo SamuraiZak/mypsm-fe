@@ -12,7 +12,7 @@ export class ModuleConstant {
     // tetapan akaun
     public static accountSetting: ModuleDTO = {
         name: 'Tetapan Akaun',
-        url: 'abc',
+        url: '/tetapan',
         roles: [],
         description: 'Kemaskini tetapan akaun anda.',
         icon: 'preference',
@@ -21,7 +21,7 @@ export class ModuleConstant {
     // pengurusan sistem
     public static systemManagement: ModuleDTO = {
         name: 'Pengurusan Sistem',
-        url: 'abc',
+        url: 'pengurusan_sistem',
         roles: [
             UserRoleConstant.admin,
             UserRoleConstant.superAdmin,
@@ -43,7 +43,7 @@ export class ModuleConstant {
     // perjawatan (checked)
     public static employment: ModuleDTO = {
         name: 'Perjawatan',
-        url: '/perjawatan',
+        url: '/perjawatan/lantikan-baru',
         description: 'Uruskan perihal perjawatan kakitangan.',
         icon: 'tie',
         roles: [
@@ -179,7 +179,7 @@ export class ModuleConstant {
     // kontrak (checked)
     public static contract: ModuleDTO = {
         name: 'Kontrak',
-        url: '',
+        url: '/kakitangan-kontrak/lantikan-baru',
         description:
             'Uruskan hal-hal berkaitan kontrak bagi kakitangan kontrak.',
         icon: 'contract',
@@ -214,7 +214,7 @@ export class ModuleConstant {
                     UserRoleConstant.pengarahKhidmatPengurusan,
                 ],
             },
-        ]
+        ],
     };
 
     // cuti
@@ -234,7 +234,7 @@ export class ModuleConstant {
     // integriti (checked)
     public static integrity: ModuleDTO = {
         name: 'Integriti',
-        url: '',
+        url: '/integriti/surcaj',
         description: 'Prosiding, Rayuan dan Surcaj',
         icon: 'justice',
         roles: [
@@ -268,13 +268,13 @@ export class ModuleConstant {
                     UserRoleConstant.urusSetiaTatatertib,
                 ],
             },
-        ]
+        ],
     };
 
     // lnpt (checked)
     public static performance: ModuleDTO = {
         name: 'Laporan Nilaian Prestasi Tahunan (LNPT)',
-        url: '',
+        url: '/lnpt/sejarah-apc',
         description: 'Nilaian Prestasi dan Anugerah Pekerja Cemerlang.',
         icon: 'performance',
         roles: [UserRoleConstant.urusSetiaLnpt],
@@ -282,31 +282,25 @@ export class ModuleConstant {
             {
                 name: 'Pengesahan Lantikan Baharu',
                 url: '/lnpt/pengesahan-lantikan-baharu',
-                roles: [
-                    UserRoleConstant.urusSetiaLnpt
-                ],
+                roles: [UserRoleConstant.urusSetiaLnpt],
             },
             {
                 name: 'Purata LNPT',
                 url: '/lnpt/purata-lnpt',
-                roles: [
-                    UserRoleConstant.urusSetiaLnpt
-                ],
+                roles: [UserRoleConstant.urusSetiaLnpt],
             },
             {
                 name: 'Sejarah APC',
                 url: '/lnpt/sejarah-apc',
-                roles: [
-                    UserRoleConstant.urusSetiaLnpt
-                ],
+                roles: [UserRoleConstant.urusSetiaLnpt],
             },
-        ]
+        ],
     };
 
     // Elaun
     public static allowance: ModuleDTO = {
         name: 'Elaun',
-        url: '',
+        url: '/elaun-elaun_perkhidmatan/permohonan',
         description: 'Uruskan permohonan elaun-elaun kakitangan.',
         icon: 'allowance',
         roles: [
@@ -318,7 +312,7 @@ export class ModuleConstant {
     // pinjaman dan kuarters (checked)
     public static loan: ModuleDTO = {
         name: 'Pinjaman dan Kuarters',
-        url: '',
+        url: '/pinjaman-dan-kuarters/pinjaman',
         description: 'Uruskan perihal pinjaman atau kuarters.',
         icon: 'loan',
         roles: [
@@ -363,13 +357,13 @@ export class ModuleConstant {
                     UserRoleConstant.pelulus,
                 ],
             },
-        ]
+        ],
     };
 
     // gaji (checked)
     public static salary: ModuleDTO = {
         name: 'Gaji',
-        url: '/gaji',
+        url: '/gaji/pergerakan-gaji',
         description:
             'Lihat pergerakan gaji, gaji dan elaun atau sijil gaji akhir kakitangan.',
         icon: 'salary',
@@ -397,24 +391,20 @@ export class ModuleConstant {
             {
                 name: 'Gaji Akir',
                 url: '/gaji/gaji-akhir',
-                roles: [
-                    UserRoleConstant.urusSetiaGaji,
-                ],
+                roles: [UserRoleConstant.urusSetiaGaji],
             },
             {
                 name: 'Sijil Gaji Akhir',
                 url: '/gaji/sijil-gaji-akhir',
-                roles: [
-                    UserRoleConstant.urusSetiaGaji,
-                ],
+                roles: [UserRoleConstant.urusSetiaGaji],
             },
-        ]
+        ],
     };
 
     // perubatan (checked)
     public static medical: ModuleDTO = {
         name: 'Perubatan',
-        url: '',
+        url: '/perubatan',
         description: 'Uruskan perihal tuntutan bil atau pembayaran rawatan.',
         icon: 'medical',
         roles: [
@@ -450,9 +440,7 @@ export class ModuleConstant {
             {
                 name: 'Perubatan',
                 url: '/perubatan',
-                roles: [
-                    UserRoleConstant.kakitangan,
-                ],
+                roles: [UserRoleConstant.kakitangan],
             },
             {
                 name: 'Bil Tuntutan Klinik',
@@ -467,31 +455,25 @@ export class ModuleConstant {
             {
                 name: 'Maklumat Bil Rawatan',
                 url: '/klinik-panel/maklumat-bil-rawatan',
-                roles: [
-                    UserRoleConstant.klinikPanel,
-                ],
+                roles: [UserRoleConstant.klinikPanel],
             },
             {
                 name: 'Maklumat Kakitangan',
                 url: '/klinik-panel/maklumat-kakitangan',
-                roles: [
-                    UserRoleConstant.klinikPanel,
-                ],
+                roles: [UserRoleConstant.klinikPanel],
             },
             {
                 name: 'Sejarah Tuntutan',
                 url: '/klinik-panel/sejarah-tuntutan',
-                roles: [
-                    UserRoleConstant.klinikPanel,
-                ],
+                roles: [UserRoleConstant.klinikPanel],
             },
-        ]
+        ],
     };
 
     // latihan (checked)
     public static training: ModuleDTO = {
         name: 'Latihan',
-        url: '',
+        url: '/latihan/rekod-peperiksaan',
         description:
             'Uruskan perihal permohonan pembiayaan atau pendaftaran peperiksaan.',
         icon: 'academic',
@@ -506,9 +488,7 @@ export class ModuleConstant {
             {
                 name: 'Kemaskini Peperiksaan',
                 url: '/latihan/kemaskini-peperiksaan',
-                roles: [
-                    UserRoleConstant.urusSetiaLatihan,
-                ],
+                roles: [UserRoleConstant.urusSetiaLatihan],
             },
             {
                 name: 'Rekod Peperiksaan',
@@ -537,7 +517,7 @@ export class ModuleConstant {
                     UserRoleConstant.kakitangan,
                 ],
             },
-        ]
+        ],
     };
 
     // rekod perkhidmatan (checked)
@@ -546,9 +526,7 @@ export class ModuleConstant {
         url: '/rekod-perkhidmatan',
         description: 'Lihat rekod perkhidmatan kakitangan.',
         icon: 'record',
-        roles: [
-            UserRoleConstant.kakitangan
-        ],
+        roles: [UserRoleConstant.kakitangan],
     };
 
     // list

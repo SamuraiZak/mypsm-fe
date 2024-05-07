@@ -73,7 +73,7 @@
             >
                 <FilterWrapper slot="filter">
                     <FilterTextField
-                        label="Nama Peranan"
+                        label="Nama Pengguna"
                         bind:inputValue={employeeListTable.param.filter.name}
                     ></FilterTextField>
                     <FilterTextField
