@@ -109,6 +109,13 @@ export const load = async ({ params }) => {
         orderType: null,
         filter: batchId,
     }
+    const interviewInfoParam: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: batchId,
+    }
 
     if (currentRoleCode !== UserRoleConstant.kakitangan.code) {
         chosenEmployeeResponse =
@@ -304,6 +311,7 @@ export const load = async ({ params }) => {
         employeeNeedPlacementAmendmentForm,
         updatePostponeDetail,
         integrityResultForm,
+        interviewInfoParam,
 
         // main
         mainActingCertification,
@@ -411,6 +419,7 @@ export const _submitUpdatePromotionMeetingResultForm = async (formData: Promotio
         formData,
         zod(_updatePromotionMeetingResultSchema),
     );
+    console.log(form)
     if (form.valid) {
         const response: CommonResponseDTO =
             await EmploymentActingServices.editPromotionResult(form.data as PromotionMeetingResult)

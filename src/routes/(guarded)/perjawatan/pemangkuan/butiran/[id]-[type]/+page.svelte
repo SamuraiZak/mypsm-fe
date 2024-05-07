@@ -233,7 +233,7 @@
         },
     };
     let interviewInfoTable: TableSettingDTO = {
-        param: data.chosenEmployeeParam,
+        param: data.interviewInfoParam,
         meta: data.interviewInfoResponse.data?.meta ?? {
             pageSize: 1,
             pageNum: 1,
@@ -2158,13 +2158,14 @@
                                     bind:val={$updateChosenCandidateForm.directorName}
                                     errors={$updateChosenCandidateError.directorName}
                                 />
-
+                                <Alert color="blue">
+                                    <p>
+                                        <span class="font-medium">Arahan: </span>
+                                        Semak senarai kakitangan yang dipilih dan tekan tombol tambah untuk meluluskan calon ke proses yang seterusnya.
+                                    </p>
+                                </Alert>
                                 <ContentHeader
-                                    title="Kemaskini Senarai Calon Yang Terpilih Mengikut Keputusan Mesyuarat"
-                                    borderClass="border-none"
-                                />
-                                <ContentHeader
-                                    title="Tindakan: Tetapkan untuk semua calon yang berkaitan."
+                                    title=""
                                     borderClass="border-none"
                                 >
                                     <TextIconButton
@@ -2301,13 +2302,6 @@
 
                 <StepperContent>
                     <StepperContentHeader title="Kemaskini Keputusan Temuduga">
-                        {#if !allMarked}
-                            <TextIconButton
-                                label="Simpan"
-                                icon="check"
-                                form="updateMeetingResultForm"
-                            />
-                        {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
                         <form
@@ -2330,6 +2324,7 @@
                                     title="Maklumat Markah Keseluruhan"
                                     borderClass="border-none"
                                 />
+                                <div class="flex w-full justify-between items-center gap-6 h-fit">
                                 <CustomTextField
                                     label="Markah Keseluruhan"
                                     id="marks"
@@ -2339,11 +2334,17 @@
                                     bind:val={$updateMeetingResultForm.marks}
                                     errors={$updateMeetingResultError.marks}
                                 />
+                                <TextIconButton
+                                label="Simpan"
+                                icon="check"
+                                form="updateMeetingResultForm"
+                            />
+                            </div>
                             {/if}
                             <div
                                 class="flex w-full flex-col justify-start gap-2.5 pb-10"
                             >
-                                <div class="h-fit w-full p-3">
+                                <div class="h-fit w-full">
                                     <DataTable
                                         title="Keputusan Temuduga Untuk Calon Terpilih"
                                         bind:tableData={interviewResultTable}
@@ -3513,15 +3514,15 @@
                                     label="Gred"
                                     disabled
                                     placeholder="Menunggu keputusan daripada pihak berkaitan.."
-                                    id="grade"
-                                    val={data.employeeFinalResult?.grade}
+                                    id="actingGrade"
+                                    val={data.employeeFinalResult?.actingGrade}
                                 />
                                 <CustomTextField
                                     label="Jawatan"
                                     disabled
                                     placeholder="Menunggu keputusan daripada pihak berkaitan.."
-                                    id="position"
-                                    val={data.employeeFinalResult?.position}
+                                    id="actingPosition"
+                                    val={data.employeeFinalResult?.actingPosition}
                                 />
                                 <CustomTextField
                                     label="Tarikh Berkuatkuasa"
@@ -3550,7 +3551,15 @@
                                     placeholder="Menunggu keputusan daripada pihak berkaitan.."
                                     id="reportingDate"
                                     val={data.employeeFinalResult
-                                        ?.reportDutyDate}
+                                        ?.reportDate}
+                                />
+                                <CustomTextField
+                                    label="Tarikh Tamat Pemangkuan"
+                                    disabled
+                                    placeholder="Menunggu keputusan daripada pihak berkaitan.."
+                                    id="reportingDate"
+                                    val={data.employeeFinalResult
+                                        ?.actingEndDate}
                                 />
                                 <ContentHeader
                                     title="Pengesah Keputusan"

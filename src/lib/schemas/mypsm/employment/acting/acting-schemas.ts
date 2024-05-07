@@ -63,7 +63,7 @@ export const _updatePromotionDetail = z.object({
 
 export const _updatePromotionMeetingResultSchema = z.object({
     id: z.number(),
-    meetingResult: shortTextSchema.default("Tidak Berjaya"),
+    meetingResult: shortTextSchema.refine((x) => x !== "Sedang Diproses", {message: "Sila tetapkan pilihan anda."}),
 })
 
 export const _updatePlacementMeeting = z.object({

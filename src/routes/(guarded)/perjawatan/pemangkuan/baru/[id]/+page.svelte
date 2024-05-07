@@ -78,6 +78,7 @@
             edit: false,
             select: false,
             filter: false,
+            footer: false,
         },
         controls: {
             add: false,

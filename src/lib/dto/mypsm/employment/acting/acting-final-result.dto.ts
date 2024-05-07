@@ -1,10 +1,11 @@
 export interface ActingFinalResult {
-    grade:          string;
-    position:       string;
+    actingGrade:          string;
+    actingPosition:       string;
     meetingDate:    string;
     newPlacement:   string;
     newDirector:    string;
-    reportDutyDate: string;
+    reportDate: string;
+    actingEndDate: string;
     supporter:      string;
     approver:       string;
 }
