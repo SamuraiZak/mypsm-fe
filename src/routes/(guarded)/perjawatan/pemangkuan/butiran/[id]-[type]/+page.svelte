@@ -3337,36 +3337,36 @@
                                 placeholder=""
                                 disabled
                                 id="grade"
-                                val={data.employeeMeetingDetail.grade}
+                                val={data.employeeMeetingDetail?.grade}
                             />
                             <CustomTextField
                                 label="Jawatan"
                                 placeholder=""
                                 disabled
                                 id="position"
-                                val={data.employeeMeetingDetail.position}
+                                val={data.employeeMeetingDetail?.position}
                             />
                             <CustomTextField
                                 label="Tarikh Berkuatkuasa"
                                 placeholder=""
                                 disabled
                                 id="date"
-                                val={data.employeeMeetingDetail.date}
+                                val={data.employeeMeetingDetail?.date}
                             />
                             <CustomTextField
                                 label="Penempatan Baru"
                                 placeholder=""
                                 disabled
                                 id="newPlacement"
-                                val={data.employeeMeetingDetail.newPlacement}
+                                val={data.employeeMeetingDetail?.newPlacement}
                             />
 
                             <ContentHeader
                                 title="Dokumen-dokumen yang perlu dimuat turun dan diisi"
                                 borderClass="border-none"
                             />
-                            {#if data.employeeMeetingDetail.document !== undefined}
-                                {#each data.employeeMeetingDetail.document as docs}
+                            {#if data.employeeMeetingDetail?.document !== undefined}
+                                {#each data.employeeMeetingDetail?.document as docs}
                                     <a
                                         href={docs.document}
                                         target="_blank"
