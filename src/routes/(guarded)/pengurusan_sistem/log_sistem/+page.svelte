@@ -33,7 +33,7 @@
             },
             {
                 english: 'module',
-                malay: 'Nama Pengguna',
+                malay: 'Nama Modul',
             },
             {
                 english: 'action',
@@ -48,7 +48,7 @@
                 malay: 'Masa',
             },
         ],
-        url: 'employee/list',
+        url: 'audit/list',
         id: 'auditLogTable',
         option: {
             checkbox: false,
