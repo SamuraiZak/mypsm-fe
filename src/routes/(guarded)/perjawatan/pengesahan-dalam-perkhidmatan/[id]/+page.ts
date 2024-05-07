@@ -302,11 +302,11 @@ export async function load({ params }) {
     const generalLookup: DropdownDTO[] = [
         {
             value: true,
-            name: 'BERSALAH',
+            name: 'YA',
         },
         {
             value: false,
-            name: 'TIDAK BERSALAH',
+            name: 'TIDAK',
         },
     ];
 

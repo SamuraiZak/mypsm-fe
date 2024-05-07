@@ -1035,14 +1035,13 @@
                         ></CustomSelectField>
 
                         {#if !!data.newHireFullDetailView.personalDetail.employeeNumber}
-                            <CustomSelectField
+                            <CustomTextField
                                 disabled={$isReadonlyPersonalFormStepper}
                                 errors={$errors.employeePosition}
                                 id="relationDetailPosition"
                                 label="Jawatan Kakitangan LKIM"
                                 bind:val={$form.employeePosition}
-                                options={data.selectionOptions.positionLookup}
-                            ></CustomSelectField>
+                            ></CustomTextField>
                         {/if}
 
                         <CustomSelectField
