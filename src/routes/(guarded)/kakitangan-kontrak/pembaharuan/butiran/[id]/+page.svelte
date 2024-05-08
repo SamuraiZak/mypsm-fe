@@ -1349,7 +1349,7 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                {#if !data.getContractPerformanceDetail.isReadonly && data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
+                {#if !data.getContractPerformanceDetail.isReadonly && (data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code)}
                     <div class="flex w-full flex-col gap-10 px-3 pb-10">
                         <Alert color="blue">
                             <p>
@@ -1413,6 +1413,7 @@
                         <CustomTextField
                             label="Markah Penilaian"
                             disabled
+                            placeholder="Sedang mengesan data..."
                             id="performanceMark"
                             bind:val={data.getContractPerformanceDetail
                                 .performanceMark}
@@ -1429,6 +1430,7 @@
         </StepperContent>
 
         {#if data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
+      
             <StepperContent>
                 <StepperContentHeader title="Keputusan Mesyuarat">
                     {#if !$contractMeetingForm.isReadonly && data.currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code}
@@ -1459,13 +1461,13 @@
                             method="POST"
                             use:contractMeetingEnhance
                         >
-                            <span
+                            <!-- <span hide first
                                 class="text-sm text-ios-labelColors-link-light"
                                 >Sekiranya keputusan mesyuarat tidak diluluskan,
                                 sistem MyPSM akan menjana surat penamatan
                                 kontrak dan emel surat berkenaan ke emel
                                 kakitangan.</span
-                            >
+                            > -->
                             <CustomTextField
                                 label="Tindakan/Ulasan"
                                 id="remark"
@@ -1839,7 +1841,7 @@
 
                 <StepperContent>
                     <StepperContentHeader title="Borang Perjanjian Kontrak">
-                        {#if data.getRenewContractDocument.attachmentName == null && data.currentRoleCode == UserRoleConstant.kakitanganKontrak.code}
+                        {#if data.getRenewContractDocument?.attachmentName == null && data.currentRoleCode == UserRoleConstant.kakitanganKontrak.code}
                             <TextIconButton
                                 label="Simpan"
                                 icon="check"
@@ -1848,7 +1850,7 @@
                         {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
-                        {#if data.getRenewContractDocument.attachmentName == null && data.currentRoleCode == UserRoleConstant.kakitanganKontrak.code}
+                        {#if data.getRenewContractDocument?.attachmentName == null && data.currentRoleCode == UserRoleConstant.kakitanganKontrak.code}
                             <form
                                 class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
                                 method="POST"
@@ -1865,6 +1867,15 @@
                                     triggerDownload={() =>
                                         handleDownload(data.contractDocLink)}
                                 />
+                                <!-- <a
+                                    href={data.getRenewDocumentTemplate
+                                        ?.template}
+                                    download={data.getRenewDocumentTemplate
+                                        ?.templateName}
+                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                    >{data.getRenewDocumentTemplate
+                                        ?.templateName}</a
+                                > -->
                                 <div class="flex w-full flex-col gap-2 px-3">
                                     <CustomFileField
                                         label="Dokumen Sokongan"
@@ -1873,7 +1884,7 @@
                                     ></CustomFileField>
                                 </div>
                             </form>
-                        {:else if data.getRenewContractDocument.attachmentName == null && data.currentRoleCode !== UserRoleConstant.kakitanganKontrak.code}
+                        {:else if data.getRenewContractDocument?.attachmentName == null && data.currentRoleCode !== UserRoleConstant.kakitanganKontrak.code}
                             <div class="flex w-full flex-col gap-10 px-3 pb-10">
                                 <Alert color="blue">
                                     <p>
@@ -1900,13 +1911,12 @@
                                 >
                                 <a
                                     href={data.getRenewContractDocument
-                                        .attachment}
-                                    target="_blank"
+                                        ?.attachment}
                                     download={data.getRenewContractDocument
-                                        .attachmentName}
+                                        ?.attachmentName}
                                     class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
                                     >{data.getRenewContractDocument
-                                        .attachmentName}</a
+                                        ?.attachmentName}</a
                                 >
                             </div>
                         {/if}
@@ -1969,6 +1979,7 @@
                     </StepperContentBody>
                 </StepperContent>
             {/if}
+     
         {/if}
     </Stepper>
 </section>
