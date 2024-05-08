@@ -490,10 +490,10 @@
                                             class="h-full cursor-pointer border-r border-ios-labelColors-separator-light px-2.5"
                                         >
                                             <div
-                                                class="flex h-full flex-row items-center justify-between"
+                                                class="flex w-fit h-full flex-row items-center justify-between"
                                             >
                                                 <span
-                                                    class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                                                    class="select-none text-nowrap text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
                                                 >
                                                     {translator(columnHeading)}
                                                 </span>
@@ -658,10 +658,10 @@
                                 {#each Object.keys(row) as key}
                                     {#if !TableHelper.isHidden(tableData.hiddenColumn ?? [], key)}
                                         <td
-                                            class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-start"
+                                            class="h-full w-fit border-r border-ios-labelColors-separator-light px-2.5 text-start"
                                         >
                                             <span
-                                                class="relative text-start align-middle text-sm font-normal text-ios-labelColors-label-light"
+                                                class="relative text-nowrap text-start align-middle text-sm font-normal text-ios-labelColors-label-light"
                                             >
                                                 {#if TableHelper.getKey(row, key) == null}
                                                     Tiada Maklumat
