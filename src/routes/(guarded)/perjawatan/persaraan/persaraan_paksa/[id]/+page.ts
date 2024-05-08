@@ -133,3 +133,106 @@ export async function load({ params }) {
         },
     };
 }
+
+export async function _certificationFormSubmit(
+    formdata: ForcedRetirementEndorsement,
+) {
+    const form = await superValidate(
+        formdata,
+        zod(ForcedRetirementEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response =
+            await ForcedRetirementServices.addCertification(formdata);
+
+        return { response };
+    }
+}
+
+export async function _confirmationFormSubmit(
+    formdata: ForcedRetirementEndorsement,
+) {
+    const form = await superValidate(
+        formdata,
+        zod(ForcedRetirementEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response =
+            await ForcedRetirementServices.addConfirmation(formdata);
+
+        return { response };
+    }
+}
+
+export async function _approvalFormSubmit(
+    formdata: ForcedRetirementEndorsement,
+) {
+    const form = await superValidate(
+        formdata,
+        zod(ForcedRetirementEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response =
+            await ForcedRetirementServices.addApproval(formdata);
+
+        return { response };
+    }
+}
+
+export const _uploadForms = async (formData: string) => {
+    const response: CommonResponseDTO =
+        await ForcedRetirementServices.uploadForms(
+            formData,
+        );
+
+    return { response };
+};
+
+export function _convertToBase64(file: File): Promise<DocumentDTO> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            const base64String = event.target?.result as string;
+            const fileName = file.name;
+            const fileObject: DocumentDTO = {
+                name: fileName,
+                base64: base64String,
+            };
+
+            resolve(fileObject);
+        };
+
+        reader.onerror = (error) => {
+            reject(error);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+export function _prepDocumentUpload(
+    fileList: FileList,
+): Promise<DocumentDTO[]> {
+    return new Promise((resolve, reject) => {
+        const fileArray: File[] = Array.from(fileList);
+
+        const filesPromiseArray: Promise<DocumentDTO>[] = [];
+
+        fileArray.forEach((file) => {
+            const filePromise = _convertToBase64(file);
+
+            filesPromiseArray.push(filePromise);
+        });
+
+        Promise.all(filesPromiseArray)
+            .then((files) => {
+                resolve(files);
+            })
+            .catch((error) => {
+                reject(error);
+            });
+    });
+}

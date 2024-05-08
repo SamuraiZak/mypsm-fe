@@ -276,90 +276,184 @@
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     <Stepper>
-        <StepperContent>
-            <StepperContentHeader title="Butiran Pertukaran">
-                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode == 'director'}
-                    <TextIconButton
-                        label="Hantar"
-                        icon="check"
-                        form="applicationDetailForm"
-                    ></TextIconButton>
-                {/if}
-            </StepperContentHeader>
-            <StepperContentBody>
-                {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode !== 'director'}
-                    <div class="flex w-full flex-col gap-10 px-3 pb-10">
-                        <Alert color="blue">
-                            <p>
-                                <span class="font-medium">Tiada Maklumat!</span>
-                                Menunggu maklum balas dari pihak berkenaan.
-                            </p>
-                        </Alert>
-                    </div>
-                {:else}
-                    <div
-                        class="flex h-full w-full flex-col items-start justify-start"
-                    >
-                        <form
-                            id="applicationDetailForm"
-                            method="POST"
-                            use:applicationDetailEnhance
-                            class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
+        {#if data.props.currentApplicationType == TransferTypeConstant.director.code}
+            <StepperContent>
+                <StepperContentHeader title="Butiran Pertukaran">
+                    {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode == 'director'}
+                        <TextIconButton
+                            label="Hantar"
+                            icon="check"
+                            form="applicationDetailForm"
+                        ></TextIconButton>
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
+                    {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode !== 'director'}
+                        <div class="flex w-full flex-col gap-10 px-3 pb-10">
+                            <Alert color="blue">
+                                <p>
+                                    <span class="font-medium"
+                                        >Tiada Maklumat!</span
+                                    >
+                                    Menunggu maklum balas dari pihak berkenaan.
+                                </p>
+                            </Alert>
+                        </div>
+                    {:else}
+                        <div
+                            class="flex h-full w-full flex-col items-start justify-start"
                         >
-                            <div class="flex w-full flex-col gap-2">
-                                <CustomSelectField
-                                    disabled={data.props
-                                        .currentApplicationDetail
-                                        .applicationDetail !== null ||
-                                        data.props.userMode != 'director'}
-                                    id="employeeIC"
-                                    label={'Nama Kakitangan'}
-                                    bind:val={$applicationDetailForm.employeeIC}
-                                    options={data.props.employeeDropdown}
-                                ></CustomSelectField>
-                            </div>
-                            <div class="flex w-full flex-col gap-2">
-                                <CustomSelectField
-                                    disabled={data.props
-                                        .currentApplicationDetail
-                                        .applicationDetail !== null ||
-                                        data.props.userMode != 'director'}
-                                    id="newPlacementId"
-                                    label={'Penempatan Baru'}
-                                    bind:val={$applicationDetailForm.newPlacementId}
-                                    options={data.props.placementListDropdown}
-                                ></CustomSelectField>
-                            </div>
-                            <div class="flex w-full flex-col gap-2">
-                                <CustomTextField
-                                    disabled={data.props
-                                        .currentApplicationDetail
-                                        .applicationDetail !== null ||
-                                        data.props.userMode != 'director'}
-                                    id="transferDate"
-                                    label={'Tarikh Pertukaran'}
-                                    type="date"
-                                    errors={$applicationDetailErrors.transferDate}
-                                    bind:val={$applicationDetailForm.transferDate}
-                                ></CustomTextField>
-                            </div>
-                            <div class="flex w-full flex-col gap-2">
-                                <CustomTextField
-                                    disabled={data.props
-                                        .currentApplicationDetail
-                                        .applicationDetail !== null ||
-                                        data.props.userMode != 'director'}
-                                    id="reason"
-                                    label={'Alasan Pertukaran'}
-                                    errors={$applicationDetailErrors.reason}
-                                    bind:val={$applicationDetailForm.reason}
-                                ></CustomTextField>
-                            </div>
-                        </form>
-                    </div>
-                {/if}
-            </StepperContentBody>
-        </StepperContent>
+                            <form
+                                id="applicationDetailForm"
+                                method="POST"
+                                use:applicationDetailEnhance
+                                class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
+                            >
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomSelectField
+                                        disabled={data.props
+                                            .currentApplicationDetail
+                                            .applicationDetail !== null ||
+                                            data.props.userMode != 'director'}
+                                        id="employeeIC"
+                                        label={'Nama Kakitangan'}
+                                        bind:val={$applicationDetailForm.employeeIC}
+                                        options={data.props.employeeDropdown}
+                                    ></CustomSelectField>
+                                </div>
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomSelectField
+                                        disabled={data.props
+                                            .currentApplicationDetail
+                                            .applicationDetail !== null ||
+                                            data.props.userMode != 'director'}
+                                        id="newPlacementId"
+                                        label={'Penempatan Baru'}
+                                        bind:val={$applicationDetailForm.newPlacementId}
+                                        options={data.props
+                                            .placementListDropdown}
+                                    ></CustomSelectField>
+                                </div>
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomTextField
+                                        disabled={data.props
+                                            .currentApplicationDetail
+                                            .applicationDetail !== null ||
+                                            data.props.userMode != 'director'}
+                                        id="transferDate"
+                                        label={'Tarikh Pertukaran'}
+                                        type="date"
+                                        errors={$applicationDetailErrors.transferDate}
+                                        bind:val={$applicationDetailForm.transferDate}
+                                    ></CustomTextField>
+                                </div>
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomTextField
+                                        disabled={data.props
+                                            .currentApplicationDetail
+                                            .applicationDetail !== null ||
+                                            data.props.userMode != 'director'}
+                                        id="reason"
+                                        label={'Alasan Pertukaran'}
+                                        errors={$applicationDetailErrors.reason}
+                                        bind:val={$applicationDetailForm.reason}
+                                    ></CustomTextField>
+                                </div>
+                            </form>
+                        </div>
+                    {/if}
+                </StepperContentBody>
+            </StepperContent>
+        {:else if data.props.currentApplicationType == TransferTypeConstant.management.code}
+            <StepperContent>
+                <StepperContentHeader title="Butiran Pertukaran">
+                    {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode == 'secretary'}
+                        <TextIconButton
+                            label="Hantar"
+                            icon="check"
+                            form="applicationDetailForm"
+                        ></TextIconButton>
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
+                    {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode !== 'secretary'}
+                        <div class="flex w-full flex-col gap-10 px-3 pb-10">
+                            <Alert color="blue">
+                                <p>
+                                    <span class="font-medium"
+                                        >Tiada Maklumat!</span
+                                    >
+                                    Menunggu maklum balas dari pihak berkenaan.
+                                </p>
+                            </Alert>
+                        </div>
+                    {:else}
+                        <div
+                            class="flex h-full w-full flex-col items-start justify-start"
+                        >
+                            <form
+                                id="applicationDetailForm"
+                                method="POST"
+                                use:applicationDetailEnhance
+                                class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
+                            >
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomSelectField
+                                        disabled={data.props
+                                            .currentApplicationDetail
+                                            .applicationDetail !== null ||
+                                            data.props.userMode != 'secretary'}
+                                        id="employeeIC"
+                                        label={'Nama Kakitangan'}
+                                        bind:val={$applicationDetailForm.employeeIC}
+                                        options={data.props.employeeDropdown}
+                                    ></CustomSelectField>
+                                </div>
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomSelectField
+                                        disabled={data.props
+                                            .currentApplicationDetail
+                                            .applicationDetail !== null ||
+                                            data.props.userMode != 'secretary'}
+                                        id="newPlacementId"
+                                        label={'Penempatan Baru'}
+                                        bind:val={$applicationDetailForm.newPlacementId}
+                                        options={data.props
+                                            .placementListDropdown}
+                                    ></CustomSelectField>
+                                </div>
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomTextField
+                                        disabled={data.props
+                                            .currentApplicationDetail
+                                            .applicationDetail !== null ||
+                                            data.props.userMode != 'secretary'}
+                                        id="transferDate"
+                                        label={'Tarikh Pertukaran'}
+                                        type="date"
+                                        errors={$applicationDetailErrors.transferDate}
+                                        bind:val={$applicationDetailForm.transferDate}
+                                    ></CustomTextField>
+                                </div>
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomTextField
+                                        disabled={data.props
+                                            .currentApplicationDetail
+                                            .applicationDetail !== null ||
+                                            data.props.userMode != 'secretary'}
+                                        id="reason"
+                                        label={'Alasan Pertukaran'}
+                                        errors={$applicationDetailErrors.reason}
+                                        bind:val={$applicationDetailForm.reason}
+                                    ></CustomTextField>
+                                </div>
+                            </form>
+                        </div>
+                    {/if}
+                </StepperContentBody>
+            </StepperContent>
+        {/if}
+
         {#if data.props.currentApplicationId !== 0}
             <StepperContent>
                 <StepperContentHeader title="Keputusan Mesyuarat">

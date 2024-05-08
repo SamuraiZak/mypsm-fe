@@ -36,7 +36,7 @@ import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export async function load({params}) {
+export async function load({ params }) {
     // set default application id
     let currentApplicationId: number = 0;
 
@@ -53,7 +53,7 @@ export async function load({params}) {
     let userMode: string = 'employee';
 
     let currentApplicationType =
-        TransferTypeConstant.list.find((item) => item.code == params.type)
+        TransferTypeConstant.list.find((item) => item.description == params.type)
             ?.code ?? TransferTypeConstant.director.code;
 
     switch (currentRoleCode) {
