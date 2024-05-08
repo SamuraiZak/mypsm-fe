@@ -203,6 +203,7 @@ export async function load({ params }) {
             } else {
                 employeeConfirmationForm.data.id = currentApplicationId;
             }
+            
             // first director feedback
             if (currentApplicationDetail.firstDirector !== null) {
                 firstDirectorFeedbackForm.data =
