@@ -1,4 +1,3 @@
-import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-document-request.dto";
 import type { QuarterDocument } from "../../pinjaman/kuarters/application-get-document.dto";
 
 export interface UpdateActingInterview {
@@ -11,7 +10,6 @@ export interface UpdateActingInterview {
     placement:     string;
     interviewDate: string;
     interviewTime: string;
-    documents: DocumentBase64RequestDTO[];
 }
 
 // Converts JSON strings to/from your types

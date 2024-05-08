@@ -107,20 +107,10 @@
                 .then(async (result) => {
                     if (stepper == 2) {
                         $employeeNeedPlacementAmendmentForm.documents = result;
-                    } else if (stepper == 1) {
-                        $updateMeetingDetailForm.documents = result;
                     }
                 })
                 .finally(() => {
-                    if (stepper == 1) {
-                        _submitUpdateMeetingDetailForm(
-                            $updateMeetingDetailForm,
-                        ).then((res) => {
-                            if (res?.response.status == 'success') {
-                                meetingDetailExist = true;
-                            }
-                        });
-                    } else if (stepper == 2) {
+                     if (stepper == 2) {
                         _submitEmployeeNeedPlacementAmendmentForm(
                             $employeeNeedPlacementAmendmentForm,
                         ).then((res) => {
@@ -267,7 +257,6 @@
             add: false,
         },
     };
-    $: interviewInfoTable.data = data.interviewInfo;
     if (
         interviewInfoTable.data.length < 1 &&
         data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code
@@ -319,7 +308,7 @@
             add: false,
         },
     };
-    $: interviewResultTable.data = data.interviewResult;
+    $: interviewResultTable.data = interviewResultTable.data ;
     $: allMarked = data.interviewResult.every((item) => item.marks !== null);
     $: interviewResultTable.option.checkbox = !allMarked;
     let promotionMeetingResultTable: TableSettingDTO = {
@@ -348,7 +337,7 @@
             add: false,
         },
     };
-    $: promotionMeetingResultTable.data = data.promotionMeetingResult;
+    $: data.promotionMeetingResult = data.promotionMeetingResult;
     let placementTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.placementDetailResponse.data?.meta ?? {
@@ -384,7 +373,7 @@
             add: false,
         },
     };
-    $: placementTable.data = data.placementDetail;
+    $: placementTable.data;
     let postponeTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.postponeListResponse.data?.meta ?? {
@@ -420,7 +409,7 @@
             add: false,
         },
     };
-    $: postponeTable.data = data.postponeList;
+    $: postponeTable.data;
     let postponeResultTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.postponeResultResponse.data?.meta ?? {
@@ -465,7 +454,7 @@
     } else {
         postponeResultTable.option.detail = false;
     }
-    $: postponeResultTable.data = data.postponeResult;
+    $: postponeResultTable.data;
     let actingConfirmationTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.actingConfirmationResponse.data?.meta ?? {
@@ -501,7 +490,7 @@
             add: false,
         },
     };
-    $: actingConfirmationTable.data = data.actingConfirmation;
+    $: actingConfirmationTable.data
 
     //gred utama table starts here
     let isMainChecked: boolean = true;
@@ -540,7 +529,7 @@
             add: false,
         },
     };
-    $: mainCertification.data = data.mainActingCertification;
+    $: mainCertification.data;
     let mainPromotionTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.mainActingPromotionListResponse.data?.meta ?? {
@@ -572,8 +561,8 @@
             add: false,
         },
     };
-    $: mainPromotionTable.data = data.mainActingPromotionList;
-    $: mainCertification.data = data.mainActingCertification;
+    $: mainPromotionTable.data;
+    $: mainCertification.data;
     $: {
         if (
             data.currentRoleCode == UserRoleConstant.urusSetiaIntegriti.code &&
@@ -634,7 +623,7 @@
             add: false,
         },
     };
-    $: mainActingInfoTable.data = data.mainActingInfo;
+    $: mainActingInfoTable.data;
     // ======================= validation
     const {
         form: updateChosenCandidateForm,
@@ -659,6 +648,7 @@
                 ).then((res) => {
                     if (res?.response.status == 'success') {
                         checkPhaseTwo = true;
+                        interviewInfoTable.data = data.interviewInfo
                     }
                 });
             }
@@ -719,7 +709,14 @@
         validators: zod(_updateMeetingDetailSchema),
         onSubmit() {
             $updateMeetingDetailForm.batchId = data.batchId.batchId;
-            uploadDocument(1);
+            _submitUpdateMeetingDetailForm(
+                            $updateMeetingDetailForm,
+                        ).then((res) => {
+                            if (res?.response.status == 'success') {
+                                meetingDetailExist = true;
+                                interviewResultTable.data = data.interviewResult;
+                            }
+                        });
         },
     });
     if ($updateMeetingDetailForm.interviewTime == undefined) {
@@ -749,6 +746,7 @@
                     (res) => {
                         if (res?.response.status == 'success') {
                             interviewResultTable.selectedData = [];
+                            interviewResultTable.data = data.interviewResult;
                         }
                     },
                 );
