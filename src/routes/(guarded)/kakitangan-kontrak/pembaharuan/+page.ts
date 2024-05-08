@@ -107,8 +107,7 @@ export const _addSelectedContractForRenew = async (selectedContract: RenewContra
     const response: CommonResponseDTO =
         await ContractEmployeeServices.addRenewContract(selectedContract);
 
-    if (response.message == "success") {
-        getSuccessToast();
-        return response
+    if (response.status == "success") {
+        return { response }
     }
 }
