@@ -115,7 +115,7 @@ export class EmploymentPromotionServices {
     // get employee list table (add to new promotion)
     static async getEmployeeList(param: CommonListRequestDTO) {
         try{
-            const url: Input = 'employment/promotion/employee_lists/list';
+            const url: Input = 'employee/acting';
 
             const promiseRes: Promise<Response> = http
                 .post(url, {

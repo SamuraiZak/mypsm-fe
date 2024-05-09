@@ -41,10 +41,41 @@
         _submitDocument,
         _submitPostponeDocument,
     } from './+page';
+    import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
+    import DataTable from '$lib/components/table/DataTable.svelte';
 
     export let data: PageData;
 
     let files: FileList;
+
+    let selectedData: any = null;
+
+    let employeeListTable: TableSettingDTO = {
+        param: data.props.employeeRequest,
+        meta: data.props.employeeResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.props.employeeResponse.data?.dataList ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: [],
+        dictionary: [],
+        url: 'employee/list',
+        id: 'employeeListTable',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: false,
+            select: true,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
+    };
 
     // application detail
     const {
@@ -280,6 +311,17 @@
             <StepperContent>
                 <StepperContentHeader title="Butiran Pertukaran">
                     {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode == 'director'}
+                        {#if selectedData !== null}
+                            <TextIconButton
+                                label="Set Semula"
+                                icon="reset"
+                                type="light"
+                                onClick={() => {
+                                    selectedData = null;
+                                    $applicationDetailForm.employeeIC = '';
+                                }}
+                            ></TextIconButton>
+                        {/if}
                         <TextIconButton
                             label="Hantar"
                             icon="check"
@@ -309,56 +351,137 @@
                                 use:applicationDetailEnhance
                                 class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
                             >
-                                <div class="flex w-full flex-col gap-2">
-                                    <CustomSelectField
-                                        disabled={data.props
-                                            .currentApplicationDetail
-                                            .applicationDetail !== null ||
-                                            data.props.userMode != 'director'}
-                                        id="employeeIC"
-                                        label={'Nama Kakitangan'}
-                                        bind:val={$applicationDetailForm.employeeIC}
-                                        options={data.props.employeeDropdown}
-                                    ></CustomSelectField>
-                                </div>
-                                <div class="flex w-full flex-col gap-2">
-                                    <CustomSelectField
-                                        disabled={data.props
-                                            .currentApplicationDetail
-                                            .applicationDetail !== null ||
-                                            data.props.userMode != 'director'}
-                                        id="newPlacementId"
-                                        label={'Penempatan Baru'}
-                                        bind:val={$applicationDetailForm.newPlacementId}
-                                        options={data.props
-                                            .placementListDropdown}
-                                    ></CustomSelectField>
-                                </div>
-                                <div class="flex w-full flex-col gap-2">
-                                    <CustomTextField
-                                        disabled={data.props
-                                            .currentApplicationDetail
-                                            .applicationDetail !== null ||
-                                            data.props.userMode != 'director'}
-                                        id="transferDate"
-                                        label={'Tarikh Pertukaran'}
-                                        type="date"
-                                        errors={$applicationDetailErrors.transferDate}
-                                        bind:val={$applicationDetailForm.transferDate}
-                                    ></CustomTextField>
-                                </div>
-                                <div class="flex w-full flex-col gap-2">
-                                    <CustomTextField
-                                        disabled={data.props
-                                            .currentApplicationDetail
-                                            .applicationDetail !== null ||
-                                            data.props.userMode != 'director'}
-                                        id="reason"
-                                        label={'Alasan Pertukaran'}
-                                        errors={$applicationDetailErrors.reason}
-                                        bind:val={$applicationDetailForm.reason}
-                                    ></CustomTextField>
-                                </div>
+                                {#if data.props.currentApplicationId == 0}
+                                    {#if selectedData == null}
+                                        <div class="h h-fit w-full">
+                                            <DataTable
+                                                title="Senarai Permohonan Sendiri"
+                                                bind:tableData={employeeListTable}
+                                                bind:passData={selectedData}
+                                                selectActions={() => {
+                                                    $applicationDetailForm.employeeIC =
+                                                        selectedData.identityCard;
+                                                }}
+                                            ></DataTable>
+                                        </div>
+                                    {:else}
+                                        <div class="flex w-full flex-col gap-2">
+                                            <CustomSelectField
+                                                disabled={data.props
+                                                    .currentApplicationDetail
+                                                    .applicationDetail !==
+                                                    null ||
+                                                    data.props.userMode !=
+                                                        'director'}
+                                                id="employeeIC"
+                                                label={'Nama Kakitangan'}
+                                                bind:val={$applicationDetailForm.employeeIC}
+                                                options={data.props
+                                                    .employeeDropdown}
+                                            ></CustomSelectField>
+                                        </div>
+                                        <div class="flex w-full flex-col gap-2">
+                                            <CustomSelectField
+                                                disabled={data.props
+                                                    .currentApplicationDetail
+                                                    .applicationDetail !==
+                                                    null ||
+                                                    data.props.userMode !=
+                                                        'director'}
+                                                id="newPlacementId"
+                                                label={'Penempatan Baru'}
+                                                bind:val={$applicationDetailForm.newPlacementId}
+                                                options={data.props
+                                                    .placementListDropdown}
+                                            ></CustomSelectField>
+                                        </div>
+                                        <div class="flex w-full flex-col gap-2">
+                                            <CustomTextField
+                                                disabled={data.props
+                                                    .currentApplicationDetail
+                                                    .applicationDetail !==
+                                                    null ||
+                                                    data.props.userMode !=
+                                                        'director'}
+                                                id="transferDate"
+                                                label={'Tarikh Pertukaran'}
+                                                type="date"
+                                                errors={$applicationDetailErrors.transferDate}
+                                                bind:val={$applicationDetailForm.transferDate}
+                                            ></CustomTextField>
+                                        </div>
+                                        <div class="flex w-full flex-col gap-2">
+                                            <CustomTextField
+                                                disabled={data.props
+                                                    .currentApplicationDetail
+                                                    .applicationDetail !==
+                                                    null ||
+                                                    data.props.userMode !=
+                                                        'director'}
+                                                id="reason"
+                                                label={'Alasan Pertukaran'}
+                                                errors={$applicationDetailErrors.reason}
+                                                bind:val={$applicationDetailForm.reason}
+                                            ></CustomTextField>
+                                        </div>
+                                    {/if}
+                                {:else}
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomSelectField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .applicationDetail !== null ||
+                                                data.props.userMode !=
+                                                    'director'}
+                                            id="employeeIC"
+                                            label={'Nama Kakitangan'}
+                                            bind:val={$applicationDetailForm.employeeIC}
+                                            options={data.props
+                                                .employeeDropdown}
+                                        ></CustomSelectField>
+                                    </div>
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomSelectField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .applicationDetail !== null ||
+                                                data.props.userMode !=
+                                                    'director'}
+                                            id="newPlacementId"
+                                            label={'Penempatan Baru'}
+                                            bind:val={$applicationDetailForm.newPlacementId}
+                                            options={data.props
+                                                .placementListDropdown}
+                                        ></CustomSelectField>
+                                    </div>
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomTextField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .applicationDetail !== null ||
+                                                data.props.userMode !=
+                                                    'director'}
+                                            id="transferDate"
+                                            label={'Tarikh Pertukaran'}
+                                            type="date"
+                                            errors={$applicationDetailErrors.transferDate}
+                                            bind:val={$applicationDetailForm.transferDate}
+                                        ></CustomTextField>
+                                    </div>
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomTextField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .applicationDetail !== null ||
+                                                data.props.userMode !=
+                                                    'director'}
+                                            id="reason"
+                                            label={'Alasan Pertukaran'}
+                                            errors={$applicationDetailErrors.reason}
+                                            bind:val={$applicationDetailForm.reason}
+                                        ></CustomTextField>
+                                    </div>
+                                {/if}
                             </form>
                         </div>
                     {/if}
@@ -368,6 +491,17 @@
             <StepperContent>
                 <StepperContentHeader title="Butiran Pertukaran">
                     {#if data.props.currentApplicationDetail.applicationDetail == null && data.props.userMode == 'secretary'}
+                        {#if selectedData !== null}
+                            <TextIconButton
+                                label="Set Semula"
+                                icon="reset"
+                                type="light"
+                                onClick={() => {
+                                    selectedData = null;
+                                    $applicationDetailForm.employeeIC = '';
+                                }}
+                            ></TextIconButton>
+                        {/if}
                         <TextIconButton
                             label="Hantar"
                             icon="check"
@@ -397,56 +531,137 @@
                                 use:applicationDetailEnhance
                                 class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
                             >
-                                <div class="flex w-full flex-col gap-2">
-                                    <CustomSelectField
-                                        disabled={data.props
-                                            .currentApplicationDetail
-                                            .applicationDetail !== null ||
-                                            data.props.userMode != 'secretary'}
-                                        id="employeeIC"
-                                        label={'Nama Kakitangan'}
-                                        bind:val={$applicationDetailForm.employeeIC}
-                                        options={data.props.employeeDropdown}
-                                    ></CustomSelectField>
-                                </div>
-                                <div class="flex w-full flex-col gap-2">
-                                    <CustomSelectField
-                                        disabled={data.props
-                                            .currentApplicationDetail
-                                            .applicationDetail !== null ||
-                                            data.props.userMode != 'secretary'}
-                                        id="newPlacementId"
-                                        label={'Penempatan Baru'}
-                                        bind:val={$applicationDetailForm.newPlacementId}
-                                        options={data.props
-                                            .placementListDropdown}
-                                    ></CustomSelectField>
-                                </div>
-                                <div class="flex w-full flex-col gap-2">
-                                    <CustomTextField
-                                        disabled={data.props
-                                            .currentApplicationDetail
-                                            .applicationDetail !== null ||
-                                            data.props.userMode != 'secretary'}
-                                        id="transferDate"
-                                        label={'Tarikh Pertukaran'}
-                                        type="date"
-                                        errors={$applicationDetailErrors.transferDate}
-                                        bind:val={$applicationDetailForm.transferDate}
-                                    ></CustomTextField>
-                                </div>
-                                <div class="flex w-full flex-col gap-2">
-                                    <CustomTextField
-                                        disabled={data.props
-                                            .currentApplicationDetail
-                                            .applicationDetail !== null ||
-                                            data.props.userMode != 'secretary'}
-                                        id="reason"
-                                        label={'Alasan Pertukaran'}
-                                        errors={$applicationDetailErrors.reason}
-                                        bind:val={$applicationDetailForm.reason}
-                                    ></CustomTextField>
-                                </div>
+                                {#if data.props.currentApplicationId == 0}
+                                    {#if selectedData == null}
+                                        <div class="h h-fit w-full">
+                                            <DataTable
+                                                title="Senarai Permohonan Sendiri"
+                                                bind:tableData={employeeListTable}
+                                                bind:passData={selectedData}
+                                                selectActions={() => {
+                                                    $applicationDetailForm.employeeIC =
+                                                        selectedData.identityCard;
+                                                }}
+                                            ></DataTable>
+                                        </div>
+                                    {:else}
+                                        <div class="flex w-full flex-col gap-2">
+                                            <CustomSelectField
+                                                disabled={data.props
+                                                    .currentApplicationDetail
+                                                    .applicationDetail !==
+                                                    null ||
+                                                    data.props.userMode !=
+                                                        'secretary'}
+                                                id="employeeIC"
+                                                label={'Nama Kakitangan'}
+                                                bind:val={$applicationDetailForm.employeeIC}
+                                                options={data.props
+                                                    .employeeDropdown}
+                                            ></CustomSelectField>
+                                        </div>
+                                        <div class="flex w-full flex-col gap-2">
+                                            <CustomSelectField
+                                                disabled={data.props
+                                                    .currentApplicationDetail
+                                                    .applicationDetail !==
+                                                    null ||
+                                                    data.props.userMode !=
+                                                        'secretary'}
+                                                id="newPlacementId"
+                                                label={'Penempatan Baru'}
+                                                bind:val={$applicationDetailForm.newPlacementId}
+                                                options={data.props
+                                                    .placementListDropdown}
+                                            ></CustomSelectField>
+                                        </div>
+                                        <div class="flex w-full flex-col gap-2">
+                                            <CustomTextField
+                                                disabled={data.props
+                                                    .currentApplicationDetail
+                                                    .applicationDetail !==
+                                                    null ||
+                                                    data.props.userMode !=
+                                                        'secretary'}
+                                                id="transferDate"
+                                                label={'Tarikh Pertukaran'}
+                                                type="date"
+                                                errors={$applicationDetailErrors.transferDate}
+                                                bind:val={$applicationDetailForm.transferDate}
+                                            ></CustomTextField>
+                                        </div>
+                                        <div class="flex w-full flex-col gap-2">
+                                            <CustomTextField
+                                                disabled={data.props
+                                                    .currentApplicationDetail
+                                                    .applicationDetail !==
+                                                    null ||
+                                                    data.props.userMode !=
+                                                        'secretary'}
+                                                id="reason"
+                                                label={'Alasan Pertukaran'}
+                                                errors={$applicationDetailErrors.reason}
+                                                bind:val={$applicationDetailForm.reason}
+                                            ></CustomTextField>
+                                        </div>
+                                    {/if}
+                                {:else}
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomSelectField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .applicationDetail !== null ||
+                                                data.props.userMode !=
+                                                    'secretary'}
+                                            id="employeeIC"
+                                            label={'Nama Kakitangan'}
+                                            bind:val={$applicationDetailForm.employeeIC}
+                                            options={data.props
+                                                .employeeDropdown}
+                                        ></CustomSelectField>
+                                    </div>
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomSelectField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .applicationDetail !== null ||
+                                                data.props.userMode !=
+                                                    'secretary'}
+                                            id="newPlacementId"
+                                            label={'Penempatan Baru'}
+                                            bind:val={$applicationDetailForm.newPlacementId}
+                                            options={data.props
+                                                .placementListDropdown}
+                                        ></CustomSelectField>
+                                    </div>
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomTextField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .applicationDetail !== null ||
+                                                data.props.userMode !=
+                                                    'secretary'}
+                                            id="transferDate"
+                                            label={'Tarikh Pertukaran'}
+                                            type="date"
+                                            errors={$applicationDetailErrors.transferDate}
+                                            bind:val={$applicationDetailForm.transferDate}
+                                        ></CustomTextField>
+                                    </div>
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomTextField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .applicationDetail !== null ||
+                                                data.props.userMode !=
+                                                    'secretary'}
+                                            id="reason"
+                                            label={'Alasan Pertukaran'}
+                                            errors={$applicationDetailErrors.reason}
+                                            bind:val={$applicationDetailForm.reason}
+                                        ></CustomTextField>
+                                    </div>
+                                {/if}
                             </form>
                         </div>
                     {/if}
