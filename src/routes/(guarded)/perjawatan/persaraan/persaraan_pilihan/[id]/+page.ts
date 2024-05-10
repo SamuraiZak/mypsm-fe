@@ -183,7 +183,7 @@ export async function load({ params }) {
         },
     ];
 
-    return {
+    return { params,
         props: {
             currentRoleCode,
             currentApplicationId,
@@ -338,7 +338,7 @@ export async function _approvalFormSubmit(formData: RetirementEndorsement) {
 
     if (form.valid) {
         const response =
-            await RetirementApplicationServices.addRetirementVoluntaryCertification(
+            await RetirementApplicationServices.addRetirementApproval(
                 formData,
             );
 
