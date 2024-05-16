@@ -286,7 +286,7 @@
     };
 </script>
 
-<ContentHeader title="Maklumat Prosiding Tatatertib">
+<ContentHeader title="Maklumat Tawaran Baru">
     {#if $isReadOnlyNewOfferApprovalResult && $newOfferApproverIsApproved}
         <Badge color="dark">Proses Tawaran Baru Tamat</Badge>
     {/if}
@@ -751,7 +751,7 @@
                                                 .employees[index].placementId}
                                         ></CustomSelectField>
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled
                                             id="serviceTypeId"
                                             label="Jenis Perkhidmatan"
                                             placeholder="-"
@@ -923,15 +923,17 @@
                                                 .retirementDate}
                                         ></CustomTextField>
 
-                                        <CustomTextField
+                                        <CustomSelectField
                                             disabled={$isReadOnlyNewOfferProcess}
                                             id="bankName"
-                                            type="text"
-                                            label={'Bank'}
+                                            label={'Name Bank'}
                                             placeholder="-"
+                                            options={[
+                                                { value: 0, name: 'Sample' },
+                                            ]}
                                             bind:val={$newOfferServiceDetailForm
                                                 .employees[index].bankName}
-                                        ></CustomTextField>
+                                        ></CustomSelectField>
 
                                         <CustomTextField
                                             disabled={$isReadOnlyNewOfferProcess}
@@ -976,7 +978,7 @@
                                         <CustomTextField
                                             disabled={$isReadOnlyNewOfferProcess}
                                             id="pensionNumber"
-                                            type="number"
+                                            type="text"
                                             label={'Nombor Pencen'}
                                             placeholder="-"
                                             bind:val={$newOfferServiceDetailForm

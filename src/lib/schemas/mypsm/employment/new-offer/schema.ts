@@ -109,7 +109,7 @@ export const _processEmployeeSchema = z.object({
     firstEffectiveServiceDate: dateStringSchema,
     confirmServiceDate: dateStringSchema,
     confirmDate: dateStringSchema,
-    pensionNumber: numberToStringSchema,
+    pensionNumber: z.string().nullish(),
     kgt: numberSchema,
     retirementDate: dateStringSchema,
     revisionMonth: codeSchema,
