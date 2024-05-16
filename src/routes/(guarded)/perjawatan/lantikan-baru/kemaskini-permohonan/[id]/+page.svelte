@@ -81,7 +81,7 @@
         certifyOptions,
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
-    import { monthLookup } from '$lib/constants/core/dropdown.constant';
+    import { kgtMonthLookup } from '$lib/constants/core/dropdown.constant';
     import { getErrorToast } from '$lib/helpers/core/toast.helper.js';
     import { error } from '@sveltejs/kit';
     import { writable } from 'svelte/store';
@@ -1105,7 +1105,7 @@
             <div class="flex w-full flex-col gap-2">
                 {#if $academicInfoForm.academics.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
-                        Sila lengkapkan butiran sebelumnya.
+                        Tiada maklumat.
                     </div>
                 {:else}
                     <CustomTab pill={true} id="academics">
@@ -1264,7 +1264,7 @@
             <div class="flex w-full flex-col gap-2">
                 {#if $experienceInfoForm.experiences.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
-                        Sila lengkapkan butiran sebelumnya.
+                        Tiada maklumat.
                     </div>
                 {:else}
                     <CustomTab pill={true} id="experiences">
@@ -1393,7 +1393,7 @@
             <div class="flex w-full flex-col gap-2">
                 {#if $activityInfoForm.activities.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
-                        Sila lengkapkan butiran sebelumnya.
+                        Tiada maklumat.
                     </div>
                 {:else}
                     <CustomTab pill={true} id="activities">
@@ -1495,7 +1495,7 @@
             <div class="flex w-full flex-col gap-2">
                 {#if $familyInfoForm.dependencies.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
-                        Sila lengkapkan butiran sebelumnya.
+                        Tiada maklumat.
                     </div>
                 {:else}
                     <CustomTab pill={true} id="families">
@@ -1757,7 +1757,7 @@
             <div class="flex w-full flex-col gap-2">
                 {#if $dependencyInfoForm.dependencies.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
-                        Sila lengkapkan butiran sebelumnya.
+                        Tiada maklumat.
                     </div>
                 {:else}
                     <CustomTab pill={true} id="dependencies">
@@ -2037,7 +2037,7 @@
             <div class="flex w-full flex-col gap-2">
                 {#if $nextOfKinInfoForm.dependencies.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
-                        Sila lengkapkan butiran sebelumnya.
+                        Tiada maklumat.
                     </div>
                 {:else}
                     <CustomTab pill={true} id="nextOfKins">
@@ -2263,7 +2263,7 @@
             ><div class="flex w-full flex-col gap-2">
                 {#if data.newHireFullDetailView.nextOfKin.dependencies.length < 1}
                     <div class="text-center text-sm italic text-system-primary">
-                        Sila lengkapkan butiran sebelumnya.
+                        Tiada maklumat.
                     </div>
                 {:else if !$isReadonlyDocumentFormStepper && data.isCandidateRole}
                     <p class="text-sm">
@@ -2545,14 +2545,20 @@
                             bind:val={$serviceInfoForm.incomeNumber}
                         ></CustomTextField>
 
-                        <CustomTextField
+                        <CustomSelectField
                             placeholder="-"
                             disabled={$isReadonlyServiceFormStepper}
                             errors={$serviceInfoErrors.bankName}
                             id="bankName"
-                            label={'Bank'}
+                            label={'Nama Bank'}
+                            options={[
+                                {
+                                    value: 0,
+                                    name: 'Sample',
+                                },
+                            ]}
                             bind:val={$serviceInfoForm.bankName}
-                        ></CustomTextField>
+                        ></CustomSelectField>
 
                         <CustomTextField
                             placeholder="-"
@@ -2668,11 +2674,21 @@
                             placeholder="-"
                             type="date"
                             disabled={$isReadonlyServiceFormStepper}
+                            errors={$serviceInfoErrors.retirementAge}
+                            id="retirementAge"
+                            label={'Umur Bersara'}
+                            bind:val={$serviceInfoForm.retirementAge}
+                        ></CustomTextField>
+
+                        <!-- <CustomTextField
+                            placeholder="-"
+                            type="date"
+                            disabled
                             errors={$serviceInfoErrors.retirementDate}
                             id="retirementDate"
                             label={'Tarikh Bersara'}
                             bind:val={$serviceInfoForm.retirementDate}
-                        ></CustomTextField>
+                        ></CustomTextField> -->
 
                         <p class={stepperFormTitleClass}>
                             Maklumat Gaji dan Elaun - Elaun
@@ -2685,12 +2701,12 @@
                                     id="revisionMonth"
                                     label="Bulan Berkuatkuasa"
                                     bind:val={$serviceInfoForm.revisionMonth}
-                                    options={monthLookup}
+                                    options={kgtMonthLookup}
                                 ></CustomSelectField>
 
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled={$isReadonlyServiceFormStepper}
+                                    disabled
                                     errors={$serviceInfoErrors.kgt}
                                     id="kgt"
                                     type="number"
