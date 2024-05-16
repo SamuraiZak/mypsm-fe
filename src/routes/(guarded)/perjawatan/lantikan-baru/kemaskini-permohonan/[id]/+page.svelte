@@ -984,7 +984,7 @@
                     disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.assetDeclarationStatusId}
                     id="assetDeclarationStatusId"
-                    label="Status Pengikstiharan Harta"
+                    label="Status Pengisyhtiharan Harta"
                     bind:val={$form.assetDeclarationStatusId}
                     options={data.selectionOptions.assetDeclarationLookup}
                 ></CustomSelectField>
@@ -996,7 +996,7 @@
                         disabled={$isReadonlyPersonalFormStepper}
                         id="propertyDeclarationDate"
                         type="date"
-                        label="Tarikh Pengikstiharan Harta"
+                        label="Tarikh Pengisyhtiharan Harta"
                         bind:val={$form.propertyDeclarationDate}
                     />
                 {/if}
