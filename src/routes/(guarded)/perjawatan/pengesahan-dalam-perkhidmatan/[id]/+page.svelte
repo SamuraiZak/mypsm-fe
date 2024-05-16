@@ -1016,6 +1016,15 @@
                         ></CustomTextField>
                         <CustomTextField
                             disabled={$isReadOnlyConfirmationInServiceMeetingResult}
+                            errors={$confirmationMeetingDetailFormErrors.confirmedPositionDate}
+                            id="confirmedPositionDate"
+                            label="Tarikh Sah Jawatan"
+                            placeholder="-"
+                            type="date"
+                            bind:val={$confirmationMeetingDetailForm.confirmedPositionDate}
+                        ></CustomTextField>
+                        <CustomTextField
+                            disabled={$isReadOnlyConfirmationInServiceMeetingResult}
                             errors={$confirmationMeetingDetailFormErrors.meetingRemark}
                             id="meetingRemark"
                             label="Catatan Mesyuarat"

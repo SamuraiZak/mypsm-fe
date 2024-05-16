@@ -93,6 +93,7 @@ export const _confirmationServiceSchema = z.object({
 export const _confirmationMeetingResultSchema = z.object({
     meetingName: codeSchema,
     meetingDate: dateStringSchema,
+    confirmedPositionDate: dateStringSchema,
     meetingRemark: shortTextSchema,
     meetingResult: booleanSchema,
     isReadonly: z.boolean().readonly(),
