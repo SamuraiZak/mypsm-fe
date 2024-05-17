@@ -354,6 +354,7 @@
 
                             <CustomTextField
                                 disabled
+                                isRequired={false}
                                 id="employeeNumber"
                                 label={'Nombor Pekerja'}
                                 type="text"
@@ -364,6 +365,7 @@
 
                             <CustomTextField
                                 disabled
+                                isRequired={false}
                                 id="workStatus"
                                 label={'Status Pekerjaan'}
                                 type="text"
@@ -374,6 +376,7 @@
 
                             <CustomTextField
                                 disabled
+                                isRequired={false}
                                 id="employeeName"
                                 label={'Nama Penuh'}
                                 type="text"
@@ -384,6 +387,7 @@
 
                             <CustomTextField
                                 disabled
+                                isRequired={false}
                                 id="alternativeName"
                                 label={'Nama Lain'}
                                 type="text"
@@ -394,6 +398,7 @@
 
                             <CustomTextField
                                 disabled
+                                isRequired={false}
                                 id="identityDocumentNumber"
                                 label={'No. Kad Pengenalan'}
                                 type="text"
@@ -404,6 +409,7 @@
 
                             <CustomTextField
                                 disabled
+                                isRequired={false}
                                 id="email"
                                 label={'Emel'}
                                 type="text"
@@ -414,6 +420,7 @@
 
                             <CustomTextField
                                 disabled
+                                isRequired={false}
                                 id="homeNumber"
                                 label={'Telefon Rumah'}
                                 type="text"
@@ -424,6 +431,7 @@
 
                             <CustomTextField
                                 disabled
+                                isRequired={false}
                                 id="phoneNumber"
                                 label={'Telefon Bimbit'}
                                 type="text"
@@ -434,6 +442,7 @@
 
                             <CustomTextField
                                 disabled
+                                isRequired={false}
                                 type="date"
                                 id="birthDate"
                                 label="Tarikh Lahir"
@@ -444,6 +453,7 @@
 
                             <CustomTextField
                                 disabled
+                                isRequired={false}
                                 id="birthState"
                                 label="Tempat Lahir"
                                 placeholder="-"
@@ -453,6 +463,7 @@
 
                             <CustomTextField
                                 disabled
+                                isRequired={false}
                                 id="birthCountry"
                                 label="Negara Dilahir"
                                 placeholder="-"
@@ -462,6 +473,7 @@
 
                             <CustomTextField
                                 disabled
+                                isRequired={false}
                                 id="nationality"
                                 label="Warganegara"
                                 placeholder="-"
@@ -471,6 +483,7 @@
 
                             <CustomTextField
                                 disabled
+                                isRequired={false}
                                 id="race"
                                 label="Bangsa"
                                 placeholder="-"
@@ -480,6 +493,7 @@
 
                             <CustomTextField
                                 disabled
+                                isRequired={false}
                                 id="religion"
                                 label="Agama"
                                 placeholder="-"
@@ -489,6 +503,7 @@
 
                             <CustomTextField
                                 disabled
+                                isRequired={false}
                                 id="gender"
                                 label="Jantina"
                                 placeholder="-"
@@ -498,6 +513,7 @@
 
                             <CustomTextField
                                 disabled
+                                isRequired={false}
                                 id="marital"
                                 label="Status Perkahwinan"
                                 placeholder="-"
@@ -507,6 +523,7 @@
 
                             <CustomSelectField
                                 disabled
+                                isRequired={false}
                                 id="isExPoliceOrSoldier"
                                 label="Bekas Polis / Tentera"
                                 placeholder="-"
@@ -517,6 +534,7 @@
 
                             <CustomSelectField
                                 disabled
+                                isRequired={false}
                                 id="isInternalRelationship"
                                 label="Perhubungan Dengan Kakitangan LKIM"
                                 placeholder="-"
@@ -528,6 +546,7 @@
                             {#if $employeeDetailForm.employees[index].isInternalRelationship}
                                 <CustomTextField
                                     disabled
+                                    isRequired={false}
                                     id="relationEmployeeNumber"
                                     label="No. Pekerja LKIM"
                                     bind:val={$employeeDetailForm.employees[
@@ -537,6 +556,7 @@
 
                                 <CustomTextField
                                     disabled
+                                    isRequired={false}
                                     id="relationName"
                                     label={'Nama Kakitangan LKIM'}
                                     bind:val={$employeeDetailForm.employees[
@@ -546,6 +566,7 @@
 
                                 <CustomTextField
                                     disabled
+                                    isRequired={false}
                                     id="relationPosition"
                                     label="Jawatan Kakitangan LKIM"
                                     bind:val={$employeeDetailForm.employees[
@@ -555,6 +576,7 @@
 
                                 <CustomTextField
                                     disabled
+                                    isRequired={false}
                                     id="relationship"
                                     label="Hubungan"
                                     bind:val={$employeeDetailForm.employees[
