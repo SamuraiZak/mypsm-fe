@@ -210,6 +210,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="fullName"
                     label={'Nama Penuh'}
                     type="text"
@@ -219,6 +220,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="identityCardNumber"
                     label={'No. Kad Pengenalan'}
                     type="text"
@@ -228,6 +230,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     type="date"
                     id="birthDate"
                     label="Tarikh Lahir"
@@ -237,6 +240,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="birhtplace"
                     label="Tempat Lahir"
                     placeholder="-"
@@ -245,6 +249,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="religion"
                     label="Agama"
                     placeholder="-"
@@ -275,6 +280,7 @@
                                         label={'Nama'}
                                         type="text"
                                         disabled
+                                        isRequired={false}
                                         placeholder="-"
                                         bind:val={$form.nextOfKins[i].name}
                                     ></CustomTextField>
@@ -282,6 +288,7 @@
                                         id="address"
                                         label={'Alamat'}
                                         disabled
+                                        isRequired={false}
                                         placeholder="-"
                                         bind:val={$form.nextOfKins[i].address}
                                     ></CustomTextField>
@@ -314,6 +321,7 @@
                                     />
                                     <CustomSelectField
                                         disabled
+                                        isRequired={false}
                                         id="majorId"
                                         label={'Jurusan'}
                                         options={data.selectionOptions
@@ -324,6 +332,7 @@
 
                                     <CustomSelectField
                                         disabled
+                                        isRequired={false}
                                         id="minorId"
                                         label={'Bidang'}
                                         bind:val={$academicInfoForm.academics[i]
@@ -334,6 +343,7 @@
 
                                     <CustomSelectField
                                         disabled
+                                        isRequired={false}
                                         id="countryId"
                                         label={'Negara'}
                                         bind:val={$academicInfoForm.academics[i]
@@ -344,6 +354,7 @@
 
                                     <CustomSelectField
                                         disabled
+                                        isRequired={false}
                                         id="institutionId"
                                         label={'Institusi'}
                                         bind:val={$academicInfoForm.academics[i]
@@ -354,6 +365,7 @@
 
                                     <CustomSelectField
                                         disabled
+                                        isRequired={false}
                                         id="educationLevelId"
                                         label={'Taraf Pendidikan'}
                                         bind:val={$academicInfoForm.academics[i]
@@ -364,6 +376,7 @@
 
                                     <CustomSelectField
                                         disabled
+                                        isRequired={false}
                                         id="sponsorshipId"
                                         label={'Penajaan'}
                                         bind:val={$academicInfoForm.academics[i]
@@ -374,6 +387,7 @@
 
                                     <CustomTextField
                                         disabled
+                                        isRequired={false}
                                         id="name"
                                         label={'Nama Sijil/Pencapaian'}
                                         type="text"
@@ -383,6 +397,7 @@
 
                                     <CustomTextField
                                         disabled
+                                        isRequired={false}
                                         id="completionDate"
                                         label="Tarikh Tamat Pembelajaran"
                                         type="date"
@@ -392,6 +407,7 @@
 
                                     <CustomTextField
                                         disabled
+                                        isRequired={false}
                                         id="finalGrade"
                                         label={'Ijazah/ CGPA/ Gred'}
                                         type="text"
@@ -401,6 +417,7 @@
 
                                     <CustomTextField
                                         disabled
+                                        isRequired={false}
                                         id="field"
                                         label={'Catatan'}
                                         type="text"
