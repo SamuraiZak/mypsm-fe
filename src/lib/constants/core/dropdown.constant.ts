@@ -30,10 +30,10 @@ export const monthNumberLookup: DropdownDTO[] = [
 ];
 
 export const kgtMonthStringLookup: DropdownDTO[] = [
-    { value: '01', name: 'Januari' },
-    { value: '04', name: 'April' },
-    { value: '07', name: 'Julai' },
-    { value: '10', name: 'Oktober' },
+    { value: 'Januari', name: 'Januari' },
+    { value: 'April', name: 'April' },
+    { value: 'Julai', name: 'Julai' },
+    { value: 'Oktober', name: 'Oktober' },
 ];
 export const kgtMonthValueIsStringLookup: DropdownDTO[] = [
     { value: 'Januari', name: 'Januari' },
