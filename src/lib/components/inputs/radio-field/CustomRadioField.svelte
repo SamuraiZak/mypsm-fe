@@ -7,6 +7,8 @@
     // input label
     export let label: string = 'Label';
 
+    export let isRequired: boolean = true;
+
     // radio options
     export let options: RadioDTO[] = [
         {
@@ -38,6 +40,9 @@
             class="block w-full text-start text-sm font-medium leading-tight text-ios-labelColors-secondaryLabel-light"
         >
             {label}
+            <span class="text-base text-system-danger" hidden={!isRequired}
+                >*</span
+            >
         </label>
     </div>
 

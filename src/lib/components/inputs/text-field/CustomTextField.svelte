@@ -4,6 +4,7 @@
     import SvgInfoSolid from '$lib/assets/svg/SvgInfoSolid.svelte';
 
     export let label: string = 'Label';
+    export let isRequired: boolean = true;
     export let id: string;
     export let disabled: boolean = false;
     export let val: string | number | Date | boolean | null | undefined;
@@ -21,8 +22,11 @@
         <label
             for="password"
             class="block w-full text-start text-sm font-medium leading-tight text-ios-labelColors-secondaryLabel-light"
-            >{label}</label
-        >
+            >{label}
+            <span class="text-base text-system-danger" hidden={!isRequired}
+                >*</span
+            >
+        </label>
         {#if type == 'password'}
             <button
                 type="button"

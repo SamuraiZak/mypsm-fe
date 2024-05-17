@@ -1,5 +1,6 @@
 <script lang="ts">
     export let label: string = 'label';
+    export let isRequired: boolean = true;
     export let id: string = 'thisId';
     export let disabled: boolean = false;
     export let val: string;
@@ -14,7 +15,10 @@
         <label
             for={id}
             class="block w-full text-start text-sm font-medium leading-tight text-ios-labelColors-secondaryLabel-light"
-            >{label}</label
+            >{label}
+            <span class="text-base text-system-danger" hidden={!isRequired}
+                >*</span
+            ></label
         >
     </div>
     <!-- input label ends here -->

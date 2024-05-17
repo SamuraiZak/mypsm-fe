@@ -4,14 +4,15 @@
     import { UserRoleConvert } from '$lib/dto/core/user-role/user-role.dto';
 
     export let label: string = 'Label';
+    export let isRequired: boolean = true;
     export let id: string;
     export let val: string | number | boolean | null | undefined;
     export let errors: string[] | undefined = [] ?? undefined;
     export let disabled: boolean = false;
-    export let placeholder: string = "-";
+    export let placeholder: string = '-';
 
     export let options: DropdownDTO[] = [];
-    export let onValueChange = ()=>{};
+    export let onValueChange = () => {};
 </script>
 
 <div class="flex w-full flex-col items-center justify-start gap-1">
@@ -19,8 +20,9 @@
     <label
         for="role"
         class="block w-full text-start text-sm font-medium text-ios-labelColors-secondaryLabel-light"
-        >{label}</label
-    >
+        >{label}
+        <span class="text-base text-system-danger" hidden={!isRequired}>*</span>
+    </label>
     <!-- input label ends here -->
 
     <!-- input field starts here -->
