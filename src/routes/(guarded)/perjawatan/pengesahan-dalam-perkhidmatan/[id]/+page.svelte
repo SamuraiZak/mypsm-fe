@@ -360,6 +360,7 @@
             <div class="flex w-full flex-col gap-2">
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="name"
                     label={'Nama Penuh'}
                     type="text"
@@ -369,6 +370,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="alternativeName"
                     label={'Nama Lain'}
                     type="text"
@@ -378,6 +380,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="identityDocumentNumber"
                     label={'No. Kad Pengenalan'}
                     type="text"
@@ -387,6 +390,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="email"
                     label={'Emel'}
                     type="text"
@@ -396,6 +400,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     type="date"
                     id="birthDate"
                     label="Tarikh Lahir"
@@ -405,6 +410,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="birthStateId"
                     label="Tempat Lahir"
                     placeholder="-"
@@ -414,6 +420,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="birthCountryId"
                     label="Negara Dilahir"
                     placeholder="-"
@@ -423,6 +430,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="nationalityId"
                     label="Warganegara"
                     placeholder="-"
@@ -432,6 +440,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="raceId"
                     label="Bangsa"
                     placeholder="-"
@@ -441,6 +450,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="ethnicId"
                     label="Etnik"
                     placeholder="-"
@@ -450,6 +460,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="religionId"
                     label="Agama"
                     placeholder="-"
@@ -459,6 +470,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="genderId"
                     label="Jantina"
                     options={data.lookups.genderLookup}
@@ -468,6 +480,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="maritalId"
                     label="Status Perkahwinan"
                     placeholder="-"
@@ -477,6 +490,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="isExPoliceOrSoldier"
                     label="Bekas Polis / Tentera"
                     placeholder="-"
@@ -486,6 +500,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="isInternalRelationship"
                     label="Perhubungan Dengan Kakitangan LKIM"
                     placeholder="-"
@@ -496,6 +511,7 @@
                 {#if $form.isInternalRelationship}
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="employeeNumber"
                         label="No. Pekerja LKIM"
                         bind:val={$form.employeeNumber}
@@ -503,6 +519,7 @@
 
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="name"
                         label={'Nama Kakitangan LKIM'}
                         bind:val={$form.employeeName}
@@ -510,6 +527,7 @@
 
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="relationDetailPosition"
                         label="Jawatan Kakitangan LKIM"
                         bind:val={$form.employeePosition}
@@ -517,6 +535,7 @@
 
                     <CustomSelectField
                         disabled
+                        isRequired={false}
                         id="relationDetailRelationship"
                         label="Hubungan"
                         options={data.lookups.relationshipLookup}
@@ -532,6 +551,7 @@
             <div class="flex w-full flex-col gap-2.5">
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="gradeId"
                     label="Gred Semasa"
                     placeholder="-"
@@ -540,6 +560,7 @@
                 ></CustomSelectField>
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="positionId"
                     label="Jawatan Semasa"
                     placeholder="-"
@@ -548,6 +569,7 @@
                 ></CustomSelectField>
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="placementId"
                     label="Penempatan"
                     placeholder="-"
@@ -556,6 +578,7 @@
                 ></CustomSelectField>
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="serviceTypeId"
                     label="Jenis Perkhidmatan"
                     placeholder="-"
@@ -565,6 +588,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="unitId"
                     label="Bahagian"
                     placeholder="-"
@@ -574,6 +598,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     type="number"
                     id="eligibleLeaveCount"
                     label={'Kelayakan Cuti'}
@@ -584,6 +609,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="effectiveDate"
                     label={'Tarikh Kuatkuasa Lantikan Semasa'}
                     placeholder="-"
@@ -593,6 +619,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="newRecruitEffectiveDate"
                     label={'Tarikh Berkuatkuasa Lantikan Baru'}
                     placeholder="-"
@@ -602,6 +629,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="firstEffectiveDate"
                     label={'Tarikh Berkuatkuasa Lantikan Pertama'}
                     placeholder="-"
@@ -611,6 +639,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="civilServiceStartDate"
                     label={'Mula Dilantik Perkhidmatan Kerajaan'}
                     placeholder="-"
@@ -620,6 +649,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="serviceDate"
                     label={'Mula Dilantik Perkhidmatan LKIM'}
                     placeholder="-"
@@ -629,6 +659,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="firstServiceDate"
                     label={'Mula Dilantik Perkhidmatan Pertama'}
                     placeholder="-"
@@ -638,6 +669,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="firstServiceDate"
                     label={'Mula Dilantik Perkhidmatan Pertama'}
                     placeholder="-"
@@ -647,6 +679,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="confirmDate"
                     label={'Mula Disahkan Perkhidmatan Semasa'}
                     placeholder="-"
@@ -656,6 +689,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="firstConfirmServiceDate"
                     label={'Mula Disahkan Perkhidmatan Pertama'}
                     placeholder="-"
@@ -665,6 +699,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="retirementDate"
                     label={'Tarikh Bersara'}
                     placeholder="-"
@@ -673,6 +708,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="maximumSalary"
                     type="number"
                     label={'Tangga Gaji'}
@@ -682,6 +718,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="bankName"
                     type="text"
                     label={'Bank'}
@@ -691,6 +728,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="bankAccount"
                     type="number"
                     label={'Akaun Bank'}
