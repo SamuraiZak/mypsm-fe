@@ -174,6 +174,7 @@
             >
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="employeeNo"
                     label={'No. Pekerja'}
                     type="text"
@@ -183,6 +184,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="name"
                     label={'Nama Penuh'}
                     type="text"
@@ -192,6 +194,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="identityCard"
                     label={'No. Kad Pengenalan'}
                     type="text"
@@ -201,6 +204,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="identityCardColor"
                     label={'Jenis Kad Pengenalan'}
                     placeholder="-"
@@ -210,6 +214,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="email"
                     label={'Emel'}
                     type="text"
@@ -219,6 +224,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     type="date"
                     id="dateOfBirth"
                     label="Tarikh Lahir"
@@ -227,6 +233,7 @@
                 ></CustomTextField>
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="placeOfBirth"
                     label="Tempat Lahir"
                     placeholder="-"
@@ -236,6 +243,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="nationality"
                     label="Warganegara"
                     placeholder="-"
@@ -245,6 +253,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="race"
                     label="Bangsa"
                     placeholder="-"
@@ -254,6 +263,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="religion"
                     label="Agama"
                     placeholder="-"
@@ -263,6 +273,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="gender"
                     label="Jantina"
                     placeholder="-"
@@ -272,6 +283,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="status"
                     label="Status Perkahwinan"
                     placeholder="-"
@@ -281,6 +293,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="skim"
                     label="Skim Perkhidmatan"
                     placeholder="-"
@@ -290,6 +303,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="grade"
                     label="Gred"
                     placeholder="-"
@@ -299,6 +313,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="position"
                     label="Jawatan"
                     placeholder="-"
@@ -308,6 +323,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="currentPlacement"
                     label="Penempatan"
                     placeholder="-"
@@ -317,6 +333,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="group"
                     label="Kumpulan"
                     placeholder="-"
@@ -326,6 +343,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="homeAddress"
                     label="Alamat Rumah"
                     placeholder="-"
@@ -334,6 +352,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="mailAddress"
                     label="Alamat Surat Menyurat"
                     placeholder="-"
@@ -342,6 +361,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     type="number"
                     id="homeNo"
                     label="Nombor Telefon Rumah"
@@ -351,6 +371,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     type="number"
                     id="mobileNo"
                     label="Nombor Telefon Bimbit"
@@ -360,6 +381,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     type="number"
                     id="housing"
                     label="Perumahan"
@@ -369,6 +391,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     type="number"
                     id="houseLoan"
                     label="Pinjaman Perumahan"
@@ -378,6 +401,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="isExPolice"
                     label="Bekas Polis / Tentera"
                     placeholder="-"
@@ -398,6 +422,7 @@
             >
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="currentGrade"
                     label="Gred Semasa"
                     placeholder="-"
@@ -406,6 +431,7 @@
                 ></CustomSelectField>
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="currentPosition"
                     label="Jawatan Semasa"
                     placeholder="-"
@@ -414,6 +440,7 @@
                 ></CustomSelectField>
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="placement"
                     label="Penempatan"
                     placeholder="-"
@@ -422,6 +449,7 @@
                 ></CustomSelectField>
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="serviceType"
                     label="Jenis Perkhidmatan"
                     placeholder="-"
@@ -431,6 +459,7 @@
 
                 <CustomSelectField
                     disabled
+                    isRequired={false}
                     id="program"
                     label="Program"
                     placeholder="-"
@@ -440,6 +469,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="retirementBenefit"
                     label={'Faedah Persaraan'}
                     placeholder="-"
@@ -449,6 +479,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="effectiveDate"
                     label={'Tarikh Kuatkuasa Lantikan Semasa'}
                     placeholder="-"
@@ -457,6 +488,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="EPFNumber"
                     label={'No. KWSP'}
                     placeholder="-"
@@ -465,6 +497,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="SOCSO"
                     label={'No. SOCSO'}
                     placeholder="-"
@@ -472,6 +505,7 @@
                 ></CustomTextField>
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="taxIncome"
                     label={'No. Cukai'}
                     placeholder="-"
@@ -480,6 +514,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="bankName"
                     label={'Bank'}
                     placeholder="-"
@@ -488,6 +523,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="accountNumber"
                     label={'No. Akaun'}
                     placeholder="-"
@@ -496,6 +532,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     type="number"
                     id="eligibleLeaveCount"
                     label={'Kelayakan Cuti'}
@@ -506,6 +543,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="civilServiceStartDate"
                     label={'Mula Dilantik Perkhidmatan Kerajaan'}
                     placeholder="-"
@@ -515,6 +553,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="confirmServiceDate"
                     label={'Disahkan Dalam Jawatan Semasa LKIM'}
                     placeholder="-"
@@ -524,6 +563,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="actingDate"
                     label={'Pemangkuan Sekarang'}
                     placeholder="-"
@@ -533,6 +573,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="interimDate"
                     label={'Tanggung Kerja Sekarang'}
                     placeholder="-"
@@ -542,6 +583,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="firstEffectiveDate"
                     label={'Tarikh Berkuatkuasa Lantikan Pertama'}
                     placeholder="-"
@@ -551,6 +593,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="pastAttachmentDate"
                     label={'Tarikh Percantuman Perkhidmatan Lepas'}
                     placeholder="-"
@@ -560,6 +603,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="lastSalaryRaiseDate"
                     label={'Kenaikan Gaji Akhir'}
                     placeholder="-"
@@ -569,6 +613,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="lastPromotionDate"
                     label={'Kenaikan Pangkat Akhir'}
                     placeholder="-"
@@ -577,6 +622,7 @@
 
                 <CustomTextField
                     disabled
+                    isRequired={false}
                     id="pensionScheme"
                     label={'Skim Pencen'}
                     placeholder="-"
@@ -586,6 +632,7 @@
                 <CustomTextField
                     type="date"
                     disabled
+                    isRequired={false}
                     id="retirementDate"
                     label={'Tarikh Bersara'}
                     placeholder="-"
@@ -597,6 +644,7 @@
                     <div class="space-y-2.5">
                         <CustomTextField
                             disabled
+                            isRequired={false}
                             id="salaryEffectiveDate"
                             type="number"
                             label={'Tarikh Berkuatkuasa'}
@@ -606,6 +654,7 @@
 
                         <CustomTextField
                             disabled
+                            isRequired={false}
                             id="maximumSalary"
                             type="number"
                             label={'Tangga Gaji'}
@@ -615,6 +664,7 @@
 
                         <CustomTextField
                             disabled
+                            isRequired={false}
                             id="baseSalary"
                             label={'Gaji Pokok'}
                             placeholder="-"
@@ -624,6 +674,7 @@
                     <div class="space-y-2.5">
                         <CustomTextField
                             disabled
+                            isRequired={false}
                             id="ITKA"
                             label={'ITKA'}
                             placeholder="-"
@@ -631,6 +682,7 @@
                         ></CustomTextField>
                         <CustomTextField
                             disabled
+                            isRequired={false}
                             id="ITP"
                             label={'ITP'}
                             placeholder="-"
@@ -638,6 +690,7 @@
                         ></CustomTextField>
                         <CustomTextField
                             disabled
+                            isRequired={false}
                             id="EPW"
                             label={'EPW'}
                             placeholder="-"
@@ -645,6 +698,7 @@
                         ></CustomTextField>
                         <CustomTextField
                             disabled
+                            isRequired={false}
                             id="COLA"
                             label={'COLA'}
                             placeholder="-"
