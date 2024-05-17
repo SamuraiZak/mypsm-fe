@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { kgtMonthStringLookup } from '$lib/constants/core/dropdown.constant';
     import type { Dependency } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto';
     import type { NextOfKin } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
     import StepperFailStatement from '$lib/components/stepper/StepperFailStatement.svelte';
@@ -75,7 +76,6 @@
     import { goto } from '$app/navigation';
     import StepperOtherRolesResult from '$lib/components/stepper/StepperOtherRolesResult.svelte';
     import FileInputFieldChildren from '$lib/components/inputs/file-input-field/FileInputFieldChildren.svelte';
-    import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import {
         approveOptions,
         certifyOptions,
@@ -758,6 +758,7 @@
                 <CustomTextField
                     placeholder="-"
                     disabled
+                    isRequired={false}
                     id="identityDocumentNumber"
                     label={'No. Kad Pengenalan'}
                     type="text"
@@ -767,6 +768,7 @@
                 <CustomTextField
                     placeholder="-"
                     disabled
+                    isRequired={false}
                     errors={$errors.name}
                     id="name"
                     label={'Nama Penuh'}
@@ -1113,6 +1115,7 @@
                             <CustomTabContent title={`Akademik #${i + 1}`}>
                                 <CustomSelectField
                                     disabled
+                                    isRequired={false}
                                     id="majorId"
                                     label={'Jurusan'}
                                     options={data.selectionOptions
@@ -1123,6 +1126,7 @@
 
                                 <CustomSelectField
                                     disabled
+                                    isRequired={false}
                                     id="minorId"
                                     label={'Bidang'}
                                     options={data.selectionOptions
@@ -1133,6 +1137,7 @@
 
                                 <CustomSelectField
                                     disabled
+                                    isRequired={false}
                                     id="countryId"
                                     options={data.selectionOptions
                                         .countryLookup}
@@ -1143,6 +1148,7 @@
 
                                 <CustomSelectField
                                     disabled
+                                    isRequired={false}
                                     id="institutionId"
                                     options={data.selectionOptions
                                         .institutionLookup}
@@ -1153,6 +1159,7 @@
 
                                 <CustomSelectField
                                     disabled
+                                    isRequired={false}
                                     id="educationLevelId"
                                     options={data.selectionOptions
                                         .educationLookup}
@@ -1163,6 +1170,7 @@
 
                                 <CustomSelectField
                                     disabled
+                                    isRequired={false}
                                     id="sponsorshipId"
                                     options={data.selectionOptions
                                         .sponsorshipLookup}
@@ -1174,6 +1182,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     disabled
+                                    isRequired={false}
                                     id="certName"
                                     label={'Nama Sijil/Pencapaian'}
                                     type="text"
@@ -1184,6 +1193,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     disabled
+                                    isRequired={false}
                                     id="completionDate"
                                     label="Tarikh Tamat Pembelajaran"
                                     type="date"
@@ -1194,6 +1204,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     disabled
+                                    isRequired={false}
                                     id="finalGrade"
                                     label={'Ijazah/ CGPA/ Gred'}
                                     type="text"
@@ -1204,6 +1215,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     disabled
+                                    isRequired={false}
                                     id="field"
                                     label={'Catatan'}
                                     type="text"
@@ -1273,6 +1285,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     disabled
+                                    isRequired={false}
                                     id="company"
                                     label={'Nama Majikan'}
                                     type="text"
@@ -1283,6 +1296,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     disabled
+                                    isRequired={false}
                                     id="address"
                                     label={'Alamat Majikan'}
                                     type="text"
@@ -1293,6 +1307,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     disabled
+                                    isRequired={false}
                                     id="position"
                                     label={'Jawatan'}
                                     type="text"
@@ -1303,6 +1318,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     disabled
+                                    isRequired={false}
                                     id="positionCode"
                                     label={'Kod Jawatan (jika ada)'}
                                     type="text"
@@ -1313,6 +1329,7 @@
                                     placeholder="-"
                                     type="date"
                                     disabled
+                                    isRequired={false}
                                     id="startDate"
                                     label="Tarikh Mula Bekerja"
                                     bind:val={$experienceInfoForm.experiences[i]
@@ -1323,6 +1340,7 @@
                                     placeholder="-"
                                     type="date"
                                     disabled
+                                    isRequired={false}
                                     id="endDate"
                                     label="Tarikh Tamat Bekerja"
                                     bind:val={$experienceInfoForm.experiences[i]
@@ -1332,6 +1350,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     disabled
+                                    isRequired={false}
                                     id="salary"
                                     label={'Gaji'}
                                     type="number"
@@ -1401,7 +1420,8 @@
                             <CustomTabContent title={`Aktiviti #${i + 1}`}>
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled={$isReadonlyActivityFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     id="addName"
                                     label={'Nama Kegiatan'}
                                     type="text"
@@ -1411,7 +1431,8 @@
 
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled={$isReadonlyActivityFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     type="date"
                                     id="addJoinDate"
                                     label={'Tarikh Keahlian'}
@@ -1421,7 +1442,8 @@
 
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled={$isReadonlyActivityFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     id="addPosition"
                                     label={'Jawatan'}
                                     type="text"
@@ -1431,7 +1453,8 @@
 
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled={$isReadonlyActivityFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     id="addDescription"
                                     label={'Catatan'}
                                     type="text"
@@ -1511,7 +1534,8 @@
                                     id="addName"
                                     label={'Nama'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .name}
                                 ></CustomTextField>
@@ -1521,7 +1545,8 @@
                                     id="addAlternativeName"
                                     label={'Nama Lain'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .alternativeName}
                                 ></CustomTextField>
@@ -1530,7 +1555,8 @@
                                     label={'Jenis Kad Pengenalan'}
                                     options={data.selectionOptions
                                         .identityCardColorLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .identityDocumentColor}
                                 ></CustomSelectField>
@@ -1539,7 +1565,8 @@
                                     id="addIdentityDocumentNumber"
                                     type="number"
                                     label={'Nombor Kad Pengenalan'}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .identityDocumentNumber}
                                 ></CustomTextField>
@@ -1548,7 +1575,8 @@
                                     placeholder="-"
                                     id="addAddress"
                                     label={'Alamat'}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .address}
                                 ></CustomTextField>
@@ -1558,14 +1586,16 @@
                                     id="addPostcode"
                                     label={'Poskod'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .postcode}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     type="date"
                                     id="addBirthDate"
                                     label={'Tarikh Lahir'}
@@ -1578,7 +1608,8 @@
                                     label={'Negara Kelahiran'}
                                     options={data.selectionOptions
                                         .countryLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .birthCountryId}
                                 ></CustomSelectField>
@@ -1587,7 +1618,8 @@
                                     id="addBirthStateId"
                                     label={'Negeri Kelahiran'}
                                     options={data.selectionOptions.stateLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .birthStateId}
                                 ></CustomSelectField>
@@ -1597,7 +1629,8 @@
                                     label={'Hubungan'}
                                     options={data.selectionOptions
                                         .relationshipLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .relationshipId}
                                 ></CustomSelectField>
@@ -1607,7 +1640,8 @@
                                     label={'Taraf Pendidikan'}
                                     options={data.selectionOptions
                                         .educationLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .educationLevelId}
                                 ></CustomSelectField>
@@ -1616,7 +1650,8 @@
                                     id="addRaceId"
                                     label={'Bangsa'}
                                     options={data.selectionOptions.raceLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .raceId}
                                 ></CustomSelectField>
@@ -1626,7 +1661,8 @@
                                     label={'Kewarganegaraan'}
                                     options={data.selectionOptions
                                         .nationalityLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .nationalityId}
                                 ></CustomSelectField>
@@ -1636,7 +1672,8 @@
                                     label={'Status Perkahwinan'}
                                     options={data.selectionOptions
                                         .maritalLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .maritalId}
                                 ></CustomSelectField>
@@ -1645,7 +1682,8 @@
                                     id="addGenderId"
                                     label={'Jantina'}
                                     options={data.selectionOptions.genderLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .genderId}
                                 ></CustomSelectField>
@@ -1655,7 +1693,8 @@
                                     id="addWorkAddress"
                                     label={'Alamat Majikan'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .workAddress}
                                 ></CustomTextField>
@@ -1665,7 +1704,8 @@
                                     id="addWorkPostcode"
                                     label={'Poskod Majikan'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .workPostcode}
                                 ></CustomTextField>
@@ -1675,7 +1715,8 @@
                                     id="addPhoneNumber"
                                     label={'Nombor Telefon'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .phoneNumber}
                                 ></CustomTextField>
@@ -1684,6 +1725,8 @@
                                     <CustomTextField
                                         placeholder="-"
                                         type="date"
+                                        disabled
+                                        isRequired={false}
                                         id="addMarriageDate"
                                         label={'Tarikh Kahwin'}
                                         bind:val={$familyInfoForm.dependencies[
@@ -1697,7 +1740,8 @@
                                     label={'Bersekolah'}
                                     options={data.selectionOptions
                                         .generalLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .inSchool}
                                 ></CustomSelectField>
@@ -1773,7 +1817,8 @@
                                     id="addName"
                                     label={'Nama'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].name}
@@ -1784,7 +1829,8 @@
                                     id="addAlternativeName"
                                     label={'Nama Lain'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].alternativeName}
@@ -1794,7 +1840,8 @@
                                     label={'Jenis Kad Pengenalan'}
                                     options={data.selectionOptions
                                         .identityCardColorLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].identityDocumentColor}
@@ -1804,7 +1851,8 @@
                                     id="addIdentityDocumentNumber"
                                     type="number"
                                     label={'Nombor Kad Pengenalan'}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].identityDocumentNumber}
@@ -1814,7 +1862,8 @@
                                     placeholder="-"
                                     id="addAddress"
                                     label={'Alamat'}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].address}
@@ -1825,7 +1874,8 @@
                                     id="addPostcode"
                                     label={'Poskod'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].postcode}
@@ -1833,7 +1883,8 @@
 
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     type="date"
                                     id="addBirthDate"
                                     label={'Tarikh Lahir'}
@@ -1847,7 +1898,8 @@
                                     label={'Negara Kelahiran'}
                                     options={data.selectionOptions
                                         .countryLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].birthCountryId}
@@ -1857,7 +1909,8 @@
                                     id="addBirthStateId"
                                     label={'Negeri Kelahiran'}
                                     options={data.selectionOptions.stateLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].birthStateId}
@@ -1868,7 +1921,8 @@
                                     label={'Hubungan'}
                                     options={data.selectionOptions
                                         .relationshipLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].relationshipId}
@@ -1879,7 +1933,8 @@
                                     label={'Taraf Pendidikan'}
                                     options={data.selectionOptions
                                         .educationLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].educationLevelId}
@@ -1889,7 +1944,8 @@
                                     id="addRaceId"
                                     label={'Bangsa'}
                                     options={data.selectionOptions.raceLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].raceId}
@@ -1900,7 +1956,8 @@
                                     label={'Kewarganegaraan'}
                                     options={data.selectionOptions
                                         .nationalityLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].nationalityId}
@@ -1911,7 +1968,8 @@
                                     label={'Status Perkahwinan'}
                                     options={data.selectionOptions
                                         .maritalLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].maritalId}
@@ -1921,7 +1979,8 @@
                                     id="addGenderId"
                                     label={'Jantina'}
                                     options={data.selectionOptions.genderLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].genderId}
@@ -1932,7 +1991,8 @@
                                     id="addWorkAddress"
                                     label={'Alamat Majikan'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].workAddress}
@@ -1943,7 +2003,8 @@
                                     id="addWorkPostcode"
                                     label={'Poskod Majikan'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].workPostcode}
@@ -1954,7 +2015,8 @@
                                     id="addPhoneNumber"
                                     label={'Nombor Telefon'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].phoneNumber}
@@ -1964,6 +2026,8 @@
                                     <CustomTextField
                                         placeholder="-"
                                         type="date"
+                                        disabled
+                                        isRequired={false}
                                         id="addMarriageDate"
                                         label={'Tarikh Kahwin'}
                                         bind:val={$dependencyInfoForm
@@ -1976,7 +2040,8 @@
                                     label={'Bersekolah'}
                                     options={data.selectionOptions
                                         .generalLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$dependencyInfoForm.dependencies[
                                         i
                                     ].inSchool}
@@ -2053,7 +2118,8 @@
                                     id="addName"
                                     label={'Nama'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .name}
                                 ></CustomTextField>
@@ -2063,7 +2129,8 @@
                                     id="addAlternativeName"
                                     label={'Nama Lain'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .alternativeName}
                                 ></CustomTextField>
@@ -2072,7 +2139,8 @@
                                     label={'Jenis Kad Pengenalan'}
                                     options={data.selectionOptions
                                         .identityCardColorLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .identityDocumentColor}
                                 ></CustomSelectField>
@@ -2081,7 +2149,8 @@
                                     id="addIdentityDocumentNumber"
                                     type="number"
                                     label={'Nombor Kad Pengenalan'}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .identityDocumentNumber}
                                 ></CustomTextField>
@@ -2090,7 +2159,8 @@
                                     placeholder="-"
                                     id="addAddress"
                                     label={'Alamat'}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .address}
                                 ></CustomTextField>
@@ -2100,14 +2170,16 @@
                                     id="addPostcode"
                                     label={'Poskod'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .postcode}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     type="date"
                                     id="addBirthDate"
                                     label={'Tarikh Lahir'}
@@ -2120,7 +2192,8 @@
                                     label={'Negara Kelahiran'}
                                     options={data.selectionOptions
                                         .countryLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .birthCountryId}
                                 ></CustomSelectField>
@@ -2129,7 +2202,8 @@
                                     id="addBirthStateId"
                                     label={'Negeri Kelahiran'}
                                     options={data.selectionOptions.stateLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .birthStateId}
                                 ></CustomSelectField>
@@ -2139,7 +2213,8 @@
                                     label={'Hubungan'}
                                     options={data.selectionOptions
                                         .relationshipLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .relationshipId}
                                 ></CustomSelectField>
@@ -2149,7 +2224,8 @@
                                     label={'Taraf Pendidikan'}
                                     options={data.selectionOptions
                                         .educationLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .educationLevelId}
                                 ></CustomSelectField>
@@ -2158,7 +2234,8 @@
                                     id="addRaceId"
                                     label={'Bangsa'}
                                     options={data.selectionOptions.raceLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .raceId}
                                 ></CustomSelectField>
@@ -2168,7 +2245,8 @@
                                     label={'Kewarganegaraan'}
                                     options={data.selectionOptions
                                         .nationalityLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .nationalityId}
                                 ></CustomSelectField>
@@ -2178,7 +2256,8 @@
                                     label={'Status Perkahwinan'}
                                     options={data.selectionOptions
                                         .maritalLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .maritalId}
                                 ></CustomSelectField>
@@ -2187,7 +2266,8 @@
                                     id="addGenderId"
                                     label={'Jantina'}
                                     options={data.selectionOptions.genderLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .genderId}
                                 ></CustomSelectField>
@@ -2197,7 +2277,8 @@
                                     id="addWorkAddress"
                                     label={'Alamat Majikan'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .workAddress}
                                 ></CustomTextField>
@@ -2207,7 +2288,8 @@
                                     id="addWorkPostcode"
                                     label={'Poskod Majikan'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .workPostcode}
                                 ></CustomTextField>
@@ -2217,7 +2299,8 @@
                                     id="addPhoneNumber"
                                     label={'Nombor Telefon'}
                                     type="text"
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .phoneNumber}
                                 ></CustomTextField>
@@ -2226,6 +2309,8 @@
                                     <CustomTextField
                                         placeholder="-"
                                         type="date"
+                                        disabled
+                                        isRequired={false}
                                         id="addMarriageDate"
                                         label={'Tarikh Kahwin'}
                                         bind:val={$nextOfKinInfoForm
@@ -2238,7 +2323,8 @@
                                     label={'Bersekolah'}
                                     options={data.selectionOptions
                                         .generalLookup}
-                                    disabled={$isReadonlyFamilyFormStepper}
+                                    disabled
+                                    isRequired={false}
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .inSchool}
                                 ></CustomSelectField>
@@ -2664,6 +2750,7 @@
                         <CustomTextField
                             placeholder="-"
                             disabled={$isReadonlyServiceFormStepper}
+                            isRequired={false}
                             errors={$serviceInfoErrors.pensionNumber}
                             id="pensionNumber"
                             label={'Nombor Pencen'}
@@ -2701,12 +2788,13 @@
                                     id="revisionMonth"
                                     label="Bulan Berkuatkuasa"
                                     bind:val={$serviceInfoForm.revisionMonth}
-                                    options={kgtMonthLookup}
+                                    options={kgtMonthStringLookup}
                                 ></CustomSelectField>
 
                                 <CustomTextField
                                     placeholder="-"
                                     disabled
+                                    isRequired={false}
                                     errors={$serviceInfoErrors.kgt}
                                     id="kgt"
                                     type="number"
@@ -3027,6 +3115,7 @@
                             <CustomTextField
                                 placeholder="-"
                                 disabled
+                                isRequired={false}
                                 id="employeeNumber"
                                 label="Nombor Pekerja (Dijana secara automatik oleh sistem setelah lulus)"
                                 bind:val={data.newHireFullDetailView
