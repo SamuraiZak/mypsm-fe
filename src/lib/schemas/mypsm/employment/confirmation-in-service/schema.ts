@@ -116,3 +116,13 @@ export const _confirmationFullDetailSchema = z.object({
     audit: _confirmationApprovalSchema,
     meeting: _confirmationMeetingResultSchema,
 });
+
+export const _confirmationExamsChecklistSchema = z.object({
+    conformationId: z.number(),
+    checker: shortTextSchema,
+    confirmationExamOneStatus: booleanSchema,
+    confirmationExamTwoStatus: booleanSchema,
+    confirmationExamThreeStatus: booleanSchema,
+    confirmationExamFourStatus: booleanSchema,
+    confirmationExamFiveStatus: booleanSchema,
+});
