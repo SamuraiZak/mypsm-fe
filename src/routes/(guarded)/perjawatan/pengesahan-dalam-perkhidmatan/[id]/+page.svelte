@@ -3,7 +3,7 @@
     import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
-    import { Badge } from 'flowbite-svelte';
+    import { Badge, Checkbox } from 'flowbite-svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
@@ -48,6 +48,7 @@
         _addConfirmationMeetingResult,
         _addConfirmationStateDirector,
     } from './+page';
+    import { _addInterimApprovalSchema } from '$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas';
     export let data: PageData;
 
     let confirmationEmploymentSecretaryIsApproved = writable<boolean>(false);
@@ -57,6 +58,7 @@
     let confirmationMeetingResultIsApproved = writable<boolean>(false);
 
     let isTypeConfirmationExceedsThreeYears = writable<boolean>(false);
+    let submitChecklist: boolean = false;
     let isReadOnlyEmploymentSecretaryConfirmationInServiceApproval =
         writable<boolean>(false);
     let isReadOnlyDivisionDirectorConfirmationInServiceApproval =
@@ -160,6 +162,22 @@
         dataType: 'json',
         validators: false,
     });
+
+    const { form: checklistForm, enhance: checklistEnhance } = superForm(
+        data.forms.checklistForm,
+        {
+            SPA: true,
+            dataType: 'json',
+            invalidateAll: true,
+            taintedMessage: false,
+            resetForm: false,
+            id: 'checklistForm',
+            validators: false,
+        },
+    );
+    // if ($checklistForm.checker !== undefined) {
+    //     submitChecklist = true;
+    // }
 
     const { form: diciplinaryDetailForm } = superForm(
         data.forms.diciplinaryInfoForm,
@@ -740,10 +758,183 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader
-            title="Senarai Peperiksaan Perkhidmatan / Kursus Induksi"
+            title="Semakan Peperiksaan Perkhidmatan / Kursus Induksi Yang Diduduki"
         />
         <StepperContentBody>
             <div class="flex w-full flex-col gap-2.5">
+                <form
+                    class="flex w-full flex-col items-start justify-start gap-4 p-3 pb-10"
+                    method="POST"
+                    use:checklistEnhance
+                    id="checklistForm"
+                >
+                    <table
+                        class="table max-h-full w-full table-auto border-collapse"
+                    >
+                        <thead class="sticky top-0 z-[1]">
+                            <tr
+                                class="h-7 min-h-7 border bg-ios-systemColors-quaternarySystemFill-light"
+                            >
+                                {#each data.lookups.examTableColumn as col, i}
+                                    <th
+                                        class="h-full {i == 0
+                                            ? 'w-[70%]'
+                                            : 'w-[15%]'} border px-2.5"
+                                    >
+                                        <div
+                                            class="flex h-full flex-row items-center justify-center"
+                                        >
+                                            <span
+                                                class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                                            >
+                                                {col.name}
+                                            </span>
+                                        </div>
+                                    </th>
+                                {/each}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="p-none gap-none h-10 border">
+                                <td
+                                    class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                >
+                                    <div
+                                        class="flex h-9 items-center bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                    >
+                                        <span>Program Transformasi Minda</span>
+                                    </div>
+                                </td>
+                                <td
+                                    class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                >
+                                    <div
+                                        class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                    >
+                                        <Checkbox
+                                            class={submitChecklist
+                                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                                : ''}
+                                            disabled={submitChecklist}
+                                            bind:checked={$checklistForm.confirmationExamOneStatus}
+                                        />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="p-none gap-none h-10 border">
+                                <td
+                                    class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                >
+                                    <div
+                                        class="flex h-9 flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                    >
+                                        <span>Peperiksaan JPA</span>
+                                        <span class="text-[10px] italic"
+                                            >Bahagian A / B</span
+                                        >
+                                    </div>
+                                </td>
+                                <td
+                                    class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                >
+                                    <div
+                                        class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                    >
+                                        <Checkbox
+                                            class={submitChecklist
+                                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                                : ''}
+                                            disabled={submitChecklist}
+                                            bind:checked={$checklistForm.confirmationExamTwoStatus}
+                                        />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="p-none gap-none h-10 border">
+                                <td
+                                    class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                >
+                                    <div
+                                        class="flex h-9 flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                    >
+                                        <span>Peperiksaan Jabatan</span>
+                                        <span class="text-[10px] italic"
+                                            >Bahagian II/III/IV</span
+                                        >
+                                    </div>
+                                </td>
+                                <td
+                                    class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                >
+                                    <div
+                                        class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                    >
+                                        <Checkbox
+                                            class={submitChecklist
+                                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                                : ''}
+                                            disabled={submitChecklist}
+                                            bind:checked={$checklistForm.confirmationExamThreeStatus}
+                                        />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="p-none gap-none h-10 border">
+                                <td
+                                    class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                >
+                                    <div
+                                        class="flex h-9 items-center bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                    >
+                                        <span>ISAC</span>
+                                    </div>
+                                </td>
+                                <td
+                                    class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                >
+                                    <div
+                                        class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                    >
+                                        <Checkbox
+                                            class={submitChecklist
+                                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                                : ''}
+                                            disabled={submitChecklist}
+                                            bind:checked={$checklistForm.confirmationExamFourStatus}
+                                        />
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="p-none gap-none h-10 border">
+                                <td
+                                    class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                >
+                                    <div
+                                        class="flex h-9 items-center bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                    >
+                                        <span>ISAC (PTSU)</span>
+                                    </div>
+                                </td>
+                                <td
+                                    class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                >
+                                    <div
+                                        class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                    >
+                                        <Checkbox
+                                            class={submitChecklist
+                                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                                : ''}
+                                            disabled={submitChecklist}
+                                            bind:checked={$checklistForm.confirmationExamFiveStatus}
+                                        />
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+
                 <DataTable
                     title="Sejarah Peperiksaan(Perkhidmatan/Kursus Induksi) Yang Pernah Diduduki"
                     bind:tableData={examsListTable}
