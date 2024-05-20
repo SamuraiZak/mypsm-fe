@@ -11,6 +11,7 @@ import {
     _confirmationApprovalSchema,
     _confirmationDiciplinarySchema,
     _confirmationExaminationSchema,
+    _confirmationExamsChecklistSchema,
     _confirmationMeetingResultSchema,
     _confirmationPersonalDetailSchema,
     _confirmationServiceSchema,
@@ -87,9 +88,14 @@ export async function load({ params }) {
         { errors: false },
     );
 
+    const checklistForm = await superValidate(zod(_confirmationExamsChecklistSchema));
     // ==========================================================================
     // Get Lookup Functions
     // ==========================================================================
+    const examTableColumn = [
+        { name: 'Jenis Peperiksaan Perkhidmatan/Kursus Induksi' },
+        { name: 'Semakan (Lulus/Gagal)' },
+    ];
     const identityCardColorLookupResponse: CommonResponseDTO =
         await LookupServices.getICTypeEnums();
 
@@ -327,8 +333,10 @@ export async function load({ params }) {
             integrityDirectorApprovalForm,
             auditDirectorInfoForm,
             confirmationMeetingForm,
+            checklistForm,
         },
         lookups: {
+            examTableColumn,
             generalLookup,
             identityCardColorLookup,
             genderLookup,
