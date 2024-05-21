@@ -482,6 +482,13 @@ export async function load({ params }) {
 
     const schemeLookup: DropdownDTO[] =
         LookupServices.setSelectOptions(schemeLookupResponse);
+    // ===========================================================================
+
+    const bankLookupResponse: CommonResponseDTO =
+        await LookupServices.getBankEnums();
+
+    const bankLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsValueIsDescription(bankLookupResponse);
 
     // ===========================================================================
 
@@ -540,6 +547,7 @@ export async function load({ params }) {
             programLookup,
             relationshipLookup,
             institutionLookup,
+            bankLookup,
             schemeLookup,
             educationLookup,
             sponsorshipLookup,

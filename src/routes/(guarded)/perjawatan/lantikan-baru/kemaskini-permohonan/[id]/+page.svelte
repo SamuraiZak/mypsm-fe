@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { kgtMonthStringLookup } from '$lib/constants/core/dropdown.constant';
+    import { kgtMonthStringLookup } from '$lib/constants/core/dropdown.constant';
     import type { Dependency } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-dependencies-details.dto';
     import type { NextOfKin } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto';
     import StepperFailStatement from '$lib/components/stepper/StepperFailStatement.svelte';
@@ -268,10 +268,14 @@
         multipleSubmits: 'prevent',
         validationMethod: 'auto',
         validators: zod(_serviceInfoResponseSchema),
+        onChange() {
+            $serviceInfoForm.retirementDate = setRetirementYear();
+        },
         onSubmit(formData) {
             _submitServiceForm(Number(data.params.id), formData.formData);
         },
     });
+    $serviceInfoForm.employmentStatusId = 2;
 
     const {
         form: secretaryApprovalInfoForm,
@@ -712,6 +716,26 @@
         $documentForm.document = $documentForm.document.filter((_, index) => {
             return index !== i;
         });
+    };
+
+    // method to set retirement year
+    const setRetirementYear = (): string => {
+        const inputAge: number = $serviceInfoForm.retirementAge;
+
+        const birthdate: string = $form.birthDate;
+        let outputDate = new Date(birthdate);
+
+        // Adds by input age
+        outputDate.setFullYear(outputDate.getFullYear() + inputAge);
+
+        // Set the new Date string
+        let day = ('0' + outputDate.getDate()).slice(-2);
+        let month = ('0' + (outputDate.getMonth() + 1)).slice(-2);
+        let year = String(outputDate.getFullYear());
+
+        const endDate: string = `${year}-${month}-${day}`;
+
+        return endDate;
     };
 </script>
 
@@ -2578,7 +2602,7 @@
                         ></CustomSelectField>
 
                         <CustomSelectField
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled
                             errors={$serviceInfoErrors.employmentStatusId}
                             id="employmentStatusId"
                             label="Status Perkhidmatan"
@@ -2637,12 +2661,7 @@
                             errors={$serviceInfoErrors.bankName}
                             id="bankName"
                             label={'Nama Bank'}
-                            options={[
-                                {
-                                    value: 0,
-                                    name: 'Sample',
-                                },
-                            ]}
+                            options={data.selectionOptions.bankLookup}
                             bind:val={$serviceInfoForm.bankName}
                         ></CustomSelectField>
 
@@ -2759,7 +2778,7 @@
 
                         <CustomTextField
                             placeholder="-"
-                            type="date"
+                            type="number"
                             disabled={$isReadonlyServiceFormStepper}
                             errors={$serviceInfoErrors.retirementAge}
                             id="retirementAge"
@@ -2767,7 +2786,7 @@
                             bind:val={$serviceInfoForm.retirementAge}
                         ></CustomTextField>
 
-                        <!-- <CustomTextField
+                        <CustomTextField
                             placeholder="-"
                             type="date"
                             disabled
@@ -2775,7 +2794,7 @@
                             id="retirementDate"
                             label={'Tarikh Bersara'}
                             bind:val={$serviceInfoForm.retirementDate}
-                        ></CustomTextField> -->
+                        ></CustomTextField>
 
                         <p class={stepperFormTitleClass}>
                             Maklumat Gaji dan Elaun - Elaun
