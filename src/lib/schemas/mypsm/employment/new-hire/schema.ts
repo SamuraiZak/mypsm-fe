@@ -328,7 +328,10 @@ export const _serviceDetailSchema = z.object({
     pensionNumber: z.string().nullish(),
     kgt: numberSchema,
     retirementAge: numberSchema,
-    retirementDate: dateStringSchema,
+    retirementDate: dateStringSchema.refine(
+        (data) => new Date(data) >= new Date(),
+        { message: 'Tarikh bersara tidak boleh kurang dari tahun semasa.' },
+    ),
     revisionMonth: codeSchema,
     maximumSalary: numberSchema,
     baseSalary: numberSchema,
