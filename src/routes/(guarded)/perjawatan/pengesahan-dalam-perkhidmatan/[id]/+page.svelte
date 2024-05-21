@@ -1273,6 +1273,20 @@
                 {/if}
             </StepperContentBody>
         </StepperContent>
+        <StepperContent>
+            <StepperContentHeader title="Surat Pengesahan">
+                <!-- {#if !data.view.confirmationInServiceView.meeting.isReadonly && data.roles.isEmploymentSecretaryRole}
+                    <TextIconButton
+                        type="primary"
+                        label="Simpan"
+                        form="confirmationMeetingDetailForm"
+                    ></TextIconButton>
+                {/if} -->
+            </StepperContentHeader>
+            <StepperContentBody>
+                IN CONSTRUCTION..
+            </StepperContentBody>
+        </StepperContent>
     {/if}
 </Stepper>
 
