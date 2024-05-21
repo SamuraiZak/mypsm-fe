@@ -62,7 +62,7 @@ export const _relationDetailSchema = z.object({
 
 export const _personalInfoResponseSchema = z.object({
     name: shortTextSchema,
-    alternativeName: shortTextSchema.nullable(),
+    alternativeName:  z.string(),
     identityCardNumber: shortTextSchema,
     identityDocumentColor: shortTextSchema,
     email: shortTextSchema,
