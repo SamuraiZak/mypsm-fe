@@ -391,7 +391,7 @@ export class ModuleConstant {
                 ],
             },
             {
-                name: 'Gaji Akir',
+                name: 'Gaji Akhir',
                 url: '/gaji/gaji-akhir',
                 roles: [UserRoleConstant.urusSetiaGaji],
             },
