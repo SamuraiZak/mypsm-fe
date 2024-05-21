@@ -35,7 +35,7 @@
         dictionary: [
             {
                 english: 'programme',
-                malay: 'Program',
+                malay: 'Penempatan Sekarang',
             },
         ],
         url: 'employment/acting/employee_lists/list',

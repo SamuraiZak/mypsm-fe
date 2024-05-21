@@ -82,6 +82,7 @@
     import {
         approveOptions,
         confirmOptions,
+        integrityOptions,
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
     import type { MainPromotionMeeting } from '$lib/dto/mypsm/employment/acting/main-promotion-meeting-detail.dto';
@@ -110,7 +111,7 @@
                     }
                 })
                 .finally(() => {
-                     if (stepper == 2) {
+                    if (stepper == 2) {
                         _submitEmployeeNeedPlacementAmendmentForm(
                             $employeeNeedPlacementAmendmentForm,
                         ).then((res) => {
@@ -298,9 +299,9 @@
         url: 'employment/acting/interview_result_marks/list',
         id: 'interviewResultTable',
         option: {
-            checkbox: !allMarked ? true : false,
+            checkbox: false,
             detail: false,
-            edit: false,
+            edit: !allMarked ? true : false,
             select: false,
             filter: false,
         },
@@ -308,9 +309,12 @@
             add: false,
         },
     };
-    $: interviewResultTable.data = interviewResultTable.data ;
+
+    //control stepper keputusan temuduga
+    $: interviewResultTable.data = interviewResultTable.data;
     $: allMarked = data.interviewResult.every((item) => item.marks !== null);
-    $: interviewResultTable.option.checkbox = !allMarked;
+    $: interviewResultTable.option.edit = !allMarked;
+
     let promotionMeetingResultTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.promotionMeetingResponse.data?.meta ?? {
@@ -337,7 +341,6 @@
             add: false,
         },
     };
-    $: data.promotionMeetingResult = data.promotionMeetingResult;
     let placementTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.placementDetailResponse.data?.meta ?? {
@@ -373,7 +376,6 @@
             add: false,
         },
     };
-    $: placementTable.data;
     let postponeTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.postponeListResponse.data?.meta ?? {
@@ -409,7 +411,6 @@
             add: false,
         },
     };
-    $: postponeTable.data;
     let postponeResultTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.postponeResultResponse.data?.meta ?? {
@@ -454,7 +455,6 @@
     } else {
         postponeResultTable.option.detail = false;
     }
-    $: postponeResultTable.data;
     let actingConfirmationTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.actingConfirmationResponse.data?.meta ?? {
@@ -490,7 +490,6 @@
             add: false,
         },
     };
-    $: actingConfirmationTable.data
 
     //gred utama table starts here
     let isMainChecked: boolean = true;
@@ -529,7 +528,6 @@
             add: false,
         },
     };
-    $: mainCertification.data;
     let mainPromotionTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
         meta: data.mainActingPromotionListResponse.data?.meta ?? {
@@ -561,8 +559,6 @@
             add: false,
         },
     };
-    $: mainPromotionTable.data;
-    $: mainCertification.data;
     $: {
         if (
             data.currentRoleCode == UserRoleConstant.urusSetiaIntegriti.code &&
@@ -623,7 +619,7 @@
             add: false,
         },
     };
-    $: mainActingInfoTable.data;
+
     // ======================= validation
     const {
         form: updateChosenCandidateForm,
@@ -648,7 +644,7 @@
                 ).then((res) => {
                     if (res?.response.status == 'success') {
                         checkPhaseTwo = true;
-                        interviewInfoTable.data = data.interviewInfo
+                        interviewInfoTable.data = data.interviewInfo;
                     }
                 });
             }
@@ -709,14 +705,14 @@
         validators: zod(_updateMeetingDetailSchema),
         onSubmit() {
             $updateMeetingDetailForm.batchId = data.batchId.batchId;
-            _submitUpdateMeetingDetailForm(
-                            $updateMeetingDetailForm,
-                        ).then((res) => {
-                            if (res?.response.status == 'success') {
-                                meetingDetailExist = true;
-                                interviewResultTable.data = data.interviewResult;
-                            }
-                        });
+            _submitUpdateMeetingDetailForm($updateMeetingDetailForm).then(
+                (res) => {
+                    if (res?.response.status == 'success') {
+                        meetingDetailExist = true;
+                        interviewResultTable.data = data.interviewResult;
+                    }
+                },
+            );
         },
     });
     if ($updateMeetingDetailForm.interviewTime == undefined) {
@@ -734,23 +730,17 @@
         id: 'updateMeetingResultForm',
         validators: zod(_updateMeetingResult),
         onSubmit() {
-            if (interviewResultTable.selectedData.length < 1) {
-                meetingResultModal = true;
-            } else {
-                interviewResultTable.selectedData.forEach((val: any) => {
-                    $updateMeetingResultForm.actingIds.push(
-                        Number(val?.actingId),
-                    );
-                });
-                _submitUpdateMeetingResultForm($updateMeetingResultForm).then(
-                    (res) => {
-                        if (res?.response.status == 'success') {
-                            interviewResultTable.selectedData = [];
-                            interviewResultTable.data = data.interviewResult;
-                        }
-                    },
-                );
-            }
+            $updateMeetingResultForm.actingIds.push(
+                selectedCandidate?.actingId,
+            );
+            _submitUpdateMeetingResultForm($updateMeetingResultForm).then(
+                (res) => {
+                    if (res?.response.status == 'success') {
+                        interviewResultTable.data = data.interviewResult;
+                        meetingResultModal = false;
+                    }
+                },
+            );
         },
     });
     let updatedPromotionMeeting: boolean = false;
@@ -1828,7 +1818,7 @@
                                         ?.employeeNumber}
                                 />
                                 <CustomTextField
-                                    label="Nama"
+                                    label="Nama Kakitangan"
                                     disabled
                                     id="employeeName"
                                     val={mainActingInfoDetail?.employeeDetails
@@ -2092,7 +2082,7 @@
                                         id="status"
                                         label="Keputusan"
                                         disabled={integrityApproved}
-                                        options={confirmOptions}
+                                        options={integrityOptions}
                                         bind:val={$integrityResultForm.status}
                                         errors={$integrityResultError.status}
                                     />
@@ -2158,8 +2148,12 @@
                                 />
                                 <Alert color="blue">
                                     <p>
-                                        <span class="font-medium">Arahan: </span>
-                                        Semak senarai kakitangan yang dipilih dan tekan tombol tambah untuk meluluskan calon ke proses yang seterusnya.
+                                        <span class="font-medium"
+                                            >Arahan:
+                                        </span>
+                                        Semak senarai kakitangan yang dipilih dan
+                                        tekan tombol tambah untuk meluluskan calon
+                                        ke proses yang seterusnya.
                                     </p>
                                 </Alert>
                                 <ContentHeader
@@ -2299,57 +2293,34 @@
                 </StepperContent>
 
                 <StepperContent>
-                    <StepperContentHeader title="Kemaskini Keputusan Temuduga">
-                    </StepperContentHeader>
+                    <StepperContentHeader
+                        title="Kemaskini Keputusan Temuduga"
+                    />
                     <StepperContentBody>
-                        <form
+                        <div
                             class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
-                            id="updateMeetingResultForm"
-                            method="POST"
-                            use:updateMeetingResultEnhance
                         >
-                            {#if !allMarked}
-                                <Alert color="blue">
-                                    <p>
-                                        <span class="font-medium"
-                                            >Arahan:
-                                        </span>
-                                        Tekan tombol tambah untuk tetapkan markah
-                                        temuduga kakitangan yang dikehendaki.
-                                    </p>
-                                </Alert>
-                                <ContentHeader
-                                    title="Maklumat Markah Keseluruhan"
-                                    borderClass="border-none"
-                                />
-                                <div class="flex w-full justify-between items-center gap-6 h-fit">
-                                <CustomTextField
-                                    label="Markah Keseluruhan"
-                                    id="marks"
-                                    type="number"
-                                    disabled={allMarked}
-                                    placeholder=""
-                                    bind:val={$updateMeetingResultForm.marks}
-                                    errors={$updateMeetingResultError.marks}
-                                />
-                                <TextIconButton
-                                label="Simpan"
-                                icon="check"
-                                form="updateMeetingResultForm"
-                            />
-                            </div>
-                            {/if}
-                            <div
-                                class="flex w-full flex-col justify-start gap-2.5 pb-10"
-                            >
+                            <Alert color="blue">
+                                <p>
+                                    <span class="font-medium">Arahan: </span>
+                                    Tetapkan markah temuduga untuk setiap kakitangan
+                                    yang berkaitan.
+                                </p>
+                            </Alert>
+
+                            <div class="flex w-full flex-col">
                                 <div class="h-fit w-full">
                                     <DataTable
                                         title="Keputusan Temuduga Untuk Calon Terpilih"
                                         bind:tableData={interviewResultTable}
-                                    ></DataTable>
+                                        bind:passData={selectedCandidate}
+                                        editActions={() => {
+                                            meetingResultModal = true;
+                                        }}
+                                    />
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </StepperContentBody>
                 </StepperContent>
 
@@ -2458,7 +2429,7 @@
                                         .employeeNumber}
                                 />
                                 <CustomTextField
-                                    label="Nama"
+                                    label="Nama Kakitangan"
                                     disabled
                                     id="employeeName"
                                     bind:val={employeePromotionDetail.candidate
@@ -2581,7 +2552,7 @@
                                     val={selectedCandidate?.employeeNumber}
                                 />
                                 <CustomTextField
-                                    label="Nama"
+                                    label="Nama Kakitangan"
                                     disabled
                                     id="employeeName"
                                     val={selectedCandidate?.employeeName}
@@ -2916,7 +2887,7 @@
                                             ?.employeeNumber}
                                     />
                                     <CustomTextField
-                                        label="Nama"
+                                        label="Nama Kakitangan"
                                         disabled
                                         id="employeeName"
                                         val={employeeActingResult.candidate
@@ -3186,7 +3157,7 @@
                                             .candidate?.employeeNumber}
                                     />
                                     <CustomTextField
-                                        label="Nama"
+                                        label="Nama Kakitangan"
                                         disabled
                                         id="employeeName"
                                         val={employeeActingConfirmation
@@ -3321,8 +3292,7 @@
                 </StepperContent>
 
                 <StepperContent>
-                    <StepperContentHeader
-                        title="Keputusan Mesyuarat"
+                    <StepperContentHeader title="Keputusan Mesyuarat"
                     ></StepperContentHeader>
                     <StepperContentBody>
                         <div class="flex w-full flex-col gap-2.5 p-3 pb-10">
@@ -3520,7 +3490,8 @@
                                     disabled
                                     placeholder="Menunggu keputusan daripada pihak berkaitan.."
                                     id="actingPosition"
-                                    val={data.employeeFinalResult?.actingPosition}
+                                    val={data.employeeFinalResult
+                                        ?.actingPosition}
                                 />
                                 <CustomTextField
                                     label="Tarikh Berkuatkuasa"
@@ -3548,8 +3519,7 @@
                                     disabled
                                     placeholder="Menunggu keputusan daripada pihak berkaitan.."
                                     id="reportingDate"
-                                    val={data.employeeFinalResult
-                                        ?.reportDate}
+                                    val={data.employeeFinalResult?.reportDate}
                                 />
                                 <CustomTextField
                                     label="Tarikh Tamat Pemangkuan"
@@ -3660,7 +3630,7 @@
                                     id="approverName"
                                     val={data.employeeMainFinalResult?.approver}
                                 />
-                                {#if data.employeeMainFinalResult   ?.approver !== undefined}
+                                {#if data.employeeMainFinalResult?.approver !== undefined}
                                     <span
                                         class="text-sm italic text-ios-labelColors-secondaryLabel-light"
                                         >Tahniah! Anda telah berjaya dalam
@@ -3711,26 +3681,70 @@
         />
     </div>
 </Modal>
-<Modal title="Sistem MyPSM" bind:open={meetingResultModal} size="sm">
-    <Alert color="red">
-        {#if data.actingType == 'Utama'}
+<Modal
+    title="Sistem MyPSM"
+    bind:open={meetingResultModal}
+    color="navbarUl"
+    size="md"
+>
+    {#if data.actingType == 'Utama'}
+        <Alert color="red">
             <p>
                 <span class="font-medium">Ralat! </span>
                 Sila pilih kakitangan terlebih dahulu untuk menetapkan perakuan.
             </p>
-        {:else}
-            <p>
-                <span class="font-medium">Ralat! </span>
-                Sila pilih kakitangan terlebih dahulu untuk menetapkan markah temuduga.
-            </p>
-        {/if}
-    </Alert>
+        </Alert>
+    {:else}
+        <form
+            class="flex w-full flex-col justify-start gap-6"
+            id="updateMeetingResultForm"
+            method="POST"
+            use:updateMeetingResultEnhance
+        >
+            <Alert color="blue" class="flex flex-col gap-2.5">
+                <p>
+                    <span class="font-medium">Nama Kakitangan: </span>
+                    {selectedCandidate?.employeeName}
+                </p>
+                <p>
+                    <span class="font-medium">No. Kad Pengenalan: </span>
+                    {selectedCandidate?.ICNumber}
+                </p>
+                <p>
+                    <span class="font-medium">No. Pekerja: </span>
+                    {selectedCandidate?.employeeNumber}
+                </p>
+                <div class="flex w-full justify-start items-center gap-1">
+                    <span class="font-medium">Markah Temuduga (%): </span>
+                    <div class="flex items-center justify-center">
+                        <CustomTextField
+                            label=""
+                            id="marks"
+                            type="number"
+                            disabled={allMarked}
+                            placeholder=""
+                            bind:val={$updateMeetingResultForm.marks}
+                            errors={$updateMeetingResultError.marks}
+                        />
+                    </div>
+                </div>
+            </Alert>
+        </form>
+    {/if}
     <div class="flex justify-center gap-3">
-        <TextIconButton
-            label="Kembali"
-            icon="previous"
-            type="neutral"
-            onClick={() => (meetingResultModal = false)}
-        />
+        {#if data.actingType == 'Utama'}
+            <TextIconButton
+                label="Kembali"
+                icon="previous"
+                type="neutral"
+                onClick={() => (meetingResultModal = false)}
+            />
+        {:else}
+            <TextIconButton
+                label="Hantar"
+                icon="check"
+                form="updateMeetingResultForm"
+            />
+        {/if}
     </div>
 </Modal>
