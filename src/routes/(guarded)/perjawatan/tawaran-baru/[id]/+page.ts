@@ -353,6 +353,13 @@ export async function load({ params }) {
 
     const employmentStatusLookup: DropdownDTO[] =
         LookupServices.setSelectOptions(employmentStatusLookupResponse);
+    // ===========================================================================
+
+    const bankLookupResponse: CommonResponseDTO =
+        await LookupServices.getBankEnums();
+
+    const bankLookup: DropdownDTO[] =
+        LookupServices.setSelectOptions(bankLookupResponse);
 
     // ===========================================================================
 
@@ -433,6 +440,7 @@ export async function load({ params }) {
             titleLookup,
             assetDeclarationLookup,
             placementLookup,
+            bankLookup,
             serviceGroupLookup,
             unitLookup,
             serviceTypeLookup,

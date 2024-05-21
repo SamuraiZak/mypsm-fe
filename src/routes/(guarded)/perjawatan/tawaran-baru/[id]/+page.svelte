@@ -950,9 +950,7 @@
                                             id="bankName"
                                             label={'Name Bank'}
                                             placeholder="-"
-                                            options={[
-                                                { value: 0, name: 'Sample' },
-                                            ]}
+                                            options={data.lookups.bankLookup}
                                             bind:val={$newOfferServiceDetailForm
                                                 .employees[index].bankName}
                                         ></CustomSelectField>
