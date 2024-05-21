@@ -185,14 +185,16 @@
                     return true; // Keep the element if the condition is not met
                 });
 
-            console.log($newOfferServiceDetailForm);
-
             _updateNewOfferProcessForm(
                 Number(data.params.id),
                 $newOfferServiceDetailForm,
             );
         },
     });
+
+    $newOfferServiceDetailForm.employees.forEach(
+        (emp) => (emp.serviceTypeId = 2),
+    );
 
     const {
         form: newOfferSetSupporterApproverDetailForm,
