@@ -88,6 +88,7 @@
     import { zod } from 'sveltekit-superforms/adapters';
     import { RetirementBenefitDropdownConstant } from '$lib/constants/dropdown/retirement-benefit.constant';
     export let data: PageData;
+    let activeIndex: number = 0;
 
     let newHireSecretaryApprovalIsApproved = writable<boolean>(false);
     let newHireSupporterApprovalIsApproved = writable<boolean>(false);
@@ -755,7 +756,7 @@
         }}
     /></ContentHeader
 >
-<Stepper>
+<Stepper bind:activeIndex>
     <!------------------------------------------------------>
     <!---------------Maklumat Peribadi---------------------->
     <!------------------------------------------------------>
@@ -1098,6 +1099,11 @@
                     label="Simpan"
                     onClick={() => triggerSubmitAcademicTempData()}
                 />
+                <TextIconButton
+                    type="neutral"
+                    label="Tidak Berkaitan"
+                    onClick={() => activeIndex++}
+                />
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
@@ -1265,6 +1271,11 @@
                     label="Simpan"
                     onClick={() => triggerSubmitExperienceTempData()}
                 />
+                <TextIconButton
+                    type="neutral"
+                    label="Tidak Berkaitan"
+                    onClick={() => activeIndex++}
+                />
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
@@ -1401,6 +1412,11 @@
                     label="Simpan"
                     onClick={() => triggerSubmitActivityTempData()}
                 />
+                <TextIconButton
+                    type="neutral"
+                    label="Tidak Berkaitan"
+                    onClick={() => activeIndex++}
+                />
             {/if}</StepperContentHeader
         >
         <StepperContentBody>
@@ -1505,6 +1521,11 @@
                     onClick={() => {
                         triggerSubmitFamilyTempData();
                     }}
+                />
+                <TextIconButton
+                    type="neutral"
+                    label="Tidak Berkaitan"
+                    onClick={() => activeIndex++}
                 />
             {/if}
         </StepperContentHeader>
@@ -1787,6 +1808,11 @@
                     onClick={() => {
                         triggerSubmitDependencyTempData();
                     }}
+                />
+                <TextIconButton
+                    type="neutral"
+                    label="Tidak Berkaitan"
+                    onClick={() => activeIndex++}
                 />
             {/if}
         </StepperContentHeader>
@@ -2089,6 +2115,11 @@
                     type="primary"
                     label="Simpan"
                     onClick={() => triggerSubmitNextOfKinTempData()}
+                />
+                <TextIconButton
+                    type="neutral"
+                    label="Tidak Berkaitan"
+                    onClick={() => activeIndex++}
                 />
             {/if}
         </StepperContentHeader>
