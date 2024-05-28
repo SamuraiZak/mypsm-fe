@@ -2810,7 +2810,7 @@
                                     options={kgtMonthStringLookup}
                                 ></CustomSelectField>
 
-                                <CustomTextField
+                                <!-- <CustomTextField
                                     placeholder="-"
                                     disabled
                                     isRequired={false}
@@ -2819,7 +2819,7 @@
                                     type="number"
                                     label={'KGT (RM)'}
                                     bind:val={$serviceInfoForm.kgt}
-                                ></CustomTextField>
+                                ></CustomTextField> -->
                                 <CustomTextField
                                     placeholder="-"
                                     disabled={$isReadonlyServiceFormStepper}
