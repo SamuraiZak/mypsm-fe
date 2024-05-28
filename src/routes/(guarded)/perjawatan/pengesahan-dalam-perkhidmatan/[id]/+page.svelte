@@ -34,6 +34,7 @@
     import {
         approveOptions,
         certifyOptions,
+        commonOptions,
         confirmOptions,
     } from '$lib/constants/core/radio-option-constants';
     import { zod } from 'sveltekit-superforms/adapters';
@@ -51,6 +52,7 @@
     import { _addInterimApprovalSchema } from '$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas';
     export let data: PageData;
 
+    let isContractContinuation: boolean = false;
     let confirmationEmploymentSecretaryIsApproved = writable<boolean>(false);
     let confirmationDivisionDirectorIsApproved = writable<boolean>(false);
     let confirmationIntegrityDirectorIsApproved = writable<boolean>(false);
@@ -935,10 +937,10 @@
                     </table>
                 </form>
 
-                <DataTable
+                <!-- <DataTable
                     title="Sejarah Peperiksaan(Perkhidmatan/Kursus Induksi) Yang Pernah Diduduki"
                     bind:tableData={examsListTable}
-                />
+                /> -->
             </div>
         </StepperContentBody>
     </StepperContent>
@@ -953,6 +955,43 @@
             </div>
         </StepperContentBody>
     </StepperContent>
+    {#if $isTypeConfirmationExceedsThreeYears}
+        <StepperContent>
+            <StepperContentHeader title="Lanjutan Percubaan Perkhidmatan" />
+            <StepperContentBody>
+                <div class="flex w-full flex-col gap-2.5">
+                    <CustomSelectField
+                        disabled={false}
+                        isRequired={false}
+                        id="gradeId"
+                        label="Keputusan"
+                        placeholder="-"
+                        options={commonOptions}
+                        bind:val={isContractContinuation}
+                    ></CustomSelectField>
+
+                    {#if isContractContinuation}
+                        <CustomTextField
+                            type="date"
+                            disabled={false}
+                            id="effectiveDate"
+                            label={'Tarikh Mula Lanjutan'}
+                            placeholder="-"
+                            bind:val={$serviceDetailForm.effectiveDate}
+                        ></CustomTextField>
+                        <CustomTextField
+                            type="number"
+                            disabled={false}
+                            id="effectiveDate"
+                            label={'Tempoh Lanjutan (Bulan)'}
+                            placeholder="-"
+                            bind:val={$serviceDetailForm.effectiveDate}
+                        ></CustomTextField>
+                    {/if}
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+    {/if}
     <StepperContent>
         <StepperContentHeader
             title="Keputusan Pengesahan Dalam Perhidmatan Daripada Peranan - Peranan Bertanggungjawab"
@@ -1283,9 +1322,7 @@
                     ></TextIconButton>
                 {/if} -->
             </StepperContentHeader>
-            <StepperContentBody>
-                IN CONSTRUCTION..
-            </StepperContentBody>
+            <StepperContentBody>IN CONSTRUCTION..</StepperContentBody>
         </StepperContent>
     {/if}
 </Stepper>
