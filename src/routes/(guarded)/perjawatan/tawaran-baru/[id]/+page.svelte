@@ -54,6 +54,8 @@
     import { RetirementBenefitDropdownConstant } from '$lib/constants/dropdown/retirement-benefit.constant';
     export let data: PageData;
 
+    let allNewOfferSupporterStatusAndRemarksNotNull = false;
+    let allNewOfferApproverStatusAndRemarksNotNull = false;
     let newOfferMeetingResultsAreNotApproved = writable<boolean>(true);
     let newOfferSupporterIsApproved = writable<boolean>(false);
     let newOfferApproverIsApproved = writable<boolean>(false);
@@ -95,28 +97,36 @@
             isReadOnlyNewOfferSetApprovers.set(false);
         }
 
-        if (
-            data.view.newOfferDetailView.supporter.status !== null &&
-            data.view.newOfferDetailView.supporter.remark !== null
-        ) {
+        data.view.newOfferDetailView.supporter.results.forEach(
+            (data, index) => {
+                if (data.status === null || data.remarks === null) {
+                    allNewOfferSupporterStatusAndRemarksNotNull = false;
+                }
+            },
+        );
+
+        if (allNewOfferSupporterStatusAndRemarksNotNull) {
             isReadOnlyNewOfferSupporterResult.set(true);
 
-            data.view.newOfferDetailView.supporter.status
-                ? newOfferSupporterIsApproved.set(true)
-                : newOfferSupporterIsApproved.set(false);
+            // data.view.newOfferDetailView.supporter.status
+            //     ? newOfferSupporterIsApproved.set(true)
+            //     : newOfferSupporterIsApproved.set(false);
         } else {
             isReadOnlyNewOfferSupporterResult.set(false);
         }
 
-        if (
-            data.view.newOfferDetailView.approver.status !== null &&
-            data.view.newOfferDetailView.approver.remark !== null
-        ) {
+        data.view.newOfferDetailView.approver.results.forEach((data, index) => {
+            if (data.status === null || data.remarks === null) {
+                allNewOfferApproverStatusAndRemarksNotNull = false;
+            }
+        });
+
+        if (allNewOfferApproverStatusAndRemarksNotNull) {
             isReadOnlyNewOfferApprovalResult.set(true);
 
-            data.view.newOfferDetailView.approver.status
-                ? newOfferApproverIsApproved.set(true)
-                : newOfferApproverIsApproved.set(false);
+            // data.view.newOfferDetailView.approver.status
+            //     ? newOfferApproverIsApproved.set(true)
+            //     : newOfferApproverIsApproved.set(false);
         } else {
             isReadOnlyNewOfferApprovalResult.set(false);
         }
@@ -289,10 +299,10 @@
 </script>
 
 <ContentHeader title="Maklumat Tawaran Baru">
-    {#if $isReadOnlyNewOfferApprovalResult && $newOfferApproverIsApproved}
+    {#if $isReadOnlyNewOfferApprovalResult}
         <Badge color="dark">Proses Tawaran Baru Tamat</Badge>
     {/if}
-    {#if ($isReadOnlyNewOfferMeetingResult && $newOfferMeetingResultsAreNotApproved) || ($isReadOnlyNewOfferSupporterResult && !$newOfferSupporterIsApproved) || ($isReadOnlyNewOfferApprovalResult && !$newOfferApproverIsApproved)}
+    {#if $isReadOnlyNewOfferMeetingResult && $newOfferMeetingResultsAreNotApproved}
         <Badge color="red">Proses Tawaran Baru Diberhentikan</Badge>
     {/if}
 
@@ -1186,23 +1196,48 @@
                                             >Penyokong</b
                                         >
                                     </div>
-                                    <CustomTextField
-                                        disabled={data.view.newOfferDetailView
-                                            .supporter.isReadonly}
-                                        errors={$newOfferSupporterResultFormErrors.remark}
-                                        id="approverRemark"
-                                        label="Tindakan/Ulasan"
-                                        bind:val={$newOfferSupporterResultForm.remark}
-                                    ></CustomTextField>
-                                    <CustomRadioBoolean
-                                        disabled={data.view.newOfferDetailView
-                                            .supporter.isReadonly}
-                                        errors={$newOfferSupporterResultFormErrors.status}
-                                        id="approverIsApproved"
-                                        options={supportOptions}
-                                        label={'Keputusan'}
-                                        bind:val={$newOfferSupporterResultForm.status}
-                                    ></CustomRadioBoolean>
+                                    {#each $newOfferSupporterResultForm.results as _, i}
+                                        <CustomTextField
+                                            disabled={data.view
+                                                .newOfferDetailView.supporter
+                                                .isReadonly}
+                                            id="applicantId"
+                                            label="Nombor Kakitangan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].employeeNumber}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled={data.view
+                                                .newOfferDetailView.supporter
+                                                .isReadonly}
+                                            id="applicantName"
+                                            label="Nama Kakitangan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].employeeName}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled={data.view
+                                                .newOfferDetailView.supporter
+                                                .isReadonly}
+                                            id="supporterRemark"
+                                            label="Tindakan/Ulasan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].remarks}
+                                        ></CustomTextField>
+
+                                        <CustomRadioBoolean
+                                            disabled={data.view
+                                                .newOfferDetailView.supporter
+                                                .isReadonly}
+                                            id="supporterIsApproved"
+                                            options={supportOptions}
+                                            label={'Keputusan'}
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].status}
+                                        ></CustomRadioBoolean>
+                                    {/each}
                                 </form>
                             {:else if !data.view.newOfferDetailView.approver.isReadonly && data.roles.isApproverRole}
                                 <form
@@ -1216,23 +1251,48 @@
                                             >Pelulus</b
                                         >
                                     </div>
-                                    <CustomTextField
-                                        disabled={data.view.newOfferDetailView
-                                            .approver.isReadonly}
-                                        errors={$newOfferApproverResultFormErrors.remark}
-                                        id="approverRemark"
-                                        label="Tindakan/Ulasan"
-                                        bind:val={$newOfferApproverResultForm.remark}
-                                    ></CustomTextField>
-                                    <CustomRadioBoolean
-                                        disabled={data.view.newOfferDetailView
-                                            .approver.isReadonly}
-                                        errors={$newOfferApproverResultFormErrors.status}
-                                        id="approverIsApproved"
-                                        options={approveOptions}
-                                        label={'Keputusan'}
-                                        bind:val={$newOfferApproverResultForm.status}
-                                    ></CustomRadioBoolean>
+                                    {#each $newOfferSupporterResultForm.results as _, i}
+                                        <CustomTextField
+                                            disabled={data.view
+                                                .newOfferDetailView.supporter
+                                                .isReadonly}
+                                            id="applicantId"
+                                            label="Nombor Kakitangan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].employeeNumber}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled={data.view
+                                                .newOfferDetailView.supporter
+                                                .isReadonly}
+                                            id="applicantName"
+                                            label="Nama Kakitangan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].employeeName}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled={data.view
+                                                .newOfferDetailView.supporter
+                                                .isReadonly}
+                                            id="approverRemark"
+                                            label="Tindakan/Ulasan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].remarks}
+                                        ></CustomTextField>
+
+                                        <CustomRadioBoolean
+                                            disabled={data.view
+                                                .newOfferDetailView.supporter
+                                                .isReadonly}
+                                            id="approverIsApproved"
+                                            options={approveOptions}
+                                            label={'Keputusan'}
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].status}
+                                        ></CustomRadioBoolean>
+                                    {/each}
                                 </form>
                             {/if}
 
@@ -1245,19 +1305,40 @@
                                     >
                                 </div>
                                 {#if $isReadOnlyNewOfferSupporterResult}
-                                    <CustomTextField
-                                        disabled
-                                        id="remark"
-                                        label="Tindakan/Ulasan"
-                                        bind:val={$newOfferSupporterResultForm.remark}
-                                    ></CustomTextField>
-                                    <CustomSelectField
-                                        disabled
-                                        id="status"
-                                        options={supportOptions}
-                                        label={'Keputusan'}
-                                        bind:val={$newOfferSupporterResultForm.status}
-                                    ></CustomSelectField>
+                                    {#each $newOfferSupporterResultForm.results as _, i}
+                                        <CustomTextField
+                                            disabled
+                                            id="applicantId"
+                                            label="Nombor Kakitangan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].employeeNumber}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled
+                                            id="applicantName"
+                                            label="Nama Kakitangan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].employeeName}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled
+                                            id="supporterRemark"
+                                            label="Tindakan/Ulasan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].remarks}
+                                        ></CustomTextField>
+
+                                        <CustomSelectField
+                                            disabled
+                                            id="supporterStatus"
+                                            options={supportOptions}
+                                            label={'Keputusan'}
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].status}
+                                        ></CustomSelectField>
+                                    {/each}
                                 {:else}
                                     <StepperOtherRolesResult />
                                 {/if}
@@ -1268,19 +1349,40 @@
                                     >
                                 </div>
                                 {#if $isReadOnlyNewOfferApprovalResult}
-                                    <CustomTextField
-                                        disabled
-                                        id="remark"
-                                        label="Tindakan/Ulasan"
-                                        bind:val={$newOfferApproverResultForm.remark}
-                                    ></CustomTextField>
-                                    <CustomSelectField
-                                        disabled
-                                        id="status"
-                                        options={approveOptions}
-                                        label={'Keputusan'}
-                                        bind:val={$newOfferApproverResultForm.status}
-                                    ></CustomSelectField>
+                                    {#each $newOfferSupporterResultForm.results as _, i}
+                                        <CustomTextField
+                                            disabled
+                                            id="applicantId"
+                                            label="Nombor Kakitangan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].employeeNumber}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled
+                                            id="applicantName"
+                                            label="Nama Kakitangan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].employeeName}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled
+                                            id="approverRemark"
+                                            label="Tindakan/Ulasan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].remarks}
+                                        ></CustomTextField>
+
+                                        <CustomSelectField
+                                            disabled
+                                            id="approverStatus"
+                                            options={approveOptions}
+                                            label={'Keputusan'}
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].status}
+                                        ></CustomSelectField>
+                                    {/each}
                                 {:else}
                                     <StepperOtherRolesResult />
                                 {/if}
