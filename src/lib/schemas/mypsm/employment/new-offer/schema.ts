@@ -1,20 +1,24 @@
 import {
-    booleanSchema,
     codeSchema,
     dateStringSchema,
     numberIdSchema,
     numberSchema,
     numberToStringSchema,
     requiredDateStringSchema,
-    shortTextSchema,
 } from '$lib/schemas/common/schema-type';
 import * as z from 'zod';
+
+export const _meetingResultEmployeeSchema = z.object({
+    employeeNumber: z.string(),
+    employeeName: z.string(),
+    remarks: z.string(),
+    status: z.boolean(),
+});
 
 export const _approverSchema = z.object({
     id: z.number(),
     name: z.string(),
-    remark: shortTextSchema,
-    status: booleanSchema,
+    results: z.array(_meetingResultEmployeeSchema),
     isReadonly: z.boolean().readonly(),
 });
 
@@ -72,13 +76,6 @@ export const _includedEmployeeDetailEmployeeSchema = z.object({
     relationName: z.null(),
     relationPosition: z.null(),
     relationship: z.null(),
-});
-
-export const _meetingResultEmployeeSchema = z.object({
-    employeeNumber: z.string(),
-    employeeName: z.string(),
-    remarks: z.string(),
-    status: z.boolean(),
 });
 
 export const _processEmployeeSchema = z.object({
