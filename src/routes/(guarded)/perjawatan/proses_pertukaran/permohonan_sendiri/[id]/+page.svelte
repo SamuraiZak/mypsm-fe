@@ -608,7 +608,7 @@
             <!-- ================================= -->
             <!-- TRANSFER DOCUMENT -->
             <!-- ================================= -->
-            {#if data.props.currentApplicationDetail.reason !== null}
+            <!-- {#if data.props.currentApplicationDetail.reason !== null}
                 <StepperContent>
                     <StepperContentHeader title="Dokumen Keperluan Pertukaran">
                         {#if data.props.currentApplicationDetail.transferDocument == null && data.props.userMode == 'secretary'}
@@ -678,7 +678,7 @@
                         {/if}
                     </StepperContentBody>
                 </StepperContent>
-            {/if}
+            {/if} -->
 
             <!-- ================================= -->
             <!-- FIRST DIRECTOR APPROVAL -->
@@ -704,8 +704,9 @@
                                         <span class="font-medium"
                                             >Tiada Maklumat!</span
                                         >
-                                        {data.props.currentApplicationDetail
-                                            .status}
+                                        Menunggu maklum balas daripada Pengarah Negeri/Bahagian
+                                        <!-- {data.props.currentApplicationDetail
+                                            .status} -->
                                     </p>
                                 </Alert>
                             </div>
@@ -752,7 +753,7 @@
             <!-- ================================= -->
             <!-- SECOND DIRECTOR APPROVAL -->
             <!-- ================================= -->
-            {#if data.props.currentApplicationDetail.confirmation !== null}
+            <!-- {#if data.props.currentApplicationDetail.confirmation !== null}
                 <StepperContent>
                     <StepperContentHeader
                         title="Maklum Balas Pengarah Penempatan Pilihan Kedua"
@@ -816,12 +817,182 @@
                         {/if}
                     </StepperContentBody>
                 </StepperContent>
+            {/if} -->
+
+            <!-- ================================= -->
+            <!-- MEETING -->
+            <!-- ================================= -->
+            {#if data.props.currentApplicationDetail.firstDirector !== null}
+                <StepperContent>
+                    <StepperContentHeader title="Keputusan Mesyuarat">
+                        {#if data.props.currentApplicationDetail.meetingDetail == null && data.props.userMode == 'secretary'}
+                            <TextIconButton
+                                label="Hantar"
+                                icon="check"
+                                form="meetingResultForm"
+                            ></TextIconButton>
+                            <TextIconButton
+                                label="Set Semula"
+                                type="neutral"
+                                icon="reset"
+                                onClick={() => {
+                                    meetingResultForm.set(
+                                        data.forms.meetingResultForm.data,
+                                    );
+                                }}
+                            ></TextIconButton>
+                        {/if}
+                    </StepperContentHeader>
+                    <StepperContentBody>
+                        {#if data.props.currentApplicationDetail.meetingDetail == null && data.props.userMode !== 'secretary'}
+                            <div class="flex w-full flex-col gap-10 px-3 pb-10">
+                                <Alert color="blue">
+                                    <p>
+                                        <span class="font-medium"
+                                            >Tiada Maklumat!</span
+                                        >
+                                        Menunggu keputusan mesyuarat.
+                                        <!-- {data.props.currentApplicationDetail
+                                                .status} -->
+                                    </p>
+                                </Alert>
+                            </div>
+                        {:else}
+                            <div
+                                class="flex h-full w-full flex-col items-start justify-start"
+                            >
+                                <form
+                                    id="meetingResultForm"
+                                    method="POST"
+                                    use:meetingResultEnhance
+                                    class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
+                                >
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomTextField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .meetingDetail !== null}
+                                            id="name"
+                                            label={'Name Mesyuarat'}
+                                            type="text"
+                                            errors={$meetingResultErrors.name}
+                                            bind:val={$meetingResultForm.name}
+                                        ></CustomTextField>
+                                    </div>
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomTextField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .meetingDetail !== null}
+                                            id="date"
+                                            label={'Tarikh Mesyuarat'}
+                                            type="date"
+                                            errors={$meetingResultErrors.date}
+                                            bind:val={$meetingResultForm.date}
+                                        ></CustomTextField>
+                                    </div>
+
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomSelectField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .meetingDetail !== null}
+                                            id="result"
+                                            label={'Keputusan Mesyuarat'}
+                                            bind:val={$meetingResultForm.result}
+                                            options={data.props
+                                                .meetingResultOption}
+                                        ></CustomSelectField>
+                                    </div>
+
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomSelectField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .meetingDetail !== null}
+                                            id="placementId"
+                                            label={'Penempatan Baru (jika ada perubahan dari penempatan cadangan asal)'}
+                                            bind:val={$meetingResultForm.placementId}
+                                            options={data.props
+                                                .placementListDropdown}
+                                        ></CustomSelectField>
+                                    </div>
+
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomSelectField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .meetingDetail !== null}
+                                            id="programmeId"
+                                            label={'Program'}
+                                            bind:val={$meetingResultForm.programmeId}
+                                            options={data.props
+                                                .programmeListDropdown}
+                                        ></CustomSelectField>
+                                    </div>
+
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomTextField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .meetingDetail !== null}
+                                            id="effectiveDate"
+                                            label={'Tarikh Berkuatkuasa (jika ada perubahan dari tarikh pertukaran asal)'}
+                                            type="date"
+                                            errors={$meetingResultErrors.effectiveDate}
+                                            bind:val={$meetingResultForm.effectiveDate}
+                                        ></CustomTextField>
+                                    </div>
+
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomTextField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .meetingDetail !== null}
+                                            id="referenceNo"
+                                            label={'Nombor Rujukan Surat'}
+                                            type="text"
+                                            errors={$meetingResultErrors.referenceNo}
+                                            bind:val={$meetingResultForm.referenceNo}
+                                        ></CustomTextField>
+                                    </div>
+
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomTextField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .meetingDetail !== null}
+                                            id="referenceDate"
+                                            label={'Tarikh Surat'}
+                                            type="date"
+                                            errors={$meetingResultErrors.referenceDate}
+                                            bind:val={$meetingResultForm.referenceDate}
+                                        ></CustomTextField>
+                                    </div>
+
+                                    <div class="flex w-full flex-col gap-2">
+                                        <CustomSelectField
+                                            disabled={data.props
+                                                .currentApplicationDetail
+                                                .meetingDetail !== null}
+                                            id="directorIC"
+                                            label={'Lapor Diri Kepada'}
+                                            bind:val={$meetingResultForm.directorIC}
+                                            options={data.props
+                                                .employeeDropdown}
+                                        ></CustomSelectField>
+                                    </div>
+                                </form>
+                            </div>
+                        {/if}
+                    </StepperContentBody>
+                </StepperContent>
             {/if}
 
             <!-- ================================= -->
             <!-- POSTPONEMENT APPLICATION -->
             <!-- ================================= -->
-            {#if data.props.currentApplicationDetail.firstDirector !== null || data.props.currentApplicationDetail.secondDirector !== null}
+            {#if data.props.currentApplicationDetail.meetingDetail !== null}
                 <StepperContent>
                     <StepperContentHeader title="Permohonan Penangguhan">
                         {#if data.props.currentApplicationDetail.postponeDetail == null && data.props.userMode == 'employee'}
@@ -850,8 +1021,9 @@
                                         <span class="font-medium"
                                             >Tiada Maklumat!</span
                                         >
-                                        {data.props.currentApplicationDetail
-                                            .status}
+                                        Menunggu maklum balas daripada Kakitangan
+                                        <!-- {data.props.currentApplicationDetail
+                                            .status} -->
                                     </p>
                                 </Alert>
                             </div>
@@ -1230,179 +1402,6 @@
                                         </Alert>
                                     </div>
                                 {/if}
-                            {/if}
-                        </StepperContentBody>
-                    </StepperContent>
-                {/if}
-            {/if}
-
-            <!-- ================================= -->
-            <!-- MEETING -->
-            <!-- ================================= -->
-            {#if data.props.currentApplicationDetail.postponeDocument !== null}
-                {#if data.props.currentApplicationDetail.postponeDetail?.isPostpone == false || data.props.currentApplicationDetail.postponeApproval !== null}
-                    <StepperContent>
-                        <StepperContentHeader title="Keputusan Mesyuarat">
-                            {#if data.props.currentApplicationDetail.meetingDetail == null && data.props.userMode == 'secretary'}
-                                <TextIconButton
-                                    label="Hantar"
-                                    icon="check"
-                                    form="meetingResultForm"
-                                ></TextIconButton>
-                                <TextIconButton
-                                    label="Set Semula"
-                                    type="neutral"
-                                    icon="reset"
-                                    onClick={() => {
-                                        meetingResultForm.set(
-                                            data.forms.meetingResultForm.data,
-                                        );
-                                    }}
-                                ></TextIconButton>
-                            {/if}
-                        </StepperContentHeader>
-                        <StepperContentBody>
-                            {#if data.props.currentApplicationDetail.meetingDetail == null && data.props.userMode !== 'secretary'}
-                                <div
-                                    class="flex w-full flex-col gap-10 px-3 pb-10"
-                                >
-                                    <Alert color="blue">
-                                        <p>
-                                            <span class="font-medium"
-                                                >Tiada Maklumat!</span
-                                            >
-                                            {data.props.currentApplicationDetail
-                                                .status}
-                                        </p>
-                                    </Alert>
-                                </div>
-                            {:else}
-                                <div
-                                    class="flex h-full w-full flex-col items-start justify-start"
-                                >
-                                    <form
-                                        id="meetingResultForm"
-                                        method="POST"
-                                        use:meetingResultEnhance
-                                        class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
-                                    >
-                                        <div class="flex w-full flex-col gap-2">
-                                            <CustomTextField
-                                                disabled={data.props
-                                                    .currentApplicationDetail
-                                                    .meetingDetail !== null}
-                                                id="name"
-                                                label={'Name Mesyuarat'}
-                                                type="text"
-                                                errors={$meetingResultErrors.name}
-                                                bind:val={$meetingResultForm.name}
-                                            ></CustomTextField>
-                                        </div>
-                                        <div class="flex w-full flex-col gap-2">
-                                            <CustomTextField
-                                                disabled={data.props
-                                                    .currentApplicationDetail
-                                                    .meetingDetail !== null}
-                                                id="date"
-                                                label={'Tarikh Mesyuarat'}
-                                                type="date"
-                                                errors={$meetingResultErrors.date}
-                                                bind:val={$meetingResultForm.date}
-                                            ></CustomTextField>
-                                        </div>
-
-                                        <div class="flex w-full flex-col gap-2">
-                                            <CustomSelectField
-                                                disabled={data.props
-                                                    .currentApplicationDetail
-                                                    .meetingDetail !== null}
-                                                id="result"
-                                                label={'Keputusan Mesyuarat'}
-                                                bind:val={$meetingResultForm.result}
-                                                options={data.props
-                                                    .meetingResultOption}
-                                            ></CustomSelectField>
-                                        </div>
-
-                                        <div class="flex w-full flex-col gap-2">
-                                            <CustomSelectField
-                                                disabled={data.props
-                                                    .currentApplicationDetail
-                                                    .meetingDetail !== null}
-                                                id="placementId"
-                                                label={'Penempatan Baru (jika ada perubahan dari penempatan cadangan asal)'}
-                                                bind:val={$meetingResultForm.placementId}
-                                                options={data.props
-                                                    .placementListDropdown}
-                                            ></CustomSelectField>
-                                        </div>
-
-                                        <div class="flex w-full flex-col gap-2">
-                                            <CustomSelectField
-                                                disabled={data.props
-                                                    .currentApplicationDetail
-                                                    .meetingDetail !== null}
-                                                id="programmeId"
-                                                label={'Program'}
-                                                bind:val={$meetingResultForm.programmeId}
-                                                options={data.props
-                                                    .programmeListDropdown}
-                                            ></CustomSelectField>
-                                        </div>
-
-                                        <div class="flex w-full flex-col gap-2">
-                                            <CustomTextField
-                                                disabled={data.props
-                                                    .currentApplicationDetail
-                                                    .meetingDetail !== null}
-                                                id="effectiveDate"
-                                                label={'Tarikh Berkuatkuasa (jika ada perubahan dari tarikh pertukaran asal)'}
-                                                type="date"
-                                                errors={$meetingResultErrors.effectiveDate}
-                                                bind:val={$meetingResultForm.effectiveDate}
-                                            ></CustomTextField>
-                                        </div>
-
-                                        <div class="flex w-full flex-col gap-2">
-                                            <CustomTextField
-                                                disabled={data.props
-                                                    .currentApplicationDetail
-                                                    .meetingDetail !== null}
-                                                id="referenceNo"
-                                                label={'Nombor Rujukan Surat'}
-                                                type="text"
-                                                errors={$meetingResultErrors.referenceNo}
-                                                bind:val={$meetingResultForm.referenceNo}
-                                            ></CustomTextField>
-                                        </div>
-
-                                        <div class="flex w-full flex-col gap-2">
-                                            <CustomTextField
-                                                disabled={data.props
-                                                    .currentApplicationDetail
-                                                    .meetingDetail !== null}
-                                                id="referenceDate"
-                                                label={'Tarikh Surat'}
-                                                type="date"
-                                                errors={$meetingResultErrors.referenceDate}
-                                                bind:val={$meetingResultForm.referenceDate}
-                                            ></CustomTextField>
-                                        </div>
-
-                                        <div class="flex w-full flex-col gap-2">
-                                            <CustomSelectField
-                                                disabled={data.props
-                                                    .currentApplicationDetail
-                                                    .meetingDetail !== null}
-                                                id="directorIC"
-                                                label={'Lapor Diri Kepada'}
-                                                bind:val={$meetingResultForm.directorIC}
-                                                options={data.props
-                                                    .employeeDropdown}
-                                            ></CustomSelectField>
-                                        </div>
-                                    </form>
-                                </div>
                             {/if}
                         </StepperContentBody>
                     </StepperContent>

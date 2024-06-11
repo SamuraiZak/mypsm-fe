@@ -53,8 +53,9 @@ export async function load({ params }) {
     let userMode: string = 'employee';
 
     let currentApplicationType =
-        TransferTypeConstant.list.find((item) => item.description == params.type)
-            ?.code ?? TransferTypeConstant.director.code;
+        TransferTypeConstant.list.find(
+            (item) => item.description == params.type,
+        )?.code ?? TransferTypeConstant.director.code;
 
     switch (currentRoleCode) {
         case UserRoleConstant.kakitangan.code:
@@ -353,6 +354,8 @@ export async function load({ params }) {
             endorserDropdown,
             endorsementDropdown,
             employeeDropdown,
+            employeeResponse,
+            employeeRequest,
             programmeListDropdown,
             meetingResultOption,
         },

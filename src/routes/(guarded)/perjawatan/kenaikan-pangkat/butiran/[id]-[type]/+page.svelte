@@ -76,7 +76,6 @@
     let supporterApproved: boolean = true;
     let approverApproved: boolean = true;
 
-
     let employeeListTable: TableSettingDTO = {
         param: data.param,
         meta: data.employeeListResponse.data?.meta ?? {
@@ -93,6 +92,10 @@
             {
                 english: 'programme',
                 malay: 'Program',
+            },
+            {
+                english: 'employeeName',
+                malay: 'Nama Kakitangan',
             },
         ],
         url: 'employment/promotion/employee_lists/list',
@@ -199,7 +202,11 @@
         data: data.certificationList,
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['employeeId', 'promotionId', data.promotionType == "Utama" ? 'directionCertification' : ""],
+        hiddenColumn: [
+            'employeeId',
+            'promotionId',
+            data.promotionType == 'Utama' ? 'directionCertification' : '',
+        ],
         dictionary: [
             {
                 english: 'integrityCertification',
@@ -465,10 +472,10 @@
         id: 'employeePromotion',
         validators: zod(_editEmployeePromotion),
         onSubmit() {
-            if(!$employeePromotion.status){
+            if (!$employeePromotion.status) {
                 $employeePromotion.supporterName = null;
                 $employeePromotion.approverName = null;
-                $employeePromotion.remark = "Tidak Lulus";
+                $employeePromotion.remark = 'Tidak Lulus';
             }
             _submitEmployeePromotion($employeePromotion).then((res) => {
                 if (res?.response.status == 'success') {
@@ -589,7 +596,7 @@
                         }
                         if ($placementForm.newGrade == null) {
                             placementMeetingExist = false;
-                            $placementForm.newGrade = "VU1"
+                            $placementForm.newGrade = 'VU1';
                         } else {
                             placementMeetingExist = true;
                         }
@@ -730,8 +737,13 @@
     <Stepper>
         {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code}
             {#if data.isNewPromotion}
+                <!-- ========================================================= -->
+                <!-- PEMILIHAN CALON -->
+                <!-- ========================================================= -->
                 <StepperContent>
-                    <StepperContentHeader title="Pemilihan Kakitangan">
+                    <StepperContentHeader
+                        title="Pemilihan Calon Kenaikan Pangkat"
+                    >
                         <TextIconButton
                             type="primary"
                             label="Tambah"
@@ -741,27 +753,35 @@
                     </StepperContentHeader>
                     <StepperContentBody paddingClass="p-none">
                         <CustomTab>
-                            <CustomTabContent title="Pemilihan Kakitangan">
+                            <CustomTabContent
+                                title="Senarai Nama Kakitangan Yang Memangku"
+                            >
                                 <form
-                                    class="flex w-full flex-col gap-2.5 p-3 pb-10"
                                     id="addnewPromotionForm"
                                     method="POST"
                                     use:addnewPromotionEnhance
+                                ></form>
+                                <div
+                                    class="flex w-full flex-col gap-2.5 p-3 pb-10"
                                 >
                                     <Alert color="blue">
                                         <p>
                                             <span class="font-medium"
                                                 >Arahan:
                                             </span>
-                                            Tekan tombol tambah untuk masukkan kakitangan
-                                            ke senarai calon yang dipilih untuk kenaikan
-                                            pangkat.
+                                            Sila tekan butang tambah di pada sebelah
+                                            kiri jadual untuk masukkan kakitangan
+                                            ke dalam senarai calon kenaikan pangkat.
+                                            Klik butang
+                                            <span class="font-medium"
+                                                >Hantar</span
+                                            > setelah selesai.
                                         </p>
                                     </Alert>
                                     <div class="flex w-full">
                                         <div class="h-fit w-full">
                                             <DataTable
-                                                title="Senarai Kakitangan"
+                                                title="Senarai Nama Kakitangan Yang Memangku"
                                                 bind:tableData={employeeListTable}
                                             >
                                                 <FilterWrapper slot="filter">
@@ -796,15 +816,15 @@
                                             </DataTable>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
                             </CustomTabContent>
                             <CustomTabContent
-                                title="Senarai Kakitangan Yang Dipilih"
+                                title="Senarai Calon Kenaikan Pangkat"
                             >
                                 <div class="flex w-full p-3 pb-10">
                                     <div class="h-fit w-full">
                                         <DataTable
-                                            title="Senarai Kakitangan Yang Dipilih"
+                                            title="Senarai Calon Kenaikan Pangkat"
                                             bind:tableData={selectedEmployeeList}
                                         ></DataTable>
                                     </div>
@@ -814,8 +834,13 @@
                     </StepperContentBody>
                 </StepperContent>
             {:else if !data.isNewPromotion}
+                <!-- ========================================================= -->
+                <!-- PERAKUAN -->
+                <!-- ========================================================= -->
                 <StepperContent>
-                    <StepperContentHeader title="Status Perakuan">
+                    <StepperContentHeader
+                        title="Perakuan Senarai Calon Kenaikan Pangkat"
+                    >
                         {#if stepperControl[0]}
                             <TextIconButton
                                 type="neutral"
@@ -840,27 +865,30 @@
                             <div
                                 class="flex w-full flex-col justify-start gap-2.5 p-3"
                             >
-                                <div
-                                    class="flex w-full flex-col gap-2.5 pb-10"
-                                >
-                                {#if data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code}
-                                <Alert color="blue">
-                                    <p>
-                                        <span class="font-medium">Arahan:  </span>
-                                        Tetapkan untuk semua kakitangan berkaitan.
-                                    </p>
-                                </Alert>
-                                {/if}
+                                <div class="flex w-full flex-col gap-2.5 pb-10">
+                                    {#if data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code}
+                                        <Alert color="blue">
+                                            <p>
+                                                <span class="font-medium"
+                                                    >Arahan:
+                                                </span>
+                                                Sila kemaskini perakuan anda bagi
+                                                setiap calon kenaikan pangkat yang
+                                                terlibat.
+                                            </p>
+                                        </Alert>
+                                    {/if}
                                     <div class="h-fit w-full">
                                         <DataTable
-                                            title="Senarai Kakitangan"
+                                            title="Senarai Calon Kenaikan Pangkat"
                                             bind:tableData={certificationTable}
                                             bind:passData={rowData}
                                             detailActions={async () => {
                                                 await getTableInformation(
                                                     1,
                                                 ).finally(
-                                                    () => (stepperControl[0] = true),
+                                                    () =>
+                                                        (stepperControl[0] = true),
                                                 );
                                             }}
                                         ></DataTable>
@@ -870,11 +898,11 @@
                         {:else}
                             <div class="flex w-full flex-col gap-2.5 pb-2.5">
                                 <ContentHeader
-                                    title="Urus Setia Integriti"
+                                    title="Perakuan Urus Setia Integriti"
                                     borderClass="border-none"
                                 />
                                 <form
-                                    class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10 md:w-1/2"
+                                    class="flex w-full flex-col justify-start gap-2.5 px-2 md:w-1/2"
                                     id="integrityForm"
                                     use:integrityEnhance
                                     method="POST"
@@ -897,7 +925,7 @@
                                 </form>
                                 {#if data.promotionType !== 'Utama'}
                                     <ContentHeader
-                                        title="Pengarah Bahagian/Negeri"
+                                        title="Perakuan Pengarah Bahagian/Negeri"
                                         borderClass="border-none"
                                     />
                                     <form
@@ -954,13 +982,21 @@
                             <div
                                 class="flex w-full flex-col justify-center gap-2.5 p-3 pb-10"
                             >
-                            {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
-                                <Alert color="blue">
-                                    <p>
-                                        <span class="font-medium">Arahan:  </span>
-                                        Tetapkan untuk semua kakitangan berkaitan.
-                                    </p>
-                                </Alert>
+                                {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                                    <Alert color="blue">
+                                        <p>
+                                            <span class="font-medium"
+                                                >Arahan:
+                                            </span>
+                                            Sila kemaskini
+                                            <span class="font-medium"
+                                                >Keputusan Mesyuarat Kenaikan
+                                                Pangkat
+                                            </span>
+                                            bagi setiap calon kenaikan pangkat yang
+                                            terlibat.
+                                        </p>
+                                    </Alert>
                                 {/if}
                                 <div class="h-fit w-full">
                                     <DataTable
@@ -971,7 +1007,8 @@
                                             await getTableInformation(
                                                 3,
                                             ).finally(
-                                                () => (stepperControl[1] = true),
+                                                () =>
+                                                    (stepperControl[1] = true),
                                             );
                                         }}
                                     ></DataTable>
@@ -1162,16 +1199,16 @@
                     </StepperContentHeader>
                     <StepperContentBody paddingClass="p-none">
                         {#if !stepperControl[2]}
-                            <div
-                                class="flex w-full flex-col gap-2.5 p-5 pb-10"
-                            >
-                            {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
-                                <Alert color="blue">
-                                    <p>
-                                        <span class="font-medium">Arahan:  </span>
-                                        Tetapkan untuk semua kakitangan berkaitan.
-                                    </p>
-                                </Alert>
+                            <div class="flex w-full flex-col gap-2.5 p-5 pb-10">
+                                {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                                    <Alert color="blue">
+                                        <p>
+                                            <span class="font-medium"
+                                                >Arahan:
+                                            </span>
+                                            Tetapkan untuk semua kakitangan berkaitan.
+                                        </p>
+                                    </Alert>
                                 {/if}
                                 <div class="h-fit w-full">
                                     <DataTable
@@ -1182,7 +1219,8 @@
                                             await getTableInformation(
                                                 1,
                                             ).finally(
-                                                () => (stepperControl[2] = true),
+                                                () =>
+                                                    (stepperControl[2] = true),
                                             );
                                         }}
                                     ></DataTable>
@@ -1277,15 +1315,24 @@
                                                 id="minMaxSalaryNewGrade"
                                                 placeholder=""
                                                 disabled
-                                                val={(currentEmployeeDetail?.secondMinimumSalary !== null ? "RM "+currentEmployeeDetail?.secondMinimumSalary+" - RM "+currentEmployeeDetail?.secondMaximumSalary : "")
-                                            }
+                                                val={currentEmployeeDetail?.secondMinimumSalary !==
+                                                null
+                                                    ? 'RM ' +
+                                                      currentEmployeeDetail?.secondMinimumSalary +
+                                                      ' - RM ' +
+                                                      currentEmployeeDetail?.secondMaximumSalary
+                                                    : ''}
                                             />
                                             <CustomTextField
                                                 label="Kenaikan Gaji Tahunan (Gred Baru)"
                                                 id="secondSalaryRaise"
                                                 disabled
                                                 placeholder=""
-                                                val={currentEmployeeDetail?.secondSalaryRaise !== null ? 'RM '+ currentEmployeeDetail?.secondSalaryRaise : ""}
+                                                val={currentEmployeeDetail?.secondSalaryRaise !==
+                                                null
+                                                    ? 'RM ' +
+                                                      currentEmployeeDetail?.secondSalaryRaise
+                                                    : ''}
                                             />
                                             <CustomTextField
                                                 label="Penempatan Sekarang"
@@ -1384,16 +1431,16 @@
                     </StepperContentHeader>
                     <StepperContentBody>
                         {#if !stepperControl[3]}
-                            <div
-                                class="flex w-full flex-col gap-2.5 p-3 pb-10"
-                            >
-                            {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
-                                <Alert color="blue">
-                                    <p>
-                                        <span class="font-medium">Arahan:  </span>
-                                        Tetapkan untuk semua kakitangan berkaitan.
-                                    </p>
-                                </Alert>
+                            <div class="flex w-full flex-col gap-2.5 p-3 pb-10">
+                                {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                                    <Alert color="blue">
+                                        <p>
+                                            <span class="font-medium"
+                                                >Arahan:
+                                            </span>
+                                            Tetapkan untuk semua kakitangan berkaitan.
+                                        </p>
+                                    </Alert>
                                 {/if}
                                 <div class="h-fit w-full">
                                     <DataTable
@@ -1404,7 +1451,8 @@
                                             await getTableInformation(
                                                 2,
                                             ).finally(
-                                                () => (stepperControl[3] = true),
+                                                () =>
+                                                    (stepperControl[3] = true),
                                             );
                                         }}
                                     ></DataTable>
@@ -1435,31 +1483,31 @@
                                         errors={$employeePromotionError.status}
                                     />
                                     {#if $employeePromotion.status}
-                                    <CustomTextField
-                                        label="Ulasan"
-                                        id="remark"
-                                        disabled={employeePromotionExist}
-                                        bind:val={$employeePromotion.remark}
-                                        errors={$employeePromotionError.remark}
-                                    /> 
-                                    <CustomSelectField
-                                        label="Nama Penyokong"
-                                        id="supporterName"
-                                        disabled={employeePromotionExist}
-                                        options={data.lookup
-                                            .supporterApproverLookup}
-                                        bind:val={$employeePromotion.supporterName}
-                                        errors={$employeePromotionError.supporterName}
-                                    />
-                                    <CustomSelectField
-                                        label="Nama Pelulus"
-                                        id="approverName"
-                                        disabled={employeePromotionExist}
-                                        options={data.lookup
-                                            .supporterApproverLookup}
-                                        bind:val={$employeePromotion.approverName}
-                                        errors={$employeePromotionError.approverName}
-                                    />
+                                        <CustomTextField
+                                            label="Ulasan"
+                                            id="remark"
+                                            disabled={employeePromotionExist}
+                                            bind:val={$employeePromotion.remark}
+                                            errors={$employeePromotionError.remark}
+                                        />
+                                        <CustomSelectField
+                                            label="Nama Penyokong"
+                                            id="supporterName"
+                                            disabled={employeePromotionExist}
+                                            options={data.lookup
+                                                .supporterApproverLookup}
+                                            bind:val={$employeePromotion.supporterName}
+                                            errors={$employeePromotionError.supporterName}
+                                        />
+                                        <CustomSelectField
+                                            label="Nama Pelulus"
+                                            id="approverName"
+                                            disabled={employeePromotionExist}
+                                            options={data.lookup
+                                                .supporterApproverLookup}
+                                            bind:val={$employeePromotion.approverName}
+                                            errors={$employeePromotionError.approverName}
+                                        />
                                     {/if}
                                 </form>
                             </div>
@@ -1494,13 +1542,15 @@
                             <div
                                 class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
                             >
-                            {#if data.currentRoleCode == UserRoleConstant.penyokong.code || data.currentRoleCode == UserRoleConstant.pelulus.code}
-                                <Alert color="blue">
-                                    <p>
-                                        <span class="font-medium">Arahan:  </span>
-                                        Tetapkan untuk semua kakitangan berkaitan.
-                                    </p>
-                                </Alert>
+                                {#if data.currentRoleCode == UserRoleConstant.penyokong.code || data.currentRoleCode == UserRoleConstant.pelulus.code}
+                                    <Alert color="blue">
+                                        <p>
+                                            <span class="font-medium"
+                                                >Arahan:
+                                            </span>
+                                            Tetapkan untuk semua kakitangan berkaitan.
+                                        </p>
+                                    </Alert>
                                 {/if}
                                 <div class="h-fit w-full">
                                     <DataTable
@@ -1511,7 +1561,8 @@
                                             await getTableInformation(
                                                 2,
                                             ).finally(
-                                                () => (stepperControl[4] = true),
+                                                () =>
+                                                    (stepperControl[4] = true),
                                             );
                                         }}
                                     ></DataTable>
@@ -1596,8 +1647,7 @@
             {/if}
         {:else if data.currentRoleCode === UserRoleConstant.kakitangan.code}
             <StepperContent>
-                <StepperContentHeader
-                    title="Butiran Kenaikan Pangkat"
+                <StepperContentHeader title="Butiran Kenaikan Pangkat"
                 ></StepperContentHeader>
                 <StepperContentBody>
                     <div class="flex w-full p-3 pb-10">
