@@ -89,7 +89,7 @@ export class RetirementApplicationServices {
             let url: Input = 'employment/retirement/voluntary/certification';
 
             const promiseResponse: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -115,7 +115,7 @@ export class RetirementApplicationServices {
             let url: Input = 'employment/retirement/voluntary/confirmation';
 
             const promiseResponse: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -141,7 +141,7 @@ export class RetirementApplicationServices {
             let url: Input = 'employment/retirement/voluntary/supporter_approver';
 
             const promiseResponse: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -167,7 +167,7 @@ export class RetirementApplicationServices {
             let url: Input = 'employment/retirement/voluntary/first_supporter';
 
             const promiseResponse: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -193,7 +193,7 @@ export class RetirementApplicationServices {
             let url: Input = 'employment/retirement/voluntary/second_supporter';
 
             const promiseResponse: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -219,7 +219,7 @@ export class RetirementApplicationServices {
             let url: Input = 'employment/retirement/voluntary/appointed_approval';
 
             const promiseResponse: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -245,7 +245,7 @@ export class RetirementApplicationServices {
             let url: Input = 'employment/retirement/voluntary/secretary_approval';
 
             const promiseResponse: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -271,7 +271,7 @@ export class RetirementApplicationServices {
             let url: Input = 'employment/retirement/voluntary/document_certification';
 
             const promiseResponse: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
@@ -294,10 +294,10 @@ export class RetirementApplicationServices {
     //  letterCertification confirmation certification
     static async addRetirementLetterCertification(param: RetirementEndorsement) {
         try {
-            let url: Input = 'employment/retirement/voluntary/document_certification';
+            let url: Input = 'employment/retirement/voluntary/letter_certification';
 
             const promiseResponse: Promise<Response> = http
-                .post(url, {
+                .put(url, {
                     body: JSON.stringify(param),
                 })
                 .json();

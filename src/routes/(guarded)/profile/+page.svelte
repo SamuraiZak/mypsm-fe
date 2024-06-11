@@ -229,7 +229,7 @@
             dataType: 'json',
             id: 'academicDetail',
             invalidateAll: true,
-            resetForm: true,
+            resetForm: false,
             multipleSubmits: 'allow',
             validationMethod: 'oninput',
             validators: false,
@@ -849,22 +849,22 @@
                                 ></CustomTextField>
                                 <CustomSelectField
                                     disabled={isReadonlyPersonalFormStepper}
-                                    errors={$personalInfoError.birthStateId}
-                                    id="birthStateId"
-                                    label="Tempat Lahir *"
-                                    bind:val={$personalInfoForm.birthStateId}
-                                    options={data.selectionOptions.stateLookup}
-                                ></CustomSelectField>
-
-                                <CustomSelectField
-                                    disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.birthCountryId}
                                     id="birthCountryId"
-                                    label="Tempat Lahir *"
+                                    label="Negara Tempat Lahir *"
                                     bind:val={$personalInfoForm.birthCountryId}
                                     options={data.selectionOptions
                                         .countryLookup}
                                 ></CustomSelectField>
+                                <CustomSelectField
+                                    disabled={isReadonlyPersonalFormStepper}
+                                    errors={$personalInfoError.birthStateId}
+                                    id="birthStateId"
+                                    label=" Negeri Tempat Lahir *"
+                                    bind:val={$personalInfoForm.birthStateId}
+                                    options={data.selectionOptions.stateLookup}
+                                ></CustomSelectField>
+
 
                                 <CustomSelectField
                                     disabled={isReadonlyPersonalFormStepper}
