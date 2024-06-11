@@ -5,3 +5,8 @@ export interface GetContractDocumentDTO {
     attachmentName: string;
     isReadonly: boolean;
 }
+
+export interface RenewContractDocument {
+    template: string;
+    templateName: string;
+}

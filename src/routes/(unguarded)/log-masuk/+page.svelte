@@ -20,6 +20,7 @@
         _submitLoginForm,
     } from './+page';
     import { Toaster } from 'svelte-french-toast';
+    import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
 
     export let data: PageData;
 
@@ -55,6 +56,10 @@
             }
         },
         onSubmit() {
+
+            if($loginCommonForm.currentRoleCode == UserRoleConstant.calonKontrak.code){
+                $loginCommonForm.userGroupCode = UserGroupConstant.candidate.code;
+            }
             _submitLoginForm($loginCommonForm);
         },
     });

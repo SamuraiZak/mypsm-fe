@@ -146,6 +146,7 @@ export const load = async ({ params }) => {
             await EmploymentActingServices.getInterviewResult(chosenEmployeeParam);
         interviewResult =
             interviewResultResponse.data?.dataList as ActingChosenEmployee[];
+        interviewResult = interviewResult.sort(customSort)
 
         const promotionMeetingDetailResponse: CommonResponseDTO =
             await EmploymentActingServices.getPromotionMeetingDetail(commonId);
@@ -769,6 +770,18 @@ const getLookup = async () => {
         departmentLookup,
         supporterApproverLookup,
     }
+}
+
+//custom sort for interview marks
+function customSort(a:any, b:any){
+     // If both marks are null, they are considered equal
+     if (a.marks === null && b.marks === null) return 0;
+     // If a's mark is null, it should come after b
+     if (a.marks === null) return 1;
+     // If b's mark is null, it should come after a
+     if (b.marks === null) return -1;
+     // If neither are null, sort by mark in descending order
+     return b.marks - a.marks;
 }
 
 // Create a function that returns a promise resolving to an array of DocumentBase64RequestDTO objects

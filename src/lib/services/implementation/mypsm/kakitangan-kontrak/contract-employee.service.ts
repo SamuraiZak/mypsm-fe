@@ -540,6 +540,28 @@ export class ContractEmployeeServices {
             return CommonResponseConstant.httpError;
         }
     }
+    //get contract document template
+    static async getContractDocumentTemplate(param: CandidateIDRequestBody) {
+        try {
+            let url: Input = '';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CandidateIDRequestBodyConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
     //get contract document detail
     static async getContractDocument(param: CandidateIDRequestBody) {
@@ -1112,6 +1134,26 @@ export class ContractEmployeeServices {
                 .post(url, {
                     body: commonIdRequestDTOConvert.toJson(param),
                 })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //get renew contract template
+    static async getRenewTemplate() {
+        try {
+            let url: Input = 'contracts/renew/new/document/template';
+
+            const response: Response = await http
+                .get(url, {})
                 .json();
 
             const result = CommonResponseConvert.fromResponse(response);

@@ -257,7 +257,7 @@ const dictionary: { [key: string]: string } = {
     //perjawatan
     staffId: 'No. Pekerja',
     staff: 'Kakitangan',
-    employeeName: 'Nama Pekerja',
+    employeeName: 'Nama Kakitangan',
     category: 'Kategori',
     currentPosition: 'Jawatan Semasa',
     offerDate: 'Tarikh Tawaran',

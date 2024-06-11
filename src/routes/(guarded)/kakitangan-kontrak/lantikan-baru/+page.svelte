@@ -7,7 +7,7 @@
     import type {
         TableSettingDTO,
     } from '$lib/dto/core/table/table.dto';
-    import { Modal } from 'flowbite-svelte';
+    import { Alert, Modal } from 'flowbite-svelte';
     import type { ContractEmployeeListDTO } from '$lib/dto/mypsm/kakitangan-kontrak/contract-employee-list.dto';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
@@ -139,10 +139,15 @@
 </section>
 
 <Modal title="Sistem MyPSM" size="xs" bind:open={openModal}>
-    <div class="flex flex-row justify-center gap-2.5">
+    <Alert color="blue">
+        <p>
+            <span class="font-medium">Arahan: </span>
+            Calon belum mengemaskini maklumat peribadi.
+        </p>
+    </Alert>
+    <div class="flex flex-row justify-center">
         <TextIconButton
             label="Kemaskini"
-            icon="reset"
             type="primary"
             onClick={() =>
                 goto('./lantikan-baru/permohonan-' + selectedRow.candidateId)}

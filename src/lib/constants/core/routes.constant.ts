@@ -190,7 +190,8 @@ export class ModuleConstant {
             UserRoleConstant.urusSetiaKhidmatSokongan,
             UserRoleConstant.penyokong,
             UserRoleConstant.pelulus,
-            UserRoleConstant.pengarahKhidmatPengurusan,
+            UserRoleConstant.pengarahBahagian,
+            UserRoleConstant.pengarahNegeri,
         ],
         subModules: [
             {
@@ -211,7 +212,8 @@ export class ModuleConstant {
                     UserRoleConstant.urusSetiaKhidmatSokongan,
                     UserRoleConstant.penyokong,
                     UserRoleConstant.pelulus,
-                    UserRoleConstant.pengarahKhidmatPengurusan,
+                    UserRoleConstant.pengarahBahagian,
+                    UserRoleConstant.pengarahNegeri,
                 ],
             },
         ],
@@ -389,7 +391,7 @@ export class ModuleConstant {
                 ],
             },
             {
-                name: 'Gaji Akir',
+                name: 'Gaji Akhir',
                 url: '/gaji/gaji-akhir',
                 roles: [UserRoleConstant.urusSetiaGaji],
             },

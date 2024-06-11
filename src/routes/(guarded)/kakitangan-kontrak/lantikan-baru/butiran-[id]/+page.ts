@@ -14,7 +14,7 @@ import type { EditNewContractEmployeeDetailDTO } from "$lib/dto/mypsm/kakitangan
 import type { GetContractAcademicDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-academic-detail.dto";
 import type { GetContractActivityDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-activity-detail.dto";
 import type { GetContractDependencyDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-dependency-detail.dto";
-import type { GetContractDocumentDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-document.dto";
+import type { GetContractDocumentDTO, RenewContractDocument } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-document.dto";
 import type { GetContractEmployeeNumberDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-employee-number.dto";
 import type { GetContractExperienceDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-experience-detail.dto";
 import type { GetContractNextOfKinDetailDTO } from "$lib/dto/mypsm/kakitangan-kontrak/get-contract-next-of-kin-detail.dto";
@@ -76,6 +76,7 @@ export const load = async ({ params }) => {
     let getApproverResult = {} as GetContractSupporterApproverResultDTO;
     let getContractEmployeeNumberResponse: CommonResponseDTO = {};
     let getContractEmployeeNumber = {} as GetContractEmployeeNumberDTO;
+    let contractTemplate = {} as RenewContractDocument;
 
     const lookup = await getLookup();
 
@@ -122,6 +123,10 @@ export const load = async ({ params }) => {
         await getContractNextOfKinDetailsResponse.data?.details as GetContractNextOfKinDetailDTO;
 
     // ========================== get uploaded documents
+    const contractTemplateRes: CommonResponseDTO =
+        await ContractEmployeeServices.getContractDocumentTemplate(contractId);
+    contractTemplate =
+        contractTemplateRes.data?.details as RenewContractDocument;
     getContractDocumentsResponse =
         await ContractEmployeeServices.getContractDocument(contractId)
     getContractDocuments =
@@ -203,6 +208,7 @@ export const load = async ({ params }) => {
         contractDocLink,
         getContractEmployeeNumberForm,
         getSecretaryResult,
+        contractTemplate,
     }
 }
 

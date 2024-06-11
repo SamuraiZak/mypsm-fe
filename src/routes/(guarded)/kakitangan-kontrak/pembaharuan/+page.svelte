@@ -15,6 +15,7 @@
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { RenewContractEmployeeTable } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-employee-table.dto';
     import DataTable from '$lib/components/table/DataTable.svelte';
+    import { Alert, Modal } from 'flowbite-svelte';
 
     export let data: PageData;
     let rowData = {} as RenewContractListResponseDTO;
@@ -35,7 +36,7 @@
         data: data.nearExpiredContractList ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: [],
+        hiddenColumn: ['contractId'],
         dictionary: [],
         url: 'contracts/renew/list',
         id: 'nearExpiredContractTable',
@@ -126,8 +127,8 @@
         dictionary: [
             {
                 english: 'Remark',
-                malay: 'Ulasan'
-            }
+                malay: 'Ulasan',
+            },
         ],
         url: '',
         id: 'contractEmployeeTable',
@@ -145,7 +146,8 @@
 
     $: selectedContract.contractors =
         (nearExpiredContractTable.selectedData as Contractor[]) ?? [];
-    $: nearExpiredContractTable.data = data.nearExpiredContractList;
+
+    let renewModal: boolean = false;
 </script>
 
 <!-- content header starts here -->
@@ -157,10 +159,8 @@
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     {#if data.currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code || data.currentRoleCode === UserRoleConstant.pengarahBahagian.code || data.currentRoleCode === UserRoleConstant.pengarahNegeri.code}
-        <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5"
-            >
+        <div class="flex w-full flex-col justify-start gap-5 p-5 pb-10">
+            <div class="flex max-h-full w-full flex-col pb-5">
                 <div class="h h-fit w-full">
                     <DataTable
                         title="Senarai Pembaharuan Kontrak"
@@ -170,8 +170,10 @@
                             goto('./pembaharuan/butiran/' + rowData.contractId)}
                     />
                 </div>
+            </div>
 
-                {#if data.currentRoleCode == UserRoleConstant.urusSetiaKhidmatSokongan.code}
+            {#if data.currentRoleCode == UserRoleConstant.urusSetiaKhidmatSokongan.code}
+                <div class="flex max-h-full w-full flex-col border-t">
                     <ContentHeader
                         title="Arahan: Pilih Kakitangan Untuk Dinilai Dalam Proses Pembaharuan Kontrak"
                         borderClass="border-none"
@@ -180,11 +182,8 @@
                             <TextIconButton
                                 label="Hantar Untuk Dinilai"
                                 type="primary"
-                                onClick={() => {
-                                    _addSelectedContractForRenew(
-                                        selectedContract,
-                                    );
-                                }}
+                                icon="edit"
+                                onClick={() => (renewModal = true)}
                             />
                         {/if}
                     </ContentHeader>
@@ -195,11 +194,11 @@
                             bind:tableData={nearExpiredContractTable}
                         />
                     </div>
-                {/if}
-            </div>
+                </div>
+            {/if}
         </div>
     {:else if data.currentRoleCode == UserRoleConstant.penyokong.code || data.currentRoleCode == UserRoleConstant.pelulus.code}
-        <div class="flex w-full flex-col justify-start gap-2.5 p-5">
+        <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
             <div class="h h-fit w-full">
                 <DataTable
                     title="Senarai Kontrak Dalam Proses Pembaharuan"
@@ -228,3 +227,42 @@
 </section>
 
 <Toaster />
+<Modal
+    title="Sistem MyPSM"
+    bind:open={renewModal}
+    size="sm"
+    dismissable={false}
+>
+    <Alert color="blue">
+        <p>
+            <span class="font-medium">Sistem: </span>
+            Kakitangan kontrak yang dipilih akan dihantar ke Pengarah Bahagian/Negeri
+            untuk dinilai dan dimasukkan ke dalam proses pembaharuan kontrak.
+        </p>
+    </Alert>
+    <div class="flex justify-center gap-3">
+        <TextIconButton
+            label="Hantar"
+            type="primary"
+            onClick={async () => {
+                await _addSelectedContractForRenew(selectedContract)
+                    .then((res) => {
+                        if (res?.response?.status == 'success') {
+                            nearExpiredContractTable.data =
+                                data.nearExpiredContractList;
+                            renewContractTable.data = data.renewContractList;
+                        }
+                    })
+                    .finally(() => {
+                        renewModal = false;
+                        nearExpiredContractTable.selectedData = [];
+                    });
+            }}
+        />
+        <TextIconButton
+            label="Batal"
+            type="neutral"
+            onClick={() => (renewModal = false)}
+        />
+    </div>
+</Modal>

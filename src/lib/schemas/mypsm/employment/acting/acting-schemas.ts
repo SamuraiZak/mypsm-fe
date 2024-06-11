@@ -45,7 +45,6 @@ export const _updateMeetingDetailSchema = z.object({
     placement: shortTextSchema,
     interviewDate: stringToMinDate,
     interviewTime: shortTextSchema,
-    documents: documentSchema.array(),
 })
 
 export const _updateMeetingResult = z.object({

@@ -7,7 +7,7 @@ import type { RadioDTO } from '$lib/dto/core/radio/radio.dto'
 import type { GetContractAcademicDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-academic-detail.dto'
 import type { GetContractActivityDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-activity-detail.dto'
 import type { GetContractDependencyDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-dependency-detail.dto'
-import type { GetContractDocumentDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-document.dto'
+import type { GetContractDocumentDTO, RenewContractDocument } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-document.dto'
 import type { GetContractExperienceDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-experience-detail.dto'
 import type { GetContractNextOfKinDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-next-of-kin-detail.dto'
 import type { GetContractPersonalDetailDTO } from '$lib/dto/mypsm/kakitangan-kontrak/get-contract-personal-detail.dto'
@@ -37,8 +37,9 @@ export const load = async ({ params }) => {
     let getSecretaryUpdate = {} as RenewContractSecretaryUpdate;
     let getSecretaryApproval = {} as RenewContractSuppAppApproval;
     let getRenewContractDocument = {} as GetContractDocumentDTO;
+    let getRenewDocumentTemplate = {} as RenewContractDocument;
     let contractDocLink: string = getContractDocumentLink()
-
+    
     //get contract personal detail
     const getContractPersonalDetailResponse: CommonResponseDTO =
         await ContractEmployeeServices.getRenewContractPersonalDetail(contractId);
@@ -70,13 +71,16 @@ export const load = async ({ params }) => {
         getNextOfKinRecordResponse.data?.details as GetContractNextOfKinDetailDTO;
     const getContractDocumentResponse: CommonResponseDTO =
         await ContractEmployeeServices.getRenewContractDocument(contractId);
+    const getRenewDocumentTemplateRes: CommonResponseDTO = 
+        await ContractEmployeeServices.getRenewTemplate();
+    getRenewDocumentTemplate = 
+        getRenewDocumentTemplateRes.data?.details as RenewContractDocument;
     const getContractDocument: GetContractDocumentDTO =
         getContractDocumentResponse.data?.details as GetContractDocumentDTO;
     const getContractInfoResponse: CommonResponseDTO =
         await ContractEmployeeServices.getRenewContractInfo(contractId);
     const getContractInfo: GetContractSecretaryUpdateDTO =
         getContractInfoResponse.data?.details;
-
     //contract performance detail
     const getContractPerformanceDetailResponse: CommonResponseDTO =
         await ContractEmployeeServices.getRenewContractPerformance(contractId);
@@ -154,6 +158,7 @@ export const load = async ({ params }) => {
         getRenewContractDocument,
         getApproverApproval,
         contractDocLink,
+        getRenewDocumentTemplate,
     }
 }
 

@@ -74,7 +74,7 @@
     import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import { ContractEmployeeServices } from '$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
-    import { certifyOptions } from '$lib/constants/core/radio-option-constants';
+    import { approveOptions, certifyOptions, supportOptions } from '$lib/constants/core/radio-option-constants';
     export let data: PageData;
 
     // temporay arrays for list details
@@ -2359,6 +2359,13 @@
                                     handleDownload(data.contractDocLink)}
                                 fileName="Surat Setuju Terima Tawaran.pdf"
                             />
+                            <!-- <a
+                                href={data.contractTemplate.template}
+                                download={data.contractTemplate
+                                    .templateName}
+                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                >{data.contractTemplate.templateName}</a
+                            > -->
                             <div class="flex w-full flex-col gap-2 px-3">
                                 <CustomFileField
                                     label="Dokumen Sokongan"
@@ -2573,7 +2580,7 @@
                                 />
                             {/if}
                             <CustomTextField
-                                label="Tindakan/Ulasan Urus Setia Perjawatan"
+                                label="Tindakan/Ulasan"
                                 disabled={$secretaryContractResultForm.isReadonly}
                                 id="remark"
                                 bind:val={$secretaryContractResultForm.remark}
@@ -2674,7 +2681,7 @@
                                         />
                                     {/if}
                                     <CustomTextField
-                                        label="Tindakan/Ulasan Urus Setia Perjawatan"
+                                        label="Tindakan/Ulasan"
                                         bind:disabled={$supporterContractResultForm.isReadonly}
                                         id="remark"
                                         bind:val={$supporterContractResultForm.remark}
@@ -2684,7 +2691,7 @@
                                         label="Keputusan"
                                         bind:disabled={$supporterContractResultForm.isReadonly}
                                         id="status"
-                                        options={data.lookup.supportOption}
+                                        options={supportOptions}
                                         bind:val={$supporterContractResultForm.status}
                                     />
                                 </form>
@@ -2733,7 +2740,7 @@
                                         />
                                     {/if}
                                     <CustomTextField
-                                        label="Tindakan/Ulasan Urus Setia Perjawatan"
+                                        label="Tindakan/Ulasan"
                                         bind:disabled={$approverContractResultForm.isReadonly}
                                         id="remark"
                                         bind:val={$approverContractResultForm.remark}
@@ -2743,7 +2750,7 @@
                                         label="Keputusan"
                                         bind:disabled={$approverContractResultForm.isReadonly}
                                         id="status"
-                                        options={data.lookup.approveOption}
+                                        options={approveOptions}
                                         bind:val={$approverContractResultForm.status}
                                     />
                                 </form>
