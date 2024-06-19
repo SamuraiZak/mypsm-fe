@@ -724,7 +724,7 @@
                             <div class="flex w-full flex-col gap-2">
                                 <CustomSelectField
                                     disabled={data.props
-                                        .currentApplicationDetail.integrity !==
+                                        .currentApplicationDetail.secretary !==
                                         null}
                                     id="status"
                                     label={'Adakah Permohonan Sah?'}
