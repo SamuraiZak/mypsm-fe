@@ -139,6 +139,7 @@
         invalidateAll: true,
         validators: zodClient(GcrEndorsementSchema),
         async onSubmit(input) {
+            $chiefDirectorFeedbackForm.id = data.props.currentApplicationId
             const response = _submitChiefDirectorFeedbackForm(
                 $chiefDirectorFeedbackForm,
             );
