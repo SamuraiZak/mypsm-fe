@@ -326,7 +326,7 @@ export class GCRServices {
     // add integrity secretary feedback
     static async addWithdrawalIntegrityFeedback(param: GcrEndorsement) {
         try {
-            let url: Input = 'leave/gcr/withdrawal/secretary';
+            let url: Input = 'leave/gcr/withdrawal/integriti';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
