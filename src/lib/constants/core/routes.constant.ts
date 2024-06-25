@@ -2,14 +2,12 @@ import type { ModuleDTO } from '$lib/dto/core/setup/setup.dto';
 import { UserRoleConstant } from './user-role.constant';
 
 export class ModuleConstant {
-    // halaman utama
     public static homePage: ModuleDTO = {
         name: 'Halaman Utama',
         url: '/halaman-utama',
         roles: [],
     };
 
-    // tetapan akaun
     public static accountSetting: ModuleDTO = {
         name: 'Tetapan Akaun',
         url: '/tetapan',
@@ -18,7 +16,6 @@ export class ModuleConstant {
         icon: 'preference',
     };
 
-    // pengurusan sistem
     public static systemManagement: ModuleDTO = {
         name: 'Pengurusan Sistem',
         url: 'pengurusan_sistem',
@@ -31,7 +28,6 @@ export class ModuleConstant {
         icon: 'setting',
     };
 
-    // profil
     public static profile: ModuleDTO = {
         name: 'Profil',
         url: '/profile',
@@ -219,7 +215,6 @@ export class ModuleConstant {
         ],
     };
 
-    // cuti
     public static leave: ModuleDTO = {
         name: 'Cuti',
         url: '/cuti/permohonan',
@@ -299,7 +294,6 @@ export class ModuleConstant {
         ],
     };
 
-    // Elaun
     public static allowance: ModuleDTO = {
         name: 'Elaun',
         url: '/elaun-elaun_perkhidmatan/permohonan',
@@ -531,7 +525,6 @@ export class ModuleConstant {
         roles: [UserRoleConstant.kakitangan],
     };
 
-    // list
     public static moduleList: ModuleDTO[] = [
         this.accountSetting,
         this.systemManagement,
