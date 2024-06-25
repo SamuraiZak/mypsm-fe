@@ -87,6 +87,7 @@
     import { zod } from 'sveltekit-superforms/adapters';
     import { RetirementBenefitDropdownConstant } from '$lib/constants/dropdown/retirement-benefit.constant';
     import { nricToBirthdate } from '$lib/helpers/core/nricToBirthdate.helper';
+    import { setRetirementYear } from '$lib/helpers/mypsm/employment/new-hire/setRetirementDate.helper';
     export let data: PageData;
     let activeIndex: number = 0;
 
@@ -270,7 +271,7 @@
         validationMethod: 'auto',
         validators: zod(_serviceInfoResponseSchema),
         onChange() {
-            $serviceInfoForm.retirementDate = setRetirementYear();
+            $serviceInfoForm.retirementDate = setRetirementYear($serviceInfoForm.retirementAge, $form.birthDate);
         },
         onSubmit(formData) {
             _submitServiceForm(Number(data.params.id), formData.formData);
@@ -733,26 +734,6 @@
         $documentForm.document = $documentForm.document.filter((_, index) => {
             return index !== i;
         });
-    };
-
-    // method to set retirement year
-    const setRetirementYear = (): string => {
-        const inputAge: number = $serviceInfoForm.retirementAge;
-
-        const birthdate: string = $form.birthDate;
-        let outputDate = new Date(birthdate);
-
-        // Adds by input age
-        outputDate.setFullYear(outputDate.getFullYear() + inputAge);
-
-        // Set the new Date string
-        let day = ('0' + outputDate.getDate()).slice(-2);
-        let month = ('0' + (outputDate.getMonth() + 1)).slice(-2);
-        let year = String(outputDate.getFullYear());
-
-        const endDate: string = `${year}-${month}-${day}`;
-
-        return endDate;
     };
 </script>
 
@@ -2853,12 +2834,12 @@
                                     disabled={$isReadonlyServiceFormStepper}
                                     errors={$serviceInfoErrors.revisionMonth}
                                     id="revisionMonth"
-                                    label="Bulan Berkuatkuasa"
+                                    label="Bulan Berkuatkuasa (Bulan KGT)"
                                     bind:val={$serviceInfoForm.revisionMonth}
                                     options={kgtMonthStringLookup}
                                 ></CustomSelectField>
 
-                                <!-- <CustomTextField
+                                <CustomTextField
                                     placeholder="-"
                                     disabled
                                     isRequired={false}
@@ -2867,7 +2848,7 @@
                                     type="number"
                                     label={'KGT (RM)'}
                                     bind:val={$serviceInfoForm.kgt}
-                                ></CustomTextField> -->
+                                ></CustomTextField>
                                 <CustomTextField
                                     placeholder="-"
                                     disabled={$isReadonlyServiceFormStepper}
@@ -3313,6 +3294,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addExperienceModalErrors.address}
             id="address"
             label={'Alamat Majikan'}
@@ -3554,6 +3536,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addFamilyErrors.workAddress}
             id="workAddress"
             label={'Alamat Majikan'}
@@ -3563,6 +3546,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addFamilyErrors.workPostcode}
             id="workPostcode"
             label={'Poskod Majikan'}
@@ -3748,6 +3732,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addNonFamilyErrors.workAddress}
             id="workAddress"
             label={'Alamat Majikan'}
@@ -3757,6 +3742,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addNonFamilyErrors.workPostcode}
             id="workPostcode"
             label={'Poskod Majikan'}
@@ -3938,6 +3924,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addNextOfKinErrors.workAddress}
             id="workAddress"
             label={'Alamat Majikan'}
@@ -3947,6 +3934,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addNextOfKinErrors.workPostcode}
             id="workPostcode"
             label={'Poskod Majikan'}
