@@ -406,7 +406,7 @@ export const _uploadDocumentsSchema = z.object({
     document: z
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
         .refine((f) => f.size < 10_000_000, 'Maximum 10 MB saiz muat naik.')
-        .array(),
+        .array().min(1, {message: "Dokumen berkenaan hendaklah dimuat naik."}),
 });
 
 export const _newHireFullDetailSchema = z.object({
