@@ -81,12 +81,12 @@
         certifyOptions,
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
-    import { kgtMonthLookup } from '$lib/constants/core/dropdown.constant';
     import { getErrorToast } from '$lib/helpers/core/toast.helper.js';
     import { error } from '@sveltejs/kit';
     import { writable } from 'svelte/store';
     import { zod } from 'sveltekit-superforms/adapters';
     import { RetirementBenefitDropdownConstant } from '$lib/constants/dropdown/retirement-benefit.constant';
+    import { nricToBirthdate } from '$lib/helpers/core/nricToBirthdate.helper';
     export let data: PageData;
     let activeIndex: number = 0;
 
@@ -651,6 +651,30 @@
             openNextOfKinInfoModal = false;
         },
     });
+
+    // Set birthdate automatically based on NRIC
+    // personal info
+    if ($form.birthDate === '') {
+        $form.birthDate = nricToBirthdate($form.identityDocumentNumber);
+    }
+    // family info
+    if ($addFamilyModal.birthDate === '') {
+        $addFamilyModal.birthDate = nricToBirthdate(
+            $addFamilyModal.identityDocumentNumber,
+        );
+    }
+    // non family info
+    if ($addNonFamilyModal.birthDate === '') {
+        $addNonFamilyModal.birthDate = nricToBirthdate(
+            $addNonFamilyModal.identityDocumentNumber,
+        );
+    }
+    // next kin info
+    if ($addNextOfKinModal.birthDate === '') {
+        $addNextOfKinModal.birthDate = nricToBirthdate(
+            $addNextOfKinModal.identityDocumentNumber,
+        );
+    }
 
     const triggerSubmitAcademicTempData = () => {
         _submitAcademicInfoForm(tempAcademicRecord);
