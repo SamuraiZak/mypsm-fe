@@ -271,7 +271,10 @@
         validationMethod: 'auto',
         validators: zod(_serviceInfoResponseSchema),
         onChange() {
-            $serviceInfoForm.retirementDate = setRetirementYear($serviceInfoForm.retirementAge, $form.birthDate);
+            $serviceInfoForm.retirementDate = setRetirementYear(
+                $serviceInfoForm.retirementAge,
+                $form.birthDate,
+            );
         },
         onSubmit(formData) {
             _submitServiceForm(Number(data.params.id), formData.formData);
@@ -571,9 +574,15 @@
         multipleSubmits: 'allow',
         validationMethod: 'auto',
         validators: zod(_relationsSchema),
-        async onSubmit(formData) {
+        onChange() {
+            // family info
+            $addFamilyModal.birthDate = nricToBirthdate(
+                $addFamilyModal.identityDocumentNumber,
+            );
+        },
+        async onSubmit() {
             const result = await superValidate(
-                formData.formData,
+                $addFamilyModal,
                 zod(_relationsSchema),
             );
 
@@ -602,9 +611,15 @@
         multipleSubmits: 'allow',
         validationMethod: 'auto',
         validators: zod(_relationsSchema),
-        async onSubmit(formData) {
+        onChange() {
+            // non family info
+            $addNonFamilyModal.birthDate = nricToBirthdate(
+                $addNonFamilyModal.identityDocumentNumber,
+            );
+        },
+        async onSubmit() {
             const result = await superValidate(
-                formData.formData,
+                $addNonFamilyModal,
                 zod(_relationsSchema),
             );
 
@@ -633,9 +648,15 @@
         multipleSubmits: 'allow',
         validationMethod: 'auto',
         validators: zod(_relationsSchema),
-        async onSubmit(formData) {
+        onChange() {
+            // next kin info
+            $addNextOfKinModal.birthDate = nricToBirthdate(
+                $addNextOfKinModal.identityDocumentNumber,
+            );
+        },
+        async onSubmit() {
             const result = await superValidate(
-                formData.formData,
+                $addNextOfKinModal,
                 zod(_relationsSchema),
             );
 
@@ -656,18 +677,6 @@
     // Set birthdate automatically based on NRIC
     // personal info
     $form.birthDate = nricToBirthdate($form.identityDocumentNumber);
-    // family info
-    $addFamilyModal.birthDate = nricToBirthdate(
-        $addFamilyModal.identityDocumentNumber,
-    );
-    // non family info
-    $addNonFamilyModal.birthDate = nricToBirthdate(
-        $addNonFamilyModal.identityDocumentNumber,
-    );
-    // next kin info
-    $addNextOfKinModal.birthDate = nricToBirthdate(
-        $addNextOfKinModal.identityDocumentNumber,
-    );
 
     const triggerSubmitAcademicTempData = () => {
         _submitAcademicInfoForm(tempAcademicRecord);
@@ -1606,7 +1615,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     id="addIdentityDocumentNumber"
-                                    type="number"
+                                    type="text"
                                     label={'Nombor Kad Pengenalan'}
                                     disabled
                                     isRequired={false}
@@ -1897,7 +1906,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     id="addIdentityDocumentNumber"
-                                    type="number"
+                                    type="text"
                                     label={'Nombor Kad Pengenalan'}
                                     disabled
                                     isRequired={false}
@@ -2200,7 +2209,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     id="addIdentityDocumentNumber"
-                                    type="number"
+                                    type="text"
                                     label={'Nombor Kad Pengenalan'}
                                     disabled
                                     isRequired={false}
@@ -3426,6 +3435,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addFamilyErrors.alternativeName}
             id="alternativeName"
             label={'Nama Lain'}
@@ -3620,6 +3630,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addNonFamilyErrors.alternativeName}
             id="alternativeName"
             label={'Nama Lain'}
@@ -3637,7 +3648,7 @@
             placeholder="-"
             errors={$addNonFamilyErrors.identityDocumentNumber}
             id="identityDocumentNumber"
-            type="number"
+            type="text"
             label={'Nombor Kad Pengenalan'}
             bind:val={$addNonFamilyModal.identityDocumentNumber}
         ></CustomTextField>
@@ -3816,6 +3827,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addNextOfKinErrors.alternativeName}
             id="alternativeName"
             label={'Nama Lain'}
@@ -3833,7 +3845,7 @@
             placeholder="-"
             errors={$addNextOfKinErrors.identityDocumentNumber}
             id="identityDocumentNumber"
-            type="number"
+            type="text"
             label={'Nombor Kad Pengenalan'}
             bind:val={$addNextOfKinModal.identityDocumentNumber}
         ></CustomTextField>
