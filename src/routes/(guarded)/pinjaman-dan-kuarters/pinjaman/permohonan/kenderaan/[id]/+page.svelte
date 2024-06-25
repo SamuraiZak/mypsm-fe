@@ -544,7 +544,7 @@
                     <CustomTextField
                         disabled={notloanDetail}
                         id="paymentPeriod"
-                        label={'Tempoh Pembayaran'}
+                        label={'Tempoh Pembayaran (Bulan)'}
                         errors={$loanInfoError.paymentPeriod}
                         bind:val={$loanInfoForm.paymentPeriod}
                     ></CustomTextField>
@@ -578,6 +578,7 @@
                     use:vehicleInfoEnhance
                     class="flex w-full flex-col gap-2"
                 >
+                <!-- dropdown -->
                     <CustomTextField
                         disabled={notkakitangan}
                         id="condition"
@@ -599,6 +600,7 @@
                         errors={$vehicleInfoError.brandModel}
                         bind:val={$vehicleInfoForm.brandModel}
                     ></CustomTextField>
+                    <!-- nullable -->
                     <CustomTextField
                         disabled={notkakitangan}
                         id="engineNumber"
@@ -606,6 +608,7 @@
                         errors={$vehicleInfoError.engineNumber}
                         bind:val={$vehicleInfoForm.engineNumber}
                     ></CustomTextField>
+                    <!-- nullable -->
                     <CustomTextField
                         disabled={notkakitangan}
                         type="date"
@@ -614,6 +617,7 @@
                         errors={$vehicleInfoError.registrationDate}
                         bind:val={$vehicleInfoForm.registrationDate}
                     ></CustomTextField>
+                    <!-- nullable -->
                     <CustomTextField
                         disabled={notkakitangan}
                         id="registrationNumber"
@@ -624,7 +628,7 @@
                     <CustomTextField
                         disabled={notkakitangan}
                         id="nettPrice"
-                        label={'Harga Bersih (RM)'}
+                        label={'Harga Jualan (RM)'}
                         errors={$vehicleInfoError.nettPrice}
                         bind:val={$vehicleInfoForm.nettPrice}
                     ></CustomTextField>
@@ -654,6 +658,10 @@
                         class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
                     >
                         <span>Fail-fail yang dimuat naik:</span>
+                        <span>1.Slip Gaji</span>
+                        <span>2.Sebut Harga</span>
+                        <span>3.NRIC</span>
+                        <span>4.Lesen</span>
                     </div>
                     {#if data.props.userMode == 'kakitangan'}
                         <div
@@ -668,7 +676,7 @@
                     {/if}
 
                     <div
-                        class="flex w-full flex-col justify-start gap-2.5 px-2"
+                        class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
                     >
                         <ContentHeader
                             title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan Kontrak"
@@ -850,6 +858,7 @@
                                 use:vehicleFirstScheduleEnhance
                                 class="flex w-full flex-col gap-2"
                             >
+                            <!-- nullable -->
                                 <CustomTextField
                                     disabled={noturusetia}
                                     id="engineNumber"
@@ -857,6 +866,7 @@
                                     errors={$vehicleFirstScheduleError.engineNumber}
                                     bind:val={$vehicleFirstScheduleForm.engineNumber}
                                 />
+                                <!-- nullable -->
                                 <CustomTextField
                                     disabled={noturusetia}
                                     id="chassisNumber"
@@ -864,6 +874,7 @@
                                     errors={$vehicleFirstScheduleError.chassisNumber}
                                     bind:val={$vehicleFirstScheduleForm.chassisNumber}
                                 />
+                                <!-- nullable -->
                                 <CustomTextField
                                     disabled={noturusetia}
                                     id="countryOrigin"
@@ -871,6 +882,7 @@
                                     errors={$vehicleFirstScheduleError.countryOrigin}
                                     bind:val={$vehicleFirstScheduleForm.countryOrigin}
                                 />
+                                <!-- nullable -->
                                 <CustomTextField
                                     disabled={noturusetia}
                                     id="brandModel"
@@ -878,6 +890,7 @@
                                     errors={$vehicleFirstScheduleError.brandModel}
                                     bind:val={$vehicleFirstScheduleForm.brandModel}
                                 />
+                                <!-- nullable -->
                                 <CustomTextField
                                     disabled={noturusetia}
                                     id="engineHP"
@@ -885,6 +898,7 @@
                                     errors={$vehicleFirstScheduleError.engineHP}
                                     bind:val={$vehicleFirstScheduleForm.engineHP}
                                 />
+                                <!-- nullable -->
                                 <CustomTextField
                                     disabled={noturusetia}
                                     id="fuelType"
@@ -892,6 +906,7 @@
                                     errors={$vehicleFirstScheduleError.fuelType}
                                     bind:val={$vehicleFirstScheduleForm.fuelType}
                                 />
+                                <!-- nullable -->
                                 <CustomTextField
                                     disabled={noturusetia}
                                     id="class"
@@ -899,6 +914,7 @@
                                     errors={$vehicleFirstScheduleError.class}
                                     bind:val={$vehicleFirstScheduleForm.class}
                                 />
+                                <!-- nullable -->
                                 <CustomTextField
                                     disabled={noturusetia}
                                     id="bodyType"
@@ -906,7 +922,7 @@
                                     errors={$vehicleFirstScheduleError.bodyType}
                                     bind:val={$vehicleFirstScheduleForm.bodyType}
                                 />
-
+                                <!-- nullable -->
                                 <CustomTextField
                                     disabled={noturusetia}
                                     id="makeYear"
@@ -923,10 +939,11 @@
                                     <CustomTextField
                                         disabled={noturusetia}
                                         id="previousOwner"
-                                        label="Nama"
+                                        label="Nama Syarikat"
                                         errors={$vehicleFirstScheduleError.previousOwner}
                                         bind:val={$vehicleFirstScheduleForm.previousOwner}
                                     />
+                                    <!-- nullable -->
                                     <CustomTextField
                                         disabled={noturusetia}
                                         id="previousOwnerIC"
@@ -937,7 +954,7 @@
                                     <CustomTextField
                                         disabled={noturusetia}
                                         id="address"
-                                        label="Alamat"
+                                        label="Alamat Syarikat"
                                         errors={$vehicleFirstScheduleError.address}
                                         bind:val={$vehicleFirstScheduleForm.address}
                                     />
@@ -968,7 +985,7 @@
                                 <CustomTextField
                                     disabled={noturusetia}
                                     id="balancePayment"
-                                    label="Bayaran Baki (RM)"
+                                    label="Bayaran Muka (RM)"
                                     errors={$firstScheduleError.balancePayment}
                                     bind:val={$firstScheduleForm.balancePayment}
                                 />
@@ -1006,7 +1023,7 @@
                                     <CustomTextField
                                         disabled={noturusetia}
                                         id="sellingPrice"
-                                        label="Jumlah Harga Belian (RM)"
+                                        label="Jumlah Harga Jualan (RM)"
                                         errors={$secondScheduleError.sellingPrice}
                                         bind:val={$secondScheduleForm.sellingPrice}
                                     ></CustomTextField>
@@ -1014,7 +1031,7 @@
                                     <CustomTextField
                                         disabled={noturusetia}
                                         id="sellingBalance"
-                                        label="Bayaran Baki (RM)"
+                                        label="Bayaran Muka (RM)"
                                         errors={$secondScheduleError.sellingBalance}
                                         bind:val={$secondScheduleForm.sellingBalance}
                                     ></CustomTextField>
@@ -1044,7 +1061,7 @@
                                         <CustomTextField
                                             disabled={noturusetia}
                                             id="paymentPeriod"
-                                            label={'Tempoh Pembayaran'}
+                                            label={'Tempoh Pembayaran(Bulan)'}
                                             errors={$secondScheduleError.paymentPeriod}
                                             bind:val={$secondScheduleForm.paymentPeriod}
                                         ></CustomTextField>
@@ -1139,6 +1156,9 @@
                         class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
                     >
                         <span>Fail-fail yang dimuat naik:</span>
+                        <span>1. Memorandum</span>
+                        <span>2. Surat Perjanjian</span>
+                        <span>3. LHDN stamping</span>
                     </div>
                     {#if data.props.userMode == 'kakitangan'}
                         <div
@@ -1186,6 +1206,7 @@
                 </form>
             </StepperContentBody>
         </StepperContent>
+        <!-- no need -->
         {#if data.props.userMode == 'urusetia' || data.props.userMode == 'pelulus' || data.props.userMode == 'ketua Seksyen'}
             <StepperContent>
                 <StepperContentHeader title="Kemaskini Maklumat Pinjaman">
@@ -1365,6 +1386,7 @@
                 </StepperContentBody>
             </StepperContent>
         {/if}
+        <!-- no need -->
         <StepperContent>
             <StepperContentHeader title="Senarai Semak Surat Perjanjian">
                 <TextIconButton
@@ -1429,6 +1451,8 @@
                         class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
                     >
                         <span>Fail-fail yang dimuat naik:</span>
+                        <span>1. Resit / Invois <span>
+                        
                     </div>
                     {#if data.props.userMode == 'kakitangan'}
                         <div

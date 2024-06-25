@@ -504,7 +504,7 @@
                 ></CustomTextField>
                 <CustomTextField
                     id="paymentPeriod"
-                    label={'Tempoh Pembayaran'}
+                    label={'Tempoh Pembayaran (Bulan)'}
                     bind:val={$loanInfoForm.paymentPeriod}
                 ></CustomTextField>
                 <CustomTextField
@@ -535,6 +535,7 @@
                     label={'Kondisi Kenderaan'}
                     bind:val={$vehicleInfoForm.condition}
                 ></CustomTextField>
+                <!-- tukarrr dropdown  -->
                 <CustomTextField
                     disabled={notkakitangan}
                     id="vehicleType"
@@ -547,12 +548,14 @@
                     label={'Jenama Model Kenderaan'}
                     bind:val={$vehicleInfoForm.brandModel}
                 ></CustomTextField>
+                <!-- not mandatory -->
                 <CustomTextField
                     disabled={notkakitangan}
                     id="engineNumber"
                     label={'Sukatan Silinder/ No. Chasis/ No. Enjin'}
                     bind:val={$vehicleInfoForm.engineNumber}
                 ></CustomTextField>
+                <!-- not mandatory -->
                 <CustomTextField
                     disabled={notkakitangan}
                     type="date"
@@ -560,6 +563,7 @@
                     label={'Tarikh Pendaftaran'}
                     bind:val={$vehicleInfoForm.registrationDate}
                 ></CustomTextField>
+                <!-- not mandatory -->
                 <CustomTextField
                     disabled={notkakitangan}
                     id="registrationNumber"
@@ -569,7 +573,7 @@
                 <CustomTextField
                     disabled={notkakitangan}
                     id="nettPrice"
-                    label={'Harga Bersih'}
+                    label={'Harga Jualan '}
                     bind:val={$vehicleInfoForm.nettPrice}
                 ></CustomTextField>
             </form></StepperContentBody
@@ -592,6 +596,10 @@
                     class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
                 >
                     <span>Fail-fail yang dimuat naik:</span>
+                    <span>Slip Gaji</span>
+                    <span>Sebut Harga</span>
+                    <span>NRIC</span>
+                    <span>Lesen</span>
                 </div>
                 {#if data.props.userMode == 'kakitangan'}
                     <div
@@ -900,7 +908,7 @@
                     />
                 </form>
             </div>
-            <div
+            <!-- <div
                 class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
             >
                 <ContentHeader title="Keputusan Dari Ketua Seksyen">
@@ -932,8 +940,44 @@
                     />
                 </form>
 
-            </div></StepperContentBody
+            </div> -->
+            </StepperContentBody
         >
+    </StepperContent>
+    <StepperContent>
+        <StepperContentHeader title="Tetapan Ketua Seksyen"></StepperContentHeader>
+
+        <div
+        class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
+    >
+        <ContentHeader title="Keputusan Dari Ketua Seksyen">
+            <TextIconButton
+                type="primary"
+                label="Simpan"
+                form="supporterApprovalDetail"
+            ></TextIconButton>
+        </ContentHeader>
+
+        <form
+            id="supporterApprovalDetail"
+            method="POST"
+            use:supporterApprovalEnhance
+            class="flex w-full flex-col gap-2"
+        >
+            <CustomTextField
+                disabled={notketuaSeksyen}
+                id="remark"
+                label="Tindakan/ Ulasan"
+                bind:val={$supporterApprovalForm.remark}
+            />
+
+            <CustomRadioBoolean
+                disabled={notketuaSeksyen}
+                id="status"
+                label="Status"
+                bind:val={$supporterApprovalForm.status}
+            />
+            </form>
     </StepperContent>
 
     <StepperContent>

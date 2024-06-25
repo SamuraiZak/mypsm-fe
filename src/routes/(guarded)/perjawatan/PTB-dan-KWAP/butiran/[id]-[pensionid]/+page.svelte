@@ -748,7 +748,7 @@
                             data.pensionDetail !== null}
                         id="PTBdate"
                         type="date"
-                        label="Tarikh Diberi PTB"
+                        label="Tarikh Berkuatkuasa PTB / Tarikh Mula Caruman KWAP"
                         errors={$PTBPensionInfoError.PTBDate}
                         bind:val={$PTBPensionInfoForm.PTBDate}
                     ></CustomTextField>
@@ -772,6 +772,7 @@
                         bind:val={$PTBPensionInfoForm.referenceDate}
                     ></CustomTextField>
 
+                    <!-- here  -->
                     <CustomTextField
                         disabled={currentRoleCode !== urusetia ||
                             data.pensionDetail !== null}
