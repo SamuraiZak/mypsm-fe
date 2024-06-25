@@ -81,12 +81,13 @@
         certifyOptions,
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
-    import { kgtMonthLookup } from '$lib/constants/core/dropdown.constant';
     import { getErrorToast } from '$lib/helpers/core/toast.helper.js';
     import { error } from '@sveltejs/kit';
     import { writable } from 'svelte/store';
     import { zod } from 'sveltekit-superforms/adapters';
     import { RetirementBenefitDropdownConstant } from '$lib/constants/dropdown/retirement-benefit.constant';
+    import { nricToBirthdate } from '$lib/helpers/core/nricToBirthdate.helper';
+    import { setRetirementYear } from '$lib/helpers/mypsm/employment/new-hire/setRetirementDate.helper';
     export let data: PageData;
     let activeIndex: number = 0;
 
@@ -270,7 +271,10 @@
         validationMethod: 'auto',
         validators: zod(_serviceInfoResponseSchema),
         onChange() {
-            $serviceInfoForm.retirementDate = setRetirementYear();
+            $serviceInfoForm.retirementDate = setRetirementYear(
+                $serviceInfoForm.retirementAge,
+                $form.birthDate,
+            );
         },
         onSubmit(formData) {
             _submitServiceForm(Number(data.params.id), formData.formData);
@@ -570,9 +574,15 @@
         multipleSubmits: 'allow',
         validationMethod: 'auto',
         validators: zod(_relationsSchema),
-        async onSubmit(formData) {
+        onChange() {
+            // family info
+            $addFamilyModal.birthDate = nricToBirthdate(
+                $addFamilyModal.identityDocumentNumber,
+            );
+        },
+        async onSubmit() {
             const result = await superValidate(
-                formData.formData,
+                $addFamilyModal,
                 zod(_relationsSchema),
             );
 
@@ -601,9 +611,15 @@
         multipleSubmits: 'allow',
         validationMethod: 'auto',
         validators: zod(_relationsSchema),
-        async onSubmit(formData) {
+        onChange() {
+            // non family info
+            $addNonFamilyModal.birthDate = nricToBirthdate(
+                $addNonFamilyModal.identityDocumentNumber,
+            );
+        },
+        async onSubmit() {
             const result = await superValidate(
-                formData.formData,
+                $addNonFamilyModal,
                 zod(_relationsSchema),
             );
 
@@ -632,9 +648,15 @@
         multipleSubmits: 'allow',
         validationMethod: 'auto',
         validators: zod(_relationsSchema),
-        async onSubmit(formData) {
+        onChange() {
+            // next kin info
+            $addNextOfKinModal.birthDate = nricToBirthdate(
+                $addNextOfKinModal.identityDocumentNumber,
+            );
+        },
+        async onSubmit() {
             const result = await superValidate(
-                formData.formData,
+                $addNextOfKinModal,
                 zod(_relationsSchema),
             );
 
@@ -651,6 +673,10 @@
             openNextOfKinInfoModal = false;
         },
     });
+
+    // Set birthdate automatically based on NRIC
+    // personal info
+    $form.birthDate = nricToBirthdate($form.identityDocumentNumber);
 
     const triggerSubmitAcademicTempData = () => {
         _submitAcademicInfoForm(tempAcademicRecord);
@@ -717,26 +743,6 @@
         $documentForm.document = $documentForm.document.filter((_, index) => {
             return index !== i;
         });
-    };
-
-    // method to set retirement year
-    const setRetirementYear = (): string => {
-        const inputAge: number = $serviceInfoForm.retirementAge;
-
-        const birthdate: string = $form.birthDate;
-        let outputDate = new Date(birthdate);
-
-        // Adds by input age
-        outputDate.setFullYear(outputDate.getFullYear() + inputAge);
-
-        // Set the new Date string
-        let day = ('0' + outputDate.getDate()).slice(-2);
-        let month = ('0' + (outputDate.getMonth() + 1)).slice(-2);
-        let year = String(outputDate.getFullYear());
-
-        const endDate: string = `${year}-${month}-${day}`;
-
-        return endDate;
     };
 </script>
 
@@ -838,7 +844,8 @@
 
                 <CustomTextField
                     placeholder="-"
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled
+                    isRequired={false}
                     errors={$errors.birthDate}
                     type="date"
                     id="birthDate"
@@ -1011,7 +1018,7 @@
                     disabled={$isReadonlyPersonalFormStepper}
                     errors={$errors.assetDeclarationStatusId}
                     id="assetDeclarationStatusId"
-                    label="Status Pengisyhtiharan Harta"
+                    label="Status Pengisytiharan Harta"
                     bind:val={$form.assetDeclarationStatusId}
                     options={data.selectionOptions.assetDeclarationLookup}
                 ></CustomSelectField>
@@ -1023,7 +1030,7 @@
                         disabled={$isReadonlyPersonalFormStepper}
                         id="propertyDeclarationDate"
                         type="date"
-                        label="Tarikh Pengisyhtiharan Harta"
+                        label="Tarikh Pengisytiharan Harta"
                         bind:val={$form.propertyDeclarationDate}
                     />
                 {/if}
@@ -1608,7 +1615,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     id="addIdentityDocumentNumber"
-                                    type="number"
+                                    type="text"
                                     label={'Nombor Kad Pengenalan'}
                                     disabled
                                     isRequired={false}
@@ -1899,7 +1906,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     id="addIdentityDocumentNumber"
-                                    type="number"
+                                    type="text"
                                     label={'Nombor Kad Pengenalan'}
                                     disabled
                                     isRequired={false}
@@ -2202,7 +2209,7 @@
                                 <CustomTextField
                                     placeholder="-"
                                     id="addIdentityDocumentNumber"
-                                    type="number"
+                                    type="text"
                                     label={'Nombor Kad Pengenalan'}
                                     disabled
                                     isRequired={false}
@@ -2836,12 +2843,12 @@
                                     disabled={$isReadonlyServiceFormStepper}
                                     errors={$serviceInfoErrors.revisionMonth}
                                     id="revisionMonth"
-                                    label="Bulan Berkuatkuasa"
+                                    label="Bulan Berkuatkuasa (Bulan KGT)"
                                     bind:val={$serviceInfoForm.revisionMonth}
                                     options={kgtMonthStringLookup}
                                 ></CustomSelectField>
 
-                                <!-- <CustomTextField
+                                <CustomTextField
                                     placeholder="-"
                                     disabled
                                     isRequired={false}
@@ -2850,7 +2857,7 @@
                                     type="number"
                                     label={'KGT (RM)'}
                                     bind:val={$serviceInfoForm.kgt}
-                                ></CustomTextField> -->
+                                ></CustomTextField>
                                 <CustomTextField
                                     placeholder="-"
                                     disabled={$isReadonlyServiceFormStepper}
@@ -3296,6 +3303,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addExperienceModalErrors.address}
             id="address"
             label={'Alamat Majikan'}
@@ -3427,6 +3435,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addFamilyErrors.alternativeName}
             id="alternativeName"
             label={'Nama Lain'}
@@ -3467,8 +3476,10 @@
         ></CustomTextField>
 
         <CustomTextField
+            disabled
             placeholder="-"
             type="date"
+            isRequired={false}
             errors={$addFamilyErrors.birthDate}
             id="birthDate"
             label={'Tarikh Lahir'}
@@ -3535,6 +3546,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addFamilyErrors.workAddress}
             id="workAddress"
             label={'Alamat Majikan'}
@@ -3544,6 +3556,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addFamilyErrors.workPostcode}
             id="workPostcode"
             label={'Poskod Majikan'}
@@ -3617,6 +3630,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addNonFamilyErrors.alternativeName}
             id="alternativeName"
             label={'Nama Lain'}
@@ -3634,7 +3648,7 @@
             placeholder="-"
             errors={$addNonFamilyErrors.identityDocumentNumber}
             id="identityDocumentNumber"
-            type="number"
+            type="text"
             label={'Nombor Kad Pengenalan'}
             bind:val={$addNonFamilyModal.identityDocumentNumber}
         ></CustomTextField>
@@ -3657,8 +3671,10 @@
         ></CustomTextField>
 
         <CustomTextField
+            disabled
             placeholder="-"
             type="date"
+            isRequired={false}
             errors={$addNonFamilyErrors.birthDate}
             id="birthDate"
             label={'Tarikh Lahir'}
@@ -3727,6 +3743,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addNonFamilyErrors.workAddress}
             id="workAddress"
             label={'Alamat Majikan'}
@@ -3736,6 +3753,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addNonFamilyErrors.workPostcode}
             id="workPostcode"
             label={'Poskod Majikan'}
@@ -3809,6 +3827,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addNextOfKinErrors.alternativeName}
             id="alternativeName"
             label={'Nama Lain'}
@@ -3826,7 +3845,7 @@
             placeholder="-"
             errors={$addNextOfKinErrors.identityDocumentNumber}
             id="identityDocumentNumber"
-            type="number"
+            type="text"
             label={'Nombor Kad Pengenalan'}
             bind:val={$addNextOfKinModal.identityDocumentNumber}
         ></CustomTextField>
@@ -3849,8 +3868,10 @@
         ></CustomTextField>
 
         <CustomTextField
+            disabled
             placeholder="-"
             type="date"
+            isRequired={false}
             errors={$addNextOfKinErrors.birthDate}
             id="birthDate"
             label={'Tarikh Lahir'}
@@ -3915,6 +3936,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addNextOfKinErrors.workAddress}
             id="workAddress"
             label={'Alamat Majikan'}
@@ -3924,6 +3946,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addNextOfKinErrors.workPostcode}
             id="workPostcode"
             label={'Poskod Majikan'}
