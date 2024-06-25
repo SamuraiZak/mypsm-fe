@@ -66,6 +66,11 @@ export const successOption: DropdownDTO[] = [
     { value: 'Tidak Berjaya', name: 'Tidak Berjaya' },
 ];
 
+export const successBooleanOption: DropdownDTO[] = [
+    { value: true, name: 'Berjaya' },
+    { value: false, name: 'Tidak Berjaya' },
+];
+
 export const dropdownCommonOption: DropdownDTO[] = [
     { value: true, name: 'Ya' },
     { value: false, name: 'Tidak' },
