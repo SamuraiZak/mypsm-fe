@@ -654,27 +654,19 @@
 
     // Set birthdate automatically based on NRIC
     // personal info
-    if ($form.birthDate === '') {
-        $form.birthDate = nricToBirthdate($form.identityDocumentNumber);
-    }
+    $form.birthDate = nricToBirthdate($form.identityDocumentNumber);
     // family info
-    if ($addFamilyModal.birthDate === '') {
-        $addFamilyModal.birthDate = nricToBirthdate(
-            $addFamilyModal.identityDocumentNumber,
-        );
-    }
+    $addFamilyModal.birthDate = nricToBirthdate(
+        $addFamilyModal.identityDocumentNumber,
+    );
     // non family info
-    if ($addNonFamilyModal.birthDate === '') {
-        $addNonFamilyModal.birthDate = nricToBirthdate(
-            $addNonFamilyModal.identityDocumentNumber,
-        );
-    }
+    $addNonFamilyModal.birthDate = nricToBirthdate(
+        $addNonFamilyModal.identityDocumentNumber,
+    );
     // next kin info
-    if ($addNextOfKinModal.birthDate === '') {
-        $addNextOfKinModal.birthDate = nricToBirthdate(
-            $addNextOfKinModal.identityDocumentNumber,
-        );
-    }
+    $addNextOfKinModal.birthDate = nricToBirthdate(
+        $addNextOfKinModal.identityDocumentNumber,
+    );
 
     const triggerSubmitAcademicTempData = () => {
         _submitAcademicInfoForm(tempAcademicRecord);
@@ -862,7 +854,8 @@
 
                 <CustomTextField
                     placeholder="-"
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled
+                    isRequired={false}
                     errors={$errors.birthDate}
                     type="date"
                     id="birthDate"
@@ -3491,8 +3484,10 @@
         ></CustomTextField>
 
         <CustomTextField
+            disabled
             placeholder="-"
             type="date"
+            isRequired={false}
             errors={$addFamilyErrors.birthDate}
             id="birthDate"
             label={'Tarikh Lahir'}
@@ -3681,8 +3676,10 @@
         ></CustomTextField>
 
         <CustomTextField
+            disabled
             placeholder="-"
             type="date"
+            isRequired={false}
             errors={$addNonFamilyErrors.birthDate}
             id="birthDate"
             label={'Tarikh Lahir'}
@@ -3873,8 +3870,10 @@
         ></CustomTextField>
 
         <CustomTextField
+            disabled
             placeholder="-"
             type="date"
+            isRequired={false}
             errors={$addNextOfKinErrors.birthDate}
             id="birthDate"
             label={'Tarikh Lahir'}
