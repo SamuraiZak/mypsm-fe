@@ -56,7 +56,7 @@
             filter: true,
         },
         controls: {
-            add: true,
+            add: data.props.mode == "kakitangan",
         },
     };
 
@@ -72,6 +72,16 @@
             currentType.description +
             '/' +
             selectedData.allowanceId;
+
+        goto(url);
+    }
+
+    // function to handle create new
+    function addApplication() {
+        let currentType: AllowanceTypeDTO =
+            AllowanceTypeConstant.ceremonyClothing;
+
+        let url = '/elaun-elaun_perkhidmatan/permohonan/baru';
 
         goto(url);
     }
@@ -95,7 +105,9 @@
                 detailActions={() => {
                     showDetails();
                 }}
-                addActions={() => {}}
+                addActions={() => {
+                    addApplication();
+                }}
             >
                 <FilterWrapper slot="filter">
                     <FilterTextField
