@@ -182,7 +182,7 @@ export const _academicListRequestSchema = _academicListResponseSchema.pick({
 
 export const _experienceInfoSchema = z.object({
     company: shortTextSchema,
-    address: shortTextSchema,
+    address: z.string().nullish(),
     position: shortTextSchema,
     positionCode: codeSchema,
     startDate: dateStringSchema,
@@ -243,8 +243,8 @@ export const _relationsSchema = z
         address: shortTextSchema,
         postcode: shortTextSchema,
         birthDate: dateStringSchema,
-        workAddress: shortTextSchema,
-        workPostcode: shortTextSchema,
+        workAddress: z.string().nullish(),
+        workPostcode: z.string().nullish(),
         phoneNumber: shortTextSchema,
         marriageDate: dateStringSchema.nullable(),
         inSchool: booleanSchema,
