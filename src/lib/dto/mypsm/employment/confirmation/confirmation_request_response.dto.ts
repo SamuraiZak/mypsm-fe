@@ -1,5 +1,6 @@
 import type {
     _confirmationApprovalSchema,
+    _confirmationContractContinuationSchema,
     _confirmationDiciplinarySchema,
     _confirmationExaminationSchema,
     _confirmationFullDetailSchema,
@@ -38,4 +39,8 @@ export type ConfirmationListResponseDTO = z.infer<
 
 export type ConfirmationMeetingResultRequestDTO = z.infer<
     typeof _updateConfirmationMeetingResultSchema
+>;
+
+export type ConfirmationContractContinuationDTO = z.infer<
+    typeof _confirmationContractContinuationSchema
 >;
