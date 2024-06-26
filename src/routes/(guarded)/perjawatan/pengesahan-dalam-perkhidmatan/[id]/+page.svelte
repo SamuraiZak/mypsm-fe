@@ -6,6 +6,7 @@
     import { Badge, Checkbox } from 'flowbite-svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
+    import SvgArrowDownTray from '$lib/assets/svg/SvgArrowDownTray.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import { Toaster } from 'svelte-french-toast';
     import { superForm } from 'sveltekit-superforms/client';
@@ -1361,16 +1362,28 @@
             </StepperContentBody>
         </StepperContent>
         <StepperContent>
-            <StepperContentHeader title="Surat Pengesahan">
-                <!-- {#if !data.view.confirmationInServiceView.meeting.isReadonly && data.roles.isEmploymentSecretaryRole}
-                    <TextIconButton
-                        type="primary"
-                        label="Simpan"
-                        form="confirmationMeetingDetailForm"
-                    ></TextIconButton>
-                {/if} -->
-            </StepperContentHeader>
-            <StepperContentBody>IN CONSTRUCTION..</StepperContentBody>
+            <StepperContentHeader title="Surat Pengesahan" />
+            <StepperContentBody>
+                <div
+                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                >
+                    <p class="text-sm">
+                        Sila muat turun surat pengesahan di bawah ini.
+                    </p>
+                    <div
+                        class="flex w-full flex-row items-center justify-between"
+                    >
+                        <a
+                            href="blank"
+                            download="Surat Pengesahan Dalam Perkhidmatan {$form.name.toUpperCase()} ({$form.identityDocumentNumber})"
+                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                            >Surat Pengesahan Dalam Perkhidmatan {$form.name.toUpperCase()}
+                            ({$form.identityDocumentNumber})
+                            <SvgArrowDownTray />
+                        </a>
+                    </div>
+                </div>
+            </StepperContentBody>
         </StepperContent>
     {/if}
 </Stepper>
