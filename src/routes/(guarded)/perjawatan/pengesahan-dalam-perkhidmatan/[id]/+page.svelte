@@ -40,10 +40,12 @@
     import { zod } from 'sveltekit-superforms/adapters';
     import {
         _confirmationApprovalSchema,
+        _confirmationContractContinuationSchema,
         _confirmationMeetingResultSchema,
     } from '$lib/schemas/mypsm/employment/confirmation-in-service/schema';
     import {
         _addConfirmationAuditDirector,
+        _addConfirmationContractContinuation,
         _addConfirmationEmploymentSecretary,
         _addConfirmationIntegrityDirector,
         _addConfirmationMeetingResult,
@@ -212,6 +214,31 @@
     });
 
     const {
+        form: contractContinuationDetailForm,
+        errors: contractContinuationDetailFormErrors,
+        enhance: contractContinuationDetailFormEnhance,
+    } = superForm(data.forms.contractContinuationInfoForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: false,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_confirmationContractContinuationSchema),
+        taintedMessage: false,
+        onChange() {
+            isContractContinuation =
+                $contractContinuationDetailForm.isContractContinued;
+        },
+        onSubmit() {
+            _addConfirmationContractContinuation(
+                Number(data.params.id),
+                $contractContinuationDetailForm,
+            );
+        },
+    });
+
+    const {
         form: divisionDirectorDetaiForm,
         errors: divisionDirectorDetaiFormErrors,
         enhance: divisionDirectorDetaiFormEnhance,
@@ -295,33 +322,33 @@
         },
     });
 
-    // Table list
-    let examsListTable: TableSettingDTO = {
-        param: data.param,
-        meta: {
-            pageSize: 1,
-            pageNum: 1,
-            totalData: 1,
-            totalPage: 1,
-        },
-        data: $examsDetaiForm.examinations ?? [],
-        selectedData: [],
-        exportData: [],
-        hiddenColumn: ['id', 'document'],
-        dictionary: [],
-        url: '',
-        id: 'examsListTable',
-        option: {
-            checkbox: false,
-            detail: false,
-            edit: false,
-            select: false,
-            filter: false,
-        },
-        controls: {
-            add: false,
-        },
-    };
+    // // Table list
+    // let examsListTable: TableSettingDTO = {
+    //     param: data.param,
+    //     meta: {
+    //         pageSize: 1,
+    //         pageNum: 1,
+    //         totalData: 1,
+    //         totalPage: 1,
+    //     },
+    //     data: $examsDetaiForm.examinations ?? [],
+    //     selectedData: [],
+    //     exportData: [],
+    //     hiddenColumn: ['id', 'document'],
+    //     dictionary: [],
+    //     url: '',
+    //     id: 'examsListTable',
+    //     option: {
+    //         checkbox: false,
+    //         detail: false,
+    //         edit: false,
+    //         select: false,
+    //         filter: false,
+    //     },
+    //     controls: {
+    //         add: false,
+    //     },
+    // };
 
     let diciplinaryListTable: TableSettingDTO = {
         param: data.param,
@@ -957,37 +984,52 @@
     </StepperContent>
     {#if $isTypeConfirmationExceedsThreeYears}
         <StepperContent>
-            <StepperContentHeader title="Lanjutan Percubaan Perkhidmatan" />
+            <StepperContentHeader title="Lanjutan Percubaan Perkhidmatan">
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    form="contractContinuationDetailForm"
+                ></TextIconButton>
+            </StepperContentHeader>
             <StepperContentBody>
                 <div class="flex w-full flex-col gap-2.5">
-                    <CustomSelectField
-                        disabled={false}
-                        isRequired={false}
-                        id="gradeId"
-                        label="Keputusan"
-                        placeholder="-"
-                        options={commonOptions}
-                        bind:val={isContractContinuation}
-                    ></CustomSelectField>
+                    <form
+                        id="contractContinuationDetailForm"
+                        method="POST"
+                        use:contractContinuationDetailFormEnhance
+                        class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                    >
+                        <CustomSelectField
+                            disabled={$contractContinuationDetailForm.isReadonly}
+                            isRequired={false}
+                            id="gradeId"
+                            label="Keputusan"
+                            placeholder="-"
+                            options={commonOptions}
+                            bind:val={$contractContinuationDetailForm.isContractContinued}
+                        ></CustomSelectField>
 
-                    {#if isContractContinuation}
-                        <CustomTextField
-                            type="date"
-                            disabled={false}
-                            id="effectiveDate"
-                            label={'Tarikh Mula Lanjutan'}
-                            placeholder="-"
-                            bind:val={$serviceDetailForm.effectiveDate}
-                        ></CustomTextField>
-                        <CustomTextField
-                            type="number"
-                            disabled={false}
-                            id="effectiveDate"
-                            label={'Tempoh Lanjutan (Bulan)'}
-                            placeholder="-"
-                            bind:val={$serviceDetailForm.effectiveDate}
-                        ></CustomTextField>
-                    {/if}
+                        {#if $contractContinuationDetailForm.isContractContinued}
+                            <CustomTextField
+                                type="date"
+                                errors={$contractContinuationDetailFormErrors.effectiveDate}
+                                disabled={false}
+                                id="effectiveDate"
+                                label={'Tarikh Mula Lanjutan'}
+                                placeholder="-"
+                                bind:val={$contractContinuationDetailForm.effectiveDate}
+                            ></CustomTextField>
+                            <CustomTextField
+                                type="number"
+                                errors={$contractContinuationDetailFormErrors.contractMonths}
+                                disabled={false}
+                                id="effectiveDate"
+                                label={'Tempoh Lanjutan (Bulan)'}
+                                placeholder="-"
+                                bind:val={$contractContinuationDetailForm.contractMonths}
+                            ></CustomTextField>
+                        {/if}
+                    </form>
                 </div>
             </StepperContentBody>
         </StepperContent>
@@ -1196,7 +1238,13 @@
                         <hr />
                         <div class="mb-5">
                             <b class="text-sm text-system-primary"
-                                >3. Pengarah Integriti</b
+                                >3. Pengarah Integriti & Pengarah Audit</b
+                            >
+                        </div>
+                        <div class="mb-5">
+                            <b
+                                class="text-sm font-medium italic text-system-primary"
+                                >Pengarah Integriti</b
                             >
                         </div>
                         {#if $isReadOnlyIntegrityDirectorConfirmationInServiceApproval}
@@ -1216,10 +1264,10 @@
                         {:else}
                             <StepperOtherRolesResult />
                         {/if}
-                        <hr />
                         <div class="mb-5">
-                            <b class="text-sm text-system-primary"
-                                >4. Pengarah Audit</b
+                            <b
+                                class="text-sm font-medium italic text-system-primary"
+                                >Pengarah Audit</b
                             >
                         </div>
                         {#if $isReadOnlyAuditDirectorConfirmationInServiceApproval}

@@ -9,8 +9,8 @@ import type {
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _confirmationApprovalSchema,
+    _confirmationContractContinuationSchema,
     _confirmationDiciplinarySchema,
-    _confirmationExaminationSchema,
     _confirmationExamsChecklistSchema,
     _confirmationMeetingResultSchema,
     _confirmationPersonalDetailSchema,
@@ -53,7 +53,7 @@ export async function load({ params }) {
 
     const examsInfoForm = await superValidate(
         confirmationInServiceView.examination,
-        zod(_confirmationExaminationSchema),
+        zod(_confirmationExamsChecklistSchema),
         { errors: false },
     );
 
@@ -62,6 +62,13 @@ export async function load({ params }) {
         zod(_confirmationDiciplinarySchema),
         { errors: false },
     );
+
+    const contractContinuationInfoForm = await superValidate(
+        confirmationInServiceView.contractContinuation,
+        zod(_confirmationContractContinuationSchema),
+        { errors: false },
+    );
+
     const employmentSecretaryInfoForm = await superValidate(
         confirmationInServiceView.secretary,
         zod(_confirmationApprovalSchema),
@@ -70,17 +77,17 @@ export async function load({ params }) {
     const divisionDirectorInfoForm = await superValidate(
         confirmationInServiceView.division,
         zod(_confirmationApprovalSchema),
-        { errors: false },
+        { errors: false, id: "divisionDirectorInfoFormID" },
     );
     const integrityDirectorApprovalForm = await superValidate(
         confirmationInServiceView.integrity,
         zod(_confirmationApprovalSchema),
-        { errors: false },
+        { errors: false, id: "integrityDirectorApprovalFormID" },
     );
     const auditDirectorInfoForm = await superValidate(
         confirmationInServiceView.audit,
         zod(_confirmationApprovalSchema),
-        { errors: false },
+        { errors: false, id: "auditDirectorInfoFormID" },
     );
     const confirmationMeetingForm = await superValidate(
         confirmationInServiceView.meeting,
@@ -88,7 +95,9 @@ export async function load({ params }) {
         { errors: false },
     );
 
-    const checklistForm = await superValidate(zod(_confirmationExamsChecklistSchema));
+    const checklistForm = await superValidate(
+        zod(_confirmationExamsChecklistSchema),
+    );
     // ==========================================================================
     // Get Lookup Functions
     // ==========================================================================
@@ -329,6 +338,7 @@ export async function load({ params }) {
             examsInfoForm,
             diciplinaryInfoForm,
             employmentSecretaryInfoForm,
+            contractContinuationInfoForm,
             divisionDirectorInfoForm,
             integrityDirectorApprovalForm,
             auditDirectorInfoForm,
@@ -387,6 +397,30 @@ export const _addConfirmationEmploymentSecretary = async (
         );
 
     return { response };
+};
+
+export const _addConfirmationContractContinuation = async (
+    id: number,
+    formData: object,
+) => {
+    const form = await superValidate(
+        formData,
+        zod(_confirmationContractContinuationSchema),
+    );
+    form.data.conformationId = id;
+
+    console.log(form.data);
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    // const response: CommonResponseDTO =
+    //     await ConfirmationServices.createConfirmationContractContinuationResult(
+    //         form.data as ConfirmationContractContinuationDTO,
+    //     );
+
+    // return { response };
 };
 
 export const _addConfirmationStateDirector = async (
