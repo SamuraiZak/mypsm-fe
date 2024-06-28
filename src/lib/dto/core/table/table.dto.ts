@@ -31,5 +31,8 @@ export interface TableSettingDTO {
     };
     controls: {
         add: boolean;
+        header?: boolean;
+        pdf?: boolean;
+        excel?: boolean;
     };
 }
