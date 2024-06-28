@@ -91,6 +91,45 @@
             openModal = true;
         }
     };
+
+    // Table list
+    let includedEmployeesListTable: TableSettingDTO = {
+        param: data.param,
+        meta: {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data:
+            (newOfferMeetingBatchListTable.selectedData as CommonEmployeeDTO[]) ??
+            [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: [
+            'employeeId',
+            'program',
+            'scheme',
+            'grade',
+            'position',
+            'placement',
+        ],
+        dictionary: [],
+        url: '',
+        id: 'includedEmployeesListTable',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: false,
+            footer: false,
+        },
+        controls: {
+            add: false,
+            header: false,
+        },
+    };
 </script>
 
 <!-- content header starts here -->
@@ -154,7 +193,7 @@
 
 <Toaster />
 
-<Modal bind:open={openModal} size="xs" autoclose={false} class="w-full">
+<Modal bind:open={openModal} size="xs" autoclose={false} class="w-fit">
     <div class="text-center">
         <form
             id="newOfferMeetingFormId"
@@ -174,7 +213,9 @@
             <p class="text-sm">
                 Bilangan Kakitangan Dipilih: {$form.employees.length}
             </p>
-            <span>
+            <DataTable title="" bind:tableData={includedEmployeesListTable}
+            ></DataTable>
+            <span class="w-full">
                 <CustomTextField
                     errors={$errors.meetingGroupName}
                     id="meetingGroupName"
