@@ -85,7 +85,7 @@ export const _processEmployeeSchema = z.object({
     maxGradeId: numberIdSchema,
     positionId: numberIdSchema,
     placementId: numberIdSchema,
-    serviceTypeId: numberIdSchema,
+    serviceTypeId: numberIdSchema.default(2),
     serviceGroupId: numberIdSchema,
     unitId: numberIdSchema,
     employmentStatusId: numberIdSchema,
