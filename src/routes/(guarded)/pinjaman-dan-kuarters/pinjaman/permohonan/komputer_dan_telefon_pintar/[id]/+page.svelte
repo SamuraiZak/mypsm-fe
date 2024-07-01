@@ -564,6 +564,7 @@
                 >
                     <!-- {data.props.loanDetail?.maxLoan}
                 {$loanInfoForm.maxLoan} -->
+                <!-- max 5k -->
                     <CustomTextField
                         id="maxLoan"
                         label={'Had Permohonan'}
@@ -577,9 +578,10 @@
                         errors={$loanInfoError.requestedLoan}
                         bind:val={$loanInfoForm.requestedLoan}
                     ></CustomTextField>
+                    <!-- 48 months -->
                     <CustomTextField
                         id="paymentPeriod"
-                        label={'Tempoh Pembayaran'}
+                        label={'Tempoh Pembayaran (Bulan)'}
                         errors={$loanInfoError.paymentPeriod}
                         bind:val={$loanInfoForm.paymentPeriod}
                     ></CustomTextField>
@@ -615,6 +617,10 @@
                         class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
                     >
                         <span>Fail-fail yang dimuat naik:</span>
+                        <span>1. Slip Gaji</span>
+                        <span>2. Sebut Harga</span>
+                        <span>3. NRIC </span>
+
                     </div>
                     {#if data.props.userMode == 'kakitangan'}
                         <div
@@ -700,7 +706,7 @@
             </StepperContentBody>
         </StepperContent>
         <StepperContent>
-            <StepperContentHeader title="Tetapan Pelulus">
+            <StepperContentHeader title="Tetapan Ketua Seksyen">
                 <TextIconButton
                     label="Kembali"
                     onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
@@ -743,6 +749,54 @@
                     />
                 </form>
                 </div>
+                <!-- <div
+                    class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
+                >
+                <ContentHeader title="Keputusan Dari Pelulus">
+                    {#if data.props.userMode == 'pelulus'}
+                    <TextIconButton
+                        type="primary"
+                        label="Simpan"
+                        form="approverApprovalDetail"
+                    ></TextIconButton>
+                    {/if}
+                </ContentHeader>
+                <form
+                    id="approverApprovalDetail"
+                    method="POST"
+                    use:approverApprovalEnhance
+                    class="flex w-full flex-col gap-2"
+                >
+                    <CustomTextField
+                        disabled={notpelulus}
+                        id="remark"
+                        label="Tindakan / Ulasan"
+                        errors={$approverApprovalError.remark}
+                        bind:val={$approverApprovalForm.remark}
+                    />
+
+                    <CustomRadioBoolean
+                        disabled={notpelulus}
+                        id="status"
+                        label="Status"
+                        errors={$approverApprovalError.status}
+                        bind:val={$approverApprovalForm.status}
+                    />
+                </form>
+                </div> -->
+                </StepperContentBody
+            >
+        </StepperContent>
+      
+        <StepperContent>
+            <StepperContentHeader title="Tetapan Pelulus">
+                <TextIconButton
+                    label="Kembali"
+                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
+                />
+            </StepperContentHeader>
+            <StepperContentBody>
+                
                 <div
                     class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
                 >
@@ -856,6 +910,12 @@
                                                     {/if}
                                                 </div>
                                                 <CustomTextField
+                                                    label="Harga Belian"
+                                                    id=""
+                                                    disabled
+                                                    val=""
+                                                />
+                                                <CustomTextField
                                                     label="Nama Pembekal"
                                                     id="name{i}"
                                                     disabled
@@ -895,14 +955,14 @@
                             >
                                 <CustomTextField
                                     id="sellingPrice"
-                                    label="Jumlah Harga Belian (RM)"
+                                    label="Jumlah Harga Jumlah (RM)"
                                     errors={$secondScheduleError.sellingPrice}
                                     bind:val={$secondScheduleForm.sellingPrice}
                                 ></CustomTextField>
 
                                 <CustomTextField
                                     id="sellingBalance"
-                                    label="Bayaran Baki (RM)"
+                                    label="Bayaran Muka (RM)"
                                     errors={$secondScheduleError.sellingBalance}
                                     bind:val={$secondScheduleForm.sellingBalance}
                                 ></CustomTextField>
@@ -920,6 +980,7 @@
                                 <div
                                     class="flex w-full flex-col items-start justify-start gap-2.5"
                                 >
+                                <!-- max 48 bulan -->
                                     <CustomTextField
                                         id="installment"
                                         label="Amaun Bulanan (RM)"
@@ -940,6 +1001,7 @@
                 </CustomTab>
             </StepperContent>
         {/if}
+        <!-- new stepper -->
 
         <StepperContent>
             <StepperContentHeader title="Surat Tawaran">
@@ -1069,6 +1131,7 @@
                     </div>
                 </form>
             </StepperContentBody>
+            <!-- x perlu -->
         </StepperContent>
         {#if data.props.userMode == 'urusetia' || data.props.userMode == 'pelulus' || data.props.userMode == 'ketua Seksyen'}
             <StepperContent>
@@ -1184,7 +1247,7 @@
                                         errors={$approvalAndOfferDetailError.loanType}
                                         bind:val={$approvalAndOfferDetailForm.loanType}
                                     ></CustomTextField>
-
+                                    <!-- max 5 k -->
                                     <CustomTextField
                                         id="purchasePrice"
                                         label="Harga Belian Dengan Kerajaan (RM)"
@@ -1244,7 +1307,8 @@
             </StepperContent>
         {/if}
 
-        <StepperContent>
+        <!-- x perlu -->
+        <!-- <StepperContent>
             <StepperContentHeader title="Senarai Semak Surat Perjanjian">
                 <TextIconButton
                     label="Kembali"
@@ -1286,7 +1350,7 @@
                     </div>
                 </form></StepperContentBody
             >
-        </StepperContent>
+        </StepperContent> -->
         <StepperContent>
             <StepperContentHeader title="Resit dan Invois">
                 <TextIconButton
@@ -1364,6 +1428,11 @@
 
 <Modal title="Tambah Pembekal" bind:open={openModal}>
     <div class="flex w-full flex-col justify-start gap-2.5 pb-3">
+        <CustomTextField
+            label="Harga Belian"
+            id="name"
+            bind:val={tempSupplier.name}
+        />
         <CustomTextField
             label="Nama Pembekal"
             id="name"
