@@ -4,13 +4,18 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
-    import { kgtMonthLookup, mesyuaratNameLookup } from '$lib/constants/core/dropdown.constant';
+    import {
+        kgtMonthLookup,
+        mesyuaratNameLookup,
+    } from '$lib/constants/core/dropdown.constant';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
+    import { Toaster } from 'svelte-french-toast';
+
     import { goto } from '$app/navigation';
 
     export let data: PageData;
@@ -27,7 +32,7 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['employeeId'],
-        dictionary: [{english: 'kumpulanPGT', malay: 'Kumpulan PGT'}],
+        dictionary: [{ english: 'kumpulanPGT', malay: 'Kumpulan PGT' }],
         url: '',
         id: 'salaryRecordTable',
         option: {
@@ -46,9 +51,17 @@
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader title="Kenaikan Gaji Tahunan">
-        <TextIconButton label="Kembali" icon="previous" type="neutral" onClick={() => goto('/gaji/pergerakan-gaji_2')} />
+        <TextIconButton
+            label="Kembali"
+            icon="previous"
+            type="neutral"
+            onClick={() => goto('/gaji/pergerakan-gaji_2')}
+        />
         <TextIconButton label="Draf" type="neutral" />
-        <TextIconButton label="Hantar" />
+        <TextIconButton
+            label="Hantar"
+            onClick={() => goto('/gaji/pergerakan-gaji/butiran/kenaikan gaji tahunan/1')}
+        />
     </ContentHeader>
 </section>
 
@@ -59,55 +72,60 @@
         <XCard
             title="Bahagian 1: Tetapan Kenaikan Gaji Tahunan (KGT) Mengikut Bulan"
         >
-            <div class="flex w-full flex-row justify-start items-center gap-2.5">
+            <form
+                class="flex w-full flex-row items-center justify-start gap-2.5"
+                id="formA"
+            >
                 <CustomSelectField
-                label="Nama dan Bilangan Mesyuarat"
+                    label="Nama dan Bilangan Mesyuarat"
                     id="meetingName"
                     options={mesyuaratNameLookup}
-                    val=''
+                    val=""
                 />
                 <CustomTextField
                     label="Tarikh Mesyuarat"
                     id="meetingDate"
                     type="date"
-                    val=''
+                    val=""
                 />
                 <CustomSelectField
-                label="Bulan Pergerakan Gaji"
+                    label="Bulan Pergerakan Gaji"
                     id="salaryMovementMonth"
                     options={kgtMonthLookup}
-                    val=''
+                    val=""
                 />
-                <TextIconButton
-                    label="Tetapkan"
-                    icon="check"
-                />
-            </div>            
+                <TextIconButton label="Tetapkan" icon="check" form="formA" />
+            </form>
         </XCard>
-        <XCard title="Bahagian 2: Tetapan Pengecualian Kakitangan Mengikut Bulan KGT">
+        <XCard
+            title="Bahagian 2: Tetapan Pengecualian Kakitangan Mengikut Bulan KGT"
+        >
             <div class="h-fit w-full">
                 <DataTable
                     title="Senarai Kakitangan"
                     bind:tableData={salaryRecordTable}
                 >
                     <FilterWrapper slot="filter">
-                        <FilterTextField
-                            label="Nama"
-                            inputValue=''
-                        />
+                        <FilterTextField label="Nama" inputValue="" />
                         <FilterTextField
                             label="No. Kad Pengenalan"
-                            inputValue=''
+                            inputValue=""
+                        />
+                        <FilterTextField label="No. Pekerja" inputValue="" />
+                        <FilterSelectField
+                            options={mesyuaratNameLookup}
+                            label="Gred"
+                            inputValue=""
                         />
                         <FilterSelectField
                             options={mesyuaratNameLookup}
-                            label="Program"
-                            inputValue=''
+                            label="Status"
+                            inputValue=""
                         />
                         <FilterSelectField
                             label="Jawatan"
                             options={kgtMonthLookup}
-                            inputValue=''
+                            inputValue=""
                         />
                     </FilterWrapper>
                 </DataTable>
@@ -115,3 +133,4 @@
         </XCard>
     </div>
 </section>
+<Toaster />

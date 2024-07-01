@@ -15,6 +15,7 @@
         monthNumberLookup,
     } from '$lib/constants/core/dropdown.constant';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
+    import { Toaster } from 'svelte-french-toast';
     import type { PageData } from './$types';
 
     export let data: PageData;
@@ -70,10 +71,13 @@
                 <TextIconButton
                     label="Tetapkan"
                     icon="check"
-                    onClick={() => console.log('situ')}
+                    form="formA"
                 />
             </ContentHeader>
-            <div class="flex w-full flex-row items-center justify-start gap-5">
+            <form
+                class="flex w-full flex-row items-center justify-start gap-5"
+                id="formA"
+            >
                 <CustomTextField
                     id="total"
                     type="number"
@@ -86,7 +90,7 @@
                     options={monthNumberLookup}
                     val={1}
                 />
-            </div>
+            </form>
         </XCard>
         <XCard title="Senarai Kakitangan">
             <div class="h-fit w-full">
@@ -116,3 +120,4 @@
         </XCard>
     </div>
 </section>
+<Toaster/>

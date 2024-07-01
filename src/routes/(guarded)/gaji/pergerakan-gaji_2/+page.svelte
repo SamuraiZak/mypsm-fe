@@ -15,6 +15,8 @@
 
     export let data: PageData;
 
+    let rowData: any;
+
     let salaryRecordTable: TableSettingDTO = {
         param: data.props.param,
         meta: {
@@ -27,7 +29,7 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['employeeId'],
-        dictionary: [{english: 'kumpulanPGT', malay: 'Kumpulan PGT'}],
+        dictionary: [{ english: 'kumpulanPGT', malay: 'Kumpulan PGT' }],
         url: '',
         id: 'salaryRecordTable',
         option: {
@@ -51,42 +53,54 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-<div class="w-full flex flex-col justify-start px-5">
-    <ContentHeader title="" borderClass="border-none">
-        <TextIconButton
-            label="Tambah"
-            icon="add"
-            options={data.props.salaryType}
-        />
-    </ContentHeader>
-    <div class="h-fit w-full">
-        <DataTable
-            title="Senarai Mesyuarat"
-            bind:tableData={salaryRecordTable}
-            detailActions={() => goto('/gaji/pergerakan-gaji/butiran/kenaikan-khas/1')}
-        >
-            <FilterWrapper slot="filter">
-                <FilterTextField
-                    label="Kumpulan PGT"
-                    inputValue=''
-                />
-                <FilterSelectField
-                    options={mesyuaratNameLookup}
-                    label="Nama Mesyuarat"
-                    inputValue=''
-                />
-                <FilterSelectField
-                    label="Bulan"
-                    options={kgtMonthLookup}
-                    inputValue=''
-                />
-                <FilterSelectField
-                    label="Status"
-                    options={kgtMonthLookup}
-                    inputValue=''
-                />
-            </FilterWrapper>
-        </DataTable>
+    <div class="flex w-full flex-col justify-start px-5">
+        <ContentHeader title="" borderClass="border-none">
+            <TextIconButton
+                label="Tambah"
+                icon="add"
+                options={data.props.salaryType}
+            />
+        </ContentHeader>
+        <div class="h-fit w-full">
+            <DataTable
+                title="Senarai Mesyuarat"
+                bind:tableData={salaryRecordTable}
+                bind:passData={rowData}
+                detailActions={() => {
+                    if (rowData.status == 'Draf') {
+                        goto(
+                            '/gaji/pergerakan-gaji/' +
+                                rowData.jenisPergerakanGaji +
+                                '/1',
+                        );
+                    } else {
+                        goto(
+                            '/gaji/pergerakan-gaji/butiran/' +
+                                rowData.jenisPergerakanGaji +
+                                '/1',
+                        );
+                    }
+                }}
+            >
+                <FilterWrapper slot="filter">
+                    <FilterTextField label="Kumpulan PGT" inputValue="" />
+                    <FilterSelectField
+                        options={mesyuaratNameLookup}
+                        label="Nama Mesyuarat"
+                        inputValue=""
+                    />
+                    <FilterSelectField
+                        label="Bulan"
+                        options={kgtMonthLookup}
+                        inputValue=""
+                    />
+                    <FilterSelectField
+                        label="Status"
+                        options={kgtMonthLookup}
+                        inputValue=""
+                    />
+                </FilterWrapper>
+            </DataTable>
+        </div>
     </div>
-</div>
 </section>
