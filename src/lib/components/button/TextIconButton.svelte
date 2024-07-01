@@ -29,7 +29,7 @@
     {form}
     {disabled}
     on:click={onClick}
-    class="flex h-7 max-h-7 min-h-7 flex-row items-center justify-center gap-1 rounded px-2 {type ===
+    class="flex h-7 max-h-7 min-h-7 flex-row items-center justify-center {label !== "" ? "gap-1" : "gap-0"} rounded px-2 {type ===
     'primary'
         ? 'bg-ios-systemColors-systemBlue-light hover:bg-ios-systemColors-systemBlue-dark'
         : type === 'danger'
