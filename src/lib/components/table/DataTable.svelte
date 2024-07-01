@@ -322,13 +322,9 @@
                             tableData.dictionary,
                         );
                     }
-                } else if(tableData.url == ''){
+                } else if (tableData.url == '') {
                     tableData.exportData = tableData.data;
-                    ExportHelper.excel(
-                            title,
-                            tableData,
-                            tableData.dictionary,
-                        );
+                    ExportHelper.excel(title, tableData, tableData.dictionary);
                 }
 
                 loading = false;
@@ -354,39 +350,47 @@
     class="just-start flex h-fit w-full flex-col items-center overflow-x-hidden overflow-y-hidden"
 >
     <!-- component header -->
-    <div
-        class="flex h-10 max-h-10 min-h-10 w-full flex-row items-center justify-between"
-    >
-        <!-- leading -->
-        <div class="flex h-fit w-fit flex-row items-center justify-start">
-            <p class="text-base font-medium">{title}</p>
+    {#if tableData.controls.header}
+        <div
+            class="flex h-10 max-h-10 min-h-10 w-full flex-row items-center justify-between"
+        >
+            <!-- leading -->
+            <div class="flex h-fit w-fit flex-row items-center justify-start">
+                <p class="text-base font-medium">{title}</p>
+            </div>
+            <!-- trailing -->
+            <div
+                class="flex h-fit w-fit flex-row items-center justify-start gap-1"
+            >
+                <slot name="extras" />
+                {#if tableData.controls.add}
+                    <TextIconButton
+                        label="Tambah"
+                        icon="add"
+                        onClick={() => {
+                            addActions();
+                        }}
+                    ></TextIconButton>
+                {/if}
+                {#if tableData.controls.pdf}
+                    <ImpactButton
+                        label="PDF"
+                        onClick={() => {
+                            handleExportPDF(tableData.id);
+                        }}
+                    ></ImpactButton>
+                {/if}
+                {#if tableData.controls.excel}
+                    <ImpactButton
+                        label="Excel"
+                        onClick={() => {
+                            handleExportExcel();
+                        }}
+                    ></ImpactButton>
+                {/if}
+            </div>
         </div>
-        <!-- trailing -->
-        <div class="flex h-fit w-fit flex-row items-center justify-start gap-1">
-            <slot name="extras" />
-            {#if tableData.controls.add}
-                <TextIconButton
-                    label="Tambah"
-                    icon="add"
-                    onClick={() => {
-                        addActions();
-                    }}
-                ></TextIconButton>
-            {/if}
-            <ImpactButton
-                label="PDF"
-                onClick={() => {
-                    handleExportPDF(tableData.id);
-                }}
-            ></ImpactButton>
-            <ImpactButton
-                label="Excel"
-                onClick={() => {
-                    handleExportExcel();
-                }}
-            ></ImpactButton>
-        </div>
-    </div>
+    {/if}
 
     <!-- table wrapper -->
     <div
@@ -490,7 +494,7 @@
                                             class="h-full cursor-pointer border-r border-ios-labelColors-separator-light px-2.5"
                                         >
                                             <div
-                                                class="flex w-fit h-full flex-row items-center justify-between"
+                                                class="flex h-full w-fit flex-row items-center justify-between"
                                             >
                                                 <span
                                                     class="select-none text-nowrap text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"

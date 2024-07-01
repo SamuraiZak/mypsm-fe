@@ -6,6 +6,7 @@ import {
     booleanSchema,
     codeSchema,
     dateStringSchema,
+    numberSchem0,
     shortTextSchema,
 } from '$lib/schemas/common/schema-type';
 import { z } from 'zod';
@@ -104,25 +105,56 @@ export const _updateConfirmationMeetingResultSchema =
         id: z.number().readonly(),
     });
 
-export const _confirmationFullDetailSchema = z.object({
-    dataType: z.string().readonly(),
-    personalDetail: _confirmationPersonalDetailSchema,
-    service: _confirmationServiceSchema,
-    examination: _confirmationExaminationSchema,
-    diciplinary: _confirmationDiciplinarySchema,
-    secretary: _confirmationApprovalSchema,
-    division: _confirmationApprovalSchema,
-    integrity: _confirmationApprovalSchema,
-    audit: _confirmationApprovalSchema,
-    meeting: _confirmationMeetingResultSchema,
-});
+export const _confirmationContractContinuationSchema = z
+    .object({
+        confirmationId: z.number(),
+        isContractContinued: booleanSchema,
+        effectiveDate: dateStringSchema,
+        contractMonths: numberSchem0,
+        isReadonly: z.boolean().readonly(),
+    })
+    .superRefine(
+        ({ isContractContinued, effectiveDate, contractMonths }, ctx) => {
+            if (isContractContinued) {
+                if (effectiveDate === '' || effectiveDate === 'undefined') {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Tarikh tidak boleh kosong.',
+                        path: ['effectiveDate'],
+                    });
+                }
+
+                if (contractMonths === null || contractMonths < 1) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message: 'Bulan percubaan tidak boleh kosong.',
+                        path: ['contractMonths'],
+                    });
+                }
+            }
+        },
+    );
 
 export const _confirmationExamsChecklistSchema = z.object({
-    conformationId: z.number(),
+    confirmationId: z.number(),
     checker: shortTextSchema,
     confirmationExamOneStatus: booleanSchema,
     confirmationExamTwoStatus: booleanSchema,
     confirmationExamThreeStatus: booleanSchema,
     confirmationExamFourStatus: booleanSchema,
     confirmationExamFiveStatus: booleanSchema,
+});
+
+export const _confirmationFullDetailSchema = z.object({
+    dataType: z.string().readonly(),
+    personalDetail: _confirmationPersonalDetailSchema,
+    service: _confirmationServiceSchema,
+    examination: _confirmationExamsChecklistSchema,
+    diciplinary: _confirmationDiciplinarySchema,
+    contractContinuation: _confirmationContractContinuationSchema,
+    secretary: _confirmationApprovalSchema,
+    division: _confirmationApprovalSchema,
+    integrity: _confirmationApprovalSchema,
+    audit: _confirmationApprovalSchema,
+    meeting: _confirmationMeetingResultSchema,
 });
