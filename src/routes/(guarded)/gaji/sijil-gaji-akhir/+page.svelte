@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { goto } from '$app/navigation';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
@@ -85,7 +86,7 @@
                 title="Rekod Sijil Gaji Akhir"
                 bind:tableData={finalPayslipTable}
                 bind:passData={rowData}
-                detailActions={() => (isOpen = true)}
+                detailActions={() => goto('/gaji/sijil-gaji-akhir/butiran/1')}
             >
                 <FilterWrapper slot="filter">
                     <FilterTextField

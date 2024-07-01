@@ -244,6 +244,7 @@
                             label="Tangga Gaji (RM)"
                             id="salaryLevel"
                             disabled
+                            isRequired={false}
                             placeholder=""
                             bind:val={data.salaryDetail.salaryLevel}
                         />
@@ -251,6 +252,7 @@
                             label="Gaji Pokok (RM)"
                             id="baseSalary"
                             disabled
+                            isRequired={false}
                             placeholder=""
                             bind:val={data.salaryDetail.baseSalary}
                         />
@@ -258,6 +260,7 @@
                             label="ITKA"
                             id="itka"
                             disabled
+                            isRequired={false}
                             placeholder=""
                             bind:val={data.salaryDetail.itka}
                         />
@@ -265,6 +268,7 @@
                             label="ITP"
                             id="itp"
                             disabled
+                            isRequired={false}
                             placeholder=""
                             bind:val={data.salaryDetail.itp}
                         />
@@ -272,13 +276,16 @@
                             label="COLA"
                             id="cola"
                             disabled
+                            isRequired={false}
                             placeholder=""
                             bind:val={data.salaryDetail.cola}
                         />
+                        <div class="w-full flex flex-row gap-3 items-center">
                         <CustomSelectField
                             label="Bulan Pergerakan Gaji"
                             id="salaryMovementMonth"
                             disabled
+                            isRequired={false}
                             placeholder=""
                             options={kgtMonthLookup}
                             val={data.salaryDetail.salaryMovementMonth}
@@ -287,15 +294,17 @@
                             label="Jumlah (RM)"
                             id="salaryMovementTotal"
                             disabled
+                            isRequired={false}
                             placeholder=""
                             bind:val={data.salaryDetail.salaryMovementTotal}
                         />
+                    </div>
                     </div>
                 </div>
             </StepperContentBody>
         </StepperContent>
 
-        <StepperContent>
+        <!-- <StepperContent>
             <StepperContentHeader title="Maklumat Lain-Lain"
             ></StepperContentHeader>
             <StepperContentBody>
@@ -345,7 +354,7 @@
                     {/if}
                 </div>
             </StepperContentBody>
-        </StepperContent>
+        </StepperContent> -->
 
         <StepperContent>
             <StepperContentHeader title="Perubahan Gaji">
@@ -368,14 +377,14 @@
             <StepperContentBody paddingClass="p-0">
                 <CustomTab>
                     <CustomTabContent title="Umum">
-                        <div class="w-full border-b px-3 pb-5">
+                        <!-- <div class="w-full border-b px-3 pb-5">
                             <div class="h-fit w-full">
                                 <DataTable
                                     title="Senarai Cuti"
                                     tableData={umumTable}
                                 />
                             </div>
-                        </div>
+                        </div> -->
                         <ContentHeader
                             title="Senarai Potongan"
                             borderClass="border-none"
@@ -483,7 +492,7 @@
                         {/if}
                     </CustomTabContent>
 
-                    <CustomTabContent title="Pemangkuan">
+                    <CustomTabContent title="Kenaikan Pangkat">
                         {#if $actingDetailForm.acting.length < 1}
                             <div class="flex w-full flex-col gap-10 px-3">
                                 <Alert color="blue">
@@ -575,6 +584,10 @@
                                 </div>
                             </div>
                         {/if}
+                    </CustomTabContent>
+
+                    <CustomTabContent title="Cuti">
+                        
                     </CustomTabContent>
 
                     <CustomTabContent title="Pelarasan">

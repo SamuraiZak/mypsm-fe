@@ -15,13 +15,19 @@
     import {
         kgtMonthLookup,
         mesyuaratNameLookup,
+        monthNumberLookup,
         successBooleanOption,
     } from '$lib/constants/core/dropdown.constant';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import Alert from 'flowbite-svelte/Alert.svelte';
     import type { PageData } from './$types';
+    import { Toaster } from 'svelte-french-toast';
+    import { Modal } from 'flowbite-svelte';
 
     export let data: PageData;
+
+    let openModal: boolean = false;
+    let selectedRow: any;
 
     let salaryRecordTable: TableSettingDTO = {
         param: data.props.param,
@@ -41,7 +47,7 @@
         option: {
             checkbox: true,
             detail: false,
-            edit: false,
+            edit: true,
             select: false,
             filter: true,
         },
@@ -70,7 +76,7 @@
         <StepperContent>
             <StepperContentHeader title="Senarai Kakitangan">
                 <TextIconButton label="Draf" type="neutral" />
-                <TextIconButton label="Hantar" />
+                <TextIconButton label="Hantar" onClick={() => console.log('do something here')}/>
             </StepperContentHeader>
             <StepperContentBody paddingClass="p-5">
                 <div class="w-full">
@@ -78,7 +84,7 @@
                         <p>
                             <span class="font-medium">Arahan: </span>
                             Pilih kakitangan untuk dikecualikan dalam senarai kakitangan
-                            yang terlibat.
+                            yang terlibat atau tambah catatan untuk kakitangan.
                         </p>
                     </Alert>
                 </div>
@@ -86,6 +92,8 @@
                     <DataTable
                         title="Senarai Kakitangan Yang Terlibat"
                         bind:tableData={salaryRecordTable}
+                        bind:passData={selectedRow}
+                        editActions={() => (openModal = true)}
                     >
                         <FilterWrapper slot="filter">
                             <FilterTextField label="Nama" inputValue="" />
@@ -95,7 +103,7 @@
                             />
                             <FilterSelectField
                                 options={mesyuaratNameLookup}
-                                label="Program"
+                                label="Status"
                                 inputValue=""
                             />
                             <FilterSelectField
@@ -109,61 +117,140 @@
             </StepperContentBody>
         </StepperContent>
 
-        <StepperContent>
-            <StepperContentHeader title="Keputusan Mesyuarat">
-                <TextIconButton label="Draf" type="neutral" />
-                <TextIconButton label="Hantar" />
-            </StepperContentHeader>
-            <StepperContentBody paddingClass="p-5">
-                <div class="flex w-full">
-                    <div class="flex w-1/2 flex-col justify-start">
-                        <div class="w-full pb-5">
-                            <Alert color="blue">
-                                <p>
-                                    <span class="font-medium">Arahan: </span>
-                                    Masukkan keputusan mesyuarat.
-                                </p>
-                            </Alert>
+        {#if data.props.salaryType == 'Kenaikan Gaji Tahunan'}
+            <StepperContent>
+                <StepperContentHeader title="Keputusan Mesyuarat">
+                    <TextIconButton label="Draf" type="neutral" />
+                    <TextIconButton label="Hantar" form="meetingResultForm" />
+                </StepperContentHeader>
+                <StepperContentBody paddingClass="p-5">
+                    <form id="meetingResultForm" class="flex w-full">
+                        <div class="flex w-1/2 flex-col justify-start">
+                            <div class="w-full pb-5">
+                                <Alert color="blue">
+                                    <p>
+                                        <span class="font-medium"
+                                            >Arahan:
+                                        </span>
+                                        Masukkan keputusan mesyuarat.
+                                    </p>
+                                </Alert>
+                            </div>
+                            <CustomTextField
+                                id="group"
+                                disabled
+                                isRequired={false}
+                                label="Kumpulan"
+                                val=""
+                            />
+                            <CustomTextField
+                                id="total"
+                                disabled
+                                isRequired={false}
+                                label="Jumlah Kakitangan"
+                                val=""
+                            />
+                            <CustomTextField
+                                id="meetingName"
+                                disabled
+                                isRequired={false}
+                                label="Nama dan Bilangan Mesyuarat"
+                                val=""
+                            />
+                            <CustomTextField
+                                id="meetingDate"
+                                type="date"
+                                label="Tarikh Mesyuarat"
+                                val=""
+                            />
+                            <CustomTextField
+                                id="feedback"
+                                isRequired={false}
+                                label="Tindakan/Ulasan"
+                                val=""
+                            />
+                            <CustomSelectField
+                                id="meetingResult"
+                                label="Keputusan Mesyuarat"
+                                options={successBooleanOption}
+                                val={true}
+                            />
                         </div>
-                        <CustomTextField
-                            id="group"
-                            disabled
-                            label="Kumpulan"
-                            val=""
-                        />
-                        <CustomTextField
-                            id="total"
-                            disabled
-                            label="Jumlah Kakitangan"
-                            val=""
-                        />
-                        <CustomTextField
-                            id="meetingName"
-                            disabled
-                            label="Nama dan Bilangan Mesyuarat"
-                            val=""
-                        />
-                        <CustomTextField
-                            id="meetingDate"
-                            type="date"
-                            label="Tarikh Mesyuarat"
-                            val=""
-                        />
-                        <CustomTextField
-                            id="group"
-                            disabled
-                            label="Tindakan/Ulasan"
-                            val=""
-                        />
-                        <CustomSelectField
-                            id="meetingResult"
-                            label="Keputusan Mesyuarat"
-                            options={successBooleanOption}
-                            val={true}
-                        />
+                    </form>
+                </StepperContentBody>
+            </StepperContent>
+        {:else}
+            <StepperContent>
+                <StepperContentHeader title="Maklumat Kumpulan" />
+                <StepperContentBody paddingClass="p-5">
+                    <div class="flex w-full">
+                        <div class="flex w-1/2 flex-col justify-start">
+                            <CustomTextField
+                                id="salaryType"
+                                isRequired={false}
+                                label="Jenis Pergerakan Gaji"
+                                disabled
+                                val={data.props.salaryType}
+                            />
+                            <CustomSelectField
+                                id="month"
+                                isRequired={false}
+                                options={monthNumberLookup}
+                                disabled
+                                label="Bulan Berkuatkuasa"
+                                val={4}
+                            />
+                            <CustomTextField
+                                id="totalPayment"
+                                isRequired={false}
+                                label="Jumlah (RM)"
+                                disabled
+                                type="number"
+                                val={100}
+                            />
+                        </div>
                     </div>
-                </div>
-            </StepperContentBody>
-        </StepperContent>
+                </StepperContentBody>
+            </StepperContent>
+        {/if}
     </Stepper>
 </section>
+
+<Toaster />
+
+<Modal title="Sistem MyPSM" bind:open={openModal} dismissable={false} size="md">
+    <form class="flex w-full flex-col justify-start gap-6" id="updateDetail">
+        <Alert color="blue" class="flex flex-col gap-2.5">
+            <p>
+                <span class="font-medium">No. Pekerja: </span>
+                {selectedRow?.noPekerja}
+            </p>
+            <p>
+                <span class="font-medium">Nama Kakitangan: </span>
+                {selectedRow?.nama}
+            </p>
+            <p>
+                <span class="font-medium">No. Kad Pengenalan: </span>
+                {selectedRow?.noIC}
+            </p>
+            <div class="flex h-fit w-full flex-col justify-center">
+                <span class="font-medium">Catatan: </span>
+                <CustomTextField
+                    id="catatan"
+                    isRequired={false}
+                    label=""
+                    val=""
+                />
+            </div>
+        </Alert>
+    </form>
+    <div class="flex justify-center gap-3">
+        <TextIconButton
+            label="Tutup"
+            icon="cancel"
+            type="neutral"
+            onClick={() => (openModal = false)}
+        />
+        <TextIconButton label="Hantar" icon="check" form="updateDetail" />
+    </div>
+</Modal>
