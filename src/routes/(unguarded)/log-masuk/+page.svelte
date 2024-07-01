@@ -56,9 +56,12 @@
             }
         },
         onSubmit() {
-
-            if($loginCommonForm.currentRoleCode == UserRoleConstant.calonKontrak.code){
-                $loginCommonForm.userGroupCode = UserGroupConstant.candidate.code;
+            if (
+                $loginCommonForm.currentRoleCode ==
+                UserRoleConstant.calonKontrak.code
+            ) {
+                $loginCommonForm.userGroupCode =
+                    UserGroupConstant.candidate.code;
             }
             _submitLoginForm($loginCommonForm);
         },
