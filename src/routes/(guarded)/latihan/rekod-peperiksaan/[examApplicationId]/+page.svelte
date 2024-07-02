@@ -903,13 +903,22 @@
 
                     <CustomTextField
                         disabled
-                        id="remark"
+                        id="title"
                         label="Tajuk Peperiksaan"
                         placeholder="-"
                         bind:val={$examResultInfoForm.examTitle}
                     ></CustomTextField>
 
                     {#if !$examApplicationIsFail && (($isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole) || ($isReadonlyExamResult && (!data.role.isCourseSecretaryRole || data.role.isCourseSecretaryRole)))}
+                        <CustomTextField
+                            disabled={$isReadonlyExamResult}
+                            errors={$examResultInfoErrors.examRemark}
+                            id="examRemark"
+                            label="Catatan"
+                            placeholder="-"
+                            bind:val={$examResultInfoForm.examRemark}
+                        ></CustomTextField>
+
                         <CustomSelectField
                             disabled={$isReadonlyExamResult}
                             errors={$examResultInfoErrors.examResult}

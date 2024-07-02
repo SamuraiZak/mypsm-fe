@@ -87,7 +87,7 @@
     };
 </script>
 
-<ContentHeader title="Maklumat Lantikan Baru"
+<ContentHeader title="Maklumat Peperiksaan Baru"
     ><TextIconButton
         label="Kembali"
         type="neutral"
