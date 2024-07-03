@@ -147,20 +147,20 @@
                 class="flex h-full w-full flex-col items-start overflow-hidden overflow-x-hidden bg-ios-basic-white"
             >
                 <!-- breadcrumb starts here -->
-                <div
+                <!-- <div
                     class="flex h-10 max-h-10 min-h-10 w-full flex-row justify-start border-b bg-ios-basic-white px-2"
                 >
                     <div
                         class="flex h-full flex-row items-center justify-center gap-2"
-                    >
+                    > -->
                         <!-- <span
                             class="text text-ios-labelColors-secondaryLabel-light"
                         >
                             <SvgBookmark size="16"></SvgBookmark>
                         </span> -->
-                        <Breadcrumb></Breadcrumb>
-                    </div>
-                </div>
+                        <!-- <Breadcrumb></Breadcrumb> -->
+                    <!-- </div>
+                </div> -->
                 <!-- breadcrumb ends here -->
 
                 <!-- content body wrapper starts here -->
