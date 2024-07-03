@@ -1,4 +1,5 @@
 <script lang="ts">
+    import CustomRadioBoolean from './../../../../../lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
     import { zod } from 'sveltekit-superforms/adapters';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
@@ -24,6 +25,7 @@
     } from '$lib/schemas/mypsm/course/fund-application-schema';
     import FileInputField from '$lib/components/inputs/file-input-field/FileInputField.svelte';
     import FileInputFieldChildren from '$lib/components/inputs/file-input-field/FileInputFieldChildren.svelte';
+    import { Checkbox } from 'flowbite-svelte';
     export let data: PageData;
 
     let enableUploadDocument = false;
@@ -36,10 +38,38 @@
         invalidateAll: false,
         resetForm: false,
         multipleSubmits: 'prevent',
-        validationMethod: 'oninput',
+        validationMethod: 'auto',
         validators: zod(_fundApplicationDetailResponseSchema),
-        async onSubmit(formData) {
-            const result = await _createFundApplicationForm(formData.formData);
+        onChange() {
+            const educationTypeIdLastIndex = $form.educationTypeId.length - 1;
+
+            if ($form.educationTypeId[educationTypeIdLastIndex] === 3) {
+                $form.educationTypeId = $form.educationTypeId.filter(
+                    (id) => id !== 4,
+                );
+            } else if ($form.educationTypeId[educationTypeIdLastIndex] === 4) {
+                $form.educationTypeId = $form.educationTypeId.filter(
+                    (id) => id !== 3,
+                );
+            }
+
+            const applicationTypeIdLastIndex =
+                $form.applicationTypeId.length - 1;
+
+            if ($form.applicationTypeId[applicationTypeIdLastIndex] === 8) {
+                $form.applicationTypeId = $form.applicationTypeId.filter(
+                    (id) => id !== 9,
+                );
+            } else if (
+                $form.applicationTypeId[applicationTypeIdLastIndex] === 9
+            ) {
+                $form.applicationTypeId = $form.applicationTypeId.filter(
+                    (id) => id !== 8,
+                );
+            }
+        },
+        async onSubmit() {
+            const result = await _createFundApplicationForm($form);
 
             if (result.response.status === 'success') {
                 enableUploadDocument = true;
@@ -176,23 +206,109 @@
                     bind:val={$form.expectedFinishedStudyDate}
                 ></CustomTextField>
 
-                <CustomSelectField
-                    disabled={enableUploadDocument}
-                    errors={$errors.educationTypeId}
-                    id="educationTypeId"
-                    label="Jenis Pengajian"
-                    bind:val={$form.educationTypeId}
-                    options={data.lookups.educationTypeLookup}
-                ></CustomSelectField>
+                <div
+                    class="mb-3 flex h-fit w-full flex-col items-start justify-start gap-y-2 bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                >
+                    <label
+                        for="role"
+                        class="mb-2 block w-full text-start text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                        >Jenis Pengajian
+                        <span class="text-base text-system-danger">*</span>
+                    </label>
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={enableUploadDocument}
+                        checked={$form.educationTypeId.includes(1)}
+                        bind:group={$form.educationTypeId}
+                        bind:value={data.lookups.educationTypeLookup[0].value}
+                        >{data.lookups.educationTypeLookup[0].name}</Checkbox
+                    >
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={enableUploadDocument}
+                        checked={$form.educationTypeId.includes(2)}
+                        bind:group={$form.educationTypeId}
+                        bind:value={data.lookups.educationTypeLookup[1].value}
+                        >{data.lookups.educationTypeLookup[1].name}</Checkbox
+                    >
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={enableUploadDocument}
+                        checked={$form.educationTypeId.includes(3)}
+                        bind:group={$form.educationTypeId}
+                        bind:value={data.lookups.educationTypeLookup[2].value}
+                        >{data.lookups.educationTypeLookup[2].name}</Checkbox
+                    >
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={enableUploadDocument}
+                        checked={$form.educationTypeId.includes(4)}
+                        bind:group={$form.educationTypeId}
+                        bind:value={data.lookups.educationTypeLookup[3].value}
+                        >{data.lookups.educationTypeLookup[3].name}</Checkbox
+                    >
+                </div>
 
-                <CustomSelectField
-                    disabled={enableUploadDocument}
-                    errors={$errors.applicationTypeId}
-                    id="applicationTypeId"
-                    label="Jenis Permohonan"
-                    bind:val={$form.applicationTypeId}
-                    options={data.lookups.fundApplicationTypeLookup}
-                ></CustomSelectField>
+                <div
+                    class="mb-3 flex h-fit w-full flex-col items-start justify-start gap-y-2 bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                >
+                    <label
+                        for="role"
+                        class="mb-2 block w-full text-start text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                        >Jenis Permohonan
+                        <span class="text-base text-system-danger">*</span>
+                    </label>
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={enableUploadDocument}
+                        checked={$form.applicationTypeId.includes(1)}
+                        bind:group={$form.applicationTypeId}
+                        bind:value={data.lookups.fundApplicationTypeLookup[0]
+                            .value}
+                        >{data.lookups.fundApplicationTypeLookup[0]
+                            .name}</Checkbox
+                    >
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={enableUploadDocument}
+                        checked={$form.applicationTypeId.includes(2)}
+                        bind:group={$form.applicationTypeId}
+                        bind:value={data.lookups.fundApplicationTypeLookup[1]
+                            .value}
+                        >{data.lookups.fundApplicationTypeLookup[1]
+                            .name}</Checkbox
+                    >
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={enableUploadDocument}
+                        checked={$form.applicationTypeId.includes(3)}
+                        bind:group={$form.applicationTypeId}
+                        bind:value={data.lookups.fundApplicationTypeLookup[2]
+                            .value}
+                        >{data.lookups.fundApplicationTypeLookup[2]
+                            .name}</Checkbox
+                    >
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={enableUploadDocument}
+                        checked={$form.applicationTypeId.includes(4)}
+                        bind:group={$form.applicationTypeId}
+                        bind:value={data.lookups.fundApplicationTypeLookup[3]
+                            .value}
+                        >{data.lookups.fundApplicationTypeLookup[3]
+                            .name}</Checkbox
+                    >
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={enableUploadDocument}
+                        checked={$form.applicationTypeId.includes(5)}
+                        bind:group={$form.applicationTypeId}
+                        bind:value={data.lookups.fundApplicationTypeLookup[4]
+                            .value}
+                        >{data.lookups.fundApplicationTypeLookup[4]
+                            .name}</Checkbox
+                    >
+                </div>
             </form>
         </StepperContentBody>
     </StepperContent>
@@ -207,6 +323,16 @@
             </StepperContentHeader>
             <StepperContentBody>
                 <div class="flex w-full flex-col gap-2">
+                    <p class="text-sm">
+                        Sila muat turun, isi dengan lengkap dokumen berikut,
+                        kemudian muat naik dokumen pada ruangan yang disediakan.
+                    </p>
+
+                    <ol class="list-inside list-decimal space-y-1 text-sm">
+                        <li>Surat tawaran</li>
+                        <li>Kebenaran melanjutkan pelajaran</li>
+                        <li>Lain-lain dokumen yang berkaitan</li>
+                    </ol>
                     <form
                         class="flex w-full flex-col justify-start gap-2.5 pb-10"
                         method="POST"
