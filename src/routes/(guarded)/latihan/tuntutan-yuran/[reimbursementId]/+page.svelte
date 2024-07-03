@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { certifyOptions } from '$lib/constants/core/radio-option-constants';
+    import { approveOptions } from '$lib/constants/core/radio-option-constants';
     import { writable } from 'svelte/store';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
@@ -796,7 +796,7 @@
                 <CustomTextField
                     disabled={true}
                     id="finalResult"
-                    label="Keputusan Akhir (CGPA/skema pemarkahan berkaitan)"
+                    label="Keputusan Semester (GPA/skema pemarkahan berkaitan)"
                     type="text"
                     placeholder="-"
                     bind:val={$form.finalResult}
@@ -905,7 +905,7 @@
                             label="Keputusan"
                             placeholder="-"
                             bind:val={$secretaryApprovalInfoForm.status}
-                            options={certifyOptions}
+                            options={approveOptions}
                         ></CustomSelectField>
                     {:else}
                         <StepperOtherRolesResult />

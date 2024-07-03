@@ -183,6 +183,7 @@ export const _examApplicationApprovalSchema = z.object({
 export const _examApplicationResultResponseSchema = z.object({
     id: numberIdSchema,
     examTitle: shortTextSchema,
+    examRemark: shortTextSchema,
     examResult: requiredTextSchema,
 });
 

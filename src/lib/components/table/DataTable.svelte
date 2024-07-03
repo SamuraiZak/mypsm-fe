@@ -336,6 +336,7 @@
     }
 
     onMount(() => {
+        tableData.controls.header = true;
         if (tableData.option.footer == undefined) {
             tableData.option.footer = true;
         }

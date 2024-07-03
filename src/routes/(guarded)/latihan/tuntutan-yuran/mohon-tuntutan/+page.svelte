@@ -208,7 +208,7 @@
                     disabled={enableUploadDocument}
                     errors={$errors.finalResult}
                     id="finalResult"
-                    label="Keputusan Akhir (CGPA/skema pemarkahan berkaitan)"
+                    label="Keputusan Semester (GPA/skema pemarkahan berkaitan)"
                     type="text"
                     bind:val={$form.finalResult}
                 ></CustomTextField>
