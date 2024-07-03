@@ -43,7 +43,7 @@
             filter: true,
         },
         controls: {
-            add: false,
+            add: true,
         },
     };
 </script>
@@ -60,7 +60,8 @@
         <TextIconButton label="Draf" type="neutral" />
         <TextIconButton
             label="Hantar"
-            onClick={() => goto('/gaji/pergerakan-gaji/butiran/kenaikan gaji tahunan/1')}
+            onClick={() =>
+                goto('/gaji/pergerakan-gaji/butiran/kenaikan gaji tahunan/1')}
         />
     </ContentHeader>
 </section>
@@ -118,13 +119,13 @@
                             inputValue=""
                         />
                         <FilterSelectField
-                            options={mesyuaratNameLookup}
-                            label="Status"
+                            label="Jawatan"
+                            options={kgtMonthLookup}
                             inputValue=""
                         />
                         <FilterSelectField
-                            label="Jawatan"
-                            options={kgtMonthLookup}
+                            options={mesyuaratNameLookup}
+                            label="Status"
                             inputValue=""
                         />
                     </FilterWrapper>

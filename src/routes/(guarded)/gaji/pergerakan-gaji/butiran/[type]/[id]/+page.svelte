@@ -45,9 +45,9 @@
         url: '',
         id: 'salaryRecordTable',
         option: {
-            checkbox: true,
+            checkbox: data.props.salaryType == "Kenaikan Gaji Tahunan" ? true : false,
             detail: false,
-            edit: true,
+            edit: data.props.salaryType == "Kenaikan Gaji Tahunan" ? true : false,
             select: false,
             filter: true,
         },
@@ -101,9 +101,13 @@
                                 label="No. Kad Pengenalan"
                                 inputValue=""
                             />
+                            <FilterTextField
+                                label="No. Pekerja"
+                                inputValue=""
+                            />
                             <FilterSelectField
-                                options={mesyuaratNameLookup}
-                                label="Status"
+                                label="Gred"
+                                options={kgtMonthLookup}
                                 inputValue=""
                             />
                             <FilterSelectField
@@ -132,7 +136,7 @@
                                         <span class="font-medium"
                                             >Arahan:
                                         </span>
-                                        Masukkan keputusan mesyuarat.
+                                        Masukkan maklumat dan keputusan mesyuarat di ruangan yang disediakan.
                                     </p>
                                 </Alert>
                             </div>
@@ -141,21 +145,20 @@
                                 disabled
                                 isRequired={false}
                                 label="Kumpulan"
-                                val=""
+                                val="Kumpulan Mesyuarat #12"
                             />
                             <CustomTextField
                                 id="total"
                                 disabled
                                 isRequired={false}
                                 label="Jumlah Kakitangan"
-                                val=""
+                                val="2241"
                             />
-                            <CustomTextField
+                            <CustomSelectField
                                 id="meetingName"
-                                disabled
-                                isRequired={false}
+                                options={mesyuaratNameLookup}
                                 label="Nama dan Bilangan Mesyuarat"
-                                val=""
+                                val="Mesyuarat 1/12"
                             />
                             <CustomTextField
                                 id="meetingDate"

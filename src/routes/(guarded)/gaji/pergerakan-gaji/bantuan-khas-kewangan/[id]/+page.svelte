@@ -36,7 +36,7 @@
         url: '',
         id: 'salaryRecordTable',
         option: {
-            checkbox: true,
+            checkbox: false,
             detail: false,
             edit: false,
             select: false,
@@ -104,9 +104,13 @@
                             label="No. Kad Pengenalan"
                             inputValue=""
                         />
+                        <FilterTextField
+                            label="No. Pekerja"
+                            inputValue=""
+                        />
                         <FilterSelectField
                             options={mesyuaratNameLookup}
-                            label="Program"
+                            label="Gred"
                             inputValue=""
                         />
                         <FilterSelectField
