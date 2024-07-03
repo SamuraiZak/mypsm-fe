@@ -29,7 +29,7 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['employeeId'],
-        dictionary: [{ english: 'kumpulanPGT', malay: 'Kumpulan PGT' }],
+        dictionary: [{ english: 'kumpulanPGT', malay: 'Kumpulan' }],
         url: '',
         id: 'salaryRecordTable',
         option: {
@@ -53,7 +53,7 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-    <div class="flex w-full flex-col justify-start px-5">
+    <div class="flex w-full flex-col justify-start px-5 py-2 gap-10">
         <ContentHeader title="" borderClass="border-none">
             <TextIconButton
                 label="Tambah"
@@ -83,10 +83,15 @@
                 }}
             >
                 <FilterWrapper slot="filter">
-                    <FilterTextField label="Kumpulan PGT" inputValue="" />
+                    <FilterTextField label="Kumpulan" inputValue="" />
                     <FilterSelectField
                         options={mesyuaratNameLookup}
                         label="Nama Mesyuarat"
+                        inputValue=""
+                    />
+                    <FilterSelectField
+                        options={mesyuaratNameLookup}
+                        label="Jenis Pergerakan Gaji"
                         inputValue=""
                     />
                     <FilterSelectField

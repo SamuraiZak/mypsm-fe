@@ -1,16 +1,12 @@
 <script lang="ts">
     import SvgManifyingGlass from '$lib/assets/svg/SvgManifyingGlass.svelte';
     import SvgChevronDown from '$lib/assets/svg/SvgChevronDown.svelte';
-    import type { PageData } from './$types';
-    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
-
-    export let data: PageData;
 
     export let disabled = false;
     export let id: string;
     export let label: string = 'Penyokong';
-    export let options: DropdownDTO[] = data.supporterApproverLookup;
+    export let options: DropdownDTO[];
     export let val: string | number | boolean | null | undefined;
     export let errors: string[] | undefined = [] ?? undefined;
 
@@ -34,13 +30,13 @@
     }
 </script>
 
-<div class="flex w-full flex-col items-center justify-start gap-1 px-6 pt-10">
+<div class="flex w-full flex-col items-center justify-start gap-1">
     <label
             for="{id}"
             class="block w-full text-start text-sm font-medium text-ios-labelColors-secondaryLabel-light"
             >{label}</label
         >
-    <div class="flex w-full flex-col">
+    <div class="flex w-full flex-col h-fit">
         <button
             disabled={disabled}
             class="flex w-full items-center rounded border border-ios-labelColors-separator-light px-2 {disabled
@@ -70,7 +66,7 @@
         {#if openList}
             <ul
                 id="dropdownOptions"
-                class="max-h-[35em] w-full overflow-y-auto rounded-md border border-ios-labelColors-separator-light text-sm"
+                class="max-h-[20em] w-auto mt-9 min-h-fit absolute bg-ios-basic-white overflow-y-auto rounded-md border border-ios-labelColors-separator-light text-sm"
             >
                 {#each options.filter((option) => option.name
                         ?.toLowerCase()
@@ -98,11 +94,4 @@
         {/if}
     </div>
     <!-- input error message ends here -->
-
-    <CustomSelectField
-        id="HHEH"
-        options={data.supporterApproverLookup}
-        label="Penyokong"
-        val={searchVal}
-    />
 </div>

@@ -51,7 +51,7 @@
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Perlantikan Baharu (Kontrak)">
+    <ContentHeader title="Pelantikan Baharu (Kontrak)">
         {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code}
             <TextIconButton
                 onClick={() => goto('./lantikan-baru/permohonan-baru')}

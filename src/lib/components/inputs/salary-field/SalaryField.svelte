@@ -1,5 +1,6 @@
 <script lang="ts">
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
+    import { Alert, Modal } from 'flowbite-svelte';
 
     interface dataDTO {
         [key: string]: string | number; // Define an index signature
@@ -14,7 +15,7 @@
     };
     export let footer: string = 'Jumlah Bayaran';
     export let total: number = 0;
-
+    let emptyForm: boolean = false;
     function removeRow(i: number) {
         rowData.splice(i, 1);
 
@@ -22,8 +23,8 @@
     }
 
     function addRow() {
-        if(singleRowData.label == ""){
-            return ;
+        if (singleRowData.label == '') {
+            return;
         }
         //insert new entered input
         rowData.push({ ...singleRowData });
@@ -167,7 +168,13 @@
                         <TextIconButton
                             label=""
                             icon="add"
-                            onClick={() => addRow()}
+                            onClick={() => {
+                                if (singleRowData.label !== '') {
+                                    addRow();
+                                } else {
+                                    emptyForm = true;
+                                }
+                            }}
                         />
                     </div>
                 </td>
@@ -188,3 +195,20 @@
         </tbody>
     </table>
 </div>
+
+<Modal bind:open={emptyForm} title="Sistem MyPSM" size="sm" dismissable={false}>
+    <Alert color="red">
+        <p>
+            <span class="font-medium">Ralat! </span>
+            Pastikan maklumat-maklumat yang ditambah telah diisi dengan lengkap.
+        </p>
+    </Alert>
+    <div class="flex w-full justify-center">
+        <TextIconButton
+            label="Kembali"
+            type="neutral"
+            icon="previous"
+            onClick={() => (emptyForm = false)}
+        />
+    </div>
+</Modal>

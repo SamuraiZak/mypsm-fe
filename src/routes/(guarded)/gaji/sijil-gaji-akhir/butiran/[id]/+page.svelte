@@ -337,7 +337,14 @@
                         />
                         <CustomTextField
                             id="name"
-                            label="gred"
+                            label="No. Kad Pengenalan"
+                            isRequired={false}
+                            disabled
+                            val="-"
+                        />
+                        <CustomTextField
+                            id="name"
+                            label="Gred"
                             isRequired={false}
                             disabled
                             val="-"
