@@ -45,8 +45,12 @@ export const _fundApplicationDetailResponseSchema = z.object({
     courseApplicationDate: dateStringSchema,
     entryDateToInstituition: dateStringSchema,
     expectedFinishedStudyDate: dateStringSchema,
-    educationTypeId: numberIdSchema,
-    applicationTypeId: numberIdSchema,
+    educationTypeId: z
+        .array(z.number())
+        .min(1, { message: 'Sila pilih pilihan anda.' }),
+    applicationTypeId: z
+        .array(z.number())
+        .min(1, { message: 'Sila pilih pilihan anda.' }),
 });
 
 export const _createFundApplicationRequestSchema =
@@ -154,5 +158,6 @@ export const _fundApplicationUploadDocSchema = z.object({
     documents: z
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
         .refine((f) => f.size < 10_000_000, 'Maximum 10 MB saiz muat naik.')
-        .array().min(1, {message: "Dokumen berkenaan hendaklah dimuat naik."}),
+        .array()
+        .min(1, { message: 'Dokumen berkenaan hendaklah dimuat naik.' }),
 });
