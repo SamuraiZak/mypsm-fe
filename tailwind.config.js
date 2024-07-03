@@ -11,8 +11,8 @@ export default {
             sm: '11px',
             base: '12px',
             md: '14px',
-            lg: '14px',
-            xl: '16px',
+            lg: '16px',
+            xl: '20px',
         },
         extend: {
             fontFamily:{
