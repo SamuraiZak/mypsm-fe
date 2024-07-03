@@ -772,7 +772,7 @@
                         bind:val={$PTBPensionInfoForm.referenceDate}
                     ></CustomTextField>
 
-                    <!-- here  -->
+                    <!-- here nullable -->
                     <CustomTextField
                         disabled={currentRoleCode !== urusetia ||
                             data.pensionDetail !== null}
@@ -791,6 +791,17 @@
                         errors={$PTBPensionInfoError.KWAPEmailDate}
                         bind:val={$PTBPensionInfoForm.KWAPEmailDate}
                     ></CustomTextField>
+
+                       <!-- here nullable perlu tambah backend -->
+                       <CustomTextField
+                       disabled={currentRoleCode !== urusetia ||
+                           data.pensionDetail !== null}
+                       id="pensionNumber"
+                       label="Tarikh Berkuatkuasa PTB / Tarikh Mula Caruman KWAP"
+                       errors={$PTBPensionInfoError.pensionNumber}
+                       bind:val={$PTBPensionInfoForm.pensionNumber}
+                   ></CustomTextField>
+
                 </form></StepperContentBody
             >
         </StepperContent>
