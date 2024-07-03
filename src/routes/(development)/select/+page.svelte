@@ -42,7 +42,7 @@
         >
     <div class="flex w-full flex-col">
         <button
-            disabled={false}
+            disabled={disabled}
             class="flex w-full items-center rounded border border-ios-labelColors-separator-light px-2 {disabled
                 ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
                 : 'bg-ios-backgroundColors-systemBackground-light hover:rounded-md hover:border-ios-activeColors-activeBlue-light focus:border-ios-activeColors-activeBlue-light active:rounded-md'} rounded-md"
@@ -50,7 +50,7 @@
         >
             <input
                 on:input={handleSearch}
-                disabled={false}
+                disabled={disabled}
                 {id}
                 type="text"
                 placeholder="Sila Pilih"
@@ -60,9 +60,9 @@
                     : 'bg-ios-backgroundColors-systemBackground-light'} h-8 w-full border-none px-1 text-sm [appearance:textfield] focus:outline-none focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
             />
             {#if openList}
-                <SvgManifyingGlass size="20" />
+                <SvgManifyingGlass size="18" />
             {:else}
-                <SvgChevronDown size="16" />
+                <SvgChevronDown size="12" />
             {/if}
         </button>
 

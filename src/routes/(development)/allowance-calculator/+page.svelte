@@ -109,12 +109,12 @@
     })
 
 
-        console.log("rowspan of each tempoh: ", overallSize)
+        console.log("rowspan of overall: ", overallSize)
         console.log("rowspan of each tempoh: ", lengthOfTempoh)
         console.log("rowspan of each jenis/jumlah: ",lengthOfJumlah)
     
 
-    export let columnLabel = [{ name: 'Perkara' }, { name: 'Jumlah (RM)' }];
+    // export let columnLabel = [{ name: 'Perkara' }, { name: 'Jumlah (RM)' }];
     export let title = 'Title';
     export let rowData: dataDTO[] = [];
     export let singleRowData: dataDTO = {
@@ -166,7 +166,8 @@
         <!-- header -->
         <thead class="sticky top-0 z-[1]">
             <tr class="h-7 min-h-7 w-full">
-                {#each columnLabel as col, i}
+                {#each mock.list as col, i}
+                {#each Object.keys(col) as value }
                     <th
                         class="h-full {i == 0 ? 'w-[90px]' : 'w-[30px]'} px-2.5"
                     >
@@ -176,10 +177,11 @@
                             <span
                                 class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
                             >
-                                {col.name}
+                                {value}
                             </span>
                         </div>
                     </th>
+                    {/each}
                 {/each}
                 <th class="h-full w-[20px] px-2.5">
                     <div
