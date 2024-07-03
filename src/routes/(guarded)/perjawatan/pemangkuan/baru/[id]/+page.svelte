@@ -17,6 +17,7 @@
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
+    import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     export let data: PageData;
 
     let confirmModal: boolean = false;
@@ -214,25 +215,32 @@
         </CustomTabContent>
     </CustomTab>
 </section>
-<Modal title="" bind:open={confirmModal} size="sm" dismissable={false}>
+<Modal title="Sistem MyPSM" bind:open={confirmModal} size="sm" dismissable={false}>
     <Alert color="blue">
         <p>
             <span class="font-medium">Arahan: </span>
             Masukkan senarai kakitangan yang dipilih ke proses pemangkuan?
         </p>
+        <CustomTextField
+            id="acting"
+            label="Gred"
+            val=""
+        />
     </Alert>
     <div class="flex justify-center gap-3">
         <TextIconButton
+            label="Batal"
+            type="neutral"
+            icon="cancel"
+            onClick={() => (confirmModal = false)}
+        />
+        <TextIconButton
             label="Hantar"
             type="primary"
+            icon="check"
             onClick={() => {
                 addChosenEmployeeToActing();
             }}
-        />
-        <TextIconButton
-            label="Batal"
-            type="neutral"
-            onClick={() => (confirmModal = false)}
         />
     </div>
 </Modal>
