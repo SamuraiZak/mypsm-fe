@@ -16,6 +16,7 @@
     import type { RenewContractEmployeeTable } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-employee-table.dto';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import { Alert, Modal } from 'flowbite-svelte';
+    import SearchSelect from '$lib/components/inputs/search-select/SearchSelect.svelte';
 
     export let data: PageData;
     let rowData = {} as RenewContractListResponseDTO;
@@ -179,12 +180,12 @@
                         borderClass="border-none"
                     >
                         {#if selectedContract.contractors.length > 0}
-                            <TextIconButton
-                                label="Hantar Untuk Dinilai"
-                                type="primary"
-                                icon="edit"
-                                onClick={() => (renewModal = true)}
-                            />
+                        <TextIconButton
+                            label="Hantar Untuk Dinilai"
+                            type="primary"
+                            icon="edit"
+                            onClick={() => (renewModal = true)}
+                        />
                         {/if}
                     </ContentHeader>
 
@@ -233,6 +234,7 @@
     size="sm"
     dismissable={false}
 >
+<div class="w-full flex flex-col justify-start gap-2.5">
     <Alert color="blue">
         <p>
             <span class="font-medium">Sistem: </span>
@@ -240,6 +242,12 @@
             untuk dinilai dan dimasukkan ke dalam proses pembaharuan kontrak.
         </p>
     </Alert>
+    <SearchSelect
+        id="directorId"
+        options={data.supporterApproverLookup}
+        val={1}
+        errors={[]}
+    />
     <div class="flex justify-center gap-3">
         <TextIconButton
             label="Hantar"
@@ -265,4 +273,5 @@
             onClick={() => (renewModal = false)}
         />
     </div>
+</div>
 </Modal>

@@ -2,12 +2,14 @@ import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.c
 import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
+import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto";
 import type { RenewContractAddDTO } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-add.dto";
 import type { RenewContractEmployeeTable } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-employee-table.dto";
 import type { RenewContractListResponseDTO } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-list-response.dto";
 import type { RenewContractListDTO } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-list.dto";
 import type { RenewContractSuppAppTable } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-supp-app-table.dto";
 import { getSuccessToast } from "$lib/helpers/core/toast.helper";
+import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.service";
 import { ContractEmployeeServices } from "$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service";
 
 export const load = async () => {
@@ -21,6 +23,28 @@ export const load = async () => {
     let employeeTable: RenewContractEmployeeTable[] = [];
     let employeeTableResponse: CommonResponseDTO = {};
 
+    const suppAppResponse: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 10000,
+        orderBy: 'name',
+        orderType: 0,
+        filter: {
+            program: "TETAP",
+            employeeNumber: null,
+            name: null,
+            identityCard: null,
+            scheme: null,
+            grade: null,
+            position: null,
+        },
+    }
+    const supporterApproverResponse: CommonResponseDTO =
+        await LookupServices.getEmployeeList(suppAppResponse);
+
+    const supporterApproverLookup: DropdownDTO[] = LookupServices.setSelectOptionSupporterAndApprover(
+        supporterApproverResponse,
+    );
+    
     //near expired contract table
     const nearExpiredContractFilter: RenewContractListDTO = {
         dataType: 0,
@@ -100,6 +124,7 @@ export const load = async () => {
         supporterApproverParam,
         employeeTableResponse,
         employeeTable,
+        supporterApproverLookup,
     }
 }
 
