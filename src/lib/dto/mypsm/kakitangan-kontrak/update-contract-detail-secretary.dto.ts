@@ -17,8 +17,6 @@ export interface EditContractDetailSecretaryDTO {
     civilServiceStartDate:     string;
     lkimServiceStartDate:      string;
     currentServiceStartDate:   string;
-    firstConfirmServiceDate:   string;
-    currentConfirmServiceDate: string;
 }
 
 // Converts JSON strings to/from your types

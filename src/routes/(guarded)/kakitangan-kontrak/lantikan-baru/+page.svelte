@@ -138,7 +138,7 @@
     </div>
 </section>
 
-<Modal title="Sistem MyPSM" size="xs" bind:open={openModal}>
+<Modal title="Sistem MyPSM" size="xs" bind:open={openModal} dismissable={false}>
     <Alert color="blue">
         <p>
             <span class="font-medium">Arahan: </span>

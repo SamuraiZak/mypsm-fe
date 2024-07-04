@@ -17,7 +17,5 @@ export interface GetContractSecretaryUpdateDTO {
     civilServiceStartDate:     string;
     lkimServiceStartDate:      string;
     currentServiceStartDate:   string;
-    firstConfirmServiceDate:   string;
-    currentConfirmServiceDate: string;
     isReadonly?:                boolean;
 }

@@ -176,9 +176,9 @@ export const _addContractViewSecretaryUpdate = z.object({
     placementId: numberSchema,
     designation: shortTextSchema,
     reportDutyDate: stringToMinDate,
-    kwspNo: shortTextSchema,
-    socsoNo: shortTextSchema,
-    taxNo: shortTextSchema,
+    kwspNo: z.string(),
+    socsoNo: z.string(),
+    taxNo: z.string(),
     bankName: shortTextSchema,
     bankAccount: shortTextSchema,
     serviceTypeId: numberSchema,
@@ -187,8 +187,6 @@ export const _addContractViewSecretaryUpdate = z.object({
     civilServiceStartDate: stringToMinDate,
     lkimServiceStartDate: stringToMinDate,
     currentServiceStartDate: stringToMinDate,
-    firstConfirmServiceDate: stringToMinDate,
-    currentConfirmServiceDate: stringToMinDate,
     isReadonly: booleanSchema.default(false)
 })
 

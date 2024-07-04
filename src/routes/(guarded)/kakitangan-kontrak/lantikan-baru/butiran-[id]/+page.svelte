@@ -2379,15 +2379,15 @@
             </StepperContent>
         {/if}
 
-        {#if isProcessEnded !== 1}
-            {#if data.currentRoleCode !== UserRoleConstant.calonKontrak.code && data.getContractDocuments.attachmentName !== ''}
+        <!-- {#if isProcessEnded !== 1}
+            {#if data.currentRoleCode !== UserRoleConstant.calonKontrak.code && data.getContractDocuments.attachmentName !== ''} -->
                 <StepperContent>
                     <StepperContentHeader
                         title="Maklumat Lantikan Baru (Kontrak)"
                     >
                         {#if !$updateContractDetailForm.isReadonly}
                             <TextIconButton
-                                label="Simpan"
+                                label="Hantar"
                                 form="updateContractDetailForm"
                                 type="primary"
                                 icon="check"
@@ -2450,6 +2450,7 @@
                             />
                             <CustomTextField
                                 label="No. KWSP"
+                                isRequired={false}
                                 bind:disabled={$updateContractDetailForm.isReadonly}
                                 id="kwspNo"
                                 bind:val={$updateContractDetailForm.kwspNo}
@@ -2457,6 +2458,7 @@
                             />
                             <CustomTextField
                                 label="No. SOCSO"
+                                isRequired={false}
                                 bind:disabled={$updateContractDetailForm.isReadonly}
                                 id="socsoNo"
                                 bind:val={$updateContractDetailForm.socsoNo}
@@ -2464,6 +2466,7 @@
                             />
                             <CustomTextField
                                 label="No. Cukai"
+                                isRequired={false}
                                 bind:disabled={$updateContractDetailForm.isReadonly}
                                 id="taxNo"
                                 bind:val={$updateContractDetailForm.taxNo}
@@ -2500,7 +2503,7 @@
                                 errors={$updateContractDetailError.leaveEntitlement}
                             />
                             <CustomTextField
-                                label="Tarikh Kuatkuasa Lantikan Semasa"
+                                label="Tarikh Lantikan Kontrak"
                                 bind:disabled={$updateContractDetailForm.isReadonly}
                                 id="effectiveDate"
                                 type="date"
@@ -2508,7 +2511,7 @@
                                 errors={$updateContractDetailError.effectiveDate}
                             />
                             <CustomTextField
-                                label="Mula Dilantik Perkhidmatan Kerajaan"
+                                label="Tarikh Lantikan Kontrak Semasa"
                                 bind:disabled={$updateContractDetailForm.isReadonly}
                                 id="civilServiceStartDate"
                                 type="date"
@@ -2531,22 +2534,6 @@
                                 bind:val={$updateContractDetailForm.currentServiceStartDate}
                                 errors={$updateContractDetailError.currentServiceStartDate}
                             />
-                            <CustomTextField
-                                label="Disahkan Dalam Jawatan Pertama LKIM"
-                                bind:disabled={$updateContractDetailForm.isReadonly}
-                                id="firstConfirmServiceDate"
-                                type="date"
-                                bind:val={$updateContractDetailForm.firstConfirmServiceDate}
-                                errors={$updateContractDetailError.firstConfirmServiceDate}
-                            />
-                            <CustomTextField
-                                label="Tarikh Perkhidmatan Pengesahan Semasa"
-                                bind:disabled={$updateContractDetailForm.isReadonly}
-                                id="currentConfirmServiceDate"
-                                type="date"
-                                bind:val={$updateContractDetailForm.currentConfirmServiceDate}
-                                errors={$updateContractDetailError.currentConfirmServiceDate}
-                            />
                         </form>
                     </StepperContentBody>
                 </StepperContent>
@@ -2557,7 +2544,7 @@
                     >
                         {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code && !$secretaryContractResultForm.isReadonly}
                             <TextIconButton
-                                label="Simpan"
+                                label="Hantar"
                                 form="secretaryContractResultForm"
                                 type="primary"
                                 icon="check"
@@ -2604,7 +2591,7 @@
                         >
                             {#if !$setSupporterApproverForm.isReadonly && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
-                                    label="Simpan"
+                                    label="Hantar"
                                     form="setSupporterApproverForm"
                                     type="primary"
                                     icon="check"
@@ -2644,7 +2631,7 @@
                         <StepperContentHeader title="Keputusan Penyokong">
                             {#if !$supporterContractResultForm.isReadonly && data.currentRoleCode == UserRoleConstant.penyokong.code}
                                 <TextIconButton
-                                    label="Simpan"
+                                    label="Hantar"
                                     form="supporterContractResultForm"
                                     type="primary"
                                     icon="check"
@@ -2703,7 +2690,7 @@
                         <StepperContentHeader title="Keputusan Pelulus">
                             {#if !$approverContractResultForm.isReadonly && data.currentRoleCode == UserRoleConstant.pelulus.code}
                                 <TextIconButton
-                                    label="Simpan"
+                                    label="Hantar"
                                     form="approverContractResultForm"
                                     type="primary"
                                     icon="check"
@@ -2792,8 +2779,8 @@
                         </StepperContentBody>
                     </StepperContent>
                 {/if}
-            {/if}
-        {/if}
+            <!-- {/if}
+        {/if} -->
     </Stepper>
 </section>
 
