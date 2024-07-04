@@ -225,7 +225,7 @@
                     label={'No. Kad Pengenalan'}
                     type="text"
                     placeholder="-"
-                    bind:val={$form.ICNumber}
+                    bind:val={$form.identityDocumentNumber}
                 ></CustomTextField>
 
                 <CustomTextField
