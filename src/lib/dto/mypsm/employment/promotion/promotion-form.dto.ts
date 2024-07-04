@@ -70,6 +70,13 @@ export interface PromotionCommonApproval {
     remark:              string;
 }
 
+export interface PromotionIntegrityApproval {
+    id:                  number[];
+    promotionType:       string;
+    status:              boolean;
+    remark:              string;
+}
+
 // Converts JSON strings to/from your types
 export class PromotionCommonApprovalConvert {
     public static fromJson(json: string): PromotionCommonApproval {
@@ -77,6 +84,15 @@ export class PromotionCommonApprovalConvert {
     }
 
     public static toJson(value: PromotionCommonApproval): string {
+        return JSON.stringify(value);
+    }
+}
+export class PromotionIntegrityApprovalConvert {
+    public static fromJson(json: string): PromotionIntegrityApproval {
+        return JSON.parse(json);
+    }
+
+    public static toJson(value: PromotionIntegrityApproval): string {
         return JSON.stringify(value);
     }
 }

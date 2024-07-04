@@ -11,6 +11,7 @@
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
+    import { Modal } from 'flowbite-svelte';
     import {
         _getCertifications,
         _getPlacementDetail,
@@ -51,12 +52,14 @@
         _editPromotionCertification,
         _editPromotionPlacement,
         _promotionCommonApproval,
+        _promotionIntegrityApproval,
     } from '$lib/schemas/mypsm/employment/promotion/promotion-schemas';
     import { Toaster } from 'svelte-french-toast';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import {
         approveOptions,
         confirmOptions,
+        integrityOptions,
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
     import { kgtMonthValueIsStringLookup } from '$lib/constants/core/dropdown.constant';
@@ -200,7 +203,7 @@
             totalPage: 1,
         },
         data: data.certificationList,
-        selectedData: [],
+        selectedData: [] as PromotionCertificationEmployee[],
         exportData: [],
         hiddenColumn: [
             'employeeId',
@@ -216,12 +219,12 @@
                 english: 'directionCertification',
                 malay: 'Perakuan Pengarah Bahagian/Negeri',
             },
-        ],
+        ],  
         url: 'employment/promotion/certifications/list',
         id: 'certificationTable',
         option: {
-            checkbox: false,
-            detail: true,
+            checkbox: data.currentRoleCode == UserRoleConstant.urusSetiaIntegriti.code ? true : false,
+            detail: data.currentRoleCode !== UserRoleConstant.urusSetiaIntegriti.code ? true : false,
             edit: false,
             select: false,
             filter: false,
@@ -420,6 +423,8 @@
             });
         },
     });
+
+    let integrityModal: boolean = false;
     const {
         form: integrityForm,
         errors: integrityError,
@@ -430,10 +435,15 @@
         dataType: 'json',
         invalidateAll: true,
         id: 'integrityForm',
-        validators: zod(_editPromotionPlacement),
+        validators: zod(_promotionIntegrityApproval),
         onSubmit() {
             $integrityForm.promotionType = data.promotionType;
-            $integrityForm.id = rowData.promotionId;
+            // $integrityForm.id = rowData.promotionId;
+            // ======================= push the id here
+            certificationTable.selectedData.map((item: any) => {
+                $integrityForm.id.push(item.promotionId)
+            })
+            
             _submitIntegrityForm($integrityForm).then((res) => {
                 if (res?.response.status == 'success') {
                     integrityApproved = true;
@@ -846,11 +856,11 @@
                                 type="neutral"
                                 label="Kembali"
                                 icon="previous"
-                                onClick={() => (stepperControl[0] = false)}
+                                onClick={() => (stepperControl[0] = false)} 
                             />
                             {#if !directorApproved || !integrityApproved}
                                 <TextIconButton
-                                    label="Simpan"
+                                    label="Hantar"
                                     icon="check"
                                     form={data.currentRoleCode !==
                                     UserRoleConstant.urusSetiaIntegriti.code
@@ -878,6 +888,14 @@
                                             </p>
                                         </Alert>
                                     {/if}
+                                    {#if data.currentRoleCode === UserRoleConstant.urusSetiaIntegriti.code}
+                                    <div class="flex w-full justify-end">
+                                        <TextIconButton
+                                            label="Tindakan"
+                                            onClick={() => integrityModal = true}
+                                        />
+                                    </div>
+                                    {/if}
                                     <div class="h-fit w-full">
                                         <DataTable
                                             title="Senarai Calon Kenaikan Pangkat"
@@ -901,28 +919,7 @@
                                     title="Perakuan Urus Setia Integriti"
                                     borderClass="border-none"
                                 />
-                                <form
-                                    class="flex w-full flex-col justify-start gap-2.5 px-2 md:w-1/2"
-                                    id="integrityForm"
-                                    use:integrityEnhance
-                                    method="POST"
-                                >
-                                    <CustomTextField
-                                        label="Ulasan/Tindakan"
-                                        id="remark"
-                                        disabled={integrityApproved}
-                                        placeholder="Menunggu perakuan daripada Urus Setia Integriti..."
-                                        bind:val={$integrityForm.remark}
-                                        errors={$integrityError.remark}
-                                    />
-                                    <CustomRadioBoolean
-                                        label="Keputusan"
-                                        id="status"
-                                        disabled={integrityApproved}
-                                        options={confirmOptions}
-                                        bind:val={$integrityForm.status}
-                                    />
-                                </form>
+                                
                                 {#if data.promotionType !== 'Utama'}
                                     <ContentHeader
                                         title="Perakuan Pengarah Bahagian/Negeri"
@@ -970,7 +967,7 @@
                             {#if !promotionMeetingExist && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
                                     type="primary"
-                                    label="Simpan"
+                                    label="Hantar"
                                     icon="check"
                                     form="certificationForm"
                                 />
@@ -1190,16 +1187,16 @@
                             {#if !placementMeetingExist && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
                                     type="primary"
-                                    label="Simpan"
+                                    label="Hantar"
                                     icon="check"
                                     form="placementForm"
                                 />
                             {/if}
                         {/if}
                     </StepperContentHeader>
-                    <StepperContentBody paddingClass="p-none">
+                    <StepperContentBody>
                         {#if !stepperControl[2]}
-                            <div class="flex w-full flex-col gap-2.5 p-5 pb-10">
+                            <div class="flex w-full flex-col gap-2.5 p-3 pb-10">
                                 {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                     <Alert color="blue">
                                         <p>
@@ -1231,19 +1228,6 @@
                                 <CustomTabContent
                                     title="Butiran Kenaikan Pangkat Kakitangan"
                                 >
-                                    <!-- <div
-                                    class="flex w-full flex-col justify-start gap-1 px-2 text-sm italic text-ios-labelColors-secondaryLabel-light"
-                                >
-                                    <span>
-                                        Borang-borang berkaitan yang akan
-                                        dijana:
-                                    </span>
-                                    <span>
-                                        1. Surat Tawaran Kenaikan Pangkat
-                                    </span>
-                                    <span> 2. Borang Lapor Diri </span>
-                                    <span> 3. Jadual Pelarasan Gaji </span>
-                                </div> -->
                                     <ContentHeader
                                         title="Butiran Kenaikan Pangkat"
                                         borderClass="border-none"
@@ -1422,7 +1406,7 @@
                             {#if !employeePromotionExist && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
                                     type="primary"
-                                    label="Simpan"
+                                    label="Hantar"
                                     icon="check"
                                     form="employeePromotion"
                                 />
@@ -1527,7 +1511,7 @@
                             {#if (data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code && !supporterApproved) || !approverApproved}
                                 <TextIconButton
                                     type="primary"
-                                    label="Simpan"
+                                    label="Hantar"
                                     icon="check"
                                     form={data.currentRoleCode ==
                                     UserRoleConstant.penyokong.code
@@ -1763,3 +1747,52 @@
     </Stepper>
 </section>
 <Toaster />
+<Modal title="Sistem MyPSM" bind:open={integrityModal} size="sm">
+    <div class="w-full flex flex-col justify-start gap-3">
+    <Alert color="blue">
+        <p>
+            <span class="font-medium">Arahan: </span>
+            Tetapkan keputusan untuk kakitangan yang dipilih.
+        </p>
+    </Alert>
+    <div class="hidden">
+        <form
+            class="flex w-full flex-col justify-start gap-2.5 px-2 md:w-1/2"
+            id="integrityForm"
+            use:integrityEnhance
+            method="POST"
+        >
+            <CustomTextField
+                label="Ulasan/Tindakan"
+                id="remark"
+                disabled={integrityApproved}
+                placeholder="Menunggu perakuan daripada Urus Setia Integriti..."
+                bind:val={$integrityForm.remark}
+                errors={$integrityError.remark}
+            />
+            <CustomRadioBoolean
+                label="Keputusan"
+                id="status"
+                disabled={integrityApproved}
+                options={integrityOptions}
+                bind:val={$integrityForm.status}
+            />
+        </form>
+    </div>
+    <div class="w-full flex justify-center gap-3">
+        <TextIconButton
+            label="TIDAK BEBAS"
+            form="integrityForm"
+            icon="cancel"
+            type="neutral"  
+            onClick={() => $integrityForm.status = false}
+        />
+        <TextIconButton
+            label="BEBAS"
+            icon="check"
+            form="integrityForm"
+            onClick={() => $integrityForm.status = true}
+        />
+        </div>
+    </div>
+</Modal>

@@ -24,6 +24,13 @@ export const _promotionCommonApproval = z.object({
     remark: shortTextSchema,
 })
 
+export const _promotionIntegrityApproval = z.object({
+    id: z.number().array(),
+    promotionType: shortTextSchema,
+    status: booleanSchema,
+    remark: z.string(),
+})
+
 export const _editPromotionCertification = z.object({
     id: z.number(),
     promotionType: shortTextSchema,

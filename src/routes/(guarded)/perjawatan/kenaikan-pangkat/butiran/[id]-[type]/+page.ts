@@ -6,8 +6,8 @@ import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { AddNewPromotion } from '$lib/dto/mypsm/employment/promotion/add-promotion.dto';
 import type { PromotionCertificationEmployee, PromotionCommonEmployee, PromotionDetail, PromotionPlacement, PromotionPlacementDetail, PromotionSalaryAdjustment } from '$lib/dto/mypsm/employment/promotion/promotion-common-employee.dto';
 import type { PromotionCertificationGet, PromotionGroupID } from '$lib/dto/mypsm/employment/promotion/promotion-common-groupid.dto';
-import type { PromotionCertification, PromotionCommonApproval, PromotionEmployeeEdit, PromotionPlacementEdit } from '$lib/dto/mypsm/employment/promotion/promotion-form.dto';
-import { _addNewPromotion, _editEmployeePromotion, _editPromotionCertification, _editPromotionPlacement, _promotionCommonApproval } from '$lib/schemas/mypsm/employment/promotion/promotion-schemas';
+import type { PromotionCertification, PromotionCommonApproval, PromotionEmployeeEdit, PromotionIntegrityApproval, PromotionPlacementEdit } from '$lib/dto/mypsm/employment/promotion/promotion-form.dto';
+import { _addNewPromotion, _editEmployeePromotion, _editPromotionCertification, _editPromotionPlacement, _promotionCommonApproval, _promotionIntegrityApproval } from '$lib/schemas/mypsm/employment/promotion/promotion-schemas';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { EmploymentPromotionServices } from '$lib/services/implementation/mypsm/perjawatan/employment-promotion.service';
 import { superValidate } from 'sveltekit-superforms';
@@ -66,7 +66,7 @@ export const load = async ({ params }) => {
 
     const addnewPromotionForm = await superValidate(zod(_addNewPromotion));
     const directorForm = await superValidate(zod(_promotionCommonApproval))
-    const integrityForm = await superValidate(zod(_promotionCommonApproval))
+    const integrityForm = await superValidate(zod(_promotionIntegrityApproval))
     const certificationForm = await superValidate(zod(_editPromotionCertification), { errors: false });
     const placementForm = await superValidate(zod(_editPromotionPlacement), { errors: false });
     const employeePromotion = await superValidate(zod(_editEmployeePromotion), { errors: false });
@@ -169,11 +169,11 @@ export const _submitDirectorForm = async (formData: PromotionCommonApproval) => 
     }
 }
 
-export const _submitIntegrityForm = async (formData: PromotionCommonApproval) => {
-    const form = await superValidate(formData, zod(_promotionCommonApproval));
+export const _submitIntegrityForm = async (formData: PromotionIntegrityApproval) => {
+    const form = await superValidate(formData, zod(_promotionIntegrityApproval));
     if (form.valid) {
         const response: CommonResponseDTO =
-            await EmploymentPromotionServices.addIntegrityApproval(form.data as PromotionCommonApproval)
+            await EmploymentPromotionServices.addIntegrityApproval(form.data as PromotionIntegrityApproval)
 
         return { response }
     }

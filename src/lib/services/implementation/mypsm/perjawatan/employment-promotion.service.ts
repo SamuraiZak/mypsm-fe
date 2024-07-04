@@ -6,7 +6,7 @@ import { invalidateAll } from "$app/navigation";
 import { getPromiseToast } from "$lib/helpers/core/toast.helper";
 import { CommonResponseConvert } from "$lib/dto/core/common/common-response.dto";
 import { AddNewPromotionConvert, type AddNewPromotion } from "$lib/dto/mypsm/employment/promotion/add-promotion.dto";
-import { PromotionCertificationConvert, PromotionCommonApprovalConvert, PromotionEmployeeEditConvert, PromotionPlacementEditConvert, type PromotionCertification, type PromotionCommonApproval, type PromotionEmployeeEdit, type PromotionPlacementEdit } from "$lib/dto/mypsm/employment/promotion/promotion-form.dto";
+import { PromotionCertificationConvert, PromotionCommonApprovalConvert, PromotionEmployeeEditConvert, PromotionIntegrityApprovalConvert, PromotionPlacementEditConvert, type PromotionCertification, type PromotionCommonApproval, type PromotionEmployeeEdit, type PromotionIntegrityApproval, type PromotionPlacementEdit } from "$lib/dto/mypsm/employment/promotion/promotion-form.dto";
 import { PromotionCertificationGetConvert, type PromotionCertificationGet } from "$lib/dto/mypsm/employment/promotion/promotion-common-groupid.dto";
 
 
@@ -514,13 +514,13 @@ export class EmploymentPromotionServices {
     } 
     
     //add integrity approval
-    static async addIntegrityApproval (param: PromotionCommonApproval) {
+    static async addIntegrityApproval (param: PromotionIntegrityApproval) {
         try{
             const url: Input = 'employment/promotion/integrity_certifies/edit';
 
             const promiseRes: Promise<Response> = http
                 .put(url, {
-                    body: PromotionCommonApprovalConvert.toJson(param),
+                    body: PromotionIntegrityApprovalConvert.toJson(param),
                 })
                 .json();
 
