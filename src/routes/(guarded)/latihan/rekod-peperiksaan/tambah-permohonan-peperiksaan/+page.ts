@@ -38,7 +38,7 @@ export async function load() {
         orderType: 1,
         filter: {
             examTypeId: null, // 0 or Null: All | 1: Perkhidmatan | 2: PSL
-            identityCard: null, //string | null | undefined;
+            identityDocumentNumber: null, //string | null | undefined;
             temporaryId: null, //string | null | undefined;
             status: null, // status code from lookup | null | undefined;
         },

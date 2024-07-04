@@ -179,11 +179,11 @@
                 <CustomTextField
                     disabled
                     isRequired={false}
-                    id="identityCard"
+                    id="identityDocumentNumber"
                     label={'No. Kad Pengenalan'}
                     type="text"
                     placeholder="-"
-                    bind:val={$personalInfoForm.identityCard}
+                    bind:val={$personalInfoForm.identityDocumentNumber}
                 ></CustomTextField>
 
                 <CustomSelectField
