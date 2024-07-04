@@ -43,7 +43,7 @@ export const load = async () => {
             dataType: 0, // 0:semua | 1:Lebih 3 tahun | 2: Rasionalisasi (kurang 3 tahun)
             employeeNumber: null, //string | null | undefined;
             name: null,
-            identityCard: null,
+            identityDocumentNumber: null,
             status: null, // status code from lookup | null | undefined;
         },
     };
@@ -57,7 +57,7 @@ export const load = async () => {
             dataType: 1, // 0:semua | 1:Lebih 3 tahun | 2: Rasionalisasi (kurang 3 tahun)
             employeeNumber: null, //string | null | undefined;
             name: null,
-            identityCard: null,
+            identityDocumentNumber: null,
             status: null, // status code from lookup | null | undefined;
         },
     };
@@ -71,7 +71,7 @@ export const load = async () => {
             dataType: 2, // 0:semua | 1:Lebih 3 tahun | 2: Rasionalisasi (kurang 3 tahun)
             employeeNumber: null, //string | null | undefined;
             name: null,
-            identityCard: null,
+            identityDocumentNumber: null,
             status: null, // status code from lookup | null | undefined;
         },
     };

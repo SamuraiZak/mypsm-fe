@@ -45,7 +45,7 @@ export const load = async () => {
             program: 'SEMUA',
             employeeNumber: null, //string | null | undefined;
             name: null, //string | null | undefined;
-            identityCard: null, //string | null | undefined;
+            identityDocumentNumber: null, //string | null | undefined;
             scheme: null, //string | null | undefined;
             grade: null, //string | null | undefined;
             position: null, //string | null | undefined;

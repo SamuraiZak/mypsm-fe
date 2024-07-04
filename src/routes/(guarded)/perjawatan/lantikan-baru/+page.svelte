@@ -266,7 +266,7 @@
                             <FilterTextField
                                 label="No. Kad Pengenalan"
                                 bind:inputValue={submittedListTable.param.filter
-                                    .identityCard}
+                                    .identityDocumentNumber}
                             ></FilterTextField>
                             <FilterSelectField
                                 label="Status"
@@ -304,7 +304,7 @@
                             <FilterTextField
                                 label="No. Kad Pengenalan"
                                 bind:inputValue={notCompletedTable.param.filter
-                                    .identityCard}
+                                    .identityDocumentNumber}
                             ></FilterTextField>
                             <FilterSelectField
                                 label="Status"
@@ -342,7 +342,7 @@
                     <FilterTextField
                         label="No. Kad Pengenalan"
                         bind:inputValue={supporterViewTable.param.filter
-                            .identityCard}
+                            .identityDocumentNumber}
                     ></FilterTextField>
                     <FilterSelectField
                         label="Status"
@@ -377,7 +377,7 @@
                     <FilterTextField
                         label="No. Kad Pengenalan"
                         bind:inputValue={approverViewTable.param.filter
-                            .identityCard}
+                            .identityDocumentNumber}
                     ></FilterTextField>
                     <FilterSelectField
                         label="Status"
