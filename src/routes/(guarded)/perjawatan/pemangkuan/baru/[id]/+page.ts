@@ -41,6 +41,12 @@ export const load = async ({ params }) => {
     }
 
     gradeLookup.push(nullGrade)
+    const positionLookupResponse: CommonResponseDTO =
+        await LookupServices.getPositionEnums();
+
+    const positionLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsValueIsDescription(positionLookupResponse)
+        
 
     const actingTypes: string = params.id;
     return {
@@ -49,6 +55,7 @@ export const load = async ({ params }) => {
         param,
         actingTypes,
         gradeLookup,
+        positionLookup,
     };
 
 };

@@ -34,6 +34,7 @@ import type { ActingFinalResult, ActingMainFinalResult } from "$lib/dto/mypsm/em
 import type { CertifySelected, MainActingDetailEdit, MainMeetingResult } from "$lib/dto/mypsm/employment/acting/main-acting-form.dto.js";
 import type { MainActingInfo } from "$lib/dto/mypsm/employment/acting/main-acting-info.dto.js";
 import { _quarterCommonApproval } from "$lib/schemas/mypsm/quarters/quarters-schema.js";
+import type { ActingCommonApproval } from "$lib/dto/mypsm/employment/acting/acting-approval.dto.js";
 
 export const load = async ({ params }) => {
     let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
@@ -355,14 +356,14 @@ export const _submitUpdateChosenCandidateForm = async (formData: UpdateChosenEmp
         return { response }
     }
 };
-export const _submitDirectorResultForm = async (formData: QuarterCommonApproval) => {
+export const _submitDirectorResultForm = async (formData: ActingCommonApproval) => {
     const form = await superValidate(
         formData,
         zod(_actingApprovalSchema),
     );
     if (form.valid) {
         const response: CommonResponseDTO =
-            await EmploymentActingServices.updateDirectorApproval(form.data as QuarterCommonApproval)
+            await EmploymentActingServices.updateDirectorApproval(form.data as ActingCommonApproval)
 
         return { response }
     }

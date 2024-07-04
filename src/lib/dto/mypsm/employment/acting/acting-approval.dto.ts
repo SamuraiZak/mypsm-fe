@@ -16,3 +16,9 @@ export interface ActingIntegrityApproval {
     integrityCertifiedDate:   string;
 }
 
+export interface ActingCommonApproval {
+    id:     number;
+    status: boolean;
+    remark: string;
+    directorCertifiedDate?: string;
+}

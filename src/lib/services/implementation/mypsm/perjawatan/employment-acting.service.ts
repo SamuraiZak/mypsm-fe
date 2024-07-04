@@ -16,6 +16,7 @@ import { QuarterCommonApprovalConvert, type QuarterCommonApproval } from "$lib/d
 import { EmployeePostponeConvert, PostponeDetailResultConvert, type EmployeePostpone, type PostponeDetailResult } from "$lib/dto/mypsm/employment/acting/acting-employee-form.dto";
 import { CertifySelectedConvert, MainActingDetailEditConvert, MainMeetingResultConvert, type CertifySelected, type MainActingDetailEdit, type MainMeetingResult } from "$lib/dto/mypsm/employment/acting/main-acting-form.dto";
 import { ActingCommonBatchIdConvert, ActingFinalResultIdConvert, type ActingCommonBatchId, type ActingFinalResultId } from "$lib/dto/mypsm/employment/acting/acting-batchid.dto";
+import type { ActingCommonApproval } from "$lib/dto/mypsm/employment/acting/acting-approval.dto";
 
 
 export class EmploymentActingServices {
@@ -347,7 +348,7 @@ export class EmploymentActingServices {
     }
 
     //update promotion meeting
-    static async updateDirectorApproval(param: QuarterCommonApproval) {
+    static async updateDirectorApproval(param: ActingCommonApproval) {
         try {
             const url: Input = 'employment/acting/director_certifies/edit';
 

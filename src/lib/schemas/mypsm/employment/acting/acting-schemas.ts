@@ -96,6 +96,7 @@ export const _actingApprovalSchema = z.object({
     id: z.number(),
     remark: shortTextSchema,
     status: booleanSchema,
+    directorCertifiedDate: z.string().default("").optional(),
 })
 
 export const _postponeDetailSchema = z.object({

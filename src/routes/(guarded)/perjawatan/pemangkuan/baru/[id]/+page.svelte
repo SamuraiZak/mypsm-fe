@@ -18,6 +18,7 @@
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     export let data: PageData;
 
     let confirmModal: boolean = false;
@@ -215,18 +216,33 @@
         </CustomTabContent>
     </CustomTab>
 </section>
-<Modal title="Sistem MyPSM" bind:open={confirmModal} size="sm" dismissable={false}>
+<Modal
+    title="Sistem MyPSM"
+    bind:open={confirmModal}
+    size="sm"
+    dismissable={false}
+>
     <Alert color="blue">
-        <p>
-            <span class="font-medium">Arahan: </span>
-            Masukkan senarai kakitangan yang dipilih ke proses pemangkuan?
-        </p>
-        <CustomTextField
-            id="acting"
-            label="Gred"
-            val=""
-        />
+        <div class="w-full flex flex-col justify-start gap-3">
+            <p>
+                <span class="font-medium">Arahan: </span>
+                Masukkan gred pemangku dan jawatan untuk menetapkan tajuk proses pemangkuan.
+            </p>
+        </div>
     </Alert>
+    <div class="grid grid-cols-3 gap-2.5">
+        <div class="col-span-1">
+            <CustomSelectField id="actingGrade" options={data.gradeLookup} label="Gred" val="" />
+        </div>
+        <div class="col-span-2">
+            <CustomSelectField
+                id="actingPosition"
+                label="Jawatan"
+                options={data.positionLookup}
+                val=""
+            />
+        </div>
+    </div>
     <div class="flex justify-center gap-3">
         <TextIconButton
             label="Batal"
