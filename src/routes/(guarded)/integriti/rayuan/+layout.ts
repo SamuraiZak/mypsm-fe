@@ -32,7 +32,7 @@ export const load = async () => {
         orderBy: 'integrityId',
         orderType: 1,
         filter: {
-            identityCard: null, //string | null | undefined;
+            identityDocumentNumber: null, //string | null | undefined;
             grade: null,
             position: null,
             year: null,

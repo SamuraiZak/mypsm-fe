@@ -106,7 +106,7 @@
                     <FilterTextField
                         label="No. Kad Pengenalan"
                         bind:inputValue={chargeListTable.param.filter
-                            .identityCardNumber}
+                            .identityDocumentNumber}
                     ></FilterTextField>
                     <FilterSelectField
                         label="Status"

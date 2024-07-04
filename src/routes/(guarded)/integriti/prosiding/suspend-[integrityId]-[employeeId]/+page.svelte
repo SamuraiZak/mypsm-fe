@@ -292,11 +292,11 @@
                 <CustomTextField
                     disabled
                     isRequired={false}
-                    id="identityCardNumber"
+                    id="identityDocumentNumber"
                     label={'No. Kad Pengenalan'}
                     type="text"
                     placeholder="-"
-                    bind:val={$form.employeeDetail.identityCardNumber}
+                    bind:val={$form.employeeDetail.identityDocumentNumber}
                 ></CustomTextField>
 
                 <CustomSelectField

@@ -28,7 +28,7 @@ export const load = async ({ parent }) => {
         filter: {
             employeeNumber: null,
             name: null,
-            identityCardNumber: null,
+            identityDocumentNumber: null,
             position: null,
             grade: null,
             serviceYear: null,
