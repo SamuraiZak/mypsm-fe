@@ -50,7 +50,7 @@ export const _examApplicationInfoResponseSchema = z.object({
     applicationId: z.number().readonly(),
     employeeNumber: z.string().readonly(),
     employeeName: shortTextSchema,
-    employeeIdentityNumber: shortTextSchema,
+    identityDocumentNumber: shortTextSchema,
     employeeGrade: codeSchema,
     examTitle: codeSchema,
     examTypeId: numberIdSchema,
@@ -84,7 +84,7 @@ export const _coursePersonalInfoResponseSchema = z
     .object({
         employeeNo: z.string(),
         name: shortTextSchema,
-        identityCard: shortTextSchema,
+        identityDocumentNumber: shortTextSchema,
         identityCardColor: codeSchema,
         dateOfBirth: dateStringSchema,
         placeOfBirth: codeSchema,

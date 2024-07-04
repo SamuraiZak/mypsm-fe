@@ -11,7 +11,7 @@ export const _relationsSchema = z.object({
 
 export const _serviceRecordPersonalDetailSchema = z.object({
     name: z.string(),
-    ICNumber: z.string(),
+    identityDocumentNumber: z.string(),
     birthDate: z.string(),
     birhtplace: z.string(),
     religion: z.string(),

@@ -23,7 +23,7 @@ export const _fundApplicationIDschema = z.object({
 export const _fundApplicationResponseSchema = z.object({
     id: z.number().readonly(),
     employeeName: shortTextSchema,
-    employeeIdentityNumber: shortTextSchema,
+    identityDocumentNumber: shortTextSchema,
     courseApplicationDate: dateSchema,
     courseName: shortTextSchema,
     academicLevel: shortTextSchema,
@@ -66,7 +66,7 @@ export const _fundApplicationPersonalInfoResponseSchema = z
     .object({
         employeeNo: z.string(),
         name: shortTextSchema,
-        identityCard: shortTextSchema,
+        identityDocumentNumber: shortTextSchema,
         identityCardColor: codeSchema,
         dateOfBirth: dateStringSchema,
         placeOfBirth: codeSchema,
