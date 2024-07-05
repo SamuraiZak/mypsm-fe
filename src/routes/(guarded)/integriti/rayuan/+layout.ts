@@ -36,6 +36,7 @@ export const load = async () => {
             grade: null,
             position: null,
             year: null,
+            employeeNumber: null,
             name: null,
             status: null, // status code from lookup | null | undefined;
         },

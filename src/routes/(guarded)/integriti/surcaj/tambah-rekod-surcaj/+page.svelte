@@ -7,7 +7,10 @@
     import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
-    import type { TableDTO, TableSettingDTO } from '$lib/dto/core/table/table.dto';
+    import type {
+        TableDTO,
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
 
     import type { PageData } from '../tambah-rekod-surcaj/$types';
@@ -24,7 +27,6 @@
     let currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
     );
-     
 
     let rowData: any;
 
@@ -49,19 +51,16 @@
             totalData: 1,
             totalPage: 1,
         },
-        data:
-            (data.addSurcajViewResponse.data
-                ?.dataList ) ?? [],
+        data: data.addSurcajViewResponse.data?.dataList ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['id',"employeeId"],
-        dictionary: [
-        ],
+        hiddenColumn: ['id', 'employeeId'],
+        dictionary: [],
         url: 'integrity/surcharge/employee_list',
         id: 'addSurcajtable',
         option: {
             checkbox: false,
-            detail:  true,
+            detail: true,
             edit: false,
             select: false,
             filter: true,
@@ -85,7 +84,6 @@
     //         addSurcajtable.param.pageNum = value.props.param.pageNum;
     //     });
     // }
-   
 </script>
 
 <section class="flex w-full flex-col items-start justify-start overflow-y-auto">
@@ -98,8 +96,9 @@
         />
     </ContentHeader>
     <CustomTabContent title="Senarai Tindakan/Ulasan Tatatertib">
-        <div class="flex max-h-full w-full flex-col items-start justify-start pb-10">
-
+        <div
+            class="flex max-h-full w-full flex-col items-start justify-start pb-10"
+        >
             <!-- <FilterCard onSearch={_search}>
                 <FilterTextField
                     label="Gred"
@@ -128,37 +127,44 @@
             ></CustomTable> -->
 
             <DataTable
-            title="Senarai Permohonan"
-            bind:tableData={addSurcajtable}
-            bind:passData={rowData}
-            detailActions= {()=>goto ("/integriti/surcaj/tambah-rekod-surcaj/butiran-" + rowData.id)}
-         
-        >
-            <FilterWrapper slot="filter">
-                <FilterTextField
-                label="Gred"
-                bind:inputValue={addSurcajtable.param.filter.grade}
-            />
-            <FilterTextField
-                label="Jawatan"
-                bind:inputValue={addSurcajtable.param.filter.position}
-            />
-            <FilterTextField
-                label="Tahun"
-                bind:inputValue={addSurcajtable.param.filter.year}
-            />
-            <FilterTextField
-                label="Nama"
-                bind:inputValue={addSurcajtable.param.filter.name}
-            />
-            </FilterWrapper>
-        </DataTable>
-
+                title="Senarai Permohonan"
+                bind:tableData={addSurcajtable}
+                bind:passData={rowData}
+                detailActions={() =>
+                    goto(
+                        '/integriti/surcaj/tambah-rekod-surcaj/butiran-' +
+                            rowData.id,
+                    )}
+            >
+                <FilterWrapper slot="filter">
+                    <FilterTextField
+                        label="Nama"
+                        bind:inputValue={addSurcajtable.param.filter.name}
+                    />
+                    <FilterTextField
+                        label="No. Pekerja"
+                        bind:inputValue={addSurcajtable.param.filter
+                            .employeeNumber}
+                    />
+                    <FilterTextField
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={addSurcajtable.param.filter
+                            .identityDocumentNumber}
+                    />
+                    <FilterTextField
+                        label="Gred"
+                        bind:inputValue={addSurcajtable.param.filter.grade}
+                    />
+                    <FilterTextField
+                        label="Jawatan"
+                        bind:inputValue={addSurcajtable.param.filter.position}
+                    />
+                    <FilterTextField
+                        label="Tahun"
+                        bind:inputValue={addSurcajtable.param.filter.year}
+                    />
+                </FilterWrapper>
+            </DataTable>
         </div>
-
-
     </CustomTabContent>
 </section>
-
-
-

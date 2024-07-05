@@ -30,6 +30,8 @@ export const load = async () => {
             position: null,
             year: null,
             name: null,
+            employeeNumber: null,
+            identityDocumentNumber: null,
         },
     };
 
