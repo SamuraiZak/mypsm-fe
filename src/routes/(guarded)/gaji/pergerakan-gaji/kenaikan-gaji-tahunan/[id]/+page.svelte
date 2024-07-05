@@ -107,12 +107,21 @@
                     bind:tableData={salaryRecordTable}
                 >
                     <FilterWrapper slot="filter">
-                        <FilterTextField label="Nama" inputValue="" />
+                        <FilterTextField
+                            label="Nama"
+                            bind:inputValue={salaryRecordTable.param.filter
+                                .name}
+                        />
+                        <FilterTextField
+                            label="No. Pekerja"
+                            bind:inputValue={salaryRecordTable.param.filter
+                                .employeeNumber}
+                        />
                         <FilterTextField
                             label="No. Kad Pengenalan"
-                            inputValue=""
+                            bind:inputValue={salaryRecordTable.param.filter
+                                .identityDocumentNumber}
                         />
-                        <FilterTextField label="No. Pekerja" inputValue="" />
                         <FilterSelectField
                             options={mesyuaratNameLookup}
                             label="Gred"

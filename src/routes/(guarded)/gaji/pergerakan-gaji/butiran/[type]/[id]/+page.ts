@@ -14,7 +14,7 @@ export const load = async ({params}) => {
             program: "TETAP",
             employeeNumber: null,
             name: null,
-            identityCard: null,
+            identityDocumentNumber: null,
             scheme: null,
             grade: null,
             position: null

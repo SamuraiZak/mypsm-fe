@@ -68,11 +68,7 @@
     <div class="flex w-full flex-col justify-start gap-3 p-3">
         <XCard title="Tetapan Kenaikan Khas">
             <ContentHeader title="" borderClass="border-none">
-                <TextIconButton
-                    label="Tetapkan"
-                    icon="check"
-                    form="formA"
-                />
+                <TextIconButton label="Tetapkan" icon="check" form="formA" />
             </ContentHeader>
             <form
                 class="flex w-full flex-row items-center justify-start gap-5"
@@ -99,14 +95,20 @@
                     bind:tableData={salaryRecordTable}
                 >
                     <FilterWrapper slot="filter">
-                        <FilterTextField label="Nama" inputValue="" />
                         <FilterTextField
-                            label="No. Kad Pengenalan"
-                            inputValue=""
+                            label="Nama"
+                            bind:inputValue={salaryRecordTable.param.filter
+                                .name}
                         />
                         <FilterTextField
                             label="No. Pekerja"
-                            inputValue=""
+                            bind:inputValue={salaryRecordTable.param.filter
+                                .employeeNumber}
+                        />
+                        <FilterTextField
+                            label="No. Kad Pengenalan"
+                            bind:inputValue={salaryRecordTable.param.filter
+                                .identityDocumentNumber}
                         />
                         <FilterSelectField
                             options={mesyuaratNameLookup}
@@ -124,4 +126,4 @@
         </XCard>
     </div>
 </section>
-<Toaster/>
+<Toaster />
