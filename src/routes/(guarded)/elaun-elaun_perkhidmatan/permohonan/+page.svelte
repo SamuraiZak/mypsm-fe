@@ -56,7 +56,7 @@
             filter: true,
         },
         controls: {
-            add: data.props.mode == "kakitangan",
+            add: data.props.mode == 'kakitangan',
         },
     };
 
@@ -111,8 +111,19 @@
             >
                 <FilterWrapper slot="filter">
                     <FilterTextField
-                        label="Nama Kakitangan"
-                        bind:inputValue={applicationListTable.param.filter.name}
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={applicationListTable.param.filter
+                            .identityDocumentNumber}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="Nombor Pekerja"
+                        bind:inputValue={applicationListTable.param.filter
+                            .employeeNumber}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="Nama Pekerja"
+                        bind:inputValue={applicationListTable.param.filter
+                            .name}
                     ></FilterTextField>
                 </FilterWrapper>
             </DataTable>
