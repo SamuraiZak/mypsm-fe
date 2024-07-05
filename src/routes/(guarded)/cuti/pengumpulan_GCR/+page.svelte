@@ -4,6 +4,7 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterNumberField from '$lib/components/table/filter/FilterNumberField.svelte';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
@@ -61,19 +62,32 @@
                 bind:tableData={accumulationListTable}
                 bind:passData={selectedData}
                 detailActions={() => {
-                    let url =
-                        '/cuti/pengumpulan_GCR/' + selectedData.id;
+                    let url = '/cuti/pengumpulan_GCR/' + selectedData.id;
 
                     goto(url);
                 }}
                 addActions={() => {
-                    let url =
-                        '/cuti/pengumpulan_GCR/Baru';
+                    let url = '/cuti/pengumpulan_GCR/Baru';
 
                     goto(url);
                 }}
             >
                 <FilterWrapper slot="filter">
+                    <FilterTextField
+                        label="No. Pekerja"
+                        bind:inputValue={accumulationListTable.param.filter
+                            .employeeNumber}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="Nama Kakitangan"
+                        bind:inputValue={accumulationListTable.param.filter
+                            .name}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={accumulationListTable.param.filter
+                            .identityDocumentNumber}
+                    ></FilterTextField>
                     <FilterNumberField
                         label="Tahun"
                         bind:inputValue={accumulationListTable.param.filter

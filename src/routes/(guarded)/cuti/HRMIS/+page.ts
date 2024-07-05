@@ -31,9 +31,9 @@ export async function load() {
 
     // set the filter
     const leaveListFilter: HRMISLeaveFilterDTO = {
-        identityCard: null,
-        staffNo: null,
-        staffName: null,
+        identityDocumentNumber: null,
+        employeeNumber: null,
+        name: null,
         position: null,
         status: null,
     };

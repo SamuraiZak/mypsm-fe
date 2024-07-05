@@ -74,14 +74,18 @@
                 <FilterWrapper slot="filter">
                     {#if data.props.currentRoleCode !== UserRoleConstant.kakitangan.code}
                         <FilterTextField
-                            label="Nama"
+                            label="No. Pekerja"
                             bind:inputValue={leaveListTable.param.filter
-                                .staffName}
+                                .employeeNumber}
+                        ></FilterTextField>
+                        <FilterTextField
+                            label="Nama Kakitangan"
+                            bind:inputValue={leaveListTable.param.filter.name}
                         ></FilterTextField>
                         <FilterTextField
                             label="No. Kad Pengenalan"
                             bind:inputValue={leaveListTable.param.filter
-                                .identityCard}
+                                .identityDocumentNumber}
                         ></FilterTextField>
                     {/if}
                 </FilterWrapper>
