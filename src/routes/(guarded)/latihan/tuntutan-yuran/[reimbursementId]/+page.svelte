@@ -779,6 +779,18 @@
                     bind:val={$form.semester}
                     options={[
                         {
+                            value: 1,
+                            name: 'Satu',
+                        },
+                        {
+                            value: 2,
+                            name: 'Dua',
+                        },
+                        {
+                            value: 3,
+                            name: 'Tiga',
+                        },
+                        {
                             value: 4,
                             name: 'Empat',
                         },
@@ -789,6 +801,14 @@
                         {
                             value: 6,
                             name: 'Enam',
+                        },
+                        {
+                            value: 7,
+                            name: 'Tujuh',
+                        },
+                        {
+                            value: 8,
+                            name: 'Lapan',
                         },
                     ]}
                 ></CustomSelectField>
