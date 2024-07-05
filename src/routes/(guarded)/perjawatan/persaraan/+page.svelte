@@ -23,6 +23,7 @@
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import FilterNumberField from '$lib/components/table/filter/FilterNumberField.svelte';
+    import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
 
     export let data: PageData;
     let param: CommonListRequestDTO = data.param;
@@ -275,6 +276,27 @@
                         }}
                     >
                         <FilterWrapper slot="filter">
+                            <FilterTextField
+                                label="No. Pekerja"
+                                bind:inputValue={voluntaryApplicationtable.param
+                                    .filter.employeeNumber}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="Nama Kakitangan"
+                                bind:inputValue={voluntaryApplicationtable.param
+                                    .filter.name}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="No. Kad Pengenalan"
+                                bind:inputValue={voluntaryApplicationtable.param
+                                    .filter.identityDocumentNumber}
+                            ></FilterTextField>
+                            <FilterSelectField
+                                label="Status"
+                                options={data.selectionOptions.statusLookup}
+                                bind:inputValue={voluntaryApplicationtable.param
+                                    .filter.status}
+                            ></FilterSelectField>
                             <FilterNumberField
                                 label="Tahun"
                                 bind:inputValue={voluntaryApplicationtable.param
@@ -314,6 +336,27 @@
                         }}
                     >
                         <FilterWrapper slot="filter">
+                            <FilterTextField
+                                label="No. Pekerja"
+                                bind:inputValue={forceApplicationtable.param
+                                    .filter.employeeNumber}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="Nama Kakitangan"
+                                bind:inputValue={forceApplicationtable.param
+                                    .filter.name}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="No. Kad Pengenalan"
+                                bind:inputValue={forceApplicationtable.param
+                                    .filter.identityDocumentNumber}
+                            ></FilterTextField>
+                            <FilterSelectField
+                                label="Status"
+                                options={data.selectionOptions.statusLookup}
+                                bind:inputValue={forceApplicationtable.param
+                                    .filter.status}
+                            ></FilterSelectField>
                             <FilterNumberField
                                 label="Tahun"
                                 bind:inputValue={forceApplicationtable.param
@@ -347,6 +390,27 @@
                         }}
                     >
                         <FilterWrapper slot="filter">
+                            <FilterTextField
+                                label="No. Pekerja"
+                                bind:inputValue={unspecifyApplicationtable.param
+                                    .filter.employeeNumber}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="Nama Kakitangan"
+                                bind:inputValue={unspecifyApplicationtable.param
+                                    .filter.name}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="No. Kad Pengenalan"
+                                bind:inputValue={unspecifyApplicationtable.param
+                                    .filter.identityDocumentNumber}
+                            ></FilterTextField>
+                            <FilterSelectField
+                                label="Status"
+                                options={data.selectionOptions.statusLookup}
+                                bind:inputValue={unspecifyApplicationtable.param
+                                    .filter.status}
+                            ></FilterSelectField>
                             <FilterNumberField
                                 label="Tahun"
                                 bind:inputValue={unspecifyApplicationtable.param
