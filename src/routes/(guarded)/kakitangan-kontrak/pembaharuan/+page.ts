@@ -1,19 +1,21 @@
-import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
-import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
-import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
-import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
-import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto";
-import type { RenewContractAddDTO } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-add.dto";
-import type { RenewContractEmployeeTable } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-employee-table.dto";
-import type { RenewContractListResponseDTO } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-list-response.dto";
-import type { RenewContractListDTO } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-list.dto";
-import type { RenewContractSuppAppTable } from "$lib/dto/mypsm/kakitangan-kontrak/renew-contract-supp-app-table.dto";
-import { getSuccessToast } from "$lib/helpers/core/toast.helper";
-import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.service";
-import { ContractEmployeeServices } from "$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service";
+import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
+import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+import type { RenewContractAddDTO } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-add.dto';
+import type { RenewContractEmployeeTable } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-employee-table.dto';
+import type { RenewContractListResponseDTO } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-list-response.dto';
+import type { RenewContractListDTO } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-list.dto';
+import type { RenewContractSuppAppTable } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-supp-app-table.dto';
+import { getSuccessToast } from '$lib/helpers/core/toast.helper';
+import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
+import { ContractEmployeeServices } from '$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service';
 
 export const load = async () => {
-    let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
+    let currentRoleCode = localStorage.getItem(
+        LocalStorageKeyConstant.currentRoleCode,
+    );
     let nearExpiredContractListResponse: CommonResponseDTO = {};
     let nearExpiredContractList: RenewContractListResponseDTO[] = [];
     let renewContractListResponse: CommonResponseDTO = {};
@@ -29,7 +31,7 @@ export const load = async () => {
         orderBy: 'name',
         orderType: 0,
         filter: {
-            program: "TETAP",
+            program: 'TETAP',
             employeeNumber: null,
             name: null,
             identityCard: null,
@@ -37,20 +39,23 @@ export const load = async () => {
             grade: null,
             position: null,
         },
-    }
+    };
     const supporterApproverResponse: CommonResponseDTO =
         await LookupServices.getEmployeeList(suppAppResponse);
 
-    const supporterApproverLookup: DropdownDTO[] = LookupServices.setSelectOptionSupporterAndApprover(
-        supporterApproverResponse,
-    );
-    
+    const supporterApproverLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionSupporterAndApprover(
+            supporterApproverResponse,
+        );
+
     //near expired contract table
     const nearExpiredContractFilter: RenewContractListDTO = {
         dataType: 0,
-        identityCard: null,
+        identityDocumentNumber: null, //string | null | undefined;
         temporaryId: null,
-    }
+        name: null,
+        status: null, // status code from lookup | null | undefined;
+    };
     const nearExpiredContractParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
@@ -62,13 +67,15 @@ export const load = async () => {
     //renew contract in process table
     const renewContractFilter: RenewContractListDTO = {
         dataType: 1,
-        identityCard: null,
+        identityDocumentNumber: null, //string | null | undefined;
         temporaryId: null,
-    }
+        name: null,
+        status: null, // status code from lookup | null | undefined;
+    };
     const renewContractParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: "contractId",
+        orderBy: 'contractId',
         orderType: 1,
         filter: renewContractFilter,
     };
@@ -76,40 +83,70 @@ export const load = async () => {
     const supporterApproverParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: "contractId",
+        orderBy: 'contractId',
         orderType: 1,
-        filter: {},
-    }
+        filter: {
+            identityDocumentNumber: null, //string | null | undefined;
+            temporaryId: null,
+            name: null,
+            status: null, // status code from lookup | null | undefined;
+        },
+    };
 
-    if (currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code || currentRoleCode === UserRoleConstant.pengarahBahagian.code || currentRoleCode === UserRoleConstant.pengarahNegeri.code) {
-        //get list of renew contract process 
+    if (
+        currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code ||
+        currentRoleCode === UserRoleConstant.pengarahBahagian.code ||
+        currentRoleCode === UserRoleConstant.pengarahNegeri.code
+    ) {
+        //get list of renew contract process
         renewContractListResponse =
-            await ContractEmployeeServices.getRenewContractList(renewContractParam)
-        renewContractList =
-            renewContractListResponse.data?.dataList as RenewContractListResponseDTO[]
-        if (currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code) {
+            await ContractEmployeeServices.getRenewContractList(
+                renewContractParam,
+            );
+        renewContractList = renewContractListResponse.data
+            ?.dataList as RenewContractListResponseDTO[];
+        if (
+            currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code
+        ) {
             //get list of near expired contract
             nearExpiredContractListResponse =
-                await ContractEmployeeServices.getRenewContractList(nearExpiredContractParam)
-            nearExpiredContractList =
-                nearExpiredContractListResponse.data?.dataList as RenewContractListResponseDTO[]
+                await ContractEmployeeServices.getRenewContractList(
+                    nearExpiredContractParam,
+                );
+            nearExpiredContractList = nearExpiredContractListResponse.data
+                ?.dataList as RenewContractListResponseDTO[];
         }
     } else if (currentRoleCode === UserRoleConstant.penyokong.code) {
         supporterApproverTableResponse =
-            await ContractEmployeeServices.getRenewContractSupporterTable(supporterApproverParam);
-        supporterApproverTable =
-            supporterApproverTableResponse.data?.dataList as RenewContractSuppAppTable[];
+            await ContractEmployeeServices.getRenewContractSupporterTable(
+                supporterApproverParam,
+            );
+        supporterApproverTable = supporterApproverTableResponse.data
+            ?.dataList as RenewContractSuppAppTable[];
     } else if (currentRoleCode === UserRoleConstant.pelulus.code) {
         supporterApproverTableResponse =
-            await ContractEmployeeServices.getRenewContractApproverTable(supporterApproverParam);
-        supporterApproverTable =
-            supporterApproverTableResponse.data?.dataList as RenewContractSuppAppTable[];
+            await ContractEmployeeServices.getRenewContractApproverTable(
+                supporterApproverParam,
+            );
+        supporterApproverTable = supporterApproverTableResponse.data
+            ?.dataList as RenewContractSuppAppTable[];
     } else if (currentRoleCode === UserRoleConstant.kakitanganKontrak.code) {
         employeeTableResponse =
-            await ContractEmployeeServices.getRenewContractEmployeeTable(supporterApproverParam)
-        employeeTable =
-            employeeTableResponse.data?.dataList as RenewContractEmployeeTable[];
+            await ContractEmployeeServices.getRenewContractEmployeeTable(
+                supporterApproverParam,
+            );
+        employeeTable = employeeTableResponse.data
+            ?.dataList as RenewContractEmployeeTable[];
     }
+
+    // ==========================================================================
+    // Get Lookup Functions
+    // ==========================================================================
+    const statusLookupResponse: CommonResponseDTO =
+        await LookupServices.getStatusEnums();
+
+    const statusLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsInString(statusLookupResponse);
 
     return {
         currentRoleCode,
@@ -125,14 +162,19 @@ export const load = async () => {
         employeeTableResponse,
         employeeTable,
         supporterApproverLookup,
-    }
-}
+        selectionOptions: {
+            statusLookup,
+        },
+    };
+};
 
-export const _addSelectedContractForRenew = async (selectedContract: RenewContractAddDTO) => {
+export const _addSelectedContractForRenew = async (
+    selectedContract: RenewContractAddDTO,
+) => {
     const response: CommonResponseDTO =
         await ContractEmployeeServices.addRenewContract(selectedContract);
 
-    if (response.status == "success") {
-        return { response }
+    if (response.status == 'success') {
+        return { response };
     }
-}
+};
