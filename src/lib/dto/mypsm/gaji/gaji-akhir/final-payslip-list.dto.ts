@@ -26,7 +26,7 @@ export interface FinalPayslipListFilter {
     type:               number;
     employeeNumber:     string;
     name:               string;
-    identityCardNumber: string;
+    identityDocumentNumber: string;
     retirementType:     string;
     status:             string;
 }

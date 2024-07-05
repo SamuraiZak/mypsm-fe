@@ -13,9 +13,9 @@ export interface HRMISLeaveDTO {
 }
 
 export interface HRMISLeaveFilterDTO {
-    identityCard: string | null;
-    staffNo: string | null;
-    staffName: string | null;
+    identityDocumentNumber: string | null;
+    employeeNumber: string | null;
+    name: string | null;
     position: string | null;
     status: string | null;
 }

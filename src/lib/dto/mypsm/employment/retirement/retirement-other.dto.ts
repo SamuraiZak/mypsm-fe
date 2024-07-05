@@ -170,5 +170,6 @@ export interface USPRetirementChosenDetailRequestDTO {
 export interface USPRetirementChosenListFilter {
     groupId: number;
     name: string | null;
+    employeeNumber: string | null;
     identityDocumentNumber: string | null;
 }
