@@ -8,6 +8,7 @@ import {
     AuthenticationRequestConvert,
     type AuthenticationRequestDTO,
 } from '$lib/dto/core/authentication/authentication-request.dto';
+import type { AuthenticationResponseDTO } from '$lib/dto/core/authentication/authentication.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import { AccountServices } from '$lib/services/implementation/core/account/account.service';
 import http from '$lib/services/implementation/service-provider.service';
@@ -15,10 +16,12 @@ import type { Input } from 'ky';
 import { TextAppearanceHelper } from './text-appearance.helper';
 
 export class AuthenticationHelper {
+    // deprecated
     static saveToken(token: string) {
         localStorage.setItem(LocalStorageKeyConstant.accessToken, token);
     }
 
+    // deprecated
     static loginSuccess() {
         try {
             const getAccountDetails: CommonResponseDTO =
@@ -49,6 +52,7 @@ export class AuthenticationHelper {
         } catch (error) {}
     }
 
+    // deprecated
     static async saveAccountDetails(param: AccountDetailDTO) {
         try {
             // save the full name
@@ -70,6 +74,19 @@ export class AuthenticationHelper {
             localStorage.setItem(
                 LocalStorageKeyConstant.currentRoleCode,
                 param.currentRole.code,
+            );
+
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    static async storeAccessToken(params: AuthenticationResponseDTO) {
+        try {
+            localStorage.setItem(
+                LocalStorageKeyConstant.accessToken,
+                params.token,
             );
 
             return true;

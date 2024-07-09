@@ -29,6 +29,11 @@
     import TextIconButton from '../button/TextIconButton.svelte';
     import SvgEmptyBox from '$lib/assets/svg/SvgEmptyBox.svelte';
     import { Span } from 'flowbite-svelte';
+    import SvgCheckedTrue from '$lib/assets/svg/checkbox.svelte/SvgCheckedTrue.svelte';
+    import SvgCheckedFalse from '$lib/assets/svg/checkbox.svelte/SvgCheckedFalse.svelte';
+    import SvgDetailsIcon from '$lib/assets/svg/SvgDetailsIcon.svelte';
+    import SvgEditIcons from '$lib/assets/svg/SvgEditIcons.svelte';
+    import SvgSelectIcon from '$lib/assets/svg/SvgSelectIcon.svelte';
 
     // =====================================================================
     // Variables
@@ -357,7 +362,7 @@
         >
             <!-- leading -->
             <div class="flex h-fit w-fit flex-row items-center justify-start">
-                <p class="text-base font-medium">{title}</p>
+                <p class="text-md font-medium">{title}</p>
             </div>
             <!-- trailing -->
             <div
@@ -460,7 +465,7 @@
                                         class="flex h-full flex-row items-center justify-center"
                                     >
                                         <span
-                                            class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                                            class="select-none text-center align-middle text-base font-medium text-gray-700"
                                         >
                                         </span>
                                     </div>
@@ -473,7 +478,7 @@
                                     class="flex h-full flex-row items-center justify-center"
                                 >
                                     <span
-                                        class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                                        class="select-none text-center align-middle text-base font-medium text-gray-700"
                                     >
                                         Bil.
                                     </span>
@@ -498,7 +503,7 @@
                                                 class="flex h-full w-fit flex-row items-center justify-between"
                                             >
                                                 <span
-                                                    class="select-none text-nowrap text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                                                    class="select-none text-nowrap text-center align-middle text-base font-medium text-gray-700"
                                                 >
                                                     {translator(columnHeading)}
                                                 </span>
@@ -531,7 +536,7 @@
 
                                 <!-- actions -->
 
-                                {#if tableData.option.detail}
+                                {#if tableData.option.detail || tableData.option.edit || tableData.option.select}
                                     <th
                                         class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
                                     >
@@ -539,35 +544,7 @@
                                             class="flex h-full flex-row items-center justify-center"
                                         >
                                             <span
-                                                class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
-                                            >
-                                            </span>
-                                        </div>
-                                    </th>
-                                {/if}
-                                {#if tableData.option.select}
-                                    <th
-                                        class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
-                                    >
-                                        <div
-                                            class="flex h-full flex-row items-center justify-center"
-                                        >
-                                            <span
-                                                class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
-                                            >
-                                            </span>
-                                        </div>
-                                    </th>
-                                {/if}
-                                {#if tableData.option.edit}
-                                    <th
-                                        class="h-full w-10 border-r border-ios-labelColors-separator-light px-2.5"
-                                    >
-                                        <div
-                                            class="flex h-full flex-row items-center justify-center"
-                                        >
-                                            <span
-                                                class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                                                class="select-none text-center align-middle text-base font-medium text-gray-700"
                                             >
                                             </span>
                                         </div>
@@ -576,7 +553,7 @@
                             {:else}
                                 <th>
                                     <span
-                                        class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                                        class="select-none text-center align-middle text-base font-medium text-gray-700"
                                     >
                                         Tiada Rekod
                                     </span>
@@ -623,8 +600,8 @@
                                                     <span
                                                         class=" text-ios-systemColors-systemRed-light"
                                                     >
-                                                        <SvgMinusCircle
-                                                        ></SvgMinusCircle>
+                                                        <SvgCheckedTrue
+                                                        ></SvgCheckedTrue>
                                                     </span>
                                                 </IconButton>
                                             {:else}
@@ -639,8 +616,8 @@
                                                     <span
                                                         class="text-ios-activeColors-activeBlue-light"
                                                     >
-                                                        <SvgAddCircle
-                                                        ></SvgAddCircle>
+                                                        <SvgCheckedFalse
+                                                        ></SvgCheckedFalse>
                                                     </span>
                                                 </IconButton>
                                             {/if}
@@ -651,7 +628,7 @@
                                     class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
                                 >
                                     <span
-                                        class="relative text-center align-middle text-sm font-normal"
+                                        class="relative text-center align-middle text-base font-normal"
                                     >
                                         {index +
                                             1 +
@@ -666,7 +643,7 @@
                                             class="h-full w-fit border-r border-ios-labelColors-separator-light px-2.5 text-start"
                                         >
                                             <span
-                                                class="relative text-nowrap text-start align-middle text-sm font-normal text-ios-labelColors-label-light"
+                                                class="relative text-nowrap text-start align-middle text-base font-normal text-ios-labelColors-label-light"
                                             >
                                                 {#if TableHelper.getKey(row, key) == null}
                                                     Tiada Maklumat
@@ -690,63 +667,46 @@
                                     {/if}
                                 {/each}
 
-                                <!-- actions column starts -->
-                                {#if tableData.option.detail}
+                                {#if tableData.option.detail || tableData.option.edit || tableData.option.select}
                                     <td
                                         class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
                                     >
                                         <div
-                                            class="flex h-full flex-row items-center justify-center"
+                                            class="flex h-full flex-row items-center justify-center gap-2"
                                         >
-                                            <IconButton
-                                                onClick={() => {
-                                                    passData = row;
-                                                    detailActions();
-                                                }}
-                                            >
-                                                <SvgEllipsisCircle
-                                                ></SvgEllipsisCircle>
-                                            </IconButton>
-                                        </div>
-                                    </td>
-                                {/if}
-                                {#if tableData.option.select}
-                                    <td
-                                        class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
-                                    >
-                                        <div
-                                            class="flex h-full flex-row items-center justify-center"
-                                        >
-                                            <TableCellButton
-                                                label="Pilih"
-                                                onClick={() => {
-                                                    passData = row;
-                                                    selectActions();
-                                                }}
-                                            >
-                                                <SvgCheck slot="icon"
-                                                ></SvgCheck>
-                                            </TableCellButton>
-                                        </div>
-                                    </td>
-                                {/if}
-                                {#if tableData.option.edit}
-                                    <td
-                                        class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
-                                    >
-                                        <div
-                                            class="flex h-full flex-row items-center justify-center"
-                                        >
-                                            <TableIconButton
-                                                color="light"
-                                                onClick={() => {
-                                                    passData = row;
-                                                    editActions();
-                                                }}
-                                            >
-                                                <SvgEdit slot="icon" size="15"
-                                                ></SvgEdit>
-                                            </TableIconButton>
+                                            {#if tableData.option.detail}
+                                                <IconButton
+                                                    onClick={() => {
+                                                        passData = row;
+                                                        detailActions();
+                                                    }}
+                                                >
+                                                    <SvgDetailsIcon
+                                                    ></SvgDetailsIcon>
+                                                </IconButton>
+                                            {/if}
+                                            {#if tableData.option.edit}
+                                                <IconButton
+                                                    onClick={() => {
+                                                        passData = row;
+                                                        editActions();
+                                                    }}
+                                                >
+                                                    <SvgEditIcons
+                                                    ></SvgEditIcons>
+                                                </IconButton>
+                                            {/if}
+                                            {#if tableData.option.select}
+                                                <IconButton
+                                                    onClick={() => {
+                                                        passData = row;
+                                                        selectActions();
+                                                    }}
+                                                >
+                                                    <SvgSelectIcon
+                                                    ></SvgSelectIcon>
+                                                </IconButton>
+                                            {/if}
                                         </div>
                                     </td>
                                 {/if}
@@ -767,7 +727,7 @@
                 <div class="flex flex-row items-center gap-2">
                     <label
                         for="idType"
-                        class=" w-full text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                        class=" w-full text-base font-medium text-gray-700"
                     >
                         Saiz Data
                     </label>
@@ -785,7 +745,7 @@
                 <div class="flex flex-row items-center gap-2">
                     <label
                         for="idType"
-                        class=" w-full text-nowrap text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                        class=" w-full text-nowrap text-base font-medium text-gray-700"
                     >
                         {tableData.meta.totalData} hasil carian
                     </label>
@@ -858,7 +818,7 @@
                                     class="flex h-full flex-row items-center justify-center"
                                 >
                                     <span
-                                        class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                                        class="select-none text-center align-middle text-base font-medium text-gray-700"
                                     >
                                         Bil.
                                     </span>
@@ -875,7 +835,7 @@
                                                 class="flex h-full flex-row items-center justify-start"
                                             >
                                                 <span
-                                                    class="select-none text-start align-middle text-sm font-medium text-ios-labelColors-label-light"
+                                                    class="select-none text-start align-middle text-base font-medium text-ios-labelColors-label-light"
                                                 >
                                                     {translate(columnHeading)}
                                                 </span>
@@ -894,7 +854,7 @@
                                         class="h-full border-r border-ios-labelColors-separator-light px-2.5 text-center"
                                     >
                                         <span
-                                            class="relative text-center align-middle text-sm font-normal"
+                                            class="relative text-center align-middle text-base font-normal"
                                         >
                                             {index +
                                                 1 +
@@ -908,7 +868,7 @@
                                                 class="h-full border-r px-2.5 text-start"
                                             >
                                                 <span
-                                                    class="relative text-start align-middle text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                                                    class="relative text-start align-middle text-base font-normal text-ios-labelColors-secondaryLabel-light"
                                                 >
                                                     {#if TableHelper.getKey(row, key) !== '' || TableHelper.getKey(row, key) !== null || TableHelper.getKey(row, key) !== null}
                                                         {#if typeof TableHelper.getKey(row, key) == 'string'}
@@ -937,7 +897,7 @@
                     </tbody>
                 {:else}
                     <p
-                        class="w-full text-start text-sm italic text-ios-basic-destructiveRed"
+                        class="w-full text-start text-base italic text-ios-basic-destructiveRed"
                     >
                         ***Tiada data untuk dicetak***
                     </p>

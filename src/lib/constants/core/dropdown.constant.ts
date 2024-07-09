@@ -50,16 +50,22 @@ export const kgtMonthLookup: DropdownDTO[] = [
 ];
 
 export const mesyuaratNameLookup: DropdownDTO[] = [
-    { value: "Mesyuarat 1/12", name: 'Mesyuarat 1/12' },
-    { value: "Mesyuarat 1/102", name: 'Mesyuarat 1/102' },
-    { value: "Mesyuarat 2/101", name: 'Mesyuarat 2/101' },
-]
+    { value: 'Mesyuarat 1/12', name: 'Mesyuarat 1/12' },
+    { value: 'Mesyuarat 1/102', name: 'Mesyuarat 1/102' },
+    { value: 'Mesyuarat 2/101', name: 'Mesyuarat 2/101' },
+];
 
-export const kgtSpecialRaiseType: DropdownDTO [] = [
-    { value: 'Ditetapkan Sekali Sepanjang Tahun Pergerakan Gaji', name: 'Ditetapkan Sekali Sepanjang Tahun Pergerakan Gaji' },
-    { value: 'Peratusan Daripada Jumlah Gaji Pokok', name: 'Peratusan Daripada Jumlah Gaji Pokok' },
+export const kgtSpecialRaiseType: DropdownDTO[] = [
+    {
+        value: 'Ditetapkan Sekali Sepanjang Tahun Pergerakan Gaji',
+        name: 'Ditetapkan Sekali Sepanjang Tahun Pergerakan Gaji',
+    },
+    {
+        value: 'Peratusan Daripada Jumlah Gaji Pokok',
+        name: 'Peratusan Daripada Jumlah Gaji Pokok',
+    },
     { value: 'Peratusan Daripada KGT', name: 'Peratusan Daripada KGT' },
-]
+];
 
 export const successOption: DropdownDTO[] = [
     { value: 'Berjaya', name: 'Berjaya' },
@@ -85,3 +91,11 @@ export const integrityDropdown: DropdownDTO[] = [
     { value: true, name: 'Bebas' },
     { value: false, name: 'Tidak Bebas' },
 ]; 
+
+export const statuDropdownOption: DropdownDTO[] = [
+    { value: 'Draf', name: 'Draf' },
+    { value: 'Sedang Diproses', name: 'Sedang Diproses' },
+    { value: 'Selesai', name: 'Selesai' },
+    { value: 'Gagal', name: 'Gagal' },
+    { value: 'Semua', name: 'Semua' },
+];

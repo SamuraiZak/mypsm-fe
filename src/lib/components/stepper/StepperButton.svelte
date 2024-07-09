@@ -17,7 +17,7 @@
     <!-- label -->
     <div class="flex h-full w-full flex-row items-center justify-start">
         <p
-            class="text-start text-sm {active
+            class="text-start text-base {active
                 ? ' font-medium text-system-primary'
                 : ' font-normal text-txt-secondary '}"
         >

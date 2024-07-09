@@ -20,7 +20,7 @@
     >
         <span
             class="
-            {fontSize === 'small' ? 'text-sm' : 'text-base'}
+            {fontSize === 'small' ? 'text-base' : 'text-md'}
             {fontWeight === 'bold' ? 'font-bold' : 'font-medium'}
                 {color === 'system-primary'
                 ? 'text-system-primary'

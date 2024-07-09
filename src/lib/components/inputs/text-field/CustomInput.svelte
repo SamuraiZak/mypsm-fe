@@ -4,7 +4,10 @@
     export let subLabel: string = '';
     export let val: any;
     export let placeholder: string = '';
-    export let valueType: string = 'text' || ' number' || 'password' || 'email' || 'textarea';
+    export let prefixText: string = '';
+    export let suffixText: string = '';
+    export let valueType: string =
+        'text' || ' number' || 'password' || 'email' || 'textarea';
     export let required: boolean = false;
     export let errors: string[] | undefined = [] ?? undefined;
     export let vertical: boolean = true;
@@ -32,7 +35,7 @@
                 >
                     <label
                         for={id}
-                        class="w-full text-wrap text-start text-md font-medium leading-tight text-black"
+                        class="text-system-midnightBlue w-full text-wrap text-start text-md font-medium leading-tight"
                         >{label}
                         {#if required}
                             <span class="text text-red-600">*</span>
@@ -58,6 +61,14 @@
         >
             <!-- prefix -->
             <slot name="prefix" />
+
+            {#if prefixText != ''}
+                <div
+                    class="flex h-full w-fit flex-col items-center justify-center"
+                >
+                    <p class="text-center text-md font-normal">{prefixText}</p>
+                </div>
+            {/if}
 
             {#if valueType == 'text'}
                 <input
@@ -163,6 +174,14 @@
                     {/if}
                 </button>
                 <!-- toggle obscure text button ends here -->
+            {/if}
+
+            {#if suffixText != ''}
+                <div
+                    class="flex h-full w-fit flex-col items-center justify-center"
+                >
+                    <p class="text-center text-md font-normal">{suffixText}</p>
+                </div>
             {/if}
 
             <!-- suffix -->

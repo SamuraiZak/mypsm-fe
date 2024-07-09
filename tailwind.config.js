@@ -13,6 +13,7 @@ export default {
             md: '14px',
             lg: '16px',
             xl: '20px',
+            '2xl': '28px'
         },
         extend: {
             fontFamily:{
@@ -32,6 +33,7 @@ export default {
                     green: '#c0dd78',
                     red: '#FFC3C9',
                     blue: '#94DCF7',
+                    midnightBlue: '#101720'
                 },
                 bdr: {
                     primary: '#E6E6E6',
