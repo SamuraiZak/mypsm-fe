@@ -33,6 +33,7 @@
         _secretaryApprovalFormSubmit,
         _supportApproverFormSubmit,
     } from './+page';
+    import { integrityDropdown } from '$lib/constants/core/dropdown.constant';
 
     export let data: PageData;
 
@@ -422,8 +423,8 @@
                                     id="status"
                                     label={'Adakah Permohonan Ini Sah?'}
                                     bind:val={$confirmationForm.status}
-                                    options={data.props.endorsementDropdown}
-                                ></CustomSelectField>
+                                    options={integrityDropdown}
+                                ></CustomSelectField> 
                             </div>
                             <div class="flex w-full flex-col gap-2">
                                 <CustomTextField

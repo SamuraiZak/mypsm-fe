@@ -311,6 +311,11 @@
                         icon="check"
                         form="secretaryApprovalForm"
                     />
+                    <TextIconButton
+                        label="Hantar"
+                        icon="check"
+                        form="secretaryApprovalForm"
+                    />
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
@@ -350,6 +355,11 @@
                         icon="check"
                         form="supporterApproverForm"
                     />
+                    <TextIconButton
+                        label="Hantar"
+                        icon="check"
+                        form="supporterApproverForm"
+                    />
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
@@ -384,6 +394,11 @@
                 {#if !supporterResult && data.currentRoleCode == UserRoleConstant.penyokong.code}
                     <TextIconButton
                         label="Simpan"
+                        icon="check"
+                        form="supporterApprovalForm"
+                    />
+                    <TextIconButton
+                        label="Hantar"
                         icon="check"
                         form="supporterApprovalForm"
                     />
@@ -438,6 +453,11 @@
                 {#if !approverResult && data.currentRoleCode == UserRoleConstant.pelulus.code}
                     <TextIconButton
                         label="Simpan"
+                        icon="check"
+                        form="approverApprovalForm"
+                    />
+                    <TextIconButton
+                        label="Hantar"
                         icon="check"
                         form="approverApprovalForm"
                     />

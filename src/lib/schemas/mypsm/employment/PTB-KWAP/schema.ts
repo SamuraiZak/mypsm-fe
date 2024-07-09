@@ -106,7 +106,7 @@ export const _salaryInfoSchema = z.object({
 export const _PTBPensionInfoSchema = z.object({
     id: numberSchema.optional(),
     employeeId: numberSchema.optional(),
-    PTBDate: stringToMinDate,
+    PTBDate: stringToMinDate.optional(),
     referenceNumber: shortTextSchema,
     referenceDate: stringToMinDate,
     pensionNumber: shortTextSchema.optional(),

@@ -303,7 +303,7 @@
                         <FilterTextField
                             label="Nama"
                             bind:inputValue={PTBListTable.param.filter
-                                .employeeName}
+                                .name}
                         />
                         <FilterTextField
                         label="No. Pekerja"
@@ -312,7 +312,7 @@
                     <FilterTextField
                         label="No. Kad Pengenalan"
                         bind:inputValue={PTBtable.param.filter
-                            .identityCard}
+                            .identityDocumentCard}
                     />
                     <FilterTextField
                         label="Jawatan"
@@ -381,7 +381,7 @@
                             <FilterTextField
                                 label="No. Kad Pengenalan"
                                 bind:inputValue={addActingTable.param
-                                    .filter.identityCard}
+                                    .filter.identityDocumentNumber}
                             ></FilterTextField>
                             <FilterTextField
                                 label="Jawatan"

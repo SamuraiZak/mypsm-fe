@@ -462,7 +462,7 @@
                                 class="flex w-full flex-col items-center justify-start space-y-2 p-2 lg:w-1/2"
                             >
                                 <div class="flex w-full flex-col gap-2">
-                                    <CustomSelectField
+                                    <CustomTextField
                                         disabled={data.props
                                             .currentApplicationDetail.reason !==
                                             null ||
@@ -470,8 +470,7 @@
                                         id="reasonId"
                                         label={'Alasan Permohonan Pertukaran'}
                                         bind:val={$employeeReasonForm.reasonId}
-                                        options={data.props.reasonDropdown}
-                                    ></CustomSelectField>
+                                    ></CustomTextField>
                                 </div>
                                 <div class="flex w-full flex-col gap-2">
                                     <CustomTextField
@@ -495,7 +494,7 @@
                                                 data.props.userMode !=
                                                     'employee'}
                                             id="distance"
-                                            label={'Nyatakan Jarak Antara Tempat Kerja Pasangan'}
+                                            label={'Nyatakan Jarak Antara Tempat Kerja Pasangan (KM)'}
                                             type="number"
                                             errors={$employeeReasonErrors.distance}
                                             bind:val={$employeeReasonForm.distance}
@@ -523,7 +522,7 @@
                                                 data.props.userMode !=
                                                     'employee'}
                                             id="company"
-                                            label={'Tarikh Pertukaran'}
+                                            label={'Tarikh Pasangan Mula Berkhidmat'}
                                             type="date"
                                             errors={$employeeReasonErrors.company}
                                             bind:val={$employeeReasonForm.company}
@@ -873,7 +872,7 @@
                                                 .currentApplicationDetail
                                                 .meetingDetail !== null}
                                             id="name"
-                                            label={'Name Mesyuarat'}
+                                            label={'Nama Mesyuarat'}
                                             type="text"
                                             errors={$meetingResultErrors.name}
                                             bind:val={$meetingResultForm.name}

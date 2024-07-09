@@ -116,7 +116,7 @@
                     <FilterTextField
                         label="Nama Pemohon"
                         bind:inputValue={quartersTable.param.filter
-                            .employeeName}
+                            .name}
                     />
                     <FilterTextField
                         label="No. Pekerja"

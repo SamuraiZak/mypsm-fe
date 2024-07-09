@@ -756,6 +756,13 @@
                                 form="personalFormStepper"
                             />
                             <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            onClick={() =>
+                                (isReadonlyPersonalFormStepper = false)}
+                            form="personalFormStepper"
+                        />
+                            <TextIconButton
                                 type="neutral"
                                 label="Kembali"
                                 onClick={() =>
@@ -1080,6 +1087,13 @@
                                 form="serviceFormStepper"
                             />
                             <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            onClick={() =>
+                                (isReadonlyServiceFormStepper = false)}
+                            form="serviceFormStepper"
+                        />
+                            <TextIconButton
                                 type="neutral"
                                 label="Kembali"
                                 onClick={() =>
@@ -1394,6 +1408,7 @@
                                 label="Simpan"
                                 onClick={submitCreateAcademic}
                             />
+                            
                             <TextIconButton
                                 type="neutral"
                                 label="Batal"
@@ -1412,6 +1427,11 @@
                                 label="Simpan"
                                 form="academicFormStepper"
                             />
+                            <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                           
+                        />
                             <TextIconButton
                                 type="neutral"
                                 label="Kembali"
@@ -1619,6 +1639,11 @@
                                 form="experienceInfoForm"
                             />
                             <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="experienceInfoForm"
+                        />
+                            <TextIconButton
                                 type="neutral"
                                 label="Kembali"
                                 onClick={() => (isEditableExperience = false)}
@@ -1783,6 +1808,11 @@
                                 form="activityInfoForm"
                             />
                             <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="activityInfoForm"
+                        />
+                            <TextIconButton
                                 type="neutral"
                                 label="Kembali"
                                 onClick={() => (isEditableActivity = false)}
@@ -1922,6 +1952,11 @@
                                 label="Simpan"
                                 form="familyInfoForm"
                             />
+                            <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="familyInfoForm"
+                        />
                             <TextIconButton
                                 type="neutral"
                                 label="Kembali"
@@ -2223,6 +2258,11 @@
                                 label="Simpan"
                                 form="dependencyInfoForm"
                             />
+                            <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="dependencyInfoForm"
+                        />
                             <TextIconButton
                                 type="neutral"
                                 label="Kembali"
@@ -2527,6 +2567,11 @@
                                 form="nextOfKinInfoForm"
                             />
                             <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="nextOfKinInfoForm"
+                        />
+                            <TextIconButton
                                 type="neutral"
                                 label="Kembali"
                                 onClick={() => (isEditableNextOfKin = false)}
@@ -2826,6 +2871,13 @@
                                 form="FormStepperSejarahPenyakit"
                             />
                             <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            onClick={() =>
+                                (isReadonlyHistoryMedicalFormStepper = false)}
+                            form="FormStepperSejarahPenyakit"
+                        />
+                            <TextIconButton
                                 type="neutral"
                                 label="Kembali"
                                 onClick={() =>
@@ -2938,6 +2990,13 @@
                                     (isGeneralMedicalFormStepper = false)}
                                 form="FormStepperPemeriksaanDoktor"
                             />
+                            <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            onClick={() =>
+                                (isGeneralMedicalFormStepper = false)}
+                            form="FormStepperPemeriksaanDoktor"
+                        />
                             <TextIconButton
                                 type="neutral"
                                 label="Kembali"

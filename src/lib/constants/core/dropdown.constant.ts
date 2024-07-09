@@ -80,3 +80,8 @@ export const vehicleConditionOption: DropdownDTO[] = [
     { value: 'Baru', name: 'Baru' },
     { value: 'Terpakai', name: 'Terpakai' },
 ];
+
+export const integrityDropdown: DropdownDTO[] = [
+    { value: true, name: 'Bebas' },
+    { value: false, name: 'Tidak Bebas' },
+]; 

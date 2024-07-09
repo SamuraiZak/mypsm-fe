@@ -109,7 +109,7 @@ export async function load({ }) {
         LookupServices.setSelectOptionsInString(
             identityCardColorLookupResponse,
         );
-
+ 
     // ===========================================================================
 
     const stateLookupResponse: CommonResponseDTO =

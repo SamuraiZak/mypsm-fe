@@ -170,6 +170,11 @@
                     >
                 {/if}
                 {#if !submitSuccess}
+                <TextIconButton
+                label="Simpan"
+                icon="check"
+                form="addClaimsForm"
+            />
                     <TextIconButton
                         label="Hantar"
                         icon="check"

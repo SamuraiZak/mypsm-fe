@@ -177,7 +177,7 @@
                     <FilterTextField
                         label="No. Kad Pengenalan"
                         bind:inputValue={newOfferMeetingBatchListTable.param
-                            .filter.identityCard}
+                            .filter.identityDocumentNumber}
                     ></FilterTextField>
                     <FilterSelectField
                         label="Gred Semasa"

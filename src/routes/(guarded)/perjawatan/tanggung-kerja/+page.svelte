@@ -139,7 +139,7 @@
                                 <FilterTextField
                                     label="No. Kad Pengenalan"
                                     bind:inputValue={employeeApplicationTable
-                                        .param.filter.identityCardNumber}
+                                        .param.filter.identityDocumentNumber}
                                 ></FilterTextField>
                                 <FilterDateField
                                     label="Tarikh Permohonan"
@@ -179,7 +179,7 @@
                             <FilterTextField
                                 label="No. Kad Pengenalan"
                                 bind:inputValue={employeeApplicationTable.param
-                                    .filter.identityCardNumber}
+                                    .filter.identityDocumentNumber}
                             ></FilterTextField>
                             <FilterDateField
                                 label="Tarikh Permohonan"
@@ -219,7 +219,7 @@
                         <FilterTextField
                             label="No. Kad Pengenalan"
                             bind:inputValue={employeeApplicationTable.param
-                                .filter.identityCardNumber}
+                                .filter.identityDocumentNumber}
                         ></FilterTextField>
                         <FilterDateField
                             label="Tarikh Permohonan"

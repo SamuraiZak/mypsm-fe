@@ -17,6 +17,7 @@
     import { goto } from '$app/navigation';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import { approveOptions } from '$lib/constants/core/radio-option-constants';
+    import { eligibleOptions } from '$lib/constants/core/radio-option-constants';
     import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import { Alert, Checkbox, Helper, Radio } from 'flowbite-svelte';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
@@ -383,6 +384,11 @@
                             icon="check"
                             form="personalDetailForm"
                         />
+                        <TextIconButton
+                            label="Hantar"
+                            form="personalDetailForm"
+                        />
+                        
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -477,6 +483,10 @@
                         <TextIconButton
                             label="Simpan"
                             icon="check"
+                            form="outsiderFamily"
+                        />
+                        <TextIconButton
+                            label="Hantar"
                             form="outsiderFamily"
                         />
                     {/if}
@@ -582,6 +592,11 @@
                             icon="check"
                             form="outsiderServiceForm"
                         />
+                        <TextIconButton
+                        label="Hantar"
+                        icon="check"
+                        form="outsiderServiceForm"
+                    />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -727,7 +742,8 @@
                                 <span>3. Kad Nikah</span>
                                 <span>4. Gambar Dalaman Kuarters</span>
                                 <span>5. Slip Gaji 3 Bulan Terkini</span>
-                                <span>6. Surat Pengesahan Jabatan/Majikan</span>
+                                <span>6. Surat Pengesahan Jabatan/Majikan(Jabatan atau Agensi Luar)</span>
+                              
                             </div>
                             <div class="flex w-full flex-col gap-2 px-3">
                                 <CustomFileField
@@ -758,6 +774,11 @@
                         {#if !submitConfirmation && data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
                             <TextIconButton
                                 label="Simpan"
+                                icon="check"
+                                form="confirmationForm"
+                            />
+                            <TextIconButton
+                                label="Hantar"
                                 icon="check"
                                 form="confirmationForm"
                             />
@@ -797,6 +818,11 @@
                                 icon="check"
                                 form="secretaryApprovalForm"
                             />
+                            <TextIconButton
+                                label="Hantar"
+                                icon="check"
+                                form="secretaryApprovalForm"
+                            />
                         {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
@@ -821,7 +847,7 @@
                                 label="Keputusan"
                                 id="status"
                                 disabled={submitSecretaryApproval}
-                                options={approveOptions}
+                                options={eligibleOptions}
                                 bind:val={$secretaryApprovalForm.status}
                             />
                             <ContentHeader
@@ -847,6 +873,11 @@
                         {#if !submitDirectorApproval && (data.currentRoleCode == UserRoleConstant.pengarahNegeri.code || data.currentRoleCode == UserRoleConstant.pengarahBahagian.code)}
                             <TextIconButton
                                 label="Simpan"
+                                icon="check"
+                                form="directorApprovalForm"
+                            />
+                            <TextIconButton
+                                label="Hantar"
                                 icon="check"
                                 form="directorApprovalForm"
                             />
@@ -906,6 +937,11 @@
                                     icon="check"
                                     form="quarterDetailForm"
                                 />
+                                <TextIconButton
+                                label="Hantar"
+                                icon="check"
+                                form="quarterDetailForm"
+                            />
                             {/if}
                         </StepperContentHeader>
                         <StepperContentBody paddingClass="p-none">
@@ -957,7 +993,7 @@
                                     </CustomTabContent>
                                 {/if}
                                 <CustomTabContent
-                                    title="Maklumat Kelulusan dan Tawaran"
+                                    title="Maklumat Kemasukan Kuarters"
                                 >
                                     <form
                                         class="flex w-full flex-col justify-start gap-2.5 p-3"
@@ -987,12 +1023,19 @@
                                             errors={$quarterDetailError.movingInDate}
                                         />
                                         <CustomTextField
-                                            label="Unit dan Kuarter"
+                                            label="Unit"
                                             id="quarterDetails"
                                             disabled={submitQuarterDetails}
                                             bind:val={$quarterDetailForm.quarterDetails}
                                             errors={$quarterDetailError.quarterDetails}
                                         />
+                                        <CustomTextField
+                                        label="Kuarter"
+                                        id="quarterDetails"
+                                        disabled={submitQuarterDetails}
+                                        bind:val={$quarterDetailForm.quarterDetails}
+                                        errors={$quarterDetailError.quarterDetails}
+                                    />
                                     </form>
 
                                     <form
@@ -1005,7 +1048,7 @@
                                             title="Kadar Bayaran Sewa Kuarters (Unit Pengurusan Fasiliti)"
                                             borderClass="border-none"
                                         >
-                                            {#if !submitPayment && data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
+                                            {#if !submitPayment && data.currentRoleCode == UserRoleConstant.unitPengurusanFasiliti.code}
                                                 <TextIconButton
                                                     label="Hantar"
                                                     icon="check"

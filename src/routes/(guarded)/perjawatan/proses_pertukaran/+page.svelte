@@ -207,13 +207,23 @@
                             <FilterTextField
                                 label="Nama Kakitangan"
                                 bind:inputValue={selfApplicationTable.param
-                                    .filter.employeeName}
+                                    .filter.name}
                             ></FilterTextField>
+                            <FilterTextField
+                            label="No. Pekerja"
+                            bind:inputValue={selfApplicationTable.param
+                                .filter.employeeNumber}
+                        ></FilterTextField>
                             <FilterTextField
                                 label="No. Kad Pengenalan"
                                 bind:inputValue={selfApplicationTable.param
                                     .filter.identityDocumentNumber}
                             ></FilterTextField>
+                            <FilterTextField
+                            label="Status"
+                            bind:inputValue={selfApplicationTable.param
+                                .filter.status}
+                        ></FilterTextField>
                         </FilterWrapper>
                     </DataTable>
                 </div>
@@ -244,13 +254,23 @@
                             <FilterTextField
                                 label="Nama Kakitangan"
                                 bind:inputValue={directorApplicationTable.param
-                                    .filter.employeeName}
+                                    .filter.name}
                             ></FilterTextField>
+                            <FilterTextField
+                            label="No. Pekerja"
+                            bind:inputValue={directorApplicationTable.param
+                                .filter.employeeNumber}
+                        ></FilterTextField>
                             <FilterTextField
                                 label="No. Kad Pengenalan"
                                 bind:inputValue={directorApplicationTable.param
                                     .filter.identityDocumentNumber}
                             ></FilterTextField>
+                            <FilterTextField
+                            label="Status"
+                            bind:inputValue={directorApplicationTable.param
+                                .filter.status}
+                        ></FilterTextField>
                         </FilterWrapper>
                     </DataTable>
                 </div>
@@ -279,9 +299,19 @@
                                     .param.filter.employeeName}
                             ></FilterTextField>
                             <FilterTextField
+                                label="No. Pekerja"
+                                bind:inputValue={managementApplicationTable
+                                    .param.filter.employeeName}
+                            ></FilterTextField>
+                            <FilterTextField
                                 label="No. Kad Pengenalan"
                                 bind:inputValue={managementApplicationTable
                                     .param.filter.identityDocumentNumber}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="Status"
+                                bind:inputValue={managementApplicationTable
+                                    .param.filter.status}
                             ></FilterTextField>
                         </FilterWrapper>
                     </DataTable>

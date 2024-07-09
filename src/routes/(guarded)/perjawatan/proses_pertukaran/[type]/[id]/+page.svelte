@@ -718,7 +718,7 @@
                                             .currentApplicationDetail
                                             .meeting !== null}
                                         id="name"
-                                        label={'Name Mesyuarat'}
+                                        label={'Nama Mesyuarat'}
                                         type="text"
                                         errors={$meetingResultErrors.name}
                                         bind:val={$meetingResultForm.name}

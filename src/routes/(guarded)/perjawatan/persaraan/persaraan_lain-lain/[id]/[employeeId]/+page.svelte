@@ -131,7 +131,7 @@
         <!-- Kemaskini Butiran Persaraan -->
         <!-- =============================== -->
         <StepperContent>
-            <StepperContentHeader title="Butiran Pertukaran">
+            <StepperContentHeader title="Butiran Persaraan">
                 {#if data.props.chosenDetail.retirementDetail == null && data.props.userMode == 'secretary'}
                     <TextIconButton
                         label="Hantar"
