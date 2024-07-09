@@ -30,6 +30,7 @@
     let submitSuccess: boolean = false;
     let successUpload: boolean = false;
     let medicalId: number = 0;
+    let exceedAllocation: boolean = false;
     let files: FileList;
     let docs: QuartersGetDocument = {
         id: 0,
@@ -321,6 +322,18 @@
 <Modal title="Tambah Tuntutan" bind:open={openModal}>
     <div class="flex w-full flex-col justify-start gap-2.5 pb-3">
         <CustomTextField
+            label="Nama Rawatan"
+            id="claims"
+            type="number"
+            bind:val={tempClaims}
+        />
+        <CustomTextField
+            label="Nama Ubat"
+            id="claims"
+            type="number"
+            bind:val={tempClaims}
+        />
+        <CustomTextField
             label="Jumlah Rawatan (RM)"
             id="claims"
             type="number"
@@ -332,6 +345,25 @@
             onClick={() => {
                 addClaims();
                 openModal = false;
+            }}
+        />
+    </div>
+</Modal>
+<Modal title="Sistem MyPSM" size="sm" bind:open={exceedAllocation} dismissable={false}>
+    <Alert color="red">
+        <p>
+            <span>Ralat! </span>
+            Permohonan tuntutan dibatalkan. Anda telah melepasi peruntukkan yang diberi.
+        </p>
+    </Alert>
+    <div class="flex w-full justify-center pb-3">
+       
+        <TextIconButton
+            label="Kembali"
+            type="neutral"
+            icon="previous"
+            onClick={() => {
+                exceedAllocation = false;
             }}
         />
     </div>

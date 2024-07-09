@@ -24,6 +24,7 @@
     import { _editAllocations } from '$lib/schemas/mypsm/medical/medical-schema';
     import { zod } from 'sveltekit-superforms/adapters';
     import { Toaster } from 'svelte-french-toast';
+    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
 
     export let data: PageData;
     let rowData: MedicalClinicEmployeeAllocationClaimList;
@@ -207,7 +208,7 @@
                                     }}
                                 />
                                 <TextIconButton
-                                    label="Simpan"
+                                    label="Hantar"
                                     icon="check"
                                     form="allocationForm"
                                 />
@@ -224,6 +225,7 @@
                             label="Peruntukkan Semasa (RM)"
                             id="currentAllocation"
                             disabled
+                            isRequired={false}
                             placeholder=""
                             type="number"
                             val={data.clinicPanelAllocations?.currentAllocation}
@@ -232,12 +234,18 @@
                             label="Kumulatif Peruntukkan (RM)"
                             id="cumulAlloc"
                             disabled
+                            isRequired={false}
                             placeholder=""
                             type="number"
                             val={data.clinicPanelAllocations?.cumulAlloc}
                         />
                         <div class="flex w-full flex-row gap-10">
                             {#if !readOnly}
+                                <CustomSelectField
+                                    label="Status"
+                                    id="status"
+                                    val={""}
+                                />
                                 <CustomTextField
                                     label="Peruntukkan Baru (RM)"
                                     id="newAllocation"
@@ -248,6 +256,7 @@
                             <CustomTextField
                                 label="Tahun"
                                 id="year"
+                                isRequired={!readOnly}
                                 disabled={readOnly}
                                 type="number"
                                 bind:val={$form.year}
@@ -257,6 +266,7 @@
                             label="Kumulatif Baki Peruntukkan (RM)"
                             id="cumulRemainder"
                             disabled
+                            isRequired={false}
                             placeholder=""
                             type="number"
                             val={data.clinicPanelAllocations?.cumulRemainder}
