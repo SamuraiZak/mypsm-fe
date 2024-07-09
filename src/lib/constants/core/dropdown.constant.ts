@@ -75,3 +75,8 @@ export const dropdownCommonOption: DropdownDTO[] = [
     { value: true, name: 'Ya' },
     { value: false, name: 'Tidak' },
 ];
+
+export const vehicleConditionOption: DropdownDTO[] = [
+    { value: 'Baru', name: 'Baru' },
+    { value: 'Terpakai', name: 'Terpakai' },
+];
