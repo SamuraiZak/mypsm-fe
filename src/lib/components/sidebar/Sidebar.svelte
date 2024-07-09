@@ -20,7 +20,7 @@
     class="flex h-10 max-h-10 min-h-10 flex-row items-center border-b bg-ios-basic-white px-2"
 >
     <div
-        class="text-sm font-medium tracking-wide text-ios-labelColors-secondaryLabel-light"
+        class="text-base font-medium tracking-wide text-ios-labelColors-secondaryLabel-light"
     >
         Menu
     </div>
