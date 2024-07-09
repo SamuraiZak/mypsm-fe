@@ -115,6 +115,7 @@
         {#if data.userMode == 'kakitangan'}
             <TextIconButton
                 type="primary"
+                icon="add"
                 label="Pinjaman Baru"
                 options={newLoanType}
                 bind:val={lType}

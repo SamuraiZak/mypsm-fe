@@ -5,6 +5,7 @@ import {
     longTextSchema,
     maxDateSchema,
     minDateSchema,
+    notRequiredString,
     numberIdSchema,
     numberSchema,
     shortTextSchema,
@@ -64,9 +65,9 @@ export const _vehicleDetail = z.object({
     condition: shortTextSchema,
     vehicleType: shortTextSchema,
     brandModel: shortTextSchema,
-    engineNumber: shortTextSchema,
-    registrationNumber: shortTextSchema,
-    registrationDate: stringToMaxDate,
+    engineNumber: notRequiredString,
+    registrationNumber: notRequiredString,
+    registrationDate: notRequiredString,
     nettPrice: numberSchema,
 })
 
@@ -74,18 +75,18 @@ export const _vehicleDetail = z.object({
 //================ Offer Loan ==========================
 //=====================================================
 
-export const _offerLoan = z.object({
-    id: numberIdSchema,
-    loanType: shortTextSchema,
-    purchasePrice: numberSchema,
-    deposit: numberSchema,
-    govProfit: numberSchema,
-    govFund: numberSchema,
-    sellingPrice: numberSchema,
-    installment: numberSchema,
-    startLoanDate: stringToMinDate,
-    paymentPeriod: numberSchema,
-})
+// export const _offerLoan = z.object({
+//     id: numberIdSchema,
+//     loanType: shortTextSchema,
+//     purchasePrice: numberSchema,
+//     deposit: numberSchema,
+//     govProfit: numberSchema,
+//     govFund: numberSchema,
+//     sellingPrice: numberSchema,
+//     installment: numberSchema,
+//     startLoanDate: stringToMinDate,
+//     paymentPeriod: numberSchema,
+// })
 
 ///=====================================================
 //================ Supplier   ==========================
@@ -107,17 +108,17 @@ export const _supplier = z.object({
 
 export const _vehicleFirstSchedule = z.object({
     id: numberIdSchema,
-    engineNumber: shortTextSchema,
-    chassisNumber: shortTextSchema,
-    countryOrigin: shortTextSchema,
-    brandModel: shortTextSchema,
-    engineHP: shortTextSchema,
-    fuelType: shortTextSchema,
-    class: shortTextSchema,
-    bodyType: shortTextSchema,
+    engineNumber: notRequiredString,
+    chassisNumber: notRequiredString,
+    countryOrigin: notRequiredString,
+    brandModel: notRequiredString,
+    engineHP: notRequiredString,
+    fuelType: notRequiredString,
+    class: notRequiredString,
+    bodyType: notRequiredString,
     makeYear: numberSchema,
     previousOwner: shortTextSchema,
-    previousOwnerIC: shortTextSchema,
+    previousOwnerIC: notRequiredString,
     address: shortTextSchema,
 
 })
@@ -152,27 +153,27 @@ export const _secondSchedule = z.object({
 //================ eligibility ======================
 //=====================================================
 
-export const _eligibility = z.object({
-    id: numberSchema,
-    baseSalary:numberSchema,
-    salaryCut: numberSchema,
-    balance: numberSchema,
-    salaryAndAllowance:numberSchema,
-    newSalaryCut:numberSchema,
-    newBalance: numberSchema,
+// export const _eligibility = z.object({
+//     id: numberSchema,
+//     baseSalary:numberSchema,
+//     salaryCut: numberSchema,
+//     balance: numberSchema,
+//     salaryAndAllowance:numberSchema,
+//     newSalaryCut:numberSchema,
+//     newBalance: numberSchema,
 
-})
+// })
 
 ///=====================================================
 //================Document Check =======================
 //=====================================================
 
-export const _documentCheck = z.object({
-    id:numberSchema,
-    agreementReceived: booleanSchema,
-    agreementChecked:  booleanSchema,
+// export const _documentCheck = z.object({
+//     id:numberSchema,
+//     agreementReceived: booleanSchema,
+//     agreementChecked:  booleanSchema,
 
-})
+// })
 
 
 // ======================================================================================//

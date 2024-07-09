@@ -26,11 +26,11 @@
     import {
         _approver,
         _approverApproval,
-        _documentCheck,
-        _eligibility,
+        // _documentCheck,
+        // _eligibility,
         _firstSchedule,
         _loanDetail,
-        _offerLoan,
+        // _offerLoan,
         _personalDetail,
         _secondSchedule,
         _supplier,
@@ -47,13 +47,13 @@
         _loanDetailSubmit,
         _vehicleDetailSubmit,
         _approverSubmit,
-        _offerLoanDetailSubmit,
+        // _offerLoanDetailSubmit,
         _vehicleFirstScheduleDetailSubmit,
         _firstScheduleDetailSubmit,
         _supplierSubmit,
         _secondScheduleDetailSubmit,
-        _eligibilityDetailSubmit,
-        _documentCheckDetailSubmit,
+        // _eligibilityDetailSubmit,
+        // _documentCheckDetailSubmit,
         _supportApprovalSubmit,
         _approverApprovalSubmit,
         _applyLoan,
@@ -75,7 +75,7 @@
     let notvehicleDetail: boolean = true;
     let noturusetia: boolean = true;
     let notkakitangan: boolean = true;
-
+    console.log(loanComputerDocument)
     if (data.props.userMode == 'pelulus') {
         notpelulus = false;
     }
@@ -222,24 +222,24 @@
         },
     });
 
-    const {
-        form: approvalAndOfferDetailForm,
-        errors: approvalAndOfferDetailError,
-        enhance: approvalAndOfferDetailEnhance,
-        isTainted: approvalAndOfferDetailtaimted,
-    } = superForm(data.forms.offerLoanForm, {
-        SPA: true,
-        id: 'offerLoan',
-        dataType: 'json',
-        multipleSubmits: 'allow',
-        resetForm: false,
-        validationMethod: 'oninput',
-        validators: zod(_offerLoan),
-        onSubmit() {
-            $approvalAndOfferDetailForm.id = data.props.currentApplicationId;
-            _offerLoanDetailSubmit($approvalAndOfferDetailForm);
-        },
-    });
+    // const {
+    //     form: approvalAndOfferDetailForm,
+    //     errors: approvalAndOfferDetailError,
+    //     enhance: approvalAndOfferDetailEnhance,
+    //     isTainted: approvalAndOfferDetailtaimted,
+    // } = superForm(data.forms.offerLoanForm, {
+    //     SPA: true,
+    //     id: 'offerLoan',
+    //     dataType: 'json',
+    //     multipleSubmits: 'allow',
+    //     resetForm: false,
+    //     validationMethod: 'oninput',
+    //     validators: zod(_offerLoan),
+    //     onSubmit() {
+    //         $approvalAndOfferDetailForm.id = data.props.currentApplicationId;
+    //         _offerLoanDetailSubmit($approvalAndOfferDetailForm);
+    //     },
+    // });
 
     const {
         form: vehicleFirstScheduleForm,
@@ -317,43 +317,43 @@
         },
     });
 
-    const {
-        form: eligibilityForm,
-        errors: eligibilityError,
-        enhance: eligibilityEnhance,
-        isTainted: eligibilityTainted,
-    } = superForm(data.forms.eligibilityDetailsForm, {
-        SPA: true,
-        id: 'eligibiltyDetail',
-        dataType: 'json',
-        resetForm: false,
-        multipleSubmits: 'allow',
-        validationMethod: 'oninput',
-        validators: zod(_eligibility),
-        onSubmit() {
-            $eligibilityForm.id = data.props.currentApplicationId;
-            _eligibilityDetailSubmit($eligibilityForm);
-        },
-    });
+    // const {
+    //     form: eligibilityForm,
+    //     errors: eligibilityError,
+    //     enhance: eligibilityEnhance,
+    //     isTainted: eligibilityTainted,
+    // } = superForm(data.forms.eligibilityDetailsForm, {
+    //     SPA: true,
+    //     id: 'eligibiltyDetail',
+    //     dataType: 'json',
+    //     resetForm: false,
+    //     multipleSubmits: 'allow',
+    //     validationMethod: 'oninput',
+    //     validators: zod(_eligibility),
+    //     onSubmit() {
+    //         $eligibilityForm.id = data.props.currentApplicationId;
+    //         _eligibilityDetailSubmit($eligibilityForm);
+    //     },
+    // });
 
-    const {
-        form: documentCheckForm,
-        errors: documentCheckError,
-        enhance: documentCheckEnhance,
-        isTainted: documentCheckTainted,
-    } = superForm(data.forms.documentCheckDetailsForm, {
-        SPA: true,
-        id: 'documentCheckDetail',
-        dataType: 'json',
-        multipleSubmits: 'allow',
-        resetForm: false,
-        validationMethod: 'oninput',
-        validators: zod(_documentCheck),
-        onSubmit() {
-            $documentCheckForm.id = data.props.currentApplicationId;
-            _documentCheckDetailSubmit($documentCheckForm);
-        },
-    });
+    // const {
+    //     form: documentCheckForm,
+    //     errors: documentCheckError,
+    //     enhance: documentCheckEnhance,
+    //     isTainted: documentCheckTainted,
+    // } = superForm(data.forms.documentCheckDetailsForm, {
+    //     SPA: true,
+    //     id: 'documentCheckDetail',
+    //     dataType: 'json',
+    //     multipleSubmits: 'allow',
+    //     resetForm: false,
+    //     validationMethod: 'oninput',
+    //     validators: zod(_documentCheck),
+    //     onSubmit() {
+    //         $documentCheckForm.id = data.props.currentApplicationId;
+    //         _documentCheckDetailSubmit($documentCheckForm);
+    //     },
+    // });
     const {
         form: supporterApprovalForm,
         errors: supporterApprovalError,
@@ -410,28 +410,38 @@
     }
 
     async function apply() {
+        let applicationId: number = 0;
+        let url: string = '';
         const response = await _applyLoan().then((value) => {
             if (value?.response.status == 'success') {
-                let applicationId: number = value?.response.data?.details.id;
-                let url =
+                applicationId = value?.response.data?.details.id;
+                url =
                     '/pinjaman-dan-kuarters/pinjaman/permohonan/komputer_dan_telefon_pintar/' +
                     applicationId;
-                goto(url, { replaceState: true });
             }
+        }).finally(() => {
+            setTimeout(() => goto(url, { replaceState: true }), 1000);
         });
     }
 </script>
+
+<!-- content header starts here -->
+<section class="flex w-full flex-col items-start justify-start">
+    <ContentHeader title="Pinjaman Kenderaan">
+        <TextIconButton
+            label="Tutup"
+            type="neutral"
+            icon="cancel"
+            onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
+        />
+    </ContentHeader>
+</section>
 
 <Stepper>
     <StepperContent>
         <StepperContentHeader
             title="Maklumat Peminjam"
         >
-            <TextIconButton
-                label="Kembali"
-                onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
-            />
-
             {#if data.props.currentApplicationId == 0}
                 <TextIconButton
                     label="Teruskan"
@@ -466,12 +476,14 @@
                     <CustomTextField
                         id="name"
                         disabled
+                        isRequired={false}
                         label={'Nama Penuh'}
                         bind:val={$personalInfoForm.name}
                     ></CustomTextField>
                     <CustomTextField
                         id="identityDocumentNumber"
                         disabled
+                        isRequired={false}
                         label={'No. K/P'}
                         bind:val={$personalInfoForm.identityDocumentNumber}
                     ></CustomTextField>
@@ -479,18 +491,21 @@
                         id="birthDate"
                         type="date"
                         disabled
+                        isRequired={false}
                         label={'Tarikh Lahir'}
                         bind:val={$personalInfoForm.birthDate}
                     ></CustomTextField>
                     <CustomTextField
                         id="age"
                         disabled
+                        isRequired={false}
                         label={'Umur Pada Tarikh Memohon'}
                         bind:val={$personalInfoForm.age}
                     ></CustomTextField>
                     <CustomSelectField
                         id="positionId"
                         disabled
+                        isRequired={false}
                         label={'Jawatan Sekarang'}
                         options={data.positionLookup}
                         bind:val={$personalInfoForm.positionId}
@@ -498,6 +513,7 @@
                     <CustomSelectField
                         id="serviceGroupId"
                         disabled
+                        isRequired={false}
                         label={'Kumpulan Perkhidmatan'}
                         options={data.serviceGroupLookup}
                         bind:val={$personalInfoForm.serviceGroupId}
@@ -505,6 +521,7 @@
                     <CustomSelectField
                         id="gradeId"
                         disabled
+                        isRequired={false}
                         label={'Gred Jawatan'}
                         options={data.gradeLookup}
                         bind:val={$personalInfoForm.gradeId}
@@ -512,6 +529,7 @@
                     <CustomSelectField
                         id="schemeId"
                         disabled
+                        isRequired={false}
                         label={'Skim'}
                         options={data.schemeLookup}
                         bind:val={$personalInfoForm.schemeId}
@@ -519,24 +537,29 @@
                     <CustomTextField
                         id="serviceDate"
                         disabled
+                        isRequired={false}
                         label={'Tarikh Perkhidmatan'}
                         bind:val={$personalInfoForm.serviceDate}
                     ></CustomTextField>
                     <CustomTextField
                         id="confirmServiceDate"
                         disabled
+                        isRequired={false}
                         label={'Tarikh Pengesahan Dalam Perkhidmatan'}
                         bind:val={$personalInfoForm.confirmServiceDate}
                     ></CustomTextField>
                     <CustomTextField
                         id="baseSalary"
                         disabled
+                        isRequired={false}
                         label={'Gaji Pokok'}
                         bind:val={$personalInfoForm.baseSalary}
                     ></CustomTextField>
                     <CustomTextField
                         id="allowance"
                         disabled
+                        placeholder=""
+                        isRequired={false}
                         label={'Jumlah Elaun-elaun'}
                         bind:val={$personalInfoForm.allowance}
                     ></CustomTextField>
@@ -548,12 +571,7 @@
     {#if data.props.currentApplicationId !== 0}
         <StepperContent>
             <StepperContentHeader title="Maklumat Pinjaman">
-                <TextIconButton
-                    label="Kembali"
-                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
-                />
-
-                <TextIconButton label="Simpan" icon="check" form="loanDetail" />
+                <TextIconButton label="Hantar" icon="check" form="loanDetail" />
             </StepperContentHeader>
             <StepperContentBody>
                 <form
@@ -597,24 +615,20 @@
 
         <StepperContent>
             <StepperContentHeader title="Dokumen Sokongan yang Berkaitan">
-                <TextIconButton
-                    label="Kembali"
-                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
-                />
                 {#if data.props.userMode == 'kakitangan'}
                     <TextIconButton
                         label="Muat Naik"
                         icon="check"
                         onClick={() => uploadDocument()}
                     />
-                {/if}</StepperContentHeader
-            >
+                {/if}
+                </StepperContentHeader>
             <StepperContentBody>
                 <form
-                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
+                    class="flex w-full flex-col justify-start gap-4 p-3"
                 >
                     <div
-                        class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
+                        class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light gap-2"
                     >
                         <span>Fail-fail yang dimuat naik:</span>
                         <span>1. Slip Gaji</span>
@@ -635,10 +649,10 @@
                     {/if}
 
                     <div
-                        class="flex w-full flex-col justify-start gap-2.5 px-2"
+                        class="flex w-full flex-col justify-start gap-2.5"
                     >
                         <ContentHeader
-                            title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan Kontrak"
+                            title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan"
                             borderClass="border-none"
                         />
                         <span
@@ -646,15 +660,11 @@
                             >Borang-borang yang telah dimuat naik oleh
                             kakitangan:</span
                         >
-                        {#if loanComputerDocument.document !== null}
+                        {#if loanComputerDocument.document !== null && loanComputerDocument.document !== undefined }
                             {#each loanComputerDocument.document as docs}
                                 <div
-                                    class="flex w-full flex-row items-center justify-between space-y-2.5"
+                                    class="flex flex-col justify-start gap-2.5"
                                 >
-                                    <label
-                                        for=""
-                                        class="block w-[20px] min-w-[20px] text-[11px] font-medium"
-                                    ></label>
                                     <a
                                         href={docs.document}
                                         download={docs.name}
@@ -668,25 +678,23 @@
                 </form>
             </StepperContentBody>
         </StepperContent>
+
         <StepperContent>
             <StepperContentHeader title="Pelulus Peminjam">
-                <TextIconButton
-                    label="Kembali"
-                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
-                />
-
+                {#if data.props.userMode == 'urusetia'}
                 <TextIconButton
                     type="primary"
-                    label="Simpan"
+                    label="Hantar"
+                    icon="check"
                     form="approverDetail"
-                ></TextIconButton>
+                    ></TextIconButton>
+                {/if}
             </StepperContentHeader>
             <StepperContentBody>
                 <div
                     class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 pb-5"
                 >
-                    <ContentHeader title="Masukkan Nama Penyokong dan Pelulus"
-                    ></ContentHeader>
+                    <ContentHeader title="Masukkan Nama Penyokong dan Pelulus" borderClass="border-none"/>
 
                     <form
                         id="approverDetail"
@@ -705,22 +713,20 @@
                 </div>
             </StepperContentBody>
         </StepperContent>
+
         <StepperContent>
             <StepperContentHeader title="Tetapan Ketua Seksyen">
-                <TextIconButton
-                    label="Kembali"
-                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
-                />
             </StepperContentHeader>
             <StepperContentBody>
                 <div
                     class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
                 >
-                <ContentHeader title="Keputusan Dari Ketua Seksyen">
+                <ContentHeader title="Keputusan Dari Ketua Seksyen" borderClass="border-none">
                     {#if data.props.userMode == 'ketua Seksyen'}
                     <TextIconButton
                         type="primary"
-                        label="Simpan"
+                        label="Hantar"
+                        icon="check"
                         form="supporterApprovalDetail"
                     ></TextIconButton>
                     {/if}
@@ -790,21 +796,18 @@
       
         <StepperContent>
             <StepperContentHeader title="Tetapan Pelulus">
-                <TextIconButton
-                    label="Kembali"
-                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
-                />
             </StepperContentHeader>
             <StepperContentBody>
                 
                 <div
                     class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
                 >
-                <ContentHeader title="Keputusan Dari Pelulus">
+                <ContentHeader title="Keputusan Dari Pelulus" borderClass="border-none">
                     {#if data.props.userMode == 'pelulus'}
                     <TextIconButton
                         type="primary"
-                        label="Simpan"
+                        label="Hantar"
+                        icon="check"
                         form="approverApprovalDetail"
                     ></TextIconButton>
                     {/if}
@@ -838,15 +841,11 @@
             <StepperContent>
                 <StepperContentHeader
                     title="Kemaskini Jadual Pertama dan Jadual Kedua"
-                >
-                    <TextIconButton
-                        label="Kembali"
-                        onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
-                    /></StepperContentHeader
+                ></StepperContentHeader
                 >
                 <CustomTab id="schedule">
                     <CustomTabContent title="Jadual Pertama">
-                        <ContentHeader title="Masukkan Maklumat Pembekal">
+                        <ContentHeader title="Masukkan Maklumat Pembekal" borderClass="border-none">
                             <TextIconButton
                                 label="Tambah Pembekal"
                                 icon="add"
@@ -855,7 +854,8 @@
                             />
                             <TextIconButton
                                 type="primary"
-                                label="Simpan"
+                                label="Hantar"
+                                icon="check"
                                 form="supplierForm"
                             ></TextIconButton>
                         </ContentHeader>
@@ -934,18 +934,21 @@
                             </div>
                         </form>
                     </CustomTabContent>
+
                     <CustomTabContent title="Jadual Kedua">
                         <ContentHeader
                             title="Masukkan Maklumat Harga Jualan (RM)"
+                            borderClass="border-none"
                         >
                             <TextIconButton
                                 type="primary"
-                                label="Simpan"
+                                label="Hantar"
+                                icon="check"
                                 form="secondScheduleDetail"
                             ></TextIconButton>
                         </ContentHeader>
                         <div
-                            class="flex w-full flex-col items-start justify-start gap-2.5"
+                            class="flex w-full flex-col justify-start gap-2.5"
                         >
                             <form
                                 id="secondScheduleDetail"
@@ -976,6 +979,7 @@
 
                                 <ContentHeader
                                     title="Masukkan Amaun dan Tempoh Bayaran Balik Harga Jualan"
+                                    borderClass="border-none"
                                 ></ContentHeader>
                                 <div
                                     class="flex w-full flex-col items-start justify-start gap-2.5"
@@ -990,7 +994,7 @@
 
                                     <CustomTextField
                                         id="paymentPeriod"
-                                        label={'Tempoh Pembayaran'}
+                                        label={'Tempoh Pembayaran (Bulan)'}
                                         errors={$secondScheduleError.paymentPeriod}
                                         bind:val={$secondScheduleForm.paymentPeriod}
                                     ></CustomTextField>
@@ -1005,26 +1009,19 @@
 
         <StepperContent>
             <StepperContentHeader title="Surat Tawaran">
-                <TextIconButton
-                    label="Kembali"
-                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
-                />
             </StepperContentHeader>
             <StepperContentBody>
                 <form
-                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
+                    class="flex w-full flex-col justify-start gap-4 p-3"
                 >
-                    <div
-                        class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
-                    ></div>
                     <div
                         class="flex h-fit w-full flex-col justify-center gap-2"
                     >
                         <div
-                            class="flex w-full flex-col justify-start gap-2.5 px-2"
+                            class="flex w-full flex-col justify-start gap-2.5"
                         >
                             <ContentHeader
-                                title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan Kontrak"
+                                title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan"
                                 borderClass="border-none"
                             />
                             <span
@@ -1041,12 +1038,8 @@
                             /> -->
 
                             <div
-                                class="flex w-full flex-row items-center justify-between space-y-2.5"
+                                class="flex flex-col justify-start gap-2.5"
                             >
-                                <label
-                                    for=""
-                                    class="block w-[20px] min-w-[20px] text-[11px] font-medium"
-                                ></label>
                                 <a
                                     href={data.documentDetailsComputer.data
                                         ?.details.document}
@@ -1065,10 +1058,6 @@
 
         <StepperContent>
             <StepperContentHeader title="Surat Perjanjian">
-                <TextIconButton
-                    label="Kembali"
-                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
-                />
                 {#if data.props.userMode == 'kakitangan'}
                     <TextIconButton
                         label="Muat Naik"
@@ -1102,7 +1091,7 @@
                         class="flex w-full flex-col justify-start gap-2.5 px-2"
                     >
                         <ContentHeader
-                            title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan Kontrak"
+                            title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan"
                             borderClass="border-none"
                         />
                         <span
@@ -1110,7 +1099,7 @@
                             >Borang-borang yang telah dimuat naik oleh
                             kakitangan:</span
                         >
-                        {#if loanAgreementDocument.document  !== null}
+                        {#if loanAgreementDocument.document  !== null && loanAgreementDocument.document  !== undefined }
                             {#each loanAgreementDocument.document as docs}
                                 <div
                                     class="flex w-full flex-row items-center justify-between space-y-2.5"
@@ -1133,7 +1122,7 @@
             </StepperContentBody>
             <!-- x perlu -->
         </StepperContent>
-        {#if data.props.userMode == 'urusetia' || data.props.userMode == 'pelulus' || data.props.userMode == 'ketua Seksyen'}
+        <!-- {#if data.props.userMode == 'urusetia' || data.props.userMode == 'pelulus' || data.props.userMode == 'ketua Seksyen'}
             <StepperContent>
                 <StepperContentHeader title="Kemaskini Maklumat Pinjaman">
                     <TextIconButton
@@ -1217,7 +1206,6 @@
                                 </form>
                             </div>
 
-                            <!-- ------------------------------------------------------------------------------------------------------ -->
                         </CustomTabContent>
                         <CustomTabContent
                             title="Maklumat Kelulusan dan Tawaran"
@@ -1247,7 +1235,6 @@
                                         errors={$approvalAndOfferDetailError.loanType}
                                         bind:val={$approvalAndOfferDetailForm.loanType}
                                     ></CustomTextField>
-                                    <!-- max 5 k -->
                                     <CustomTextField
                                         id="purchasePrice"
                                         label="Harga Belian Dengan Kerajaan (RM)"
@@ -1260,7 +1247,6 @@
                                         errors={$approvalAndOfferDetailError.deposit}
                                         bind:val={$approvalAndOfferDetailForm.deposit}
                                     ></CustomTextField>
-                                    <!-- value={upfront} -->
 
                                     <CustomTextField
                                         id="govProfit"
@@ -1305,7 +1291,7 @@
                     </CustomTab>
                 </StepperContentBody>
             </StepperContent>
-        {/if}
+        {/if} -->
 
         <!-- x perlu -->
         <!-- <StepperContent>
@@ -1353,10 +1339,6 @@
         </StepperContent> -->
         <StepperContent>
             <StepperContentHeader title="Resit dan Invois">
-                <TextIconButton
-                    label="Kembali"
-                    onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
-                />
                 {#if data.props.userMode == 'kakitangan'}
                     <TextIconButton
                         label="Muat Naik"
@@ -1400,7 +1382,7 @@
                             >Borang-borang yang telah dimuat naik oleh
                             kakitangan:</span
                         >
-                        {#if loanPaymentDocument.document  !== null}
+                        {#if loanPaymentDocument.document  !== null && loanPaymentDocument.document  !== undefined} 
                             {#each loanPaymentDocument.document as docs}
                                 <div
                                     class="flex w-full flex-row items-center justify-between space-y-2.5"
@@ -1429,7 +1411,7 @@
 <Modal title="Tambah Pembekal" bind:open={openModal}>
     <div class="flex w-full flex-col justify-start gap-2.5 pb-3">
         <CustomTextField
-            label="Harga Belian"
+            label="Harga Belian (RM)"
             id="name"
             bind:val={tempSupplier.name}
         />
@@ -1444,7 +1426,7 @@
             bind:val={tempSupplier.address}
         />
         <TextIconButton
-            label="Simpan"
+            label="Hantar"
             icon="check"
             onClick={() => {
                 addSupplier();

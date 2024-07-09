@@ -22,7 +22,7 @@ import type { SecondSchedule } from '$lib/dto/mypsm/pinjaman/second-schedule.dto
 import type { Supplier } from '$lib/dto/mypsm/pinjaman/supplier-detail.dto';
 import type { SupportApprover } from '$lib/dto/mypsm/pinjaman/support-approval-detail.dto';
 import type { vechicalDetail } from '$lib/dto/mypsm/pinjaman/vehical-detail.dto';
-import { _approver, _approverApproval, _documentCheck, _eligibility, _firstSchedule, _loanDetail, _offerLoan, _personalDetail, _secondSchedule, _supplier, _supportApproval, _vehicleDetail, _vehicleFirstSchedule } from '$lib/schemas/mypsm/loan/loan-application';
+import { _approver, _approverApproval, _firstSchedule, _loanDetail, _personalDetail, _secondSchedule, _supplier, _supportApproval, _vehicleDetail, _vehicleFirstSchedule } from '$lib/schemas/mypsm/loan/loan-application';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { LoanServices } from '$lib/services/implementation/mypsm/pinjaman/loan.service';
 import { superValidate } from 'sveltekit-superforms';
@@ -42,7 +42,7 @@ export async function load({ params }) {
 
     if (params.id !== "Baru") {
         // reset application id to actual application id if not new
-        currentApplicationId = parseInt(params.id);
+        currentApplicationId = Number(params.id);
     }
     // ==========================================================
     // =================== Lookup ================================
@@ -208,10 +208,10 @@ export async function load({ params }) {
         ;
 
 
-    const offerLoanForm = await superValidate(zod(
-        _offerLoan))
-        ;
-    offerLoanForm.data.loanType = loan;
+    // const offerLoanForm = await superValidate(zod(
+    //     _offerLoan))
+    //     ;
+    // offerLoanForm.data.loanType = loan;
 
     const vehicleFirstScheduleDetailsForm = await superValidate(zod(
         _vehicleFirstSchedule))
@@ -225,13 +225,13 @@ export async function load({ params }) {
         _secondSchedule))
         ;
 
-    const eligibilityDetailsForm = await superValidate(zod(
-        _eligibility))
-        ;
+    // const eligibilityDetailsForm = await superValidate(zod(
+    //     _eligibility))
+    //     ;
 
-    const documentCheckDetailsForm = await superValidate(zod(
-        _documentCheck))
-        ;
+    // const documentCheckDetailsForm = await superValidate(zod(
+    //     _documentCheck))
+    //     ;
 
     const approverDetailsForm = await superValidate(zod(
         _approver))
@@ -354,11 +354,11 @@ export async function load({ params }) {
         if (offerLoanDetailResponse.status == 'success') {
             offerLoanDetail = offerLoanDetailResponse.data?.details as OfferedLoan;
 
-            offerLoanForm.data = offerLoanDetail;
+            // offerLoanForm.data = offerLoanDetail;
 
-            let tempString: string;
-            tempString = (offerLoanForm.data.loanType).split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
-            offerLoanForm.data.loanType = tempString;
+            // let tempString: string;
+            // tempString = (offerLoanForm.data.loanType).split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+            // offerLoanForm.data.loanType = tempString;
         }
     }
 
@@ -445,7 +445,7 @@ export async function load({ params }) {
         if (eligibilityDetailResponse.status == 'success') {
             eligibilityDetail = eligibilityDetailResponse.data?.details as Eligibility;
 
-            eligibilityDetailsForm.data = eligibilityDetail;
+            // eligibilityDetailsForm.data = eligibilityDetail;
         }
     }
 
@@ -467,7 +467,7 @@ export async function load({ params }) {
         if (documentCheckDetailResponse.status == 'success') {
             documentCheckDetail = documentCheckDetailResponse.data?.details as DocumentCheck;
 
-            documentCheckDetailsForm.data = documentCheckDetail;
+            // documentCheckDetailsForm.data = documentCheckDetail;
         }
     }
 
@@ -616,10 +616,10 @@ export async function load({ params }) {
             personalDetailForm,
             loanDetailsForm,
             vehicleDetailsForm,
-            offerLoanForm,
+            // offerLoanForm,
             secondScheduleDetailsForm,
-            eligibilityDetailsForm,
-            documentCheckDetailsForm,
+            // eligibilityDetailsForm,
+            // documentCheckDetailsForm,
             approverDetailsForm,
             supporterApprovalDetailsForm,
             approverApprovalDetailsForm,
@@ -677,16 +677,16 @@ export const _vehicleDetailSubmit = async (formData: object) => {
 // ================================================================
 // ========== Add offer Loan Detail ==============================
 // ================================================================
-export const _offerLoanDetailSubmit = async (formData: object) => {
-    const offerLoanDetailsInfoForm = await superValidate(formData, (zod)(_offerLoan));
-    console.log(offerLoanDetailsInfoForm)
-    if (offerLoanDetailsInfoForm.valid) {
-        const response: CommonResponseDTO =
-            await LoanServices.offerLoanDetail(offerLoanDetailsInfoForm.data as OfferedLoan);
-        return { response };
-    }
+// export const _offerLoanDetailSubmit = async (formData: object) => {
+//     const offerLoanDetailsInfoForm = await superValidate(formData, (zod)(_offerLoan));
+//     console.log(offerLoanDetailsInfoForm)
+//     if (offerLoanDetailsInfoForm.valid) {
+//         const response: CommonResponseDTO =
+//             await LoanServices.offerLoanDetail(offerLoanDetailsInfoForm.data as OfferedLoan);
+//         return { response };
+//     }
 
-};
+// };
 
 
 
@@ -749,31 +749,31 @@ export const _secondScheduleDetailSubmit = async (formData: object) => {
 //========= Add Eligibility =================
 //============================================
 
-export const _eligibilityDetailSubmit = async (formData: object) => {
-    const eligibilityDetailsInfoForm = await superValidate(formData, (zod)(_eligibility));
+// export const _eligibilityDetailSubmit = async (formData: object) => {
+//     const eligibilityDetailsInfoForm = await superValidate(formData, (zod)(_eligibility));
 
-    if (eligibilityDetailsInfoForm.valid) {
-        const response: CommonResponseDTO =
-            await LoanServices.addEligibilityDetail(eligibilityDetailsInfoForm.data as Eligibility);
-        return { response };
-    }
+//     if (eligibilityDetailsInfoForm.valid) {
+//         const response: CommonResponseDTO =
+//             await LoanServices.addEligibilityDetail(eligibilityDetailsInfoForm.data as Eligibility);
+//         return { response };
+//     }
 
-};
+// };
 
 //============================================
 //========= Document Check ===================
 //============================================
 
-export const _documentCheckDetailSubmit = async (formData: object) => {
-    const documentCheckDetailsInfoForm = await superValidate(formData, (zod)(_documentCheck));
+// export const _documentCheckDetailSubmit = async (formData: object) => {
+//     const documentCheckDetailsInfoForm = await superValidate(formData, (zod)(_documentCheck));
 
-    if (documentCheckDetailsInfoForm.valid) {
-        const response: CommonResponseDTO =
-            await LoanServices.addDocumentCheckDetail(documentCheckDetailsInfoForm.data as DocumentCheck);
-        return { response };
-    }
+//     if (documentCheckDetailsInfoForm.valid) {
+//         const response: CommonResponseDTO =
+//             await LoanServices.addDocumentCheckDetail(documentCheckDetailsInfoForm.data as DocumentCheck);
+//         return { response };
+//     }
 
-};
+// };
 
 //============================================
 //========= Add Support Approval ===============
@@ -898,7 +898,7 @@ const getAgreementLetter = () => {
 export const _applyLoan = async () => {
 
     let selectedType: addLoan = {
-        loanType: 'komputer-dan-telefon-pintar',
+        loanType: 'Komputer Dan Telefon Pintar',
     }
 
     const response: CommonResponseDTO =
