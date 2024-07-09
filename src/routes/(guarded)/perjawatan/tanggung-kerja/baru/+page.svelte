@@ -75,7 +75,7 @@
                 {#if !submitSuccess}
                     <TextIconButton
                         type="primary"
-                        label="Simpan"
+                        label="Hantar"
                         icon="check"
                         form="addNewInterimApplicationForm"
                     />
@@ -113,6 +113,7 @@
                         id="referenceNumber"
                         label="Nombor Butiran Anggaran Belanjawan Mengurus/Waran Penjawatan"
                         type="text"
+                        isRequired={false}
                         placeholder="Contoh: Bekalan 12"
                         bind:val={$addNewInterimApplicationForm.referenceNumber}
                         errors={$addNewInterimApplicationError.referenceNumber}

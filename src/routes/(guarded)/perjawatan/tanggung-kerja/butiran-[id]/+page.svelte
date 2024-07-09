@@ -191,14 +191,15 @@
     <Stepper>
         <StepperContent>
             <StepperContentHeader title="Butiran Permohonan Tanggung Kerja" />
-            <StepperContentBody>
+            <StepperContentBody paddingClass="p-2.5 items-start justify-start">
                 <div
-                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
+                    class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
                 >
                     <CustomSelectField
                         label="Gred"
                         id="grade"
                         disabled
+                        isRequired={false}
                         val={data.interimApplicationDetail.applicationDetail
                             .grade}
                         options={data.lookup.gradeLookup}
@@ -207,6 +208,7 @@
                         label="Jawatan"
                         id="position"
                         disabled
+                        isRequired={false}
                         val={data.interimApplicationDetail.applicationDetail
                             .position}
                         options={data.lookup.positionLookup}
@@ -215,6 +217,7 @@
                         label="Kementerian/Jabatan"
                         id="placement"
                         disabled
+                        isRequired={false}
                         val={data.interimApplicationDetail.applicationDetail
                             .placement}
                         options={data.lookup.placementLookup}
@@ -222,6 +225,7 @@
                     <CustomTextField
                         id="referenceNumber"
                         disabled
+                        isRequired={false}
                         label="Nombor Butiran Anggaran Belanjawan Mengurus/Waran Penjawatan"
                         type="text"
                         val={data.interimApplicationDetail.applicationDetail
@@ -230,6 +234,7 @@
                     <CustomTextField
                         id="startDate"
                         disabled
+                        isRequired={false}
                         label="Tarikh Mula"
                         type="date"
                         val={data.interimApplicationDetail.applicationDetail
@@ -238,6 +243,7 @@
                     <CustomTextField
                         id="endDate"
                         disabled
+                        isRequired={false}
                         label="Tarikh Tamat"
                         type="date"
                         val={data.interimApplicationDetail.applicationDetail
@@ -247,6 +253,7 @@
                         label="Tempat Kekosongan"
                         id="newPlacement"
                         disabled
+                        isRequired={false}
                         options={data.lookup.placementLookup}
                         val={data.interimApplicationDetail.applicationDetail
                             .newPlacement}
@@ -254,6 +261,7 @@
                     <CustomTextField
                         id="reason"
                         disabled
+                        isRequired={false}
                         label="Sebab-sebab Kekosongan"
                         type="text"
                         val={data.interimApplicationDetail.applicationDetail
@@ -273,6 +281,7 @@
                     <CustomTextField
                         label="Nama Pengawai"
                         disabled
+                        isRequired={false}
                         id="name"
                         type="text"
                         val={data.interimApplicationDetail.employeeDetail.name}
@@ -280,6 +289,7 @@
                     <CustomTextField
                         label="No. Kad Pengenalan"
                         disabled
+                        isRequired={false}
                         id="identityCardNumber"
                         type="text"
                         val={data.interimApplicationDetail.employeeDetail
@@ -288,6 +298,7 @@
                     <CustomTextField
                         label="Tarikh Lantikan Jawatan Sekarang"
                         disabled
+                        isRequired={false}
                         id="serviceDate"
                         type="date"
                         val={data.interimApplicationDetail.employeeDetail
@@ -296,6 +307,7 @@
                     <CustomTextField
                         label="Tarikh Sah Dalam Jawatan Sekarang"
                         disabled
+                        isRequired={false}
                         id="effectiveDate"
                         type="date"
                         val={data.interimApplicationDetail.employeeDetail
@@ -304,6 +316,7 @@
                     <CustomTextField
                         label="Jawatan/Gred"
                         disabled
+                        isRequired={false}
                         id="positionWithGrade"
                         type="text"
                         val={data.interimApplicationDetail.employeeDetail
@@ -312,6 +325,7 @@
                     <CustomTextField
                         label="Tarikh Mula Bertugas di Jawatan Sekarang"
                         disabled
+                        isRequired={false}
                         id="confirmDate"
                         type="date"
                         val={data.interimApplicationDetail.employeeDetail
@@ -320,6 +334,7 @@
                     <CustomTextField
                         label="Tempat Bertugas Semasa"
                         disabled
+                        isRequired={false}
                         id="placement"
                         type="text"
                         val={data.interimApplicationDetail.employeeDetail
@@ -344,6 +359,7 @@
                         label="Dari"
                         id="from"
                         disabled
+                        isRequired={false}
                         type="date"
                         val={data.interimApplicationDetail.duration?.from}
                     />
@@ -351,6 +367,7 @@
                         label="Hingga"
                         id="to"
                         disabled
+                        isRequired={false}
                         type="date"
                         val={data.interimApplicationDetail.duration?.to}
                     />
@@ -361,6 +378,7 @@
                     <CustomTextField
                         label="Dari"
                         disabled
+                        isRequired={false}
                         id="from"
                         type="date"
                         val={data.interimApplicationDetail.duration
@@ -369,6 +387,7 @@
                     <CustomTextField
                         label="Hingga"
                         disabled
+                        isRequired={false}
                         id="date"
                         type="date"
                         val={data.interimApplicationDetail.duration
@@ -425,7 +444,7 @@
                             class="flex w-full flex-col justify-start gap-2.5 px-2"
                         >
                             <ContentHeader
-                                title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan Kontrak"
+                                title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan"
                                 borderClass="border-none"
                             />
                             <span
@@ -451,7 +470,7 @@
             <StepperContentHeader title="Pelangkauan Dari Segi Kekananan">
                 {#if !submitSkip && data.currentRoleCode == UserRoleConstant.kakitangan.code}
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         icon="check"
                         form="skippingForm"
                     />
@@ -492,7 +511,7 @@
                 >
                     {#if !submitDirector && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
                         <TextIconButton
-                            label="Simpan"
+                            label="Hantar"
                             icon="check"
                             form="directorForm"
                         />
@@ -561,7 +580,7 @@
                 >
                     {#if !submitChecklist && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                         <TextIconButton
-                            label="Simpan"
+                            label="Hantar"
                             icon="check"
                             form="checklistForm"
                         />
@@ -1028,7 +1047,7 @@
                 >
                     {#if !submitApprover && data.currentRoleCode == UserRoleConstant.pengarahKhidmatPengurusan.code}
                         <TextIconButton
-                            label="Simpan"
+                            label="Hantar"
                             icon="check"
                             form="approverForm"
                         />

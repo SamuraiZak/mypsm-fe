@@ -25,9 +25,9 @@ export const _addNewInterimApplicationSchema = z.object({
     positionId: numberSchema,
     placementId: numberSchema,
     newPlacementId: numberSchema,
-    referenceNumber: shortTextSchema,
-    startDate: stringToMinDate,
-    endDate: stringToMinDate,
+    referenceNumber: z.string(),
+    startDate: z.string(),
+    endDate: z.string(),
     reason: shortTextSchema,
     isReadOnly: z.boolean().optional(),
 })

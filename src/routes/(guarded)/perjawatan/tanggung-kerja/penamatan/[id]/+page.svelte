@@ -27,6 +27,7 @@
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import { Toaster } from 'svelte-french-toast';
     import Alert from 'flowbite-svelte/Alert.svelte';
+    import XCard from '$lib/components/card/XCard.svelte';
 
     export let data: PageData;
     let submitSecretary: boolean = false;
@@ -119,7 +120,7 @@
         async onSubmit() {
             $approverApprovalForm.interimId = data.interimId.interimId;
             await _submitApproverApproval($approverApprovalForm).then((res) => {
-                if(res?.response.status == "success"){
+                if (res?.response.status == 'success') {
                     submitApprover = true;
                 }
             });
@@ -127,6 +128,31 @@
     });
     if ($approverApprovalForm?.remark !== '') {
         submitApprover = true;
+    }
+
+    let editInterimDate: boolean = true;
+    let inBetweenMonths: string = '';
+
+    if(data.terminationDetail?.calculation.breakdown !== null){
+        
+        const startDate = new Date(data.terminationDetail?.applicationDetail.startDate);
+        const endDate = new Date(data.terminationDetail?.applicationDetail.endDate);
+    
+        const months = [
+        "Januari", "Februari", "Mar", "April", "May", "Jun", 
+        "Julai", "Ogos", "September", "October", "November", "Disember"
+        ];
+    
+        // Adjust start and end dates to exclude the actual start and end months
+        const startMonth = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1);
+        const endMonth = new Date(endDate.getFullYear(), endDate.getMonth() - 1, 1);
+
+       
+        
+        const startMonthYear = months[startMonth.getMonth()] + ' ' + startMonth.getFullYear();
+        const endMonthYear = months[endMonth.getMonth()] + ' ' + endMonth.getFullYear();
+
+        inBetweenMonths = startMonthYear + ' - ' + endMonthYear;
     }
 </script>
 
@@ -158,6 +184,7 @@
                         label="Gred"
                         id="grade"
                         disabled
+                        isRequired={false}
                         options={data.lookup.gradeLookup}
                         val={data.terminationDetail?.applicationDetail?.grade}
                     />
@@ -165,33 +192,42 @@
                         label="Jawatan"
                         id="position"
                         disabled
+                        isRequired={false}
                         options={data.lookup.positionLookup}
-                        val={data.terminationDetail?.applicationDetail?.position}
+                        val={data.terminationDetail?.applicationDetail
+                            ?.position}
                     />
                     <CustomSelectField
                         label="Kementrian/Jabatan"
                         id="placement"
                         disabled
+                        isRequired={false}
                         options={data.lookup.placementLookup}
-                        val={data.terminationDetail?.applicationDetail?.placement}
+                        val={data.terminationDetail?.applicationDetail
+                            ?.placement}
                     />
                     <CustomTextField
                         label="Nombor Butiran Anggaran Belanjawan Mengurus/Waran Penjawatan"
                         id="referenceNumber"
                         disabled
-                        val={data.terminationDetail?.applicationDetail?.referenceNumber}
+                        isRequired={false}
+                        val={data.terminationDetail?.applicationDetail
+                            ?.referenceNumber}
                     />
                     <CustomTextField
                         label="Tarikh Mula"
                         id="startDate"
                         disabled
+                        isRequired={false}
                         type="date"
-                        val={data.terminationDetail?.applicationDetail?.startDate}
+                        val={data.terminationDetail?.applicationDetail
+                            ?.startDate}
                     />
                     <CustomTextField
                         label="Tarikh Tamat"
                         id="endDate"
                         disabled
+                        isRequired={false}
                         type="date"
                         val={data.terminationDetail?.applicationDetail?.endDate}
                     />
@@ -199,13 +235,16 @@
                         label="Tempat Kekosongan"
                         id="newPlacement"
                         disabled
+                        isRequired={false}
                         options={data.lookup.placementLookup}
-                        val={data.terminationDetail?.applicationDetail?.newPlacement}
+                        val={data.terminationDetail?.applicationDetail
+                            ?.newPlacement}
                     />
                     <CustomTextField
                         label="Sebab-sebab Kekosongan"
                         id="reason"
                         disabled
+                        isRequired={false}
                         val={data.terminationDetail?.applicationDetail?.reason}
                     />
                 </div>
@@ -222,18 +261,21 @@
                         label="Nama Pegawai"
                         id="name"
                         disabled
+                        isRequired={false}
                         val={data.terminationDetail?.detail?.name}
                     />
                     <CustomTextField
                         label="No. Kad Pengenalan"
                         id="identityCardNumber"
                         disabled
+                        isRequired={false}
                         val={data.terminationDetail?.detail?.identityCardNumber}
                     />
                     <CustomTextField
                         label="Tarikh Lantikan Jawatan Sekarang"
                         id="serviceDate"
                         disabled
+                        isRequired={false}
                         type="date"
                         val={data.terminationDetail?.detail?.serviceDate}
                     />
@@ -241,6 +283,7 @@
                         label="Tarikh Sah Dalam Jawatan Sekarang"
                         id="effectiveDate"
                         disabled
+                        isRequired={false}
                         type="date"
                         val={data.terminationDetail?.detail?.effectiveDate}
                     />
@@ -248,12 +291,14 @@
                         label="Jawatan/Gred"
                         id="positionWithGrade"
                         disabled
+                        isRequired={false}
                         val={data.terminationDetail?.detail?.positionWithGrade}
                     />
                     <CustomTextField
                         label="Tarikh Mula Bertugas di Jawatan Sekarang"
                         id="confirmDate"
                         disabled
+                        isRequired={false}
                         type="date"
                         val={data.terminationDetail?.detail?.confirmDate}
                     />
@@ -261,6 +306,7 @@
                         label="Tempat Bertugas Semasa"
                         id="placement"
                         disabled
+                        isRequired={false}
                         val={data.terminationDetail?.detail?.placement}
                     />
                 </div>
@@ -273,7 +319,7 @@
             >
                 {#if !submitSecretary && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         icon="check"
                         form="secretaryApprovalForm"
                     />
@@ -326,197 +372,146 @@
         </StepperContent>
 
         <StepperContent>
-            <StepperContentHeader
-                title="Pengiraan Elaun Tanggung Kerja"
-            />
+            <StepperContentHeader title="Pengiraan Elaun Tanggung Kerja" />
             <StepperContentBody>
-                <ContentHeader
-                    title="Penyata Pelarasan Elaun Tanggung Kerja"
-                    borderClass="border-none"
-                />
-                <div class="flex w-full flex-col justify-start p-3 pb-none">
-                    <CustomTextField
-                        label="Nama Pegawai"
-                        id="name"
-                        disabled
-                        val={data.terminationDetail?.calculation.personalDetail
-                            .name}
-                    />
-                    <CustomTextField
-                        label="No. Kad Pengenalan"
-                        id="identityCardNumber"
-                        disabled
-                        val={data.terminationDetail?.calculation.personalDetail
-                            .identityCardNumber}
-                    />
-                    <CustomTextField
-                        label="No. Pekerja"
-                        id="employeeNumber"
-                        disabled
-                        val={data.terminationDetail?.calculation.personalDetail
-                            .employeeNumber}
-                    />
-                    <CustomTextField
-                        label="Jawatan Hakiki Sekarang"
-                        id="currentPosition"
-                        disabled
-                        val={data.terminationDetail?.calculation.personalDetail
-                            .currentPosition}
-                    />
-                    <CustomTextField
-                        label="Jawatan Yang Ditanggung Kerja"
-                        id="interimPosition"
-                        disabled
-                        val={data.terminationDetail?.calculation.personalDetail
-                            .interimPosition}
-                    />
-                    <CustomTextField
-                        label="Gred dan Gaji Minima Jawatan yang Ditanggung Kerja"
-                        id="interimMinimalSalary"
-                        disabled
-                        val={data.terminationDetail?.calculation.personalDetail
-                            .interimMinimalSalary}
-                    />
-                    <CustomTextField
-                        label="25% Daripada Gaji Minima"
-                        id="twentyfivePercent"
-                        disabled
-                        val={data.terminationDetail?.calculation.personalDetail
-                            .twentyfivePercent}
-                    />
-                    <div class="flex w-full flex-row justify-between gap-5">
+                <div class="w-full flex flex-col justify-start items-start">
+
+                    <div class="w-1/2 flex flex-col gap-3 pb-10 justify-start items-start">
+                    <XCard title="Penyata Pelarasan Elaun Tanggung Kerja"   >
                         <CustomTextField
-                            label="Tarikh Kuatkuasa Tanggung Kerja"
-                            id="startEffectiveDate"
+                            label="Nama Pegawai"
+                            id="name"
                             disabled
-                            type="date"
-                            val={data.terminationDetail?.calculation
-                                .personalDetail.startEffectiveDate}
+                            isRequired={false}
+                            val={data.terminationDetail?.calculation.personalDetail
+                                .name}
                         />
                         <CustomTextField
-                            label="Hingga"
-                            id="endEffectiveDate"
+                            label="No. Kad Pengenalan"
+                            id="identityCardNumber"
                             disabled
-                            type="date"
-                            val={data.terminationDetail?.calculation
-                                .personalDetail.endEffectiveDate}
+                            isRequired={false}
+                            val={data.terminationDetail?.calculation.personalDetail
+                                .identityCardNumber}
                         />
-                    </div>
-                    <CustomTextField
-                        label="Penempatan"
-                        id="placement"
-                        disabled
-                        val={data.terminationDetail?.calculation.personalDetail
-                            .placement}
-                    />
-                </div>
-                <ContentHeader
-                    title="Pengiraan Elaun Tanggung Kerja"
-                    borderClass="border-none"
-                />
-                <div
-                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-16"
-                >
-                    <div class="flex w-full items-center justify-between gap-5">
-                        <span
-                            class="text-sm text-ios-labelColors-secondaryLabel-light min-w-[90px] max-w-[90px]"
-                            >Bulan {new Date(
+                        <CustomTextField
+                            label="No. Pekerja"
+                            id="employeeNumber"
+                            disabled
+                            isRequired={false}
+                            val={data.terminationDetail?.calculation.personalDetail
+                                .employeeNumber}
+                        />
+                        <CustomTextField
+                            label="Jawatan Hakiki Sekarang"
+                            id="currentPosition"
+                            disabled
+                            isRequired={false}
+                            val={data.terminationDetail?.calculation.personalDetail
+                                .currentPosition}
+                        />
+                        <CustomTextField
+                            label="Jawatan Yang Ditanggung Kerja"
+                            id="interimPosition"
+                            disabled
+                            isRequired={false}
+                            val={data.terminationDetail?.calculation.personalDetail
+                                .interimPosition}
+                        />
+                        <CustomTextField
+                            label="Gred dan Gaji Minima Jawatan yang Ditanggung Kerja"
+                            id="interimMinimalSalary"
+                            disabled
+                            isRequired={false}
+                            val={data.terminationDetail?.calculation.personalDetail
+                                .interimMinimalSalary}
+                        />
+                        <CustomTextField
+                            label="25% Daripada Gaji Minima"
+                            id="twentyfivePercent"
+                            disabled
+                            isRequired={false}
+                            val={data.terminationDetail?.calculation.personalDetail
+                                .twentyfivePercent}
+                        />
+                        <div class="flex w-full flex-row justify-between items-center gap-5">
+                            <CustomTextField
+                                label="Tarikh Kuatkuasa Tanggung Kerja"
+                                id="startEffectiveDate"
+                                disabled={editInterimDate}
+                                isRequired={false}
+                                type="date"
+                                val={data.terminationDetail?.calculation
+                                    .personalDetail.startEffectiveDate}
+                            />
+                            <CustomTextField
+                                label="Hingga"
+                                id="endEffectiveDate"
+                                disabled={editInterimDate}
+                                isRequired={false}
+                                type="date"
+                                val={data.terminationDetail?.calculation
+                                    .personalDetail.endEffectiveDate}
+                            />
+                            {#if !editInterimDate}
+                            <TextIconButton
+                                label=""
+                                icon="check"
+                                onClick={() => editInterimDate = true}
+                            />
+                            {/if}
+                            {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                            <TextIconButton
+                                label=""
+                                icon="edit"
+                                type="neutral"
+                                onClick={() => editInterimDate = !editInterimDate}
+                            />  
+                            {/if}
+                        </div>
+                        <CustomTextField
+                            label="Penempatan"
+                            id="placement"
+                            disabled
+                            isRequired={false}
+                            val={data.terminationDetail?.calculation.personalDetail
+                                .placement}
+                        />
+                    </XCard>
+                    <XCard title="Pengiraan Elaun Tanggung Kerja"   >
+                        <CustomTextField
+                            id="breakdownFirstMonth"
+                            isRequired={false}
+                            label="Bulan Pertama ({new Date(
                                 data.terminationDetail?.calculation.personalDetail.startEffectiveDate,
-                            ).toLocaleString('ms', { month: 'long' })}</span
-                        >
-                        <div
-                            class="flex w-full justify-around gap-1 rounded-md border border-ios-basic-inactiveGray p-2 text-md text-ios-labelColors-secondaryLabel-light"
-                        >
-                            <span>&#40;</span>
-                            <span
-                                >{data.terminationDetail?.calculation.breakdown
-                                    .allowance}</span
-                            >
-                            <span>x</span>
-                            <span
-                                >{data.terminationDetail?.calculation.breakdown
-                                    .startDay} hari</span
-                            >
-                            <span>&#41;</span>
-                            <span>/</span>
-                            <span
-                                >{data.terminationDetail?.calculation.breakdown
-                                    .NumberOfDaysForStartMonth}</span
-                            >
-                            <span>=</span>
-                            <span
-                                >{data.terminationDetail?.calculation.breakdown
-                                    .firstMonthAllowance}</span
-                            >
-                        </div>
-                    </div>
-                    <div class="flex w-full items-center justify-between gap-5">
-                        <span
-                            class="text-sm text-ios-labelColors-secondaryLabel-light min-w-[90px] max-w-[90px]"
-                            >Bulan Pertengahan (Penuh)</span
-                        >
-                        <div
-                            class="flex w-full justify-around gap-1 rounded-md border border-ios-basic-inactiveGray p-2 text-md text-ios-labelColors-secondaryLabel-light"
-                        >
-                            <span>&#40;</span>
-                            <span
-                                >{data.terminationDetail?.calculation.breakdown
-                                    .allowance}</span
-                            >
-                            <span>x</span>
-                            <span
-                                >{data.terminationDetail?.calculation.breakdown
-                                    .MonthInBetween} bulan</span
-                            >
-                            <span>&#41;</span>
-                            <span>=</span>
-                            <span
-                                >{data.terminationDetail?.calculation.breakdown
-                                    .calculateInBetween}</span
-                            >
-                        </div>
-                    </div>
-                    <div class="flex w-full items-center justify-between gap-5">
-                        <span
-                            class="text-sm text-ios-labelColors-secondaryLabel-light min-w-[90px] max-w-[90px]"
-                            >Bulan {new Date(
+                            ).toLocaleString('ms', { month: 'long', year: 'numeric' })})"
+                            val="({data.terminationDetail?.calculation.breakdown.allowance} x {data.terminationDetail?.calculation.breakdown.startDay} hari) / {data.terminationDetail?.calculation.breakdown.NumberOfDaysForStartMonth} = {data.terminationDetail?.calculation.breakdown.firstMonthAllowance}"
+                            disabled
+                        />
+                        <CustomTextField
+                            id="breakdownFullMonth"
+                            isRequired={false}
+                            label="Bulan Pertengahan ({inBetweenMonths})"
+                            val="({data.terminationDetail?.calculation.breakdown.firstMonthAllowance} x {data.terminationDetail?.calculation.breakdown.MonthInBetween} bulan) = {data.terminationDetail?.calculation.breakdown.calculateInBetween}"
+                            disabled
+                        />
+                        <CustomTextField
+                            id="breakdownEndMonth"
+                            isRequired={false}
+                            label="Bulan Terakhir ({new Date(
                                 data.terminationDetail?.calculation.personalDetail.endEffectiveDate,
-                            ).toLocaleString('ms', { month: 'long' })}</span
-                        >
-                        <div
-                            class="flex w-full justify-around gap-1 rounded-md border border-ios-basic-inactiveGray p-2 text-md text-ios-labelColors-secondaryLabel-light"
-                        >
-                            <span>&#40;</span>
-                            <span
-                                >{data.terminationDetail?.calculation.breakdown
-                                    .allowance}</span
-                            >
-                            <span>x</span>
-                            <span
-                                >{data.terminationDetail?.calculation.breakdown
-                                    .endDay} hari</span
-                            >
-                            <span>&#41;</span>
-                            <span>/</span>
-                            <span
-                                >{data.terminationDetail?.calculation.breakdown
-                                    .NumberOfDaysForEndMonth}</span
-                            >
-                            <span>=</span>
-                            <span
-                                >{data.terminationDetail?.calculation.breakdown
-                                    .lastMonthAllowance}</span
-                            >
-                        </div>
-                    </div>
-                    <div class="pt-3">
-                    <CustomTextField
-                        label="Jumlah Bayaran Tunggakkan ETK"
-                        id="totalETK"
-                        disabled
-                        val={data.terminationDetail?.calculation.breakdown
-                            .totalETK}
-                    />
+                            ).toLocaleString('ms', { month: 'long', year: 'numeric' })})"
+                            val="({data.terminationDetail?.calculation.breakdown.lastMonthAllowance} x {data.terminationDetail?.calculation.breakdown.endDay} hari) / {data.terminationDetail?.calculation.breakdown.NumberOfDaysForEndMonth} = {data.terminationDetail?.calculation.breakdown.lastMonthAllowance}"
+                            disabled
+                        />
+                        <CustomTextField
+                            label="Jumlah Bayaran Tunggakkan ETK"
+                            id="totalETK"
+                            isRequired={false}
+                            disabled
+                            val={data.terminationDetail?.calculation.breakdown.totalETK}
+                        />
+                    </XCard>
                 </div>
                 </div>
             </StepperContentBody>
@@ -526,7 +521,7 @@
             <StepperContentHeader title="Penyokong dan Pelulus">
                 {#if !submitSuppApp && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         icon="check"
                         form="suppAppForm"
                     />
@@ -563,14 +558,14 @@
             <StepperContentHeader title="Keputusan Penyokong dan Pelulus">
                 {#if !submitSupporter && data.currentRoleCode == UserRoleConstant.timbalanKetuaSeksyen.code}
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         icon="check"
                         form="supporterApprovalForm"
                     />
                 {/if}
                 {#if !submitApprover && data.currentRoleCode == UserRoleConstant.ketuaSeksyen.code}
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         icon="check"
                         form="approverApprovalForm"
                     />
@@ -646,7 +641,7 @@
                             </Alert>
                         </div>
                     {:else}
-                        {#if $approverApprovalForm.name !== ""}
+                        {#if $approverApprovalForm.name !== ''}
                             <CustomTextField
                                 label="Nama"
                                 id="name"
