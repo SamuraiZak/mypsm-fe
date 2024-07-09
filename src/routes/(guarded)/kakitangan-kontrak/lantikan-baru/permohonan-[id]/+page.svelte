@@ -45,7 +45,7 @@
         <TextIconButton
             icon="check"
             type="primary"
-            label="Simpan"
+            label="Hantar"
             form="addContractForm"
         />
     </ContentHeader>
