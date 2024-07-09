@@ -36,6 +36,7 @@
     } from './+page';
     import { RoleConstant } from '$lib/constants/core/role.constant';
     import { Alert } from 'flowbite-svelte';
+    import { approveOptions, certifyOptions, supportOptions } from '$lib/constants/core/radio-option-constants';
 
     export let data: PageData;
 
@@ -152,6 +153,7 @@
     } = superForm(data.forms.directorEndorsementForm, {
         id: 'directorEndorsementForm',
         SPA: true,
+        resetForm: false,
         validators: zodClient(AllowanceEndorsementSchema),
         onSubmit(input) {
             _submitDirectorEndorsementForm($directorEndorsementForm).then(
@@ -180,6 +182,7 @@
     } = superForm(data.forms.secretaryCheckForm, {
         id: 'secretaryCheckForm',
         SPA: true,
+        resetForm: false,
         validators: zodClient(AllowanceEndorsementSchema),
         onSubmit(input) {
             _submitSecretaryCheckForm($secretaryCheckForm).then((value) => {
@@ -206,6 +209,7 @@
     } = superForm(data.forms.endorserDetailForm, {
         id: 'endorserDetailForm',
         SPA: true,
+        resetForm: false,
         validators: zodClient(AllowanceEndorserDetailSchema),
         onSubmit(input) {
             console.log($endorserDetailForm);
@@ -221,6 +225,7 @@
     } = superForm(data.forms.supporterEndorsementForm, {
         id: 'supporterEndorsementForm',
         SPA: true,
+        resetForm: false,
         validators: zodClient(AllowanceEndorsementSchema),
         onSubmit(input) {
             _submitSupporterEndorsementForm($supporterEndorsementForm).then(
@@ -243,6 +248,7 @@
     } = superForm(data.forms.approverEndorsementForm, {
         id: 'approverEndorsementForm',
         SPA: true,
+        resetForm: false,
         validators: zodClient(AllowanceEndorsementSchema),
         onSubmit(input) {
             _submitApproverEndorsementForm($approverEndorsementForm).then(
@@ -928,8 +934,7 @@
                                         id="directorApprove"
                                         label={'Adakah Permohonan Ini Sah?'}
                                         bind:val={$directorEndorsementForm.status}
-                                        options={data.props
-                                            .allowanceEndorsementOption}
+                                        options={certifyOptions}
                                     ></CustomSelectField>
                                 </div>
                                 <div class="flex w-full flex-col gap-2">
@@ -993,8 +998,7 @@
                                         id="directorApprove"
                                         label={'Adakah Permohonan Ini Sah?'}
                                         bind:val={$secretaryCheckForm.status}
-                                        options={data.props
-                                            .allowanceEndorsementOption}
+                                        options={certifyOptions}
                                     ></CustomSelectField>
                                 </div>
                                 <div class="flex w-full flex-col gap-2">
@@ -1124,8 +1128,7 @@
                                         id="directorApprove"
                                         label={'Adakah Anda Sokong Permohonan Ini?'}
                                         bind:val={$supporterEndorsementForm.status}
-                                        options={data.props
-                                            .allowanceEndorsementOption}
+                                        options={supportOptions}
                                     ></CustomSelectField>
                                 </div>
                                 <div class="flex w-full flex-col gap-2">
@@ -1187,10 +1190,9 @@
                                             .approval !== null ||
                                             data.props.mode != 'pelulus'}
                                         id="directorApprove"
-                                        label={'Adakah Permohonan Ini Sah?'}
+                                        label={'Adakah Permohonan Ini Diluluskan?'}
                                         bind:val={$approverEndorsementForm.status}
-                                        options={data.props
-                                            .allowanceEndorsementOption}
+                                        options={approveOptions}
                                     ></CustomSelectField>
                                 </div>
                                 <div class="flex w-full flex-col gap-2">
