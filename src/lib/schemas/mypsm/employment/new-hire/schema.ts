@@ -360,6 +360,7 @@ export const _approvalResultSchema = z.object({
     remark: longTextSchema,
     status: booleanSchema,
     isReadonly: z.boolean().readonly(),
+    approvalDate: z.string().readonly(),
 });
 
 //==========================================================
