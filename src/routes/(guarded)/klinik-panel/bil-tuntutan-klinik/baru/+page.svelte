@@ -12,6 +12,7 @@
     import { _fileToBase64Object, _submitClaimDetailForm } from './+page';
     import { Toaster } from 'svelte-french-toast';
     import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
+    import XCard from '$lib/components/card/XCard.svelte';
 
 
     export let data: PageData;
@@ -58,7 +59,7 @@
         />
         {#if !successSubmit}
             <TextIconButton
-                label="Simpan"
+                label="Hantar"
                 icon="check"
                 form="claimDetailForm"
             />
@@ -69,10 +70,8 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-    <div class="flex w-full flex-col justify-start gap-2.5 px-3 pb-10 pt-3">
-        <div class="flex w-full flex-col justify-start gap-2.5 px-2 md:w-1/2">
-            <ContentHeader title="Maklumat Invois" borderClass="border-none" />
-
+    <div class="flex w-full justify-between gap-2.5 px-3 pb-10 pt-3">
+        <XCard title="Maklumat Invois">
             <form
                 class="flex w-full flex-col justify-start gap-2.5"
                 method="POST"
@@ -82,6 +81,7 @@
                 <CustomTextField
                     label="Nama Klinik"
                     id="clinicName"
+                    isRequired={false}
                     disabled
                     bind:val={data.profile.clinicName}
                 />
@@ -136,7 +136,18 @@
                     bind:files
                 ></CustomFileField>
             </div>
-        </div>
+        </XCard>
+
+        <XCard title="Maklumat Rawatan">
+            <div class="w-full flex justify-end">
+                <TextIconButton
+                    label="Tambah"
+                    icon="add"
+                    type="neutral"
+                    onClick={() => console.log('')}
+                />
+            </div>
+        </XCard>
     </div>
 </section>
 <Toaster />

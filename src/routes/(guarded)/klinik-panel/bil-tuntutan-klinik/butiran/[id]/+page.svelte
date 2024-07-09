@@ -154,6 +154,28 @@
 >
     <Stepper>
         <StepperContent>
+            <StepperContentHeader title="Maklumat Rawatan"
+            ></StepperContentHeader>
+            <StepperContentBody>
+                <CustomTextField
+                    label="Nama Diagnosis"
+                    id="dignosis"
+                    disabled
+                    isRequired={false}
+                    val="Demam"
+                    />
+                <CustomTextField
+                    label="Ubat-ubatan"
+                    id="medicine"
+                    disabled
+                    isRequired={false}
+                    val="Panadol"
+                    />
+
+            </StepperContentBody>
+        </StepperContent>
+
+        <StepperContent>
             <StepperContentHeader title="Maklumat Invois"
             ></StepperContentHeader>
             <StepperContentBody>
@@ -348,7 +370,7 @@
                             label="Keputusan"
                             id="status"
                             disabled={supporterApproved}
-                            options={supportOptions}
+                            options={[{value: true, name: "SOKONG"}]}
                             bind:val={$supporterApprovalForm.status}
                         />
                     </form>
@@ -394,7 +416,7 @@
                             label="Keputusan"
                             id="status"
                             disabled={approverApproved}
-                            options={approveOptions}
+                            options={[{value: true, name: "LULUS"}]}
                             bind:val={$approverApprovalForm.status}
                         />
                     </form>
