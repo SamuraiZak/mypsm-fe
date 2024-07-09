@@ -929,6 +929,7 @@
                         ></CustomSelectField>
                         <CustomTextField
                             disabled
+                            isRequired={false}
                             id="approvalDate"
                             label="Tarikh Kelulusan"
                             type="date"
