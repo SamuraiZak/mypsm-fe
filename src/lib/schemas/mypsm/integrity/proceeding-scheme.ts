@@ -140,6 +140,7 @@ export const _proceedingApproverSchema = z.object({
     integrityId: z.number().readonly(),
     status: booleanSchema,
     remark: shortTextSchema,
+    approvalDate: z.string().readonly(),
 });
 
 export const _chargesSchema = z.object({
