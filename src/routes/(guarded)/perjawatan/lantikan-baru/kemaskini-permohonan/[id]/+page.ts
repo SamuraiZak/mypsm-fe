@@ -111,7 +111,7 @@ export async function load({ params }) {
     // filter
     const filter: CommonFilterDTO = {
         program: 'SEMUA',
-        identityCard: null,
+        identityDocumentNumber: null,
         employeeNumber: null,
         name: null,
         position: null,
@@ -572,8 +572,6 @@ export async function load({ params }) {
 //==================================================
 export const _submitPersonalForm = async (formData: object) => {
     const form = await superValidate(formData, zod(_personalInfoRequestSchema));
-
-    console.log(form);
 
     if (!form.valid) {
         getErrorToast();
