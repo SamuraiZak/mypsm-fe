@@ -175,7 +175,7 @@ export const _examApplicationApprovalSchema = z.object({
     id: numberIdSchema,
     remark: codeSchema,
     status: booleanSchema,
-    approvalDate: z.string(),
+    approvalDate: z.string().readonly(),
 });
 
 // ==================================================
