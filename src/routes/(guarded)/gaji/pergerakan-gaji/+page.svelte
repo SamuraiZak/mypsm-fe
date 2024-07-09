@@ -269,9 +269,14 @@
                                             .filter.name}
                                     />
                                     <FilterTextField
+                                        label="No. Pekerja"
+                                        bind:inputValue={employeeListTable.param
+                                            .filter.employeeNumber}
+                                    />
+                                    <FilterTextField
                                         label="No. Kad Pengenalan"
                                         bind:inputValue={employeeListTable.param
-                                            .filter.identityCard}
+                                            .filter.identityDocumentNumber}
                                     />
                                 </FilterWrapper>
                             </DataTable>

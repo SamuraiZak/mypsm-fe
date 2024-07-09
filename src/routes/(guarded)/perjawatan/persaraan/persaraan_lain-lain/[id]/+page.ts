@@ -23,6 +23,7 @@ export async function load({ params }) {
     let chosenListFilter: USPRetirementChosenListFilter = {
         groupId: currentApplicationId,
         name: null,
+        employeeNumber: null,
         identityDocumentNumber: null,
     };
 
@@ -49,7 +50,7 @@ export async function load({ params }) {
             chosenList,
             chosenListFilter,
             chosenListRequest,
-            chosenListResponse
+            chosenListResponse,
         },
     };
 }

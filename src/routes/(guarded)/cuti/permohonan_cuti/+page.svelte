@@ -104,9 +104,19 @@
 
                     {#if data.props.currentRoleCode !== UserRoleConstant.kakitangan.code}
                         <FilterTextField
-                            label="Nama"
+                            label="No. Pekerja"
                             bind:inputValue={applicationListTable.param.filter
-                                .employeeName}
+                                .employeeNumber}
+                        ></FilterTextField>
+                        <FilterTextField
+                            label="Nama Kakitangan"
+                            bind:inputValue={applicationListTable.param.filter
+                                .name}
+                        ></FilterTextField>
+                        <FilterTextField
+                            label="No. Kad Pengenalan"
+                            bind:inputValue={applicationListTable.param.filter
+                                .identityDocumentNumber}
                         ></FilterTextField>
                     {/if}
                 </FilterWrapper>

@@ -16,6 +16,7 @@
     import { Toaster } from 'svelte-french-toast';
     import type { PageData } from './$types';
     import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
 
     export let data: PageData;
 
@@ -101,6 +102,20 @@
                 }}
             >
                 <FilterWrapper slot="filter">
+                    <FilterTextField
+                        label="No. Pekerja"
+                        bind:inputValue={chosenListTable.param.filter
+                            .employeeNumber}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="Nama Kakitangan"
+                        bind:inputValue={chosenListTable.param.filter.name}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={chosenListTable.param.filter
+                            .identityDocumentNumber}
+                    ></FilterTextField>
                     <FilterNumberField
                         label="Tahun"
                         bind:inputValue={chosenListTable.param.filter.year}

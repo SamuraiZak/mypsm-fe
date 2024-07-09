@@ -32,7 +32,9 @@ export async function load() {
     // set the filter
     const applicationListFilter: LeaveApplicationFilterDTO = {
         year: new Date().getFullYear(),
-        employeeName: null,
+        name: null,
+        identityDocumentNumber: null,
+        employeeNumber: null,
         leaveType: null,
         status: null,
     };

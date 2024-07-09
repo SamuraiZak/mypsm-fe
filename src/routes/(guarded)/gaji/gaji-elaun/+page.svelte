@@ -74,6 +74,20 @@
                     )}
             >
                 <FilterWrapper slot="filter">
+                    <FilterTextField
+                        label="No. Pekerja"
+                        bind:inputValue={salaryAllowanceTable.param.filter
+                            .employeeNumber}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="Nama Kakitangan"
+                        bind:inputValue={salaryAllowanceTable.param.filter.name}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={salaryAllowanceTable.param.filter
+                            .identityDocumentNumber}
+                    ></FilterTextField>
                     <FilterSelectField
                         label="Bulan"
                         options={monthNumberLookup}

@@ -24,7 +24,9 @@ export async function load() {
 
     const leaveApplicationFilter: LeaveApplicationFilterDTO = {
         year: currentYear,
-        employeeName: null,
+        employeeNumber: null,
+        name: null,
+        identityDocumentNumber: null,
         leaveType: null,
         status: null,
     };

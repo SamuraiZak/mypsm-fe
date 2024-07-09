@@ -18,8 +18,8 @@ export async function load() {
     // get list of gcr accumulation application
     let filter: GCRAccumulationHistoryFilterDTO = {
         name: null,
-        identityCard: null,
-        employeeNo: null,
+        identityDocumentNumber: null,
+        employeeNumber: null,
         status: null,
     };
 

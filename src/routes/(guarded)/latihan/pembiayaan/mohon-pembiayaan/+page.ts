@@ -55,7 +55,7 @@ export async function load() {
 //==================================================
 //=============== Submit Functions =================
 //==================================================
-export const _createFundApplicationForm = async (formData: FormData) => {
+export const _createFundApplicationForm = async (formData: object) => {
     const form = await superValidate(
         formData,
         zod(_createFundApplicationRequestSchema),

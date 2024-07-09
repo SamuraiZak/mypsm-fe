@@ -3,6 +3,7 @@
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterNumberField from '$lib/components/table/filter/FilterNumberField.svelte';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import { GCRWithdrawalTypeConstant } from '$lib/constants/core/early-gcr.constant';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
@@ -98,6 +99,21 @@
                 }}
             >
                 <FilterWrapper slot="filter">
+                    <FilterTextField
+                        label="No. Pekerja"
+                        bind:inputValue={withdrawalListTable.param.filter
+                            .employeeNumber}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="Nama Kakitangan"
+                        bind:inputValue={withdrawalListTable.param.filter
+                            .name}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={withdrawalListTable.param.filter
+                            .identityDocumentNumber}
+                    ></FilterTextField>
                     <FilterNumberField
                         label="Tahun"
                         bind:inputValue={withdrawalListTable.param.filter.year}

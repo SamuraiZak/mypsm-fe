@@ -36,7 +36,7 @@
                 malay: 'Jenis Peperiksaan',
             },
             {
-                english: 'employeeIdentityNumber',
+                english: 'identityDocumentNumber',
                 malay: 'No. Kad Pengenalan',
             },
             {

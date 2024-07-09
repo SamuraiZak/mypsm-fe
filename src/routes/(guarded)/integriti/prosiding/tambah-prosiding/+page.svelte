@@ -94,7 +94,7 @@
                 <FilterTextField
                     label="No. Kad Pengenalan"
                     bind:inputValue={proceedingListTable.param.filter
-                        .identityCardNumber}
+                        .identityDocumentNumber}
                 ></FilterTextField>
                 <FilterSelectField
                     label="Gred"

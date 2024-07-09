@@ -11,7 +11,7 @@ export async function load() {
     // prepare employee list filter
     const employeeListFilter: CommonFilterDTO = {
         program: 'SEMUA',
-        identityCard: null,
+        identityDocumentNumber: null,
         employeeNumber: null,
         name: null,
         position: null,

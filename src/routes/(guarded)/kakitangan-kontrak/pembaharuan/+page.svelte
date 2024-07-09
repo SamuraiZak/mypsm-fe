@@ -17,6 +17,9 @@
     import DataTable from '$lib/components/table/DataTable.svelte';
     import { Alert, Modal } from 'flowbite-svelte';
     import SearchSelect from '$lib/components/inputs/search-select/SearchSelect.svelte';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
 
     export let data: PageData;
     let rowData = {} as RenewContractListResponseDTO;
@@ -46,7 +49,7 @@
             detail: false,
             edit: false,
             select: false,
-            filter: false,
+            filter: true,
         },
         controls: {
             add: false,
@@ -74,7 +77,7 @@
             detail: true,
             edit: false,
             select: false,
-            filter: false,
+            filter: true,
         },
         controls: {
             add: false,
@@ -105,7 +108,7 @@
             detail: true,
             edit: false,
             select: false,
-            filter: false,
+            filter: true,
         },
         controls: {
             add: false,
@@ -131,7 +134,7 @@
                 malay: 'Ulasan',
             },
         ],
-        url: '',
+        url: 'contracts/renew/personal_detail/list',
         id: 'contractEmployeeTable',
         option: {
             checkbox: false,
@@ -169,7 +172,31 @@
                         bind:passData={rowData}
                         detailActions={() =>
                             goto('./pembaharuan/butiran/' + rowData.contractId)}
-                    />
+                    >
+                        <FilterWrapper slot="filter">
+                            <FilterTextField
+                                label="ID Sementara"
+                                bind:inputValue={renewContractTable.param.filter
+                                    .temporaryId}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="Nama Kakitangan"
+                                bind:inputValue={renewContractTable.param.filter
+                                    .name}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="No. Kad Pengenalan"
+                                bind:inputValue={renewContractTable.param.filter
+                                    .identityDocumentNumber}
+                            ></FilterTextField>
+                            <FilterSelectField
+                                label="Status"
+                                options={data.selectionOptions.statusLookup}
+                                bind:inputValue={renewContractTable.param.filter
+                                    .status}
+                            ></FilterSelectField>
+                        </FilterWrapper>
+                    </DataTable>
                 </div>
             </div>
 
@@ -180,12 +207,12 @@
                         borderClass="border-none"
                     >
                         {#if selectedContract.contractors.length > 0}
-                        <TextIconButton
-                            label="Hantar Untuk Dinilai"
-                            type="primary"
-                            icon="edit"
-                            onClick={() => (renewModal = true)}
-                        />
+                            <TextIconButton
+                                label="Hantar Untuk Dinilai"
+                                type="primary"
+                                icon="edit"
+                                onClick={() => (renewModal = true)}
+                            />
                         {/if}
                     </ContentHeader>
 
@@ -193,7 +220,31 @@
                         <DataTable
                             title="Senarai Kontrak Yang Hampir Tamat"
                             bind:tableData={nearExpiredContractTable}
-                        />
+                        >
+                            <FilterWrapper slot="filter">
+                                <FilterTextField
+                                    label="ID Sementara"
+                                    bind:inputValue={nearExpiredContractTable
+                                        .param.filter.temporaryId}
+                                ></FilterTextField>
+                                <FilterTextField
+                                    label="Nama Kakitangan"
+                                    bind:inputValue={nearExpiredContractTable
+                                        .param.filter.name}
+                                ></FilterTextField>
+                                <FilterTextField
+                                    label="No. Kad Pengenalan"
+                                    bind:inputValue={nearExpiredContractTable
+                                        .param.filter.identityDocumentNumber}
+                                ></FilterTextField>
+                                <FilterSelectField
+                                    label="Status"
+                                    options={data.selectionOptions.statusLookup}
+                                    bind:inputValue={nearExpiredContractTable
+                                        .param.filter.status}
+                                ></FilterSelectField>
+                            </FilterWrapper>
+                        </DataTable>
                     </div>
                 </div>
             {/if}
@@ -207,7 +258,31 @@
                     bind:passData={rowData}
                     detailActions={() =>
                         goto('./pembaharuan/butiran/' + rowData.contractId)}
-                />
+                >
+                    <FilterWrapper slot="filter">
+                        <FilterTextField
+                            label="ID Sementara"
+                            bind:inputValue={supporterApproverTable.param.filter
+                                .temporaryId}
+                        ></FilterTextField>
+                        <FilterTextField
+                            label="Nama Kakitangan"
+                            bind:inputValue={supporterApproverTable.param.filter
+                                .name}
+                        ></FilterTextField>
+                        <FilterTextField
+                            label="No. Kad Pengenalan"
+                            bind:inputValue={supporterApproverTable.param.filter
+                                .identityDocumentNumber}
+                        ></FilterTextField>
+                        <FilterSelectField
+                            label="Status"
+                            options={data.selectionOptions.statusLookup}
+                            bind:inputValue={supporterApproverTable.param.filter
+                                .status}
+                        ></FilterSelectField>
+                    </FilterWrapper>
+                </DataTable>
             </div>
         </div>
     {:else if data.currentRoleCode == UserRoleConstant.kakitanganKontrak.code}
@@ -221,7 +296,31 @@
                         goto(
                             './pembaharuan/butiran/' + employeeData.contractId,
                         )}
-                />
+                >
+                    <FilterWrapper slot="filter">
+                        <FilterTextField
+                            label="ID Sementara"
+                            bind:inputValue={contractEmployeeTable.param.filter
+                                .temporaryId}
+                        ></FilterTextField>
+                        <FilterTextField
+                            label="Nama Kakitangan"
+                            bind:inputValue={contractEmployeeTable.param.filter
+                                .name}
+                        ></FilterTextField>
+                        <FilterTextField
+                            label="No. Kad Pengenalan"
+                            bind:inputValue={contractEmployeeTable.param.filter
+                                .identityDocumentNumber}
+                        ></FilterTextField>
+                        <FilterSelectField
+                            label="Status"
+                            options={data.selectionOptions.statusLookup}
+                            bind:inputValue={contractEmployeeTable.param.filter
+                                .status}
+                        ></FilterSelectField>
+                    </FilterWrapper>
+                </DataTable>
             </div>
         </div>
     {/if}
@@ -234,44 +333,45 @@
     size="sm"
     dismissable={false}
 >
-<div class="w-full flex flex-col justify-start gap-2.5">
-    <Alert color="blue">
-        <p>
-            <span class="font-medium">Sistem: </span>
-            Kakitangan kontrak yang dipilih akan dihantar ke Pengarah Bahagian/Negeri
-            untuk dinilai dan dimasukkan ke dalam proses pembaharuan kontrak.
-        </p>
-    </Alert>
-    <SearchSelect
-        id="directorId"
-        options={data.supporterApproverLookup}
-        val={1}
-        errors={[]}
-    />
-    <div class="flex justify-center gap-3">
-        <TextIconButton
-            label="Hantar"
-            type="primary"
-            onClick={async () => {
-                await _addSelectedContractForRenew(selectedContract)
-                    .then((res) => {
-                        if (res?.response?.status == 'success') {
-                            nearExpiredContractTable.data =
-                                data.nearExpiredContractList;
-                            renewContractTable.data = data.renewContractList;
-                        }
-                    })
-                    .finally(() => {
-                        renewModal = false;
-                        nearExpiredContractTable.selectedData = [];
-                    });
-            }}
+    <div class="flex w-full flex-col justify-start gap-2.5">
+        <Alert color="blue">
+            <p>
+                <span class="font-medium">Sistem: </span>
+                Kakitangan kontrak yang dipilih akan dihantar ke Pengarah Bahagian/Negeri
+                untuk dinilai dan dimasukkan ke dalam proses pembaharuan kontrak.
+            </p>
+        </Alert>
+        <SearchSelect
+            id="directorId"
+            options={data.supporterApproverLookup}
+            val={1}
+            errors={[]}
         />
-        <TextIconButton
-            label="Batal"
-            type="neutral"
-            onClick={() => (renewModal = false)}
-        />
+        <div class="flex justify-center gap-3">
+            <TextIconButton
+                label="Hantar"
+                type="primary"
+                onClick={async () => {
+                    await _addSelectedContractForRenew(selectedContract)
+                        .then((res) => {
+                            if (res?.response?.status == 'success') {
+                                nearExpiredContractTable.data =
+                                    data.nearExpiredContractList;
+                                renewContractTable.data =
+                                    data.renewContractList;
+                            }
+                        })
+                        .finally(() => {
+                            renewModal = false;
+                            nearExpiredContractTable.selectedData = [];
+                        });
+                }}
+            />
+            <TextIconButton
+                label="Batal"
+                type="neutral"
+                onClick={() => (renewModal = false)}
+            />
+        </div>
     </div>
-</div>
 </Modal>

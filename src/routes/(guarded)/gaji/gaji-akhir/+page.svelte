@@ -78,7 +78,7 @@
                     <FilterTextField
                         label="No. Kad Pengenalan"
                         bind:inputValue={finalPayslipTable.param.filter
-                            .identityCardNumber}
+                            .identityDocumentNumber}
                     />
                     <FilterTextField
                         label="Status"

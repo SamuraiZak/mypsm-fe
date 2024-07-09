@@ -15,6 +15,7 @@
     import { Toaster } from 'svelte-french-toast';
     import type { PageData } from './$types';
     import { _submitChosenList } from './+page';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
 
     export let data: PageData;
 
@@ -118,6 +119,20 @@
                     {/if}
                 </div>
                 <FilterWrapper slot="filter">
+                    <FilterTextField
+                        label="No. Pekerja"
+                        bind:inputValue={employeeListTable.param.filter
+                            .employeeNumber}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="Nama Kakitangan"
+                        bind:inputValue={employeeListTable.param.filter.name}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={employeeListTable.param.filter
+                            .identityDocumentNumber}
+                    ></FilterTextField>
                     <FilterNumberField
                         label="Tahun"
                         bind:inputValue={employeeListTable.param.filter.year}

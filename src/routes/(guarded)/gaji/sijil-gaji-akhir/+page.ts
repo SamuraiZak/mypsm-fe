@@ -14,7 +14,7 @@ export const load = async () => {
         type: 1,
         employeeNumber: "",
         name: "",
-        identityCardNumber: "",
+        identityDocumentNumber: "",
         retirementType: "",
         status: "",
     }

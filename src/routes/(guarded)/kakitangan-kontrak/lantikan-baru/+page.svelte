@@ -1,5 +1,7 @@
 <script lang="ts">
+	import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
+    import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import type { PageData } from './$types';
@@ -11,6 +13,7 @@
     import type { ContractEmployeeListDTO } from '$lib/dto/mypsm/kakitangan-kontrak/contract-employee-list.dto';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     export let data: PageData;
     let selectedRow = {} as ContractEmployeeListDTO;
     let openModal: boolean = false;
@@ -41,7 +44,7 @@
             detail: true,
             edit: false,
             select: false,
-            filter: false,
+            filter: true,
         },
         controls: {
             add: false,
@@ -96,7 +99,31 @@
                                 );
                             }
                         }}
-                    />
+                    >
+                    <FilterWrapper slot="filter">
+                        <FilterTextField
+                            label="ID Sementara"
+                            bind:inputValue={contractEmployeeListTable.param.filter
+                                .temporaryId}
+                        ></FilterTextField>
+                        <FilterTextField
+                            label="Nama Kakitangan"
+                            bind:inputValue={contractEmployeeListTable.param.filter
+                                .name}
+                        ></FilterTextField>
+                        <FilterTextField
+                            label="No. Kad Pengenalan"
+                            bind:inputValue={contractEmployeeListTable.param.filter
+                                .identityDocumentNumber}
+                        ></FilterTextField>
+                        <FilterSelectField
+                            label="Status"
+                            options={data.selectionOptions.statusLookup}
+                            bind:inputValue={contractEmployeeListTable.param.filter
+                                .status}
+                        ></FilterSelectField>
+                    </FilterWrapper>
+                </DataTable>
                 </div>
             </div>
         {:else if data.currentRoleCode === UserRoleConstant.calonKontrak.code}

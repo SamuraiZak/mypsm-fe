@@ -190,6 +190,18 @@
                     bind:val={$form.semester}
                     options={[
                         {
+                            value: 1,
+                            name: 'Satu',
+                        },
+                        {
+                            value: 2,
+                            name: 'Dua',
+                        },
+                        {
+                            value: 3,
+                            name: 'Tiga',
+                        },
+                        {
                             value: 4,
                             name: 'Empat',
                         },
@@ -200,6 +212,14 @@
                         {
                             value: 6,
                             name: 'Enam',
+                        },
+                        {
+                            value: 7,
+                            name: 'Tujuh',
+                        },
+                        {
+                            value: 8,
+                            name: 'Lapan',
                         },
                     ]}
                 ></CustomSelectField>
@@ -235,6 +255,16 @@
             </StepperContentHeader>
             <StepperContentBody>
                 <div class="flex w-full flex-col gap-2">
+                    <p class="text-sm">
+                        Sila muat turun, isi dengan lengkap dokumen berikut,
+                        kemudian muat naik dokumen pada ruangan yang disediakan.
+                    </p>
+
+                    <ol class="list-inside list-decimal space-y-1 text-sm">
+                        <li>Slip keputusan</li>
+                        <li>Resit tuntutan</li>
+                        <li>Lain-lain dokumen yang berkaitan</li>
+                    </ol>
                     <form
                         class="flex w-full flex-col justify-start gap-2.5 pb-10"
                         method="POST"

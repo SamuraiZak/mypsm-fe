@@ -19,7 +19,8 @@ export async function load() {
     let filter: GCRWithdrawalHistoryFilterDTO = {
         dataType: 0,
         name: null,
-        identityCard: null,
+        identityDocumentNumber: null,
+        employeeNumber: null,
         status: null,
     };
 

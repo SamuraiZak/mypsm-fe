@@ -6,7 +6,7 @@
         supportOptions,
         confirmOptions,
     } from '$lib/constants/core/radio-option-constants';
-    import { Badge } from 'flowbite-svelte';
+    import { Badge, Checkbox } from 'flowbite-svelte';
     import {
         approveOptions,
         certifyOptions,
@@ -268,11 +268,11 @@
                 <CustomTextField
                     disabled
                     isRequired={false}
-                    id="identityCard"
+                    id="identityDocumentNumber"
                     label={'No. Kad Pengenalan'}
                     type="text"
                     placeholder="-"
-                    bind:val={$personalInfoForm.identityCard}
+                    bind:val={$personalInfoForm.identityDocumentNumber}
                 ></CustomTextField>
 
                 <CustomSelectField
@@ -863,23 +863,109 @@
                     bind:val={$form.expectedFinishedStudyDate}
                 ></CustomTextField>
 
-                <CustomSelectField
-                    disabled={true}
-                    id="educationType"
-                    label="Jenis Pengajian"
-                    placeholder="-"
-                    bind:val={$form.educationTypeId}
-                    options={data.lookups.educationTypeLookup}
-                ></CustomSelectField>
+                <div
+                    class="mb-3 flex h-fit w-full flex-col items-start justify-start gap-y-2 bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                >
+                    <label
+                        for="role"
+                        class="mb-2 block w-full text-start text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                        >Jenis Pengajian
+                        <span class="text-base text-system-danger">*</span>
+                    </label>
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={true}
+                        checked={$form.educationTypeId.includes(1)}
+                        bind:group={$form.educationTypeId}
+                        bind:value={data.lookups.educationTypeLookup[0].value}
+                        >{data.lookups.educationTypeLookup[0].name}</Checkbox
+                    >
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={true}
+                        checked={$form.educationTypeId.includes(2)}
+                        bind:group={$form.educationTypeId}
+                        bind:value={data.lookups.educationTypeLookup[1].value}
+                        >{data.lookups.educationTypeLookup[1].name}</Checkbox
+                    >
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={true}
+                        checked={$form.educationTypeId.includes(3)}
+                        bind:group={$form.educationTypeId}
+                        bind:value={data.lookups.educationTypeLookup[2].value}
+                        >{data.lookups.educationTypeLookup[2].name}</Checkbox
+                    >
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={true}
+                        checked={$form.educationTypeId.includes(4)}
+                        bind:group={$form.educationTypeId}
+                        bind:value={data.lookups.educationTypeLookup[3].value}
+                        >{data.lookups.educationTypeLookup[3].name}</Checkbox
+                    >
+                </div>
 
-                <CustomSelectField
-                    disabled={true}
-                    id="applicationType"
-                    label="Jenis Permohonan"
-                    placeholder="-"
-                    bind:val={$form.applicationTypeId}
-                    options={data.lookups.fundApplicationTypeLookup}
-                ></CustomSelectField>
+                <div
+                    class="mb-3 flex h-fit w-full flex-col items-start justify-start gap-y-2 bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                >
+                    <label
+                        for="role"
+                        class="mb-2 block w-full text-start text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+                        >Jenis Permohonan
+                        <span class="text-base text-system-danger">*</span>
+                    </label>
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={true}
+                        checked={$form.applicationTypeId.includes(1)}
+                        bind:group={$form.applicationTypeId}
+                        bind:value={data.lookups.fundApplicationTypeLookup[0]
+                            .value}
+                        >{data.lookups.fundApplicationTypeLookup[0]
+                            .name}</Checkbox
+                    >
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={true}
+                        checked={$form.applicationTypeId.includes(2)}
+                        bind:group={$form.applicationTypeId}
+                        bind:value={data.lookups.fundApplicationTypeLookup[1]
+                            .value}
+                        >{data.lookups.fundApplicationTypeLookup[1]
+                            .name}</Checkbox
+                    >
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={true}
+                        checked={$form.applicationTypeId.includes(3)}
+                        bind:group={$form.applicationTypeId}
+                        bind:value={data.lookups.fundApplicationTypeLookup[2]
+                            .value}
+                        >{data.lookups.fundApplicationTypeLookup[2]
+                            .name}</Checkbox
+                    >
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={true}
+                        checked={$form.applicationTypeId.includes(4)}
+                        bind:group={$form.applicationTypeId}
+                        bind:value={data.lookups.fundApplicationTypeLookup[3]
+                            .value}
+                        >{data.lookups.fundApplicationTypeLookup[3]
+                            .name}</Checkbox
+                    >
+                    <Checkbox
+                        class={'text-ios-labelColors-secondaryLabel-light'}
+                        disabled={true}
+                        checked={$form.applicationTypeId.includes(5)}
+                        bind:group={$form.applicationTypeId}
+                        bind:value={data.lookups.fundApplicationTypeLookup[4]
+                            .value}
+                        >{data.lookups.fundApplicationTypeLookup[4]
+                            .name}</Checkbox
+                    >
+                </div>
             </form>
         </StepperContentBody>
     </StepperContent>

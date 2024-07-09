@@ -2,7 +2,7 @@ export interface CommonFilterDTO {
     program?: string | null;
     employeeNumber?: string | null;
     name?: string | null;
-    identityCard?: string | null;
+    identityDocumentNumber?: string | null;
     scheme?: string | null;
     grade?: string | null;
     position?: string | null;

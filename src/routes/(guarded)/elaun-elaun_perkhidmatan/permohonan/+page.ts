@@ -42,6 +42,7 @@ export async function load() {
     const filter: AllowanceApplicationFilterDTO = {
         employeeNumber: null,
         name: null,
+        identityDocumentNumber: null,
         allowanceType: null,
         applicationDate: null,
         status: null,

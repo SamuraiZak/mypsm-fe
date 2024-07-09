@@ -13,8 +13,8 @@ export interface LeaveEntitlementDTO {
 export interface LeaveEntitlementFilterDTO {
     year?: number | null;
     employeeId?: number | null;
-    identityCard?: string | null;
-    employeeNo?: string | null;
+    identityDocumentNumber?: string | null;
+    employeeNumber?: string | null;
     name?: string | null;
     position?: string | null;
     status?: string | null;
@@ -22,7 +22,9 @@ export interface LeaveEntitlementFilterDTO {
 
 export interface LeaveApplicationFilterDTO {
     year?: number | null;
-    employeeName?: string | null;
+    employeeNumber?: string | null;
+    name?: string | null;
+    identityDocumentNumber?: string | null;
     leaveType?: string | null;
     status?: string | null;
 }
@@ -343,8 +345,8 @@ export interface GCRAccumulationHistoryDTO {
 
 export interface GCRAccumulationHistoryFilterDTO {
     name: string | null;
-    identityCard: string | null;
-    employeeNo: string | null;
+    identityDocumentNumber: string | null;
+    employeeNumber: string | null;
     status: string | null;
 }
 
@@ -405,7 +407,8 @@ export interface GCRWithdrawalHistoryDTO {
 export interface GCRWithdrawalHistoryFilterDTO {
     dataType: number;
     name: string | null;
-    identityCard: string | null;
+    identityDocumentNumber: string | null;
+    employeeNumber: string | null;
     status: string | null;
 }
 

@@ -20,7 +20,7 @@ export async function load() {
 
     const filter: CommonFilterDTO = {
         program: 'SEMUA',
-        identityCard: null,
+        identityDocumentNumber: null,
         employeeNumber: null,
         name: null,
         position: null,

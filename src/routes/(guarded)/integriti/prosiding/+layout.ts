@@ -37,7 +37,7 @@ export const load = async () => {
         filter: {
             employeeNumber: null, //string | null | undefined;
             name: null,
-            identityCardNumber: null,
+            identityDocumentNumber: null,
             status: null, // status code from lookup | null | undefined;
         },
     };

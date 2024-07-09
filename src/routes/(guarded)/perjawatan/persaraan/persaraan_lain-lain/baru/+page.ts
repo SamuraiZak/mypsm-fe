@@ -13,7 +13,7 @@ export async function load() {
     const employeeListFilter = {
         employeeNumber: null,
         name: null,
-        identityCardNumber: null,
+        identityDocumentNumber: null,
         applicationDate: null,
     };
 

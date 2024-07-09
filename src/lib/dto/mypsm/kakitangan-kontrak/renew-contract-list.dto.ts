@@ -1,7 +1,9 @@
 export interface RenewContractListDTO {
     dataType:     number;
-    identityCard?: string | null | undefined;
+    identityDocumentNumber?: string | null | undefined;
+    name?: string | null | undefined;
     temporaryId?:  string | null | undefined;
+    status?:  string | null | undefined;
 }
 
 // Converts JSON strings to/from your types

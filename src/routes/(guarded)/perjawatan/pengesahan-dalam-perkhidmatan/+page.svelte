@@ -228,7 +228,7 @@
                             <FilterTextField
                                 label="No. Kad Pengenalan"
                                 bind:inputValue={confirmationListTable.param
-                                    .filter.identityCard}
+                                    .filter.identityDocumentNumber}
                             ></FilterTextField>
                             <FilterSelectField
                                 label="Status"
@@ -272,7 +272,7 @@
                                     <FilterTextField
                                         label="No. Kad Pengenalan"
                                         bind:inputValue={confirmationExceedsThreeYearsListTable
-                                            .param.filter.identityCard}
+                                            .param.filter.identityDocumentNumber}
                                     ></FilterTextField>
                                     <FilterSelectField
                                         label="Status"
@@ -320,7 +320,7 @@
                                 <FilterTextField
                                     label="No. Kad Pengenalan"
                                     bind:inputValue={confirmationRationalisationListTable
-                                        .param.filter.identityCard}
+                                        .param.filter.identityDocumentNumber}
                                 ></FilterTextField>
                                 <FilterSelectField
                                     label="Status"

@@ -23,7 +23,7 @@ export const _fundApplicationIDschema = z.object({
 export const _fundApplicationResponseSchema = z.object({
     id: z.number().readonly(),
     employeeName: shortTextSchema,
-    employeeIdentityNumber: shortTextSchema,
+    identityDocumentNumber: shortTextSchema,
     courseApplicationDate: dateSchema,
     courseName: shortTextSchema,
     academicLevel: shortTextSchema,
@@ -45,8 +45,12 @@ export const _fundApplicationDetailResponseSchema = z.object({
     courseApplicationDate: dateStringSchema,
     entryDateToInstituition: dateStringSchema,
     expectedFinishedStudyDate: dateStringSchema,
-    educationTypeId: numberIdSchema,
-    applicationTypeId: numberIdSchema,
+    educationTypeId: z
+        .array(z.number())
+        .min(1, { message: 'Sila pilih pilihan anda.' }),
+    applicationTypeId: z
+        .array(z.number())
+        .min(1, { message: 'Sila pilih pilihan anda.' }),
 });
 
 export const _createFundApplicationRequestSchema =
@@ -62,7 +66,7 @@ export const _fundApplicationPersonalInfoResponseSchema = z
     .object({
         employeeNo: z.string(),
         name: shortTextSchema,
-        identityCard: shortTextSchema,
+        identityDocumentNumber: shortTextSchema,
         identityCardColor: codeSchema,
         dateOfBirth: dateStringSchema,
         placeOfBirth: codeSchema,
@@ -154,5 +158,6 @@ export const _fundApplicationUploadDocSchema = z.object({
     documents: z
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
         .refine((f) => f.size < 10_000_000, 'Maximum 10 MB saiz muat naik.')
-        .array().min(1, {message: "Dokumen berkenaan hendaklah dimuat naik."}),
+        .array()
+        .min(1, { message: 'Dokumen berkenaan hendaklah dimuat naik.' }),
 });

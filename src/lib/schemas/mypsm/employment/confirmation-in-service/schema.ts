@@ -19,7 +19,7 @@ export const _confirmationListSchema = z.object({
     id: z.number().readonly(),
     employeeNo: z.string().readonly(),
     employeeName: z.string().readonly(),
-    identityCardNo: z.string().readonly(),
+    identityDocumentNumber: z.string().readonly(),
     positionByBoard: z.string().readonly(),
     employedDate: z.string().readonly(),
     currentPosition: z.string().readonly(),

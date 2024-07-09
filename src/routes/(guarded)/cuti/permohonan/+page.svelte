@@ -95,6 +95,21 @@
                 }}
             >
                 <FilterWrapper slot="filter">
+                    <FilterTextField
+                        label="No. Pekerja"
+                        bind:inputValue={leaveEntitlementTable.param.filter
+                            .employeeNumber}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="Nama Kakitangan"
+                        bind:inputValue={leaveEntitlementTable.param.filter
+                            .name}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={leaveEntitlementTable.param.filter
+                            .identityDocumentNumber}
+                    ></FilterTextField>
                     <FilterNumberField
                         label="Tahun"
                         bind:inputValue={leaveEntitlementTable.param.filter

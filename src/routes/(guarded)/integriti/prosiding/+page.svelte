@@ -164,7 +164,7 @@
                             <FilterTextField
                                 label="No. Kad Pengenalan"
                                 bind:inputValue={chargeListTable.param.filter
-                                    .identityCardNumber}
+                                    .identityDocumentNumber}
                             ></FilterTextField>
                             <FilterSelectField
                                 label="Status"
@@ -202,7 +202,7 @@
                             <FilterTextField
                                 label="No. Kad Pengenalan"
                                 bind:inputValue={suspendListTable.param.filter
-                                    .identityCardNumber}
+                                    .identityDocumentNumber}
                             ></FilterTextField>
                             <FilterSelectField
                                 label="Status"
@@ -251,7 +251,7 @@
                                 <FilterTextField
                                     label="No. Kad Pengenalan"
                                     bind:inputValue={chargeListTable.param
-                                        .filter.identityCardNumber}
+                                        .filter.identityDocumentNumber}
                                 ></FilterTextField>
                                 <FilterSelectField
                                     label="Status"
@@ -299,7 +299,7 @@
                                     <FilterTextField
                                         label="No. Kad Pengenalan"
                                         bind:inputValue={suspendListTable.param
-                                            .filter.identityCardNumber}
+                                            .filter.identityDocumentNumber}
                                     ></FilterTextField>
                                     <FilterSelectField
                                         label="Status"

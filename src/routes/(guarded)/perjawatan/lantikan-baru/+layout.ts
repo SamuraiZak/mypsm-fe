@@ -45,7 +45,7 @@ export const load = async () => {
         orderType: 1,
         filter: {
             dataType: 0, // 0: New | 1: Other | null
-            identityCard: null, //string | null | undefined;
+            identityDocumentNumber: null, //string | null | undefined;
             temporaryId: null, //string | null | undefined;
             status: null, // status code from lookup | null | undefined;
         },
@@ -59,7 +59,7 @@ export const load = async () => {
         orderType: 1,
         filter: {
             dataType: 1, // 0: New | 1: Other | null
-            identityCard: null, //string | null | undefined;
+            identityDocumentNumber: null, //string | null | undefined;
             temporaryId: null, //string | null | undefined;
             status: null, // status code from lookup | null | undefined;
         },
@@ -73,7 +73,7 @@ export const load = async () => {
         orderType: 1,
         filter: {
             dataType: null, // 0: New | 1: Other | null
-            identityCard: null, //string | null | undefined;
+            identityDocumentNumber: null, //string | null | undefined;
             temporaryId: null, //string | null | undefined;
             status: null, // status code from lookup | null | undefined;
         },

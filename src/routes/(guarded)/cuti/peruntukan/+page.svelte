@@ -46,8 +46,7 @@
     class="flex h-full max-h-full w-full flex-col overflow-y-hidden bg-ios-basic-lightBackgroundGray"
 >
     <section class="flex w-full flex-col items-start justify-start">
-        <ContentHeader title="Peruntukan Cuti"
-        ></ContentHeader>
+        <ContentHeader title="Peruntukan Cuti"></ContentHeader>
     </section>
     <div
         class="flex h-full max-h-full w-full flex-col justify-start gap-2 overflow-y-auto bg-ios-basic-white px-10 py-4"
@@ -58,6 +57,21 @@
                 bind:tableData={leaveEntitlementTable}
             >
                 <FilterWrapper slot="filter">
+                    <FilterTextField
+                        label="No. Pekerja"
+                        bind:inputValue={leaveEntitlementTable.param.filter
+                            .employeeNumber}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="Nama Kakitangan"
+                        bind:inputValue={leaveEntitlementTable.param.filter
+                            .name}
+                    ></FilterTextField>
+                    <FilterTextField
+                        label="No. Kad Pengenalan"
+                        bind:inputValue={leaveEntitlementTable.param.filter
+                            .identityDocumentNumber}
+                    ></FilterTextField>
                     <FilterNumberField
                         label="Tahun"
                         bind:inputValue={leaveEntitlementTable.param.filter

@@ -35,7 +35,7 @@
         hiddenColumn: ['id'],
         dictionary: [
             {
-                english: 'employeeIdentityNumber',
+                english: 'identityDocumentNumber',
                 malay: 'No. Kad Pengenalan',
             },
             {

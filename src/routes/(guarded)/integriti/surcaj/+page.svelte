@@ -297,7 +297,7 @@
                     />
                     <FilterTextField
                         label="No. Kad Pengenalan"
-                        bind:inputValue={surcajtable.param.filter.identityCardNumber}
+                        bind:inputValue={surcajtable.param.filter.identityDocumentNumber}
                     />
                     <FilterDateField
                         label="Tarikh Permohonan"
@@ -375,7 +375,7 @@
                 />
                 <FilterTextField
                     label="No. Kad Pengenalan"
-                    bind:inputValue={directorSurcajtable.param.filter.identityCardNumber}
+                    bind:inputValue={directorSurcajtable.param.filter.identityDocumentNumber}
                 />
                 <FilterTextField
                     label="Tarikh Permohonan"
@@ -437,7 +437,7 @@
             />
             <FilterTextField
                 label="No. Kad Pengenalan"
-                bind:inputValue={employeeSurcajtable.param.filter.identityCardNumber}
+                bind:inputValue={employeeSurcajtable.param.filter.identityDocumentNumber}
             />
             <FilterTextField
                 label="Tarikh Permohonan"

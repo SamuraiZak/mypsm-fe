@@ -1,36 +1,37 @@
-import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
-import { UserRoleConstant } from "$lib/constants/core/user-role.constant";
-import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
-import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
-import { retirementServices } from "$lib/services/implementation/mypsm/perjawatan/retirement.service";
-import { LoanServices } from "$lib/services/implementation/mypsm/pinjaman/loan.service";
-
+import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
+import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
+import { retirementServices } from '$lib/services/implementation/mypsm/perjawatan/retirement.service';
+import { LoanServices } from '$lib/services/implementation/mypsm/pinjaman/loan.service';
 
 export const load = async () => {
-
     // =============================
     // set mode
     // =============================
 
-    let userMode: string = "kakitangan";
+    let userMode: string = 'kakitangan';
 
-    const currentRoleCode: string = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode) ?? "";
+    const currentRoleCode: string =
+        localStorage.getItem(LocalStorageKeyConstant.currentRoleCode) ?? '';
 
     switch (currentRoleCode) {
         case UserRoleConstant.kakitangan.code:
-            userMode = "kakitangan"
+            userMode = 'kakitangan';
             break;
 
         case UserRoleConstant.pelulus.code:
-            userMode = "pelulus";
+            userMode = 'pelulus';
             break;
 
         case UserRoleConstant.ketuaSeksyen.code:
-            userMode = "ketua Seksyen";
+            userMode = 'ketua Seksyen';
             break;
 
         case UserRoleConstant.urusSetiaPentadbiran.code:
-            userMode = "urusetia";
+            userMode = 'urusetia';
             break;
 
         default:
@@ -44,13 +45,13 @@ export const load = async () => {
         orderType: null,
         filter: {
             dataType: 1,
-            staffName: "",
-            staffNo: "",
-            identityCard: "",
+            staffName: '',
+            staffNo: '',
+            identityCard: '',
             applicationDate: null,
-            grade: "",
-            position: "",
-            status: "" // status code from lookup | null | undefined;
+            grade: '',
+            position: '',
+            status: '', // status code from lookup | null | undefined;
         },
     };
 
@@ -63,16 +64,25 @@ export const load = async () => {
     let unspecifyViewResponse: CommonResponseDTO = {};
     let unspecifyViewTable = [];
 
-
-    voluntaryViewResponse = await retirementServices.getVoluntaryListDetails(param);
+    voluntaryViewResponse =
+        await retirementServices.getVoluntaryListDetails(param);
     voluntaryViewTable = voluntaryViewResponse.data?.dataList ?? [];
 
     forceViewResponse = await retirementServices.getForceListDetails(param);
     forceViewTable = forceViewResponse.data?.dataList ?? [];
 
-    unspecifyViewResponse = await retirementServices.getUnspecifyListDetails(param);
+    unspecifyViewResponse =
+        await retirementServices.getUnspecifyListDetails(param);
     unspecifyViewTable = unspecifyViewResponse.data?.dataList ?? [];
 
+    // ==========================================================================
+    // Get Lookup Functions
+    // ==========================================================================
+    const statusLookupResponse: CommonResponseDTO =
+        await LookupServices.getStatusEnums();
+
+    const statusLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsInString(statusLookupResponse);
     return {
         param,
         voluntaryViewResponse,
@@ -81,13 +91,16 @@ export const load = async () => {
         forceViewTable,
         unspecifyViewResponse,
         unspecifyViewTable,
-        userMode
-    }
-
+        userMode,
+        selectionOptions: {
+            statusLookup,
+        },
+    };
 };
 
 export async function _updatevoluntaryTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await retirementServices.getVoluntaryListDetails(param);
+    const response: CommonResponseDTO =
+        await retirementServices.getVoluntaryListDetails(param);
     return {
         props: {
             param,
@@ -97,7 +110,8 @@ export async function _updatevoluntaryTable(param: CommonListRequestDTO) {
 }
 
 export async function _updateForceTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await retirementServices.getForceListDetails(param);
+    const response: CommonResponseDTO =
+        await retirementServices.getForceListDetails(param);
     return {
         props: {
             param,
@@ -107,7 +121,8 @@ export async function _updateForceTable(param: CommonListRequestDTO) {
 }
 
 export async function _updateUnspecifyTable(param: CommonListRequestDTO) {
-    const response: CommonResponseDTO = await retirementServices.getUnspecifyListDetails(param);
+    const response: CommonResponseDTO =
+        await retirementServices.getUnspecifyListDetails(param);
     return {
         props: {
             param,
@@ -115,4 +130,3 @@ export async function _updateUnspecifyTable(param: CommonListRequestDTO) {
         },
     };
 }
-
