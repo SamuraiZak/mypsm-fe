@@ -1144,6 +1144,16 @@
                                     .fundApplicationStateUnitDirectorApprovalResponse
                                     .data?.details.status}
                             ></CustomSelectField>
+                            <CustomTextField
+                                disabled
+                                id="approvalDate"
+                                label="Tarikh Kelulusan"
+                                type="date"
+                                placeholder="-"
+                                val={data.responses
+                                    .fundApplicationStateUnitDirectorApprovalResponse
+                                    .data?.details.approvalDate}
+                            ></CustomTextField>
                         {:else if $fundApplicationIsFail}
                             <StepperFailStatement />
                         {:else}
@@ -1173,6 +1183,16 @@
                                     .fundApplicationIntegritySecretaryApprovalResponse
                                     .data?.details.status}
                             ></CustomSelectField>
+                            <CustomTextField
+                                disabled
+                                id="approvalDate"
+                                label="Tarikh Kelulusan"
+                                type="date"
+                                placeholder="-"
+                                val={data.responses
+                                    .fundApplicationIntegritySecretaryApprovalResponse
+                                    .data?.details.approvalDate}
+                            ></CustomTextField>
                         {:else if $fundApplicationIsFail}
                             <StepperFailStatement />
                         {:else}
@@ -1202,6 +1222,16 @@
                                     .fundApplicationCourseSecretaryApprovalResponse
                                     .data?.details.status}
                             ></CustomSelectField>
+                            <CustomTextField
+                                disabled
+                                id="approvalDate"
+                                label="Tarikh Kelulusan"
+                                type="date"
+                                placeholder="-"
+                                val={data.responses
+                                    .fundApplicationCourseSecretaryApprovalResponse
+                                    .data?.details.approvalDate}
+                            ></CustomTextField>
                         {:else if $fundApplicationIsFail}
                             <StepperFailStatement />
                         {:else}

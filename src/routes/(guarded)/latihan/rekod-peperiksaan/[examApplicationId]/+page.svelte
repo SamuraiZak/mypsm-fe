@@ -868,6 +868,14 @@
                         bind:val={$secretaryApprovalInfoForm.status}
                         options={certifyOptions}
                     ></CustomRadioBoolean>
+                    <CustomTextField
+                        disabled
+                        id="approvalDate"
+                        label="Tarikh Kelulusan"
+                        type="date"
+                        placeholder="-"
+                        bind:val={$secretaryApprovalInfoForm.approvalDate}
+                    ></CustomTextField>
                 {:else}
                     <StepperOtherRolesResult />
                 {/if}
