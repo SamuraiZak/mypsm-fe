@@ -78,7 +78,7 @@
             ><FilterWrapper slot="filter">
                 <FilterTextField
                     label="Nama Pemohon"
-                    bind:inputValue={quartersTable.param.filter.employeeName}
+                    bind:inputValue={quartersTable.param.filter.name}
                 />
                 <FilterTextField
                     label="No. Pekerja"

@@ -610,6 +610,11 @@
                         icon="check"
                         form="moveOutForm"
                     />
+                    <TextIconButton
+                    label="Hantar"
+                    icon="check"
+                    form="moveOutForm"
+                />
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
@@ -735,6 +740,15 @@
                             >Muat turun dan isi salinan borang di bawah dan muat
                             naik pada ruangan yang disediakan.</span
                         >
+                        <span
+                        >1. Sijil akuan Keluar Rumah.</span
+                    >
+                    <span
+                        >2. Borang Pemeriksaan Keluar Rumah.</span
+                    >
+                    <span
+                        >3. Gambar Dalam Rumah</span
+                    >
                         <a
                             href={data.quartersDeclarationLetter.document}
                             download="Borang Akuan Keluar Kuarters.pdf"
@@ -768,6 +782,11 @@
                             icon="check"
                             form="confirmationForm"
                         />
+                        <TextIconButton
+                        label="Hantar"
+                        icon="check"
+                        form="confirmationForm"
+                    />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -803,6 +822,11 @@
                             icon="check"
                             form="secretaryApproval"
                         />
+                        <TextIconButton
+                        label="Hantar"
+                        icon="check"
+                        form="secretaryApproval"
+                    />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -1005,6 +1029,11 @@
                     {#if !submitDirectorApproval && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
                         <TextIconButton
                             label="Simpan"
+                            icon="check"
+                            form="directorApprovalForm"
+                        />
+                        <TextIconButton
+                            label="Hantar"
                             icon="check"
                             form="directorApprovalForm"
                         />

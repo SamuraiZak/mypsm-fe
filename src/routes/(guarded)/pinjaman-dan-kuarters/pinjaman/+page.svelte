@@ -173,7 +173,7 @@
                 <FilterTextField
                     label="Nama"
                     bind:inputValue={loanListTable.param.filter
-                        .employeeName}
+                        .name}
                 />
                 <FilterTextField
                     label="Jenis Pinjaman"
@@ -187,7 +187,7 @@
                 <FilterTextField
                     label="No Pekerja"
                     bind:inputValue={loanListTable.param.filter
-                        .employeeNumber}
+                        .name}
                 />
                 <FilterTextField
                     label="Status"

@@ -244,6 +244,11 @@
                             icon="check"
                             form="secretaryApprovalForm"
                         />
+                        <TextIconButton
+                            label="Hantar"
+                            icon="check"
+                            form="secretaryApprovalForm"
+                        />
                     {/if}
                 </ContentHeader>
                 <form
@@ -285,6 +290,11 @@
             >
                 {#if !submitSuccess}
                     <div class="flex w-full justify-end">
+                        <TextIconButton
+                            label="Simpan"
+                            icon="check"
+                            form="paymentForm"
+                        />
                         <TextIconButton
                             label="Hantar"
                             icon="check"
