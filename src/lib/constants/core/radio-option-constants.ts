@@ -32,6 +32,17 @@ export const approveOptions: RadioDTO[] = [
     },
 ];
 
+export const eligibleOptions: RadioDTO[] = [
+    {
+        value: true,
+        name: 'LAYAK',
+    },
+    {
+        value: false,
+        name: 'TIDAK LAYAK',
+    },
+];
+
 export const supportOptions: RadioDTO[] = [
     {
         value: true,

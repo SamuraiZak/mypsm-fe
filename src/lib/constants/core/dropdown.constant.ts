@@ -74,4 +74,9 @@ export const successBooleanOption: DropdownDTO[] = [
 export const dropdownCommonOption: DropdownDTO[] = [
     { value: true, name: 'Ya' },
     { value: false, name: 'Tidak' },
-];
+]; 
+
+export const integrityDropdown: DropdownDTO[] = [
+    { value: true, name: 'Bebas' },
+    { value: false, name: 'Tidak Bebas' },
+]; 

@@ -106,7 +106,7 @@
                         label="Nama Kakitangan"
                     ></FilterTextField>
                     <FilterTextField
-                        bind:inputValue={table.param.filter.identityCard}
+                        bind:inputValue={table.param.filter.identityDocumentNumber}
                         label="No. Kad Pengenalan"
                     ></FilterTextField>
                     <FilterTextField

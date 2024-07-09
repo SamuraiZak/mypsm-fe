@@ -610,6 +610,11 @@
                     type="primary"
                     form="newOfferMeetingDetailForm"
                 />
+                <TextIconButton
+                    label="Hantar"
+                    type="primary"
+                    form="newOfferMeetingDetailForm"
+                />
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
@@ -694,6 +699,11 @@
                 {#if !$isReadOnlyNewOfferProcess && data.roles.isEmploymentSecretaryRole}
                     <TextIconButton
                         label="Simpan"
+                        type="primary"
+                        form="newOfferServiceDetailForm"
+                    />
+                    <TextIconButton
+                        label="Hantar"
                         type="primary"
                         form="newOfferServiceDetailForm"
                     />
@@ -1133,6 +1143,11 @@
                             type="primary"
                             form="newOfferSetSupporterApproverDetailForm"
                         />
+                        <TextIconButton
+                        label="Hantar"
+                        type="primary"
+                        form="newOfferSetSupporterApproverDetailForm"
+                    />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -1174,12 +1189,22 @@
                                 label="Simpan"
                                 form="newOfferSupporterResultForm"
                             ></TextIconButton>
+                            <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="newOfferSupporterResultForm"
+                        ></TextIconButton>
                         {:else if !data.view.newOfferDetailView.approver.isReadonly && data.roles.isApproverRole}
                             <TextIconButton
                                 type="primary"
                                 label="Simpan"
                                 form="newOfferApproverResultForm"
                             ></TextIconButton>
+                            <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="newOfferApproverResultForm"
+                        ></TextIconButton>
                         {/if}
                     </StepperContentHeader>
                     <StepperContentBody>

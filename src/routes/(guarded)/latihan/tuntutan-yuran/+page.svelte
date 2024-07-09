@@ -111,7 +111,7 @@
                 <FilterTextField
                     label="Nama Pekerja"
                     bind:inputValue={fundReimbursementTable.param.filter
-                        .employeeName}
+                        .name}
                 ></FilterTextField>
                 <FilterNumberField
                     label="Jumlah Tuntutan"

@@ -743,6 +743,7 @@
                     method="POST"
                     use:PTBPensionInfoEnhance
                 >
+                <!-- nullabale -->
                     <CustomTextField
                         disabled={currentRoleCode !== urusetia ||
                             data.pensionDetail !== null}
@@ -818,8 +819,18 @@
                         label="Simpan"
                         form="assignRolesRelatedDetail"
                     >
+                    
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
+                    <TextIconButton
+                    type="primary"
+                    label="Hantar"
+                    form="assignRolesRelatedDetail"
+                >
+                
+                    <SvgCheck></SvgCheck>
+                </TextIconButton>
+                    
                     {/if}
                 </StepperContentHeader>
                 <form
@@ -976,6 +987,13 @@
                     >
                         <SvgCheck></SvgCheck>
                     </TextIconButton>
+                    <TextIconButton
+                    type="primary"
+                    label="Hantar"
+                    form="supporterDetail"
+                >
+                    <SvgCheck></SvgCheck>
+                </TextIconButton>
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -1039,6 +1057,12 @@
                 {#if data.approveDetail == null}
                     <TextIconButton
                         label="simpan"
+                        type="primary"
+                        icon="check"
+                        form="approverDetail"
+                    ></TextIconButton>
+                    <TextIconButton
+                        label="Hantar"
                         type="primary"
                         icon="check"
                         form="approverDetail"
