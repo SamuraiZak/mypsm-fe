@@ -2971,6 +2971,15 @@
                                 label={'Keputusan'}
                                 bind:val={$secretaryApprovalInfoForm.status}
                             ></CustomRadioBoolean>
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="approvalDate"
+                                label="Tarikh Kelulusan"
+                                type="date"
+                                placeholder="-"
+                                val={$secretaryApprovalInfoForm.approvalDate}
+                            ></CustomTextField>
                         </form>
                     {/if}
                 </StepperContentBody>
@@ -3127,6 +3136,16 @@
                                     bind:val={data.newHireFullDetailView
                                         .supporter.status}
                                 ></CustomSelectField>
+                                <CustomTextField
+                                    disabled
+                                    isRequired={false}
+                                    id="approvalDate"
+                                    label="Tarikh Kelulusan"
+                                    type="date"
+                                    placeholder="-"
+                                    bind:val={data.newHireFullDetailView
+                                        .supporter.approvalDate}
+                                ></CustomTextField>
                             {:else if !$newHireSecretaryApprovalIsApproved}
                                 <StepperFailStatement />
                             {:else}
@@ -3155,6 +3174,16 @@
                                     bind:val={data.newHireFullDetailView
                                         .approver.status}
                                 ></CustomSelectField>
+                                <CustomTextField
+                                    disabled
+                                    isRequired={false}
+                                    id="approvalDate"
+                                    label="Tarikh Kelulusan"
+                                    type="date"
+                                    placeholder="-"
+                                    bind:val={data.newHireFullDetailView
+                                        .approver.approvalDate}
+                                ></CustomTextField>
                             {:else if !$newHireSecretaryApprovalIsApproved || !newHireSupporterApprovalIsApproved}
                                 <StepperFailStatement />
                             {:else}
