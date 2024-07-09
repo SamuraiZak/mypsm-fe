@@ -2,13 +2,14 @@
     export let fontSize: string = '';
     export let fontWeight: string = '';
     export let title: string = 'Page Title';
+    export let headerColor: string = 'bg-ios-systemColors-systemCyan-light';
 </script>
 
 <div
     class="w-full flex flex-col h-fit border bg-ios-basic-white"
 >
     <div
-        class="flex h-10 min-h-10 w-full items-center bg-ios-systemColors-systemCyan-light justify-start px-2"
+        class="flex h-10 min-h-10 w-full items-center {headerColor} justify-start px-2"
     >
         <span
             class="
