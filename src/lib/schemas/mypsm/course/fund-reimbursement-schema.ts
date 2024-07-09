@@ -163,7 +163,7 @@ export const _fundReimbursementApprovalSchema = z.object({
     id: numberIdSchema,
     remark: shortTextSchema,
     status: booleanSchema,
-    approvalDate: z.string(),
+    approvalDate: z.string().readonly(),
 });
 
 // ==================================================
