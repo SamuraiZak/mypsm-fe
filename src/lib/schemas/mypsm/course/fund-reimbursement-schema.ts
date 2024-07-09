@@ -163,6 +163,7 @@ export const _fundReimbursementApprovalSchema = z.object({
     id: numberIdSchema,
     remark: shortTextSchema,
     status: booleanSchema,
+    approvalDate: z.string(),
 });
 
 // ==================================================
@@ -176,5 +177,6 @@ export const _fundReimbursementUploadDocSchema = z.object({
     documents: z
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
         .refine((f) => f.size < 10_000_000, 'Maximum 10 MB saiz muat naik.')
-        .array().min(1, {message: "Dokumen berkenaan hendaklah dimuat naik."}),
+        .array()
+        .min(1, { message: 'Dokumen berkenaan hendaklah dimuat naik.' }),
 });
