@@ -175,6 +175,7 @@ export const _examApplicationApprovalSchema = z.object({
     id: numberIdSchema,
     remark: codeSchema,
     status: booleanSchema,
+    isDraft: z.boolean().default(false),
     approvalDate: z.string().readonly(),
 });
 
@@ -186,6 +187,7 @@ export const _examApplicationResultResponseSchema = z.object({
     examTitle: shortTextSchema,
     examRemark: shortTextSchema,
     examResult: requiredTextSchema,
+    isDraft: z.boolean().default(false),
 });
 
 export const _examApplicationResultRequestSchema =
