@@ -35,7 +35,7 @@
                 >
                     <label
                         for={id}
-                        class="text-system-midnightBlue w-full text-wrap text-start text-md font-medium leading-tight"
+                        class="text-system-midnightBlue w-full text-wrap text-start text-md font-normal leading-tight"
                         >{label}
                         {#if required}
                             <span class="text text-red-600">*</span>
@@ -44,7 +44,7 @@
 
                     {#if subLabel != ''}
                         <p
-                            class="w-full text-wrap text-base font-medium text-gray-700"
+                            class="w-full text-wrap text-base font-normal text-gray-700"
                         >
                             {subLabel}
                         </p>
