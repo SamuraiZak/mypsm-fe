@@ -988,7 +988,7 @@
             <StepperContentHeader title="Lanjutan Percubaan Perkhidmatan">
                 <TextIconButton
                     type="primary"
-                    label="Simpan"
+                    label="Hantar"
                     form="contractContinuationDetailForm"
                 ></TextIconButton>
             </StepperContentHeader>
@@ -1042,25 +1042,25 @@
             {#if !data.view.confirmationInServiceView.secretary.isReadonly && data.roles.isEmploymentSecretaryRole}
                 <TextIconButton
                     type="primary"
-                    label="Simpan"
+                    label="Hantar"
                     form="employmentSecretaryDetailForm"
                 ></TextIconButton>
             {:else if !data.view.confirmationInServiceView.division.isReadonly && data.roles.isStateDirectorRole && !$isTypeConfirmationExceedsThreeYears}
                 <TextIconButton
                     type="primary"
-                    label="Simpan"
+                    label="Hantar"
                     form="divisionDirectorDetaiForm"
                 ></TextIconButton>
             {:else if !data.view.confirmationInServiceView.integrity.isReadonly && data.roles.isIntegrityDirectorRole && !$isTypeConfirmationExceedsThreeYears}
                 <TextIconButton
                     type="primary"
-                    label="Simpan"
+                    label="Hantar"
                     form="integrityDirectorDetailForm"
                 ></TextIconButton>
             {:else if !data.view.confirmationInServiceView.audit.isReadonly && data.roles.isAuditDirectorRole && !$isTypeConfirmationExceedsThreeYears}
                 <TextIconButton
                     type="primary"
-                    label="Simpan"
+                    label="Hantar"
                     form="auditDirectorDetailForm"
                 ></TextIconButton>
             {/if}
@@ -1335,7 +1335,7 @@
                 {#if !data.view.confirmationInServiceView.meeting.isReadonly && data.roles.isEmploymentSecretaryRole}
                     <TextIconButton
                         type="primary"
-                        label="Simpan"
+                        label="Hantar"
                         form="confirmationMeetingDetailForm"
                     ></TextIconButton>
                 {/if}
