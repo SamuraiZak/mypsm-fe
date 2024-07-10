@@ -28,6 +28,7 @@
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import { Toaster } from 'svelte-french-toast';
     import Alert from 'flowbite-svelte/Alert.svelte';
+    import { Accordion, AccordionItem } from 'flowbite-svelte';
 
     export let data: PageData;
 
@@ -157,21 +158,27 @@
             <StepperContentHeader title="Maklumat Rawatan"
             ></StepperContentHeader>
             <StepperContentBody>
-                <CustomTextField
-                    label="Nama Diagnosis"
-                    id="dignosis"
-                    disabled
-                    isRequired={false}
-                    val="Demam"
-                    />
-                <CustomTextField
-                    label="Ubat-ubatan"
-                    id="medicine"
-                    disabled
-                    isRequired={false}
-                    val="Panadol"
-                    />
-
+                <Accordion class="flex w-full flex-col">
+                    <AccordionItem>
+                        <span class="text-[12px] text-ios-activeColors-activeBlue-dark" slot="header">
+                            Tuntutan 1
+                        </span>
+                        <CustomTextField
+                            label="Nama Kakitangan"
+                            id="dignosis"
+                            disabled
+                            isRequired={false}
+                            val="Ali bin Abu"
+                        />
+                        <CustomTextField
+                            label="No. Kad Pengenalan"
+                            id="identityDocumentNumber"
+                            disabled
+                            isRequired={false}
+                            val="871113137712"
+                        />
+                    </AccordionItem>
+                </Accordion>
             </StepperContentBody>
         </StepperContent>
 
@@ -214,7 +221,7 @@
                     label="Jumlah (RM)"
                     disabled
                     id="total"
-                    val={data.claimDetail.detail?.total}
+                    val={data.claimDetail?.detail?.total}
                 />
             </StepperContentBody>
         </StepperContent>
@@ -224,15 +231,15 @@
             ></StepperContentHeader>
             <StepperContentBody>
                 <div class="flex w-full flex-col justify-start gap-2.5 p-3">
-                    {#if data.claimDetail?.download !== undefined}
-                    {#each data.claimDetail?.download as docs, i}
-                        <a
-                            href={docs?.document}
-                            download={docs?.name}
-                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                            >{docs?.name}</a
-                        >
-                    {/each}
+                    {#if data.claimDetail?.download !== undefined && data.claimDetail?.download !== null}
+                        {#each data.claimDetail?.download as docs, i}
+                            <a
+                                href={docs?.document}
+                                download={docs?.name}
+                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                >{docs?.name}</a
+                            >
+                        {/each}
                     {/if}
                 </div>
             </StepperContentBody>
@@ -370,7 +377,7 @@
                             label="Keputusan"
                             id="status"
                             disabled={supporterApproved}
-                            options={[{value: true, name: "SOKONG"}]}
+                            options={[{ value: true, name: 'SOKONG' }]}
                             bind:val={$supporterApprovalForm.status}
                         />
                     </form>
@@ -416,7 +423,7 @@
                             label="Keputusan"
                             id="status"
                             disabled={approverApproved}
-                            options={[{value: true, name: "LULUS"}]}
+                            options={[{ value: true, name: 'LULUS' }]}
                             bind:val={$approverApprovalForm.status}
                         />
                     </form>

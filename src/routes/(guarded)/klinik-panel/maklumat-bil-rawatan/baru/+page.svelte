@@ -80,7 +80,10 @@
                     placementId: $singlePatientForm.placementId,
                     date: $singlePatientForm.date,
                 };
-                $patientForm.patientList = [tempPatient, ...$patientForm.patientList];
+                $patientForm.patientList = [
+                    tempPatient,
+                    ...$patientForm.patientList,
+                ];
                 $treatmentForm.patientList[patientIndex] = {
                     patientName: $singlePatientForm.name,
                     treatmentList: [],
@@ -132,7 +135,7 @@
                 $singleTreatmentForm,
                 zod(_treatmentSchema),
             );
-            
+
             if (form.valid) {
                 let temptTreatment: TreatmentDetailList = {
                     description: $singleTreatmentForm.description,
@@ -188,9 +191,9 @@
             $singlePatientForm.identityDocumentCard =
                 employeeDetail.identityCardNumber;
         } else {
-            $singlePatientForm.name = "";
+            $singlePatientForm.name = '';
             $singlePatientForm.relationshipId = 0;
-            $singlePatientForm.identityDocumentCard = "";
+            $singlePatientForm.identityDocumentCard = '';
         }
     }
 </script>
@@ -215,56 +218,60 @@
             <StepperContentHeader title="Maklumat Kakitangan">
                 {#if !isSelected}
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         icon="check"
                         onClick={() => (isSelected = true)}
                     />
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <CustomSelectField
-                    label="Nama"
-                    id="fullname"
-                    disabled={isSelected}
-                    options={data.lookup.employeeList}
-                    bind:val={selectedEmployee}
-                    onValueChange={() => searchEmployee()}
-                />
-                <CustomTextField
-                    label="No. Pekerja"
-                    id="employeeNumber"
-                    placeholder=""
-                    disabled
-                    bind:val={employeeDetail.employeeNumber}
-                />
-                <CustomTextField
-                    label="No. Kad Pengenalan"
-                    id="identityCardNumber"
-                    placeholder=""
-                    disabled
-                    bind:val={employeeDetail.identityCardNumber}
-                />
-                <CustomTextField
-                    label="Gred"
-                    id="grade"
-                    placeholder=""
-                    disabled
-                    bind:val={employeeDetail.grade}
-                />
-                <CustomTextField
-                    label="Penempatan"
-                    id="placement"
-                    placeholder=""
-                    disabled
-                    bind:val={employeeDetail.placement}
-                />
-                <CustomTextField
-                    label="Kumpulan"
-                    id="serviceGroup"
-                    placeholder=""
-                    disabled
-                    bind:val={employeeDetail.serviceGroup}
-                />
+                <div class="flex w-full px-2 pb-10">
+                    <div class="flex w-1/2 flex-col justify-start gap-2.5">
+                        <CustomSelectField
+                            label="Nama"
+                            id="fullname"
+                            disabled={isSelected}
+                            options={data.lookup.employeeList}
+                            bind:val={selectedEmployee}
+                            onValueChange={() => searchEmployee()}
+                        />
+                        <CustomTextField
+                            label="No. Pekerja"
+                            id="employeeNumber"
+                            placeholder=""
+                            disabled
+                            bind:val={employeeDetail.employeeNumber}
+                        />
+                        <CustomTextField
+                            label="No. Kad Pengenalan"
+                            id="identityCardNumber"
+                            placeholder=""
+                            disabled
+                            bind:val={employeeDetail.identityCardNumber}
+                        />
+                        <CustomTextField
+                            label="Gred"
+                            id="grade"
+                            placeholder=""
+                            disabled
+                            bind:val={employeeDetail.grade}
+                        />
+                        <CustomTextField
+                            label="Penempatan"
+                            id="placement"
+                            placeholder=""
+                            disabled
+                            bind:val={employeeDetail.placement}
+                        />
+                        <CustomTextField
+                            label="Kumpulan"
+                            id="serviceGroup"
+                            placeholder=""
+                            disabled
+                            bind:val={employeeDetail.serviceGroup}
+                        />
+                    </div>
+                </div>
             </StepperContentBody>
         </StepperContent>
 
@@ -293,7 +300,7 @@
             </StepperContentHeader>
             <StepperContentBody paddingClass="p-none">
                 {#if $patientForm.patientList.length < 1}
-                    <div class="flex w-full flex-col gap-10 p-3">
+                    <div class="flex w-full flex-col p-3">
                         <Alert color="blue">
                             <p>
                                 <span class="font-medium">Tiada Maklumat!</span>
@@ -302,8 +309,9 @@
                         </Alert>
                     </div>
                 {:else}
+                <div class="w-full flex flex-col pb-10">
                     <form
-                        class="flex w-full flex-col justify-start p-3"
+                        class="flex w-1/2 flex-col justify-start p-2"
                         method="POST"
                         use:patientEnhance
                         id="patientForm"
@@ -321,6 +329,7 @@
                                         label="Nama Pesakit"
                                         id="name"
                                         disabled
+                                        isRequired={false}
                                         bind:val={$patientForm.patientList[i]
                                             .name}
                                     />
@@ -328,6 +337,7 @@
                                         label="No. Kad Pengenalan"
                                         id="identityDocumentCard"
                                         disabled
+                                        isRequired={false}
                                         bind:val={$patientForm.patientList[i]
                                             .identityDocumentCard}
                                     />
@@ -335,6 +345,7 @@
                                         label="Hubungan"
                                         id="relationshipId"
                                         disabled
+                                        isRequired={false}
                                         options={data.lookup.relationshipLookup}
                                         bind:val={$patientForm.patientList[i]
                                             .relationshipId}
@@ -343,6 +354,7 @@
                                         label="Pejabat LKIM"
                                         id="placementId"
                                         disabled
+                                        isRequired={false}
                                         options={data.lookup.placementLookup}
                                         bind:val={$patientForm.patientList[i]
                                             .placementId}
@@ -352,6 +364,7 @@
                                         id="date"
                                         type="date"
                                         disabled
+                                        isRequired={false}
                                         bind:val={$patientForm.patientList[i]
                                             .date}
                                     />
@@ -359,6 +372,7 @@
                             {/each}
                         </Accordion>
                     </form>
+                </div>
                 {/if}
             </StepperContentBody>
         </StepperContent>
@@ -375,7 +389,7 @@
             </StepperContentHeader>
             <StepperContentBody paddingClass="p-none">
                 {#if $treatmentForm.patientList.length < 1}
-                    <div class="flex w-full flex-col gap-10 p-3">
+                    <div class="flex w-full flex-col p-3">
                         <Alert color="blue">
                             <p>
                                 <span class="font-medium">Tiada Maklumat!</span>
@@ -384,8 +398,9 @@
                         </Alert>
                     </div>
                 {:else if $treatmentForm.patientList.length > 0}
+                <div class="w-full flex flex-col pb-10">
                     <form
-                        class="flex w-full flex-col justify-start p-3"
+                        class="flex w-1/2 flex-col justify-start p-2"
                         method="POST"
                         use:treatmentEnhance
                         id="treatmentForm"
@@ -443,6 +458,7 @@
                             {/each}
                         </Accordion>
                     </form>
+                </div>
                 {/if}
             </StepperContentBody>
         </StepperContent>
@@ -457,8 +473,9 @@
         use:singlePatientEnhance
         method="POST"
     >
-        <Checkbox class="text-sm font-base text-ios-systemColors-systemGrey-light" bind:checked={patientIsEmployee}
-            >Pesakit ialah kakitangan</Checkbox
+        <Checkbox
+            class="font-base text-sm text-ios-systemColors-systemGrey-light"
+            bind:checked={patientIsEmployee}>Pesakit ialah kakitangan</Checkbox
         >
         <CustomTextField
             label="Nama Pesakit"
