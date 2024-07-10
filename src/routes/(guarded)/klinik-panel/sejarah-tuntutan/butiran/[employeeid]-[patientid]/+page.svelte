@@ -20,7 +20,7 @@
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Makluamt Rawatan">
+    <ContentHeader title="Maklumat Rawatan">
         <TextIconButton
             label="Kembali"
             type="neutral"

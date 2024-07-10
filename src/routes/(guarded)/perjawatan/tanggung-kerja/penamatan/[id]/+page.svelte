@@ -177,9 +177,10 @@
         <StepperContent>
             <StepperContentHeader title="Butiran Penanggungan Kerja" />
             <StepperContentBody>
-                <div
-                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
-                >
+                <div class="flex w-full items-start justify-start pb-10">
+                    <div
+                        class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
+                    >
                     <CustomSelectField
                         label="Gred"
                         id="grade"
@@ -248,15 +249,17 @@
                         val={data.terminationDetail?.applicationDetail?.reason}
                     />
                 </div>
+                </div>
             </StepperContentBody>
         </StepperContent>
 
         <StepperContent>
             <StepperContentHeader title="Pegawai Yang Menanggung Kerja" />
             <StepperContentBody>
-                <div
-                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
-                >
+                <div class="flex w-full items-start justify-start pb-10">
+                    <div
+                        class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
+                    >
                     <CustomTextField
                         label="Nama Pegawai"
                         id="name"
@@ -310,6 +313,7 @@
                         val={data.terminationDetail?.detail?.placement}
                     />
                 </div>
+                </div>
             </StepperContentBody>
         </StepperContent>
 
@@ -326,8 +330,9 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
+                <div class="flex w-full items-start justify-start pb-10">
                 <form
-                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
+                    class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
                     method="POST"
                     use:secretaryApprovalEnhance
                     id="secretaryApprovalForm"
@@ -336,6 +341,7 @@
                         <CustomTextField
                             label="Tindakan/Ulasan"
                             id="remark"
+                            isRequired={false}
                             disabled={submitSecretary}
                             bind:val={$secretaryApprovalForm.remark}
                             errors={$secretaryApprovalError.remark}
@@ -368,6 +374,7 @@
                         />
                     {/if}
                 </form>
+                </div>
             </StepperContentBody>
         </StepperContent>
 
@@ -528,8 +535,9 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
+                <div class="flex w-full items-start justify-start pb-10">
                 <form
-                    class="flex w-full flex-col justify-start gap-2.5 p-3"
+                    class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
                     method="POST"
                     id="suppAppForm"
                     use:suppAppEnhance
@@ -551,6 +559,7 @@
                         errors={$suppAppError.approver}
                     />
                 </form>
+                </div>
             </StepperContentBody>
         </StepperContent>
 
@@ -572,12 +581,13 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
+                <div class="flex w-full flex-col items-start justify-start pb-10">
                 <ContentHeader
                     title="Timbalan Ketua Seksyen"
                     borderClass="border-none"
                 />
                 <form
-                    class="flex w-full flex-col justify-start gap-2.5 p-3"
+                    class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
                     method="POST"
                     id="supporterApprovalForm"
                     use:supporterApprovalEnhance
@@ -598,6 +608,7 @@
                             <CustomTextField
                                 label="Nama"
                                 id="name"
+                                isRequired={false}
                                 disabled={submitSupporter}
                                 bind:val={$supporterApprovalForm.name}
                             />
@@ -605,6 +616,7 @@
                         <CustomTextField
                             label="Tindakan/Ulasan"
                             id="remark"
+                            isRequired={false}
                             disabled={submitSupporter}
                             bind:val={$supporterApprovalForm.remark}
                             errors={$supporterApprovalError.remark}
@@ -624,7 +636,7 @@
                     borderClass="border-none"
                 />
                 <form
-                    class="flex w-full flex-col justify-start gap-2.5 p-3"
+                    class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
                     method="POST"
                     id="approverApprovalForm"
                     use:approverApprovalEnhance
@@ -645,6 +657,7 @@
                             <CustomTextField
                                 label="Nama"
                                 id="name"
+                                isRequired={false}
                                 disabled={submitApprover}
                                 bind:val={$approverApprovalForm.name}
                             />
@@ -652,6 +665,7 @@
                         <CustomTextField
                             label="Tindakan/Ulasan"
                             id="remark"
+                            isRequired={false}
                             disabled={submitApprover}
                             bind:val={$approverApprovalForm.remark}
                             errors={$approverApprovalError.remark}
@@ -665,6 +679,7 @@
                         />
                     {/if}
                 </form>
+                </div>
             </StepperContentBody>
         </StepperContent>
     </Stepper>

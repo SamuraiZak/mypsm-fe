@@ -82,8 +82,9 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
+                <div class="w-full flex flex-col justify-start pb-10">
                 <form
-                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-12"
+                    class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
                     id="addNewInterimApplicationForm"
                     method="POST"
                     use:addNewInterimApplicationEnhance
@@ -147,6 +148,7 @@
                         errors={$addNewInterimApplicationError.reason}
                     />
                 </form>
+            </div>
             </StepperContentBody>
         </StepperContent>
 

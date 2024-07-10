@@ -35,7 +35,7 @@ export const _addNewInterimApplicationSchema = z.object({
 export const _addInterimApprovalSchema = z.object({
     interimId: numberSchema,
     status: booleanSchema,
-    remark: shortTextSchema.nullable(),
+    remark: z.string().nullable(),
     name: z.string().optional(),
     statusDescription: z.string().optional(),
 })
