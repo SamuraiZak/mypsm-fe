@@ -33,6 +33,7 @@
         approveOptions,
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
+    import FileGreyField from '$lib/components/inputs/file-upload/FileGreyField.svelte';
 
     export let data: PageData;
 
@@ -42,6 +43,9 @@
     let submitChecklist: boolean = false;
     let submitApprover: boolean = false;
     let files: FileList;
+    let files2: FileList;
+    let files3: FileList;
+    let files4: FileList;
 
     if (data.uploadedDocuments.document.length > 0) {
         submitDocument = true;
@@ -57,7 +61,8 @@
         if (files == undefined) {
             alert('Dokumen sokongan tidak boleh kosong.');
         } else {
-            _fileToBase64Object(files)
+            let fileToUpload = [files, files2, files3, files4]
+            _fileToBase64Object(fileToUpload)
                 .then(async (result) => {
                     let interimDocuments: InterimUploadDocuments = {
                         interimId: data.interimId.interimId,
@@ -187,939 +192,1004 @@
 <section
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
-{#if !data.failToLoad}
-    <Stepper>
-        <StepperContent>
-            <StepperContentHeader title="Butiran Permohonan Tanggung Kerja" />
-            <StepperContentBody paddingClass="p-2.5 items-start justify-start">
-                <div
-                    class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
-                >
-                    <CustomSelectField
-                        label="Gred"
-                        id="grade"
-                        disabled
-                        isRequired={false}
-                        val={data.interimApplicationDetail.applicationDetail
-                            .grade}
-                        options={data.lookup.gradeLookup}
-                    />
-                    <CustomSelectField
-                        label="Jawatan"
-                        id="position"
-                        disabled
-                        isRequired={false}
-                        val={data.interimApplicationDetail.applicationDetail
-                            .position}
-                        options={data.lookup.positionLookup}
-                    />
-                    <CustomSelectField
-                        label="Kementerian/Jabatan"
-                        id="placement"
-                        disabled
-                        isRequired={false}
-                        val={data.interimApplicationDetail.applicationDetail
-                            .placement}
-                        options={data.lookup.placementLookup}
-                    />
-                    <CustomTextField
-                        id="referenceNumber"
-                        disabled
-                        isRequired={false}
-                        label="Nombor Butiran Anggaran Belanjawan Mengurus/Waran Penjawatan"
-                        type="text"
-                        val={data.interimApplicationDetail.applicationDetail
-                            .referenceNumber}
-                    />
-                    <CustomTextField
-                        id="startDate"
-                        disabled
-                        isRequired={false}
-                        label="Tarikh Mula"
-                        type="date"
-                        val={data.interimApplicationDetail.applicationDetail
-                            .startDate}
-                    />
-                    <CustomTextField
-                        id="endDate"
-                        disabled
-                        isRequired={false}
-                        label="Tarikh Tamat"
-                        type="date"
-                        val={data.interimApplicationDetail.applicationDetail
-                            .endDate}
-                    />
-                    <CustomSelectField
-                        label="Tempat Kekosongan"
-                        id="newPlacement"
-                        disabled
-                        isRequired={false}
-                        options={data.lookup.placementLookup}
-                        val={data.interimApplicationDetail.applicationDetail
-                            .newPlacement}
-                    />
-                    <CustomTextField
-                        id="reason"
-                        disabled
-                        isRequired={false}
-                        label="Sebab-sebab Kekosongan"
-                        type="text"
-                        val={data.interimApplicationDetail.applicationDetail
-                            .reason}
-                    />
-                </div>
-            </StepperContentBody>
-        </StepperContent>
-
-        <StepperContent>
-            <StepperContentHeader title="Pegawai Yang Menanggung Kerja"
-            ></StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
-                >
-                    <CustomTextField
-                        label="Nama Pengawai"
-                        disabled
-                        isRequired={false}
-                        id="name"
-                        type="text"
-                        val={data.interimApplicationDetail.employeeDetail.name}
-                    />
-                    <CustomTextField
-                        label="No. Kad Pengenalan"
-                        disabled
-                        isRequired={false}
-                        id="identityCardNumber"
-                        type="text"
-                        val={data.interimApplicationDetail.employeeDetail
-                            .identityCardNumber}
-                    />
-                    <CustomTextField
-                        label="Tarikh Lantikan Jawatan Sekarang"
-                        disabled
-                        isRequired={false}
-                        id="serviceDate"
-                        type="date"
-                        val={data.interimApplicationDetail.employeeDetail
-                            .serviceDate}
-                    />
-                    <CustomTextField
-                        label="Tarikh Sah Dalam Jawatan Sekarang"
-                        disabled
-                        isRequired={false}
-                        id="effectiveDate"
-                        type="date"
-                        val={data.interimApplicationDetail.employeeDetail
-                            .effectiveDate}
-                    />
-                    <CustomTextField
-                        label="Jawatan/Gred"
-                        disabled
-                        isRequired={false}
-                        id="positionWithGrade"
-                        type="text"
-                        val={data.interimApplicationDetail.employeeDetail
-                            .positionWithGrade}
-                    />
-                    <CustomTextField
-                        label="Tarikh Mula Bertugas di Jawatan Sekarang"
-                        disabled
-                        isRequired={false}
-                        id="confirmDate"
-                        type="date"
-                        val={data.interimApplicationDetail.employeeDetail
-                            .confirmDate}
-                    />
-                    <CustomTextField
-                        label="Tempat Bertugas Semasa"
-                        disabled
-                        isRequired={false}
-                        id="placement"
-                        type="text"
-                        val={data.interimApplicationDetail.employeeDetail
-                            .placement}
-                    />
-                </div>
-            </StepperContentBody>
-        </StepperContent>
-
-        <StepperContent>
-            <StepperContentHeader title="Tempoh Penanggungan Kerja"
-            ></StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
-                >
-                    <ContentHeader
-                        title="Tempoh Penanggungan Kerja Yang Diperakukan"
-                        borderClass="border-none"
-                    />
-                    <CustomTextField
-                        label="Dari"
-                        id="from"
-                        disabled
-                        isRequired={false}
-                        type="date"
-                        val={data.interimApplicationDetail.duration?.from}
-                    />
-                    <CustomTextField
-                        label="Hingga"
-                        id="to"
-                        disabled
-                        isRequired={false}
-                        type="date"
-                        val={data.interimApplicationDetail.duration?.to}
-                    />
-                    <ContentHeader
-                        title="Tempoh Penanggungan Kerja Bagi Jawatan yang Sama Sebelum Ini (Jika Ada)"
-                        borderClass="border-none"
-                    />
-                    <CustomTextField
-                        label="Dari"
-                        disabled
-                        isRequired={false}
-                        id="from"
-                        type="date"
-                        val={data.interimApplicationDetail.duration
-                            ?.previousInterim[0].from}
-                    />
-                    <CustomTextField
-                        label="Hingga"
-                        disabled
-                        isRequired={false}
-                        id="date"
-                        type="date"
-                        val={data.interimApplicationDetail.duration
-                            ?.previousInterim[0].to}
-                    />
-                </div>
-            </StepperContentBody>
-        </StepperContent>
-
-        <StepperContent>
-            <StepperContentHeader title="Muat Naik Dokumen Berkaitan">
-                {#if !submitDocument && data.currentRoleCode == UserRoleConstant.kakitangan.code}
-                    <TextIconButton
-                        label="Muat Naik"
-                        icon="add"
-                        onClick={() => uploadDocument()}
-                    />
-                {/if}
-            </StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
-                >
-                    {#if data.uploadedDocuments.document.length < 1}
-                        <ContentHeader
-                            title="Tindakan: Muat naik dokumen-dokumen yang diperlukan."
-                            borderClass="border-none"
-                        />
+    {#if !data.failToLoad}
+        <Stepper>
+            <StepperContent>
+                <StepperContentHeader
+                    title="Butiran Permohonan Tanggung Kerja"
+                />
+                <StepperContentBody>
+                    <div class="flex w-full items-start justify-start pb-10">
                         <div
-                            class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
+                            class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
                         >
-                            <span>Fail-fail yang perlu dimuat naik:</span>
-                            <span
-                                >1. Carta Organisasi (Kedudukan Pegawai dan
-                                Jawatan yang Ditanggung Kerja)</span
-                            >
-                            <span>2. Salinan Surat Arahan Penagguhan Kerja</span
-                            >
-                            <span>3. Maklumat Cuti Yang Terkini</span>
-                            <span
-                                >4. Senarai Tugas Jawatan Ditanggung Kerja dan
-                                Pegawai Menanggung Kerja</span
-                            >
+                            <CustomSelectField
+                                label="Gred"
+                                id="grade"
+                                disabled
+                                isRequired={false}
+                                val={data.interimApplicationDetail
+                                    .applicationDetail.grade}
+                                options={data.lookup.gradeLookup}
+                            />
+                            <CustomSelectField
+                                label="Jawatan"
+                                id="position"
+                                disabled
+                                isRequired={false}
+                                val={data.interimApplicationDetail
+                                    .applicationDetail.position}
+                                options={data.lookup.positionLookup}
+                            />
+                            <CustomSelectField
+                                label="Kementerian/Jabatan"
+                                id="placement"
+                                disabled
+                                isRequired={false}
+                                val={data.interimApplicationDetail
+                                    .applicationDetail.placement}
+                                options={data.lookup.placementLookup}
+                            />
+                            <CustomTextField
+                                id="referenceNumber"
+                                disabled
+                                isRequired={false}
+                                label="Nombor Butiran Anggaran Belanjawan Mengurus/Waran Penjawatan"
+                                type="text"
+                                val={data.interimApplicationDetail
+                                    .applicationDetail.referenceNumber}
+                            />
+                            <CustomTextField
+                                id="startDate"
+                                disabled
+                                isRequired={false}
+                                label="Tarikh Mula"
+                                type="date"
+                                val={data.interimApplicationDetail
+                                    .applicationDetail.startDate}
+                            />
+                            <CustomTextField
+                                id="endDate"
+                                disabled
+                                isRequired={false}
+                                label="Tarikh Tamat"
+                                type="date"
+                                val={data.interimApplicationDetail
+                                    .applicationDetail.endDate}
+                            />
+                            <CustomSelectField
+                                label="Tempat Kekosongan"
+                                id="newPlacement"
+                                disabled
+                                isRequired={false}
+                                options={data.lookup.placementLookup}
+                                val={data.interimApplicationDetail
+                                    .applicationDetail.newPlacement}
+                            />
+                            <CustomTextField
+                                id="reason"
+                                disabled
+                                isRequired={false}
+                                label="Sebab-sebab Kekosongan"
+                                type="text"
+                                val={data.interimApplicationDetail
+                                    .applicationDetail.reason}
+                            />
                         </div>
-                        <div class="flex w-full flex-col gap-2">
-                            <CustomFileField
-                                label="Dokumen Sokongan"
-                                id="employeeClaimDocument"
-                                bind:files
-                            ></CustomFileField>
-                        </div>
-                    {:else}
+                    </div>
+                </StepperContentBody>
+            </StepperContent>
+
+            <StepperContent>
+                <StepperContentHeader title="Pegawai Yang Menanggung Kerja"
+                ></StepperContentHeader>
+                <StepperContentBody>
+                    <div class="flex w-full items-start justify-start pb-10">
                         <div
-                            class="flex w-full flex-col justify-start gap-2.5 px-2"
+                            class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
+                        >
+                            <CustomTextField
+                                label="Nama Pengawai"
+                                disabled
+                                isRequired={false}
+                                id="name"
+                                type="text"
+                                val={data.interimApplicationDetail
+                                    .employeeDetail.name}
+                            />
+                            <CustomTextField
+                                label="No. Kad Pengenalan"
+                                disabled
+                                isRequired={false}
+                                id="identityCardNumber"
+                                type="text"
+                                val={data.interimApplicationDetail
+                                    .employeeDetail.identityCardNumber}
+                            />
+                            <CustomTextField
+                                label="Tarikh Lantikan Jawatan Sekarang"
+                                disabled
+                                isRequired={false}
+                                id="serviceDate"
+                                type="date"
+                                val={data.interimApplicationDetail
+                                    .employeeDetail.serviceDate}
+                            />
+                            <CustomTextField
+                                label="Tarikh Sah Dalam Jawatan Sekarang"
+                                disabled
+                                isRequired={false}
+                                id="effectiveDate"
+                                type="date"
+                                val={data.interimApplicationDetail
+                                    .employeeDetail.effectiveDate}
+                            />
+                            <CustomTextField
+                                label="Jawatan/Gred"
+                                disabled
+                                isRequired={false}
+                                id="positionWithGrade"
+                                type="text"
+                                val={data.interimApplicationDetail
+                                    .employeeDetail.positionWithGrade}
+                            />
+                            <CustomTextField
+                                label="Tarikh Mula Bertugas di Jawatan Sekarang"
+                                disabled
+                                isRequired={false}
+                                id="confirmDate"
+                                type="date"
+                                val={data.interimApplicationDetail
+                                    .employeeDetail.confirmDate}
+                            />
+                            <CustomTextField
+                                label="Tempat Bertugas Semasa"
+                                disabled
+                                isRequired={false}
+                                id="placement"
+                                type="text"
+                                val={data.interimApplicationDetail
+                                    .employeeDetail.placement}
+                            />
+                        </div>
+                    </div>
+                </StepperContentBody>
+            </StepperContent>
+
+            <StepperContent>
+                <StepperContentHeader title="Tempoh Penanggungan Kerja"
+                ></StepperContentHeader>
+                <StepperContentBody>
+                    <div class="flex w-full items-start justify-start pb-10">
+                        <div
+                            class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
                         >
                             <ContentHeader
-                                title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan"
+                                title="Tempoh Penanggungan Kerja Yang Diperakukan"
                                 borderClass="border-none"
                             />
-                            <span
-                                class="text-sm text-ios-labelColors-secondaryLabel-light"
-                                >Borang-borang yang telah dimuat naik oleh
-                                kakitangan:</span
-                            >
-                            {#each data.uploadedDocuments.document as docs}
-                                <a
-                                    href={docs.document}
-                                    download={docs.name}
-                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                    >{docs.name}</a
-                                >
-                            {/each}
-                        </div>
-                    {/if}
-                </div>
-            </StepperContentBody>
-        </StepperContent>
-
-        <StepperContent>
-            <StepperContentHeader title="Pelangkauan Dari Segi Kekananan">
-                {#if !submitSkip && data.currentRoleCode == UserRoleConstant.kakitangan.code}
-                    <TextIconButton
-                        label="Hantar"
-                        icon="check"
-                        form="skippingForm"
-                    />
-                {/if}
-            </StepperContentHeader>
-            <StepperContentBody>
-                <form
-                    class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
-                    method="POST"
-                    id="skippingForm"
-                    use:skippingEnhance
-                >
-                    <CustomRadioBoolean
-                        label="Pelangkauan Dari Segi Kekananan"
-                        disabled={submitSkip}
-                        id="status"
-                        bind:val={$skippingForm.status}
-                        errors={$skippingError.status}
-                    />
-                    {#if $skippingForm.status}
-                        <CustomTextField
-                            label="Sebab-Sebab Pelangkauan"
-                            disabled={submitSkip}
-                            id="remark"
-                            type="text"
-                            bind:val={$skippingForm.remark}
-                            errors={$skippingError.remark}
-                        />
-                    {/if}
-                </form>
-            </StepperContentBody>
-        </StepperContent>
-
-        {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code}
-            <StepperContent>
-                <StepperContentHeader
-                    title="Sokongan dari Pengarah Bahagian/Negeri"
-                >
-                    {#if !submitDirector && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
-                        <TextIconButton
-                            label="Hantar"
-                            icon="check"
-                            form="directorForm"
-                        />
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <ContentHeader
-                        title="Ulasan Keputusan Daripada Pengarah Bahagian/Negeri"
-                        borderClass="border-none"
-                    />
-                    {#if data.interimSupportDetail.name == '' && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
-                        <form
-                            class="flex w-full flex-col justify-start gap-2.5"
-                            method="POST"
-                            id="directorForm"
-                            use:directorEnhance
-                        >
                             <CustomTextField
-                                label="Tindakan/Ulasan"
-                                disabled={submitDirector}
-                                id="remark"
-                                bind:val={$directorForm.remark}
-                                errors={$directorError.remark}
-                            />
-                            <CustomRadioBoolean
-                                label="Keputusan"
-                                disabled={submitDirector}
-                                options={supportOptions}
-                                id="status"
-                                bind:val={$directorForm.status}
-                                errors={$directorError.status}
-                            />
-                        </form>
-                    {:else}
-                        <div class="flex w-full flex-col gap-2.5 p-3">
-                            <CustomTextField
-                                label="Nama"
+                                label="Dari"
+                                id="from"
                                 disabled
-                                placeholder="Menunggu keputusan..."
-                                id="name"
-                                val={data.interimSupportDetail?.name}
+                                isRequired={false}
+                                type="date"
+                                val={data.interimApplicationDetail.duration
+                                    ?.from}
                             />
                             <CustomTextField
-                                label="Ulasan"
+                                label="Hingga"
+                                id="to"
                                 disabled
-                                placeholder="Menunggu keputusan..."
-                                id="remark"
-                                val={data.interimSupportDetail?.remark}
+                                isRequired={false}
+                                type="date"
+                                val={data.interimApplicationDetail.duration?.to}
+                            />
+                            <ContentHeader
+                                title="Tempoh Penanggungan Kerja Bagi Jawatan yang Sama Sebelum Ini (Jika Ada)"
+                                borderClass="border-none"
                             />
                             <CustomTextField
-                                label="Keputusan"
+                                label="Dari"
                                 disabled
-                                placeholder="Menunggu keputusan..."
-                                id="status"
-                                val={data.interimSupportDetail?.status}
+                                isRequired={false}
+                                id="from"
+                                type="date"
+                                val={data.interimApplicationDetail.duration
+                                    ?.previousInterim[0].from}
+                            />
+                            <CustomTextField
+                                label="Hingga"
+                                disabled
+                                isRequired={false}
+                                id="date"
+                                type="date"
+                                val={data.interimApplicationDetail.duration
+                                    ?.previousInterim[0].to}
                             />
                         </div>
-                    {/if}
-                </StepperContentBody>
-            </StepperContent>
-
-            {#if data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
-            <StepperContent>
-                <StepperContentHeader
-                    title="Senarai Semak Permohonan Penangguhan/Pindaan Penempatan Kerja"
-                >
-                    {#if !submitChecklist && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
-                        <TextIconButton
-                            label="Hantar"
-                            icon="check"
-                            form="checklistForm"
-                        />
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <form
-                        class="flex w-full flex-col items-start justify-start gap-4 p-3 pb-10"
-                        method="POST"
-                        use:checklistEnhance
-                        id="checklistForm"
-                    >
-                        <table
-                            class="table max-h-full w-full table-auto border-collapse"
-                        >
-                            <thead class="sticky top-0 z-[1]">
-                                <tr
-                                    class="h-7 min-h-7 border bg-ios-systemColors-quaternarySystemFill-light"
-                                >
-                                    {#each data.lookup.columnLabel as col, i}
-                                        <th
-                                            class="h-full {i == 0
-                                                ? 'w-[70%]'
-                                                : 'w-[15%]'} border px-2.5"
-                                        >
-                                            <div
-                                                class="flex h-full flex-row items-center justify-center"
-                                            >
-                                                <span
-                                                    class="select-none text-center align-middle text-sm font-medium text-ios-labelColors-secondaryLabel-light"
-                                                >
-                                                    {col.name}
-                                                </span>
-                                            </div>
-                                        </th>
-                                    {/each}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="p-none gap-none h-10 border">
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <span
-                                                >Surat permohonan dari Bahagian</span
-                                            >
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <Checkbox
-                                                class={submitChecklist
-                                                    ? 'text-ios-labelColors-secondaryLabel-light'
-                                                    : ''}
-                                                disabled={submitChecklist}
-                                                bind:checked={$checklistForm.applicationLetterStatus}
-                                            />
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <Checkbox
-                                                class={submitChecklist
-                                                    ? 'text-ios-labelColors-secondaryLabel-light'
-                                                    : ''}
-                                                disabled={submitChecklist}
-                                                bind:checked={$checklistForm.applicationLetterCheck}
-                                            />
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="p-none gap-none h-10 border">
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <span
-                                                >Borang Perakuan Penanggungan
-                                                Kerja</span
-                                            >
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <Checkbox
-                                                class={submitChecklist
-                                                    ? 'text-ios-labelColors-secondaryLabel-light'
-                                                    : ''}
-                                                disabled={submitChecklist}
-                                                bind:checked={$checklistForm.certifiedFormStatus}
-                                            />
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <Checkbox
-                                                class={submitChecklist
-                                                    ? 'text-ios-labelColors-secondaryLabel-light'
-                                                    : ''}
-                                                disabled={submitChecklist}
-                                                bind:checked={$checklistForm.certifiedFormCheck}
-                                            />
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="p-none gap-none h-10 border">
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <span
-                                                >Carta Organisasi yang disahkan
-                                                dan jelas menandakan kedudukan:</span
-                                            >
-                                            <span class="text-[10px] italic"
-                                                >Nota: Pegawai yang menanggung
-                                                dan jawatan yang ditanggung.</span
-                                            >
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <Checkbox
-                                                class={submitChecklist
-                                                    ? 'text-ios-labelColors-secondaryLabel-light'
-                                                    : ''}
-                                                disabled={submitChecklist}
-                                                bind:checked={$checklistForm.organisationalChartStatus}
-                                            />
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <Checkbox
-                                                class={submitChecklist
-                                                    ? 'text-ios-labelColors-secondaryLabel-light'
-                                                    : ''}
-                                                disabled={submitChecklist}
-                                                bind:checked={$checklistForm.organisationalChartCheck}
-                                            />
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="p-none gap-none h-10 border">
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <span>Deskripsi Tugas (JD)</span>
-                                            <span class="text-[10px] italic"
-                                                >Nota: Pegawai yang menanggung
-                                                dan jawatan yang ditanggung.</span
-                                            >
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <Checkbox
-                                                class={submitChecklist
-                                                    ? 'text-ios-labelColors-secondaryLabel-light'
-                                                    : ''}
-                                                disabled={submitChecklist}
-                                                bind:checked={$checklistForm.jobDescriptionStatus}
-                                            />
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <Checkbox
-                                                class={submitChecklist
-                                                    ? 'text-ios-labelColors-secondaryLabel-light'
-                                                    : ''}
-                                                disabled={submitChecklist}
-                                                bind:checked={$checklistForm.jobDescriptionCheck}
-                                            />
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="p-none gap-none h-10 border">
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <span
-                                                >Surat Arahan Penanggungan Kerja</span
-                                            >
-                                            <span class="text-[10px] italic"
-                                                >Nota: Tarikh Surat Arahan
-                                                hendaklah sebelum atau pada
-                                                tarikh Penangguhan Kerja</span
-                                            >
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <Checkbox
-                                                class={submitChecklist
-                                                    ? 'text-ios-labelColors-secondaryLabel-light'
-                                                    : ''}
-                                                disabled={submitChecklist}
-                                                bind:checked={$checklistForm.orderLetterStatus}
-                                            />
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <Checkbox
-                                                class={submitChecklist
-                                                    ? 'text-ios-labelColors-secondaryLabel-light'
-                                                    : ''}
-                                                disabled={submitChecklist}
-                                                bind:checked={$checklistForm.orderLetterCheck}
-                                            />
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="p-none gap-none h-10 border">
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-fit flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <span
-                                                >Kenyataan cuti untuk 28 hari
-                                                (perakuan pertama)/14 hari
-                                                pertama (pelanjutan) pegawai
-                                                yang menanggung kerja</span
-                                            >
-                                            <span class="text-[10px] italic"
-                                                >Nota: Hendaklah dijana melalui
-                                                Aplikasi HRMIS</span
-                                            >
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <Checkbox
-                                                class={submitChecklist
-                                                    ? 'text-ios-labelColors-secondaryLabel-light'
-                                                    : ''}
-                                                disabled={submitChecklist}
-                                                bind:checked={$checklistForm.leaveStatementStatus}
-                                            />
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <Checkbox
-                                                class={submitChecklist
-                                                    ? 'text-ios-labelColors-secondaryLabel-light'
-                                                    : ''}
-                                                disabled={submitChecklist}
-                                                bind:checked={$checklistForm.leaveStatementCheck}
-                                            />
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="p-none gap-none h-fit border">
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-fit flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <span
-                                                >Salinan dokumen sokongan
-                                                berkaitan</span
-                                            >
-                                            <span class="text-[10px] italic"
-                                                >1. Sijil Cuti Sakit</span
-                                            >
-                                            <span class="text-[10px] italic"
-                                                >2. Surat Pertukaran Pegawai</span
-                                            >
-                                            <span class="text-[10px] italic"
-                                                >3. Surat Pemangkuan Pegawai</span
-                                            >
-                                            <span class="text-[10px] italic"
-                                                >4. Surat Kelulusan (Cuti Haji,
-                                                Cuti Bersalin, Cuti Barah, Cuti
-                                                Belajar, Cuti Tanpa Gaji)</span
-                                            >
-                                            <span class="text-[10px] italic"
-                                                >5. Borang Perancangan Cuti bagi
-                                                Pegawai yang mengambil Cuti
-                                                Rehat Sebelum Bersara</span
-                                            >
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <Checkbox
-                                                class={submitChecklist
-                                                    ? 'text-ios-labelColors-secondaryLabel-light'
-                                                    : ''}
-                                                disabled={submitChecklist}
-                                                bind:checked={$checklistForm.documentListStatus}
-                                            />
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <Checkbox
-                                                class={submitChecklist
-                                                    ? 'text-ios-labelColors-secondaryLabel-light'
-                                                    : ''}
-                                                disabled={submitChecklist}
-                                                bind:checked={$checklistForm.documentListCheck}
-                                            />
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="p-none gap-none h-10 border">
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-fit flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <span
-                                                >Justifikasi (sekiranya ada)
-                                                bagi permohonan longgar syarat</span
-                                            >
-                                            <span class="text-[10px] italic"
-                                                >1. Pelangkauan melebihi 2 gred</span
-                                            >
-                                            <span class="text-[10px] italic"
-                                                >2. Lokasi berlainan dan
-                                                melebihi lingkuangan 25KM</span
-                                            >
-                                            <span class="text-[10px] italic"
-                                                >3. Kelayakan, Kemahiran atau
-                                                Syarat Khas (Berlainan Skim)</span
-                                            >
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-fit items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <Checkbox
-                                                class={submitChecklist
-                                                    ? 'text-ios-labelColors-secondaryLabel-light'
-                                                    : ''}
-                                                disabled={submitChecklist}
-                                                bind:checked={$checklistForm.justificationStatus}
-                                            />
-                                        </div>
-                                    </td>
-                                    <td
-                                        class="h-fit w-fit border border-ios-labelColors-separator-light"
-                                    >
-                                        <div
-                                            class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
-                                        >
-                                            <Checkbox
-                                                class={submitChecklist
-                                                    ? 'text-ios-labelColors-secondaryLabel-light'
-                                                    : ''}
-                                                disabled={submitChecklist}
-                                                bind:checked={$checklistForm.justificationCheck}
-                                            />
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <div class="gap2-.5 flex flex-col">
-                            <CustomSelectField
-                                label="Disediakan Oleh"
-                                id="preparer"
-                                disabled={submitChecklist}
-                                options={data.lookup.supporterApproverLookup}
-                                bind:val={$checklistForm.preparer}
-                                errors={$checklistError.preparer}
-                            />
-                            <CustomSelectField
-                                label="Disemak Oleh"
-                                id="checker"
-                                disabled={submitChecklist}
-                                options={data.lookup.supporterApproverLookup}
-                                bind:val={$checklistForm.checker}
-                                errors={$checklistError.checker}
-                            />
-                        </div>
-                    </form>
+                    </div>
                 </StepperContentBody>
             </StepperContent>
 
             <StepperContent>
-                <StepperContentHeader
-                    title="Kelulusan Permohonan Tanggung Kerja"
-                >
-                    {#if !submitApprover && data.currentRoleCode == UserRoleConstant.pengarahKhidmatPengurusan.code}
+                <StepperContentHeader title="Muat Naik Dokumen Berkaitan">
+                    {#if !submitDocument && data.currentRoleCode == UserRoleConstant.kakitangan.code}
                         <TextIconButton
-                            label="Hantar"
+                            label="Muat Naik"
                             icon="check"
-                            form="approverForm"
+                            onClick={() => uploadDocument()}
                         />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
-                    <ContentHeader
-                        title="Ulasan Keputusan daripada Pengarah Khidmat Pengurusan"
-                        borderClass="border-none"
-                    />
-                    <form
-                        class="flex w-full flex-col justify-start gap-2.5 p-3"
-                        id="approverForm"
-                        method="POST"
-                        use:approverEnhance
-                    >
-                        {#if data.interimApprovalDetail.name == ''}
-                            {#if data.currentRoleCode !== UserRoleConstant.pengarahKhidmatPengurusan.code}
-                                <div class="flex w-full flex-col gap-10 px-3">
-                                    <Alert color="blue">
-                                        <p>
-                                            <span class="font-medium"
-                                                >Tiada Maklumat!
-                                            </span>
-                                            Menunggu keputusan daripada Pengarah
-                                            Khidmat Pengurusan.
-                                        </p>
-                                    </Alert>
+                    <div class="flex w-full items-start justify-start pb-10">
+                        <div
+                            class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
+                        >
+                            {#if data.uploadedDocuments.document.length < 1}
+                                <ContentHeader
+                                    title="Tindakan: Muat naik dokumen-dokumen yang diperlukan."
+                                    borderClass="border-none"
+                                />
+                                <div class="flex w-full flex-col gap-6">
+                                    <FileGreyField
+                                        label="1. Carta Organisasi (Kedudukan Pegawai dan Jawatan yang Ditanggung Kerja)"
+                                        id="files"
+                                        bind:files={files}
+                                    ></FileGreyField>
+                                    <FileGreyField
+                                        label="2. Salinan Surat Arahan Penangguhan Kerja"
+                                        id="files2"
+                                        bind:files={files2}
+                                    ></FileGreyField>
+                                    <FileGreyField
+                                        label="3. Maklumat Cuti yang Terkini"
+                                        id="files3"
+                                        bind:files={files3}
+                                    ></FileGreyField>
+                                    <FileGreyField
+                                        label="4. Senarai Tugas Jawatan Ditanggung Kerja dan Pegawai Menanggung Kerja"
+                                        id="files4"
+                                        bind:files={files4}
+                                    ></FileGreyField>
                                 </div>
                             {:else}
-                                <CustomTextField
-                                    label="Tindakan/Ulasan"
-                                    disabled={submitApprover}
-                                    id="remark"
-                                    bind:val={$approverForm.remark}
-                                    errors={$approverError.remark}
-                                />
-                                <CustomRadioBoolean
-                                    label="Keputusan"
-                                    id="status"
-                                    disabled={submitApprover}
-                                    options={approveOptions}
-                                    bind:val={$approverForm.status}
-                                />
+                                <div
+                                    class="flex w-full flex-col justify-start gap-2.5 px-2"
+                                >
+                                    <ContentHeader
+                                        title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan"
+                                        borderClass="border-none"
+                                    />
+                                    <span
+                                        class="text-sm text-ios-labelColors-secondaryLabel-light"
+                                        >Borang-borang yang telah dimuat naik
+                                        oleh kakitangan:</span
+                                    >
+                                    {#each data.uploadedDocuments.document as docs}
+                                        <a
+                                            href={docs.document}
+                                            download={docs.name}
+                                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                            >{docs.name}</a
+                                        >
+                                    {/each}
+                                </div>
                             {/if}
-                        {:else}
-                            <CustomTextField
-                                label="Nama"
-                                disabled
-                                id="name"
-                                bind:val={data.interimApprovalDetail.name}
-                            />
-                            <CustomTextField
-                                label="Ulasan"
-                                disabled
-                                id="remark"
-                                bind:val={data.interimApprovalDetail.remark}
-                            />
-                            <CustomTextField
-                                label="Keputusan"
-                                disabled
-                                id="statusDescription"
-                                bind:val={data.interimApprovalDetail
-                                    .statusDescription}
-                            />
-                        {/if}
-                    </form>
+                        </div>
+                    </div>
                 </StepperContentBody>
             </StepperContent>
+
+            <StepperContent>
+                <StepperContentHeader title="Pelangkauan Dari Segi Kekananan">
+                    {#if !submitSkip && data.currentRoleCode == UserRoleConstant.kakitangan.code}
+                        <TextIconButton
+                            label="Hantar"
+                            icon="check"
+                            form="skippingForm"
+                        />
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <div class="flex w-full items-start justify-start pb-10">
+                        <form
+                            class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
+                            method="POST"
+                            id="skippingForm"
+                            use:skippingEnhance
+                        >
+                            <CustomRadioBoolean
+                                label="Pelangkauan Dari Segi Kekananan"
+                                disabled={submitSkip}
+                                id="status"
+                                bind:val={$skippingForm.status}
+                                errors={$skippingError.status}
+                            />
+                            {#if $skippingForm.status}
+                                <CustomTextField
+                                    label="Sebab-Sebab Pelangkauan"
+                                    disabled={submitSkip}
+                                    id="remark"
+                                    type="text"
+                                    bind:val={$skippingForm.remark}
+                                    errors={$skippingError.remark}
+                                />
+                            {/if}
+                        </form>
+                    </div>
+                </StepperContentBody>
+            </StepperContent>
+
+            {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code}
+                <StepperContent>
+                    <StepperContentHeader
+                        title="Sokongan dari Pengarah Bahagian/Negeri"
+                    >
+                        {#if !submitDirector && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
+                            <TextIconButton
+                                label="Hantar"
+                                icon="check"
+                                form="directorForm"
+                            />
+                        {/if}
+                    </StepperContentHeader>
+                    <StepperContentBody>
+                        <div
+                            class="flex w-full flex-col items-start justify-start pb-10"
+                        >
+                            <ContentHeader
+                                title="Ulasan Keputusan Daripada Pengarah Bahagian/Negeri"
+                                borderClass="border-none"
+                            />
+                            {#if data.interimSupportDetail.name == '' && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
+                                <form
+                                    class="flex w-1/2 flex-col justify-start gap-2.5"
+                                    method="POST"
+                                    id="directorForm"
+                                    use:directorEnhance
+                                >
+                                    <CustomTextField
+                                        label="Tindakan/Ulasan"
+                                        disabled={submitDirector}
+                                        id="remark"
+                                        isRequired={false}
+                                        bind:val={$directorForm.remark}
+                                        errors={$directorError.remark}
+                                    />
+                                    <CustomRadioBoolean
+                                        label="Keputusan"
+                                        disabled={submitDirector}
+                                        options={supportOptions}
+                                        id="status"
+                                        bind:val={$directorForm.status}
+                                        errors={$directorError.status}
+                                    />
+                                </form>
+                            {:else}
+                                <div class="flex w-1/2 flex-col gap-2.5 p-3">
+                                    <CustomTextField
+                                        label="Nama"
+                                        disabled
+                                        isRequired={false}
+                                        placeholder="Menunggu keputusan..."
+                                        id="name"
+                                        val={data.interimSupportDetail?.name}
+                                    />
+                                    <CustomTextField
+                                        label="Ulasan"
+                                        disabled
+                                        isRequired={false}
+                                        placeholder="Menunggu keputusan..."
+                                        id="remark"
+                                        val={data.interimSupportDetail?.remark}
+                                    />
+                                    <CustomTextField
+                                        label="Keputusan"
+                                        disabled
+                                        isRequired={false}
+                                        placeholder="Menunggu keputusan..."
+                                        id="status"
+                                        val={data.interimSupportDetail?.status}
+                                    />
+                                </div>
+                            {/if}
+                        </div>
+                        </StepperContentBody>
+                </StepperContent>
+
+                {#if data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
+                    <StepperContent>
+                        <StepperContentHeader
+                            title="Senarai Semak Permohonan Penangguhan/Pindaan Penempatan Kerja"
+                        >
+                            {#if !submitChecklist && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                                <TextIconButton
+                                    label="Hantar"
+                                    icon="check"
+                                    form="checklistForm"
+                                />
+                            {/if}
+                        </StepperContentHeader>
+                        <StepperContentBody>
+                            <form
+                                class="flex w-full flex-col items-start justify-start gap-4 p-3 pb-10"
+                                method="POST"
+                                use:checklistEnhance
+                                id="checklistForm"
+                            >
+                                <table
+                                    class="table max-h-full w-full table-auto border-collapse"
+                                >
+                                    <thead class="sticky top-0 z-[1]">
+                                        <tr
+                                            class="h-7 min-h-7 border bg-ios-systemColors-quaternarySystemFill-light"
+                                        >
+                                            {#each data.lookup.columnLabel as col, i}
+                                                <th
+                                                    class="h-full {i == 0
+                                                        ? 'w-[70%]'
+                                                        : 'w-[15%]'} border px-2.5"
+                                                >
+                                                    <div
+                                                        class="flex h-full flex-row items-center justify-center"
+                                                    >
+                                                        <span
+                                                            class="select-none text-center align-middle text-md font-medium text-ios-labelColors-secondaryLabel-light"
+                                                        >
+                                                            {col.name}
+                                                        </span>
+                                                    </div>
+                                                </th>
+                                            {/each}
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-[13px]">
+                                        <tr class="p-none gap-none h-10 border">
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center bg-ios-backgroundColors-systemBackground-light px-2 font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <span
+                                                        >Surat permohonan dari
+                                                        Bahagian</span
+                                                    >
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <Checkbox
+                                                        class={submitChecklist
+                                                            ? 'text-ios-labelColors-secondaryLabel-light'
+                                                            : ''}
+                                                        disabled={submitChecklist}
+                                                        bind:checked={$checklistForm.applicationLetterStatus}
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <Checkbox
+                                                        class={submitChecklist
+                                                            ? 'text-ios-labelColors-secondaryLabel-light'
+                                                            : ''}
+                                                        disabled={submitChecklist}
+                                                        bind:checked={$checklistForm.applicationLetterCheck}
+                                                    />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="p-none gap-none h-10 border">
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center bg-ios-backgroundColors-systemBackground-light px-2 font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <span
+                                                        >Borang Perakuan
+                                                        Penanggungan Kerja</span
+                                                    >
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <Checkbox
+                                                        class={submitChecklist
+                                                            ? 'text-ios-labelColors-secondaryLabel-light'
+                                                            : ''}
+                                                        disabled={submitChecklist}
+                                                        bind:checked={$checklistForm.certifiedFormStatus}
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <Checkbox
+                                                        class={submitChecklist
+                                                            ? 'text-ios-labelColors-secondaryLabel-light'
+                                                            : ''}
+                                                        disabled={submitChecklist}
+                                                        bind:checked={$checklistForm.certifiedFormCheck}
+                                                    />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="p-none gap-none h-10 border">
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <span
+                                                        >Carta Organisasi yang
+                                                        disahkan dan jelas
+                                                        menandakan kedudukan:</span
+                                                    >
+                                                    <span
+                                                        class="text-[12px] italic"
+                                                        >Nota: Pegawai yang
+                                                        menanggung dan jawatan
+                                                        yang ditanggung.</span
+                                                    >
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <Checkbox
+                                                        class={submitChecklist
+                                                            ? 'text-ios-labelColors-secondaryLabel-light'
+                                                            : ''}
+                                                        disabled={submitChecklist}
+                                                        bind:checked={$checklistForm.organisationalChartStatus}
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <Checkbox
+                                                        class={submitChecklist
+                                                            ? 'text-ios-labelColors-secondaryLabel-light'
+                                                            : ''}
+                                                        disabled={submitChecklist}
+                                                        bind:checked={$checklistForm.organisationalChartCheck}
+                                                    />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="p-none gap-none h-10 border">
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <span
+                                                        >Deskripsi Tugas (JD)</span
+                                                    >
+                                                    <span
+                                                        class="text-[12px] italic"
+                                                        >Nota: Pegawai yang
+                                                        menanggung dan jawatan
+                                                        yang ditanggung.</span
+                                                    >
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <Checkbox
+                                                        class={submitChecklist
+                                                            ? 'text-ios-labelColors-secondaryLabel-light'
+                                                            : ''}
+                                                        disabled={submitChecklist}
+                                                        bind:checked={$checklistForm.jobDescriptionStatus}
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <Checkbox
+                                                        class={submitChecklist
+                                                            ? 'text-ios-labelColors-secondaryLabel-light'
+                                                            : ''}
+                                                        disabled={submitChecklist}
+                                                        bind:checked={$checklistForm.jobDescriptionCheck}
+                                                    />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="p-none gap-none h-10 border">
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <span
+                                                        >Surat Arahan
+                                                        Penanggungan Kerja</span
+                                                    >
+                                                    <span
+                                                        class="text-[12px] italic"
+                                                        >Nota: Tarikh Surat
+                                                        Arahan hendaklah sebelum
+                                                        atau pada tarikh
+                                                        Penangguhan Kerja</span
+                                                    >
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <Checkbox
+                                                        class={submitChecklist
+                                                            ? 'text-ios-labelColors-secondaryLabel-light'
+                                                            : ''}
+                                                        disabled={submitChecklist}
+                                                        bind:checked={$checklistForm.orderLetterStatus}
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <Checkbox
+                                                        class={submitChecklist
+                                                            ? 'text-ios-labelColors-secondaryLabel-light'
+                                                            : ''}
+                                                        disabled={submitChecklist}
+                                                        bind:checked={$checklistForm.orderLetterCheck}
+                                                    />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="p-none gap-none h-10 border">
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-fit flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <span
+                                                        >Kenyataan cuti untuk 28
+                                                        hari (perakuan
+                                                        pertama)/14 hari pertama
+                                                        (pelanjutan) pegawai
+                                                        yang menanggung kerja</span
+                                                    >
+                                                    <span
+                                                        class="text-[12px] italic"
+                                                        >Nota: Hendaklah dijana
+                                                        melalui Aplikasi HRMIS</span
+                                                    >
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <Checkbox
+                                                        class={submitChecklist
+                                                            ? 'text-ios-labelColors-secondaryLabel-light'
+                                                            : ''}
+                                                        disabled={submitChecklist}
+                                                        bind:checked={$checklistForm.leaveStatementStatus}
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <Checkbox
+                                                        class={submitChecklist
+                                                            ? 'text-ios-labelColors-secondaryLabel-light'
+                                                            : ''}
+                                                        disabled={submitChecklist}
+                                                        bind:checked={$checklistForm.leaveStatementCheck}
+                                                    />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr
+                                            class="p-none gap-none h-fit border"
+                                        >
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-fit flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <span
+                                                        >Salinan dokumen
+                                                        sokongan berkaitan</span
+                                                    >
+                                                    <span
+                                                        class="text-[12px] italic"
+                                                        >1. Sijil Cuti Sakit</span
+                                                    >
+                                                    <span
+                                                        class="text-[12px] italic"
+                                                        >2. Surat Pertukaran
+                                                        Pegawai</span
+                                                    >
+                                                    <span
+                                                        class="text-[12px] italic"
+                                                        >3. Surat Pemangkuan
+                                                        Pegawai</span
+                                                    >
+                                                    <span
+                                                        class="text-[12px] italic"
+                                                        >4. Surat Kelulusan
+                                                        (Cuti Haji, Cuti
+                                                        Bersalin, Cuti Barah,
+                                                        Cuti Belajar, Cuti Tanpa
+                                                        Gaji)</span
+                                                    >
+                                                    <span
+                                                        class="text-[12px] italic"
+                                                        >5. Borang Perancangan
+                                                        Cuti bagi Pegawai yang
+                                                        mengambil Cuti Rehat
+                                                        Sebelum Bersara</span
+                                                    >
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <Checkbox
+                                                        class={submitChecklist
+                                                            ? 'text-ios-labelColors-secondaryLabel-light'
+                                                            : ''}
+                                                        disabled={submitChecklist}
+                                                        bind:checked={$checklistForm.documentListStatus}
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <Checkbox
+                                                        class={submitChecklist
+                                                            ? 'text-ios-labelColors-secondaryLabel-light'
+                                                            : ''}
+                                                        disabled={submitChecklist}
+                                                        bind:checked={$checklistForm.documentListCheck}
+                                                    />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="p-none gap-none h-10 border">
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-fit flex-col items-start bg-ios-backgroundColors-systemBackground-light px-2 font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <span
+                                                        >Justifikasi (sekiranya
+                                                        ada) bagi permohonan
+                                                        longgar syarat</span
+                                                    >
+                                                    <span
+                                                        class="text-[12px] italic"
+                                                        >1. Pelangkauan melebihi
+                                                        2 gred</span
+                                                    >
+                                                    <span
+                                                        class="text-[12px] italic"
+                                                        >2. Lokasi berlainan dan
+                                                        melebihi lingkuangan
+                                                        25KM</span
+                                                    >
+                                                    <span
+                                                        class="text-[12px] italic"
+                                                        >3. Kelayakan, Kemahiran
+                                                        atau Syarat Khas
+                                                        (Berlainan Skim)</span
+                                                    >
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-fit items-center justify-center bg-ios-backgroundColors-systemBackground-light font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <Checkbox
+                                                        class={submitChecklist
+                                                            ? 'text-ios-labelColors-secondaryLabel-light'
+                                                            : ''}
+                                                        disabled={submitChecklist}
+                                                        bind:checked={$checklistForm.justificationStatus}
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td
+                                                class="h-fit w-fit border border-ios-labelColors-separator-light"
+                                            >
+                                                <div
+                                                    class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light font-normal text-ios-labelColors-secondaryLabel-light"
+                                                >
+                                                    <Checkbox
+                                                        class={submitChecklist
+                                                            ? 'text-ios-labelColors-secondaryLabel-light'
+                                                            : ''}
+                                                        disabled={submitChecklist}
+                                                        bind:checked={$checklistForm.justificationCheck}
+                                                    />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="gap2-.5 flex flex-col">
+                                    <CustomSelectField
+                                        label="Disediakan Oleh"
+                                        id="preparer"
+                                        disabled={submitChecklist}
+                                        options={data.lookup
+                                            .supporterApproverLookup}
+                                        bind:val={$checklistForm.preparer}
+                                        errors={$checklistError.preparer}
+                                    />
+                                    <CustomSelectField
+                                        label="Disemak Oleh"
+                                        id="checker"
+                                        disabled={submitChecklist}
+                                        options={data.lookup
+                                            .supporterApproverLookup}
+                                        bind:val={$checklistForm.checker}
+                                        errors={$checklistError.checker}
+                                    />
+                                </div>
+                            </form>
+                        </StepperContentBody>
+                    </StepperContent>
+
+                    <StepperContent>
+                        <StepperContentHeader
+                            title="Kelulusan Permohonan Tanggung Kerja"
+                        >
+                            {#if !submitApprover && data.currentRoleCode == UserRoleConstant.pengarahKhidmatPengurusan.code}
+                                <TextIconButton
+                                    label="Hantar"
+                                    icon="check"
+                                    form="approverForm"
+                                />
+                            {/if}
+                        </StepperContentHeader>
+                        <StepperContentBody>
+                            <div class="flex w-full flex-col items-start justify-start pb-10">
+                            <ContentHeader
+                                title="Ulasan Keputusan daripada Pengarah Khidmat Pengurusan"
+                                borderClass="border-none"
+                            />
+                            <form
+                                class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
+                                id="approverForm"
+                                method="POST"
+                                use:approverEnhance
+                            >
+                                {#if data.interimApprovalDetail.name == ''}
+                                    {#if data.currentRoleCode !== UserRoleConstant.pengarahKhidmatPengurusan.code}
+                                        <div
+                                            class="flex w-full flex-col gap-10 px-3"
+                                        >
+                                            <Alert color="blue">
+                                                <p>
+                                                    <span class="font-medium"
+                                                        >Tiada Maklumat!
+                                                    </span>
+                                                    Menunggu keputusan daripada Pengarah
+                                                    Khidmat Pengurusan.
+                                                </p>
+                                            </Alert>
+                                        </div>
+                                    {:else}
+                                        <CustomTextField
+                                            label="Tindakan/Ulasan"
+                                            disabled={submitApprover}
+                                            id="remark"
+                                            isRequired={false}
+                                            bind:val={$approverForm.remark}
+                                            errors={$approverError.remark}
+                                        />
+                                        <CustomRadioBoolean
+                                            label="Keputusan"
+                                            id="status"
+                                            disabled={submitApprover}
+                                            options={approveOptions}
+                                            bind:val={$approverForm.status}
+                                        />
+                                    {/if}
+                                {:else}
+                                    <CustomTextField
+                                        label="Nama"
+                                        disabled
+                                        isRequired={false}
+                                        id="name"
+                                        bind:val={data.interimApprovalDetail
+                                            .name}
+                                    />
+                                    <CustomTextField
+                                        label="Ulasan"
+                                        disabled
+                                        isRequired={false}
+                                        id="remark"
+                                        bind:val={data.interimApprovalDetail
+                                            .remark}
+                                    />
+                                    <CustomTextField
+                                        label="Keputusan"
+                                        disabled
+                                        isRequired={false}
+                                        id="statusDescription"
+                                        bind:val={data.interimApprovalDetail
+                                            .statusDescription}
+                                    />
+                                {/if}
+                            </form>
+                            </div>
+                        </StepperContentBody>
+                    </StepperContent>
+                {/if}
             {/if}
-        {/if}
-    </Stepper>
+        </Stepper>
     {:else}
         <Modal title="Sistem MyPSM" open={data.failToLoad} dismissable={false}>
             <Alert color="red" class="w-full">
@@ -1128,11 +1198,11 @@
                     Sila cuba sekali lagi.
                 </p>
             </Alert>
-            <div class="w-full flex items-center justify-center">
-            <TextIconButton
-                label="Kembali"
-                onClick={() => goto('/perjawatan/tanggung-kerja')}
-                type="neutral"
+            <div class="flex w-full items-center justify-center">
+                <TextIconButton
+                    label="Kembali"
+                    onClick={() => goto('/perjawatan/tanggung-kerja')}
+                    type="neutral"
                 />
             </div>
         </Modal>

@@ -134,10 +134,12 @@ export const _submitApproverForm = async (formData: InterimCommonApproval) => {
 }
 
 // Create a function that returns a promise resolving to an array of DocumentBase64RequestDTO objects
-export function _fileToBase64Object(fileList: FileList): Promise<DocumentBase64RequestDTO[]> {
+export function _fileToBase64Object(fileList: Array<FileList>): Promise<DocumentBase64RequestDTO[]> {
     return new Promise((resolve, reject) => {
         // Convert FileList to array
-        const fileArray: File[] = Array.from(fileList);
+        let fileArray: File[] = [] 
+        
+        fileList.map((val) => Object.values(val).forEach((item) => {fileArray.push(item)}));
 
         // Simulate fetching base64 data for each file asynchronously
         const filesPromiseArray: Promise<DocumentBase64RequestDTO>[] = [];
@@ -145,7 +147,6 @@ export function _fileToBase64Object(fileList: FileList): Promise<DocumentBase64R
             const filePromise = fetchBase64Data(file);
             filesPromiseArray.push(filePromise);
         });
-
         // Resolve the promise when all file promises are resolved
         Promise.all(filesPromiseArray)
             .then((files) => {
