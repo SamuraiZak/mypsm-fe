@@ -37,7 +37,7 @@ export class AuthenticationServices {
     }
 
     // get current account details
-    static async getMethod() {
+    static async getAccountDetails() {
         try {
             let url: Input = 'auth/detail';
             const promiseResponse: Promise<Response> = http.get(url, {}).json();

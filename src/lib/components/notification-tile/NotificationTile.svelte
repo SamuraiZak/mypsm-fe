@@ -2,7 +2,7 @@
 </script>
 
 <div
-    class="flex h-fit w-full cursor-pointer flex-row items-start gap-3 p-4 hover:bg-blue-100"
+    class="flex h-fit w-full cursor-pointer flex-row items-start gap-3 hover:scale-105 p-4 hover:bg-blue-100"
 >
     <!-- notification avatar -->
     <div class="flex h-full w-10 flex-col items-center justify-start">
