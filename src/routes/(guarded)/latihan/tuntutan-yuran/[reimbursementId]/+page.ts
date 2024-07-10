@@ -1,20 +1,29 @@
+import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
+import type { DocumentBase64RequestDTO } from '$lib/dto/core/common/base-64-document-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto.js';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+import type { CourseFundApplicationUploadDocumentsBase64RequestDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-document.dto';
 import type { CourseFundReimbursementApprovalDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-approval.dto';
 import type { CourseFundReimbursementDocumentsResponseDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-document.dto';
 import type { CourseFundReimbursementPersonalDetailResponseDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-personal-info.dto';
 import type { CourseFundReimbursementServiceDetailResponseDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-service-info.dto';
-import type { CourseFundReimbursementDetailResponseDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement.dto';
+import type {
+    CourseAddFundReimbursementRequestDTO,
+    CourseFundReimbursementDetailResponseDTO,
+} from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement.dto';
+import { _fileToBase64String } from '$lib/helpers/core/fileToBase64String.helper';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
+    _createFundReimbursementRequestSchema,
     _fundReimbursementApprovalSchema,
     _fundReimbursementDetailResponseSchema,
     _fundReimbursementDocumentSchema,
     _fundReimbursementPersonalInfoResponseSchema,
     _fundReimbursementServiceInfoResponseSchema,
+    _fundReimbursementUploadDocSchema,
 } from '$lib/schemas/mypsm/course/fund-reimbursement-schema';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { CourseFundReimbursementServices } from '$lib/services/implementation/mypsm/latihan/fundReimbursement.service.js';
@@ -26,11 +35,13 @@ import { superValidate } from 'sveltekit-superforms/client';
 //=============== Load Function ====================
 //==================================================
 export async function load({ params }) {
+    const fundReimbursementId = Number(params.reimbursementId);
     const currentRoleCode = localStorage.getItem(
         LocalStorageKeyConstant.currentRoleCode,
     );
 
-    currentRoleCode === RoleConstant.urusSetiaLatihan.code;
+    const isStaffRole: boolean =
+        currentRoleCode === RoleConstant.kakitangan.code;
 
     const idRequestBody: commonIdRequestDTO = {
         id: Number(params.reimbursementId),
@@ -116,6 +127,10 @@ export async function load({ params }) {
         fundReimbursementDocumentInfoResponse.data
             ?.details as CourseFundReimbursementDocumentsResponseDTO,
         zod(_fundReimbursementDocumentSchema),
+        { errors: false },
+    );
+    const fundReimbursementUploadDocumentForm = await superValidate(
+        zod(_fundReimbursementUploadDocSchema),
         { errors: false },
     );
 
@@ -294,6 +309,7 @@ export async function load({ params }) {
     // ===========================================================================
 
     return {
+        fundReimbursementId,
         responses: {
             fundReimbursementDetailResponse,
             fundReimbursementPersonalDetailResponse,
@@ -309,6 +325,7 @@ export async function load({ params }) {
             fundReimbursementSecretaryApprovalForm,
             fundReimbursementResultForm,
             fundReimbursementDocumentForm,
+            fundReimbursementUploadDocumentForm,
         },
         selectionOptions: {
             identityCardColorLookup,
@@ -331,10 +348,82 @@ export async function load({ params }) {
             programLookup,
         },
         role: {
+            isStaffRole,
             isCourseSecretaryRole,
         },
     };
 }
+
+//==================================================
+//=============== Submit Functions =================
+//==================================================
+export const _createFundReimbursementForm = async (formData: object) => {
+    const form = await superValidate(
+        formData,
+        zod(_createFundReimbursementRequestSchema),
+    );
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await CourseFundReimbursementServices.createCourseFundReimbursement(
+            form.data as CourseAddFundReimbursementRequestDTO,
+        );
+
+    if (response.status === 'success')
+        setTimeout(() => {
+            goto(`../tuntutan-yuran/${response.data?.details.id}`);
+        }, 1000);
+
+    return { response };
+};
+
+export const _submitDocumentForm = async (id: number,isDraft: boolean, files: File[]) => {
+    const documentData = new FormData();
+
+    // check file size validation
+    files.forEach((file) => {
+        documentData.append('documents', file, file.name);
+    });
+
+    const form = await superValidate(
+        documentData,
+        zod(_fundReimbursementUploadDocSchema),
+    );
+
+    if (!form.valid || id === undefined) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    // turns file into base 64 format
+    const requestBody: CourseFundApplicationUploadDocumentsBase64RequestDTO = {
+        documents: [],
+        id: id,
+        isDraft: isDraft,
+    };
+
+    console.log('requestBody', requestBody);
+
+    for (let i = 0; i < files.length; i++) {
+        const base64String = await _fileToBase64String(files[i]);
+        const documentObject: DocumentBase64RequestDTO = {
+            base64: base64String,
+            name: files[i].name,
+        };
+        requestBody.documents?.push(documentObject);
+    }
+
+    const response: CommonResponseDTO =
+        await CourseFundReimbursementServices.uploadFundReimbursementEmployeeDocument(
+            requestBody,
+        );
+
+    return { response };
+};
 
 //==================================================
 //=============== Submit Functions =================

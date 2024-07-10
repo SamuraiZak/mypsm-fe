@@ -1,4 +1,5 @@
 <script lang="ts">
+    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import { approveOptions } from '$lib/constants/core/radio-option-constants';
     import { writable } from 'svelte/store';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
@@ -14,30 +15,58 @@
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import { goto } from '$app/navigation';
-    import { _addSecretaryApprovalForm } from './+page';
+    import {
+        _addSecretaryApprovalForm,
+        _createFundReimbursementForm,
+        _submitDocumentForm,
+    } from './+page';
     import { zod } from 'sveltekit-superforms/adapters';
     import { error } from '@sveltejs/kit';
     import type { CourseFundReimbursementDetailResponseDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement.dto';
     import {
         _fundReimbursementApprovalSchema,
         _fundReimbursementDetailResponseSchema,
+        _fundReimbursementUploadDocSchema,
     } from '$lib/schemas/mypsm/course/fund-reimbursement-schema';
     import { Badge } from 'flowbite-svelte';
     import StepperFileNotUploaded from '$lib/components/stepper/StepperFileNotUploaded.svelte';
-    import DownloadAttachment from '$lib/components/inputs/attachment/DownloadAttachment.svelte';
     import { CourseFundReimbursementServices } from '$lib/services/implementation/mypsm/latihan/fundReimbursement.service';
+    import FileInputField from '$lib/components/inputs/file-input-field/FileInputField.svelte';
+    import FileInputFieldChildren from '$lib/components/inputs/file-input-field/FileInputFieldChildren.svelte';
     export let data: PageData;
 
     let isReadonlySecretaryApprovalResult = writable<boolean>(false);
 
     let fundReimbursementIsFail = writable<boolean>(false);
 
+    let reimbursementInfoIsDrafted = writable<boolean>(false);
+
+    let reimbursementDocumentIsDrafted = writable<boolean>(false);
+
+    let reimbursementSecretaryApprovalIsDrafted = writable<boolean>(false);
+
     let fundReimbursementNotUploaded = writable<boolean>(false);
     $: {
+        data.responses.fundReimbursementDetailResponse.data?.details.isDraft ===
+        true
+            ? reimbursementInfoIsDrafted.set(true)
+            : reimbursementInfoIsDrafted.set(false);
+
         data.responses.fundReimbursementDocumentInfoResponse.data?.details
             .document === null
             ? fundReimbursementNotUploaded.set(true)
             : fundReimbursementNotUploaded.set(false);
+
+        data.responses.fundReimbursementDocumentInfoResponse.data?.details
+            .isDraft === true
+            ? reimbursementDocumentIsDrafted.set(true)
+            : reimbursementDocumentIsDrafted.set(false);
+
+        data.responses.fundReimbursementSecretaryApprovalResponse.data?.details
+            .isDraft === true
+            ? reimbursementSecretaryApprovalIsDrafted.set(true)
+            : reimbursementSecretaryApprovalIsDrafted.set(false);
+
         data.responses.fundReimbursementSecretaryApprovalResponse.data?.details
             .status === false
             ? fundReimbursementIsFail.set(true)
@@ -50,15 +79,23 @@
     }
 
     // Superforms
-    const { form, enhance } = superForm(data.forms.fundReimbursementInfoForm, {
-        SPA: true,
-        dataType: 'json',
-        invalidateAll: true,
-        resetForm: false,
-        multipleSubmits: 'allow',
-        validationMethod: 'oninput',
-        validators: false,
-    });
+    const { form, errors, enhance } = superForm(
+        data.forms.fundReimbursementInfoForm,
+        {
+            SPA: true,
+            dataType: 'json',
+            invalidateAll: true,
+            resetForm: false,
+            multipleSubmits: 'allow',
+            validationMethod: 'oninput',
+            validators: zod(_fundReimbursementDetailResponseSchema),
+            async onSubmit() {
+                $form.id = data.fundReimbursementId;
+                await _createFundReimbursementForm($form);
+            },
+            taintedMessage: false,
+        },
+    );
 
     const { form: reimbursementDocumentsForm } = superForm(
         data.forms.fundReimbursementDocumentForm,
@@ -72,6 +109,25 @@
             validators: false,
         },
     );
+
+    const {
+        form: fundReimbursementUploadDocumentForm,
+        errors: fundReimbursementUploadDocumentError,
+        enhance: fundReimbursementUploadDocumentEnhance,
+    } = superForm(data.forms.fundReimbursementUploadDocumentForm, {
+        SPA: true,
+        resetForm: false,
+        id: 'documentUploadForm',
+        validators: zod(_fundReimbursementUploadDocSchema),
+        onSubmit() {
+            _submitDocumentForm(
+                data.fundReimbursementId,
+                $fundReimbursementUploadDocumentForm.isDraft,
+                $fundReimbursementUploadDocumentForm.documents,
+            );
+        },
+        taintedMessage: 'Permohonon anda belum selesai.',
+    });
 
     const { form: personalInfoForm, enhance: personalInfoEnhance } = superForm(
         data.forms.fundReimbursementPersonalInfoForm,
@@ -126,8 +182,26 @@
         },
     });
 
-    const handleDownload = async (url: string) => {
-        await CourseFundReimbursementServices.downloadAttachment(url);
+    const handleOnInput = (e: Event) => {
+        const additionalFiles: File[] = Array.from(
+            (e.currentTarget as HTMLInputElement)?.files ?? [],
+        );
+
+        additionalFiles.forEach((file) => {
+            $fundReimbursementUploadDocumentForm.documents = [
+                ...$fundReimbursementUploadDocumentForm.documents,
+                file,
+            ];
+        });
+    };
+
+    const handleDelete = (i: number) => {
+        $fundReimbursementUploadDocumentForm.documents =
+            $fundReimbursementUploadDocumentForm.documents.filter(
+                (_, index) => {
+                    return index !== i;
+                },
+            );
     };
 </script>
 
@@ -700,240 +774,437 @@
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Maklumat Pembelajaran Diikuti" />
+        <StepperContentHeader title="Maklumat Pembelajaran Diikuti">
+            {#if $reimbursementInfoIsDrafted && data.role.isStaffRole}
+                <TextIconButton
+                    type="neutral"
+                    label="Deraf"
+                    form="examReimbursementInfoStepper"
+                    onClick={() => {
+                        $form.isDraft = true;
+                    }}
+                />
+                <TextIconButton
+                    type="primary"
+                    label="Hantar"
+                    form="examReimbursementInfoStepper"
+                    onClick={() => {
+                        $form.isDraft = false;
+                    }}
+                />
+            {/if}
+        </StepperContentHeader>
         <StepperContentBody>
-            <form
-                id="examReimbursementInfoStepper"
-                method="POST"
-                use:enhance
-                class="flex w-full flex-col gap-2"
-            >
-                <CustomSelectField
-                    disabled={true}
-                    id="academicLevel"
-                    label="Peringkat Kursus Pengajian"
-                    placeholder="-"
-                    bind:val={$form.academicLevel}
-                    options={data.lookups.educationLookup}
-                ></CustomSelectField>
-
-                <CustomTextField
-                    disabled={true}
-                    id="courseName"
-                    label="Nama Kursus Pengajian"
-                    type="text"
-                    placeholder="-"
-                    bind:val={$form.courseName}
-                ></CustomTextField>
-
-                <CustomSelectField
-                    disabled={true}
-                    id="institution"
-                    label="Tempat Pengajian"
-                    placeholder="-"
-                    bind:val={$form.institution}
-                    options={data.lookups.institutionLookup}
-                ></CustomSelectField>
-
-                <CustomSelectField
-                    disabled={true}
-                    id="learningInstitution"
-                    label="Institusi/Pusat Pembelajaran"
-                    placeholder="-"
-                    bind:val={$form.learningInstitution}
-                    options={data.lookups.institutionLookup}
-                ></CustomSelectField>
-
-                <CustomTextField
-                    disabled={true}
-                    id="studyDuration"
-                    label="Tempoh Pengajian (Tahun)"
-                    type="number"
-                    placeholder="-"
-                    bind:val={$form.studyDuration}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled={true}
-                    id="courseApplicationDate"
-                    label="Tarikh Kemasukan Ke IPTA"
-                    type="date"
-                    placeholder="-"
-                    bind:val={$form.courseApplicationDate}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled={true}
-                    id="finishedStudyDate"
-                    label="Tamat Pada"
-                    type="date"
-                    placeholder="-"
-                    bind:val={$form.finishedStudyDate}
-                ></CustomTextField>
-
-                <CustomSelectField
-                    disabled={true}
-                    id="semester"
-                    label="Tuntutan Untuk Semester"
-                    placeholder="-"
-                    bind:val={$form.semester}
-                    options={[
-                        {
-                            value: 1,
-                            name: 'Satu',
-                        },
-                        {
-                            value: 2,
-                            name: 'Dua',
-                        },
-                        {
-                            value: 3,
-                            name: 'Tiga',
-                        },
-                        {
-                            value: 4,
-                            name: 'Empat',
-                        },
-                        {
-                            value: 5,
-                            name: 'Lima',
-                        },
-                        {
-                            value: 6,
-                            name: 'Enam',
-                        },
-                        {
-                            value: 7,
-                            name: 'Tujuh',
-                        },
-                        {
-                            value: 8,
-                            name: 'Lapan',
-                        },
-                    ]}
-                ></CustomSelectField>
-
-                <CustomTextField
-                    disabled={true}
-                    id="finalResult"
-                    label="Keputusan Semester (GPA/skema pemarkahan berkaitan)"
-                    type="text"
-                    placeholder="-"
-                    bind:val={$form.finalResult}
-                ></CustomTextField>
-
-                <CustomTextField
-                    disabled={true}
-                    id="totalClaim"
-                    label="Jumlah Tuntutan (RM)"
-                    type="number"
-                    placeholder="-"
-                    bind:val={$form.totalClaim}
-                ></CustomTextField>
-            </form>
-        </StepperContentBody>
-    </StepperContent>
-    <StepperContent>
-        <StepperContentHeader title="Dokumen - Dokumen Sokongan yang Berkaitan"
-        ></StepperContentHeader>
-        <StepperContentBody>
-            {#if $fundReimbursementNotUploaded}
-                <StepperFileNotUploaded />
+            {#if $reimbursementInfoIsDrafted && data.role.isCourseSecretaryRole}
+                <StepperOtherRolesResult />
             {:else}
-                <div class="flex w-full flex-col gap-2">
-                    <div
-                        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-                    >
-                        <p
-                            class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
-                        >
-                            Fail-fail yang dimuat naik:
-                        </p>
+                <form
+                    id="examReimbursementInfoStepper"
+                    method="POST"
+                    use:enhance
+                    class="flex w-full flex-col gap-2"
+                >
+                    <CustomSelectField
+                        disabled={!$reimbursementInfoIsDrafted}
+                        errors={$errors.academicLevel}
+                        id="academicLevel"
+                        label="Peringkat Kursus Pengajian"
+                        placeholder="-"
+                        bind:val={$form.academicLevel}
+                        options={data.lookups.educationLookup}
+                    ></CustomSelectField>
 
-                        {#each $reimbursementDocumentsForm.document as _, i}
-                            <div
-                                class="flex w-full flex-row items-center justify-between"
-                            >
-                                <label
-                                    for=""
-                                    class="block w-[20px] min-w-[20px] text-[11px] font-medium"
-                                    >{i + 1}.</label
-                                >
-                                <a
-                                    href={$reimbursementDocumentsForm.document[
-                                        i
-                                    ].document}
-                                    download={$reimbursementDocumentsForm
-                                        .document[i].name}
-                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                    >{$reimbursementDocumentsForm.document[i]
-                                        .name}</a
-                                >
-                            </div>
-                        {/each}
-                    </div>
-                </div>
+                    <CustomTextField
+                        disabled={!$reimbursementInfoIsDrafted}
+                        errors={$errors.courseName}
+                        id="courseName"
+                        label="Nama Kursus Pengajian"
+                        type="text"
+                        placeholder="-"
+                        bind:val={$form.courseName}
+                    ></CustomTextField>
+
+                    <CustomSelectField
+                        disabled={!$reimbursementInfoIsDrafted}
+                        errors={$errors.institution}
+                        id="institution"
+                        label="Tempat Pengajian"
+                        placeholder="-"
+                        bind:val={$form.institution}
+                        options={data.lookups.institutionLookup}
+                    ></CustomSelectField>
+
+                    <CustomSelectField
+                        disabled={!$reimbursementInfoIsDrafted}
+                        errors={$errors.learningInstitution}
+                        id="learningInstitution"
+                        label="Institusi/Pusat Pembelajaran"
+                        placeholder="-"
+                        bind:val={$form.learningInstitution}
+                        options={data.lookups.institutionLookup}
+                    ></CustomSelectField>
+
+                    <CustomTextField
+                        disabled={!$reimbursementInfoIsDrafted}
+                        errors={$errors.studyDuration}
+                        id="studyDuration"
+                        label="Tempoh Pengajian (Tahun)"
+                        type="number"
+                        placeholder="-"
+                        bind:val={$form.studyDuration}
+                    ></CustomTextField>
+
+                    <CustomTextField
+                        disabled={!$reimbursementInfoIsDrafted}
+                        errors={$errors.entryDateToInstituition}
+                        id="entryDateToInstituition"
+                        label="Tarikh Kemasukan Ke IPTA"
+                        type="date"
+                        placeholder="-"
+                        bind:val={$form.entryDateToInstituition}
+                    ></CustomTextField>
+
+                    <CustomTextField
+                        disabled={!$reimbursementInfoIsDrafted}
+                        errors={$errors.finishedStudyDate}
+                        id="finishedStudyDate"
+                        label="Tamat Pada"
+                        type="date"
+                        placeholder="-"
+                        bind:val={$form.finishedStudyDate}
+                    ></CustomTextField>
+
+                    <CustomSelectField
+                        disabled={!$reimbursementInfoIsDrafted}
+                        errors={$errors.semester}
+                        id="semester"
+                        label="Tuntutan Untuk Semester"
+                        placeholder="-"
+                        bind:val={$form.semester}
+                        options={[
+                            {
+                                value: 1,
+                                name: 'Satu',
+                            },
+                            {
+                                value: 2,
+                                name: 'Dua',
+                            },
+                            {
+                                value: 3,
+                                name: 'Tiga',
+                            },
+                            {
+                                value: 4,
+                                name: 'Empat',
+                            },
+                            {
+                                value: 5,
+                                name: 'Lima',
+                            },
+                            {
+                                value: 6,
+                                name: 'Enam',
+                            },
+                            {
+                                value: 7,
+                                name: 'Tujuh',
+                            },
+                            {
+                                value: 8,
+                                name: 'Lapan',
+                            },
+                        ]}
+                    ></CustomSelectField>
+
+                    <CustomTextField
+                        disabled={!$reimbursementInfoIsDrafted}
+                        errors={$errors.finalResult}
+                        id="finalResult"
+                        label="Keputusan Semester (GPA/skema pemarkahan berkaitan)"
+                        type="text"
+                        placeholder="-"
+                        bind:val={$form.finalResult}
+                    ></CustomTextField>
+
+                    <CustomTextField
+                        disabled={!$reimbursementInfoIsDrafted}
+                        errors={$errors.totalClaim}
+                        id="totalClaim"
+                        label="Jumlah Tuntutan (RM)"
+                        type="number"
+                        placeholder="-"
+                        bind:val={$form.totalClaim}
+                    ></CustomTextField>
+                </form>
             {/if}
         </StepperContentBody>
     </StepperContent>
-
-    {#if !$fundReimbursementNotUploaded}
+    {#if !$reimbursementInfoIsDrafted}
         <StepperContent>
-            <StepperContentHeader title="Pengesahan Semakan Urus Setia Latihan">
-                {#if !$isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole}
+            <StepperContentHeader
+                title="Dokumen - Dokumen Sokongan yang Berkaitan"
+            >
+                {#if $reimbursementDocumentIsDrafted && data.role.isStaffRole}
+                    <TextIconButton
+                        type="neutral"
+                        label="Deraf"
+                        form="documentUploadForm"
+                        onClick={() => {
+                            $fundReimbursementUploadDocumentForm.isDraft = true;
+                        }}
+                    />
                     <TextIconButton
                         type="primary"
-                        label="Simpan"
-                        form="examReimbursementSecretaryApprovalForm"
-                    ></TextIconButton>
+                        label="Hantar"
+                        form="documentUploadForm"
+                        onClick={() => {
+                            $fundReimbursementUploadDocumentForm.isDraft = false;
+                        }}
+                    />
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <form
-                    id="examReimbursementSecretaryApprovalForm"
-                    method="POST"
-                    use:secretaryApprovalInfoEnhance
-                    class="flex w-full flex-col gap-2.5"
-                >
-                    {#if $isReadonlySecretaryApprovalResult || data.role.isCourseSecretaryRole}
-                        <div class="mb-5">
-                            <b class="text-sm text-system-primary"
-                                >Keputusan Urus Setia Latihan</b
+                {#if ($fundReimbursementNotUploaded || $reimbursementDocumentIsDrafted) && data.role.isCourseSecretaryRole}
+                    <StepperFileNotUploaded />
+                {:else if ($fundReimbursementNotUploaded || $reimbursementDocumentIsDrafted) && data.role.isStaffRole}
+                    <div class="flex w-full flex-col gap-2">
+                        <p class="text-sm">
+                            Sila muat turun, isi dengan lengkap dokumen berikut,
+                            kemudian muat naik dokumen pada ruangan yang
+                            disediakan.
+                        </p>
+
+                        <ol class="list-inside list-decimal space-y-1 text-sm">
+                            <li>Slip keputusan</li>
+                            <li>Resit tuntutan</li>
+                            <li>Lain-lain dokumen yang berkaitan</li>
+                        </ol>
+                        <form
+                            class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                            method="POST"
+                            id="documentUploadForm"
+                            enctype="multipart/form-data"
+                            use:fundReimbursementUploadDocumentEnhance
+                        >
+                            {#if $fundReimbursementUploadDocumentError.documents}
+                                <span
+                                    class="font-sans text-sm italic text-system-danger"
+                                    >Sila muat naik dokumen barkaitan dan
+                                    pastikan tidak melebihi 10MB.</span
+                                >
+                            {/if}
+                            <ContentHeader
+                                title="Pastikan dokumen berkenaan dimuat naik"
+                                borderClass="border-none"
                             >
+                                <div
+                                    hidden={$fundReimbursementUploadDocumentForm
+                                        .documents.length < 1}
+                                >
+                                    <FileInputField
+                                        id="documents"
+                                        handleOnInput={(e) => handleOnInput(e)}
+                                    ></FileInputField>
+                                </div>
+                            </ContentHeader>
+                            <div
+                                class="flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border border-bdr-primary p-2.5"
+                            >
+                                <div class="flex flex-wrap gap-3">
+                                    {#each $fundReimbursementUploadDocumentForm.documents as _, i}
+                                        <FileInputFieldChildren
+                                            childrenType="grid"
+                                            handleDelete={() => handleDelete(i)}
+                                            document={$fundReimbursementUploadDocumentForm
+                                                .documents[i]}
+                                        />
+                                    {/each}
+                                </div>
+                                {#if $fundReimbursementUploadDocumentForm.documents.length < 1}
+                                    <div
+                                        class="flex flex-col items-center justify-center gap-2.5 text-sm text-txt-tertiary"
+                                    >
+                                        <span
+                                            >Pilih fail dari peranti anda.</span
+                                        >
+                                        <svg
+                                            width={40}
+                                            height={40}
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                            />
+                                        </svg>
+                                        <FileInputField
+                                            id="documents"
+                                            handleOnInput={(e) =>
+                                                handleOnInput(e)}
+                                        ></FileInputField>
+                                    </div>
+                                {/if}
+                            </div>
+                        </form>
+                        {#if !$fundReimbursementNotUploaded}
+                            <div class="flex w-full flex-col gap-2">
+                                <div
+                                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                                >
+                                    <p
+                                        class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
+                                    >
+                                        Fail-fail yang dimuat naik:
+                                    </p>
+
+                                    {#each $reimbursementDocumentsForm.document as _, i}
+                                        <div
+                                            class="flex w-full flex-row items-center justify-between"
+                                        >
+                                            <label
+                                                for=""
+                                                class="block w-[20px] min-w-[20px] text-[11px] font-medium"
+                                                >{i + 1}.</label
+                                            >
+                                            <a
+                                                href={$reimbursementDocumentsForm
+                                                    .document[i].document}
+                                                download={$reimbursementDocumentsForm
+                                                    .document[i].name}
+                                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                                >{$reimbursementDocumentsForm
+                                                    .document[i].name}</a
+                                            >
+                                        </div>
+                                    {/each}
+                                </div>
+                            </div>
+                        {/if}
+                    </div>
+                {:else}
+                    <div class="flex w-full flex-col gap-2">
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                        >
+                            <p
+                                class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
+                            >
+                                Fail-fail yang dimuat naik:
+                            </p>
+
+                            {#each $reimbursementDocumentsForm.document as _, i}
+                                <div
+                                    class="flex w-full flex-row items-center justify-between"
+                                >
+                                    <label
+                                        for=""
+                                        class="block w-[20px] min-w-[20px] text-[11px] font-medium"
+                                        >{i + 1}.</label
+                                    >
+                                    <a
+                                        href={$reimbursementDocumentsForm
+                                            .document[i].document}
+                                        download={$reimbursementDocumentsForm
+                                            .document[i].name}
+                                        class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                        >{$reimbursementDocumentsForm.document[
+                                            i
+                                        ].name}</a
+                                    >
+                                </div>
+                            {/each}
                         </div>
-
-                        <input
-                            hidden
-                            bind:value={$secretaryApprovalInfoForm.id}
-                        />
-
-                        <CustomTextField
-                            disabled={$isReadonlySecretaryApprovalResult ||
-                                !data.role.isCourseSecretaryRole}
-                            errors={$secretaryApprovalInfoErrors.remark}
-                            id="remark"
-                            label="Tindakan/Ulasan"
-                            placeholder="-"
-                            bind:val={$secretaryApprovalInfoForm.remark}
-                        ></CustomTextField>
-
-                        <CustomSelectField
-                            disabled={$isReadonlySecretaryApprovalResult ||
-                                !data.role.isCourseSecretaryRole}
-                            errors={$secretaryApprovalInfoErrors.status}
-                            id="status"
-                            label="Keputusan"
-                            placeholder="-"
-                            bind:val={$secretaryApprovalInfoForm.status}
-                            options={approveOptions}
-                        ></CustomSelectField>
-                    {:else}
-                        <StepperOtherRolesResult />
-                    {/if}
-                </form>
-                <hr />
+                    </div>
+                {/if}
             </StepperContentBody>
         </StepperContent>
+        {#if !$fundReimbursementNotUploaded && !$reimbursementDocumentIsDrafted}
+            <StepperContent>
+                <StepperContentHeader
+                    title="Pengesahan Semakan Urus Setia Latihan"
+                >
+                    {#if (!$isReadonlySecretaryApprovalResult || $reimbursementSecretaryApprovalIsDrafted) && data.role.isCourseSecretaryRole}
+                        <TextIconButton
+                            type="neutral"
+                            label="Deraf"
+                            form="examReimbursementSecretaryApprovalForm"
+                            onClick={() => {
+                                $secretaryApprovalInfoForm.isDraft = true;
+                            }}
+                        />
+                        <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="examReimbursementSecretaryApprovalForm"
+                            onClick={() => {
+                                $secretaryApprovalInfoForm.isDraft = false;
+                            }}
+                        />
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <form
+                        id="examReimbursementSecretaryApprovalForm"
+                        method="POST"
+                        use:secretaryApprovalInfoEnhance
+                        class="flex w-full flex-col gap-2.5"
+                    >
+                        {#if ($isReadonlySecretaryApprovalResult && !$reimbursementSecretaryApprovalIsDrafted) || data.role.isCourseSecretaryRole}
+                            <div class="mb-5">
+                                <b class="text-sm text-system-primary"
+                                    >Keputusan Urus Setia Latihan</b
+                                >
+                            </div>
+
+                            <input
+                                hidden
+                                bind:value={$secretaryApprovalInfoForm.id}
+                            />
+
+                            <CustomTextField
+                                disabled={($isReadonlySecretaryApprovalResult &&
+                                    !$reimbursementSecretaryApprovalIsDrafted) ||
+                                    !data.role.isCourseSecretaryRole}
+                                errors={$secretaryApprovalInfoErrors.remark}
+                                id="remark"
+                                label="Tindakan/Ulasan"
+                                placeholder="-"
+                                bind:val={$secretaryApprovalInfoForm.remark}
+                            ></CustomTextField>
+
+                            <CustomRadioBoolean
+                                disabled={($isReadonlySecretaryApprovalResult &&
+                                    !$reimbursementSecretaryApprovalIsDrafted) ||
+                                    !data.role.isCourseSecretaryRole}
+                                errors={$secretaryApprovalInfoErrors.status}
+                                id="status"
+                                label="Keputusan"
+                                bind:val={$secretaryApprovalInfoForm.status}
+                                options={approveOptions}
+                            ></CustomRadioBoolean>
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="approvalDate"
+                                label="Tarikh Kelulusan"
+                                type="date"
+                                placeholder="-"
+                                val={$secretaryApprovalInfoForm.approvalDate}
+                            ></CustomTextField>
+                        {:else}
+                            <StepperOtherRolesResult />
+                        {/if}
+                    </form>
+                    <hr />
+                </StepperContentBody>
+            </StepperContent>
+        {/if}
     {/if}
 </Stepper>
 

@@ -16,17 +16,14 @@
         _serviceInfoRequestSchema,
     } from '$lib/schemas/mypsm/employment/new-hire/schema';
     import { goto } from '$app/navigation';
-    import { _createFundReimbursementForm, _submitDocumentForm } from './+page';
+    import { _createFundReimbursementForm } from './+page';
     import {
         _fundReimbursementDetailResponseSchema,
         _fundReimbursementUploadDocSchema,
     } from '$lib/schemas/mypsm/course/fund-reimbursement-schema';
     import type { PageData } from './$types';
-    import FileInputField from '$lib/components/inputs/file-input-field/FileInputField.svelte';
-    import FileInputFieldChildren from '$lib/components/inputs/file-input-field/FileInputFieldChildren.svelte';
     export let data: PageData;
-    let enableUploadDocument = false;
-    let createdApplicationId: number;
+    let formSubmitted = false;
 
     // Superforms
     const { form, errors, enhance } = superForm(data.reimbursementInfoForm, {
@@ -43,57 +40,16 @@
             );
 
             if (result.response.status === 'success') {
-                enableUploadDocument = true;
-                createdApplicationId = result.response.data?.details.id;
+                formSubmitted = true;
             }
         },
         taintedMessage: false,
     });
-
-    const {
-        form: fundReimbursementUploadDocumentForm,
-        errors: fundReimbursementUploadDocumentError,
-        enhance: fundReimbursementUploadDocumentEnhance,
-    } = superForm(data.fundReimbursementUploadDocumentForm, {
-        SPA: true,
-        resetForm: false,
-        id: 'documentUploadForm',
-        validators: zod(_fundReimbursementUploadDocSchema),
-        onSubmit() {
-            _submitDocumentForm(
-                createdApplicationId,
-                $fundReimbursementUploadDocumentForm.documents,
-            );
-        },
-        taintedMessage: 'Permohonon anda belum selesai.',
-    });
-
-    const handleOnInput = (e: Event) => {
-        const additionalFiles: File[] = Array.from(
-            (e.currentTarget as HTMLInputElement)?.files ?? [],
-        );
-
-        additionalFiles.forEach((file) => {
-            $fundReimbursementUploadDocumentForm.documents = [
-                ...$fundReimbursementUploadDocumentForm.documents,
-                file,
-            ];
-        });
-    };
-
-    const handleDelete = (i: number) => {
-        $fundReimbursementUploadDocumentForm.documents =
-            $fundReimbursementUploadDocumentForm.documents.filter(
-                (_, index) => {
-                    return index !== i;
-                },
-            );
-    };
 </script>
 
 <ContentHeader title="Maklumat Pembiayaan Pelajaran"
     ><TextIconButton
-        label={enableUploadDocument ? 'Muat naik kemudian' : 'Kembali'}
+        label="Kembali"
         type="neutral"
         onClick={() => {
             goto('../tuntutan-yuran');
@@ -103,13 +59,22 @@
 <Stepper>
     <StepperContent>
         <StepperContentHeader title="Maklumat Pengajian Diikuti">
-            {#if !enableUploadDocument}
+                <TextIconButton
+                    type="neutral"
+                    label="Deraf"
+                    form="fundReimbursementFormStepper"
+                    onClick={() => {
+                        $form.isDraft = true;
+                    }}
+                />
                 <TextIconButton
                     type="primary"
-                    label="Simpan"
+                    label="Hantar"
                     form="fundReimbursementFormStepper"
+                    onClick={() => {
+                        $form.isDraft = false;
+                    }}
                 />
-            {/if}
         </StepperContentHeader>
         <StepperContentBody
             ><!-- Maklumat Peperiksaan -->
@@ -120,7 +85,7 @@
                 class="flex w-full flex-col gap-2"
             >
                 <CustomSelectField
-                    disabled={enableUploadDocument}
+                    disabled={formSubmitted}
                     errors={$errors.academicLevel}
                     id="academicLevel"
                     label="Peringkat Kursus Pengajian"
@@ -129,7 +94,7 @@
                 ></CustomSelectField>
 
                 <CustomTextField
-                    disabled={enableUploadDocument}
+                    disabled={formSubmitted}
                     errors={$errors.courseName}
                     id="courseName"
                     label="Nama Kursus Pengajian"
@@ -138,7 +103,7 @@
                 ></CustomTextField>
 
                 <CustomSelectField
-                    disabled={enableUploadDocument}
+                    disabled={formSubmitted}
                     errors={$errors.institution}
                     id="institution"
                     label="Tempat Pengajian"
@@ -147,7 +112,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={enableUploadDocument}
+                    disabled={formSubmitted}
                     errors={$errors.learningInstitution}
                     id="learningInstitution"
                     label="Institusi/Pusat Pembelajaran"
@@ -156,7 +121,7 @@
                 ></CustomSelectField>
 
                 <CustomTextField
-                    disabled={enableUploadDocument}
+                    disabled={formSubmitted}
                     errors={$errors.studyDuration}
                     id="studyDuration"
                     label="Tempoh Pengajian (Tahun)"
@@ -165,7 +130,7 @@
                 ></CustomTextField>
 
                 <CustomTextField
-                    disabled={enableUploadDocument}
+                    disabled={formSubmitted}
                     errors={$errors.entryDateToInstituition}
                     id="entryDateToInstituition"
                     label="Tarikh Kemasukan Ke IPTA"
@@ -174,7 +139,7 @@
                 ></CustomTextField>
 
                 <CustomTextField
-                    disabled={enableUploadDocument}
+                    disabled={formSubmitted}
                     errors={$errors.finishedStudyDate}
                     id="finishedStudyDate"
                     label="Tamat Pada"
@@ -183,7 +148,7 @@
                 ></CustomTextField>
 
                 <CustomSelectField
-                    disabled={enableUploadDocument}
+                    disabled={formSubmitted}
                     errors={$errors.semester}
                     id="semester"
                     label="Tuntutan Untuk Semester"
@@ -225,7 +190,7 @@
                 ></CustomSelectField>
 
                 <CustomTextField
-                    disabled={enableUploadDocument}
+                    disabled={formSubmitted}
                     errors={$errors.finalResult}
                     id="finalResult"
                     label="Keputusan Semester (GPA/skema pemarkahan berkaitan)"
@@ -234,7 +199,7 @@
                 ></CustomTextField>
 
                 <CustomTextField
-                    disabled={enableUploadDocument}
+                    disabled={formSubmitted}
                     errors={$errors.totalClaim}
                     id="totalClaim"
                     label="Jumlah Tuntutan (RM)"
@@ -244,100 +209,6 @@
             </form>
         </StepperContentBody>
     </StepperContent>
-    {#if enableUploadDocument}
-        <StepperContent>
-            <StepperContentHeader title="Dokumen Sokongan">
-                <TextIconButton
-                    label="Simpan"
-                    form="documentUploadForm"
-                    type="primary"
-                />
-            </StepperContentHeader>
-            <StepperContentBody>
-                <div class="flex w-full flex-col gap-2">
-                    <p class="text-sm">
-                        Sila muat turun, isi dengan lengkap dokumen berikut,
-                        kemudian muat naik dokumen pada ruangan yang disediakan.
-                    </p>
-
-                    <ol class="list-inside list-decimal space-y-1 text-sm">
-                        <li>Slip keputusan</li>
-                        <li>Resit tuntutan</li>
-                        <li>Lain-lain dokumen yang berkaitan</li>
-                    </ol>
-                    <form
-                        class="flex w-full flex-col justify-start gap-2.5 pb-10"
-                        method="POST"
-                        id="documentUploadForm"
-                        enctype="multipart/form-data"
-                        use:fundReimbursementUploadDocumentEnhance
-                    >
-                        {#if $fundReimbursementUploadDocumentError.documents}
-                            <span
-                                class="font-sans text-sm italic text-system-danger"
-                                >Sila muat naik dokumen barkaitan dan pastikan
-                                tidak melebihi 10MB.</span
-                            >
-                        {/if}
-                        <ContentHeader
-                            title="Dokumen Sokongan"
-                            borderClass="border-none"
-                        >
-                            <div
-                                hidden={$fundReimbursementUploadDocumentForm
-                                    .documents.length < 1}
-                            >
-                                <FileInputField
-                                    id="documents"
-                                    handleOnInput={(e) => handleOnInput(e)}
-                                ></FileInputField>
-                            </div>
-                        </ContentHeader>
-                        <div
-                            class="flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border border-bdr-primary p-2.5"
-                        >
-                            <div class="flex flex-wrap gap-3">
-                                {#each $fundReimbursementUploadDocumentForm.documents as _, i}
-                                    <FileInputFieldChildren
-                                        childrenType="grid"
-                                        handleDelete={() => handleDelete(i)}
-                                        document={$fundReimbursementUploadDocumentForm
-                                            .documents[i]}
-                                    />
-                                {/each}
-                            </div>
-                            {#if $fundReimbursementUploadDocumentForm.documents.length < 1}
-                                <div
-                                    class="flex flex-col items-center justify-center gap-2.5 text-sm text-txt-tertiary"
-                                >
-                                    <span>Pilih fail dari peranti anda.</span>
-                                    <svg
-                                        width={40}
-                                        height={40}
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="1.5"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                                        />
-                                    </svg>
-                                    <FileInputField
-                                        id="documents"
-                                        handleOnInput={(e) => handleOnInput(e)}
-                                    ></FileInputField>
-                                </div>
-                            {/if}
-                        </div>
-                    </form>
-                </div></StepperContentBody
-            >
-        </StepperContent>
-    {/if}
 </Stepper>
 
 <Toaster />

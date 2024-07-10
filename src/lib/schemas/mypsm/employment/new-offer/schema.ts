@@ -13,6 +13,7 @@ export const _meetingResultEmployeeSchema = z.object({
     employeeName: z.string(),
     remarks: z.string(),
     status: z.boolean(),
+    approvalDate: z.string().readonly(),
 });
 
 export const _approverSchema = z.object({

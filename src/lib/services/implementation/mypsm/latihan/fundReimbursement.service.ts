@@ -86,7 +86,7 @@ export class CourseFundReimbursementServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                // await invalidateAll();
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -167,7 +167,7 @@ export class CourseFundReimbursementServices {
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
-            console.log(result);
+            
             if (result.status == 'success') {
                 await invalidateAll();
                 return result;

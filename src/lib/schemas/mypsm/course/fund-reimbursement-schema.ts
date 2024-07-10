@@ -30,6 +30,7 @@ export const _fundReimbursementResponseSchema = z.object({
     LNPTAverage: z.number(),
     totalClaim: z.number(),
     status: z.string().readonly(),
+    isDraft: z.boolean().default(false),
 });
 
 export const _fundReimbursementListResponseSchema = z.array(
@@ -45,6 +46,7 @@ export const _fundReimbursementDetailResponseSchema =
             studyDuration: true,
             totalClaim: true,
             status: true,
+            isDraft: true,
         })
         .extend({
             academicLevel: shortTextSchema,
@@ -58,6 +60,7 @@ export const _fundReimbursementDetailResponseSchema =
 
 export const _createFundReimbursementRequestSchema =
     _fundReimbursementDetailResponseSchema.pick({
+        id: true,
         academicLevel: true,
         courseName: true,
         institution: true,
@@ -68,6 +71,7 @@ export const _createFundReimbursementRequestSchema =
         finishedStudyDate: true,
         finalResult: true,
         totalClaim: true,
+        isDraft: true,
     });
 
 export const _uploadDocumentsSchema = z.object({
@@ -163,6 +167,8 @@ export const _fundReimbursementApprovalSchema = z.object({
     id: numberIdSchema,
     remark: shortTextSchema,
     status: booleanSchema,
+    approvalDate: z.string().readonly(),
+    isDraft: z.boolean().default(false),
 });
 
 // ==================================================
@@ -173,8 +179,10 @@ export const _fundReimbursementDocumentSchema = z.object({
 });
 export const _fundReimbursementUploadDocSchema = z.object({
     // id: numberIdSchema,
+    isDraft: z.boolean().default(false),
     documents: z
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
         .refine((f) => f.size < 10_000_000, 'Maximum 10 MB saiz muat naik.')
-        .array().min(1, {message: "Dokumen berkenaan hendaklah dimuat naik."}),
+        .array()
+        .min(1, { message: 'Dokumen berkenaan hendaklah dimuat naik.' }),
 });

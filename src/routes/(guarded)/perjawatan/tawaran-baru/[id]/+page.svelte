@@ -1144,10 +1144,10 @@
                             form="newOfferSetSupporterApproverDetailForm"
                         />
                         <TextIconButton
-                        label="Hantar"
-                        type="primary"
-                        form="newOfferSetSupporterApproverDetailForm"
-                    />
+                            label="Hantar"
+                            type="primary"
+                            form="newOfferSetSupporterApproverDetailForm"
+                        />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -1190,10 +1190,10 @@
                                 form="newOfferSupporterResultForm"
                             ></TextIconButton>
                             <TextIconButton
-                            type="primary"
-                            label="Hantar"
-                            form="newOfferSupporterResultForm"
-                        ></TextIconButton>
+                                type="primary"
+                                label="Hantar"
+                                form="newOfferSupporterResultForm"
+                            ></TextIconButton>
                         {:else if !data.view.newOfferDetailView.approver.isReadonly && data.roles.isApproverRole}
                             <TextIconButton
                                 type="primary"
@@ -1201,10 +1201,10 @@
                                 form="newOfferApproverResultForm"
                             ></TextIconButton>
                             <TextIconButton
-                            type="primary"
-                            label="Hantar"
-                            form="newOfferApproverResultForm"
-                        ></TextIconButton>
+                                type="primary"
+                                label="Hantar"
+                                form="newOfferApproverResultForm"
+                            ></TextIconButton>
                         {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
@@ -1276,14 +1276,14 @@
                                             >Pelulus</b
                                         >
                                     </div>
-                                    {#each $newOfferSupporterResultForm.results as _, i}
+                                    {#each $newOfferApproverResultForm.results as _, i}
                                         <CustomTextField
                                             disabled={data.view
                                                 .newOfferDetailView.supporter
                                                 .isReadonly}
                                             id="applicantId"
                                             label="Nombor Kakitangan"
-                                            bind:val={$newOfferSupporterResultForm
+                                            bind:val={$newOfferApproverResultForm
                                                 .results[i].employeeNumber}
                                         ></CustomTextField>
 
@@ -1293,7 +1293,7 @@
                                                 .isReadonly}
                                             id="applicantName"
                                             label="Nama Kakitangan"
-                                            bind:val={$newOfferSupporterResultForm
+                                            bind:val={$newOfferApproverResultForm
                                                 .results[i].employeeName}
                                         ></CustomTextField>
 
@@ -1303,7 +1303,7 @@
                                                 .isReadonly}
                                             id="approverRemark"
                                             label="Tindakan/Ulasan"
-                                            bind:val={$newOfferSupporterResultForm
+                                            bind:val={$newOfferApproverResultForm
                                                 .results[i].remarks}
                                         ></CustomTextField>
 
@@ -1314,7 +1314,7 @@
                                             id="approverIsApproved"
                                             options={approveOptions}
                                             label={'Keputusan'}
-                                            bind:val={$newOfferSupporterResultForm
+                                            bind:val={$newOfferApproverResultForm
                                                 .results[i].status}
                                         ></CustomRadioBoolean>
                                     {/each}
@@ -1363,6 +1363,16 @@
                                             bind:val={$newOfferSupporterResultForm
                                                 .results[i].status}
                                         ></CustomSelectField>
+                                        <CustomTextField
+                                            disabled
+                                            isRequired={false}
+                                            id="approvalDate"
+                                            label="Tarikh Kelulusan"
+                                            type="date"
+                                            placeholder="-"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].approvalDate}
+                                        ></CustomTextField>
                                     {/each}
                                 {:else}
                                     <StepperOtherRolesResult />
@@ -1374,12 +1384,12 @@
                                     >
                                 </div>
                                 {#if $isReadOnlyNewOfferApprovalResult}
-                                    {#each $newOfferSupporterResultForm.results as _, i}
+                                    {#each $newOfferApproverResultForm.results as _, i}
                                         <CustomTextField
                                             disabled
                                             id="applicantId"
                                             label="Nombor Kakitangan"
-                                            bind:val={$newOfferSupporterResultForm
+                                            bind:val={$newOfferApproverResultForm
                                                 .results[i].employeeNumber}
                                         ></CustomTextField>
 
@@ -1387,7 +1397,7 @@
                                             disabled
                                             id="applicantName"
                                             label="Nama Kakitangan"
-                                            bind:val={$newOfferSupporterResultForm
+                                            bind:val={$newOfferApproverResultForm
                                                 .results[i].employeeName}
                                         ></CustomTextField>
 
@@ -1395,7 +1405,7 @@
                                             disabled
                                             id="approverRemark"
                                             label="Tindakan/Ulasan"
-                                            bind:val={$newOfferSupporterResultForm
+                                            bind:val={$newOfferApproverResultForm
                                                 .results[i].remarks}
                                         ></CustomTextField>
 
@@ -1404,9 +1414,19 @@
                                             id="approverStatus"
                                             options={approveOptions}
                                             label={'Keputusan'}
-                                            bind:val={$newOfferSupporterResultForm
+                                            bind:val={$newOfferApproverResultForm
                                                 .results[i].status}
                                         ></CustomSelectField>
+                                        <CustomTextField
+                                            disabled
+                                            isRequired={false}
+                                            id="approvalDate"
+                                            label="Tarikh Kelulusan"
+                                            type="date"
+                                            placeholder="-"
+                                            bind:val={$newOfferApproverResultForm
+                                                .results[i].approvalDate}
+                                        ></CustomTextField>
                                     {/each}
                                 {:else}
                                     <StepperOtherRolesResult />

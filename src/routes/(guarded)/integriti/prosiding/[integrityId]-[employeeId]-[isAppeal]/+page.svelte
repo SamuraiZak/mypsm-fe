@@ -1067,6 +1067,15 @@
                             label={'Keputusan'}
                             bind:val={$integrityDirectorApprovalForm.status}
                         ></CustomSelectField>
+                        <CustomTextField
+                            disabled
+                            isRequired={false}
+                            id="approvalDate"
+                            label="Tarikh Kelulusan"
+                            type="date"
+                            placeholder="-"
+                            bind:val={$integrityDirectorApprovalForm.approvalDate}
+                        ></CustomTextField>
                     {:else}
                         <StepperOtherRolesResult />
                     {/if}
@@ -1576,6 +1585,15 @@
                                     label={'Keputusan'}
                                     bind:val={$sentencingConfirmationForm.status}
                                 ></CustomSelectField>
+                                <CustomTextField
+                                    disabled
+                                    isRequired={false}
+                                    id="approvalDate"
+                                    label="Tarikh Kelulusan"
+                                    type="date"
+                                    placeholder="-"
+                                    bind:val={$sentencingConfirmationForm.approvalDate}
+                                ></CustomTextField>
                             {:else}
                                 <StepperOtherRolesResult />
                             {/if}
@@ -2232,6 +2250,15 @@
                                     label={'Keputusan'}
                                     bind:val={$appealConfirmationForm.status}
                                 ></CustomSelectField>
+                                <CustomTextField
+                                    disabled
+                                    isRequired={false}
+                                    id="approvalDate"
+                                    label="Tarikh Kelulusan"
+                                    type="date"
+                                    placeholder="-"
+                                    bind:val={$appealConfirmationForm.approvalDate}
+                                ></CustomTextField>
                             {:else}
                                 <StepperOtherRolesResult />
                             {/if}

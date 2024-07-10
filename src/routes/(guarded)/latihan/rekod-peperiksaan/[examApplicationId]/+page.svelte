@@ -826,9 +826,20 @@
         <StepperContentHeader title="Pengesahan Semakan Urus Setia Latihan">
             {#if !$isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole}
                 <TextIconButton
-                    type="primary"
-                    label="Simpan"
+                    type="neutral"
+                    label="Deraf"
                     form="examApplicationSecretaryApprovalForm"
+                    onClick={() => {
+                        $secretaryApprovalInfoForm.isDraft = true;
+                    }}
+                ></TextIconButton>
+                <TextIconButton
+                    type="primary"
+                    label="Hantar"
+                    form="examApplicationSecretaryApprovalForm"
+                    onClick={() => {
+                        $secretaryApprovalInfoForm.isDraft = false;
+                    }}
                 ></TextIconButton>
             {/if}
         </StepperContentHeader>
@@ -868,6 +879,15 @@
                         bind:val={$secretaryApprovalInfoForm.status}
                         options={certifyOptions}
                     ></CustomRadioBoolean>
+                    <CustomTextField
+                        disabled
+                        isRequired={false}
+                        id="approvalDate"
+                        label="Tarikh Kelulusan"
+                        type="date"
+                        placeholder="-"
+                        bind:val={$secretaryApprovalInfoForm.approvalDate}
+                    ></CustomTextField>
                 {:else}
                     <StepperOtherRolesResult />
                 {/if}
@@ -880,9 +900,20 @@
             <StepperContentHeader title="Keputusan Panel">
                 {#if !$examApplicationIsFail && $isReadonlySecretaryApprovalResult && !$isReadonlyExamResult && data.role.isCourseSecretaryRole}
                     <TextIconButton
-                        type="primary"
-                        label="Simpan"
+                        type="neutral"
+                        label="Deraf"
                         form="examApplicationPanelResultForm"
+                        onClick={() => {
+                            $examResultInfoForm.isDraft = true;
+                        }}
+                    ></TextIconButton>
+                    <TextIconButton
+                        type="primary"
+                        label="Hantar"
+                        form="examApplicationPanelResultForm"
+                        onClick={() => {
+                            $examResultInfoForm.isDraft = false;
+                        }}
                     ></TextIconButton>
                 {/if}
             </StepperContentHeader>

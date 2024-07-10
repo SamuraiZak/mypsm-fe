@@ -1209,6 +1209,15 @@
                             label={'Keputusan'}
                             bind:val={$employmentSecretaryDetailForm.status}
                         ></CustomSelectField>
+                        <CustomTextField
+                            disabled
+                            isRequired={false}
+                            id="approvalDate"
+                            label="Tarikh Kelulusan"
+                            type="date"
+                            placeholder="-"
+                            bind:val={$employmentSecretaryDetailForm.approvalDate}
+                        ></CustomTextField>
                     {:else}
                         <StepperOtherRolesResult />
                     {/if}
@@ -1233,6 +1242,15 @@
                                 label={'Keputusan'}
                                 bind:val={$divisionDirectorDetaiForm.status}
                             ></CustomSelectField>
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="approvalDate"
+                                label="Tarikh Kelulusan"
+                                type="date"
+                                placeholder="-"
+                                bind:val={$divisionDirectorDetaiForm.approvalDate}
+                            ></CustomTextField>
                         {:else}
                             <StepperOtherRolesResult />
                         {/if}
@@ -1262,6 +1280,15 @@
                                 label={'Keputusan'}
                                 bind:val={$integrityDirectorDetailForm.status}
                             ></CustomSelectField>
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="approvalDate"
+                                label="Tarikh Kelulusan"
+                                type="date"
+                                placeholder="-"
+                                bind:val={$integrityDirectorDetailForm.approvalDate}
+                            ></CustomTextField>
                         {:else}
                             <StepperOtherRolesResult />
                         {/if}
@@ -1285,6 +1312,15 @@
                                 label={'Keputusan'}
                                 bind:val={$auditDirectorDetailForm.status}
                             ></CustomSelectField>
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="approvalDate"
+                                label="Tarikh Kelulusan"
+                                type="date"
+                                placeholder="-"
+                                bind:val={$auditDirectorDetailForm.approvalDate}
+                            ></CustomTextField>
                         {:else}
                             <StepperOtherRolesResult />
                         {/if}
