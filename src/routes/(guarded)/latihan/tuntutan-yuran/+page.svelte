@@ -93,7 +93,7 @@
             bind:tableData={fundReimbursementTable}
             bind:passData={rowData}
             detailActions={() => {
-                _checkIfDocumentExist(data.roles.isStaffRole, rowData.id);
+                goto(`./tuntutan-yuran/${rowData.id}`);
             }}
             addActions={() => goto('./tuntutan-yuran/mohon-tuntutan')}
         >
