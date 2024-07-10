@@ -45,9 +45,9 @@ export const load = async () => {
         orderType: null,
         filter: {
             dataType: 1,
-            staffName: '',
-            staffNo: '',
-            identityCard: '',
+            name: '',
+            employeeNumber: '',
+            identityCardNumber: '',
             applicationDate: null,
             grade: '',
             position: '',

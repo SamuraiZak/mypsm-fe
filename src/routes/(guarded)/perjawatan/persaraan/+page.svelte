@@ -297,11 +297,7 @@
                                 bind:inputValue={voluntaryApplicationtable.param
                                     .filter.status}
                             ></FilterSelectField>
-                            <FilterNumberField
-                                label="Tahun"
-                                bind:inputValue={voluntaryApplicationtable.param
-                                    .filter.year}
-                            ></FilterNumberField>
+                            
                         </FilterWrapper>
                     </DataTable>
                 </div>

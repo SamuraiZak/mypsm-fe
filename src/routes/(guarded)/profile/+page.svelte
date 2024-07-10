@@ -749,13 +749,6 @@
                             />
                         {:else}
                             <TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                onClick={() =>
-                                    (isReadonlyPersonalFormStepper = false)}
-                                form="personalFormStepper"
-                            />
-                            <TextIconButton
                             type="primary"
                             label="Hantar"
                             onClick={() =>
@@ -805,7 +798,7 @@
                                     disabled={isReadonlyPersonalFormStepper}
                                     errors={$personalInfoError.alternativeName}
                                     id="alternativeName"
-                                    label={'Nama Lain *'}
+                                    label={'Nama Lain'}
                                     type="text"
                                     bind:val={$personalInfoForm.alternativeName}
                                 ></CustomTextField>
@@ -1079,13 +1072,6 @@
                                     (isReadonlyServiceFormStepper = false)}
                             />
                         {:else}
-                            <TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                onClick={() =>
-                                    (isReadonlyServiceFormStepper = false)}
-                                form="serviceFormStepper"
-                            />
                             <TextIconButton
                             type="primary"
                             label="Hantar"
@@ -1424,14 +1410,9 @@
                         {:else}
                             <TextIconButton
                                 type="primary"
-                                label="Simpan"
+                                label="Hantar"
                                 form="academicFormStepper"
                             />
-                            <TextIconButton
-                            type="primary"
-                            label="Hantar"
-                           
-                        />
                             <TextIconButton
                                 type="neutral"
                                 label="Kembali"
@@ -1634,11 +1615,6 @@
                             />
                         {:else}
                             <TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                form="experienceInfoForm"
-                            />
-                            <TextIconButton
                             type="primary"
                             label="Hantar"
                             form="experienceInfoForm"
@@ -1803,11 +1779,6 @@
                             />
                         {:else}
                             <TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                form="activityInfoForm"
-                            />
-                            <TextIconButton
                             type="primary"
                             label="Hantar"
                             form="activityInfoForm"
@@ -1947,11 +1918,7 @@
                                 onClick={() => (isEditableFamily = true)}
                             />
                         {:else}
-                            <TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                form="familyInfoForm"
-                            />
+                         
                             <TextIconButton
                             type="primary"
                             label="Hantar"
@@ -2253,11 +2220,6 @@
                                 onClick={() => (isEditableDependency = true)}
                             />
                         {:else}
-                            <TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                form="dependencyInfoForm"
-                            />
                             <TextIconButton
                             type="primary"
                             label="Hantar"
@@ -2562,11 +2524,6 @@
                             />
                         {:else}
                             <TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                form="nextOfKinInfoForm"
-                            />
-                            <TextIconButton
                             type="primary"
                             label="Hantar"
                             form="nextOfKinInfoForm"
@@ -2864,13 +2821,6 @@
                             />
                         {:else}
                             <TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                onClick={() =>
-                                    (isReadonlyHistoryMedicalFormStepper = false)}
-                                form="FormStepperSejarahPenyakit"
-                            />
-                            <TextIconButton
                             type="primary"
                             label="Hantar"
                             onClick={() =>
@@ -2983,13 +2933,6 @@
                                     (isGeneralMedicalFormStepper = false)}
                             />
                         {:else}
-                            <TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                onClick={() =>
-                                    (isGeneralMedicalFormStepper = false)}
-                                form="FormStepperPemeriksaanDoktor"
-                            />
                             <TextIconButton
                             type="primary"
                             label="Hantar"

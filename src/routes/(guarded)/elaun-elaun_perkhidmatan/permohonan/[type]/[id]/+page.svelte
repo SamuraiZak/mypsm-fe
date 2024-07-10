@@ -357,6 +357,64 @@
                                 {/each}
                             </div>
                         </form>
+                        <div class="w-full flex flex-col justify-start">
+                            <p class="text-sm font-semibold ps-2  ">Nota:</p>
+                            <p class="text-sm font-semibold ps-2  "> 1. Kadar bagi Bayaran Pakaian Istiadat, Bantuan Pakaian Black Tie dan Bayaran Pakaian Menghadiri Upacara Rasmi adalah seperti berikut:</p>
+                            <table class="w-full border">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="3" class="border text-sm ps-2">Bil</th>
+                                        <th rowspan="1" class="border text-sm ps-2">Jenis Pakaian</th>
+                                        <th rowspan="1"  class="border text-sm ps-2">Kadar Bayaran (RM)</th>
+                                    </tr>
+                                    
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="border text-sm ps-2">
+                                            1.
+                                        </td>
+                                        <td class="border text-sm ps-2">
+                                           Bayaran Pakaian Istiadat
+                                        </td>
+                                        <td class="border text-sm ps-2">
+                                            3,500.00
+                                        </td>
+                                       
+                                    </tr>
+                                    <tr>
+                                        <td class="border text-sm ps-2">
+                                            2.
+                                        </td>
+                                        <td class="border text-sm ps-2">
+                                           Bantuan Bayaran Pakaian Black Tie
+                                        </td>
+                                        <td class="border text-sm ps-2 ">
+                                            1,000.00
+                                        </td>
+                                       
+                                    </tr>
+                                    <tr>
+                                        <td class="border text-sm ps-2">
+                                            3.
+                                        </td>
+                                        <td class="border text-sm ps-2">
+                                           Bayaran Pakaian Menghadiri Upacara Rasmi
+                                        </td>
+                                        <td class="border text-sm ps-2">
+                                            3,500.00
+                                        </td>
+                                       
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p class="text-sm font-semibold ps-2  ">2. Kemudahan ini adalah tertakluk kepada syarat seperti berikut:</p>
+                            <p class="text-sm ps-4  ">- Kemudahan bayaran pakaian ini diberi setiap tiga (3) tahun sekali.</p>
+                            <p class="text-sm ps-4  ">- Pegawai yang telah diberi Bayaran Pakaian Istiadat tidak layak menuntut Bayaran Pakaian Menghadiri Upacara Rasmi dalam tempoh tiga (3) tahun yang sama;</p>
+                            <p class="text-sm ps-4  ">- Tuntutan bayaran balik hendaklah disokong dengan resit; dan</p>
+                            <p class="text-sm ps-4  ">- Tuntutan bayaran balik Pakaian Menghadiri Upacara Rasmi hendaklah disokong dengan maklumat mengenai jemputan upacara rasmi atau surat arahan bertigas di Parlimen atau Dewan Undangan Negeri.</p>
+                            <p class="text-sm font-semibold ps-2  ">3. Pengunaan kemudahan ini hendaklah dicatatkan dalam Buku Perkhidmatan pegawai</p>
+                        </div>
                     {:else if currentAllowanceTypeCode == AllowanceTypeConstant.winterClothing.code}
                         <!-- ===================================================================== -->
                         <!-- WINTER CLOTHING -->
