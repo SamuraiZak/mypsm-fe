@@ -219,12 +219,20 @@
                 english: 'directionCertification',
                 malay: 'Perakuan Pengarah Bahagian/Negeri',
             },
-        ],  
+        ],
         url: 'employment/promotion/certifications/list',
         id: 'certificationTable',
         option: {
-            checkbox: data.currentRoleCode == UserRoleConstant.urusSetiaIntegriti.code ? true : false,
-            detail: data.currentRoleCode !== UserRoleConstant.urusSetiaIntegriti.code ? true : false,
+            checkbox:
+                data.currentRoleCode == UserRoleConstant.urusSetiaIntegriti.code
+                    ? true
+                    : false,
+            detail:
+                data.currentRoleCode !==
+                    UserRoleConstant.urusSetiaIntegriti.code &&
+                data.promotionType !== 'Utama'
+                    ? true
+                    : false,
             edit: false,
             select: false,
             filter: false,
@@ -441,9 +449,9 @@
             // $integrityForm.id = rowData.promotionId;
             // ======================= push the id here
             certificationTable.selectedData.map((item: any) => {
-                $integrityForm.id.push(item.promotionId)
-            })
-            
+                $integrityForm.id.push(item.promotionId);
+            });
+
             _submitIntegrityForm($integrityForm).then((res) => {
                 if (res?.response.status == 'success') {
                     integrityApproved = true;
@@ -856,7 +864,7 @@
                                 type="neutral"
                                 label="Kembali"
                                 icon="previous"
-                                onClick={() => (stepperControl[0] = false)} 
+                                onClick={() => (stepperControl[0] = false)}
                             />
                             {#if !directorApproved || !integrityApproved}
                                 <TextIconButton
@@ -889,12 +897,13 @@
                                         </Alert>
                                     {/if}
                                     {#if data.currentRoleCode === UserRoleConstant.urusSetiaIntegriti.code}
-                                    <div class="flex w-full justify-end">
-                                        <TextIconButton
-                                            label="Tindakan"
-                                            onClick={() => integrityModal = true}
-                                        />
-                                    </div>
+                                        <div class="flex w-full justify-end">
+                                            <TextIconButton
+                                                label="Tindakan"
+                                                onClick={() =>
+                                                    (integrityModal = true)}
+                                            />
+                                        </div>
                                     {/if}
                                     <div class="h-fit w-full">
                                         <DataTable
@@ -915,11 +924,6 @@
                             </div>
                         {:else}
                             <div class="flex w-full flex-col gap-2.5 pb-2.5">
-                                <ContentHeader
-                                    title="Perakuan Urus Setia Integriti"
-                                    borderClass="border-none"
-                                />
-                                
                                 {#if data.promotionType !== 'Utama'}
                                     <ContentHeader
                                         title="Perakuan Pengarah Bahagian/Negeri"
@@ -955,7 +959,7 @@
 
                 <StepperContent>
                     <StepperContentHeader
-                        title="Keputusan Mesyuarat Kenaikan Pangkat"
+                        title="Keputusan Mesyuarat Jawatankuasa"
                     >
                         {#if stepperControl[1]}
                             <TextIconButton
@@ -987,8 +991,8 @@
                                             </span>
                                             Sila kemaskini
                                             <span class="font-medium"
-                                                >Keputusan Mesyuarat Kenaikan
-                                                Pangkat
+                                                >Keputusan Mesyuarat
+                                                Jawatankuasa
                                             </span>
                                             bagi setiap calon kenaikan pangkat yang
                                             terlibat.
@@ -1194,9 +1198,9 @@
                             {/if}
                         {/if}
                     </StepperContentHeader>
-                    <StepperContentBody>
+                    <StepperContentBody paddingClass="p-0">
                         {#if !stepperControl[2]}
-                            <div class="flex w-full flex-col gap-2.5 p-3 pb-10">
+                            <div class="flex w-full flex-col gap-2.5 p-6 pb-10">
                                 {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                     <Alert color="blue">
                                         <p>
@@ -1732,67 +1736,56 @@
                     </div>
                 </StepperContentBody>
             </StepperContent>
-
-            <!-- <StepperContent>
-                <StepperContentHeader title="Jadual Pergerakan Gaji">
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <DataTable
-                        title="Senarai Rekod Kenaikan Gaji"
-                        tableData={salaryAdjustTable}
-                    />
-                </StepperContentBody>
-            </StepperContent> -->
         {/if}
     </Stepper>
 </section>
 <Toaster />
 <Modal title="Sistem MyPSM" bind:open={integrityModal} size="sm">
-    <div class="w-full flex flex-col justify-start gap-3">
-    <Alert color="blue">
-        <p>
-            <span class="font-medium">Arahan: </span>
-            Tetapkan keputusan untuk kakitangan yang dipilih.
-        </p>
-    </Alert>
-    <div class="hidden">
-        <form
-            class="flex w-full flex-col justify-start gap-2.5 px-2 md:w-1/2"
-            id="integrityForm"
-            use:integrityEnhance
-            method="POST"
-        >
-            <CustomTextField
-                label="Ulasan/Tindakan"
-                id="remark"
-                disabled={integrityApproved}
-                placeholder="Menunggu perakuan daripada Urus Setia Integriti..."
-                bind:val={$integrityForm.remark}
-                errors={$integrityError.remark}
+    <div class="flex w-full flex-col justify-start gap-3">
+        <Alert color="blue">
+            <p>
+                <span class="font-medium">Arahan: </span>
+                Tetapkan perakuan untuk kakitangan yang dipilih.
+            </p>
+        </Alert>
+        <div class="hidden">
+            <form
+                class="flex w-full flex-col justify-start gap-2.5 px-2 md:w-1/2"
+                id="integrityForm"
+                use:integrityEnhance
+                method="POST"
+            >
+                <CustomTextField
+                    label="Ulasan/Tindakan"
+                    id="remark"
+                    disabled={integrityApproved}
+                    placeholder="Menunggu perakuan daripada Urus Setia Integriti..."
+                    bind:val={$integrityForm.remark}
+                    errors={$integrityError.remark}
+                />
+                <CustomRadioBoolean
+                    label="Keputusan"
+                    id="status"
+                    disabled={integrityApproved}
+                    options={integrityOptions}
+                    bind:val={$integrityForm.status}
+                />
+            </form>
+        </div>
+        <div class="flex w-full justify-between gap-3">
+            <TextIconButton
+                label="TIDAK BEBAS"
+                form="integrityForm"
+                icon="cancel"
+                type="neutral"
+                onClick={() => ($integrityForm.status = false)}
             />
-            <CustomRadioBoolean
-                label="Keputusan"
-                id="status"
-                disabled={integrityApproved}
-                options={integrityOptions}
-                bind:val={$integrityForm.status}
+            <TextIconButton
+                label="BEBAS"
+                icon="check"
+                form="integrityForm"
+                onClick={() => ($integrityForm.status = true)}
             />
-        </form>
-    </div>
-    <div class="w-full flex justify-center gap-3">
-        <TextIconButton
-            label="TIDAK BEBAS"
-            form="integrityForm"
-            icon="cancel"
-            type="neutral"  
-            onClick={() => $integrityForm.status = false}
-        />
-        <TextIconButton
-            label="BEBAS"
-            icon="check"
-            form="integrityForm"
-            onClick={() => $integrityForm.status = true}
-        />
         </div>
     </div>
 </Modal>
