@@ -39,7 +39,14 @@
 
     let isReadonlySecretaryApprovalResult = writable<boolean>(false);
     let isReadonlyExamResult = writable<boolean>(false);
+    let examSecretaryApprovalResultIsDraft = writable<boolean>(false);
+    let panelExamResultIsDraft = writable<boolean>(false);
     let examApplicationIsFail = writable<boolean>(false);
+
+    $: data.responses.courseExamSecretaryApprovalResponse.data?.details
+        .isDraft === true
+        ? examSecretaryApprovalResultIsDraft.set(true)
+        : examSecretaryApprovalResultIsDraft.set(false);
 
     $: data.responses.courseExamSecretaryApprovalResponse.data?.details
         .status === false
@@ -50,6 +57,10 @@
         .status === null
         ? isReadonlySecretaryApprovalResult.set(false)
         : isReadonlySecretaryApprovalResult.set(true);
+
+    $: data.responses.courseExamResultResponse.data?.details.isDraft === true
+        ? panelExamResultIsDraft.set(false)
+        : panelExamResultIsDraft.set(true);
 
     $: data.responses.courseExamResultResponse.data?.details.examResult === ''
         ? isReadonlyExamResult.set(false)
@@ -824,7 +835,7 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Pengesahan Semakan Urus Setia Latihan">
-            {#if !$isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole}
+            {#if $examSecretaryApprovalResultIsDraft && data.role.isCourseSecretaryRole}
                 <TextIconButton
                     type="neutral"
                     label="Deraf"
@@ -850,7 +861,7 @@
                 use:secretaryApprovalInfoEnhance
                 class="flex w-full flex-col gap-2.5"
             >
-                {#if data.role.isCourseSecretaryRole || $isReadonlySecretaryApprovalResult}
+                {#if data.role.isCourseSecretaryRole || $isReadonlySecretaryApprovalResult || !$examSecretaryApprovalResultIsDraft}
                     <div class="mb-5">
                         <b class="text-sm text-system-primary"
                             >Keputusan Urus Setia Latihan</b
@@ -861,6 +872,7 @@
 
                     <CustomTextField
                         disabled={!data.role.isCourseSecretaryRole ||
+                            !$examSecretaryApprovalResultIsDraft ||
                             $isReadonlySecretaryApprovalResult}
                         errors={$secretaryApprovalInfoErrors.remark}
                         id="remark"
@@ -871,6 +883,7 @@
                     <CustomRadioBoolean
                         disabled={!!(
                             !data.role.isCourseSecretaryRole ||
+                            !$examSecretaryApprovalResultIsDraft ||
                             $isReadonlySecretaryApprovalResult
                         )}
                         errors={$secretaryApprovalInfoErrors.status}
@@ -898,7 +911,7 @@
     {#if $isReadonlySecretaryApprovalResult}
         <StepperContent>
             <StepperContentHeader title="Keputusan Panel">
-                {#if !$examApplicationIsFail && $isReadonlySecretaryApprovalResult && !$isReadonlyExamResult && data.role.isCourseSecretaryRole}
+                {#if !$examApplicationIsFail && $panelExamResultIsDraft && !$isReadonlyExamResult && data.role.isCourseSecretaryRole}
                     <TextIconButton
                         type="neutral"
                         label="Deraf"
@@ -942,7 +955,7 @@
 
                     {#if !$examApplicationIsFail && (($isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole) || ($isReadonlyExamResult && (!data.role.isCourseSecretaryRole || data.role.isCourseSecretaryRole)))}
                         <CustomTextField
-                            disabled={$isReadonlyExamResult}
+                            disabled={$isReadonlyExamResult || !$panelExamResultIsDraft}
                             errors={$examResultInfoErrors.examRemark}
                             id="examRemark"
                             label="Catatan"
@@ -951,7 +964,7 @@
                         ></CustomTextField>
 
                         <CustomSelectField
-                            disabled={$isReadonlyExamResult}
+                            disabled={$isReadonlyExamResult || !$panelExamResultIsDraft}
                             errors={$examResultInfoErrors.examResult}
                             id="examResult"
                             label="Keputusan Panel"
