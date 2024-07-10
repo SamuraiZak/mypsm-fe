@@ -15,5 +15,6 @@ export type CourseFundApplicationUploadDocumentsRequestDTO = z.infer<
 
 export type CourseFundApplicationUploadDocumentsBase64RequestDTO = {
     id: number;
+    isDraft: boolean;
     documents?: DocumentBase64RequestDTO[];
 };
