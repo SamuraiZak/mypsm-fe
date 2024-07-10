@@ -407,7 +407,7 @@ export const _addConfirmationContractContinuation = async (
         formData,
         zod(_confirmationContractContinuationSchema),
     );
-    form.data.conformationId = id;
+    form.data.confirmationId = id;
 
     console.log(form.data);
     if (!form.valid) {
