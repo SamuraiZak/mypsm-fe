@@ -33,7 +33,7 @@
         </div>
 
         <div
-            class="flex h-full w-1/4 items-center justify-center rounded-l-md hover:bg-ios-systemColors-systemFill-dark bg-ios-labelColors-tertiaryLabel-light px-3"
+            class="flex h-full w-1/4 items-center justify-center rounded-l-md hover:bg-ios-systemColors-systemFill-dark bg-ios-labelColors-tertiaryLabel-light"
         >
             <label
                 for={id}
