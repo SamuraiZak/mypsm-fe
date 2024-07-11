@@ -1268,7 +1268,7 @@
                             <CustomTextField
                                 disabled
                                 id="pensionScheme"
-                                label={'Skim Pencen'}
+                                label={'Skim Pencen/KWSP'}
                                 type="text"
                                 bind:val={$serviceInfoForm.pensionScheme}
                             ></CustomTextField>
