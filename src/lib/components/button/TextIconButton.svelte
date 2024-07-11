@@ -12,9 +12,10 @@
     import SvgInfoSolid from '$lib/assets/svg/SvgInfoSolid.svelte';
     import SvgManifyingGlass from '$lib/assets/svg/SvgManifyingGlass.svelte';
     import SvgReload from '$lib/assets/svg/SvgReload.svelte';
+    import SvgSave from '$lib/assets/svg/SvgSave.svelte';
 
     export let form: string = '';
-    export let type: string = 'primary' || 'danger' || 'neutral';
+    export let type: string = 'primary' || 'danger' || 'neutral' || 'draft';
     export let operation: string = 'submit';
     export let disabled: boolean = false;
     export let icon: string = '';
@@ -29,12 +30,16 @@
     {form}
     {disabled}
     on:click={onClick}
-    class="flex h-7 max-h-7 min-h-7 flex-row items-center justify-center {label !== "" ? "gap-1" : "gap-0"} rounded px-2 {type ===
-    'primary'
+    class="flex h-7 max-h-7 min-h-7 flex-row items-center justify-center {label !==
+    ''
+        ? 'gap-1'
+        : 'gap-0'} rounded px-2 {type === 'primary'
         ? 'bg-ios-systemColors-systemBlue-light hover:bg-ios-systemColors-systemBlue-dark'
         : type === 'danger'
           ? 'bg-ios-systemColors-systemRed-light hover:bg-ios-systemColors-systemRed-dark'
-          : 'border bg-bgr-primary hover:bg-bgr-secondary'}"
+          : type === 'draft'
+            ? 'bg-slate-200 hover:bg-slate-300 border border-slate-400'
+            : 'border bg-bgr-primary hover:bg-bgr-secondary'}"
 >
     <!-- icon -->
     <div class="flex h-full max-h-full flex-row items-center justify-center">
@@ -43,7 +48,9 @@
                 ? 'text-txt-blend '
                 : type === 'danger'
                   ? 'text-txt-blend'
-                  : 'text-txt-secondary'}"
+                  : type === 'draft'
+                    ? 'text-slate-600'
+                    : 'text-txt-secondary'}"
         >
             <!-- icon slot -->
             {#if icon == 'cancel'}
@@ -68,6 +75,8 @@
                 <SvgManifyingGlass size="20" />
             {:else if icon == 'reset'}
                 <SvgReload size="12" />
+            {:else if icon == 'save'}
+                <SvgSave size="20" />
             {:else}
                 <slot />
             {/if}
@@ -77,11 +86,13 @@
     <!-- label -->
     <div class="flex h-full flex-row items-center justify-center">
         <p
-            class="text-sm font-normal leading-loose {type === 'primary'
+            class="text-base font-medium leading-loose {type === 'primary'
                 ? ' text-ios-basic-white'
                 : type === 'danger'
                   ? ' text-ios-basic-white'
-                  : ' text-ios-labelColors-secondaryLabel-light'}"
+                  : type === 'draft'
+                    ? 'text-slate-700'
+                    : ' text-ios-labelColors-secondaryLabel-light'}"
         >
             {label}
         </p>
@@ -92,7 +103,13 @@
     <Dropdown containerClass="z-50 border border-bdr-primary min-w-[200px]">
         {#if options.length > 0}
             {#each options as item}
-                <DropdownItem data-sveltekit-preload-data="false" href={item.href != "" ? item.href: ""} on:click={() => {val = item.value;}}>
+                <DropdownItem
+                    data-sveltekit-preload-data="false"
+                    href={item.href != '' ? item.href : ''}
+                    on:click={() => {
+                        val = item.value;
+                    }}
+                >
                     {item.name}
                 </DropdownItem>
             {/each}

@@ -36,7 +36,7 @@
     <div class="flex h-fit w-full flex-row items-center justify-between">
         <label
             for="password"
-            class="block w-full text-start text-sm font-medium leading-tight text-ios-labelColors-secondaryLabel-light"
+            class="block w-full text-start text-base font-medium leading-tight text-slate-700"
         >
             {label}
             <span class="text-base text-system-danger" hidden={!isRequired}
@@ -64,7 +64,7 @@
                 <span
                     class="text-base font-normal leading-tight {disabled
                         ? 'text-ios-basic-inactiveGray'
-                        : 'text-ios-labelColors-label-light'}"
+                        : 'text-slate-700'}"
                     >{option.name}</span
                 >
             </label>

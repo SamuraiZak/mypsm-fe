@@ -35,7 +35,7 @@
                 >
                     <label
                         for={id}
-                        class="text-system-midnightBlue w-full text-wrap text-start text-base font-medium leading-tight"
+                        class="w-full text-wrap text-start text-base font-medium leading-tight text-system-midnightBlue"
                         >{label}
                         {#if required}
                             <span class="text text-red-600">*</span>
@@ -57,7 +57,7 @@
     <div class=" flex w-full flex-col">
         <!-- input -->
         <div
-            class="flex h-9 w-full flex-row items-center justify-start gap-1 rounded border border-gray-300 px-2 focus-within:border-blue-500"
+            class="flex min-h-9 w-full flex-row items-center justify-start gap-1 rounded border border-gray-300 px-2 focus-within:border-blue-500"
         >
             <!-- prefix -->
             <slot name="prefix" />
@@ -86,6 +86,13 @@
                     bind:value={val}
                     class="h-full w-full border-none bg-transparent px-0 text-md outline-none focus:ring-0"
                 />
+            {:else if valueType == 'textarea'}
+                <textarea
+                    {placeholder}
+                    {id}
+                    bind:value={val}
+                    class=" w-full border-none bg-transparent px-0 text-md outline-none focus:ring-0"
+                ></textarea>
             {:else if valueType == 'password'}
                 {#if obscureText}
                     <input

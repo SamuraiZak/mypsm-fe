@@ -34,7 +34,7 @@
         on:change={onValueChange}
         class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
             ? 'bg-ios-systemColors-quaternarySystemFill-light'
-            : 'bg-ios-backgroundColors-systemBackground-light'} py-0 text-sm focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
+            : 'bg-ios-backgroundColors-systemBackground-light'} py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
     >
         {#each options as item}
             <option value={item.value}>
