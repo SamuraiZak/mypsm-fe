@@ -26,4 +26,25 @@ export class ServiceAllowanceServices {
             return CommonResponseConstant.httpError;
         }
     }
+
+    // submit ceremony clothing form
+    static async addCeremonyClothingDetail(param: string) {
+        try {
+            let url: Input = 'service_allowance/ceremony_clothing/add';
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+            const response = await toasterCommon(promiseResponse);
+            const result = CommonResponseConvert.fromResponse(response);
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 }
