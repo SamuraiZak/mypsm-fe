@@ -44,6 +44,7 @@
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
     import { PrintHelper } from '$lib/helpers/print-helper/print-helper';
+    import { onMount } from 'svelte';
 
     export let data: PageData;
 
@@ -232,6 +233,23 @@
         await ContractEmployeeServices.downloadContractAttachment(url);
     };
 
+    let elems: (HTMLInputElement | HTMLSelectElement)[] = [];
+
+    // Get input elements when component mounts
+    onMount(() => {
+        const divElement = document.getElementById('toExport');
+        // elems = Array.from(
+        //     divElement?.querySelectorAll(
+        //         'input[type="text"], input[type="radio"]',
+        //     ) ?? [],
+        // );
+        const formEl = document.getElementById('contractSecretaryUpdateForm');
+        elems = Array.from(
+            formEl?.querySelectorAll(
+                'input[type="text"], input[type="radio"], input[type="number"], input[type="date"], select',
+            ) ?? [],
+        );
+    });
 </script>
 
 <!-- content header starts here -->
@@ -1384,24 +1402,22 @@
                         </div>
                     </form>
                 {:else if data.getContractPerformanceDetail.isReadonly}
+                    <div class="flex w-full justify-end px-2">
+                        <TextIconButton
+                            label="Cetak"
+                            icon="print"
+                            onClick={() => PrintHelper.handleExportPDF('toExport')}
+                        />
+                    </div>
                     <div
                         id="toExport"
                         class="flex w-full flex-col justify-start gap-2.5 px-2"
                     >
-                        <div class="flex w-full items-center justify-between">
-                            <span
-                                class="text-sm font-bold text-ios-labelColors-link-light"
-                            >
-                                Penilaian dan Perakuan Kakitangan
-                            </span>
-                            <TextIconButton
-                            label=""
-                            icon="print"
-                            onClick={() => {
-                                PrintHelper.handleExportPDF("toExport")
-                            }}
-                        />
-                        </div>
+                        <span
+                            class="text-sm font-bold text-ios-labelColors-link-light"
+                        >
+                            Penilaian dan Perakuan Kakitangan Kontrak
+                        </span>
                         <CustomTextField
                             label="Nama Kakitangan Kontrak"
                             disabled
@@ -1675,7 +1691,8 @@
                         <ContentHeader
                             title="Maklumat Kontrak Baru"
                             borderClass="border-b-none"
-                        />
+                        >
+                    </ContentHeader>
                         <form
                             class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
                             method="POST"
