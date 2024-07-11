@@ -16,7 +16,7 @@
 >
     <!-- leading starts here -->
     <div
-        class="flex h-full max-h-full min-h-full w-fit flex-row items-center justify-start"
+        class="flex h-full max-h-full gap-2 min-h-full w-fit flex-row items-center justify-start"
     >
         <span
             class="
@@ -28,6 +28,10 @@
         >
             {title}
         </span>
+
+        <div class="flex h-full w-fit flex-row items-center justify-start">
+            <slot name="status" />
+        </div>
     </div>
     <!-- leading ends here -->
 

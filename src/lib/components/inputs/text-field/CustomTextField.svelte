@@ -9,7 +9,8 @@
     export let disabled: boolean = false;
     export let val: string | number | Date | boolean | null | undefined;
     export let placeholder: string = 'Taip jawapan anda di sini';
-    export let type: string = 'text' || 'number' || 'password' || 'email';
+    export let type: string =
+        'text' || 'number' || 'password' || 'email' || 'textarea';
     export let errors: string[] | undefined = [] ?? undefined;
 
     let showPassword = false;
@@ -21,7 +22,7 @@
     <div class="flex h-fit w-full flex-row items-center justify-between">
         <label
             for="password"
-            class="block w-full text-start text-sm font-medium leading-tight text-ios-labelColors-secondaryLabel-light"
+            class="block w-full text-start text-base font-medium leading-tight text-slate-700"
             >{label}
             <span class="text-base text-system-danger" hidden={!isRequired}
                 >*</span
@@ -61,7 +62,7 @@
             step="0.01"
             class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
                 ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
-                : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
     {:else if type == 'password'}
         {#if showPassword}
@@ -74,7 +75,7 @@
                 {id}
                 class="autofill:hide-default-inner-shadow block {disabled
                     ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
-                    : 'bg-ios-backgroundColors-systemBackground-light'} h-8 w-full rounded border border-ios-labelColors-separator-light p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
+                    : 'bg-ios-backgroundColors-systemBackground-light'} h-8 w-full rounded border border-ios-labelColors-separator-light p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
             />
         {:else}
             <input
@@ -86,7 +87,7 @@
                 {id}
                 class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
                     ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
-                    : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
+                    : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
             />
         {/if}
     {:else if type == 'email'}
@@ -99,8 +100,19 @@
             {id}
             class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
                 ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
-                : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
+    {:else if type == 'textarea'}
+        <textarea
+            bind:value={val}
+            {disabled}
+            {placeholder}
+            name={id}
+            {id}
+            class="autofill:hide-default-inner-shadow block min-h-10 w-full rounded border border-ios-labelColors-separator-light {disabled
+                ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
+                : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        ></textarea>
     {:else if type == 'date'}
         <input
             bind:value={val}
@@ -111,7 +123,7 @@
             {id}
             class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
                 ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
-                : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
     {:else}
         <input
@@ -123,7 +135,7 @@
             {id}
             class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
                 ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
-                : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
     {/if}
 
