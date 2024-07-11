@@ -894,7 +894,7 @@
                             ></CustomTextField>
                         {/if}
                         <CustomTextField
-                            disabled={true}
+                            
                             id="eligibleEmolumen"
                             label="Emolumen Yang Layak Diterima"
                             placeholder="-"
@@ -1061,7 +1061,7 @@
                                         bind:val={$suspensionCriminalDetailForm.startDate}
                                     ></CustomTextField>
                                     <CustomTextField
-                                        disabled={true}
+                                      
                                         id="eligibleEmolumen"
                                         label="Emolumen Yang Layak Diterima"
                                         placeholder="-"

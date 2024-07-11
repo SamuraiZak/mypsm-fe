@@ -201,6 +201,10 @@ export async function load({ params }) {
             value: 'Mengesahkan Keputusan JKTT tetapi Mengubah kepada Hukuman yang Lebih Ringan',
             name: 'Mengesahkan Keputusan JKTT tetapi Mengubah kepada Hukuman yang Lebih Ringan',
         },
+        {
+            value: 'Mengakaskan keputusan dan hukuman Jawatankuasa Tatatertib itu dan membebaskan pegawai itu daripada pertuduhan terhadapnya.',
+            name: 'Mengakaskan keputusan dan hukuman Jawatankuasa Tatatertib itu dan membebaskan pegawai itu daripada pertuduhan terhadapnya.',
+        },
     ];
 
     const proceedingActionOptions: RadioDTO[] = [

@@ -308,21 +308,21 @@
                         />
                         <FilterTextField
                         label="No. Pekerja"
-                        bind:inputValue={PTBtable.param.filter.staffNo}
+                        bind:inputValue={PTBListTable.param.filter.staffNo}
                     />
                     <FilterTextField
                         label="No. Kad Pengenalan"
-                        bind:inputValue={PTBtable.param.filter
+                        bind:inputValue={PTBListTable.param.filter
                             .identityDocumentCard}
                     />
                     <FilterTextField
                         label="Jawatan"
-                        bind:inputValue={PTBtable.param.filter
+                        bind:inputValue={PTBListTable.param.filter
                             .position}
                     />
                     <FilterTextField
                         label="Gred"
-                        bind:inputValue={PTBtable.param.filter.grade}
+                        bind:inputValue={PTBListTable.param.filter.grade}
                     />
                     </FilterWrapper>
                 </DataTable>
