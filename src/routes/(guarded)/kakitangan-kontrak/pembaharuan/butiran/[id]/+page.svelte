@@ -43,6 +43,7 @@
         confirmOptions,
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
+    import { PrintHelper } from '$lib/helpers/print-helper/print-helper';
 
     export let data: PageData;
 
@@ -230,6 +231,7 @@
     const handleDownload = async (url: string) => {
         await ContractEmployeeServices.downloadContractAttachment(url);
     };
+
 </script>
 
 <!-- content header starts here -->
@@ -1320,20 +1322,6 @@
                         type="date"
                         val={data.getContractInfo.currentServiceStartDate}
                     />
-                    <CustomTextField
-                        label="Disahkan Dalam Jawatan Pertama LKIM"
-                        disabled
-                        id="firstConfirmServiceDate"
-                        type="date"
-                        val={data.getContractInfo.firstConfirmServiceDate}
-                    />
-                    <CustomTextField
-                        label="Tarikh Perkhidmatan Pengesahan Semasa"
-                        disabled
-                        id="currentConfirmServiceDate"
-                        type="date"
-                        val={data.getContractInfo.currentConfirmServiceDate}
-                    />
                 </div>
             </StepperContentBody>
         </StepperContent>
@@ -1349,7 +1337,7 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                {#if !data.getContractPerformanceDetail.isReadonly && (data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code)}
+                {#if !data.getContractPerformanceDetail.isReadonly && data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
                     <div class="flex w-full flex-col gap-10 px-3 pb-10">
                         <Alert color="blue">
                             <p>
@@ -1397,22 +1385,34 @@
                     </form>
                 {:else if data.getContractPerformanceDetail.isReadonly}
                     <div
-                        class="flex w-full flex-col justify-start gap-2.5 px-2 pb-10"
+                        id="toExport"
+                        class="flex w-full flex-col justify-start gap-2.5 px-2"
                     >
-                        <span
-                            class="text-sm font-bold text-ios-labelColors-link-light"
-                        >
-                            Penilaian dan Perakuan Kakitangan
-                        </span>
+                        <div class="flex w-full items-center justify-between">
+                            <span
+                                class="text-sm font-bold text-ios-labelColors-link-light"
+                            >
+                                Penilaian dan Perakuan Kakitangan
+                            </span>
+                            <TextIconButton
+                            label=""
+                            icon="print"
+                            onClick={() => {
+                                PrintHelper.handleExportPDF("toExport")
+                            }}
+                        />
+                        </div>
                         <CustomTextField
                             label="Nama Kakitangan Kontrak"
                             disabled
+                            isRequired={false}
                             id="name"
                             bind:val={data.getContractPerformanceDetail.name}
                         />
                         <CustomTextField
                             label="Markah Penilaian"
                             disabled
+                            isRequired={false}
                             placeholder="Sedang mengesan data..."
                             id="performanceMark"
                             bind:val={data.getContractPerformanceDetail
@@ -1421,6 +1421,7 @@
                         <CustomRadioBoolean
                             label="Keputusan Pengarah Bahagian/Negeri"
                             options={confirmOptions}
+                            isRequired={false}
                             id="status"
                             bind:val={data.getContractPerformanceDetail.status}
                         />
@@ -1430,7 +1431,6 @@
         </StepperContent>
 
         {#if data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
-      
             <StepperContent>
                 <StepperContentHeader title="Keputusan Mesyuarat">
                     {#if !$contractMeetingForm.isReadonly && data.currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code}
@@ -1461,13 +1461,6 @@
                             method="POST"
                             use:contractMeetingEnhance
                         >
-                            <!-- <span hide first
-                                class="text-sm text-ios-labelColors-link-light"
-                                >Sekiranya keputusan mesyuarat tidak diluluskan,
-                                sistem MyPSM akan menjana surat penamatan
-                                kontrak dan emel surat berkenaan ke emel
-                                kakitangan.</span
-                            > -->
                             <CustomTextField
                                 label="Tindakan/Ulasan"
                                 id="remark"
@@ -1979,7 +1972,6 @@
                     </StepperContentBody>
                 </StepperContent>
             {/if}
-     
         {/if}
     </Stepper>
 </section>

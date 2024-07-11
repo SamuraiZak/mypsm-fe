@@ -81,6 +81,7 @@
         },
         controls: {
             add: false,
+            pdf: true,
         },
     };
 
