@@ -48,7 +48,7 @@ export const _submitLoginForm = async (params: AuthenticationRequestDTO) => {
                 );
 
             if (isStored) {
-                goto('/halaman-utama');
+                goto('/v2/dashboard');
             } else {
                 return fail(400, form);
             }
@@ -65,20 +65,16 @@ export const _submitResetPasswordForm = async (
 ) => {
     const form = await superValidate(params, zod(AccountPasswordResetSchema));
 
-    try {
-        if (form.valid) {
-            const response: CommonResponseDTO =
-                await AccountServices.resetPassword(params);
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await AccountServices.resetPassword(params);
 
-            if (response.status == 'success') {
-                return response;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
+        if (response.status == 'success') {
+            return response;
         } else {
             return CommonResponseConstant.httpError;
         }
-    } catch (error) {
+    } else {
         return CommonResponseConstant.httpError;
     }
 };
