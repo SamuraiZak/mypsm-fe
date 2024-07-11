@@ -416,7 +416,7 @@
                 <StepperContentHeader title="Muat Naik Dokumen Berkaitan">
                     {#if !submitDocument && data.currentRoleCode == UserRoleConstant.kakitangan.code}
                         <TextIconButton
-                            label="Muat Naik"
+                            label="Hantar"
                             icon="check"
                             onClick={() => uploadDocument()}
                         />
@@ -425,13 +425,17 @@
                 <StepperContentBody>
                     <div class="flex w-full items-start justify-start pb-10">
                         <div
-                            class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
+                            class="flex w-1/2 flex-col justify-start gap-6 p-3"
                         >
                             {#if data.uploadedDocuments.document.length < 1}
-                                <ContentHeader
-                                    title="Tindakan: Muat naik dokumen-dokumen yang diperlukan."
-                                    borderClass="border-none"
-                                />
+                                <Alert color="blue">
+                                    <p>
+                                        <span class="font-medium"
+                                            >Arahan:
+                                        </span>
+                                        Muat naik semua dokumen-dokumen yang berkaitan dan tekan butang Hantar untuk menghantar ke sistem.
+                                    </p>
+                                </Alert>
                                 <div class="flex w-full flex-col gap-6">
                                     <FileGreyField
                                         label="1. Carta Organisasi (Kedudukan Pegawai dan Jawatan yang Ditanggung Kerja)"
@@ -461,19 +465,23 @@
                                     <ContentHeader
                                         title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan"
                                         borderClass="border-none"
+                                        titlePadding={false}
                                     />
                                     <span
                                         class="text-sm text-ios-labelColors-secondaryLabel-light"
                                         >Borang-borang yang telah dimuat naik
                                         oleh kakitangan:</span
                                     >
-                                    {#each data.uploadedDocuments.document as docs}
+                                    {#each data.uploadedDocuments.document as docs, i}
+                                    <div class="w-full flex flex-row gap-2.5 jusitfy-start items-center">
+                                        <span class="text-[12px]">{i+1}. </span>
                                         <a
                                             href={docs.document}
                                             download={docs.name}
                                             class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
                                             >{docs.name}</a
                                         >
+                                    </div>
                                     {/each}
                                 </div>
                             {/if}
