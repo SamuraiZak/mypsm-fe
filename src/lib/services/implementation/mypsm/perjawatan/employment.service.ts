@@ -48,9 +48,66 @@ export class EmploymentServices {
         }
     }
 
+    // create new hire
     static async createNewHireCandidate(param: NewHireAddCandidateDTO) {
         try {
             const url: Input = 'employment/new_hire/add';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get new hire status
+    static async getNewHireStatus(param: CandidateIDRequestBody) {
+        try {
+            const url: Input = 'employment/new_hire/detail';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // edit new hire
+    static async editNewHireCandidate<T>(param: T) {
+        try {
+            const url: Input = 'employment/new_hire/edit';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -112,34 +169,6 @@ export class EmploymentServices {
 
             // await toast for resolved or rejected state
             // const response: Response = await getPromiseToast(promiseRes);
-            const response: Response = await promiseRes;
-
-            // parse the json response to object
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // get new hire status
-    static async getNewHireStatus(param: CandidateIDRequestBody) {
-        try {
-            const url: Input = 'employment/new_hire/detail';
-
-            // get the promise response
-            const promiseRes: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            // await toast for resolved or rejected state
             const response: Response = await promiseRes;
 
             // parse the json response to object
