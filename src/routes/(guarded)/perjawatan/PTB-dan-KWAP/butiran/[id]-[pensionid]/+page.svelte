@@ -729,7 +729,7 @@
             <StepperContentHeader title="Kemaskini Maklumat PTB dan KWAP">
                 {#if data.pensionDetail == null && currentRoleCode == urusetia}
                     <TextIconButton
-                        label="simpan"
+                        label="Simpan"
                         type="primary"
                         icon="check"
                         form="PTBPensionDetail"
@@ -793,15 +793,6 @@
                         bind:val={$PTBPensionInfoForm.KWAPEmailDate}
                     ></CustomTextField>
 
-                       <!-- here nullable perlu tambah backend -->
-                       <CustomTextField
-                       disabled={currentRoleCode !== urusetia ||
-                           data.pensionDetail !== null}
-                       id="pensionNumber"
-                       label="Tarikh Berkuatkuasa PTB / Tarikh Mula Caruman KWAP"
-                       errors={$PTBPensionInfoError.pensionNumber}
-                       bind:val={$PTBPensionInfoForm.pensionNumber}
-                   ></CustomTextField>
 
                 </form></StepperContentBody
             >
