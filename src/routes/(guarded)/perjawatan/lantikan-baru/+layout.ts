@@ -125,11 +125,13 @@ export const load = async () => {
         candidateViewTable,
         supporterViewList,
         approverViewList,
-        isCandidateRole,
-        isEmploymentSecretaryRole,
-        isSupporterRole,
-        isApproverRole,
-        currentRoleCode,
+        roles: {
+            isCandidateRole,
+            isEmploymentSecretaryRole,
+            isSupporterRole,
+            isApproverRole,
+            currentRoleCode,
+        },
         responses: {
             candidateViewResponse,
             newCandidateResponse,
