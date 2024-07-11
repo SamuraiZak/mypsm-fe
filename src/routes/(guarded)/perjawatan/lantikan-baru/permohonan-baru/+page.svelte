@@ -62,6 +62,17 @@
                 label="Simpan"
                 type="primary"
                 form="createCandidateForm"
+                onClick={() => {
+                    $form.isDraft = true;
+                }}
+            ></TextIconButton>
+            <TextIconButton
+                label="Hantar"
+                type="primary"
+                form="createCandidateForm"
+                onClick={() => {
+                    $form.isDraft = false;
+                }}
             ></TextIconButton>
         </ContentHeader>
         <form
