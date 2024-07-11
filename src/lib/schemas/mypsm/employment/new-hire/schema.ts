@@ -16,6 +16,7 @@ import { z } from 'zod';
 
 // creating schema
 export const _addNewHireSchema = z.object({
+    applicationId: z.number().nullable(),
     name: z.coerce
         .string({
             required_error: 'Sila tetapkan ID sementara calon',
@@ -33,6 +34,7 @@ export const _addNewHireSchema = z.object({
     email: z
         .string()
         .email({ message: 'Pastikan emel adalah betul dan lengkap' }),
+    isDraft: z.boolean().default(false),
 });
 
 export const _personalInfoResponseSchema = z.object({
@@ -407,7 +409,8 @@ export const _uploadDocumentsSchema = z.object({
     document: z
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
         .refine((f) => f.size < 10_000_000, 'Maximum 10 MB saiz muat naik.')
-        .array().min(1, {message: "Dokumen berkenaan hendaklah dimuat naik."}),
+        .array()
+        .min(1, { message: 'Dokumen berkenaan hendaklah dimuat naik.' }),
 });
 
 export const _newHireFullDetailSchema = z.object({
