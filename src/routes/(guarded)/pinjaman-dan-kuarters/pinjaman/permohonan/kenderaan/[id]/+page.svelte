@@ -50,6 +50,7 @@
     import { Alert } from 'flowbite-svelte';
     import { goto } from '$app/navigation';
     import { vehicleConditionOption } from '$lib/constants/core/dropdown.constant';
+    import { PrintHelper } from '$lib/helpers/print-helper/print-helper';
 
     export let data: PageData;
     let files: FileList;
@@ -532,12 +533,35 @@
                 />
             </StepperContentHeader>
             <StepperContentBody>
+                <div class="w-full flex justify-end">
+                    <TextIconButton
+                        label="Cetak"
+                        icon="print"
+                        onClick={() => PrintHelper.handleExportPDF("loanInfoForm")}
+                    />
+                </div>
                 <form
                     id="loanInfoForm"
                     method="POST"
                     use:loanInfoEnhance
                     class="flex w-full flex-col gap-2"
                 >
+                <div class="hidden">
+                    <CustomTextField
+                        id="name"
+                        disabled
+                        isRequired={false}
+                        label={'Nama Penuh'}
+                        bind:val={$personalInfoForm.name}
+                    ></CustomTextField>
+                    <CustomTextField
+                        id="identityDocumentNumber"
+                        disabled
+                        isRequired={false}
+                        label={'No. K/P'}
+                        bind:val={$personalInfoForm.identityDocumentNumber}
+                    ></CustomTextField>
+                </div>
                     <CustomTextField
                         disabled={noturusetia}
                         id="maxLoan"

@@ -70,7 +70,7 @@
             >
                 {#each options.filter((option) => option.name
                         ?.toLowerCase()
-                        .includes(searchVal?.toLowerCase())) as item, i}
+                        .includes(searchVal?.toLowerCase())) as item}
                     <option
                         on:click={handleClick}
                         value={item.value}

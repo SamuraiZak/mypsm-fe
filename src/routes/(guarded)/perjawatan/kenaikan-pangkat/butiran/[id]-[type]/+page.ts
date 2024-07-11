@@ -45,15 +45,21 @@ export const load = async ({ params }) => {
     let finalResult: PromotionDetail[] = [];
 
     let employeePromotionInfo = {} as PromotionPlacementDetail;
-    let employeeSalaryAdjustmentRes: CommonResponseDTO = {};
-    let employeeSalaryAdjustment: PromotionSalaryAdjustment[] = [];
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
         orderBy: null,
         orderType: null,
-        filter: {},
+        filter: {
+            program: "TETAP",
+            employeeNumber: "",
+            name: "",
+            identityCard: "",
+            scheme: "",
+            grade: null,
+            position: null,
+        },
     };
 
     const commonParam: CommonListRequestDTO = {
