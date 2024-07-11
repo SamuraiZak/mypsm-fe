@@ -89,7 +89,7 @@
             bind:tableData={fundApplicationTable}
             bind:passData={rowData}
             detailActions={() => {
-                _checkIfDocumentExist(data.roles.isStaffRole, rowData.id);
+                goto(`./pembiayaan/${rowData.id}`);
             }}
             addActions={() => goto('./pembiayaan/mohon-pembiayaan')}
         >

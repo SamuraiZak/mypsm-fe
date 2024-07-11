@@ -1,4 +1,3 @@
-import { goto } from '$app/navigation';
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { DocumentBase64RequestDTO } from '$lib/dto/core/common/base-64-document-request.dto';
@@ -372,11 +371,6 @@ export const _createFundReimbursementForm = async (formData: object) => {
         await CourseFundReimbursementServices.createCourseFundReimbursement(
             form.data as CourseAddFundReimbursementRequestDTO,
         );
-
-    if (response.status === 'success')
-        setTimeout(() => {
-            goto(`../tuntutan-yuran/${response.data?.details.id}`);
-        }, 1000);
 
     return { response };
 };

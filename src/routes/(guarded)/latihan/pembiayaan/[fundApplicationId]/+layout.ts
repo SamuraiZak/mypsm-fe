@@ -1,23 +1,39 @@
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
+import type { DocumentBase64RequestDTO } from '$lib/dto/core/common/base-64-document-request.dto';
+import type { CommonFilterDTO } from '$lib/dto/core/common/common-filter.dto';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
 import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto.js';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
-import type { CourseFundApplicationApprovalDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-approval.dto';
+import type {
+    CourseFundApplicationApprovalDTO,
+    CourseFundApplicationSetApproverDTO,
+} from '$lib/dto/mypsm/course/fund-application/course-fund-application-approval.dto';
 import type { CourseFundApplicationDocumentsResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-document.dto';
 import type { CourseFundApplicationPersonalDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-personal-info.dto';
 import type { CourseFundApplicationServiceDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-service-info.dto';
-import type { CourseFundApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
+import type {
+    CourseAddFundApplicationRequestDTO,
+    CourseFundApplicationDetailResponseDTO,
+} from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
+import type { CourseFundReimbursementUploadDocumentsBase64RequestDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-document.dto';
+import { _fileToBase64String } from '$lib/helpers/core/fileToBase64String.helper';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
+    _createFundApplicationRequestSchema,
     _fundApplicationApprovalSchema,
     _fundApplicationDetailResponseSchema,
     _fundApplicationDocumentSchema,
     _fundApplicationPersonalInfoResponseSchema,
     _fundApplicationServiceInfoResponseSchema,
+    _fundApplicationUploadDocSchema,
+    _setApproversSchema,
 } from '$lib/schemas/mypsm/course/fund-application-schema';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { CourseFundApplicationServices } from '$lib/services/implementation/mypsm/latihan/fundApplication.service.js';
+import { EmployeeServices } from '$lib/services/implementation/mypsm/shared/employee.service';
 import { error } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms/client';
@@ -36,6 +52,8 @@ export async function load({ params }) {
         id: Number(params.fundApplicationId),
     };
 
+    const isStaffRole: boolean =
+        currentRoleCode === RoleConstant.kakitangan.code;
     const isCourseSecretaryRole: boolean =
         currentRoleCode === RoleConstant.urusSetiaLatihan.code;
     const isIntegritySecretaryRole: boolean =
@@ -48,6 +66,8 @@ export async function load({ params }) {
     let fundApplicationDetailResponse: CommonResponseDTO = {};
     let fundApplicationPersonalDetailResponse: CommonResponseDTO = {};
     let fundApplicationServiceDetailResponse: CommonResponseDTO = {};
+    let fundApplicationCourseSecretarySetApproverResponse: CommonResponseDTO =
+        {};
     let fundApplicationCourseSecretaryApprovalResponse: CommonResponseDTO = {};
     let fundApplicationIntegritySecretaryApprovalResponse: CommonResponseDTO =
         {};
@@ -66,6 +86,11 @@ export async function load({ params }) {
 
     fundApplicationServiceDetailResponse =
         await CourseFundApplicationServices.getCourseFundApplicationServiceDetail(
+            idRequestBody,
+        );
+
+    fundApplicationCourseSecretarySetApproverResponse =
+        await CourseFundApplicationServices.getFundApplicationApprover(
             idRequestBody,
         );
 
@@ -113,6 +138,13 @@ export async function load({ params }) {
         { errors: false },
     );
 
+    const secretarySetApproverForm = await superValidate(
+        fundApplicationCourseSecretarySetApproverResponse.data
+            ?.details as CourseFundApplicationSetApproverDTO,
+        zod(_setApproversSchema),
+        { errors: false },
+    );
+
     const fundApplicationCourseSecretaryApprovalForm = await superValidate(
         fundApplicationCourseSecretaryApprovalResponse.data
             ?.details as CourseFundApplicationApprovalDTO,
@@ -138,6 +170,11 @@ export async function load({ params }) {
         fundApplicationDocumentInfoResponse.data
             ?.details as CourseFundApplicationDocumentsResponseDTO,
         zod(_fundApplicationDocumentSchema),
+        { errors: false },
+    );
+
+    const fundApplicationUploadDocumentForm = await superValidate(
+        zod(_fundApplicationUploadDocSchema),
         { errors: false },
     );
 
@@ -310,13 +347,47 @@ export async function load({ params }) {
         LookupServices.setSelectOptions(fundApplicationTypeLookupResponse);
 
     // ===========================================================================
+    // filter
+    const filter: CommonFilterDTO = {
+        program: 'SEMUA',
+        identityDocumentNumber: null,
+        employeeNumber: null,
+        name: null,
+        position: null,
+        status: null,
+        grade: null,
+        scheme: null,
+    };
+
+    // request body
+    const param: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 10000,
+        orderBy: 'name',
+        orderType: 0,
+        filter: filter,
+    };
+
+    // fetch apc history
+    const response: CommonResponseDTO =
+        await EmployeeServices.getEmployeeList(param);
+
+    //convert to id number
+    const employeeLookup: DropdownDTO[] = (
+        response.data?.dataList as CommonEmployeeDTO[]
+    ).map((data) => ({
+        value: Number(data.employeeId),
+        name: String(data.name),
+    }));
 
     return {
+        params,
         idRequestBody,
         responses: {
             fundApplicationDetailResponse,
             fundApplicationPersonalDetailResponse,
             fundApplicationServiceDetailResponse,
+            fundApplicationCourseSecretarySetApproverResponse,
             fundApplicationCourseSecretaryApprovalResponse,
             fundApplicationIntegritySecretaryApprovalResponse,
             fundApplicationStateUnitDirectorApprovalResponse,
@@ -326,10 +397,12 @@ export async function load({ params }) {
             fundApplicationInfoForm,
             fundApplicationPersonalInfoForm,
             fundApplicationServiceInfoForm,
+            secretarySetApproverForm,
             fundApplicationCourseSecretaryApprovalForm,
             fundApplicationIntegritySecretaryApprovalForm,
             fundApplicationStateUnitDirectorApprovalForm,
             fundApplicationDocumentForm,
+            fundApplicationUploadDocumentForm,
         },
         selectionOptions: {
             identityCardColorLookup,
@@ -341,6 +414,7 @@ export async function load({ params }) {
             maritalLookup,
             positionLookup,
             titleLookup,
+            employeeLookup,
             generalLookup,
             gradeLookup,
             placementLookup,
@@ -352,6 +426,7 @@ export async function load({ params }) {
             programLookup,
         },
         role: {
+            isStaffRole,
             isCourseSecretaryRole,
             isIntegritySecretaryRole,
             isStateDirectorRole,
@@ -363,6 +438,92 @@ export async function load({ params }) {
 //==================================================
 //=============== Submit Functions =================
 //==================================================
+export const _createFundApplicationForm = async (formData: object) => {
+    const form = await superValidate(
+        formData,
+        zod(_createFundApplicationRequestSchema),
+    );
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await CourseFundApplicationServices.createCourseFundApplication(
+            form.data as CourseAddFundApplicationRequestDTO,
+        );
+
+    return { response };
+};
+
+export const _submitDocumentForm = async (
+    id: number,
+    isDraft: boolean,
+    files: File[],
+) => {
+    const documentData = new FormData();
+
+    // check file size validation
+    files.forEach((file) => {
+        documentData.append('documents', file, file.name);
+    });
+
+    const form = await superValidate(
+        documentData,
+        zod(_fundApplicationUploadDocSchema),
+    );
+
+    if (!form.valid || id === undefined) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    // turns file into base 64 format
+    const requestBody: CourseFundReimbursementUploadDocumentsBase64RequestDTO =
+        {
+            documents: [],
+            id: id,
+            isDraft: isDraft,
+        };
+
+    for (let i = 0; i < files.length; i++) {
+        const base64String = await _fileToBase64String(files[i]);
+        const documentObject: DocumentBase64RequestDTO = {
+            base64: base64String,
+            name: files[i].name,
+        };
+        requestBody.documents?.push(documentObject);
+    }
+
+    const response: CommonResponseDTO =
+        await CourseFundApplicationServices.uploadFundApplicationEmployeeDocument(
+            requestBody,
+        );
+
+    return { response };
+};
+
+export const _submitSecretarySetApproverForm = async (
+    id: number,
+    formData: object,
+) => {
+    const form = await superValidate(formData, zod(_setApproversSchema));
+    form.data.id = id;
+
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await CourseFundApplicationServices.createFundApplicationApprover(
+            form.data as CourseFundApplicationSetApproverDTO,
+        );
+
+    return { response };
+};
+
 export const _addCourseSecretaryApprovalForm = async (formData: object) => {
     const form = await superValidate(
         formData,
