@@ -48,7 +48,7 @@ export const _submitCandidateForm = async (formData: object) => {
     }
 
     const response: CommonResponseDTO =
-        await EmploymentServices.editNewHireCandidate(
+        await EmploymentServices.createNewHireCandidate(
             form.data as NewHireAddCandidateDTO,
         );
 
