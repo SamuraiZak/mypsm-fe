@@ -1,9 +1,12 @@
 <script lang="ts">
+    import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
+    import { AllowanceTypeConstant } from '$lib/constants/core/allowance-type.constant';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
+    import type { AllowanceTypeDTO } from '$lib/dto/mypsm/allowance/allowance.dto';
     import type { LayoutData } from '../../$types';
     import type { PageData } from './$types';
 
@@ -53,9 +56,17 @@
         },
         controls: {
             // add: false,
-            add: data.props.layoutData.accountDetails.currentRole == 'kakitangan',
+            add:
+                data.props.layoutData.accountDetails.currentRole ==
+                'kakitangan',
         },
     };
+
+    function addApplication() {
+        let url = '/v2/service-allowance/application/forms';
+
+        goto(url);
+    }
 </script>
 
 <div
@@ -77,7 +88,7 @@
                     // showDetails();
                 }}
                 addActions={() => {
-                    // addApplication();
+                    addApplication();
                 }}
             >
                 <FilterWrapper slot="filter">
@@ -106,7 +117,7 @@
                             .applicationDate}
                     ></FilterTextField>
                     <FilterTextField
-                        label="Tarikh"
+                        label="Status"
                         bind:inputValue={applicationListTable.param.filter
                             .status}
                     ></FilterTextField>
