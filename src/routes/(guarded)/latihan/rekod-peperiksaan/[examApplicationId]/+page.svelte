@@ -838,7 +838,7 @@
             {#if $examSecretaryApprovalResultIsDraft && data.role.isCourseSecretaryRole}
                 <TextIconButton
                     type="neutral"
-                    label="Deraf"
+                    label="Simpan"
                     form="examApplicationSecretaryApprovalForm"
                     onClick={() => {
                         $secretaryApprovalInfoForm.isDraft = true;
@@ -914,7 +914,7 @@
                 {#if !$examApplicationIsFail && $panelExamResultIsDraft && !$isReadonlyExamResult && data.role.isCourseSecretaryRole}
                     <TextIconButton
                         type="neutral"
-                        label="Deraf"
+                        label="Simpan"
                         form="examApplicationPanelResultForm"
                         onClick={() => {
                             $examResultInfoForm.isDraft = true;

@@ -61,7 +61,7 @@
         <StepperContentHeader title="Maklumat Pengajian Diikuti">
                 <TextIconButton
                     type="neutral"
-                    label="Deraf"
+                    label="Simpan"
                     form="fundReimbursementFormStepper"
                     onClick={() => {
                         $form.isDraft = true;

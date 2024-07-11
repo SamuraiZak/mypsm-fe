@@ -91,7 +91,7 @@
             {#if !enableUploadDocument}
                 <TextIconButton
                     type="neutral"
-                    label="Deraf"
+                    label="Simpan"
                     form="fundReimbursementFormStepper"
                     onClick={() => {
                         $form.isDraft = true;
