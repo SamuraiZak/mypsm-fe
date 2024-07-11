@@ -16,6 +16,7 @@ import { z } from 'zod';
 
 // creating schema
 export const _addNewHireSchema = z.object({
+    applicationId: z.number().nullable(),
     name: z.coerce
         .string({
             required_error: 'Sila tetapkan ID sementara calon',
@@ -33,6 +34,7 @@ export const _addNewHireSchema = z.object({
     email: z
         .string()
         .email({ message: 'Pastikan emel adalah betul dan lengkap' }),
+    isDraft: z.boolean().default(false),
 });
 
 export const _personalInfoResponseSchema = z.object({
@@ -87,6 +89,7 @@ export const _personalInfoResponseSchema = z.object({
     employeePosition: z.string().nullable(),
     relationshipId: z.number().nullable(),
     isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean().default(false),
 });
 
 export const _personalInfoRequestSchema = _personalInfoResponseSchema
@@ -170,10 +173,12 @@ export const _academicInfoSchema = z
 export const _academicListResponseSchema = z.object({
     academics: z.array(_academicInfoSchema),
     isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean().default(false),
 });
 
 export const _academicListRequestSchema = _academicListResponseSchema.pick({
     academics: true,
+    isDraft: true,
 });
 
 //==========================================================
@@ -193,10 +198,12 @@ export const _experienceInfoSchema = z.object({
 export const _experienceListResponseSchema = z.object({
     experiences: z.array(_experienceInfoSchema),
     isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean().default(false),
 });
 
 export const _experienceListRequestSchema = _experienceListResponseSchema.pick({
     experiences: true,
+    isDraft: true,
 });
 
 //==========================================================
@@ -213,10 +220,12 @@ export const _activityInfoSchema = z.object({
 export const _activityListResponseSchema = z.object({
     activities: z.array(_activityInfoSchema),
     isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean().default(false),
 });
 
 export const _activityListRequestSchema = _activityListResponseSchema.pick({
     activities: true,
+    isDraft: true,
 });
 
 //==========================================================
@@ -273,6 +282,7 @@ export const _relationsSchema = z
 export const _dependencyListResponseSchema = z.object({
     dependencies: z.array(_relationsSchema),
     isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean().default(false),
 });
 
 // export const _nextOfKinListResponseSchema = z.object({
@@ -282,14 +292,17 @@ export const _dependencyListResponseSchema = z.object({
 
 export const _familyListRequestSchema = _dependencyListResponseSchema.pick({
     dependencies: true,
+    isDraft: true,
 });
 
 export const _dependencyListRequestSchema = _dependencyListResponseSchema.pick({
     dependencies: true,
+    isDraft: true,
 });
 
 export const _nextOfKinListRequestSchema = z.object({
     nextOfKins: z.array(_relationsSchema),
+    isDraft: z.boolean().default(false),
 });
 
 //==========================================================
@@ -340,6 +353,7 @@ export const _serviceDetailSchema = z.object({
     epw: numberSchema,
     cola: numberSchema,
     isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean().default(false),
 });
 
 export const _serviceInfoResponseSchema = _serviceDetailSchema.omit({
@@ -360,6 +374,7 @@ export const _approvalResultSchema = z.object({
     remark: longTextSchema,
     status: booleanSchema,
     isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean().default(false),
     approvalDate: z.string().readonly(),
 });
 
@@ -378,9 +393,10 @@ export const _setApproversSchema = z.object({
 //==========================================================
 
 export const _getNewHireApproversSchema = z.object({
-    isReadonly: z.boolean().readonly(),
     supporterId: z.number().readonly(),
     approverId: z.number().readonly(),
+    isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean().default(false),
 });
 
 //==========================================================
@@ -401,13 +417,16 @@ export const _documentsSchema = z.object({
     attachment: z.string().readonly(),
     attachmentName: z.string().readonly(),
     isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean().default(false),
 });
 
 export const _uploadDocumentsSchema = z.object({
+    isDraft: z.boolean().default(false),
     document: z
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
         .refine((f) => f.size < 10_000_000, 'Maximum 10 MB saiz muat naik.')
-        .array().min(1, {message: "Dokumen berkenaan hendaklah dimuat naik."}),
+        .array()
+        .min(1, { message: 'Dokumen berkenaan hendaklah dimuat naik.' }),
 });
 
 export const _newHireFullDetailSchema = z.object({

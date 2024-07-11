@@ -778,7 +778,7 @@
             {#if $reimbursementInfoIsDrafted && data.role.isStaffRole}
                 <TextIconButton
                     type="neutral"
-                    label="Deraf"
+                    label="Simpan"
                     form="examReimbursementInfoStepper"
                     onClick={() => {
                         $form.isDraft = true;
@@ -948,7 +948,7 @@
                 {#if $reimbursementDocumentIsDrafted && data.role.isStaffRole}
                     <TextIconButton
                         type="neutral"
-                        label="Deraf"
+                        label="Simpan"
                         form="documentUploadForm"
                         onClick={() => {
                             $fundReimbursementUploadDocumentForm.isDraft = true;
@@ -1132,7 +1132,7 @@
                     {#if (!$isReadonlySecretaryApprovalResult || $reimbursementSecretaryApprovalIsDrafted) && data.role.isCourseSecretaryRole}
                         <TextIconButton
                             type="neutral"
-                            label="Deraf"
+                            label="Simpan"
                             form="examReimbursementSecretaryApprovalForm"
                             onClick={() => {
                                 $secretaryApprovalInfoForm.isDraft = true;

@@ -96,31 +96,62 @@
     let newHireApproverApprovalIsApproved = writable<boolean>(false);
 
     let isReadonlyPersonalFormStepper = writable<boolean>(false);
+    let personalFormStepperIdDraft = writable<boolean>(false);
     let isReadonlyAcademicFormStepper = writable<boolean>(false);
+    let academicFormStepperIsDraft = writable<boolean>(false);
     let isReadonlyExperienceFormStepper = writable<boolean>(false);
+    let experienceFormStepperIsDraft = writable<boolean>(false);
+    let activityFormStepperIsDraft = writable<boolean>(false);
     let isReadonlyActivityFormStepper = writable<boolean>(false);
+    let familyFormStepperIsDraft = writable<boolean>(false);
     let isReadonlyFamilyFormStepper = writable<boolean>(false);
+    let dependencyFormStepperIsDraft = writable<boolean>(false);
     let isReadonlyDependencyFormStepper = writable<boolean>(false);
+    let nextOfKinFormStepperIsDraft = writable<boolean>(false);
     let isReadonlyNextOfKinFormStepper = writable<boolean>(false);
+    let documentFormStepperIsDraft = writable<boolean>(false);
     let isReadonlyDocumentFormStepper = writable<boolean>(false);
+    let serviceFormStepperIsDraft = writable<boolean>(false);
     let isReadonlyServiceFormStepper = writable<boolean>(false);
+    let secretaryApprovalResultIsDraft = writable<boolean>(false);
     let isReadonlySecretaryApprovalResult = writable<boolean>(false);
+    let setApproversFormStepperIsDraft = writable<boolean>(false);
     let isReadonlySetApproversFormStepper = writable<boolean>(false);
+    let supporterApprovalResultIsDraft = writable<boolean>(false);
     let isReadonlySupporterApprovalResult = writable<boolean>(false);
+    let approverApprovalResultIsDraft = writable<boolean>(false);
     let isReadonlyApproverApprovalResult = writable<boolean>(false);
     let isReadonlyEmployeeNumber = writable<boolean>(false);
 
     $: {
+        if (data.newHireFullDetailView.personalDetail.isDraft === true) {
+            personalFormStepperIdDraft.set(true);
+        } else {
+            personalFormStepperIdDraft.set(false);
+        }
+
         if (data.newHireFullDetailView.personalDetail.isReadonly) {
             isReadonlyPersonalFormStepper.set(true);
         } else {
             isReadonlyPersonalFormStepper.set(false);
         }
 
+        if (data.newHireFullDetailView.academic.isDraft === true) {
+            academicFormStepperIsDraft.set(true);
+        } else {
+            academicFormStepperIsDraft.set(false);
+        }
+
         if (data.newHireFullDetailView.academic.isReadonly) {
             isReadonlyAcademicFormStepper.set(true);
         } else {
             isReadonlyAcademicFormStepper.set(false);
+        }
+
+        if (data.newHireFullDetailView.experience.isDraft) {
+            experienceFormStepperIsDraft.set(true);
+        } else {
+            experienceFormStepperIsDraft.set(false);
         }
 
         if (data.newHireFullDetailView.experience.isReadonly) {
@@ -135,10 +166,22 @@
             isReadonlyActivityFormStepper.set(false);
         }
 
+        if (data.newHireFullDetailView.activity.isDraft === true) {
+            activityFormStepperIsDraft.set(true);
+        } else {
+            activityFormStepperIsDraft.set(false);
+        }
+
         if (data.newHireFullDetailView.family.isReadonly) {
             isReadonlyFamilyFormStepper.set(true);
         } else {
             isReadonlyFamilyFormStepper.set(false);
+        }
+
+        if (data.newHireFullDetailView.family.isDraft === true) {
+            familyFormStepperIsDraft.set(true);
+        } else {
+            familyFormStepperIsDraft.set(false);
         }
 
         if (data.newHireFullDetailView.dependent.isReadonly) {
@@ -147,10 +190,30 @@
             isReadonlyDependencyFormStepper.set(false);
         }
 
+        if (data.newHireFullDetailView.dependent.isDraft === true) {
+            dependencyFormStepperIsDraft.set(true);
+        } else {
+            dependencyFormStepperIsDraft.set(false);
+        }
+
         if (data.newHireFullDetailView.nextOfKin.isReadonly) {
             isReadonlyNextOfKinFormStepper.set(true);
         } else {
             isReadonlyNextOfKinFormStepper.set(false);
+        }
+
+        if (data.newHireFullDetailView.nextOfKin.isDraft === true) {
+            nextOfKinFormStepperIsDraft.set(true);
+        } else {
+            nextOfKinFormStepperIsDraft.set(false);
+        }
+
+        if (
+            data.newHireFullDetailView.document.isDraft === true
+        ) {
+            documentFormStepperIsDraft.set(true);
+        } else {
+            documentFormStepperIsDraft.set(false);
         }
 
         if (
@@ -162,19 +225,23 @@
             isReadonlyDocumentFormStepper.set(false);
         }
 
+        if (data.newHireFullDetailView.secretaryUpdate.isDraft) {
+            serviceFormStepperIsDraft.set(true);
+        } else {
+            serviceFormStepperIsDraft.set(false);
+        }
+
         if (data.newHireFullDetailView.secretaryUpdate.isReadonly) {
             isReadonlyServiceFormStepper.set(true);
         } else {
             isReadonlyServiceFormStepper.set(false);
         }
 
-        if (
-            data.newHireFullDetailView.supporterApprover.supporterId ||
-            data.newHireFullDetailView.supporterApprover.approverId
-        ) {
-            isReadonlySetApproversFormStepper.set(true);
+
+        if (data.newHireFullDetailView.secretaryApproval.isDraft === true) {
+            secretaryApprovalResultIsDraft.set(true);
         } else {
-            isReadonlySetApproversFormStepper.set(false);
+            secretaryApprovalResultIsDraft.set(false);
         }
 
         if (data.newHireFullDetailView.secretaryApproval.status !== null) {
@@ -187,6 +254,30 @@
             isReadonlySecretaryApprovalResult.set(false);
         }
 
+        if (
+            data.newHireFullDetailView.supporterApprover.isDraft === true
+        ) {
+            setApproversFormStepperIsDraft.set(true);
+        } else {
+            setApproversFormStepperIsDraft.set(false);
+        }
+
+        if (
+            data.newHireFullDetailView.supporterApprover.supporterId ||
+            data.newHireFullDetailView.supporterApprover.approverId
+        ) {
+            isReadonlySetApproversFormStepper.set(true);
+        } else {
+            isReadonlySetApproversFormStepper.set(false);
+        }
+        
+        if (data.newHireFullDetailView.supporter.isDraft === true) {
+            supporterApprovalResultIsDraft.set(true);
+
+        } else {
+            supporterApprovalResultIsDraft.set(false);
+        }
+        
         if (data.newHireFullDetailView.supporter.status !== null) {
             isReadonlySupporterApprovalResult.set(true);
 
@@ -195,6 +286,13 @@
                 : newHireSupporterApprovalIsApproved.set(false);
         } else {
             isReadonlySupporterApprovalResult.set(false);
+        }
+
+        if (data.newHireFullDetailView.approver.isDraft === true) {
+            approverApprovalResultIsDraft.set(true);
+
+        } else {
+            approverApprovalResultIsDraft.set(false);
         }
 
         if (data.newHireFullDetailView.approver.status !== null) {
@@ -232,9 +330,9 @@
 
     let isStatusNew: boolean;
 
-    if (data.isCandidateRole) {
+    if (data.roles.isCandidateRole) {
         isStatusNew = data.candidateViewTable[0]?.status === 'Baru';
-    } else if (data.isEmploymentSecretaryRole) {
+    } else if (data.roles.isEmploymentSecretaryRole) {
         isStatusNew =
             data.newHireStatusResponse.data?.details.status === 'Baru';
     }
@@ -453,7 +551,7 @@
         taintedMessage: false,
         validators: zod(_uploadDocumentsSchema),
         onSubmit() {
-            _submitDocumentForm($documentForm.document);
+            _submitDocumentForm($documentForm.isDraft, $documentForm.document);
         },
     });
 
@@ -678,24 +776,25 @@
     // personal info
     $form.birthDate = nricToBirthdate($form.identityDocumentNumber);
 
-    const triggerSubmitAcademicTempData = () => {
-        _submitAcademicInfoForm(tempAcademicRecord);
+    const triggerSubmitAcademicTempData = (isDraft: boolean) => {
+        
+        _submitAcademicInfoForm(isDraft, tempAcademicRecord);
     };
 
-    const triggerSubmitExperienceTempData = () => {
-        _submitExperienceInfoForm(tempExperienceRecord);
+    const triggerSubmitExperienceTempData = (isDraft: boolean) => {
+        _submitExperienceInfoForm(isDraft, tempExperienceRecord);
     };
 
-    const triggerSubmitActivityTempData = () => {
-        _submitActivityInfoForm(tempActivityRecord);
+    const triggerSubmitActivityTempData = (isDraft: boolean) => {
+        _submitActivityInfoForm(isDraft, tempActivityRecord);
     };
-    const triggerSubmitFamilyTempData = () => {
-        _submitFamilyInfoForm(tempFamilyRecord);
+    const triggerSubmitFamilyTempData = (isDraft: boolean) => {
+        _submitFamilyInfoForm(isDraft, tempFamilyRecord);
     };
-    const triggerSubmitDependencyTempData = () => {
-        _submitDependencyInfoForm(tempNonFamilyRecord);
+    const triggerSubmitDependencyTempData = (isDraft: boolean) => {
+        _submitDependencyInfoForm(isDraft, tempNonFamilyRecord);
     };
-    const triggerSubmitNextOfKinTempData = () => {
+    const triggerSubmitNextOfKinTempData = (isDraft: boolean) => {
         const tempData = tempNextOfKinFromFamily.map((tempData) => ({
             birthCountryId: Number(tempData.birthCountryId),
             birthStateId: Number(tempData.birthStateId),
@@ -723,7 +822,7 @@
             ...tempNextOfKinRecord,
             ...tempData,
         ] as NextOfKin[];
-        _submitNextOfKinInfoForm(tempNextOfKinRecord);
+        _submitNextOfKinInfoForm(isDraft, tempNextOfKinRecord);
     };
 
     const handleOnInput = (e: Event) => {
@@ -769,11 +868,18 @@
 
     <StepperContent>
         <StepperContentHeader title="Maklumat Peribadi">
-            {#if !$isReadonlyPersonalFormStepper && data.isCandidateRole}
+            {#if (!$isReadonlyPersonalFormStepper || $personalFormStepperIdDraft) && data.roles.isCandidateRole}
                 <TextIconButton
-                    type="primary"
+                    type="neutral"
                     label="Simpan"
                     form="personalFormStepper"
+                    onClick={()=>{$form.isDraft = true;}}
+                />
+                <TextIconButton
+                    type="primary"
+                    label="Hantar"
+                    form="personalFormStepper"
+                    onClick={()=>{$form.isDraft = false;}}
                 />
             {/if}
         </StepperContentHeader>
@@ -808,7 +914,7 @@
                 ></CustomTextField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.titleId}
                     id="titleId"
                     label={'Gelaran Nama'}
@@ -818,7 +924,7 @@
 
                 <CustomTextField
                     placeholder="-"
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     id="alternativeName"
                     label={'Nama Lain'}
                     type="text"
@@ -827,14 +933,14 @@
 
                 <CustomTextField
                     placeholder="-"
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     id="statusPekerjaan"
                     label="Emel Pekerja"
                     bind:val={$form.email}
                 ></CustomTextField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.identityDocumentColor}
                     id="identityDocumentColor"
                     label="Jenis Kad Pengenalan"
@@ -853,7 +959,7 @@
                     bind:val={$form.birthDate}
                 ></CustomTextField>
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.birthStateId}
                     id="birthStateId"
                     label="Negeri Kelahiran"
@@ -862,7 +968,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.birthCountryId}
                     id="birthCountryId"
                     label="Negara Kelahiran"
@@ -871,7 +977,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.nationalityId}
                     id="nationalityId"
                     label="Warganegara"
@@ -880,7 +986,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.raceId}
                     id="raceId"
                     label="Bangsa"
@@ -889,7 +995,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.ethnicId}
                     id="ethnicId"
                     label="Etnik"
@@ -898,7 +1004,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.religionId}
                     id="religionId"
                     label="Agama"
@@ -907,7 +1013,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.genderId}
                     id="genderId"
                     label="Jantina"
@@ -916,7 +1022,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.maritalId}
                     id="maritalId"
                     label="Status Perkahwinan"
@@ -927,14 +1033,14 @@
                 <CustomTextField
                     placeholder="-"
                     errors={$errors.homeAddress}
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     id="homeAddress"
                     label="Alamat Rumah"
                     bind:val={$form.homeAddress}
                 />
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.homeCountryId}
                     id="homeCountryId"
                     label="Negara Kediaman"
@@ -943,7 +1049,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.homeStateId}
                     id="homeStateId"
                     label="Negeri Kediaman"
@@ -952,7 +1058,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.homeCityId}
                     id="homeCityId"
                     label="Daerah Kediaman"
@@ -963,7 +1069,7 @@
                 <CustomTextField
                     placeholder="-"
                     errors={$errors.homePostcode}
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     id="homePostcode"
                     label="Poskod Rumah"
                     bind:val={$form.homePostcode}
@@ -972,14 +1078,14 @@
                 <CustomTextField
                     placeholder="-"
                     errors={$errors.mailAddress}
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     id="mailAddress"
                     label="Alamat Surat Menyurat"
                     bind:val={$form.mailAddress}
                 />
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.mailCountryId}
                     id="mailCountryId"
                     label="Negara Surat Menyurat"
@@ -988,7 +1094,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.mailStateId}
                     id="mailStateId"
                     label="Negeri Surat Menyurat"
@@ -997,7 +1103,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.mailCityId}
                     id="mailCityId"
                     label="Daerah Surat Menyurat"
@@ -1008,14 +1114,14 @@
                 <CustomTextField
                     placeholder="-"
                     errors={$errors.mailPostcode}
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     id="mailPostcode"
                     label="Poskod Surat Menyurat"
                     bind:val={$form.mailPostcode}
                 />
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.assetDeclarationStatusId}
                     id="assetDeclarationStatusId"
                     label="Status Pengisytiharan Harta"
@@ -1027,7 +1133,7 @@
                     <CustomTextField
                         placeholder="-"
                         errors={$errors.propertyDeclarationDate}
-                        disabled={$isReadonlyPersonalFormStepper}
+                        disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                         id="propertyDeclarationDate"
                         type="date"
                         label="Tarikh Pengisytiharan Harta"
@@ -1036,7 +1142,7 @@
                 {/if}
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                     errors={$errors.isExPoliceOrSoldier}
                     id="isExPoliceOrSoldier"
                     label="Bekas Polis / Tentera"
@@ -1050,7 +1156,7 @@
                     </p>
 
                     <CustomSelectField
-                        disabled={$isReadonlyPersonalFormStepper}
+                        disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                         errors={$errors.isInternalRelationship}
                         id="isInternalRelationship"
                         label="Perhubungan Dengan Kakitangan LKIM"
@@ -1060,7 +1166,7 @@
 
                     {#if $form.isInternalRelationship}
                         <CustomSelectField
-                            disabled={$isReadonlyPersonalFormStepper}
+                            disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                             errors={$errors.employeeNumber}
                             id="employeeNumber"
                             label="Nama Pekerja LKIM"
@@ -1070,7 +1176,7 @@
 
                         {#if !!data.newHireFullDetailView.personalDetail.employeeNumber}
                             <CustomTextField
-                                disabled={$isReadonlyPersonalFormStepper}
+                                disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                                 errors={$errors.employeePosition}
                                 id="relationDetailPosition"
                                 label="Jawatan Kakitangan LKIM"
@@ -1079,7 +1185,7 @@
                         {/if}
 
                         <CustomSelectField
-                            disabled={$isReadonlyPersonalFormStepper}
+                            disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
                             errors={$errors.relationshipId}
                             id="relationDetailRelationship"
                             label="Hubungan"
@@ -1100,21 +1206,26 @@
         <StepperContentHeader
             title="Maklumat Akademik / Kelayakan / Latihan yang Lalu"
         >
-            {#if !$isReadonlyAcademicFormStepper && data.isCandidateRole}
-                <TextIconButton
-                    type="primary"
-                    label="Simpan"
-                    onClick={() => triggerSubmitAcademicTempData()}
-                />
+            {#if (!$isReadonlyAcademicFormStepper || $academicFormStepperIsDraft) && !data.roles.isCandidateRole}
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
                     onClick={() => activeIndex++}
                 />
+                <TextIconButton
+                    type="neutral"
+                    label="Simpan"
+                    onClick={() => triggerSubmitAcademicTempData(true)}
+                />
+                <TextIconButton
+                    type="primary"
+                    label="Hantar"
+                    onClick={() => triggerSubmitAcademicTempData(false)}
+                />
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
-            {#if !$isReadonlyAcademicFormStepper && data.isCandidateRole}
+            {#if !$isReadonlyAcademicFormStepper && data.roles.isCandidateRole}
                 {#if tempAcademicRecord.length > 0}
                     <div
                         class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
@@ -1272,21 +1383,26 @@
     <!------------------------------------------------------->
     <StepperContent>
         <StepperContentHeader title="Maklumat Pengalaman">
-            {#if !$isReadonlyExperienceFormStepper && data.isCandidateRole}
-                <TextIconButton
-                    type="primary"
-                    label="Simpan"
-                    onClick={() => triggerSubmitExperienceTempData()}
-                />
+            {#if (!$isReadonlyExperienceFormStepper || $experienceFormStepperIsDraft) && data.roles.isCandidateRole}
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
                     onClick={() => activeIndex++}
                 />
+                <TextIconButton
+                    type="neutral"
+                    label="Simpan"
+                    onClick={() => triggerSubmitExperienceTempData(true)}
+                />
+                <TextIconButton
+                    type="primary"
+                    label="Hantar"
+                    onClick={() => triggerSubmitExperienceTempData(false)}
+                />
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
-            {#if !$isReadonlyExperienceFormStepper && data.isCandidateRole}
+            {#if !$isReadonlyExperienceFormStepper && data.roles.isCandidateRole}
                 {#if tempExperienceRecord.length > 0}
                     <div
                         class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
@@ -1413,21 +1529,26 @@
 
     <StepperContent>
         <StepperContentHeader title="Maklumat Kegiatan / Keahlian">
-            {#if !$isReadonlyActivityFormStepper && data.isCandidateRole}
-                <TextIconButton
-                    type="primary"
-                    label="Simpan"
-                    onClick={() => triggerSubmitActivityTempData()}
-                />
+            {#if (!$isReadonlyActivityFormStepper || $activityFormStepperIsDraft) && data.roles.isCandidateRole}
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
                     onClick={() => activeIndex++}
                 />
+                <TextIconButton
+                    type="neutral"
+                    label="Simpan"
+                    onClick={() => triggerSubmitActivityTempData(true)}
+                />
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    onClick={() => triggerSubmitActivityTempData(false)}
+                />
             {/if}</StepperContentHeader
         >
         <StepperContentBody>
-            {#if !$isReadonlyActivityFormStepper && data.isCandidateRole}
+            {#if !$isReadonlyActivityFormStepper && data.roles.isCandidateRole}
                 {#if tempActivityRecord.length > 0}
                     <div
                         class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
@@ -1521,23 +1642,30 @@
     <!------------------------------------------------------->
     <StepperContent>
         <StepperContentHeader title="Maklumat Keluarga">
-            {#if !$isReadonlyFamilyFormStepper && data.isCandidateRole}
-                <TextIconButton
-                    type="primary"
-                    label="Simpan"
-                    onClick={() => {
-                        triggerSubmitFamilyTempData();
-                    }}
-                />
+            {#if (!$isReadonlyFamilyFormStepper || $familyFormStepperIsDraft) && data.roles.isCandidateRole}
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
                     onClick={() => activeIndex++}
                 />
+                <TextIconButton
+                    type="neutral"
+                    label="Simpan"
+                    onClick={() => {
+                        triggerSubmitFamilyTempData(true);
+                    }}
+                />
+                <TextIconButton
+                    type="primary"
+                    label="Hantar"
+                    onClick={() => {
+                        triggerSubmitFamilyTempData(false);
+                    }}
+                />
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
-            {#if !$isReadonlyFamilyFormStepper && data.isCandidateRole}
+            {#if !$isReadonlyFamilyFormStepper && data.roles.isCandidateRole}
                 {#if tempFamilyRecord.length > 0}
                     <div
                         class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
@@ -1808,23 +1936,30 @@
         <StepperContentHeader
             title="Maklumat Tanggungan Selain Isteri dan Anak"
         >
-            {#if !$isReadonlyDependencyFormStepper && data.isCandidateRole}
-                <TextIconButton
-                    type="primary"
-                    label="Simpan"
-                    onClick={() => {
-                        triggerSubmitDependencyTempData();
-                    }}
-                />
+        {#if (!$isReadonlyDependencyFormStepper || $dependencyFormStepperIsDraft) && data.roles.isCandidateRole}
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
                     onClick={() => activeIndex++}
                 />
+                <TextIconButton
+                    type="neutral"
+                    label="Simpan"
+                    onClick={() => {
+                        triggerSubmitDependencyTempData(true);
+                    }}
+                />
+                <TextIconButton
+                    type="primary"
+                    label="Hantar"
+                    onClick={() => {
+                        triggerSubmitDependencyTempData(false);
+                    }}
+                />
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
-            {#if !$isReadonlyDependencyFormStepper && data.isCandidateRole}
+            {#if !$isReadonlyDependencyFormStepper && data.roles.isCandidateRole}
                 {#if tempNonFamilyRecord.length > 0}
                     <div
                         class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
@@ -2117,21 +2252,26 @@
 
     <StepperContent>
         <StepperContentHeader title="Maklumat Waris">
-            {#if !$isReadonlyNextOfKinFormStepper && data.isCandidateRole}
-                <TextIconButton
-                    type="primary"
-                    label="Simpan"
-                    onClick={() => triggerSubmitNextOfKinTempData()}
-                />
+            {#if (!$isReadonlyNextOfKinFormStepper || $nextOfKinFormStepperIsDraft) && data.roles.isCandidateRole}
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
                     onClick={() => activeIndex++}
                 />
+                <TextIconButton
+                    type="neutral"
+                    label="Simpan"
+                    onClick={() => triggerSubmitNextOfKinTempData(true)}
+                />
+                <TextIconButton
+                    type="primary"
+                    label="Simpan"
+                    onClick={() => triggerSubmitNextOfKinTempData(false)}
+                />
             {/if}
         </StepperContentHeader>
         <StepperContentBody>
-            {#if !$isReadonlyNextOfKinFormStepper && data.isCandidateRole}
+            {#if !$isReadonlyNextOfKinFormStepper && data.roles.isCandidateRole}
                 {#if tempNextOfKinRecord.length > 0}
                     <div
                         class="flex w-full flex-col gap-2.5 rounded-[3px] border border-system-accent p-2.5"
@@ -2399,11 +2539,18 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Dokumen - Dokumen Sokongan yang Berkaitan">
-            {#if !$isReadonlyDocumentFormStepper && data.isCandidateRole && data.newHireFullDetailView.nextOfKin.dependencies.length > 0}
+            {#if (!$isReadonlyDocumentFormStepper || $documentFormStepperIsDraft) && data.roles.isCandidateRole && data.newHireFullDetailView.nextOfKin.dependencies.length > 0}
                 <TextIconButton
-                    type="primary"
+                    type="neutral"
                     label="Simpan"
                     form="documentUploadForm"
+                    onClick={()=>{$documentForm.isDraft = true}}
+                />
+                <TextIconButton
+                    type="primary"
+                    label="Hantar"
+                    form="documentUploadForm"
+                    onClick={()=>{$documentForm.isDraft = false}}
                 />
             {/if}
         </StepperContentHeader>
@@ -2413,7 +2560,7 @@
                     <div class="text-center text-sm italic text-system-primary">
                         Tiada maklumat.
                     </div>
-                {:else if !$isReadonlyDocumentFormStepper && data.isCandidateRole}
+                {:else if (!$isReadonlyDocumentFormStepper || $documentFormStepperIsDraft) && data.roles.isCandidateRole}
                     <p class="text-sm">
                         Sila muat turun, isi dengan lengkap dokumen berikut,
                         kemudian muat naik dokumen pada ruangan yang disediakan.
@@ -2505,7 +2652,40 @@
                             {/if}
                         </div>
                     </form>
-                {:else}
+                    {#if $isReadonlyDocumentFormStepper}
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                        >
+                            <ContentHeader
+                                title="Dokumen - Dokumen Sokongan yang Berkaitan"
+                            ></ContentHeader>
+                            <p
+                                class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
+                            >
+                                Fail-fail yang dimuat naik:
+                            </p>
+
+                            <div
+                                class="flex w-full flex-row items-center justify-between"
+                            >
+                                <label
+                                    for=""
+                                    class="block w-[20px] min-w-[20px] text-[11px] font-medium"
+                                    >1.</label
+                                >
+                                <a
+                                    href={data.newHireFullDetailView.document
+                                        .attachment}
+                                    download={data.newHireFullDetailView.document
+                                        .attachmentName}
+                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                    >{data.newHireFullDetailView.document
+                                        .attachmentName}</a
+                                >
+                            </div>
+                        </div>
+                    {/if}
+                {:else if $isReadonlyDocumentFormStepper && !$documentFormStepperIsDraft}
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
                     >
@@ -2536,25 +2716,35 @@
                                     .attachmentName}</a
                             >
                         </div>
-                    </div>{/if}
+                    </div>
+                {/if}
             </div></StepperContentBody
         >
     </StepperContent>
-    {#if !isStatusNew || data.isSupporterRole || data.isApproverRole}
+    {#if !isStatusNew || data.roles.isSupporterRole || data.roles.isApproverRole}
         <StepperContent>
             <StepperContentHeader title="Kemaskini Lantikan Baru">
-                {#if !$isReadonlyServiceFormStepper && data.isEmploymentSecretaryRole}
+                {#if (!$isReadonlyServiceFormStepper || $serviceFormStepperIsDraft) && data.roles.isEmploymentSecretaryRole}
                     <TextIconButton
-                        type="primary"
+                        type="neutral"
                         label="Simpan"
                         form="newHireEmploymentServiceForm"
-                    >
-                        <SvgCheck></SvgCheck>
-                    </TextIconButton>
+                        onClick={()=>{
+                            $serviceInfoForm.isDraft = true;
+                        }}
+                    />
+                    <TextIconButton
+                        type="primary"
+                        label="Hantar"
+                        form="newHireEmploymentServiceForm"
+                        onClick={()=>{
+                            $serviceInfoForm.isDraft = false;
+                        }}
+                    />
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                {#if !$isReadonlyServiceFormStepper && !data.isEmploymentSecretaryRole}
+                {#if (!$isReadonlyServiceFormStepper || $serviceFormStepperIsDraft) && !data.roles.isEmploymentSecretaryRole}
                     <StepperOtherRolesResult />
                 {:else}
                     <p class={stepperFormTitleClass}>Maklumat Perkhidmatan</p>
@@ -2565,7 +2755,7 @@
                         class="flex w-full flex-col gap-2.5"
                     >
                         <CustomSelectField
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.gradeId}
                             id="gradeId"
                             label="Gred Semasa"
@@ -2573,7 +2763,7 @@
                             options={data.selectionOptions.gradeLookup}
                         ></CustomSelectField>
                         <CustomSelectField
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.maxGradeId}
                             id="maxGradeId"
                             label="Gred Maksimum"
@@ -2581,7 +2771,7 @@
                             options={data.selectionOptions.gradeLookup}
                         ></CustomSelectField>
                         <CustomSelectField
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.programmeId}
                             id="programmeId"
                             label="Program"
@@ -2589,7 +2779,7 @@
                             options={data.selectionOptions.programLookup}
                         ></CustomSelectField>
                         <CustomSelectField
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.schemeId}
                             id="schemeId"
                             label="Skim"
@@ -2597,7 +2787,7 @@
                             options={data.selectionOptions.schemeLookup}
                         ></CustomSelectField>
                         <CustomSelectField
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.positionId}
                             id="positionId"
                             label="Jawatan"
@@ -2605,7 +2795,7 @@
                             options={data.selectionOptions.positionLookup}
                         ></CustomSelectField>
                         <CustomSelectField
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.placementId}
                             id="placementId"
                             label="Penempatan"
@@ -2613,7 +2803,7 @@
                             options={data.selectionOptions.placementLookup}
                         ></CustomSelectField>
                         <CustomSelectField
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.serviceTypeId}
                             id="serviceTypeId"
                             label="Taraf Perkhidmatan"
@@ -2622,7 +2812,7 @@
                         ></CustomSelectField>
 
                         <CustomSelectField
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.serviceGroupId}
                             id="serviceGroupId"
                             label="Kumpulan Perkhidmatan"
@@ -2631,7 +2821,7 @@
                         ></CustomSelectField>
 
                         <CustomSelectField
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.unitId}
                             id="unitId"
                             label="Unit Perkhidmatan"
@@ -2651,7 +2841,7 @@
                         <CustomTextField
                             placeholder="-"
                             type="date"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.effectiveDate}
                             id="effectiveDate"
                             label={'Tarikh Kuatkuasa Lantikan Semasa'}
@@ -2659,7 +2849,7 @@
                         ></CustomTextField>
 
                         <CustomSelectField
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.retirementBenefit}
                             id="retirementBenefit"
                             label="Faedah Persaraan"
@@ -2669,7 +2859,7 @@
 
                         <CustomTextField
                             placeholder="-"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.epfNumber}
                             id="epfNumber"
                             label={'No. KWSP'}
@@ -2678,7 +2868,7 @@
 
                         <CustomTextField
                             placeholder="-"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.socsoNumber}
                             id="socsoNumber"
                             label={'No. SOCSO'}
@@ -2686,7 +2876,7 @@
                         ></CustomTextField>
                         <CustomTextField
                             placeholder="-"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.incomeNumber}
                             id="incomeNumber"
                             label={'No. Cukai'}
@@ -2695,7 +2885,7 @@
 
                         <CustomSelectField
                             placeholder="-"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.bankName}
                             id="bankName"
                             label={'Nama Bank'}
@@ -2705,7 +2895,7 @@
 
                         <CustomTextField
                             placeholder="-"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.bankAccount}
                             id="bankAccount"
                             label={'No. Akaun'}
@@ -2714,7 +2904,7 @@
 
                         <CustomTextField
                             placeholder="-"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.eligibleLeaveCount}
                             id="eligibleLeaveCount"
                             label={'Kelayakan Cuti'}
@@ -2724,7 +2914,7 @@
                         <CustomTextField
                             placeholder="-"
                             type="date"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.civilServiceStartDate}
                             id="civilServiceStartDate"
                             label={'Mula Dilantik Perkhidmatan Kerajaan'}
@@ -2733,7 +2923,7 @@
                         <CustomTextField
                             placeholder="-"
                             type="date"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.firstServiceDate}
                             id="firstServiceDate"
                             label={'Mula Dilantik Perkhidmatan LKIM'}
@@ -2742,7 +2932,7 @@
                         <CustomTextField
                             placeholder="-"
                             type="date"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.serviceDate}
                             id="serviceDate"
                             label={'Mula Dilantik Perkhidmatan Sekarang'}
@@ -2751,7 +2941,7 @@
                         <CustomTextField
                             placeholder="-"
                             type="date"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.confirmServiceDate}
                             id="confirmServiceDate"
                             label={'Tarikh Disahkan Perkhidmatan Sekarang'}
@@ -2760,7 +2950,7 @@
                         <CustomTextField
                             placeholder="-"
                             type="date"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.firstEffectiveServiceDate}
                             id="firstEffectiveServiceDate"
                             label={'Mula Berkuatkuasa Perkhidmatan Pertama'}
@@ -2769,7 +2959,7 @@
                         <CustomTextField
                             placeholder="-"
                             type="date"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.firstConfirmServiceDate}
                             id="firstConfirmServiceDate"
                             label={'Disahkan Dalam Jawatan Pertama LKIM'}
@@ -2778,7 +2968,7 @@
                         <CustomTextField
                             placeholder="-"
                             type="date"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.confirmDate}
                             id="confirmDate"
                             label={'Disahkan Dalam Jawatan Semasa LKIM'}
@@ -2788,7 +2978,7 @@
                         <CustomTextField
                             placeholder="-"
                             type="date"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.firstEffectiveDate}
                             id="firstEffectiveDate"
                             label={'Tarikh Berkuatkuasa Lantikan Pertama'}
@@ -2797,7 +2987,7 @@
                         <CustomTextField
                             placeholder="-"
                             type="date"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.newRecruitEffectiveDate}
                             id="newRecruitEffectiveDate"
                             label={'Tarikh Lantikan Baru'}
@@ -2806,7 +2996,7 @@
 
                         <CustomTextField
                             placeholder="-"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             isRequired={false}
                             errors={$serviceInfoErrors.pensionNumber}
                             id="pensionNumber"
@@ -2817,7 +3007,7 @@
                         <CustomTextField
                             placeholder="-"
                             type="number"
-                            disabled={$isReadonlyServiceFormStepper}
+                            disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.retirementAge}
                             id="retirementAge"
                             label={'Umur Bersara'}
@@ -2840,7 +3030,7 @@
                         <div class="grid grid-cols-2 gap-10">
                             <div class="space-y-2.5">
                                 <CustomSelectField
-                                    disabled={$isReadonlyServiceFormStepper}
+                                    disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                                     errors={$serviceInfoErrors.revisionMonth}
                                     id="revisionMonth"
                                     label="Bulan Berkuatkuasa (Bulan KGT)"
@@ -2860,7 +3050,7 @@
                                 ></CustomTextField>
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled={$isReadonlyServiceFormStepper}
+                                    disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                                     errors={$serviceInfoErrors.maximumSalary}
                                     id="maximumSalary"
                                     type="number"
@@ -2870,7 +3060,7 @@
 
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled={$isReadonlyServiceFormStepper}
+                                    disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                                     errors={$serviceInfoErrors.baseSalary}
                                     id="baseSalary"
                                     label={'Gaji Pokok (RM)'}
@@ -2881,7 +3071,7 @@
                             <div class="space-y-2.5">
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled={$isReadonlyServiceFormStepper}
+                                    disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                                     errors={$serviceInfoErrors.itka}
                                     id="itka"
                                     label={'ITKA (RM)'}
@@ -2890,7 +3080,7 @@
                                 ></CustomTextField>
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled={$isReadonlyServiceFormStepper}
+                                    disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                                     errors={$serviceInfoErrors.itp}
                                     id="itp"
                                     label={'ITP (RM)'}
@@ -2899,7 +3089,7 @@
                                 ></CustomTextField>
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled={$isReadonlyServiceFormStepper}
+                                    disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                                     errors={$serviceInfoErrors.epw}
                                     id="epw"
                                     label={'EPW (RM)'}
@@ -2908,7 +3098,7 @@
                                 ></CustomTextField>
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled={$isReadonlyServiceFormStepper}
+                                    disabled={$isReadonlyServiceFormStepper || !$serviceFormStepperIsDraft}
                                     errors={$serviceInfoErrors.cola}
                                     id="cola"
                                     label={'COLA (RM)'}
@@ -2921,21 +3111,28 @@
                 {/if}
             </StepperContentBody>
         </StepperContent>
-        {#if $isReadonlyServiceFormStepper}
+        {#if $isReadonlyServiceFormStepper && !$serviceFormStepperIsDraft}
             <StepperContent>
                 <StepperContentHeader
                     title="Keputusan Lantikan Baru (Urus Setia Perjawatan)"
                 >
-                    {#if !$isReadonlySecretaryApprovalResult && data.isEmploymentSecretaryRole}
+                    {#if (!$isReadonlySecretaryApprovalResult || $secretaryApprovalResultIsDraft) && data.roles.isEmploymentSecretaryRole}
                         <TextIconButton
-                            type="primary"
+                            type="neutral"
                             label="Simpan"
                             form="newEmploymentSecretaryResultForm"
+                            onClick={()=>{$secretaryApprovalInfoForm.isDraft = true}}
+                        ></TextIconButton>
+                        <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="newEmploymentSecretaryResultForm"
+                            onClick={()=>{$secretaryApprovalInfoForm.isDraft = false}}
                         ></TextIconButton>
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
-                    {#if !$isReadonlySecretaryApprovalResult && !data.isEmploymentSecretaryRole}
+                    {#if (!$isReadonlySecretaryApprovalResult || $secretaryApprovalResultIsDraft) && !data.roles.isEmploymentSecretaryRole}
                         <StepperOtherRolesResult />
                     {:else}
                         <form
@@ -2957,14 +3154,14 @@
 
                             <CustomTextField
                                 placeholder="-"
-                                disabled={$isReadonlySecretaryApprovalResult}
+                                disabled={$isReadonlySecretaryApprovalResult || !$secretaryApprovalResultIsDraft}
                                 errors={$secretaryApprovalInfoErrors.remark}
                                 id="remark"
                                 label="Tindakan/Ulasan"
                                 bind:val={$secretaryApprovalInfoForm.remark}
                             ></CustomTextField>
                             <CustomRadioBoolean
-                                disabled={$isReadonlySecretaryApprovalResult}
+                                disabled={$isReadonlySecretaryApprovalResult || !$secretaryApprovalResultIsDraft}
                                 errors={$secretaryApprovalInfoErrors.status}
                                 id="status"
                                 options={certifyOptions}
@@ -2985,21 +3182,28 @@
                 </StepperContentBody>
             </StepperContent>
         {/if}
-        {#if $newHireSecretaryApprovalIsApproved}
+        {#if $newHireSecretaryApprovalIsApproved && !$secretaryApprovalResultIsDraft}
             <StepperContent>
                 <StepperContentHeader
                     title="Tetapan Penyokong dan Pelulus (Jika Sah)"
                 >
-                    {#if !$isReadonlySetApproversFormStepper && data.isEmploymentSecretaryRole}
+                    {#if (!$isReadonlySetApproversFormStepper || $setApproversFormStepperIsDraft) && data.roles.isEmploymentSecretaryRole}
                         <TextIconButton
-                            type="primary"
+                            type="neutral"
                             label="Simpan"
                             form="newEmploymentAssignApproverSupporterForm"
+                            onClick={()=>{$secretarySetApproverForm.isDraft = true;}}
+                        ></TextIconButton>
+                        <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="newEmploymentAssignApproverSupporterForm"
+                            onClick={()=>{$secretarySetApproverForm.isDraft = false;}}
                         ></TextIconButton>
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
-                    {#if !$isReadonlySetApproversFormStepper && !data.isEmploymentSecretaryRole}
+                    {#if (!$isReadonlySetApproversFormStepper || $setApproversFormStepperIsDraft) && !data.roles.isEmploymentSecretaryRole}
                         <StepperOtherRolesResult />
                     {:else}
                         <form
@@ -3009,7 +3213,7 @@
                             class="flex w-full flex-col gap-2"
                         >
                             <CustomSelectField
-                                disabled={$isReadonlySetApproversFormStepper}
+                                disabled={$isReadonlySetApproversFormStepper || !$setApproversFormStepperIsDraft}
                                 errors={$secretarySetApproverErrors.supporterId}
                                 id="supporterId"
                                 label="Nama Penyokong"
@@ -3017,7 +3221,7 @@
                                 bind:val={$secretarySetApproverForm.supporterId}
                             />
                             <CustomSelectField
-                                disabled={$isReadonlySetApproversFormStepper}
+                                disabled={$isReadonlySetApproversFormStepper || !$setApproversFormStepperIsDraft}
                                 errors={$secretarySetApproverErrors.approverId}
                                 id="approverId"
                                 label="Nama Pelulus"
@@ -3028,171 +3232,187 @@
                     {/if}
                 </StepperContentBody>
             </StepperContent>
-            <StepperContent>
-                <StepperContentHeader
-                    title="Keputusan daripada Peranan - Peranan Lain"
-                >
-                    {#if $newHireSecretaryApprovalIsApproved}
-                        {#if !$isReadonlySupporterApprovalResult && data.isSupporterRole}
-                            <TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                form="newEmploymentSupporterApproval"
-                            ></TextIconButton>
-                        {:else if !$isReadonlyApproverApprovalResult && data.isApproverRole}
-                            <TextIconButton
-                                type="primary"
-                                label="Simpan"
-                                form="newEmploymentApprovalApproval"
-                            ></TextIconButton>
-                        {/if}
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <div class="flex w-full flex-col gap-2.5">
+            {#if $newHireSecretaryApprovalIsApproved && !$setApproversFormStepperIsDraft}
+                <StepperContent>
+                    <StepperContentHeader
+                        title="Keputusan daripada Peranan - Peranan Lain"
+                    >
                         {#if $newHireSecretaryApprovalIsApproved}
-                            {#if data.isSupporterRole && !$isReadonlySupporterApprovalResult}
-                                <form
-                                    id="newEmploymentSupporterApproval"
-                                    method="POST"
-                                    use:supporterApprovalEnhance
-                                    class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                                >
-                                    <div class="mb-5">
-                                        <b class="text-sm text-system-primary"
-                                            >Penyokong</b
-                                        >
-                                    </div>
+                            {#if (!$isReadonlySupporterApprovalResult || $supporterApprovalResultIsDraft) && data.roles.isSupporterRole}
+                                <TextIconButton
+                                    type="neutral"
+                                    label="Simpan"
+                                    form="newEmploymentSupporterApproval"
+                                    onClick={()=>{$supporterApprovalForm.isDraft = true;}}
+                                ></TextIconButton>
+                                <TextIconButton
+                                    type="primary"
+                                    label="Hantar"
+                                    form="newEmploymentSupporterApproval"
+                                    onClick={()=>{$supporterApprovalForm.isDraft = false;}}
+                                ></TextIconButton>
+                            {:else if (!$isReadonlyApproverApprovalResult || $approverApprovalResultIsDraft) && data.roles.isApproverRole}
+                                <TextIconButton
+                                    type="neutral"
+                                    label="Simpan"
+                                    form="newEmploymentApprovalApproval"
+                                    onClick={()=>{$approverApprovalForm.isDraft = true;}}
+                                ></TextIconButton>
+                                <TextIconButton
+                                    type="primary"
+                                    label="Hantar"
+                                    form="newEmploymentApprovalApproval"
+                                    onClick={()=>{$approverApprovalForm.isDraft = false;}}
+                                ></TextIconButton>
+                            {/if}
+                        {/if}
+                    </StepperContentHeader>
+                    <StepperContentBody>
+                        <div class="flex w-full flex-col gap-2.5">
+                            {#if $newHireSecretaryApprovalIsApproved}
+                                {#if data.roles.isSupporterRole && (!$isReadonlySupporterApprovalResult || $supporterApprovalResultIsDraft)}
+                                    <form
+                                        id="newEmploymentSupporterApproval"
+                                        method="POST"
+                                        use:supporterApprovalEnhance
+                                        class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                                    >
+                                        <div class="mb-5">
+                                            <b class="text-sm text-system-primary"
+                                                >Penyokong</b
+                                            >
+                                        </div>
+                                        <CustomTextField
+                                            placeholder="-"
+                                            disabled={$isReadonlySupporterApprovalResult || !$supporterApprovalResultIsDraft}
+                                            errors={$supporterApprovalErrors.remark}
+                                            id="supporterRemark"
+                                            label="Tindakan/Ulasan"
+                                            bind:val={$supporterApprovalForm.remark}
+                                        ></CustomTextField>
+                                        <CustomRadioBoolean
+                                            disabled={$isReadonlySupporterApprovalResult || !$supporterApprovalResultIsDraft}
+                                            errors={$supporterApprovalErrors.status}
+                                            id="supporterIsApproved"
+                                            options={supportOptions}
+                                            label={'Keputusan'}
+                                            bind:val={$supporterApprovalForm.status}
+                                        ></CustomRadioBoolean>
+                                    </form>
+                                {:else if data.roles.isApproverRole && (!$isReadonlyApproverApprovalResult || $approverApprovalResultIsDraft) && $newHireSupporterApprovalIsApproved}
+                                    <form
+                                        id="newEmploymentApprovalApproval"
+                                        method="POST"
+                                        use:approverApprovalEnhance
+                                        class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                                    >
+                                        <div class="mb-5">
+                                            <b class="text-sm text-system-primary"
+                                                >Pelulus</b
+                                            >
+                                        </div>
+                                        <CustomTextField
+                                            placeholder="-"
+                                            disabled={$isReadonlyApproverApprovalResult || !$approverApprovalResultIsDraft}
+                                            errors={$approverApprovalErrors.remark}
+                                            id="approverRemark"
+                                            label="Tindakan/Ulasan"
+                                            bind:val={$approverApprovalForm.remark}
+                                        ></CustomTextField>
+                                        <CustomRadioBoolean
+                                            disabled={$isReadonlyApproverApprovalResult || !$approverApprovalResultIsDraft}
+                                            id="approverIsApproved"
+                                            options={approveOptions}
+                                            label={'Keputusan'}
+                                            bind:val={$approverApprovalForm.status}
+                                        ></CustomRadioBoolean>
+                                    </form>
+                                {/if}
+                            {/if}
+
+                            <div
+                                class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                            >
+                                <div class="mb-5">
+                                    <b class="text-sm text-system-primary"
+                                        >1. Penyokong</b
+                                    >
+                                </div>
+                                {#if $isReadonlySupporterApprovalResult && !$supporterApprovalResultIsDraft}
                                     <CustomTextField
                                         placeholder="-"
-                                        disabled={$isReadonlySupporterApprovalResult}
-                                        errors={$supporterApprovalErrors.remark}
+                                        disabled
                                         id="supporterRemark"
                                         label="Tindakan/Ulasan"
-                                        bind:val={$supporterApprovalForm.remark}
+                                        bind:val={data.newHireFullDetailView
+                                            .supporter.remark}
                                     ></CustomTextField>
-                                    <CustomRadioBoolean
-                                        disabled={$isReadonlySupporterApprovalResult}
-                                        errors={$supporterApprovalErrors.status}
-                                        id="supporterIsApproved"
+                                    <CustomSelectField
+                                        disabled
+                                        id="supporterStatus"
                                         options={supportOptions}
                                         label={'Keputusan'}
-                                        bind:val={$supporterApprovalForm.status}
-                                    ></CustomRadioBoolean>
-                                </form>
-                            {:else if data.isApproverRole && !$isReadonlyApproverApprovalResult && $newHireSupporterApprovalIsApproved}
-                                <form
-                                    id="newEmploymentApprovalApproval"
-                                    method="POST"
-                                    use:approverApprovalEnhance
-                                    class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                                >
-                                    <div class="mb-5">
-                                        <b class="text-sm text-system-primary"
-                                            >Pelulus</b
-                                        >
-                                    </div>
+                                        bind:val={data.newHireFullDetailView
+                                            .supporter.status}
+                                    ></CustomSelectField>
+                                    <CustomTextField
+                                        disabled
+                                        isRequired={false}
+                                        id="approvalDate"
+                                        label="Tarikh Kelulusan"
+                                        type="date"
+                                        placeholder="-"
+                                        bind:val={data.newHireFullDetailView
+                                            .supporter.approvalDate}
+                                    ></CustomTextField>
+                                {:else if !$newHireSecretaryApprovalIsApproved}
+                                    <StepperFailStatement />
+                                {:else}
+                                    <StepperOtherRolesResult />
+                                {/if}
+                                <hr />
+                                <div class="mb-5">
+                                    <b class="text-sm text-system-primary"
+                                        >2. Pelulus</b
+                                    >
+                                </div>
+                                {#if $isReadonlyApproverApprovalResult && !$approverApprovalResultIsDraft}
                                     <CustomTextField
                                         placeholder="-"
-                                        disabled={$isReadonlyApproverApprovalResult}
-                                        errors={$approverApprovalErrors.remark}
+                                        disabled
                                         id="approverRemark"
                                         label="Tindakan/Ulasan"
-                                        bind:val={$approverApprovalForm.remark}
+                                        bind:val={data.newHireFullDetailView
+                                            .approver.remark}
                                     ></CustomTextField>
-                                    <CustomRadioBoolean
-                                        disabled={$isReadonlyApproverApprovalResult}
-                                        id="approverIsApproved"
+                                    <CustomSelectField
+                                        disabled
+                                        id="approverStatus"
                                         options={approveOptions}
                                         label={'Keputusan'}
-                                        bind:val={$approverApprovalForm.status}
-                                    ></CustomRadioBoolean>
-                                </form>
-                            {/if}
-                        {/if}
-
-                        <div
-                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                        >
-                            <div class="mb-5">
-                                <b class="text-sm text-system-primary"
-                                    >1. Penyokong</b
-                                >
+                                        bind:val={data.newHireFullDetailView
+                                            .approver.status}
+                                    ></CustomSelectField>
+                                    <CustomTextField
+                                        disabled
+                                        isRequired={false}
+                                        id="approvalDate"
+                                        label="Tarikh Kelulusan"
+                                        type="date"
+                                        placeholder="-"
+                                        bind:val={data.newHireFullDetailView
+                                            .approver.approvalDate}
+                                    ></CustomTextField>
+                                {:else if !$newHireSecretaryApprovalIsApproved || !newHireSupporterApprovalIsApproved}
+                                    <StepperFailStatement />
+                                {:else}
+                                    <StepperOtherRolesResult />
+                                {/if}
                             </div>
-                            {#if $isReadonlySupporterApprovalResult}
-                                <CustomTextField
-                                    placeholder="-"
-                                    disabled
-                                    id="supporterRemark"
-                                    label="Tindakan/Ulasan"
-                                    bind:val={data.newHireFullDetailView
-                                        .supporter.remark}
-                                ></CustomTextField>
-                                <CustomSelectField
-                                    disabled
-                                    id="supporterStatus"
-                                    options={supportOptions}
-                                    label={'Keputusan'}
-                                    bind:val={data.newHireFullDetailView
-                                        .supporter.status}
-                                ></CustomSelectField>
-                                <CustomTextField
-                                    disabled
-                                    isRequired={false}
-                                    id="approvalDate"
-                                    label="Tarikh Kelulusan"
-                                    type="date"
-                                    placeholder="-"
-                                    bind:val={data.newHireFullDetailView
-                                        .supporter.approvalDate}
-                                ></CustomTextField>
-                            {:else if !$newHireSecretaryApprovalIsApproved}
-                                <StepperFailStatement />
-                            {:else}
-                                <StepperOtherRolesResult />
-                            {/if}
-                            <hr />
-                            <div class="mb-5">
-                                <b class="text-sm text-system-primary"
-                                    >2. Pelulus</b
-                                >
-                            </div>
-                            {#if $isReadonlyApproverApprovalResult}
-                                <CustomTextField
-                                    placeholder="-"
-                                    disabled
-                                    id="approverRemark"
-                                    label="Tindakan/Ulasan"
-                                    bind:val={data.newHireFullDetailView
-                                        .approver.remark}
-                                ></CustomTextField>
-                                <CustomSelectField
-                                    disabled
-                                    id="approverStatus"
-                                    options={approveOptions}
-                                    label={'Keputusan'}
-                                    bind:val={data.newHireFullDetailView
-                                        .approver.status}
-                                ></CustomSelectField>
-                                <CustomTextField
-                                    disabled
-                                    isRequired={false}
-                                    id="approvalDate"
-                                    label="Tarikh Kelulusan"
-                                    type="date"
-                                    placeholder="-"
-                                    bind:val={data.newHireFullDetailView
-                                        .approver.approvalDate}
-                                ></CustomTextField>
-                            {:else if !$newHireSecretaryApprovalIsApproved || !newHireSupporterApprovalIsApproved}
-                                <StepperFailStatement />
-                            {:else}
-                                <StepperOtherRolesResult />
-                            {/if}
                         </div>
-                    </div>
-                </StepperContentBody>
-            </StepperContent>
+                    </StepperContentBody>
+                </StepperContent>
+            {/if}
             {#if $isReadonlyEmployeeNumber && $newHireApproverApprovalIsApproved}
                 <StepperContent>
                     <StepperContentHeader title="Maklumat Nombor Pekerja" />

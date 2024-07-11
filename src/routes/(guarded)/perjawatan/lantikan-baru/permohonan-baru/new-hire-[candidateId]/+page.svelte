@@ -9,12 +9,23 @@
     import type { PageData } from './$types';
     import { Toaster } from 'svelte-french-toast';
     import { zod } from 'sveltekit-superforms/adapters';
+    import { writable } from 'svelte/store';
 
     // =============================================================================
     // Variables
     // =============================================================================
 
     export let data: PageData;
+
+    let newHireRecordIsDraft = writable<boolean>(false);
+
+    $: {
+        if (data.view.newHireRecordView.isDraft === true) {
+            newHireRecordIsDraft.set(true);
+        } else {
+            newHireRecordIsDraft.set(false);
+        }
+    }
 
     // =============================================================================
     // Functions
@@ -41,7 +52,7 @@
             label="Kembali"
             type="neutral"
             icon="previous"
-            onClick={() => goto('../lantikan-baru')}
+            onClick={() => goto('../../lantikan-baru')}
         ></TextIconButton>
     </ContentHeader>
 </section>
@@ -58,22 +69,24 @@
             title="Sila Lengkapkan Butiran Penambahan Calon Lantikan Baru"
             borderClass="border-none"
         >
-            <TextIconButton
-                label="Simpan"
-                type="primary"
-                form="createCandidateForm"
-                onClick={() => {
-                    $form.isDraft = true;
-                }}
-            ></TextIconButton>
-            <TextIconButton
-                label="Hantar"
-                type="primary"
-                form="createCandidateForm"
-                onClick={() => {
-                    $form.isDraft = false;
-                }}
-            ></TextIconButton>
+            {#if $newHireRecordIsDraft && data.roles.isEmploymentSecretaryRole}
+                <TextIconButton
+                    label="Simpan"
+                    type="neutral"
+                    form="createCandidateForm"
+                    onClick={() => {
+                        $form.isDraft = true;
+                    }}
+                ></TextIconButton>
+                <TextIconButton
+                    label="Hantar"
+                    type="primary"
+                    form="createCandidateForm"
+                    onClick={() => {
+                        $form.isDraft = false;
+                    }}
+                ></TextIconButton>
+            {/if}
         </ContentHeader>
         <form
             id="createCandidateForm"
@@ -82,6 +95,7 @@
             class="flex max-h-full w-full flex-col items-start justify-start"
         >
             <CustomTextField
+                disabled={!$newHireRecordIsDraft}
                 errors={$errors.name}
                 id="name"
                 label="Nama Penuh"
@@ -89,6 +103,7 @@
                 bind:val={$form.name}
             />
             <CustomTextField
+                disabled={!$newHireRecordIsDraft}
                 errors={$errors.identityDocumentNumber}
                 id="identityDocumentNumber"
                 type="text"
@@ -97,6 +112,7 @@
                 bind:val={$form.identityDocumentNumber}
             />
             <CustomTextField
+                disabled={!$newHireRecordIsDraft}
                 errors={$errors.email}
                 id="email"
                 label="Emel"

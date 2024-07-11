@@ -940,7 +940,7 @@
             {#if $fundApplicationIsDraft && data.role.isStaffRole}
                 <TextIconButton
                     type="neutral"
-                    label="Deraf"
+                    label="Simpan"
                     form="examApplicationInfoStepper"
                     onClick={() => {
                         $form.isDraft = true;
@@ -1158,7 +1158,7 @@
                 {#if $fundApplicationDocumentIsDraft && data.role.isStaffRole}
                     <TextIconButton
                         type="neutral"
-                        label="Deraf"
+                        label="Simpan"
                         form="documentUploadForm"
                         onClick={() => {
                             $fundApplicationUploadDocumentForm.isDraft = true;
@@ -1338,7 +1338,7 @@
                     {#if $fundApplicationSecretarySetApproversIsDraft && data.role.isCourseSecretaryRole}
                         <TextIconButton
                             type="neutral"
-                            label="Deraf"
+                            label="Simpan"
                             form="fundApplicationAssignApproverForm"
                             onClick={() => {
                                 $secretarySetApproverForm.isDraft = true;
@@ -1384,7 +1384,7 @@
                         {#if !$fundApplicationIsFail && !$isReadonlyStateUnitDirectorApprovalResult && (data.role.isStateDirectorRole || data.role.isUnitDirectorRole)}
                             <TextIconButton
                                 type="neutral"
-                                label="Deraf"
+                                label="Simpan"
                                 form="stateUnitDirectorApprovalForm"
                                 onClick={() => {
                                     $stateUnitDirectorApprovalInfoForm.isDraft = true;
@@ -1401,7 +1401,7 @@
                         {:else if !$fundApplicationIsFail && $isReadonlyStateUnitDirectorApprovalResult && !$isReadonlyIntegritySecretaryApprovalResult && data.role.isIntegritySecretaryRole && !$stateUnitDirectorApprovalResultIsDraft}
                             <TextIconButton
                                 type="neutral"
-                                label="Deraf"
+                                label="Simpan"
                                 form="integritySecretaryApprovalForm"
                                 onClick={() => {
                                     $integritySecretaryApprovalInfoForm.isDraft = true;
@@ -1418,7 +1418,7 @@
                         {:else if !$fundApplicationIsFail && $isReadonlyStateUnitDirectorApprovalResult && $isReadonlyIntegritySecretaryApprovalResult && !$isReadonlyCourseSecretaryApprovalResult && data.role.isCourseSecretaryRole && !$integritySecretaryApprovalResultIsDraft}
                             <TextIconButton
                                 type="neutral"
-                                label="Deraf"
+                                label="Simpan"
                                 form="courseSecretaryApprovalForm"
                                 onClick={() => {
                                     $courseSecretaryApprovalInfoForm.isDraft = true;

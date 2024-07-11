@@ -106,13 +106,14 @@ export const _updateConfirmationMeetingResultSchema =
         id: z.number().readonly(),
     });
 
-export const _confirmationContractContinuationSchema = z
+export const _confirmationProbationContinuationSchema = z
     .object({
         confirmationId: z.number(),
         isContractContinued: booleanSchema,
         effectiveDate: dateStringSchema,
         contractMonths: numberSchem0,
         isReadonly: z.boolean().readonly(),
+        isDraft: z.boolean().default(false),
     })
     .superRefine(
         ({ isContractContinued, effectiveDate, contractMonths }, ctx) => {
@@ -152,7 +153,7 @@ export const _confirmationFullDetailSchema = z.object({
     service: _confirmationServiceSchema,
     examination: _confirmationExamsChecklistSchema,
     diciplinary: _confirmationDiciplinarySchema,
-    contractContinuation: _confirmationContractContinuationSchema,
+    probationContinuation: _confirmationProbationContinuationSchema,
     secretary: _confirmationApprovalSchema,
     division: _confirmationApprovalSchema,
     integrity: _confirmationApprovalSchema,

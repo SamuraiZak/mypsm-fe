@@ -46,12 +46,12 @@
         option: {
             checkbox: false,
             detail: false,
-            edit: false,
+            edit: true,
             select: false,
             filter: true,
         },
         controls: {
-            add: data.isEmploymentSecretaryRole,
+            add: data.roles.isEmploymentSecretaryRole,
         },
     };
 
@@ -190,7 +190,7 @@
                 message: newHireFullDetailResponse.message as string,
             });
         }
-        
+
         const route = `./lantikan-baru/kemaskini-permohonan/${rowData.candidateId}`;
         goto(route);
     };
@@ -206,7 +206,7 @@
 <section
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-    {#if data.currentRoleCode == UserRoleConstant.calon.code}
+    {#if data.roles.currentRoleCode == UserRoleConstant.calon.code}
         <div
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
@@ -238,7 +238,7 @@
                 </FilterWrapper>
             </DataTable>
         </div>
-    {:else if data.isEmploymentSecretaryRole}
+    {:else if data.roles.isEmploymentSecretaryRole}
         <CustomTab>
             <CustomTabContent title="Senarai Rekod Selesai Diisi">
                 <div
@@ -287,6 +287,12 @@
                     <DataTable
                         title="Senarai Calon Yang Belum Melengkapkan e-Borang Lantikan Baru"
                         bind:tableData={notCompletedTable}
+                        bind:passData={rowData}
+                        editActions={() => {
+                            goto(
+                                `./lantikan-baru/permohonan-baru/new-hire-${rowData.candidateId}`,
+                            );
+                        }}
                         addActions={() =>
                             goto('./lantikan-baru/permohonan-baru')}
                     >
@@ -317,7 +323,7 @@
                 </div>
             </CustomTabContent>
         </CustomTab>
-    {:else if data.isSupporterRole}
+    {:else if data.roles.isSupporterRole}
         <div
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
@@ -352,7 +358,7 @@
                 </FilterWrapper>
             </DataTable>
         </div>
-    {:else if data.isApproverRole}
+    {:else if data.roles.isApproverRole}
         <div
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
