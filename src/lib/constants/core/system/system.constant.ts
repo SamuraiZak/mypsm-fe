@@ -259,6 +259,11 @@ export class SystemConstant {
                     url: '/v2/medical/claims-clinic',
                     child: [],
                 },
+                {
+                    moduleName: 'Permohonan Klinik Panel',
+                    url: '/v2/medical/clinic-application',
+                    child: [],
+                },
             ],
         },
         {

@@ -5,8 +5,44 @@
     import mypsm_logo from '$lib/assets/images/MyPSM.png';
     import type { LayoutData } from './$types';
     import SideNavBar from '$lib/components/sidebar/SideNavBar.svelte';
+    import { get } from 'svelte/store';
+    import { page } from '$app/stores';
+    import { onDestroy } from 'svelte';
+    import { _switchRole, load } from './+layout';
+    import { TextAppearanceHelper } from '$lib/helpers/core/text-appearance.helper';
+    import type { SwitchRoleDTO } from '$lib/dto/core/user-account/user-account.dto';
 
     export let data: LayoutData;
+
+    let unsubscribe;
+
+    // Function to call on URL change
+    const handleNavigation = async () => {
+        const currentPage = get(page);
+        console.log('Navigated to:', currentPage.url.pathname);
+        // Call your load function or any other function here
+        // You can fetch data or do other actions here
+    };
+
+    // Subscribe to $page store to detect URL changes
+    unsubscribe = page.subscribe(() => {
+        handleNavigation();
+    });
+
+    onDestroy(() => {
+        // Clean up the subscription when the component is destroyed
+        if (unsubscribe) {
+            unsubscribe();
+        }
+    });
+
+    function switchRole(roleCode: string) {
+        const params: SwitchRoleDTO = {
+            roleCode: roleCode,
+        };
+
+        _switchRole(params);
+    }
 </script>
 
 <div class="flex h-screen w-screen flex-col items-start justify-start bg-white">
@@ -16,7 +52,7 @@
     >
         <!-- brand -->
         <div
-            class="hidden hover:scale-105 h-full w-60 min-w-60 flex-row items-center justify-start md:flex"
+            class="hidden h-full w-60 min-w-60 flex-row items-center justify-start hover:scale-105 md:flex"
         >
             <!-- company logo -->
             <div class="flex h-full flex-col items-center justify-center p-1">
@@ -34,7 +70,7 @@
             <!-- account -->
             <button
                 id="accountTile"
-                class="flex w-fit hover:scale-105 flex-row items-center justify-center gap-1 rounded-full bg-gray-100 p-1 hover:bg-gray-200"
+                class="flex w-fit flex-row items-center justify-center gap-1 rounded-full bg-gray-100 p-1 hover:scale-105 hover:bg-gray-200"
             >
                 <!-- avatar -->
                 <div
@@ -50,7 +86,9 @@
                     <p
                         class="w-fit text-base font-medium leading-tight text-slate-700"
                     >
-                        Kakitangan
+                        {TextAppearanceHelper.toProper(
+                            data.props.accountDetails.currentRole,
+                        )}
                     </p>
                 </div>
                 <div
@@ -79,28 +117,23 @@
                             Tukar Peranan
                         </p>
                     </div>
-                    <DropdownItem>
-                        <div
-                            class="flex h-5 w-full flex-col items-center justify-center"
+                    {#each data.props.accountDetails.roles as role}
+                        <DropdownItem
+                            on:click={() => {
+                                switchRole(role.code);
+                            }}
                         >
-                            <p
-                                class="font w-full text-wrap text-start text-base font-medium text-slate-700"
+                            <div
+                                class="flex h-5 w-full flex-col items-center justify-center"
                             >
-                                Kakitangan
-                            </p>
-                        </div>
-                    </DropdownItem>
-                    <DropdownItem>
-                        <div
-                            class="flex h-5 w-full flex-col items-center justify-center"
-                        >
-                            <p
-                                class="font w-full text-wrap text-start text-base font-medium text-slate-700"
-                            >
-                                Urus Setia Gaji
-                            </p>
-                        </div>
-                    </DropdownItem>
+                                <p
+                                    class="font w-full text-wrap text-start text-base font-medium text-slate-700"
+                                >
+                                    {TextAppearanceHelper.toProper(role.name)}
+                                </p>
+                            </div>
+                        </DropdownItem>
+                    {/each}
                 </div>
                 <DropdownItem>
                     <div
@@ -143,7 +176,7 @@
         <aside
             class="flex h-full w-60 min-w-60 flex-col items-center justify-start overflow-y-auto border-r bg-white"
         >
-            <SideNavBar menu={data.props.modules}></SideNavBar>
+            <SideNavBar menu={data.props.accountDetails.module}></SideNavBar>
         </aside>
         <!-- sidebar ends here -->
 

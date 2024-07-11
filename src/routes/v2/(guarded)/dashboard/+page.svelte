@@ -1,6 +1,7 @@
 <script lang="ts">
     import SvgReload from '$lib/assets/svg/SvgReload.svelte';
     import NotificationTile from '$lib/components/notification-tile/NotificationTile.svelte';
+    import { TextAppearanceHelper } from '$lib/helpers/core/text-appearance.helper';
     import type { PageData } from './$types';
 
     export let data: PageData;
@@ -17,7 +18,7 @@
         <div
             class="flex h-40 min-h-40 w-full flex-col items-start justify-center rounded-xl bg-gradient-to-br from-blue-600 to-blue-300 p-6 shadow-md"
         >
-            <h1 class="text-xl font-medium text-white">Hi, Bon Jovi</h1>
+            <h1 class="text-xl font-medium text-white">Salam Sejahtera, {TextAppearanceHelper.toProper(data.props.layoutData.accountDetails.name)}</h1>
             <p class="text-md font-medium text-white">
                 Selamat datang ke sistem MYPSM
             </p>
@@ -38,7 +39,7 @@
             <div
                 class="grid w-full grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
             >
-                {#each data.props.modules as module}
+                {#each data.props.layoutData.accountDetails.module as module}
                     <a
                         href={module.child.length == 0
                             ? module.url
@@ -85,7 +86,7 @@
                                     <p
                                         class="w-fit text-wrap text-md font-medium text-slate-700"
                                     >
-                                        {module.moduleName}
+                                        {TextAppearanceHelper.toProper(module.moduleName)}
                                     </p>
                                 </div>
                             </div>
