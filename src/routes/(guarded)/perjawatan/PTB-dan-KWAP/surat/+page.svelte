@@ -6,6 +6,8 @@
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import type { PageData } from './$types';
+    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
+    import { goto } from '$app/navigation';
 
     export let data: PageData;
     function handleDownload(agreementLetter: any): void {
@@ -50,6 +52,13 @@ class="flex h-full max-h-full min-h-full w-full flex-col items-center justify-st
     <ContentHeader title="PTB & KWAP">
        
 <p class="text-sm ps-2 ">Sila muat turun dan pastikan dokumen diisi dengan lengkap dan ditandatangani sebelum dihantar kepada Urus Setia </p>
+
+<TextIconButton
+type="primary"
+label="Kembali"
+onClick={() => goto('/perjawatan/PTB-dan-KWAP')}
+
+/>
 
     </ContentHeader>
     
