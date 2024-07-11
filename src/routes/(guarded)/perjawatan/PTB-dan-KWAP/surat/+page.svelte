@@ -51,7 +51,6 @@ class="flex h-full max-h-full min-h-full w-full flex-col items-center justify-st
     </div> -->
     <ContentHeader title="PTB & KWAP">
        
-<p class="text-sm ps-2 ">Sila muat turun dan pastikan dokumen diisi dengan lengkap dan ditandatangani sebelum dihantar kepada Urus Setia </p>
 
 <TextIconButton
 type="primary"

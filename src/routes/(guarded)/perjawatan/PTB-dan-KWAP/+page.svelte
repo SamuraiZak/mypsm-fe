@@ -335,7 +335,6 @@
 <!-- new -->
 
 
-
 <!--  -->
 
             </CustomTabContent>
@@ -400,7 +399,7 @@
 
     {#if currentRoleCode === kakitangan}
         <CustomTabContent title="Senarai Kakitangan Baharu diberi PTB dan KWAP">
-            <FilterCard></FilterCard>
+          
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
