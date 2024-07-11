@@ -18,7 +18,7 @@
 <div class="flex w-full flex-col items-center justify-start gap-1">
     <!-- input label starts here -->
     <label
-        for="role"
+        for={id}
         class="block w-full text-start text-sm font-medium text-ios-labelColors-secondaryLabel-light"
         >{label}
         <span class="text-base text-system-danger" hidden={!isRequired}>*</span>
