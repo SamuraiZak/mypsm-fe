@@ -41,7 +41,7 @@
     import { zod } from 'sveltekit-superforms/adapters';
     import {
         _confirmationApprovalSchema,
-        _confirmationContractContinuationSchema,
+        _confirmationProbationContinuationSchema,
         _confirmationMeetingResultSchema,
     } from '$lib/schemas/mypsm/employment/confirmation-in-service/schema';
     import {
@@ -73,12 +73,22 @@
     let isReadOnlyAuditDirectorConfirmationInServiceApproval =
         writable<boolean>(false);
     let isReadOnlyConfirmationInServiceMeetingResult = writable<boolean>(false);
+    let confirmationProbationContinuedIsDraft = writable<boolean>(true);
 
     $: {
         if (data.view.confirmationInServiceView.dataType === 'Lebih 3 tahun') {
             isTypeConfirmationExceedsThreeYears.set(true);
         } else {
             isTypeConfirmationExceedsThreeYears.set(false);
+        }
+
+        if (
+            data.view.confirmationInServiceView.probationContinuation
+                .isDraft === true
+        ) {
+            confirmationProbationContinuedIsDraft.set(true);
+        } else {
+            confirmationProbationContinuedIsDraft.set(false);
         }
 
         if (
@@ -225,7 +235,7 @@
         resetForm: false,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
-        validators: zod(_confirmationContractContinuationSchema),
+        validators: zod(_confirmationProbationContinuationSchema),
         taintedMessage: false,
         onChange() {
             isContractContinuation =
@@ -986,52 +996,63 @@
     {#if $isTypeConfirmationExceedsThreeYears}
         <StepperContent>
             <StepperContentHeader title="Lanjutan Percubaan Perkhidmatan">
-                <TextIconButton
-                    type="primary"
-                    label="Hantar"
-                    form="contractContinuationDetailForm"
-                ></TextIconButton>
+                {#if $confirmationProbationContinuedIsDraft && data.roles.isEmploymentSecretaryRole}
+                    <TextIconButton
+                        type="neutral"
+                        label="Simpan"
+                        form="contractContinuationDetailForm"
+                    ></TextIconButton>
+                    <TextIconButton
+                        type="primary"
+                        label="Hantar"
+                        form="contractContinuationDetailForm"
+                    ></TextIconButton>
+                {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <div class="flex w-full flex-col gap-2.5">
-                    <form
-                        id="contractContinuationDetailForm"
-                        method="POST"
-                        use:contractContinuationDetailFormEnhance
-                        class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                    >
-                        <CustomSelectField
-                            disabled={$contractContinuationDetailForm.isReadonly}
-                            isRequired={false}
-                            id="gradeId"
-                            label="Keputusan"
-                            placeholder="-"
-                            options={commonOptions}
-                            bind:val={$contractContinuationDetailForm.isContractContinued}
-                        ></CustomSelectField>
+                {#if data.roles.isStaffRole}
+                    <StepperOtherRolesResult />
+                {:else}
+                    <div class="flex w-full flex-col gap-2.5">
+                        <form
+                            id="contractContinuationDetailForm"
+                            method="POST"
+                            use:contractContinuationDetailFormEnhance
+                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                        >
+                            <CustomSelectField
+                                disabled={$contractContinuationDetailForm.isReadonly}
+                                isRequired={false}
+                                id="gradeId"
+                                label="Keputusan"
+                                placeholder="-"
+                                options={commonOptions}
+                                bind:val={$contractContinuationDetailForm.isContractContinued}
+                            ></CustomSelectField>
 
-                        {#if $contractContinuationDetailForm.isContractContinued}
-                            <CustomTextField
-                                type="date"
-                                errors={$contractContinuationDetailFormErrors.effectiveDate}
-                                disabled={false}
-                                id="effectiveDate"
-                                label={'Tarikh Mula Lanjutan'}
-                                placeholder="-"
-                                bind:val={$contractContinuationDetailForm.effectiveDate}
-                            ></CustomTextField>
-                            <CustomTextField
-                                type="number"
-                                errors={$contractContinuationDetailFormErrors.contractMonths}
-                                disabled={false}
-                                id="effectiveDate"
-                                label={'Tempoh Lanjutan (Bulan)'}
-                                placeholder="-"
-                                bind:val={$contractContinuationDetailForm.contractMonths}
-                            ></CustomTextField>
-                        {/if}
-                    </form>
-                </div>
+                            {#if $contractContinuationDetailForm.isContractContinued}
+                                <CustomTextField
+                                    type="date"
+                                    errors={$contractContinuationDetailFormErrors.effectiveDate}
+                                    disabled={false}
+                                    id="effectiveDate"
+                                    label={'Tarikh Mula Lanjutan'}
+                                    placeholder="-"
+                                    bind:val={$contractContinuationDetailForm.effectiveDate}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    type="number"
+                                    errors={$contractContinuationDetailFormErrors.contractMonths}
+                                    disabled={false}
+                                    id="effectiveDate"
+                                    label={'Tempoh Lanjutan (Bulan)'}
+                                    placeholder="-"
+                                    bind:val={$contractContinuationDetailForm.contractMonths}
+                                ></CustomTextField>
+                            {/if}
+                        </form>
+                    </div>
+                {/if}
             </StepperContentBody>
         </StepperContent>
     {/if}

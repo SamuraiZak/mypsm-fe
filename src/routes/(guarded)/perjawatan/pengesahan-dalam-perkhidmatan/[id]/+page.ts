@@ -9,7 +9,7 @@ import type {
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _confirmationApprovalSchema,
-    _confirmationContractContinuationSchema,
+    _confirmationProbationContinuationSchema,
     _confirmationDiciplinarySchema,
     _confirmationExamsChecklistSchema,
     _confirmationMeetingResultSchema,
@@ -26,10 +26,12 @@ import { superValidate } from 'sveltekit-superforms/client';
 //==================================================
 //=============== Load Function ====================
 //==================================================
-export async function load({ params }) {
+export async function load({ params, parent }) {
     const idRequestBody: commonIdRequestDTO = {
         id: Number(params.id),
     };
+
+    const { roles } = await parent();
 
     const confirmationInServiceDetailViewResponse: CommonResponseDTO =
         await ConfirmationServices.getConfirmationFullDetail(idRequestBody);
@@ -64,8 +66,8 @@ export async function load({ params }) {
     );
 
     const contractContinuationInfoForm = await superValidate(
-        confirmationInServiceView.contractContinuation,
-        zod(_confirmationContractContinuationSchema),
+        confirmationInServiceView.probationContinuation,
+        zod(_confirmationProbationContinuationSchema),
         { errors: false },
     );
 
@@ -77,17 +79,17 @@ export async function load({ params }) {
     const divisionDirectorInfoForm = await superValidate(
         confirmationInServiceView.division,
         zod(_confirmationApprovalSchema),
-        { errors: false, id: "divisionDirectorInfoFormID" },
+        { errors: false, id: 'divisionDirectorInfoFormID' },
     );
     const integrityDirectorApprovalForm = await superValidate(
         confirmationInServiceView.integrity,
         zod(_confirmationApprovalSchema),
-        { errors: false, id: "integrityDirectorApprovalFormID" },
+        { errors: false, id: 'integrityDirectorApprovalFormID' },
     );
     const auditDirectorInfoForm = await superValidate(
         confirmationInServiceView.audit,
         zod(_confirmationApprovalSchema),
-        { errors: false, id: "auditDirectorInfoFormID" },
+        { errors: false, id: 'auditDirectorInfoFormID' },
     );
     const confirmationMeetingForm = await superValidate(
         confirmationInServiceView.meeting,
@@ -373,6 +375,7 @@ export async function load({ params }) {
             serviceTypeLookup,
             retirementBenefitLookup,
         },
+        roles,
     };
 }
 
@@ -405,7 +408,7 @@ export const _addConfirmationContractContinuation = async (
 ) => {
     const form = await superValidate(
         formData,
-        zod(_confirmationContractContinuationSchema),
+        zod(_confirmationProbationContinuationSchema),
     );
     form.data.confirmationId = id;
 
