@@ -788,7 +788,7 @@ export const _submitSecretarySetApproverForm = async (
     return { response };
 };
 
-export const _submitDocumentForm = async (files: File[]) => {
+export const _submitDocumentForm = async (isDraft: boolean, files: File[]) => {
     const documentData = new FormData();
 
     // check file size validation
@@ -807,8 +807,10 @@ export const _submitDocumentForm = async (files: File[]) => {
     const base64String = await _fileToBase64String(files[0]);
 
     const requestBody: {
+        isDraft: boolean,
         document?: DocumentBase64RequestDTO | undefined;
     } = {
+        isDraft: isDraft,
         document: {
             base64: base64String,
             name: files[0].name,
@@ -828,16 +830,18 @@ export const _downloadDocument = async (param: string) => {
 };
 
 // submit array modal functions
-export const _submitAcademicInfoForm = async (formData: Academic[]) => {
+export const _submitAcademicInfoForm = async (
+    isDraft: boolean,
+    formData: Academic[],
+) => {
     if (formData.length < 1) {
         getErrorToast();
         return fail(400);
     }
     const requestData: CandidateAcademicDetailRequestDTO = {
         academics: formData,
+        isDraft: isDraft,
     };
-
-    console.log(requestData);
 
     const response: CommonResponseDTO =
         await EmploymentServices.createCurrentCandidateAcademicDetails(
@@ -847,13 +851,14 @@ export const _submitAcademicInfoForm = async (formData: Academic[]) => {
     return { response };
 };
 
-export const _submitExperienceInfoForm = async (formData: Experience[]) => {
+export const _submitExperienceInfoForm = async (isDraft: boolean, formData: Experience[]) => {
     if (formData.length < 1) {
         getErrorToast();
         return fail(400);
     }
     const requestData: CandidateExperiencesDetailRequestDTO = {
         experiences: formData,
+        isDraft: isDraft,
     };
 
     const response: CommonResponseDTO =
@@ -864,13 +869,14 @@ export const _submitExperienceInfoForm = async (formData: Experience[]) => {
     return { response };
 };
 
-export const _submitActivityInfoForm = async (formData: Activity[]) => {
+export const _submitActivityInfoForm = async (isDraft: boolean, formData: Activity[]) => {
     if (formData.length < 1) {
         getErrorToast();
         return fail(400);
     }
     const requestData: CandidateActivityDetailRequestDTO = {
         activities: formData,
+        isDraft: isDraft,
     };
 
     const response: CommonResponseDTO =
@@ -881,13 +887,14 @@ export const _submitActivityInfoForm = async (formData: Activity[]) => {
     return { response };
 };
 
-export const _submitFamilyInfoForm = async (formData: Family[]) => {
+export const _submitFamilyInfoForm = async (isDraft: boolean, formData: Family[]) => {
     if (formData.length < 1) {
         getErrorToast();
         return fail(400);
     }
     const requestData: CandidateFamilyDetailRequestDTO = {
         dependencies: formData,
+        isDraft: isDraft,
     };
 
     const response: CommonResponseDTO =
@@ -898,13 +905,14 @@ export const _submitFamilyInfoForm = async (formData: Family[]) => {
     return { response };
 };
 
-export const _submitDependencyInfoForm = async (formData: Dependency[]) => {
+export const _submitDependencyInfoForm = async (isDraft: boolean, formData: Dependency[]) => {
     if (formData.length < 1) {
         getErrorToast();
         return fail(400);
     }
     const requestData: CandidateDependenciesDetailRequestDTO = {
         dependencies: formData,
+        isDraft: isDraft,
     };
 
     const response: CommonResponseDTO =
@@ -915,13 +923,14 @@ export const _submitDependencyInfoForm = async (formData: Dependency[]) => {
     return { response };
 };
 
-export const _submitNextOfKinInfoForm = async (formData: NextOfKin[]) => {
+export const _submitNextOfKinInfoForm = async (isDraft: boolean, formData: NextOfKin[]) => {
     if (formData.length < 1) {
         getErrorToast();
         return fail(400);
     }
     const requestData: CandidateNextOfKinDetailRequestDTO = {
         nextOfKins: formData,
+        isDraft: isDraft,
     };
 
     const response: CommonResponseDTO =
