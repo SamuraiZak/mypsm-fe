@@ -35,7 +35,7 @@
                 >
                     <label
                         for={id}
-                        class="text-system-midnightBlue w-full text-wrap text-start text-md font-normal leading-tight"
+                        class="text-system-midnightBlue w-full text-wrap text-start text-base font-medium leading-tight"
                         >{label}
                         {#if required}
                             <span class="text text-red-600">*</span>
