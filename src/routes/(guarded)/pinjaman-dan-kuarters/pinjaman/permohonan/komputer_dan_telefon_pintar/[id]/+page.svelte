@@ -60,6 +60,7 @@
     } from './+page';
     import { goto } from '$app/navigation';
     import type { PageData } from './$types';
+    import { PrintHelper } from '$lib/helpers/print-helper/print-helper';
 
     export let data: PageData;
     const loanComputerDocument: LoanDownload = data.loanDocument.data?.details;
@@ -75,7 +76,7 @@
     let notvehicleDetail: boolean = true;
     let noturusetia: boolean = true;
     let notkakitangan: boolean = true;
-    console.log(loanComputerDocument)
+
     if (data.props.userMode == 'pelulus') {
         notpelulus = false;
     }
@@ -574,15 +575,36 @@
                 <TextIconButton label="Hantar" icon="check" form="loanDetail" />
             </StepperContentHeader>
             <StepperContentBody>
+                <div class="w-full flex justify-end">
+                    <TextIconButton
+                        label="Cetak"
+                        icon="print"
+                        onClick={() => PrintHelper.handleExportPDF("loanDetail")}
+                    />
+                </div>
                 <form
                     id="loanDetail"
                     method="POST"
                     use:loanInfoEnhance
                     class="flex w-full flex-col gap-2"
                 >
-                    <!-- {data.props.loanDetail?.maxLoan}
-                {$loanInfoForm.maxLoan} -->
                 <!-- max 5k -->
+                <div class="hidden">
+                    <CustomTextField
+                        id="name"
+                        disabled
+                        isRequired={false}
+                        label={'Nama Penuh'}
+                        bind:val={$personalInfoForm.name}
+                    ></CustomTextField>
+                    <CustomTextField
+                        id="identityDocumentNumber"
+                        disabled
+                        isRequired={false}
+                        label={'No. K/P'}
+                        bind:val={$personalInfoForm.identityDocumentNumber}
+                    ></CustomTextField>
+                </div>
                     <CustomTextField
                         id="maxLoan"
                         label={'Had Permohonan'}
@@ -630,7 +652,7 @@
                     <div
                         class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light gap-2"
                     >
-                        <span>Fail-fail yang dimuat naik:</span>
+                        <span>Fail-fail yang perlu dimuat naik:</span>
                         <span>1. Slip Gaji</span>
                         <span>2. Sebut Harga</span>
                         <span>3. NRIC </span>
