@@ -1,4 +1,5 @@
 import { LocalStorageKeyConstant } from "$lib/constants/core/local-storage-key.constant";
+import { UserRoleConstant } from "$lib/constants/core/user-role.constant.js";
 import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-document-request.dto";
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
@@ -221,6 +222,7 @@ const getLookup = async () => {
             identityCard: null,
             scheme: null,
             grade: null,
+            role: UserRoleConstant.urusSetiaPerjawatan.code,
             position: null,
         },
     }
