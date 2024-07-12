@@ -622,6 +622,32 @@ export class LoanServices {
         }
     }
     //============================================
+    //========= Add Calculation ====================
+    //============================================
+
+    static async addCalculation(param: string) {
+        try {
+            let url: Input = 'loan/calculation_document/add';
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: param,
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    //============================================
     //========= Add Document ====================
     //============================================
 
@@ -898,6 +924,59 @@ export class LoanServices {
             return CommonResponseConstant.httpError;
         }
     }
+    //============================================
+    //========= Add Offer Letter ===============
+    //============================================
+
+    static async addOfferLetter(param: string) {
+        try {
+            let url: Input = 'loan/offer_letter/add';
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: param,
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+     //============================================
+    //========= Add Voucher ===============
+    //============================================
+
+    static async addVoucher(param: string) {
+        try {
+            let url: Input = 'loan/voucher/add';
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: param,
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
     //============================================
     //========= Add Support Approval ===============
@@ -1072,6 +1151,87 @@ export class LoanServices {
     ) {
         try {
             const url: Input = 'loan/agreement_letter/get';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+            .post(url, { body: JSON.stringify(param) })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getLoanOfferLetter(
+        param: loanIdRequestDTO
+    ) {
+        try {
+            const url: Input = 'loan/offer_letter/get';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+            .post(url, { body: JSON.stringify(param) })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getLoanCalculation(
+        param: loanIdRequestDTO
+    ) {
+        try {
+            const url: Input = 'loan/calculation_document/get';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+            .post(url, { body: JSON.stringify(param) })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getVoucher(
+        param: loanIdRequestDTO
+    ) {
+        try {
+            const url: Input = 'loan/voucher/get';
 
             // get the promise response
             const promiseRes: Promise<Response> = http

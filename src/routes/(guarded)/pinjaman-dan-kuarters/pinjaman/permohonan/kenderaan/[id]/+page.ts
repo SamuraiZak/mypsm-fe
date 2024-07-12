@@ -158,10 +158,20 @@ export async function load({ params }) {
     // ===============
     // Loan Payment
     // ===============
-
+    let loanCalculation: LoanDownload = {
+        document: []
+    }
     let loanPaymentDocumentDetail: LoanDownload = {
         document: []
     };
+    let loanOfferLetter: LoanDownload = {
+        document: []
+    }
+    let loanVoucher: LoanDownload = {
+        document: []
+    }
+
+
 
     let loanPaymentDocumentDetailRequestBody: loanIdRequestDTO = {
         id: currentApplicationId
@@ -195,8 +205,28 @@ export async function load({ params }) {
     //  download letter computer
     const loanPayment: CommonResponseDTO =
         await LoanServices.getLoanPayment(loanIDRequest);
+    //get calculation
+    const loanCalculationResponse: CommonResponseDTO =
+        await LoanServices.getLoanCalculation(loanPaymentDocumentDetailRequestBody)
+    if (loanCalculationResponse.data?.details !== null) {
+        loanCalculation =
+            loanCalculationResponse.data?.details as LoanDownload;
+    }
+    //get offer letter
+    const loanOfferLetterResponse: CommonResponseDTO =
+        await LoanServices.getLoanOfferLetter(loanPaymentDocumentDetailRequestBody)
+    if (loanOfferLetterResponse.data?.details !== null) {
+        loanOfferLetter =
+            loanOfferLetterResponse.data?.details as LoanDownload;
+    }
 
-
+    //get voucher
+    const loanVoucherResponse: CommonResponseDTO =
+        await LoanServices.getVoucher(loanPaymentDocumentDetailRequestBody)
+    if (loanVoucherResponse.data?.details !== null) {
+        loanVoucher =
+            loanVoucherResponse.data?.details as LoanDownload;
+    }
 
     // =========================================
     // =========== Form ========================
@@ -263,10 +293,6 @@ export async function load({ params }) {
         }
     } else {
         // if application is new
-        let personalDetailRequestBody: loanIdRequestDTO = {
-            id: currentApplicationId
-        }
-
         const personalDetailResponse: CommonResponseDTO =
             await LoanServices.getOwnProfilePersonalDetails();
 
@@ -572,7 +598,6 @@ export async function load({ params }) {
         props: {
             currentApplicationId,
             userMode,
-
             supplierDetail,
             loanDetail,
             personalDetail,
@@ -589,7 +614,10 @@ export async function load({ params }) {
             loanDocumentDetail,
             agreementLetterDetail,
             loanPaymentDocumentDetail,
+            loanCalculation,
             agreementLetter,
+            loanOfferLetter,
+            loanVoucher,
         },
         forms:
         {
@@ -769,6 +797,12 @@ export const _approverApprovalSubmit = async (formData: object) => {
 ///=====================================================
 //================ Document ===========================
 //=====================================================
+export const _submitCalculation = async (formData: string) => {
+    const response: CommonResponseDTO =
+        await LoanServices.addCalculation(formData)
+
+    return { response }
+};
 
 export const _submitDocument = async (formData: string) => {
     const response: CommonResponseDTO =
@@ -787,6 +821,18 @@ export const _submitAgreementDocument = async (formData: string) => {
 export const _submitPaymentDocument = async (formData: string) => {
     const response: CommonResponseDTO =
         await LoanServices.addPaymentDocument(formData)
+
+    return { response }
+}
+export const _submitOfferLetter = async (formData: string) => {
+    const response: CommonResponseDTO =
+        await LoanServices.addOfferLetter(formData)
+
+    return { response }
+}
+export const _submitVoucher = async (formData: string) => {
+    const response: CommonResponseDTO =
+        await LoanServices.addVoucher(formData)
 
     return { response }
 }
