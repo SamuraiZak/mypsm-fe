@@ -28,7 +28,9 @@
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import { Toaster } from 'svelte-french-toast';
     import Alert from 'flowbite-svelte/Alert.svelte';
-    import { Accordion, AccordionItem } from 'flowbite-svelte';
+    import { Accordion, AccordionItem, Checkbox, Modal } from 'flowbite-svelte';
+    import MedicTable from '$lib/components/table/MedicTable.svelte';
+    import XCard from '$lib/components/card/XCard.svelte';
 
     export let data: PageData;
 
@@ -136,6 +138,18 @@
             }
         },
     });
+
+    let modal: boolean = false;
+    let totalToPay: number = 0;
+    let isCheck:boolean[] = []
+    $: {
+        isCheck.forEach((val) => {
+            if(val){
+                totalToPay
+                // TOOD -- CALCULATE TOTAL TO PAY
+            }
+        })
+    }
 </script>
 
 <!-- content header starts here -->
@@ -160,23 +174,41 @@
             <StepperContentBody>
                 <Accordion class="flex w-full flex-col">
                     <AccordionItem>
-                        <span class="text-[12px] text-ios-activeColors-activeBlue-dark" slot="header">
+                        <span
+                            class="text-[12px] text-ios-activeColors-activeBlue-dark"
+                            slot="header"
+                        >
                             Tuntutan 1
                         </span>
-                        <CustomTextField
-                            label="Nama Kakitangan"
-                            id="dignosis"
-                            disabled
-                            isRequired={false}
-                            val="Ali bin Abu"
-                        />
-                        <CustomTextField
-                            label="No. Kad Pengenalan"
-                            id="identityDocumentNumber"
-                            disabled
-                            isRequired={false}
-                            val="871113137712"
-                        />
+                        <div class="flex w-full flex-col gap-3">
+                            <div class="flex w-full justify-start">
+                                <TextIconButton
+                                    label="Tindakan"
+                                    icon="action"
+                                    type="neutral"
+                                    onClick={() => (modal = true)}
+                                />
+                            </div>
+                            <div class="flex w-full justify-between gap-3">
+                                <div class="flex w-full flex-col gap-2.5">
+                                    <CustomTextField
+                                        label="Nama Kakitangan"
+                                        id="dignosis"
+                                        disabled
+                                        isRequired={false}
+                                        val="Ali bin Abu"
+                                    />
+                                    <CustomTextField
+                                        label="No. Kad Pengenalan"
+                                        id="identityDocumentNumber"
+                                        disabled
+                                        isRequired={false}
+                                        val="871113137712"
+                                    />
+                                </div>
+                                <MedicTable tableData={data.mockData} />
+                            </div>
+                        </div>
                     </AccordionItem>
                 </Accordion>
             </StepperContentBody>
@@ -433,3 +465,93 @@
     </Stepper>
 </section>
 <Toaster />
+
+<Modal bind:open={modal} size="lg" title="Sistem MyPSM">
+<!-- <Modal open={true} title="Sistem MyPSM"> -->
+    <div class="flex w-full flex-col justify-start gap-3">
+        <ContentHeader
+            title="Klinik"
+            borderClass="border-none"
+            titlePadding={false}
+        >
+            <TextIconButton label="Hantar" icon="check" form="" />
+        </ContentHeader>
+        <CustomTextField
+            label="Tindakan/Ulasan"
+            isRequired={false}
+            type="textarea"
+            placeholder="Hantar ke klinik untuk membuat pembetulan..."
+            id="clinicRemarks"
+            val=""
+        />
+        <ContentHeader
+            title="Kakitangan"
+            borderClass="border-none"
+            titlePadding={false}
+        >
+            <TextIconButton label="Hantar" icon="check" form="" />
+        </ContentHeader>
+        <CustomTextField
+            label="Tindakan/Ulasan"
+            isRequired={false}
+            type="textarea"
+            placeholder="Hantar ke kakitangan untuk membuat pembayaran rawatan yang tidak ditanggung oleh LKIM..."
+            id="employeeRemarks"
+            val=""
+        />
+        <CustomTextField
+            label="Jumlah Perlu Ditanggung Oleh Kakitangan (RM)"
+            isRequired={false}
+            type="number"
+            id="employeeRemarks"
+            val=""
+        />
+        <XCard
+            title="Maklumat Rawatan/Ubat"
+            headerColor="bg-ios-systemColors-systemGrey-light"
+        >
+            <div class="flex w-full flex-col justify-start gap-5">
+                <div class="flex w-full flex-col justify-start gap-2">
+                    {#each data.mockData as item, i}
+                        <div
+                            class="flex w-full flex-col justify-start rounded-sm border p-2"
+                        >
+                            <Checkbox
+                                class="text-[11px] text-ios-systemColors-systemGrey-dark"
+                            >
+                                <div class="flex w-full flex-col">
+                                    <span class="flex w-full">
+                                        {i + 1}.
+                                        {#each item.treatment as treatmentList, index}
+                                            {treatmentList.name}{index ==
+                                            item.treatment.length - 1
+                                                ? ''
+                                                : '/'}
+                                        {/each}
+                                    </span>
+                                    <CustomTextField
+                                        label=""
+                                        id=""
+                                        val={'RM ' + item.total}
+                                        isRequired={false}
+                                        disabled
+                                    />
+                                </div>
+                            </Checkbox>
+                        </div>
+                    {/each}
+                </div>
+
+                <div class="flex w-full justify-end items-center gap-3">
+                    <CustomTextField
+                        label="Jumlah Tanggungan oleh LKIM (RM)"
+                        id="totalPay"
+                        type="number"
+                        bind:val={totalToPay}
+                    />
+                    <TextIconButton label="SAH" icon="check" form="" />
+                </div>
+            </div>
+        </XCard>
+    </div>
+</Modal>

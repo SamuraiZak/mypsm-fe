@@ -31,6 +31,35 @@ export const load = async ({ params }) => {
     const supporterApprovalForm = await superValidate(claimDetail.supporter, zod(_clinicCommonResultSchema), { errors: false })
     const approverApprovalForm = await superValidate(claimDetail.approver, zod(_clinicCommonResultSchema), { errors: false })
 
+
+
+    let mockData = [
+        {
+            id: 1,
+            patientName: 'Ali bin Abu',
+            identityCardNumber: '881110127781',
+            treatment: [{ name: 'Demam' }, { name: 'Selsema' }, { name: 'Batuk' }],
+            relationship: 'Abang',
+            total: 500,
+        },
+        {
+            id: 2,
+            patientName: 'Anak Dia',
+            identityCardNumber: '881110127781',
+            treatment: [{ name: 'Kencing Manis' }],
+            relationship: 'Anak',
+            total: 1000,
+        },
+        {
+            id: 3,
+            patientName: 'Anak Kamu',
+            identityCardNumber: '881110127781',
+            treatment: [{ name: 'Pekak' }, {name: 'Kencing Manis'}],
+            relationship: 'Anak',
+            total: 1000,
+        },
+    ];
+
     return {
         currentRoleCode,
         claimDetail,
@@ -40,6 +69,7 @@ export const load = async ({ params }) => {
         supporterApproverForm,
         supporterApprovalForm,
         approverApprovalForm,
+        mockData,
     }
 }
 
