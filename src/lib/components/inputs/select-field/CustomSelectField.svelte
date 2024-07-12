@@ -19,7 +19,7 @@
     <!-- input label starts here -->
     <label
         for={id}
-        class="block w-full text-start text-sm font-medium text-ios-labelColors-secondaryLabel-light"
+        class="block w-full text-start text-base font-medium text-ios-labelColors-secondaryLabel-light"
         >{label}
         <span class="text-base text-system-danger" hidden={!isRequired}>*</span>
     </label>
