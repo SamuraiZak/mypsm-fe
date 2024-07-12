@@ -32,22 +32,22 @@
     // export let footer: string = 'Jumlah Bayaran';
 
     //find rowspan
-    let rowSpan: number = 2;
-    mockData.forEach((data) => {
-        for (const key in data) {
-            if (data.hasOwnProperty(key)) {
-                const value = data[key];
-                if (Array.isArray(value)) {
-                    console.log(
-                        `Property ${key} is an array with length: ${value.length}`,
-                    );
-                    // rowSpan = value.length;
-                }
-            }
-        }
-    });
+    // let rowSpan: number = 2;
+    // mockData.forEach((data) => {
+    //     for (const key in data) {
+    //         if (data.hasOwnProperty(key)) {
+    //             const value = data[key];
+    //             if (Array.isArray(value)) {
+    //                 console.log(
+    //                     `Property ${key} is an array with length: ${value.length}`,
+    //                     //add rowspan here
+    //                 );
+                    
+    //             }
+    //         }
+    //     }
+    // });
 
-    console.log(rowSpan);
 </script>
 
 <div class="flex h-full max-h-full w-full flex-col p-5">
@@ -96,9 +96,9 @@
             {#if mockData.length > 0}
                 {#each mockData as val, i}
                     <!-- Check if value is empty, remove the row from displaying -->
-                    <tr class="h-8">
+                    <tr>
                         <td
-                            class="h-full rounded-md border border-ios-basic-darkBackgroundGray text-center"
+                            class="h-full border border-ios-basic-darkBackgroundGray"
                         >
                             <div
                                 class="flex h-8 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-systemColors-systemGrey5-dark"
@@ -108,23 +108,23 @@
                         </td>
                         {#each Object.values(val) as value}
                             {#if typeof value == 'object'}
-                                {#each Object.values(value) as eachItem}
-                                    <td
-                                        class="h-full w-full rounded-md border border-ios-basic-darkBackgroundGray"
-                                    >
+                                <td
+                                    class="h-full border border-ios-basic-darkBackgroundGray "
+                                >
+                                    {#each Object.values(value) as eachItem, index}
                                         <div
-                                            class="flex h-8 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-systemColors-systemGrey5-dark"
+                                            class="flex h-8 items-center justify-center text-sm font-normal text-ios-systemColors-systemGrey5-dark"
                                         >
-                                            <span>{eachItem.name}</span>
+                                            <span>{index+1}. {eachItem.name}</span>
                                         </div>
-                                    </td>
-                                {/each}
+                                    {/each}
+                                </td>
                             {:else}
                                 <td
-                                    class="h-full rounded-md border border-ios-basic-darkBackgroundGray text-center"
+                                    class="h-full border border-ios-basic-darkBackgroundGray"
                                 >
                                     <div
-                                        class="flex h-8 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-systemColors-systemGrey5-dark"
+                                        class="flex h-8 items-center justify-center text-sm font-normal text-ios-systemColors-systemGrey5-dark"
                                     >
                                         <span>{value}</span>
                                     </div>
