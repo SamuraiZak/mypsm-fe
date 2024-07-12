@@ -64,16 +64,23 @@
 
     let isTypeConfirmationExceedsThreeYears = writable<boolean>(false);
     let submitChecklist: boolean = false;
+    let employmentSecretaryDetailIsDraft = writable<boolean>(false);
     let isReadOnlyEmploymentSecretaryConfirmationInServiceApproval =
         writable<boolean>(false);
+    let divisionDirectorDetailIsDraft = writable<boolean>(false);
     let isReadOnlyDivisionDirectorConfirmationInServiceApproval =
         writable<boolean>(false);
+    let integrityDirectorDetailIsDraft = writable<boolean>(false);
     let isReadOnlyIntegrityDirectorConfirmationInServiceApproval =
         writable<boolean>(false);
+    let auditDirectorDetailIsDraft = writable<boolean>(false);
     let isReadOnlyAuditDirectorConfirmationInServiceApproval =
         writable<boolean>(false);
+    let confirmationMeetingDetailIsDraft = writable<boolean>(false);
     let isReadOnlyConfirmationInServiceMeetingResult = writable<boolean>(false);
     let confirmationProbationContinuedIsDraft = writable<boolean>(true);
+
+    let isExceedsThreeYearsAndIsDraft: boolean = false;
 
     $: {
         if (data.view.confirmationInServiceView.dataType === 'Lebih 3 tahun') {
@@ -89,6 +96,12 @@
             confirmationProbationContinuedIsDraft.set(true);
         } else {
             confirmationProbationContinuedIsDraft.set(false);
+        }
+
+        if (data.view.confirmationInServiceView.secretary.isDraft === true) {
+            employmentSecretaryDetailIsDraft.set(true);
+        } else {
+            employmentSecretaryDetailIsDraft.set(false);
         }
 
         if (
@@ -108,6 +121,12 @@
             );
         }
 
+        if (data.view.confirmationInServiceView.division.isDraft === true) {
+            divisionDirectorDetailIsDraft.set(true);
+        } else {
+            divisionDirectorDetailIsDraft.set(false);
+        }
+
         if (
             data.view.confirmationInServiceView.division.status !== null &&
             data.view.confirmationInServiceView.division.remark !== null
@@ -118,6 +137,12 @@
                 : confirmationDivisionDirectorIsApproved.set(false);
         } else {
             isReadOnlyDivisionDirectorConfirmationInServiceApproval.set(false);
+        }
+
+        if (data.view.confirmationInServiceView.integrity.isDraft === true) {
+            integrityDirectorDetailIsDraft.set(true);
+        } else {
+            integrityDirectorDetailIsDraft.set(false);
         }
 
         if (
@@ -132,6 +157,12 @@
             isReadOnlyIntegrityDirectorConfirmationInServiceApproval.set(false);
         }
 
+        if (data.view.confirmationInServiceView.audit.isDraft === true) {
+            auditDirectorDetailIsDraft.set(true);
+        } else {
+            auditDirectorDetailIsDraft.set(false);
+        }
+
         if (
             data.view.confirmationInServiceView.audit.status !== null ||
             data.view.confirmationInServiceView.audit.remark !== null
@@ -142,6 +173,12 @@
                 : confirmationAuditDirectorIsApproved.set(false);
         } else {
             isReadOnlyAuditDirectorConfirmationInServiceApproval.set(false);
+        }
+
+        if (data.view.confirmationInServiceView.meeting.isDraft === true) {
+            confirmationMeetingDetailIsDraft.set(true);
+        } else {
+            confirmationMeetingDetailIsDraft.set(false);
         }
 
         if (
@@ -156,6 +193,14 @@
                 : confirmationMeetingResultIsApproved.set(false);
         } else {
             isReadOnlyConfirmationInServiceMeetingResult.set(false);
+        }
+
+        if ($isTypeConfirmationExceedsThreeYears === true) {
+            if ($confirmationProbationContinuedIsDraft === true) {
+                isExceedsThreeYearsAndIsDraft = true;
+            }
+        } else {
+            isExceedsThreeYearsAndIsDraft = false;
         }
     }
 
@@ -996,16 +1041,22 @@
     {#if $isTypeConfirmationExceedsThreeYears}
         <StepperContent>
             <StepperContentHeader title="Lanjutan Percubaan Perkhidmatan">
-                {#if $confirmationProbationContinuedIsDraft && data.roles.isEmploymentSecretaryRole}
+                {#if (!data.view.confirmationInServiceView.probationContinuation.isReadonly || $confirmationProbationContinuedIsDraft) && data.roles.isEmploymentSecretaryRole}
                     <TextIconButton
                         type="neutral"
                         label="Simpan"
                         form="contractContinuationDetailForm"
+                        onClick={() => {
+                            $contractContinuationDetailForm.isDraft = true;
+                        }}
                     ></TextIconButton>
                     <TextIconButton
                         type="primary"
                         label="Hantar"
                         form="contractContinuationDetailForm"
+                        onClick={() => {
+                            $contractContinuationDetailForm.isDraft = false;
+                        }}
                     ></TextIconButton>
                 {/if}
             </StepperContentHeader>
@@ -1021,7 +1072,8 @@
                             class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
                         >
                             <CustomSelectField
-                                disabled={$contractContinuationDetailForm.isReadonly}
+                                disabled={$contractContinuationDetailForm.isReadonly ||
+                                    !$confirmationProbationContinuedIsDraft}
                                 isRequired={false}
                                 id="gradeId"
                                 label="Keputusan"
@@ -1034,7 +1086,8 @@
                                 <CustomTextField
                                     type="date"
                                     errors={$contractContinuationDetailFormErrors.effectiveDate}
-                                    disabled={false}
+                                    disabled={$contractContinuationDetailForm.isReadonly ||
+                                        !$confirmationProbationContinuedIsDraft}
                                     id="effectiveDate"
                                     label={'Tarikh Mula Lanjutan'}
                                     placeholder="-"
@@ -1043,7 +1096,8 @@
                                 <CustomTextField
                                     type="number"
                                     errors={$contractContinuationDetailFormErrors.contractMonths}
-                                    disabled={false}
+                                    disabled={$contractContinuationDetailForm.isReadonly ||
+                                        !$confirmationProbationContinuedIsDraft}
                                     id="effectiveDate"
                                     label={'Tempoh Lanjutan (Bulan)'}
                                     placeholder="-"
@@ -1056,392 +1110,464 @@
             </StepperContentBody>
         </StepperContent>
     {/if}
-    <StepperContent>
-        <StepperContentHeader
-            title="Keputusan Pengesahan Dalam Perhidmatan Daripada Peranan - Peranan Bertanggungjawab"
-        >
-            {#if !data.view.confirmationInServiceView.secretary.isReadonly && data.roles.isEmploymentSecretaryRole}
-                <TextIconButton
-                    type="primary"
-                    label="Hantar"
-                    form="employmentSecretaryDetailForm"
-                ></TextIconButton>
-            {:else if !data.view.confirmationInServiceView.division.isReadonly && data.roles.isStateDirectorRole && !$isTypeConfirmationExceedsThreeYears}
-                <TextIconButton
-                    type="primary"
-                    label="Hantar"
-                    form="divisionDirectorDetaiForm"
-                ></TextIconButton>
-            {:else if !data.view.confirmationInServiceView.integrity.isReadonly && data.roles.isIntegrityDirectorRole && !$isTypeConfirmationExceedsThreeYears}
-                <TextIconButton
-                    type="primary"
-                    label="Hantar"
-                    form="integrityDirectorDetailForm"
-                ></TextIconButton>
-            {:else if !data.view.confirmationInServiceView.audit.isReadonly && data.roles.isAuditDirectorRole && !$isTypeConfirmationExceedsThreeYears}
-                <TextIconButton
-                    type="primary"
-                    label="Hantar"
-                    form="auditDirectorDetailForm"
-                ></TextIconButton>
-            {/if}
-        </StepperContentHeader>
-        <StepperContentBody>
-            <div class="flex w-full flex-col gap-2.5">
-                {#if !data.view.confirmationInServiceView.secretary.isReadonly && data.roles.isEmploymentSecretaryRole}
-                    <form
-                        id="employmentSecretaryDetailForm"
-                        method="POST"
-                        use:employmentSecretaryDetailFormEnhance
-                        class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                    >
-                        <div class="mb-5">
-                            <b class="text-sm text-system-primary"
-                                >Urus Setia Perjawatan</b
-                            >
-                        </div>
-                        <CustomTextField
-                            disabled={data.view.confirmationInServiceView
-                                .secretary.isReadonly}
-                            errors={$employmentSecretaryDetailFormErrors.remark}
-                            id="approverRemark"
-                            label="Tindakan/Ulasan"
-                            bind:val={$employmentSecretaryDetailForm.remark}
-                        ></CustomTextField>
-                        <CustomRadioBoolean
-                            disabled={data.view.confirmationInServiceView
-                                .secretary.isReadonly}
-                            errors={$employmentSecretaryDetailFormErrors.status}
-                            id="approverIsApproved"
-                            options={certifyOptions}
-                            label={'Keputusan'}
-                            bind:val={$employmentSecretaryDetailForm.status}
-                        ></CustomRadioBoolean>
-                    </form>
-                {:else if !data.view.confirmationInServiceView.division.isReadonly && data.roles.isStateDirectorRole && !$isTypeConfirmationExceedsThreeYears}
-                    <form
-                        id="divisionDirectorDetaiForm"
-                        method="POST"
-                        use:divisionDirectorDetaiFormEnhance
-                        class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                    >
-                        <div class="mb-5">
-                            <b class="text-sm text-system-primary"
-                                >Pengarah Bahagian/Negeri</b
-                            >
-                        </div>
-                        <CustomTextField
-                            disabled={data.view.confirmationInServiceView
-                                .division.isReadonly}
-                            errors={$divisionDirectorDetaiFormErrors.remark}
-                            id="approverRemark"
-                            label="Tindakan/Ulasan"
-                            bind:val={$divisionDirectorDetaiForm.remark}
-                        ></CustomTextField>
-                        <CustomRadioBoolean
-                            disabled={data.view.confirmationInServiceView
-                                .division.isReadonly}
-                            errors={$divisionDirectorDetaiFormErrors.status}
-                            id="approverIsApproved"
-                            options={confirmOptions}
-                            label={'Keputusan'}
-                            bind:val={$divisionDirectorDetaiForm.status}
-                        ></CustomRadioBoolean>
-                    </form>
-                {:else if !data.view.confirmationInServiceView.integrity.isReadonly && data.roles.isIntegrityDirectorRole && !$isTypeConfirmationExceedsThreeYears}
-                    <form
-                        id="integrityDirectorDetailForm"
-                        method="POST"
-                        use:integrityDirectorDetailFormEnhance
-                        class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                    >
-                        <div class="mb-5">
-                            <b class="text-sm text-system-primary"
-                                >Pengarah Integriti</b
-                            >
-                        </div>
-                        <CustomTextField
-                            disabled={data.view.confirmationInServiceView
-                                .integrity.isReadonly}
-                            errors={$integrityDirectorDetailFormErrors.remark}
-                            id="approverRemark"
-                            label="Tindakan/Ulasan"
-                            bind:val={$integrityDirectorDetailForm.remark}
-                        ></CustomTextField>
-                        <CustomRadioBoolean
-                            disabled={data.view.confirmationInServiceView
-                                .integrity.isReadonly}
-                            errors={$integrityDirectorDetailFormErrors.status}
-                            id="approverIsApproved"
-                            options={confirmOptions}
-                            label={'Keputusan'}
-                            bind:val={$integrityDirectorDetailForm.status}
-                        ></CustomRadioBoolean>
-                    </form>
-                {:else if !data.view.confirmationInServiceView.audit.isReadonly && data.roles.isAuditDirectorRole && !$isTypeConfirmationExceedsThreeYears}
-                    <form
-                        id="auditDirectorDetailForm"
-                        method="POST"
-                        use:auditDirectorDetailFormEnhance
-                        class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                    >
-                        <div class="mb-5">
-                            <b class="text-sm text-system-primary"
-                                >Pengarah Audit</b
-                            >
-                        </div>
-                        <CustomTextField
-                            disabled={data.view.confirmationInServiceView.audit
-                                .isReadonly}
-                            errors={$auditDirectorDetailFormErrors.remark}
-                            id="approverRemark"
-                            label="Tindakan/Ulasan"
-                            bind:val={$auditDirectorDetailForm.remark}
-                        ></CustomTextField>
-                        <CustomRadioBoolean
-                            disabled={data.view.confirmationInServiceView.audit
-                                .isReadonly}
-                            errors={$auditDirectorDetailFormErrors.status}
-                            id="approverIsApproved"
-                            options={confirmOptions}
-                            label={'Keputusan'}
-                            bind:val={$auditDirectorDetailForm.status}
-                        ></CustomRadioBoolean>
-                    </form>
-                {/if}
-
-                <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
-                    <div class="mb-5">
-                        <b class="text-sm text-system-primary"
-                            >1. Urus Setia Perjawatan</b
-                        >
-                    </div>
-                    {#if $isReadOnlyEmploymentSecretaryConfirmationInServiceApproval}
-                        <CustomTextField
-                            disabled
-                            id="integrityDirectorRemark"
-                            label="Tindakan/Ulasan"
-                            bind:val={$employmentSecretaryDetailForm.remark}
-                        ></CustomTextField>
-                        <CustomSelectField
-                            disabled
-                            id="integrityDirectorStatus"
-                            options={certifyOptions}
-                            label={'Keputusan'}
-                            bind:val={$employmentSecretaryDetailForm.status}
-                        ></CustomSelectField>
-                        <CustomTextField
-                            disabled
-                            isRequired={false}
-                            id="approvalDate"
-                            label="Tarikh Kelulusan"
-                            type="date"
-                            placeholder="-"
-                            bind:val={$employmentSecretaryDetailForm.approvalDate}
-                        ></CustomTextField>
-                    {:else}
-                        <StepperOtherRolesResult />
-                    {/if}
-                    {#if !$isTypeConfirmationExceedsThreeYears}
-                        <hr />
-                        <div class="mb-5">
-                            <b class="text-sm text-system-primary"
-                                >2. Pengarah Bahagian/Negeri</b
-                            >
-                        </div>
-                        {#if $isReadOnlyDivisionDirectorConfirmationInServiceApproval}
-                            <CustomTextField
-                                disabled
-                                id="integrityDirectorRemark"
-                                label="Tindakan/Ulasan"
-                                bind:val={$divisionDirectorDetaiForm.remark}
-                            ></CustomTextField>
-                            <CustomSelectField
-                                disabled
-                                id="integrityDirectorStatus"
-                                options={confirmOptions}
-                                label={'Keputusan'}
-                                bind:val={$divisionDirectorDetaiForm.status}
-                            ></CustomSelectField>
-                            <CustomTextField
-                                disabled
-                                isRequired={false}
-                                id="approvalDate"
-                                label="Tarikh Kelulusan"
-                                type="date"
-                                placeholder="-"
-                                bind:val={$divisionDirectorDetaiForm.approvalDate}
-                            ></CustomTextField>
-                        {:else}
-                            <StepperOtherRolesResult />
-                        {/if}
-                        <hr />
-                        <div class="mb-5">
-                            <b class="text-sm text-system-primary"
-                                >3. Pengarah Integriti & Pengarah Audit</b
-                            >
-                        </div>
-                        <div class="mb-5">
-                            <b
-                                class="text-sm font-medium italic text-system-primary"
-                                >Pengarah Integriti</b
-                            >
-                        </div>
-                        {#if $isReadOnlyIntegrityDirectorConfirmationInServiceApproval}
-                            <CustomTextField
-                                disabled
-                                id="integrityDirectorRemark"
-                                label="Tindakan/Ulasan"
-                                bind:val={$integrityDirectorDetailForm.remark}
-                            ></CustomTextField>
-                            <CustomSelectField
-                                disabled
-                                id="integrityDirectorStatus"
-                                options={confirmOptions}
-                                label={'Keputusan'}
-                                bind:val={$integrityDirectorDetailForm.status}
-                            ></CustomSelectField>
-                            <CustomTextField
-                                disabled
-                                isRequired={false}
-                                id="approvalDate"
-                                label="Tarikh Kelulusan"
-                                type="date"
-                                placeholder="-"
-                                bind:val={$integrityDirectorDetailForm.approvalDate}
-                            ></CustomTextField>
-                        {:else}
-                            <StepperOtherRolesResult />
-                        {/if}
-                        <div class="mb-5">
-                            <b
-                                class="text-sm font-medium italic text-system-primary"
-                                >Pengarah Audit</b
-                            >
-                        </div>
-                        {#if $isReadOnlyAuditDirectorConfirmationInServiceApproval}
-                            <CustomTextField
-                                disabled
-                                id="integrityDirectorRemark"
-                                label="Tindakan/Ulasan"
-                                bind:val={$auditDirectorDetailForm.remark}
-                            ></CustomTextField>
-                            <CustomSelectField
-                                disabled
-                                id="integrityDirectorStatus"
-                                options={confirmOptions}
-                                label={'Keputusan'}
-                                bind:val={$auditDirectorDetailForm.status}
-                            ></CustomSelectField>
-                            <CustomTextField
-                                disabled
-                                isRequired={false}
-                                id="approvalDate"
-                                label="Tarikh Kelulusan"
-                                type="date"
-                                placeholder="-"
-                                bind:val={$auditDirectorDetailForm.approvalDate}
-                            ></CustomTextField>
-                        {:else}
-                            <StepperOtherRolesResult />
-                        {/if}
-                    {/if}
-                </div>
-            </div>
-        </StepperContentBody>
-    </StepperContent>
-    {#if ($isReadOnlyAuditDirectorConfirmationInServiceApproval && $confirmationAuditDirectorIsApproved) || ($isTypeConfirmationExceedsThreeYears && $confirmationEmploymentSecretaryIsApproved)}
+    {#if !$isTypeConfirmationExceedsThreeYears || isExceedsThreeYearsAndIsDraft}
         <StepperContent>
-            <StepperContentHeader title="Keputusan Mesyuarat">
-                {#if !data.view.confirmationInServiceView.meeting.isReadonly && data.roles.isEmploymentSecretaryRole}
+            <StepperContentHeader
+                title="Keputusan Pengesahan Dalam Perhidmatan Daripada Peranan - Peranan Bertanggungjawab"
+            >
+                {#if (!data.view.confirmationInServiceView.secretary.isReadonly || $employmentSecretaryDetailIsDraft) && data.roles.isEmploymentSecretaryRole}
+                    <TextIconButton
+                        type="neutral"
+                        label="Simpan"
+                        form="employmentSecretaryDetailForm"
+                        onClick={() => {
+                            $employmentSecretaryDetailForm.isDraft = true;
+                        }}
+                    ></TextIconButton>
                     <TextIconButton
                         type="primary"
                         label="Hantar"
-                        form="confirmationMeetingDetailForm"
+                        form="employmentSecretaryDetailForm"
+                        onClick={() => {
+                            $employmentSecretaryDetailForm.isDraft = false;
+                        }}
+                    ></TextIconButton>
+                {:else if (!data.view.confirmationInServiceView.division.isReadonly || $divisionDirectorDetailIsDraft) && data.roles.isStateDirectorRole && !$isTypeConfirmationExceedsThreeYears}
+                    <TextIconButton
+                        type="neutral"
+                        label="Simpan"
+                        form="divisionDirectorDetaiForm"
+                        onClick={() => {
+                            $divisionDirectorDetaiForm.isDraft = true;
+                        }}
+                    ></TextIconButton>
+                    <TextIconButton
+                        type="primary"
+                        label="Hantar"
+                        form="divisionDirectorDetaiForm"
+                        onClick={() => {
+                            $divisionDirectorDetaiForm.isDraft = false;
+                        }}
+                    ></TextIconButton>
+                {:else if (!data.view.confirmationInServiceView.integrity.isReadonly || $integrityDirectorDetailIsDraft) && data.roles.isIntegrityDirectorRole && !$isTypeConfirmationExceedsThreeYears}
+                    <TextIconButton
+                        type="neutral"
+                        label="Simpan"
+                        form="integrityDirectorDetailForm"
+                        onClick={() => {
+                            $integrityDirectorDetailForm.isDraft = true;
+                        }}
+                    ></TextIconButton>
+                    <TextIconButton
+                        type="primary"
+                        label="Hantar"
+                        form="integrityDirectorDetailForm"
+                        onClick={() => {
+                            $integrityDirectorDetailForm.isDraft = false;
+                        }}
+                    ></TextIconButton>
+                {:else if (!data.view.confirmationInServiceView.audit.isReadonly || $auditDirectorDetailIsDraft) && data.roles.isAuditDirectorRole && !$isTypeConfirmationExceedsThreeYears}
+                    <TextIconButton
+                        type="neutral"
+                        label="Simpan"
+                        form="auditDirectorDetailForm"
+                        onClick={() => {
+                            $auditDirectorDetailForm.isDraft = true;
+                        }}
+                    ></TextIconButton>
+                    <TextIconButton
+                        type="primary"
+                        label="Hantar"
+                        form="auditDirectorDetailForm"
+                        onClick={() => {
+                            $auditDirectorDetailForm.isDraft = false;
+                        }}
                     ></TextIconButton>
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                {#if !$isReadOnlyConfirmationInServiceMeetingResult && !data.roles.isEmploymentSecretaryRole}
-                    <StepperOtherRolesResult />
-                {:else}
-                    <form
-                        id="confirmationMeetingDetailForm"
-                        method="POST"
-                        use:confirmationMeetingDetailFormEnhance
-                        class="flex w-full flex-col items-center gap-2"
-                    >
-                        <CustomTextField
-                            disabled={$isReadOnlyConfirmationInServiceMeetingResult}
-                            errors={$confirmationMeetingDetailFormErrors.meetingName}
-                            id="meetingName"
-                            label="Nama Mesyuarat"
-                            placeholder="-"
-                            bind:val={$confirmationMeetingDetailForm.meetingName}
-                        ></CustomTextField>
-                        <CustomTextField
-                            disabled={$isReadOnlyConfirmationInServiceMeetingResult}
-                            errors={$confirmationMeetingDetailFormErrors.meetingDate}
-                            id="meetingDate"
-                            label="Tarikh Mesyuarat"
-                            type="date"
-                            placeholder="-"
-                            bind:val={$confirmationMeetingDetailForm.meetingDate}
-                        ></CustomTextField>
-                        <CustomTextField
-                            disabled={$isReadOnlyConfirmationInServiceMeetingResult}
-                            errors={$confirmationMeetingDetailFormErrors.confirmedPositionDate}
-                            id="confirmedPositionDate"
-                            label="Tarikh Sah Jawatan"
-                            placeholder="-"
-                            type="date"
-                            bind:val={$confirmationMeetingDetailForm.confirmedPositionDate}
-                        ></CustomTextField>
-                        <CustomTextField
-                            disabled={$isReadOnlyConfirmationInServiceMeetingResult}
-                            errors={$confirmationMeetingDetailFormErrors.meetingRemark}
-                            id="meetingRemark"
-                            label="Catatan Mesyuarat"
-                            placeholder="-"
-                            type="text"
-                            bind:val={$confirmationMeetingDetailForm.meetingRemark}
-                        ></CustomTextField>
-                        <CustomRadioBoolean
-                            disabled={$isReadOnlyConfirmationInServiceMeetingResult}
-                            errors={$confirmationMeetingDetailFormErrors.meetingResult}
-                            id="meetingResult"
-                            label="Keputusan Mesyuarat"
-                            options={approveOptions}
-                            bind:val={$confirmationMeetingDetailForm.meetingResult}
-                        ></CustomRadioBoolean>
-                    </form>
-                {/if}
-            </StepperContentBody>
-        </StepperContent>
-        <StepperContent>
-            <StepperContentHeader title="Surat Pengesahan" />
-            <StepperContentBody>
-                <div
-                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-                >
-                    <p class="text-sm">
-                        Sila muat turun surat pengesahan di bawah ini.
-                    </p>
-                    <div
-                        class="flex w-full flex-row items-center justify-between"
-                    >
-                        <a
-                            href="blank"
-                            download="Surat Pengesahan Dalam Perkhidmatan {$form.name.toUpperCase()} ({$form.identityDocumentNumber})"
-                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                            >Surat Pengesahan Dalam Perkhidmatan {$form.name.toUpperCase()}
-                            ({$form.identityDocumentNumber})
-                            <SvgArrowDownTray />
-                        </a>
+                <div class="flex w-full flex-col gap-2.5">
+                    {#if (!data.view.confirmationInServiceView.secretary.isReadonly || $employmentSecretaryDetailIsDraft) && data.roles.isEmploymentSecretaryRole}
+                        <form
+                            id="employmentSecretaryDetailForm"
+                            method="POST"
+                            use:employmentSecretaryDetailFormEnhance
+                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                        >
+                            <div class="mb-5">
+                                <b class="text-sm text-system-primary"
+                                    >Urus Setia Perjawatan</b
+                                >
+                            </div>
+                            <CustomTextField
+                                disabled={data.view.confirmationInServiceView
+                                    .secretary.isReadonly ||
+                                    !$employmentSecretaryDetailIsDraft}
+                                errors={$employmentSecretaryDetailFormErrors.remark}
+                                id="approverRemark"
+                                label="Tindakan/Ulasan"
+                                bind:val={$employmentSecretaryDetailForm.remark}
+                            ></CustomTextField>
+                            <CustomRadioBoolean
+                                disabled={data.view.confirmationInServiceView
+                                    .secretary.isReadonly ||
+                                    !$employmentSecretaryDetailIsDraft}
+                                errors={$employmentSecretaryDetailFormErrors.status}
+                                id="approverIsApproved"
+                                options={certifyOptions}
+                                label={'Keputusan'}
+                                bind:val={$employmentSecretaryDetailForm.status}
+                            ></CustomRadioBoolean>
+                        </form>
+                    {:else if (!data.view.confirmationInServiceView.division.isReadonly || $divisionDirectorDetailIsDraft) && data.roles.isStateDirectorRole && !$isTypeConfirmationExceedsThreeYears}
+                        <form
+                            id="divisionDirectorDetaiForm"
+                            method="POST"
+                            use:divisionDirectorDetaiFormEnhance
+                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                        >
+                            <div class="mb-5">
+                                <b class="text-sm text-system-primary"
+                                    >Pengarah Bahagian/Negeri</b
+                                >
+                            </div>
+                            <CustomTextField
+                                disabled={data.view.confirmationInServiceView
+                                    .division.isReadonly ||
+                                    !$divisionDirectorDetailIsDraft}
+                                errors={$divisionDirectorDetaiFormErrors.remark}
+                                id="approverRemark"
+                                label="Tindakan/Ulasan"
+                                bind:val={$divisionDirectorDetaiForm.remark}
+                            ></CustomTextField>
+                            <CustomRadioBoolean
+                                disabled={data.view.confirmationInServiceView
+                                    .division.isReadonly ||
+                                    !$divisionDirectorDetailIsDraft}
+                                errors={$divisionDirectorDetaiFormErrors.status}
+                                id="approverIsApproved"
+                                options={confirmOptions}
+                                label={'Keputusan'}
+                                bind:val={$divisionDirectorDetaiForm.status}
+                            ></CustomRadioBoolean>
+                        </form>
+                    {:else if (!data.view.confirmationInServiceView.integrity.isReadonly || $integrityDirectorDetailIsDraft) && data.roles.isIntegrityDirectorRole && !$isTypeConfirmationExceedsThreeYears}
+                        <form
+                            id="integrityDirectorDetailForm"
+                            method="POST"
+                            use:integrityDirectorDetailFormEnhance
+                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                        >
+                            <div class="mb-5">
+                                <b class="text-sm text-system-primary"
+                                    >Pengarah Integriti</b
+                                >
+                            </div>
+                            <CustomTextField
+                                disabled={data.view.confirmationInServiceView
+                                    .integrity.isReadonly ||
+                                    !$integrityDirectorDetailIsDraft}
+                                errors={$integrityDirectorDetailFormErrors.remark}
+                                id="approverRemark"
+                                label="Tindakan/Ulasan"
+                                bind:val={$integrityDirectorDetailForm.remark}
+                            ></CustomTextField>
+                            <CustomRadioBoolean
+                                disabled={data.view.confirmationInServiceView
+                                    .integrity.isReadonly ||
+                                    !$integrityDirectorDetailIsDraft}
+                                errors={$integrityDirectorDetailFormErrors.status}
+                                id="approverIsApproved"
+                                options={confirmOptions}
+                                label={'Keputusan'}
+                                bind:val={$integrityDirectorDetailForm.status}
+                            ></CustomRadioBoolean>
+                        </form>
+                    {:else if (!data.view.confirmationInServiceView.audit.isReadonly || $auditDirectorDetailIsDraft) && data.roles.isAuditDirectorRole && !$isTypeConfirmationExceedsThreeYears}
+                        <form
+                            id="auditDirectorDetailForm"
+                            method="POST"
+                            use:auditDirectorDetailFormEnhance
+                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                        >
+                            <div class="mb-5">
+                                <b class="text-sm text-system-primary"
+                                    >Pengarah Audit</b
+                                >
+                            </div>
+                            <CustomTextField
+                                disabled={data.view.confirmationInServiceView
+                                    .audit.isReadonly ||
+                                    !$auditDirectorDetailIsDraft}
+                                errors={$auditDirectorDetailFormErrors.remark}
+                                id="approverRemark"
+                                label="Tindakan/Ulasan"
+                                bind:val={$auditDirectorDetailForm.remark}
+                            ></CustomTextField>
+                            <CustomRadioBoolean
+                                disabled={data.view.confirmationInServiceView
+                                    .audit.isReadonly ||
+                                    !$auditDirectorDetailIsDraft}
+                                errors={$auditDirectorDetailFormErrors.status}
+                                id="approverIsApproved"
+                                options={confirmOptions}
+                                label={'Keputusan'}
+                                bind:val={$auditDirectorDetailForm.status}
+                            ></CustomRadioBoolean>
+                        </form>
+                    {/if}
+
+                    <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
+                        <div class="mb-5">
+                            <b class="text-sm text-system-primary"
+                                >1. Urus Setia Perjawatan</b
+                            >
+                        </div>
+                        {#if $isReadOnlyEmploymentSecretaryConfirmationInServiceApproval}
+                            <CustomTextField
+                                disabled
+                                id="integrityDirectorRemark"
+                                label="Tindakan/Ulasan"
+                                bind:val={$employmentSecretaryDetailForm.remark}
+                            ></CustomTextField>
+                            <CustomSelectField
+                                disabled
+                                id="integrityDirectorStatus"
+                                options={certifyOptions}
+                                label={'Keputusan'}
+                                bind:val={$employmentSecretaryDetailForm.status}
+                            ></CustomSelectField>
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="approvalDate"
+                                label="Tarikh Kelulusan"
+                                type="date"
+                                placeholder="-"
+                                bind:val={$employmentSecretaryDetailForm.approvalDate}
+                            ></CustomTextField>
+                        {:else}
+                            <StepperOtherRolesResult />
+                        {/if}
+                        {#if !$isTypeConfirmationExceedsThreeYears}
+                            <hr />
+                            <div class="mb-5">
+                                <b class="text-sm text-system-primary"
+                                    >2. Pengarah Bahagian/Negeri</b
+                                >
+                            </div>
+                            {#if $isReadOnlyDivisionDirectorConfirmationInServiceApproval}
+                                <CustomTextField
+                                    disabled
+                                    id="integrityDirectorRemark"
+                                    label="Tindakan/Ulasan"
+                                    bind:val={$divisionDirectorDetaiForm.remark}
+                                ></CustomTextField>
+                                <CustomSelectField
+                                    disabled
+                                    id="integrityDirectorStatus"
+                                    options={confirmOptions}
+                                    label={'Keputusan'}
+                                    bind:val={$divisionDirectorDetaiForm.status}
+                                ></CustomSelectField>
+                                <CustomTextField
+                                    disabled
+                                    isRequired={false}
+                                    id="approvalDate"
+                                    label="Tarikh Kelulusan"
+                                    type="date"
+                                    placeholder="-"
+                                    bind:val={$divisionDirectorDetaiForm.approvalDate}
+                                ></CustomTextField>
+                            {:else}
+                                <StepperOtherRolesResult />
+                            {/if}
+                            <hr />
+                            <div class="mb-5">
+                                <b class="text-sm text-system-primary"
+                                    >3. Pengarah Integriti & Pengarah Audit</b
+                                >
+                            </div>
+                            <div class="mb-5">
+                                <b
+                                    class="text-sm font-medium italic text-system-primary"
+                                    >Pengarah Integriti</b
+                                >
+                            </div>
+                            {#if $isReadOnlyIntegrityDirectorConfirmationInServiceApproval}
+                                <CustomTextField
+                                    disabled
+                                    id="integrityDirectorRemark"
+                                    label="Tindakan/Ulasan"
+                                    bind:val={$integrityDirectorDetailForm.remark}
+                                ></CustomTextField>
+                                <CustomSelectField
+                                    disabled
+                                    id="integrityDirectorStatus"
+                                    options={confirmOptions}
+                                    label={'Keputusan'}
+                                    bind:val={$integrityDirectorDetailForm.status}
+                                ></CustomSelectField>
+                                <CustomTextField
+                                    disabled
+                                    isRequired={false}
+                                    id="approvalDate"
+                                    label="Tarikh Kelulusan"
+                                    type="date"
+                                    placeholder="-"
+                                    bind:val={$integrityDirectorDetailForm.approvalDate}
+                                ></CustomTextField>
+                            {:else}
+                                <StepperOtherRolesResult />
+                            {/if}
+                            <div class="mb-5">
+                                <b
+                                    class="text-sm font-medium italic text-system-primary"
+                                    >Pengarah Audit</b
+                                >
+                            </div>
+                            {#if $isReadOnlyAuditDirectorConfirmationInServiceApproval}
+                                <CustomTextField
+                                    disabled
+                                    id="integrityDirectorRemark"
+                                    label="Tindakan/Ulasan"
+                                    bind:val={$auditDirectorDetailForm.remark}
+                                ></CustomTextField>
+                                <CustomSelectField
+                                    disabled
+                                    id="integrityDirectorStatus"
+                                    options={confirmOptions}
+                                    label={'Keputusan'}
+                                    bind:val={$auditDirectorDetailForm.status}
+                                ></CustomSelectField>
+                                <CustomTextField
+                                    disabled
+                                    isRequired={false}
+                                    id="approvalDate"
+                                    label="Tarikh Kelulusan"
+                                    type="date"
+                                    placeholder="-"
+                                    bind:val={$auditDirectorDetailForm.approvalDate}
+                                ></CustomTextField>
+                            {:else}
+                                <StepperOtherRolesResult />
+                            {/if}
+                        {/if}
                     </div>
                 </div>
             </StepperContentBody>
         </StepperContent>
+        {#if $auditDirectorDetailIsDraft && (($isReadOnlyAuditDirectorConfirmationInServiceApproval && $confirmationAuditDirectorIsApproved) || ($isTypeConfirmationExceedsThreeYears && $confirmationEmploymentSecretaryIsApproved))}
+            <StepperContent>
+                <StepperContentHeader title="Keputusan Mesyuarat">
+                    {#if (!data.view.confirmationInServiceView.meeting.isReadonly || $confirmationMeetingDetailIsDraft) && data.roles.isEmploymentSecretaryRole}
+                        <TextIconButton
+                            type="neutral"
+                            label="Simpan"
+                            form="confirmationMeetingDetailForm"
+                            onClick={() => {
+                                $confirmationMeetingDetailForm.isDraft = false;
+                            }}
+                        ></TextIconButton>
+                        <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="confirmationMeetingDetailForm"
+                            onClick={() => {
+                                $confirmationMeetingDetailForm.isDraft = false;
+                            }}
+                        ></TextIconButton>
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
+                    {#if (!$isReadOnlyConfirmationInServiceMeetingResult || $confirmationMeetingDetailIsDraft) && !data.roles.isEmploymentSecretaryRole}
+                        <StepperOtherRolesResult />
+                    {:else}
+                        <form
+                            id="confirmationMeetingDetailForm"
+                            method="POST"
+                            use:confirmationMeetingDetailFormEnhance
+                            class="flex w-full flex-col items-center gap-2"
+                        >
+                            <CustomTextField
+                                disabled={$isReadOnlyConfirmationInServiceMeetingResult ||
+                                    !$confirmationMeetingDetailIsDraft}
+                                errors={$confirmationMeetingDetailFormErrors.meetingName}
+                                id="meetingName"
+                                label="Nama Mesyuarat"
+                                placeholder="-"
+                                bind:val={$confirmationMeetingDetailForm.meetingName}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled={$isReadOnlyConfirmationInServiceMeetingResult ||
+                                    !$confirmationMeetingDetailIsDraft}
+                                errors={$confirmationMeetingDetailFormErrors.meetingDate}
+                                id="meetingDate"
+                                label="Tarikh Mesyuarat"
+                                type="date"
+                                placeholder="-"
+                                bind:val={$confirmationMeetingDetailForm.meetingDate}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled={$isReadOnlyConfirmationInServiceMeetingResult ||
+                                    !$confirmationMeetingDetailIsDraft}
+                                errors={$confirmationMeetingDetailFormErrors.confirmedPositionDate}
+                                id="confirmedPositionDate"
+                                label="Tarikh Sah Jawatan"
+                                placeholder="-"
+                                type="date"
+                                bind:val={$confirmationMeetingDetailForm.confirmedPositionDate}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled={$isReadOnlyConfirmationInServiceMeetingResult ||
+                                    !$confirmationMeetingDetailIsDraft}
+                                errors={$confirmationMeetingDetailFormErrors.meetingRemark}
+                                id="meetingRemark"
+                                label="Catatan Mesyuarat"
+                                placeholder="-"
+                                type="text"
+                                bind:val={$confirmationMeetingDetailForm.meetingRemark}
+                            ></CustomTextField>
+                            <CustomRadioBoolean
+                                disabled={$isReadOnlyConfirmationInServiceMeetingResult ||
+                                    !$confirmationMeetingDetailIsDraft}
+                                errors={$confirmationMeetingDetailFormErrors.meetingResult}
+                                id="meetingResult"
+                                label="Keputusan Mesyuarat"
+                                options={approveOptions}
+                                bind:val={$confirmationMeetingDetailForm.meetingResult}
+                            ></CustomRadioBoolean>
+                        </form>
+                    {/if}
+                </StepperContentBody>
+            </StepperContent>
+            {#if data.view.confirmationInServiceView.meeting.isReadonly && !$confirmationMeetingDetailIsDraft}
+                <StepperContent>
+                    <StepperContentHeader title="Surat Pengesahan" />
+                    <StepperContentBody>
+                        <div
+                            class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                        >
+                            <p class="text-sm">
+                                Sila muat turun surat pengesahan di bawah ini.
+                            </p>
+                            <div
+                                class="flex w-full flex-row items-center justify-between"
+                            >
+                                <a
+                                    href="blank"
+                                    download="Surat Pengesahan Dalam Perkhidmatan {$form.name.toUpperCase()} ({$form.identityDocumentNumber})"
+                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                    >Surat Pengesahan Dalam Perkhidmatan {$form.name.toUpperCase()}
+                                    ({$form.identityDocumentNumber})
+                                    <SvgArrowDownTray />
+                                </a>
+                            </div>
+                        </div>
+                    </StepperContentBody>
+                </StepperContent>
+            {/if}
+        {/if}
     {/if}
 </Stepper>
 
