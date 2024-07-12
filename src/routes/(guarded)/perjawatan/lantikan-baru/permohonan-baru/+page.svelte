@@ -60,7 +60,7 @@
         >
             <TextIconButton
                 label="Simpan"
-                type="primary"
+                type="neutral"
                 form="createCandidateForm"
                 onClick={() => {
                     $form.isDraft = true;

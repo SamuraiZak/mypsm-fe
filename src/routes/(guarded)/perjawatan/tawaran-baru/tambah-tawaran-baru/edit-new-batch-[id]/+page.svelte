@@ -104,7 +104,17 @@
         data:
             (newOfferMeetingBatchListTable.selectedData as CommonEmployeeDTO[]) ??
             [],
-        selectedData: [],
+        selectedData:
+            (
+                newOfferMeetingBatchListTable.selectedData as CommonEmployeeDTO[]
+            ).filter((staffs) => {
+                data.selectionOptions.selectedEmployees.some((empStaffs) => {
+                    return (
+                        empStaffs ===
+                        (staffs.employeeNumber as unknown as number)
+                    );
+                });
+            }) ?? [],
         exportData: [],
         hiddenColumn: [
             'employeeId',
@@ -155,7 +165,7 @@
             label="Kembali"
             type="neutral"
             onClick={() => {
-                goto('../tawaran-baru');
+                goto('../../tawaran-baru');
             }}
         />
     </ContentHeader>

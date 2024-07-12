@@ -60,12 +60,23 @@
     let newOfferSupporterIsApproved = writable<boolean>(false);
     let newOfferApproverIsApproved = writable<boolean>(false);
     let isReadOnlyNewOfferMeetingResult = writable<boolean>(false);
+    let newOfferMeetingResultIsDraft = writable<boolean>(false);
     let isReadOnlyNewOfferProcess = writable<boolean>(false);
+    let newOfferProcessIsDraft = writable<boolean>(false);
+    let newOfferSetApproversIsDraft = writable<boolean>(false);
     let isReadOnlyNewOfferSetApprovers = writable<boolean>(false);
+    let newOfferSupporterResultIsDraft = writable<boolean>(false);
     let isReadOnlyNewOfferSupporterResult = writable<boolean>(false);
+    let newOfferApproverResultIsDraft = writable<boolean>(false);
     let isReadOnlyNewOfferApprovalResult = writable<boolean>(false);
 
     $: {
+        if (data.view.newOfferDetailView.meetingResult.isDraft === true) {
+            newOfferMeetingResultIsDraft.set(true);
+        } else {
+            newOfferMeetingResultIsDraft.set(false);
+        }
+
         if (
             data.view.newOfferDetailView.meetingResult.employees.every(
                 (data) =>
@@ -85,16 +96,36 @@
                 : newOfferMeetingResultsAreNotApproved.set(false);
         }
 
+        if (data.view.newOfferDetailView.process.isDraft === true) {
+            newOfferProcessIsDraft.set(true);
+        } else {
+            newOfferProcessIsDraft.set(false);
+        }
+
         if (data.view.newOfferDetailView.process.isReadonly) {
             isReadOnlyNewOfferProcess.set(true);
         } else {
             isReadOnlyNewOfferProcess.set(false);
         }
 
+        if (
+            data.view.newOfferDetailView.setSupporterApprover.isDraft === true
+        ) {
+            newOfferSetApproversIsDraft.set(true);
+        } else {
+            newOfferSetApproversIsDraft.set(false);
+        }
+
         if (data.view.newOfferDetailView.setSupporterApprover.isReadonly) {
             isReadOnlyNewOfferSetApprovers.set(true);
         } else {
             isReadOnlyNewOfferSetApprovers.set(false);
+        }
+
+        if (data.view.newOfferDetailView.supporter.isDraft === true) {
+            newOfferSupporterResultIsDraft.set(true);
+        } else {
+            newOfferSupporterResultIsDraft.set(false);
         }
 
         data.view.newOfferDetailView.supporter.results.forEach(
@@ -113,6 +144,12 @@
             //     : newOfferSupporterIsApproved.set(false);
         } else {
             isReadOnlyNewOfferSupporterResult.set(false);
+        }
+
+        if (data.view.newOfferDetailView.approver.isDraft === true) {
+            newOfferApproverResultIsDraft.set(true);
+        } else {
+            newOfferApproverResultIsDraft.set(false);
         }
 
         data.view.newOfferDetailView.approver.results.forEach((data, index) => {
@@ -604,16 +641,22 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Keputusan Mesyuarat">
-            {#if !$isReadOnlyNewOfferMeetingResult && data.roles.isEmploymentSecretaryRole}
+            {#if (!$isReadOnlyNewOfferMeetingResult || $newOfferMeetingResultIsDraft) && data.roles.isEmploymentSecretaryRole}
                 <TextIconButton
                     label="Simpan"
-                    type="primary"
+                    type="neutral"
                     form="newOfferMeetingDetailForm"
+                    onClick={() => {
+                        $newOfferMeetingDetailForm.isDraft = true;
+                    }}
                 />
                 <TextIconButton
                     label="Hantar"
                     type="primary"
                     form="newOfferMeetingDetailForm"
+                    onClick={() => {
+                        $newOfferMeetingDetailForm.isDraft = false;
+                    }}
                 />
             {/if}
         </StepperContentHeader>
@@ -670,7 +713,8 @@
                                 .employees[index].employeeNumber})</b
                         >
                         <CustomTextField
-                            disabled={$isReadOnlyNewOfferMeetingResult}
+                            disabled={$isReadOnlyNewOfferMeetingResult ||
+                                !$newOfferMeetingResultIsDraft}
                             id="employees[index].remarks"
                             label="Catatan"
                             placeholder="-"
@@ -680,7 +724,8 @@
                             ].remarks}
                         ></CustomTextField>
                         <CustomRadioBoolean
-                            disabled={$isReadOnlyNewOfferMeetingResult}
+                            disabled={$isReadOnlyNewOfferMeetingResult ||
+                                !$newOfferMeetingResultIsDraft}
                             id="employees[index].status"
                             label="Keputusan Mesyuarat"
                             options={approveOptions}
@@ -693,19 +738,25 @@
             </form>
         </StepperContentBody>
     </StepperContent>
-    {#if !$newOfferMeetingResultsAreNotApproved}
+    {#if !$newOfferMeetingResultsAreNotApproved && !$newOfferMeetingResultIsDraft}
         <StepperContent>
             <StepperContentHeader title="Maklumat Tawaran Baru">
-                {#if !$isReadOnlyNewOfferProcess && data.roles.isEmploymentSecretaryRole}
+                {#if (!$isReadOnlyNewOfferProcess || $newOfferProcessIsDraft) && data.roles.isEmploymentSecretaryRole}
                     <TextIconButton
                         label="Simpan"
-                        type="primary"
+                        type="neutral"
                         form="newOfferServiceDetailForm"
+                        onClick={() => {
+                            $newOfferServiceDetailForm.isDraft = true;
+                        }}
                     />
                     <TextIconButton
                         label="Hantar"
                         type="primary"
                         form="newOfferServiceDetailForm"
+                        onClick={() => {
+                            $newOfferServiceDetailForm.isDraft = false;
+                        }}
                     />
                 {/if}
             </StepperContentHeader>
@@ -757,7 +808,8 @@
                                         <StepperFailStatement />
                                     {:else}
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="gradeId"
                                             label="Gred"
                                             placeholder="-"
@@ -766,7 +818,8 @@
                                                 .employees[index].gradeId}
                                         ></CustomSelectField>
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="maxGradeId"
                                             label="Gred Maksimum"
                                             placeholder="-"
@@ -775,7 +828,8 @@
                                                 .employees[index].maxGradeId}
                                         ></CustomSelectField>
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="positionId"
                                             label="Jawatan"
                                             placeholder="-"
@@ -785,7 +839,8 @@
                                                 .employees[index].positionId}
                                         ></CustomSelectField>
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="placementId"
                                             label="Penempatan"
                                             placeholder="-"
@@ -805,7 +860,8 @@
                                                 .employees[index].serviceTypeId}
                                         ></CustomSelectField>
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="serviceGroupId"
                                             label="Kumpulan Perkhidmatan"
                                             placeholder="-"
@@ -817,7 +873,8 @@
                                         ></CustomSelectField>
 
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="employmentStatusId"
                                             label="Sektor Perkhidmatan"
                                             placeholder="-"
@@ -829,7 +886,8 @@
                                         ></CustomSelectField>
 
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="unitId"
                                             label="Bahagian"
                                             placeholder="-"
@@ -839,7 +897,8 @@
                                         ></CustomSelectField>
 
                                         <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             type="number"
                                             id="eligibleLeaveCount"
                                             label={'Kelayakan Cuti'}
@@ -851,7 +910,8 @@
 
                                         <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="effectiveDate"
                                             label={'Tarikh Kuatkuasa Lantikan Semasa'}
                                             placeholder="-"
@@ -861,7 +921,8 @@
 
                                         <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="newRecruitEffectiveDate"
                                             label={'Tarikh Berkuatkuasa Lantikan Baru'}
                                             placeholder="-"
@@ -872,7 +933,8 @@
 
                                         <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="firstEffectiveDate"
                                             label={'Tarikh Berkuatkuasa Lantikan Pertama'}
                                             placeholder="-"
@@ -883,7 +945,8 @@
 
                                         <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="civilServiceStartDate"
                                             label={'Mula Dilantik Perkhidmatan Kerajaan'}
                                             placeholder="-"
@@ -894,7 +957,8 @@
 
                                         <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="serviceDate"
                                             label={'Mula Dilantik Perkhidmatan LKIM'}
                                             placeholder="-"
@@ -904,7 +968,8 @@
 
                                         <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="firstServiceDate"
                                             label={'Mula Dilantik Perkhidmatan Pertama'}
                                             placeholder="-"
@@ -915,7 +980,8 @@
 
                                         <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="confirmDate"
                                             label={'Mula Disahkan Perkhidmatan Semasa'}
                                             placeholder="-"
@@ -926,7 +992,8 @@
                                         <CustomTextField
                                             placeholder="-"
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="confirmServiceDate"
                                             label={'Disahkan Dalam Jawatan Semasa LKIM'}
                                             bind:val={$newOfferServiceDetailForm
@@ -937,7 +1004,8 @@
                                         <CustomTextField
                                             placeholder="-"
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="firstEffectiveServiceDate"
                                             label={'Mula Berkuatkuasa Perkhidmatan Pertama'}
                                             bind:val={$newOfferServiceDetailForm
@@ -948,7 +1016,8 @@
                                         <CustomTextField
                                             placeholder="-"
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="firstConfirmServiceDate"
                                             label={'Disahkan Dalam Jawatan Pertama LKIM'}
                                             bind:val={$newOfferServiceDetailForm
@@ -958,7 +1027,8 @@
 
                                         <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="retirementDate"
                                             label={'Tarikh Bersara'}
                                             placeholder="-"
@@ -968,7 +1038,8 @@
                                         ></CustomTextField>
 
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="bankName"
                                             label={'Name Bank'}
                                             placeholder="-"
@@ -978,7 +1049,8 @@
                                         ></CustomSelectField>
 
                                         <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="bankAccount"
                                             type="number"
                                             label={'Akaun Bank'}
@@ -988,7 +1060,8 @@
                                         ></CustomTextField>
 
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="retirementBenefit"
                                             label={'Kemudahan Persaraan'}
                                             options={RetirementBenefitDropdownConstant.list}
@@ -998,7 +1071,8 @@
                                         ></CustomSelectField>
 
                                         <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="epfNumber"
                                             type="number"
                                             label={'Nombor EPF'}
@@ -1008,7 +1082,8 @@
                                         ></CustomTextField>
 
                                         <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="incomeNumber"
                                             type="number"
                                             label={'Nombor Pendapatan'}
@@ -1018,7 +1093,8 @@
                                         ></CustomTextField>
 
                                         <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="pensionNumber"
                                             type="text"
                                             label={'Nombor Pencen'}
@@ -1028,7 +1104,8 @@
                                         ></CustomTextField>
 
                                         <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess}
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
                                             id="socsoNumber"
                                             type="number"
                                             label={'Nombor SOCSO'}
@@ -1049,7 +1126,8 @@
                                         <div class="grid grid-cols-2 gap-10">
                                             <div class="space-y-2.5">
                                                 <CustomSelectField
-                                                    disabled={$isReadOnlyNewOfferProcess}
+                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                        !$newOfferProcessIsDraft}
                                                     id="revisionMonth"
                                                     label={'Bulan Berkuatkuasa'}
                                                     placeholder="-"
@@ -1061,7 +1139,8 @@
                                                 ></CustomSelectField>
 
                                                 <CustomTextField
-                                                    disabled={$isReadOnlyNewOfferProcess}
+                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                        !$newOfferProcessIsDraft}
                                                     id="kgt"
                                                     type="number"
                                                     label={'KGT (RM)'}
@@ -1071,7 +1150,8 @@
                                                 ></CustomTextField>
 
                                                 <CustomTextField
-                                                    disabled={$isReadOnlyNewOfferProcess}
+                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                        !$newOfferProcessIsDraft}
                                                     id="maximumSalary"
                                                     type="number"
                                                     label={'Tangga Gaji (RM)'}
@@ -1082,7 +1162,8 @@
                                                 ></CustomTextField>
 
                                                 <CustomTextField
-                                                    disabled={$isReadOnlyNewOfferProcess}
+                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                        !$newOfferProcessIsDraft}
                                                     id="baseSalary"
                                                     label={'Gaji Pokok (RM)'}
                                                     placeholder="-"
@@ -1093,7 +1174,8 @@
                                             </div>
                                             <div class="space-y-2.5">
                                                 <CustomTextField
-                                                    disabled={$isReadOnlyNewOfferProcess}
+                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                        !$newOfferProcessIsDraft}
                                                     id="ITKA"
                                                     label={'ITKA (RM)'}
                                                     placeholder="-"
@@ -1101,7 +1183,8 @@
                                                         .employees[index].itka}
                                                 ></CustomTextField>
                                                 <CustomTextField
-                                                    disabled={$isReadOnlyNewOfferProcess}
+                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                        !$newOfferProcessIsDraft}
                                                     id="ITP"
                                                     label={'ITP (RM)'}
                                                     placeholder="-"
@@ -1109,7 +1192,8 @@
                                                         .employees[index].itp}
                                                 ></CustomTextField>
                                                 <CustomTextField
-                                                    disabled={$isReadOnlyNewOfferProcess}
+                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                        !$newOfferProcessIsDraft}
                                                     id="EPW"
                                                     label={'EPW (RM)'}
                                                     placeholder="-"
@@ -1117,7 +1201,8 @@
                                                         .employees[index].epw}
                                                 ></CustomTextField>
                                                 <CustomTextField
-                                                    disabled={$isReadOnlyNewOfferProcess}
+                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                        !$newOfferProcessIsDraft}
                                                     id="COLA"
                                                     label={'COLA (RM)'}
                                                     placeholder="-"
@@ -1134,19 +1219,25 @@
                 </div>
             </StepperContentBody>
         </StepperContent>
-        {#if $isReadOnlyNewOfferProcess}
+        {#if $isReadOnlyNewOfferProcess && !$newOfferProcessIsDraft}
             <StepperContent>
                 <StepperContentHeader title="Maklumat Penyokong Dan Pelulus">
-                    {#if !$isReadOnlyNewOfferSetApprovers && data.roles.isEmploymentSecretaryRole}
+                    {#if (!$isReadOnlyNewOfferSetApprovers || $newOfferSetApproversIsDraft) && data.roles.isEmploymentSecretaryRole}
                         <TextIconButton
                             label="Simpan"
-                            type="primary"
+                            type="neutral"
                             form="newOfferSetSupporterApproverDetailForm"
+                            onClick={() => {
+                                $newOfferSetSupporterApproverDetailForm.isDraft = true;
+                            }}
                         />
                         <TextIconButton
                             label="Hantar"
                             type="primary"
                             form="newOfferSetSupporterApproverDetailForm"
+                            onClick={() => {
+                                $newOfferSetSupporterApproverDetailForm.isDraft = false;
+                            }}
                         />
                     {/if}
                 </StepperContentHeader>
@@ -1158,7 +1249,8 @@
                         class="flex w-full flex-col items-center gap-2"
                     >
                         <CustomSelectField
-                            disabled={$isReadOnlyNewOfferSetApprovers}
+                            disabled={$isReadOnlyNewOfferSetApprovers ||
+                                !$newOfferSetApproversIsDraft}
                             errors={$newOfferSetSupporterApproverDetailFormErrors.supporterId}
                             id="supporterId"
                             label="Penyokong"
@@ -1167,7 +1259,8 @@
                             bind:val={$newOfferSetSupporterApproverDetailForm.supporterId}
                         ></CustomSelectField>
                         <CustomSelectField
-                            disabled={$isReadOnlyNewOfferSetApprovers}
+                            disabled={$isReadOnlyNewOfferSetApprovers ||
+                                !$newOfferSetApproversIsDraft}
                             errors={$newOfferSetSupporterApproverDetailFormErrors.approverId}
                             id="approverId"
                             label="Pelulus"
@@ -1178,38 +1271,50 @@
                     </form>
                 </StepperContentBody>
             </StepperContent>
-            {#if $isReadOnlyNewOfferSetApprovers}
+            {#if $isReadOnlyNewOfferSetApprovers && !$newOfferSetApproversIsDraft}
                 <StepperContent>
                     <StepperContentHeader
                         title="Keputusan Pengesahan Dalam Perhidmatan Daripada Peranan - Peranan Bertanggungjawab"
                     >
-                        {#if !data.view.newOfferDetailView.supporter.isReadonly && data.roles.isSupporterRole}
+                        {#if (!data.view.newOfferDetailView.supporter.isReadonly || $newOfferSupporterResultIsDraft) && data.roles.isSupporterRole}
                             <TextIconButton
-                                type="primary"
+                                type="neutral"
                                 label="Simpan"
                                 form="newOfferSupporterResultForm"
+                                onClick={() => {
+                                    $newOfferSupporterResultForm.isDraft = true;
+                                }}
                             ></TextIconButton>
                             <TextIconButton
                                 type="primary"
                                 label="Hantar"
                                 form="newOfferSupporterResultForm"
+                                onClick={() => {
+                                    $newOfferSupporterResultForm.isDraft = false;
+                                }}
                             ></TextIconButton>
-                        {:else if !data.view.newOfferDetailView.approver.isReadonly && data.roles.isApproverRole}
+                        {:else if (!data.view.newOfferDetailView.approver.isReadonly || $newOfferApproverResultIsDraft) && data.roles.isApproverRole}
                             <TextIconButton
-                                type="primary"
+                                type="neutral"
                                 label="Simpan"
                                 form="newOfferApproverResultForm"
+                                onClick={() => {
+                                    $newOfferApproverResultForm.isDraft = true;
+                                }}
                             ></TextIconButton>
                             <TextIconButton
                                 type="primary"
                                 label="Hantar"
                                 form="newOfferApproverResultForm"
+                                onClick={() => {
+                                    $newOfferApproverResultForm.isDraft = false;
+                                }}
                             ></TextIconButton>
                         {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
                         <div class="flex w-full flex-col gap-2.5">
-                            {#if !data.view.newOfferDetailView.supporter.isReadonly && data.roles.isSupporterRole}
+                            {#if (!data.view.newOfferDetailView.supporter.isReadonly || $newOfferSupporterResultIsDraft) && data.roles.isSupporterRole}
                                 <form
                                     id="newOfferSupporterResultForm"
                                     method="POST"
@@ -1225,7 +1330,8 @@
                                         <CustomTextField
                                             disabled={data.view
                                                 .newOfferDetailView.supporter
-                                                .isReadonly}
+                                                .isReadonly ||
+                                                !$newOfferSupporterResultIsDraft}
                                             id="applicantId"
                                             label="Nombor Kakitangan"
                                             bind:val={$newOfferSupporterResultForm
@@ -1235,7 +1341,8 @@
                                         <CustomTextField
                                             disabled={data.view
                                                 .newOfferDetailView.supporter
-                                                .isReadonly}
+                                                .isReadonly ||
+                                                !$newOfferSupporterResultIsDraft}
                                             id="applicantName"
                                             label="Nama Kakitangan"
                                             bind:val={$newOfferSupporterResultForm
@@ -1245,7 +1352,8 @@
                                         <CustomTextField
                                             disabled={data.view
                                                 .newOfferDetailView.supporter
-                                                .isReadonly}
+                                                .isReadonly ||
+                                                !$newOfferSupporterResultIsDraft}
                                             id="supporterRemark"
                                             label="Tindakan/Ulasan"
                                             bind:val={$newOfferSupporterResultForm
@@ -1255,7 +1363,8 @@
                                         <CustomRadioBoolean
                                             disabled={data.view
                                                 .newOfferDetailView.supporter
-                                                .isReadonly}
+                                                .isReadonly ||
+                                                !$newOfferSupporterResultIsDraft}
                                             id="supporterIsApproved"
                                             options={supportOptions}
                                             label={'Keputusan'}
@@ -1264,7 +1373,7 @@
                                         ></CustomRadioBoolean>
                                     {/each}
                                 </form>
-                            {:else if !data.view.newOfferDetailView.approver.isReadonly && data.roles.isApproverRole}
+                            {:else if (!data.view.newOfferDetailView.approver.isReadonly || $newOfferApproverResultIsDraft) && data.roles.isApproverRole}
                                 <form
                                     id="newOfferApproverResultForm"
                                     method="POST"
@@ -1279,8 +1388,9 @@
                                     {#each $newOfferApproverResultForm.results as _, i}
                                         <CustomTextField
                                             disabled={data.view
-                                                .newOfferDetailView.supporter
-                                                .isReadonly}
+                                                .newOfferDetailView.approver
+                                                .isReadonly ||
+                                                !$newOfferApproverResultIsDraft}
                                             id="applicantId"
                                             label="Nombor Kakitangan"
                                             bind:val={$newOfferApproverResultForm
@@ -1289,8 +1399,9 @@
 
                                         <CustomTextField
                                             disabled={data.view
-                                                .newOfferDetailView.supporter
-                                                .isReadonly}
+                                                .newOfferDetailView.approver
+                                                .isReadonly ||
+                                                !$newOfferApproverResultIsDraft}
                                             id="applicantName"
                                             label="Nama Kakitangan"
                                             bind:val={$newOfferApproverResultForm
@@ -1299,8 +1410,9 @@
 
                                         <CustomTextField
                                             disabled={data.view
-                                                .newOfferDetailView.supporter
-                                                .isReadonly}
+                                                .newOfferDetailView.approver
+                                                .isReadonly ||
+                                                !$newOfferApproverResultIsDraft}
                                             id="approverRemark"
                                             label="Tindakan/Ulasan"
                                             bind:val={$newOfferApproverResultForm
@@ -1309,8 +1421,9 @@
 
                                         <CustomRadioBoolean
                                             disabled={data.view
-                                                .newOfferDetailView.supporter
-                                                .isReadonly}
+                                                .newOfferDetailView.approver
+                                                .isReadonly ||
+                                                !$newOfferApproverResultIsDraft}
                                             id="approverIsApproved"
                                             options={approveOptions}
                                             label={'Keputusan'}
