@@ -136,9 +136,20 @@
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader title="Tawaran Baru">
         <TextIconButton
+            label="Simpan"
+            type="neutral"
+            onClick={() => {
+                $form.isDraft = true;
+                addToMeeting();
+            }}
+        />
+        <TextIconButton
             label="Masukkan Kedalam Mesyuarat"
             type="primary"
-            onClick={addToMeeting}
+            onClick={() => {
+                $form.isDraft = false;
+                addToMeeting();
+            }}
         />
         <TextIconButton
             label="Kembali"
@@ -234,7 +245,7 @@
             </span>
             <div class="flex flex-row gap-x-4">
                 <TextIconButton
-                    label="Tambah"
+                    label={$form.isDraft ? 'Simpan' : 'Tambah'}
                     type="primary"
                     form="newOfferMeetingFormId"
                 />
