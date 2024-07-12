@@ -13,6 +13,7 @@
     import SvgManifyingGlass from '$lib/assets/svg/SvgManifyingGlass.svelte';
     import SvgReload from '$lib/assets/svg/SvgReload.svelte';
     import SvgSave from '$lib/assets/svg/SvgSave.svelte';
+    import SvgEditIcons from '$lib/assets/svg/SvgEditIcons.svelte';
 
     export let form: string = '';
     export let type: string = 'primary' || 'danger' || 'neutral' || 'draft';
@@ -77,6 +78,8 @@
                 <SvgReload size="12" />
             {:else if icon == 'save'}
                 <SvgSave size="20" />
+            {:else if icon == 'action'}
+                <SvgEditIcons size="20" />
             {:else}
                 <slot />
             {/if}

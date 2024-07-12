@@ -30,8 +30,11 @@
         _loanDetailSubmit,
         _secondScheduleDetailSubmit,
         _submitAgreementDocument,
+        _submitCalculation,
         _submitDocument,
+        _submitOfferLetter,
         _submitPaymentDocument,
+        _submitVoucher,
         _supportApprovalSubmit,
         _vehicleDetailSubmit,
         _vehicleFirstScheduleDetailSubmit,
@@ -58,7 +61,6 @@
     const loanAgreementDocument: LoanDownload =
         data.loanAgreementLetter.data?.details;
     const loanPaymentDocument: LoanDownload = data.loanPayment.data?.details;
-    let filesPayment: FileList;
 
     let notpelulus: boolean = true;
     let notketuaSeksyen: boolean = true;
@@ -87,6 +89,24 @@
         data.props.userMode == 'urusetia'
     ) {
         notloanDetail = false;
+    }
+
+    function uploadCalculation() {
+        if (files == undefined) {
+            alert('Dokumen tidak boleh kosong.');
+        } else {
+            _fileToBase64Object(files)
+                .then((result) => {
+                    let Documents: UploadDocuments = {
+                        id: data.props.currentApplicationId,
+                        documents: result,
+                    };
+                    _submitCalculation(JSON.stringify(Documents));
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
     }
 
     function uploadDocument() {
@@ -133,11 +153,47 @@
         } else {
             _fileToBase64Object(files)
                 .then((result) => {
+                    let offerLetter: UploadDocuments = {
+                        id: data.props.currentApplicationId,
+                        documents: result,
+                    };
+                    _submitOfferLetter(JSON.stringify(offerLetter));
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }
+
+    function uploadOfferLetter() {
+        if (files == undefined) {
+            alert('Dokumen tidak boleh kosong.');
+        } else {
+            _fileToBase64Object(files)
+                .then((result) => {
                     let paymentDocuments: UploadDocuments = {
                         id: data.props.currentApplicationId,
                         documents: result,
                     };
-                    _submitPaymentDocument(JSON.stringify(paymentDocuments));
+                    _submitOfferLetter(JSON.stringify(paymentDocuments));
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }
+
+    function uploadVoucher() {
+        if (files == undefined) {
+            alert('Dokumen tidak boleh kosong.');
+        } else {
+            _fileToBase64Object(files)
+                .then((result) => {
+                    let paymentDocuments: UploadDocuments = {
+                        id: data.props.currentApplicationId,
+                        documents: result,
+                    };
+                    _submitVoucher(JSON.stringify(paymentDocuments));
                 })
                 .catch((error) => {
                     console.log(error);
@@ -149,7 +205,6 @@
         form: personalInfoForm,
         errors: personalInfoError,
         enhance: personalInfoEnhance,
-        isTainted: personalDetailTainted,
     } = superForm(data.forms.personalDetailForm, {
         SPA: true,
         id: 'personalDetail',
@@ -163,7 +218,6 @@
         form: loanInfoForm,
         errors: loanInfoError,
         enhance: loanInfoEnhance,
-        isTainted: loanDetailTainted,
     } = superForm(data.forms.loanDetailsForm, {
         SPA: true,
         id: 'loanDetail',
@@ -198,7 +252,6 @@
         form: approverInfoForm,
         errors: approverInfoError,
         enhance: approverInfoEnhance,
-        isTainted: approverDetailTainted,
     } = superForm(data.forms.approverDetailsForm, {
         SPA: true,
         id: 'approverDetail',
@@ -213,30 +266,10 @@
         },
     });
 
-    // const {
-    //     form: approvalAndOfferDetailForm,
-    //     errors: approvalAndOfferDetailError,
-    //     enhance: approvalAndOfferDetailEnhance,
-    //     isTainted: approvalAndOfferDetailtaimted,
-    // } = superForm(data.forms.offerLoanForm, {
-    //     SPA: true,
-    //     id: 'offerLoan',
-    //     dataType: 'json',
-    //     multipleSubmits: 'allow',
-    //     resetForm: false,
-    //     validationMethod: 'oninput',
-    //     validators: zod(_offerLoan),
-    //     onSubmit() {
-    //         $approvalAndOfferDetailForm.id = data.props.currentApplicationId;
-    //         _offerLoanDetailSubmit($approvalAndOfferDetailForm);
-    //     },
-    // });
-
     const {
         form: vehicleFirstScheduleForm,
         errors: vehicleFirstScheduleError,
         enhance: vehicleFirstScheduleEnhance,
-        isTainted: vehicleFirstScheduleTainted,
     } = superForm(data.forms.vehicleFirstScheduleDetailsForm, {
         SPA: true,
         id: 'vehicleFirstSchedule',
@@ -255,7 +288,6 @@
         form: firstScheduleForm,
         errors: firstScheduleError,
         enhance: firstScheduleEnhance,
-        isTainted: firstScheduleTainted,
     } = superForm(data.forms.firstScheduleDetailsForm, {
         SPA: true,
         id: 'firstScheduleDetail',
@@ -274,7 +306,6 @@
         form: secondScheduleForm,
         errors: secondScheduleError,
         enhance: secondScheduleEnhance,
-        isTainted: secondScheduleTainted,
     } = superForm(data.forms.secondScheduleDetailsForm, {
         SPA: true,
         id: 'secondScheduleDetail',
@@ -289,49 +320,10 @@
         },
     });
 
-    // const {
-    //     form: eligibilityForm,
-    //     errors: eligibilityError,
-    //     enhance: eligibilityEnhance,
-    //     isTainted: eligibilityTainted,
-    // } = superForm(data.forms.eligibilityDetailsForm, {
-    //     SPA: true,
-    //     id: 'eligibiltyDetail',
-    //     dataType: 'json',
-    //     multipleSubmits: 'allow',
-    //     resetForm: false,
-    //     validationMethod: 'oninput',
-    //     validators: zod(_eligibility),
-    //     onSubmit() {
-    //         $eligibilityForm.id = data.props.currentApplicationId;
-    //         _eligibilityDetailSubmit($eligibilityForm);
-    //     },
-    // });
-
-    // const {
-    //     form: documentCheckForm,
-    //     errors: documentCheckError,
-    //     enhance: documentCheckEnhance,
-    //     isTainted: documentCheckTainted,
-    // } = superForm(data.forms.documentCheckDetailsForm, {
-    //     SPA: true,
-    //     id: 'documentCheckDetail',
-    //     dataType: 'json',
-    //     multipleSubmits: 'allow',
-    //     resetForm: false,
-    //     validationMethod: 'oninput',
-    //     validators: zod(_documentCheck),
-    //     onSubmit() {
-    //         $documentCheckForm.id = data.props.currentApplicationId;
-    //         _documentCheckDetailSubmit($documentCheckForm);
-    //     },
-    // });
-
     const {
         form: supporterApprovalForm,
         errors: supporterApprovalError,
         enhance: supporterApprovalEnhance,
-        isTainted: supporterApprovalTainted,
     } = superForm(data.forms.supporterApprovalDetailsForm, {
         SPA: true,
         id: 'supporterApprovalDetail',
@@ -350,7 +342,6 @@
         form: approverApprovalForm,
         errors: approverApprovalError,
         enhance: approverApprovalEnhance,
-        isTainted: approverApprovalTainted,
     } = superForm(data.forms.approverApprovalDetailsForm, {
         SPA: true,
         id: 'approverApprovalDetail',
@@ -364,10 +355,6 @@
             _approverApprovalSubmit($approverApprovalForm);
         },
     });
-
-    const handleDownload = async (url: string) => {
-        await LoanServices.getAgreementForm(url);
-    };
 
     function apply() {
         _applyLoan().then((value) => {
@@ -533,11 +520,12 @@
                 />
             </StepperContentHeader>
             <StepperContentBody>
-                <div class="w-full flex justify-end">
+                <div class="flex w-full justify-end">
                     <TextIconButton
                         label="Cetak"
                         icon="print"
-                        onClick={() => PrintHelper.handleExportPDF("loanInfoForm")}
+                        onClick={() =>
+                            PrintHelper.handleExportPDF('loanInfoForm')}
                     />
                 </div>
                 <form
@@ -546,22 +534,22 @@
                     use:loanInfoEnhance
                     class="flex w-full flex-col gap-2"
                 >
-                <div class="hidden">
-                    <CustomTextField
-                        id="name"
-                        disabled
-                        isRequired={false}
-                        label={'Nama Penuh'}
-                        bind:val={$personalInfoForm.name}
-                    ></CustomTextField>
-                    <CustomTextField
-                        id="identityDocumentNumber"
-                        disabled
-                        isRequired={false}
-                        label={'No. K/P'}
-                        bind:val={$personalInfoForm.identityDocumentNumber}
-                    ></CustomTextField>
-                </div>
+                    <div class="hidden">
+                        <CustomTextField
+                            id="name"
+                            disabled
+                            isRequired={false}
+                            label={'Nama Kakitangan'}
+                            bind:val={$personalInfoForm.name}
+                        ></CustomTextField>
+                        <CustomTextField
+                            id="identityDocumentNumber"
+                            disabled
+                            isRequired={false}
+                            label={'No. K/P'}
+                            bind:val={$personalInfoForm.identityDocumentNumber}
+                        ></CustomTextField>
+                    </div>
                     <CustomTextField
                         disabled={noturusetia}
                         id="maxLoan"
@@ -592,6 +580,45 @@
                     ></CustomTextField>
                 </form></StepperContentBody
             >
+        </StepperContent>
+
+        <StepperContent>
+            <StepperContentHeader title="Maklumat Pengiraan">
+                <TextIconButton
+                    label="Hantar"
+                    icon="check"
+                    onClick={() => uploadCalculation()}
+                />
+            </StepperContentHeader>
+            <StepperContentBody>
+                <div
+                    class="flex w-full flex-col gap-2 text-sm text-ios-labelColors-secondaryLabel-light"
+                >
+                    <span>Fail-fail yang perlu dimuat naik:</span>
+                    <span>1. Maklumat pinjaman yang telah dicetak beserta pengiraan</span>
+                </div>
+                {#if data.props.userMode == 'urusetia'}
+                    <div
+                        class="flex h-fit w-full flex-col justify-center gap-2"
+                    >
+                        <CustomFileField
+                            label=""
+                            id="loanCalculation"
+                            bind:files
+                        ></CustomFileField>
+                    </div>
+                {/if}
+                {#if data.props.loanCalculation.document}
+                    {#each data.props.loanCalculation.document as calculation}
+                        <a
+                            href={calculation.document}
+                            download={calculation.name}
+                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                            >{calculation.name}</a
+                        >
+                    {/each}
+                {/if}
+            </StepperContentBody>
         </StepperContent>
 
         <StepperContent>
@@ -686,15 +713,16 @@
                     class="flex w-full flex-col justify-start gap-4 p-3 pb-10"
                 >
                     <div
-                        class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light gap-2"
+                        class="flex w-full flex-col gap-2 text-sm text-ios-labelColors-secondaryLabel-light"
                     >
                         <span>Fail-fail yang perlu dimuat naik:</span>
                         <span>1. Slip Gaji</span>
                         <span>2. Sebut Harga</span>
-                        <span>3. No. Kad Pengenalan</span>
-                        <span>4. Lesen</span>
-                        <span class="flex flex-row gap-2 items-center">5. 
-                            
+                        <span>3. Salinan Kad Pengenalan</span>
+                        <span>4. Lesen Memandu</span>
+                        <span class="flex flex-row items-center gap-2"
+                            >5.
+
                             <a
                                 href={data.documentDetailsVehicle.data?.details
                                     .document}
@@ -730,9 +758,7 @@
                         >
                         {#if loanVehicleDocument.document !== null}
                             {#each loanVehicleDocument.document as docs}
-                                <div
-                                    class="flex w-full justify-start flex-col"
-                                >
+                                <div class="flex w-full flex-col justify-start">
                                     <a
                                         href={docs.document}
                                         download={docs.name}
@@ -1156,17 +1182,22 @@
                     <TextIconButton
                         label="Muat Naik"
                         icon="check"
-                        onClick={() => console.log("upload api here")}
+                        onClick={() => uploadOfferLetter()}
                     />
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <form class="flex w-full flex-col justify-start p-3 gap-3">
+                <form class="flex w-full flex-col justify-start gap-3 p-3">
                     <div
-                        class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light gap-2"
+                        class="flex w-full flex-col gap-2 text-sm text-ios-labelColors-secondaryLabel-light"
                     >
-                        <span>Fail-fail yang perlu dimuat naik oleh Urus Setia:</span>
-                        <span>1. Surat Pernjanjian Pinjaman (telah diisi oleh kakitangan)</span>
+                        <span
+                            >Fail-fail yang perlu dimuat naik oleh Urus Setia:</span
+                        >
+                        <span
+                            >1. Surat Perjanjian Pinjaman (telah diisi oleh
+                            kakitangan)</span
+                        >
                         <span>2. Memorandum Penerimaan</span>
                     </div>
                     {#if data.props.userMode == 'urusetia'}
@@ -1175,10 +1206,20 @@
                         >
                             <CustomFileField
                                 label=""
-                                id="employeeClaimDocument"
+                                id="employeeOfferLetter"
                                 bind:files
                             ></CustomFileField>
                         </div>
+                    {/if}
+                    {#if data.props.loanOfferLetter.document}
+                        {#each data.props.loanOfferLetter.document as offer}
+                            <a
+                                href={offer.document}
+                                download={offer.name}
+                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                >{offer.name}</a
+                            >
+                        {/each}
                     {/if}
                 </form>
             </StepperContentBody>
@@ -1195,13 +1236,13 @@
                 {/if}</StepperContentHeader
             >
             <StepperContentBody>
-                <form
-                    class="flex w-full flex-col justify-start p-3 gap-4"
-                >
+                <form class="flex w-full flex-col justify-start gap-4 p-3">
                     <div
-                        class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light gap-2"
+                        class="flex w-full flex-col gap-2 text-sm text-ios-labelColors-secondaryLabel-light"
                     >
-                        <span>Fail-fail yang perlu dimuat naik oleh kakitangan:</span>
+                        <span
+                            >Fail-fail yang perlu dimuat naik oleh kakitangan:</span
+                        >
                         <span>1. Memorandum Penerimaan</span>
                         <span>2. Surat Perjanjian</span>
                         <span>3. Duti Setem (Lembaga Hasil Dalam Negeri)</span>
@@ -1218,9 +1259,7 @@
                         </div>
                     {/if}
 
-                    <div
-                        class="flex w-full flex-col justify-start gap-2.5"
-                    >
+                    <div class="flex w-full flex-col justify-start gap-2.5">
                         <ContentHeader
                             title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan"
                             borderClass="border-none"
@@ -1232,9 +1271,7 @@
                         >
                         {#if loanAgreementDocument.document !== null}
                             {#each loanAgreementDocument.document as docs}
-                                <div
-                                    class="flex w-full flex-col items-center "
-                                >
+                                <div class="flex w-full flex-col items-center">
                                     <a
                                         href={docs.document}
                                         download={docs.name}
@@ -1252,19 +1289,21 @@
         <StepperContent>
             <StepperContentHeader title="Kemaskini Pembiayaan Pinjaman">
                 {#if data.props.userMode == 'urusetia'}
-                <TextIconButton
-                    label="Muat Naik"
-                    icon="check"
-                    onClick={() => console.log("upload api here")}
-                />
+                    <TextIconButton
+                        label="Muat Naik"
+                        icon="check"
+                        onClick={() => uploadVoucher()}
+                    />
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <form class="flex w-full flex-col justify-start p-3 gap-3">
+                <form class="flex w-full flex-col justify-start gap-3 p-3">
                     <div
-                        class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light gap-2"
+                        class="flex w-full flex-col gap-2 text-sm text-ios-labelColors-secondaryLabel-light"
                     >
-                        <span>Fail-fail yang perlu dimuat naik oleh Urus Setia:</span>
+                        <span
+                            >Fail-fail yang perlu dimuat naik oleh Urus Setia:</span
+                        >
                         <span>1. Baucar</span>
                     </div>
                     {#if data.props.userMode == 'urusetia'}
@@ -1273,10 +1312,20 @@
                         >
                             <CustomFileField
                                 label=""
-                                id="employeeClaimDocument"
+                                id="employeeVoucher"
                                 bind:files
                             ></CustomFileField>
                         </div>
+                    {/if}
+                    {#if data.props.loanVoucher.document}
+                        {#each data.props.loanVoucher.document as voucher}
+                            <a
+                                href={voucher.document}
+                                download={voucher.name}
+                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                >{voucher.name}</a
+                            >
+                        {/each}
                     {/if}
                 </form>
             </StepperContentBody>
@@ -1293,11 +1342,9 @@
                 {/if}</StepperContentHeader
             >
             <StepperContentBody>
-                <form
-                    class="flex w-full flex-col justify-start gap-2.5 p-3"
-                >
+                <form class="flex w-full flex-col justify-start gap-2.5 p-3">
                     <div
-                        class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light"
+                        class="flex w-full flex-col text-sm text-ios-labelColors-secondaryLabel-light gap-2"
                     >
                         <span>Fail-fail yang dimuat naik:</span>
                         <span>1. Resit atau Invois</span>
@@ -1316,9 +1363,7 @@
                         </div>
                     {/if}
 
-                    <div
-                        class="flex w-full flex-col justify-start gap-2.5"
-                    >
+                    <div class="flex w-full flex-col justify-start gap-2.5">
                         <ContentHeader
                             title="Dokumen Yang Telah Dimuat Naik Oleh Kakitangan "
                             borderClass="border-none"
@@ -1330,9 +1375,7 @@
                         >
                         {#if loanPaymentDocument.document !== null}
                             {#each loanPaymentDocument.document as docs}
-                                <div
-                                    class="flex w-full flex-col justify-start"
-                                >
+                                <div class="flex w-full flex-col justify-start">
                                     <a
                                         href={docs.document}
                                         download={docs.name}

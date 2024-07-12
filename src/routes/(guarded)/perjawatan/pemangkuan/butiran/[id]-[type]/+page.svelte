@@ -1199,7 +1199,10 @@
                             data.currentRoleCode ==
                                 UserRoleConstant.urusSetiaPerjawatan.code
                         ) {
+                            $updatePostponeDetail.newReportDutyDate = employeePostponeDetail?.initialReportDate;
+                            $updatePostponeDetail.newPlacement = employeePostponeDetail.initialPlacement;
                             updatedPostpone = false;
+                            
                         } else {
                             updatedPostpone = true;
                         }
@@ -1513,7 +1516,7 @@
 
                             {#if !mainMeetingResultChecked && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
-                                    label="Simpan"
+                                    label="Hantar"
                                     icon="check"
                                     type="primary"
                                     form="mainMeetingResultForm"
@@ -1521,7 +1524,7 @@
                             {/if}
                         {:else if !updateMainPromotionMeetingResultChecked && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                             <TextIconButton
-                                label="Simpan"
+                                label="Hantar"
                                 icon="check"
                                 type="primary"
                                 form="updateMainPromotionMeetingResultForm"
@@ -1753,19 +1756,19 @@
                             />
                             {#if !mainMeetingDetailChecked && data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
-                                    label="Simpan"
+                                    label="Hantar"
                                     icon="check"
                                     form="mainMeetingDetailForm"
                                 />
                             {:else if !mainSupporterApproved && data.currentRoleCode === UserRoleConstant.penyokong.code}
                                 <TextIconButton
-                                    label="Simpan"
+                                    label="Hantar"
                                     icon="check"
                                     form="mainSupporterApproval"
                                 />
                             {:else if !mainApproverApproved && data.currentRoleCode === UserRoleConstant.pelulus.code}
                                 <TextIconButton
-                                    label="Simpan"
+                                    label="Hantar"
                                     icon="check"
                                     form="mainApproverApproval"
                                 />
@@ -2209,7 +2212,7 @@
                     <StepperContentHeader title="Kemaskini Maklumat Temuduga">
                         {#if !meetingDetailExist && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                             <TextIconButton
-                                label="Simpan"
+                                label="Hantar"
                                 icon="check"
                                 form="updateMeetingDetailForm"
                             />
@@ -2350,14 +2353,14 @@
                             />
                             {#if !updatedPromotionMeetingResult && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
-                                    label="Simpan"
+                                    label="Hantar"
                                     icon="check"
                                     form="updatePromotionMeetingResultForm"
                                 />
                             {/if}
                         {:else if !updatedPromotionMeeting && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                             <TextIconButton
-                                label="Simpan"
+                                label="Hantar"
                                 icon="check"
                                 form="updatePromotionMeetingForm"
                             />
@@ -2487,14 +2490,14 @@
                             />
                             {#if !updatedPlacementResult && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
-                                    label="Simpan"
+                                    label="Hantar"
                                     icon="check"
                                     form="updateEmployeePlacementMeetingResultForm"
                                 />
                             {/if}
                         {:else if !updatedPlacementMeeting && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                             <TextIconButton
-                                label="Simpan"
+                                label="Hantar"
                                 icon="check"
                                 form="updatePlacementMeeting"
                             />
@@ -2635,7 +2638,7 @@
                             />
                             {#if !updatedPostpone && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
-                                    label="Simpan"
+                                    label="Hantar"
                                     icon="check"
                                     form="updatePostponeDetail"
                                 />
@@ -2709,6 +2712,7 @@
                                     <ContentHeader
                                         title="Dokumen Sokongan"
                                         borderClass="border-none"
+                                        titlePadding={false}
                                     />
                                     <div
                                         class="flex w-full flex-col justify-start gap-2.5 px-2"
@@ -2727,6 +2731,7 @@
                                     <ContentHeader
                                         title="Butiran Penangguhan/Pindaan Penempatan"
                                         borderClass="border-none"
+                                        titlePadding={false}
                                     />
                                     <CustomTextField
                                         label="Tarikh Asal Lapor Diri"
@@ -2817,21 +2822,21 @@
                             />
                             {#if !suppAppExist && data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
-                                    label="Simpan"
+                                    label="Hantar"
                                     icon="check"
                                     type="primary"
                                     form="updateActingResultForm"
                                 />
                             {:else if !supporterApproved && data.currentRoleCode === UserRoleConstant.penyokong.code}
                                 <TextIconButton
-                                    label="Simpan"
+                                    label="Hantar"
                                     icon="check"
                                     type="primary"
                                     form="supporterResultForm"
                                 />
                             {:else if !approverApproved && data.currentRoleCode === UserRoleConstant.pelulus.code}
                                 <TextIconButton
-                                    label="Simpan"
+                                    label="Hantar"
                                     icon="check"
                                     type="primary"
                                     form="approverResultForm"
@@ -2891,6 +2896,7 @@
                                     <ContentHeader
                                         title="Maklumat Calon"
                                         borderClass="border-none"
+                                        titlePadding={false}
                                     />
                                     <CustomTextField
                                         label="No. Pekerja"
@@ -2976,6 +2982,7 @@
                                             <ContentHeader
                                                 title="Pengesah Keputusan"
                                                 borderClass="border-none"
+                                                titlePadding={false}
                                             />
                                             <CustomSelectField
                                                 label="Nama Penyokong"
@@ -3006,6 +3013,7 @@
                                         <ContentHeader
                                             title="Penyokong"
                                             borderClass="border-none"
+                                            titlePadding={false}
                                         />
                                         <CustomSelectField
                                             label="Nama Penyokong"
@@ -3062,6 +3070,7 @@
                                         <ContentHeader
                                             title="Pelulus"
                                             borderClass="border-none"
+                                            titlePadding={false}
                                         />
                                         <CustomSelectField
                                             label="Nama Pelulus"
@@ -3384,7 +3393,7 @@
                         {#if !employeePostponeNeeded}
                             <TextIconButton
                                 type="primary"
-                                label="Simpan"
+                                label="Hantar"
                                 icon="check"
                                 form="employeeNeedPlacementAmendmentForm"
                             />

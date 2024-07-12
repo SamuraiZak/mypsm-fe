@@ -448,6 +448,39 @@ export async function load({ params }) {
             // eligibilityDetailsForm.data = eligibilityDetail;
         }
     }
+    let loanCalculation: LoanDownload = {
+        document: []
+    }
+    let loanOfferLetter: LoanDownload = {
+        document: []
+    }
+    let loanVoucher: LoanDownload = {
+        document: []
+    }
+
+
+    const loanCalculationResponse: CommonResponseDTO =
+        await LoanServices.getLoanCalculation(loanPaymentDocumentDetailRequestBody)
+    if (loanCalculationResponse.data?.details !== null) {
+        loanCalculation =
+            loanCalculationResponse.data?.details as LoanDownload;
+    }
+
+    //get offer letter
+    const loanOfferLetterResponse: CommonResponseDTO =
+        await LoanServices.getLoanOfferLetter(loanPaymentDocumentDetailRequestBody)
+    if (loanOfferLetterResponse.data?.details !== null) {
+        loanOfferLetter =
+            loanOfferLetterResponse.data?.details as LoanDownload;
+    }
+
+    //get voucher
+    const loanVoucherResponse: CommonResponseDTO =
+        await LoanServices.getVoucher(loanPaymentDocumentDetailRequestBody)
+    if (loanVoucherResponse.data?.details !== null) {
+        loanVoucher =
+            loanVoucherResponse.data?.details as LoanDownload;
+    }
 
     // ===============
     // Document Check
@@ -592,7 +625,6 @@ export async function load({ params }) {
         props: {
             currentApplicationId,
             userMode,
-
             supplierDetail,
             loanDetail,
             personalDetail,
@@ -609,6 +641,9 @@ export async function load({ params }) {
             loanDocumentDetail,
             agreementLetterDetail,
             loanPaymentDocumentDetail,
+            loanCalculation,
+            loanVoucher,
+            loanOfferLetter,
             agreementLetter,
         },
         forms:
@@ -831,6 +866,26 @@ export const _submitDocument = async (formData: string) => {
 
     return { response }
 };
+
+export const _submitCalculation = async (formData: string) => {
+    const response: CommonResponseDTO =
+        await LoanServices.addCalculation(formData)
+
+    return { response }
+};
+
+export const _submitOfferLetter = async (formData: string) => {
+    const response: CommonResponseDTO =
+        await LoanServices.addOfferLetter(formData)
+
+    return { response }
+}
+export const _submitVoucher = async (formData: string) => {
+    const response: CommonResponseDTO =
+        await LoanServices.addVoucher(formData)
+
+    return { response }
+}
 
 export const _submitAgreementDocument = async (formData: string) => {
     const response: CommonResponseDTO =

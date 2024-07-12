@@ -1,6 +1,5 @@
 <script lang="ts">
     import { translate } from '$lib/config/dictionary';
-    import { object } from 'zod';
 
     interface treatmentDTO {
         name: string;
@@ -10,53 +9,17 @@
         [key: string]: string | number | treatmentDTO[]; // Define an index signature
     }
 
-    let mockData: dataDTO[] = [
-        {
-            patientName: 'Ali bin Abu',
-            identityCardNumber: '881110127781',
-            treatment: [{ name: 'Demam' }, { name: 'Selsema' }],
-            relationship: 'Abang',
-            total: 500,
-        },
-        {
-            patientName: 'Anak Dia',
-            identityCardNumber: '881110127781',
-            treatment: [{ name: 'Kencing Manis' }],
-            relationship: 'Anak',
-            total: 1000,
-        },
-    ];
-
-    // export let title = 'Title';
-
-    // export let footer: string = 'Jumlah Bayaran';
-
-    //find rowspan
-    // let rowSpan: number = 2;
-    // mockData.forEach((data) => {
-    //     for (const key in data) {
-    //         if (data.hasOwnProperty(key)) {
-    //             const value = data[key];
-    //             if (Array.isArray(value)) {
-    //                 console.log(
-    //                     `Property ${key} is an array with length: ${value.length}`,
-    //                     //add rowspan here
-    //                 );
-                    
-    //             }
-    //         }
-    //     }
-    // });
+    export let tableData: dataDTO[];
 
 </script>
 
-<div class="flex h-full max-h-full w-full flex-col p-5">
+<div class="flex h-full max-h-full w-full">
     <table class="table max-h-full w-full table-fixed">
         <!-- header -->
         <thead class="sticky top-0 z-[1]">
             <tr class="h-7 min-h-7 w-full">
                 <th
-                    class="h-full w-[20px] rounded-md border border-ios-basic-darkBackgroundGray"
+                    class="h-full w-[25px] rounded-md border border-ios-basic-darkBackgroundGray"
                 >
                     <div
                         class="flex h-full flex-row items-center justify-center"
@@ -68,7 +31,7 @@
                         </span>
                     </div>
                 </th>
-                {#each mockData as item, i}
+                {#each tableData as item, i}
                     {#if i == 0}
                         {#each Object.keys(item) as value}
                             <th
@@ -93,8 +56,8 @@
         <!-- body -->
         <tbody>
             <!-- display each data -->
-            {#if mockData.length > 0}
-                {#each mockData as val, i}
+            {#if tableData.length > 0}
+                {#each tableData as val, i}
                     <!-- Check if value is empty, remove the row from displaying -->
                     <tr>
                         <td
@@ -109,11 +72,11 @@
                         {#each Object.values(val) as value}
                             {#if typeof value == 'object'}
                                 <td
-                                    class="h-full border border-ios-basic-darkBackgroundGray "
+                                    class="h-full border border-ios-basic-darkBackgroundGray p-1"
                                 >
                                     {#each Object.values(value) as eachItem, index}
                                         <div
-                                            class="flex h-8 items-center justify-center text-sm font-normal text-ios-systemColors-systemGrey5-dark"
+                                            class="flex h-8 items-center justify-center text-center text-sm font-normal text-ios-systemColors-systemGrey5-dark"
                                         >
                                             <span>{index+1}. {eachItem.name}</span>
                                         </div>
