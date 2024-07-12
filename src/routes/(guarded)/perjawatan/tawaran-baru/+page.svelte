@@ -57,7 +57,7 @@
             add: data.roles.isEmploymentSecretaryRole,
         },
     };
- 
+
     const checkIfFail = async (id: number) => {
         const idRequestBody: commonIdRequestDTO = {
             id: Number(id),
@@ -74,7 +74,13 @@
                 message: newOfferFullDetailViewResponse.message as string,
             });
         }
-        const route = `./tawaran-baru/${id}`;
+        let route = '';
+
+        if (rowData.status === 'Draf') {
+            route = `./tawaran-baru/tambah-tawaran-baru/edit-new-batch-${id}`;
+        } else {
+            route = `./tawaran-baru/${id}`;
+        }
         goto(route);
     };
 </script>
