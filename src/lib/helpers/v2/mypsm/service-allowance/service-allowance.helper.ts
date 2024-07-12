@@ -15,4 +15,20 @@ export class ServiceAllowanceHelpers {
 
         return JSON.stringify(formData);
     }
+
+    static async fileListToBase64String(fileList: FileList) {
+        let documents: DocumentDTO[] = [];
+
+        for (let i = 0; i < fileList.length; i++) {
+            const file = fileList[i];
+            const base64String = await DocumentHelper.toBase64(file);
+            const documentObject: DocumentDTO = {
+                base64: base64String,
+                name: file.name,
+            };
+            documents.push(documentObject);
+        }
+
+        return documents;
+    }
 }

@@ -148,7 +148,7 @@
                 </DropdownItem>
                 <DropdownItem
                     slot="footer"
-                    href="/log-masuk"
+                    href="/v2/login"
                     on:click={() => {
                         localStorage.clear();
                     }}
