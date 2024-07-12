@@ -1110,7 +1110,7 @@
                                             id="meetingName"
                                             disabled
                                             options={data.lookup
-                                                .meetingNameLookup}
+                                                .meetingLookup}
                                             val={certificationResult?.meetingName}
                                         />
                                         <CustomTextField

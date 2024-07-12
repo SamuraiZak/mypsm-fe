@@ -319,6 +319,13 @@ const getLookup = async () => {
 
     const departmentLookup: DropdownDTO[] =
         LookupServices.setSelectOptionsValueIsDescription(departmentLookupResponse)
+
+        const meetingLookupResponse: CommonResponseDTO =
+        await LookupServices.getMeetingTypeEnums();
+
+        const meetingLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsValueIsDescription(meetingLookupResponse)
+    
     // -------------------------------------------------------
     const meetingNameLookup: DropdownDTO[] = [
         { value: 'Mesyuarat 1/12', name: 'Mesyuarat 1/12' },
@@ -355,5 +362,8 @@ const getLookup = async () => {
         positionLookup,
         departmentLookup,
         supporterApproverLookup,
+        meetingLookupResponse,
+meetingLookup,
+        
     }
 }

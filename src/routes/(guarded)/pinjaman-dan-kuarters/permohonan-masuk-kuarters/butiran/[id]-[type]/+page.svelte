@@ -44,6 +44,7 @@
         _submitQuartersDocument,
         _submitSecretaryApprovalForm,
         _submitQuarterPayment,
+        _submitOtherDocument,
     } from './+page';
     import type { QuartersUploadDocuments } from '$lib/dto/mypsm/pinjaman/kuarters/quarters-upload-document.dto';
     import { ContractEmployeeServices } from '$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service';
@@ -85,7 +86,7 @@
         submitDirectorApproval = true;
     }
 
-    function uploadDocument() {
+    function uploadDocument(stepper: number) {
         if (files == undefined) {
             alert('Dokumen sokongan tidak boleh kosong.');
         } else {
@@ -95,6 +96,7 @@
                         id: data.currentId.id,
                         documents: result,
                     };
+                    if (stepper == 1) {
                     const res = await _submitQuartersDocument(
                         JSON.stringify(quartersDocument),
                     );
@@ -102,6 +104,16 @@
                     if (res.response.status == 'success') {
                         successUpload = true;
                     }
+                } else if (stepper == 2) {
+                    const res = await _submitOtherDocument(
+                            JSON.stringify(quartersDocument),
+                        );
+
+                        if (res.response.status == 'success') {
+                            successUpload = true;
+                        }
+                    }
+
                 })
                 .catch((error) => {
                     throw new Error(error);
@@ -327,6 +339,8 @@
     const handleDownload = async (url: string) => {
         await ContractEmployeeServices.downloadContractAttachment(url);
     };
+
+    
 </script>
 
 <!-- content header starts here -->
@@ -718,7 +732,7 @@
                         <TextIconButton
                             label="Simpan"
                             icon="check"
-                            onClick={() => uploadDocument()}
+                            onClick={() => uploadDocument(1)}
                         />
                     {/if}
                 </StepperContentHeader>
@@ -1166,7 +1180,11 @@
             {#if data.currentRoleCode == UserRoleConstant.kakitangan.code || data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
                 <StepperContent>
                     <StepperContentHeader title="Surat Tawaran Kuarters"
-                    ></StepperContentHeader>
+                    > <TextIconButton
+                    label="Simpan"
+                    icon="check"
+                    onClick={() => uploadDocument(2)}
+                /></StepperContentHeader>
                     <StepperContentBody>
                         <div
                             class="flex w-full flex-col justify-start gap-2.5 p-3"
@@ -1192,6 +1210,37 @@
                                             data.quartersOfferLetter,
                                         )}
                                 />
+                                <a
+                                href={data.movingIncertificateLetter.document}
+                                download="Borang Akuan Keluar Kuarters.pdf"
+                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                >Borang Akuan Keluar Kuarters.pdf</a
+                            >
+                            <a
+                            href={data.movingInGuidelineLetter.document}
+                            download="Garis Panduan Permohonan.pdf"
+                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                            >Garis Panduan Permohonan.pdf</a
+                        >
+                        <a
+                        href={data.movingInCertificationLetter.document}
+                        download="Surat Akuan Patuh.pdf"
+                        class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                        >Surat Akuan Patuh.pdf</a
+                    >
+                    <a
+                    href={data.movingInMovingInLetter.document}
+                    download="Borang Pemeriksaan Masuk Rumah.pdf"
+                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                    >Borang Pemeriksaan Masuk Rumah.pdf</a
+                >
+                <div class="flex w-full flex-col gap-2 px-3">
+                    <CustomFileField
+                        label="Dokumen Sokongan"
+                        id="othersDocument"
+                        bind:files
+                    ></CustomFileField>
+                </div>
                             {/if}
                         </div>
                     </StepperContentBody>

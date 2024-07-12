@@ -53,6 +53,15 @@ export const load = async ({ params }) => {
         name: "",
         document: "",
     };;
+    let quartersMovingOutOutstandingLetter: QuarterDocument = {
+        name: "",
+        document: "",
+    };;
+
+    let memoMovingOutOutstandingLetter: QuarterDocument = {
+        name: "",
+        document: "",
+    };;
 
     const setDirectorForm = await superValidate(zod(_setDirector));
     const directorApprovalForm = await superValidate(zod(_quarterCommonApproval), { errors: false });
@@ -64,6 +73,18 @@ export const load = async ({ params }) => {
         quartersDeclarationLetter =
             declarationLetter.data?.details as QuarterDocument;
     }
+    const outstandingLetter: CommonResponseDTO =
+        await QuartersServices.getOutstandingDocument(currentId);
+    if (outstandingLetter.status == 'success') {
+        quartersDeclarationLetter =
+        outstandingLetter.data?.details as QuarterDocument;
+    }
+    const memoDocument: CommonResponseDTO =
+    await QuartersServices.getMemoDocument(currentId);
+if (memoDocument.status == 'success') {
+    quartersDeclarationLetter =
+    memoDocument.data?.details as QuarterDocument;
+}
     const checkingDocument: CommonResponseDTO =
         await QuartersServices.getCheckingDocument();
     quartersMovingOutCheckingLetter =
@@ -160,6 +181,7 @@ export const load = async ({ params }) => {
         moveOutForm,
         quartersDeclarationLetter,
         quartersMovingOutCheckingLetter,
+        quartersMovingOutOutstandingLetter,
         quarterDocuments,
         confirmationForm,
         secretaryApprovalForm,
@@ -173,6 +195,8 @@ export const load = async ({ params }) => {
         outstandingDocument,
         declarationLetter,
         checkingDocument,
+        memoMovingOutOutstandingLetter,
+memoDocument,
     }
 }
 

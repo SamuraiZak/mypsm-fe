@@ -423,6 +423,55 @@ export class QuartersServices {
             return CommonResponseConstant.httpError;
         }
     }
+      //get certificate document
+      static async getOutstandingDocument(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'quarter/moving_out/moving_out_certificate';
+
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getMemoDocument(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'loan/memorandum';
+
+            const response: Response = await http
+                .get(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+
+
+
+
     //get checkingDocument
     static async getCheckingDocument() {
         try {
@@ -1122,4 +1171,121 @@ static async getMovingOutDirectorApproval(param: commonIdRequestDTO) {
             return CommonResponseConstant.httpError;
         }
     }
+
+
+     //get certificate document
+     static async getCertificateDocumentMovingIn(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'quarter/moving_in/moving_in_certificate';
+
+            const response: Response = await http
+                .get(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    static async getGuidelineDocumentMovingIn(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'quarter/moving_in/guideline';
+
+            const response: Response = await http
+                .get(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getCertificationDocumentMovingIn(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'quarter/moving_in/certificate_letter';
+
+            const response: Response = await http
+                .get(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getDocumentMovingIn(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'quarter/moving_in/checking_document';
+
+            const response: Response = await http
+                .get(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // add other  document
+    static async addOtherDocument(param: string) {
+        try {
+            let url: Input = 'quarter/moving_in/other_document/upload';
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: param,
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+
+
+}
+
+
 }

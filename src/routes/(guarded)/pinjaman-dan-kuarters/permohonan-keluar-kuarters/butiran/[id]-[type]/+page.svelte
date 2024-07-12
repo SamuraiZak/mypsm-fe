@@ -756,6 +756,18 @@
                             >Borang Akuan Keluar Kuarters.pdf</a
                         >
                         <a
+                        href={data.quartersMovingOutOutstandingLetter.document}
+                        download="Sijil Keluar Kuarters.pdf"
+                        class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                        >Sijil Keluar Kuarters.pdf</a
+                    >
+                    <a
+                    href={data.memoMovingOutOutstandingLetter.document}
+                    download="Memorandum.pdf"
+                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                    >Memorandum.pdf</a
+                >
+                        <a
                             href={data.quartersMovingOutCheckingLetter.document}
                             download={data.quartersMovingOutCheckingLetter.name}
                             class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"

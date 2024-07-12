@@ -14,7 +14,7 @@ import { zod } from "sveltekit-superforms/adapters"
 import { _addConfirmationSchema, _addQuarterDetails, _outsiderApplication, _outsiderFamily, _outsiderService, _quarterCommonApproval, _quarterSecretaryApproval, _quartersPayment } from "$lib/schemas/mypsm/quarters/quarters-schema"
 import type { QuartersAddConfirmation } from "$lib/dto/mypsm/pinjaman/kuarters/application-confirmation.dto"
 import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-document-request.dto"
-import type { QuartersGetDocument } from "$lib/dto/mypsm/pinjaman/kuarters/application-get-document.dto"
+import type { QuarterDocument, QuartersGetDocument } from "$lib/dto/mypsm/pinjaman/kuarters/application-get-document.dto"
 import type { QuarterCommonApproval, QuarterSecretaryApproval } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto"
 import type { QuarterDetails, QuarterPayment } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-details.dto"
 import type { OutsiderId } from "$lib/dto/mypsm/pinjaman/kuarters/outsider-id.dto"
@@ -174,6 +174,52 @@ export const load = async ({ params }) => {
         personalDetailForm.data = response.data?.details as QuartersPersonalDetail;
     }
 
+    // new file
+let movingIncertificateLetter: QuarterDocument = {
+    name: "",
+    document: "",
+}
+let movingInGuidelineLetter: QuarterDocument = {
+    name: "",
+    document: "",
+}
+let movingInCertificationLetter: QuarterDocument = {
+    name: "",
+    document: "",
+}
+let movingInMovingInLetter: QuarterDocument = {
+    name: "",
+    document: "",
+}
+
+const certificateLetter: CommonResponseDTO =
+        await QuartersServices.getCertificateDocumentMovingIn(currentId);
+    if (certificateLetter.status == 'success') {
+        movingIncertificateLetter =
+        certificateLetter.data?.details as QuarterDocument;
+    }
+
+    const GuidelineLetter: CommonResponseDTO =
+        await QuartersServices.getCertificateDocumentMovingIn(currentId);
+    if (GuidelineLetter.status == 'success') {
+        movingInGuidelineLetter =
+        GuidelineLetter.data?.details as QuarterDocument;
+    }
+
+    const CertificationLetter: CommonResponseDTO =
+        await QuartersServices.getCertificateDocumentMovingIn(currentId);
+    if (CertificationLetter.status == 'success') {
+        movingInCertificationLetter =
+        CertificationLetter.data?.details as QuarterDocument;
+    }
+
+    const MovingInLetter: CommonResponseDTO =
+        await QuartersServices.getCertificateDocumentMovingIn(currentId);
+    if (MovingInLetter.status == 'success') {
+        movingInMovingInLetter =
+        MovingInLetter.data?.details as QuarterDocument;
+    }
+
     let quartersOfferLetter: string = getSuratTawaranKuarters();
     return {
         currentRoleCode,
@@ -199,6 +245,14 @@ export const load = async ({ params }) => {
         personalDetailForm,
         outsiderFamily,
         outsiderServiceForm,
+        movingIncertificateLetter,
+movingInGuidelineLetter,
+movingInCertificationLetter,
+movingInMovingInLetter,
+certificateLetter,
+GuidelineLetter,
+CertificationLetter,
+MovingInLetter,
     }
 }
 
@@ -295,6 +349,13 @@ export const _submitQuarterPayment = async (formData: QuarterPayment) => {
 
         return { response }
     }
+}
+
+export const _submitOtherDocument = async (formData: string) => {
+    const response: CommonResponseDTO =
+        await QuartersServices.addOtherDocument(formData)
+
+    return { response }
 }
 
 
@@ -394,6 +455,10 @@ function fetchBase64Data(file: File): Promise<DocumentBase64RequestDTO> {
     });
 }
 
+
+
+
+
 const getLookup = async () => {
     // -------------------------------------------------------
     const maritalLookupResponse: CommonResponseDTO =
@@ -470,4 +535,4 @@ const getSuratTawaranKuarters = () => {
     const url: string = "http://localhost:3333/quarter/moving_in/offer_letter"
 
     return url;
-}
+} 
