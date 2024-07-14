@@ -21,6 +21,7 @@
     import { zod } from 'sveltekit-superforms/adapters';
     import {
         _submitApproverApprovalForm,
+        _submitClaims,
         _submitSecretaryApprovalForm,
         _submitSuppAppForm,
         _submitSupporterApprovalForm,
@@ -72,6 +73,23 @@
             if (editMode?.response.status == 'success') {
                 secretaryApproved = true;
             }
+        },
+    });
+
+    const {
+        form: claimsForm,
+        errors: claimsError,
+        enhance: claimsEnhance,
+    } = superForm(data.claimsForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'claimsForm',
+        validators: zod(_clinicCommonResultSchema),
+        resetForm: false,
+        async onSubmit() {
+            $claimsForm.id = data.clinicId.id;
+            const editMode = await _submitClaims($claimsForm);
+            console.log($claimsForm);
         },
     });
 
@@ -140,15 +158,29 @@
     });
 
     let modal: boolean = false;
-    let totalToPay: number = 0;
-    let isCheck:boolean[] = []
+
+    let isCheck: boolean[] = [];
+
+    function calculateTotal() {}
     $: {
-        isCheck.forEach((val) => {
-            if(val){
-                totalToPay
-                // TOOD -- CALCULATE TOTAL TO PAY
+        $claimsForm.totalLkimToPay = 0;
+        data.mockData.forEach((value, i) => {
+            if (isCheck[i]) {
+                $claimsForm.totalLkimToPay += value.total;
+                // $claimsForm.treatments.push(value.treatment[i].name)
+                let tempData = {
+                    name: '',
+                    total: 0,
+                }
+                value.treatment.forEach((item) => {
+                    tempData.name = item.name;
+                    tempData.total = value.total;
+                    $claimsForm.treatments.push(tempData)
+                })
+
+                console.log($claimsForm)
             }
-        })
+        });
     }
 </script>
 
@@ -467,8 +499,13 @@
 <Toaster />
 
 <Modal bind:open={modal} size="lg" title="Sistem MyPSM">
-<!-- <Modal open={true} title="Sistem MyPSM"> -->
-    <div class="flex w-full flex-col justify-start gap-3">
+    <!-- <Modal open={true} title="Sistem MyPSM"> -->
+    <form
+        class="flex w-full flex-col justify-start gap-3"
+        use:claimsEnhance
+        id="claimsForm"
+        method="POST"
+    >
         <ContentHeader
             title="Klinik"
             borderClass="border-none"
@@ -517,6 +554,7 @@
                             class="flex w-full flex-col justify-start rounded-sm border p-2"
                         >
                             <Checkbox
+                                bind:checked={isCheck[i]}
                                 class="text-[11px] text-ios-systemColors-systemGrey-dark"
                             >
                                 <div class="flex w-full flex-col">
@@ -542,16 +580,21 @@
                     {/each}
                 </div>
 
-                <div class="flex w-full justify-end items-center gap-3">
+                <div class="flex w-full items-center justify-end gap-3">
                     <CustomTextField
                         label="Jumlah Tanggungan oleh LKIM (RM)"
                         id="totalPay"
                         type="number"
-                        bind:val={totalToPay}
+                        disabled
+                        bind:val={$claimsForm.totalLkimToPay}
                     />
-                    <TextIconButton label="SAH" icon="check" form="" />
+                    <TextIconButton
+                        label="SAH"
+                        icon="check"
+                        form="claimsForm"
+                    />
                 </div>
             </div>
         </XCard>
-    </div>
+    </form>
 </Modal>

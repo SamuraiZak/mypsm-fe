@@ -6,7 +6,7 @@ import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { ClinicCommonResult } from '$lib/dto/mypsm/perubatan/clinic-common-approval.dto';
 import type { ClinicClaimsDetails } from '$lib/dto/mypsm/perubatan/clinic-panel-claim-detail.dto';
 import type { MedicalClinicClaimSuppApp } from '$lib/dto/mypsm/perubatan/tuntutan-klinik/clinic-claim-supporter-approver.dto';
-import { _clinicCommonResultSchema, _clinicSuppAppIdSchema } from '$lib/schemas/mypsm/medical/medical-schema';
+import { _claimToBePaid, _clinicCommonResultSchema, _clinicSuppAppIdSchema } from '$lib/schemas/mypsm/medical/medical-schema';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { MedicalServices } from '$lib/services/implementation/mypsm/perubatan/medical.service';
 import { superValidate } from 'sveltekit-superforms';
@@ -30,7 +30,7 @@ export const load = async ({ params }) => {
     const supporterApproverForm = await superValidate(claimDetail.supporterApprover, zod(_clinicSuppAppIdSchema), { errors: false })
     const supporterApprovalForm = await superValidate(claimDetail.supporter, zod(_clinicCommonResultSchema), { errors: false })
     const approverApprovalForm = await superValidate(claimDetail.approver, zod(_clinicCommonResultSchema), { errors: false })
-
+    const claimsForm = await superValidate(zod(_claimToBePaid))
 
 
     let mockData = [
@@ -69,6 +69,7 @@ export const load = async ({ params }) => {
         supporterApproverForm,
         supporterApprovalForm,
         approverApprovalForm,
+        claimsForm,
         mockData,
     }
 }
@@ -80,6 +81,17 @@ export const _submitSecretaryApprovalForm = async (formData: ClinicCommonResult)
         const { supporterName, approverName, ...tempObj } = form.data
         const response: CommonResponseDTO =
             await MedicalServices.addClinicPanelClaimSecretaryApproval(tempObj as ClinicCommonResult)
+
+        return { response }
+    }
+}
+
+export const _submitClaims = async (formData: object) => {
+    const form = await superValidate(formData, zod(_claimToBePaid));
+
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await MedicalServices.addClaimsLiabilities(form.data)
 
         return { response }
     }
