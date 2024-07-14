@@ -21,7 +21,7 @@
         _fundReimbursementDetailResponseSchema,
         _fundReimbursementUploadDocSchema,
     } from '$lib/schemas/mypsm/course/fund-reimbursement-schema';
-    import type { PageData } from '../mohon-tuntutan/$types';
+    import type { PageData } from './$types';
     export let data: PageData;
     let formSubmitted = false;
 
