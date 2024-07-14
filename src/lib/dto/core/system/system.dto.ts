@@ -4,3 +4,9 @@ export interface ModuleDTO {
     color?: string;
     child: ModuleDTO[];
 }
+
+export interface PageSlug{
+    mode?: string;
+    status?: string;
+    id?: number;
+}

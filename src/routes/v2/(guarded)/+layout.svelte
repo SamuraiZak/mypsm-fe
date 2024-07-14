@@ -11,6 +11,7 @@
     import { _switchRole, load } from './+layout';
     import { TextAppearanceHelper } from '$lib/helpers/core/text-appearance.helper';
     import type { SwitchRoleDTO } from '$lib/dto/core/user-account/user-account.dto';
+    import { Toaster } from 'svelte-french-toast';
 
     export let data: LayoutData;
 
@@ -199,3 +200,5 @@
         </p>
     </div>
 </div>
+
+<Toaster></Toaster>

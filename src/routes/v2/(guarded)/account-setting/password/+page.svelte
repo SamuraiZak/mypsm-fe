@@ -1,106 +1,105 @@
 <script lang="ts">
-    import SvgInfoSolid from '$lib/assets/svg/SvgInfoSolid.svelte';
-    import CustomInput from '$lib/components/inputs/text-field/CustomInput.svelte';
-    import { superForm } from 'sveltekit-superforms';
+    import { superForm } from 'sveltekit-superforms/client';
+    import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
     import type { PageData } from './$types';
-    import { _submitUpdatePasswordForm } from './+page';
+    import { _submit, _updatePasswordSchema } from './+page';
+    import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
+    import { goto } from '$app/navigation';
+    import { Toaster } from 'svelte-french-toast';
     import { zodClient } from 'sveltekit-superforms/adapters';
-    import { AccountUpdatePasswordSchema } from '$lib/schemas/core/user-account.schema';
 
     export let data: PageData;
 
-    const {
-        form: updatePasswordForm,
-        errors: updatePasswordErrors,
-        enhance: updatePasswordEnhance,
-        options: updatePasswordOptions,
-    } = superForm(data.forms.updatePasswordForm, {
-        id: 'updatePasswordForm',
+    const { form, errors, enhance } = superForm(data.props.form, {
         SPA: true,
-        resetForm: true,
-        validationMethod: 'onsubmit',
-        validators: zodClient(AccountUpdatePasswordSchema),
-        onChange(event) {
-            if (event.target) {
-                if (
-                    event.path == 'oldPassword' ||
-                    event.path == 'newPassword' ||
-                    event.path == 'confirmPassword'
-                ) {
-                    updatePasswordOptions.validationMethod = 'auto';
-                }
-            }
-        },
-        onSubmit() {
-            _submitUpdatePasswordForm($updatePasswordForm);
+        taintedMessage: false,
+        validators: zodClient(_updatePasswordSchema),
+        onUpdate({ form }) {},
+        onSubmit(input) {
+            _submit($form);
         },
     });
 </script>
 
-<div
-    class="flex h-full w-full flex-col items-start justify-start overflow-hidden"
+<section
+    class="flex h-full max-h-full w-full flex-col gap-2 overflow-hidden p-10 pb-2"
 >
-    <div
-        class="flex h-14 w-full flex-row items-center justify-between bg-white px-4"
-    >
-        <!-- leading -->
-        <div class="flex h-full flex-row items-center justify-start">
-            <p class="text-lg font-semibold text-slate-700">
-                Kemaskini Kata Laluan
-            </p>
-        </div>
-        <!-- leading -->
-        <div class="flex h-full flex-row items-center justify-start"></div>
-    </div>
-    <div
-        class="flex h-full w-full flex-col items-start justify-start gap-4 p-4"
-    >
-        <!-- banner starts here -->
-        <div
-            class="flex min-h-9 w-full flex-row items-start justify-start gap-2 rounded-md bg-blue-100 p-1 md:w-1/2"
-        >
-            <div
-                class="flex h-full max-h-9 min-w-9 flex-col items-center justify-center"
-            >
-                <span class="text-blue-700">
-                    <SvgInfoSolid></SvgInfoSolid>
-                </span>
+    <!-- group #1 starts here -->
+    <div class="flex h-fit w-full flex-col gap-2.5">
+        <!-- group header starts here -->
+        <div class="flex w-full flex-col gap-1.5">
+            <div class="flex w-full flex-col items-start justify-center">
+                <span class="text-xl font-semibold leading-tight"
+                    >Kemaskini Kata Laluan</span
+                >
             </div>
-            <div
-                class="flex h-full min-h-9 min-w-9 flex-col items-center justify-center"
-            >
-                <p class="text-base font-medium text-blue-700">
-                    Sila masukkan kata laluan baru anda dan sahkan kata laluan
-                    anda di ruangan berikut.
-                </p>
+            <div class="flex w-full flex-col items-start justify-center">
+                <span
+                    class="text-base font-normal leading-loose text-ios-basic-inactiveGray"
+                    >Isi ruangan di bawah untuk kemaskini kata laluan anda</span
+                >
             </div>
         </div>
-        <!-- banner ends here -->
+        <!-- group header ends here -->
 
-        <!-- form starts here -->
-        <form
-            use:updatePasswordEnhance
-            id="updatePasswordForm"
-            method="POST"
-            action=""
-            class="flex h-full w-full flex-col items-start justify-start md:w-1/2"
-        >
-            <CustomInput
-                bind:val={$updatePasswordForm.oldPassword}
-                bind:errors={$updatePasswordErrors.oldPassword}
-                label="Kata Laluan Semasa"
-            ></CustomInput>
-            <CustomInput
-                bind:val={$updatePasswordForm.newPassword}
-                bind:errors={$updatePasswordErrors.newPassword}
-                label="Kata Laluan Baru"
-            ></CustomInput>
-            <CustomInput
-                bind:val={$updatePasswordForm.confirmPassword}
-                bind:errors={$updatePasswordErrors.confirmPassword}
-                label="Sahkan Kata Laluan Baru"
-            ></CustomInput>
-            <button form="updatePasswordForm">hantar</button>
-        </form>
+        <!-- group body starts here -->
+
+        <div class="flex w-full flex-col items-start justify-start gap-2">
+            <form
+                id="updatePasswordForm"
+                method="POST"
+                use:enhance
+                class="flex w-full max-w-[500px] flex-col items-center justify-start gap-2"
+            >
+                <CustomTextField
+                    bind:val={$form.oldPassword}
+                    errors={$errors.oldPassword}
+                    label="Masukkan Kata Laluan Lama"
+                    id="oldPassword"
+                    type="password"
+                    placeholder="••••••••"
+                ></CustomTextField>
+                <CustomTextField
+                    bind:val={$form.newPassword}
+                    errors={$errors.newPassword}
+                    label="Masukkan Kata Laluan Baru"
+                    id="newPassword"
+                    type="password"
+                    placeholder="••••••••"
+                ></CustomTextField>
+                <CustomTextField
+                    bind:val={$form.confirmPassword}
+                    errors={$errors.confirmPassword}
+                    label="Sahkan Kata Laluan Baru"
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="••••••••"
+                ></CustomTextField>
+
+                <div
+                    class="mt-2 flex w-full flex-row items-start justify-start gap-1.5"
+                >
+                    <TextIconButton
+                        icon="previous"
+                        label="Kembali"
+                        type="draft"
+                        onClick={() => {
+                            goto('/tetapan');
+                        }}
+                    ></TextIconButton>
+                    <TextIconButton
+                        icon="check"
+                        label="Hantar"
+                        form="updatePasswordForm"
+                    ></TextIconButton>
+                </div>
+            </form>
+        </div>
+
+        <!-- group body ends here -->
     </div>
-</div>
+    <!-- group #1 ends here -->
+</section>
+
+<Toaster></Toaster>

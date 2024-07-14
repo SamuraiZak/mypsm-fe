@@ -7,6 +7,7 @@
     import { AllowanceTypeConstant } from '$lib/constants/core/allowance-type.constant';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type { AllowanceTypeDTO } from '$lib/dto/mypsm/allowance/allowance.dto';
+    import { Toaster } from 'svelte-french-toast';
     import type { LayoutData } from '../../$types';
     import type { PageData } from './$types';
 
@@ -63,8 +64,12 @@
     };
 
     function addApplication() {
-        let url = '/v2/service-allowance/application/forms';
-
+        
+        let allowanceTypeCode: string = AllowanceTypeConstant.ceremonyClothing.code;
+        
+        let applicationId: number = 0;
+        
+        let url = `/v2/service-allowance/application/${allowanceTypeCode}/${applicationId}`;
         goto(url);
     }
 </script>
@@ -126,3 +131,5 @@
         </div>
     </div>
 </div>
+
+<Toaster></Toaster>
