@@ -1,0 +1,1556 @@
+<script lang="ts">
+    import StepperFailStatement from '$lib/components/stepper/StepperFailStatement.svelte';
+    import {
+        _approverSchema,
+        _supporterApproverSchema,
+    } from '$lib/schemas/mypsm/employment/new-offer/schema';
+    import { _processSchema } from '$lib/schemas/mypsm/employment/new-offer/schema';
+    import {
+        approveOptions,
+        supportOptions,
+    } from '$lib/constants/core/radio-option-constants';
+    import DataTable from '$lib/components/table/DataTable.svelte';
+    import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
+    import Stepper from '$lib/components/stepper/Stepper.svelte';
+    import { Accordion, AccordionItem, Badge } from 'flowbite-svelte';
+    import StepperContent from '$lib/components/stepper/StepperContent.svelte';
+    import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
+    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
+    import { Toaster } from 'svelte-french-toast';
+    import { superForm } from 'sveltekit-superforms/client';
+    import StepperOtherRolesResult from '$lib/components/stepper/StepperOtherRolesResult.svelte';
+    import type { PageData } from './$types';
+    import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
+    import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
+    import {
+        _academicInfoSchema,
+        _serviceInfoRequestSchema,
+    } from '$lib/schemas/mypsm/employment/new-hire/schema';
+    import { goto } from '$app/navigation';
+    import { writable } from 'svelte/store';
+    import {
+        _proceedingAppealSchema,
+        _proceedingApproverSchema,
+        _proceedingSentencingMeetingSchema,
+        _proceedingSuspensionCriminalCancelSchema,
+        _proceedingSuspensionCriminalDetailSchema,
+        _proceedingSuspensionViewSchema,
+        _sentenceSchema,
+    } from '$lib/schemas/mypsm/integrity/proceeding-scheme';
+    import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
+    import { certifyOptions } from '$lib/constants/core/radio-option-constants';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import {
+        _newOfferApproverResultForm,
+        _newOfferSupporterResultForm,
+        _setNewOfferSupporterApproverForm,
+        _updateNewOfferMeetingResultForm,
+        _updateNewOfferProcessForm,
+    } from './+page';
+    import { _meetingResultSchema } from '$lib/schemas/mypsm/employment/new-offer/schema';
+    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
+    import { RetirementBenefitDropdownConstant } from '$lib/constants/dropdown/retirement-benefit.constant';
+    export let data: PageData;
+
+    let allNewOfferSupporterStatusAndRemarksNotNull = false;
+    let allNewOfferApproverStatusAndRemarksNotNull = false;
+    let newOfferMeetingResultsAreNotApproved = writable<boolean>(true);
+    let newOfferSupporterIsApproved = writable<boolean>(false);
+    let newOfferApproverIsApproved = writable<boolean>(false);
+    let isReadOnlyNewOfferMeetingResult = writable<boolean>(false);
+    let newOfferMeetingResultIsDraft = writable<boolean>(false);
+    let isReadOnlyNewOfferProcess = writable<boolean>(false);
+    let newOfferProcessIsDraft = writable<boolean>(false);
+    let newOfferSetApproversIsDraft = writable<boolean>(false);
+    let isReadOnlyNewOfferSetApprovers = writable<boolean>(false);
+    let newOfferSupporterResultIsDraft = writable<boolean>(false);
+    let isReadOnlyNewOfferSupporterResult = writable<boolean>(false);
+    let newOfferApproverResultIsDraft = writable<boolean>(false);
+    let isReadOnlyNewOfferApprovalResult = writable<boolean>(false);
+
+    $: {
+        if (data.view.newOfferDetailView.meetingResult.isDraft === true) {
+            newOfferMeetingResultIsDraft.set(true);
+        } else {
+            newOfferMeetingResultIsDraft.set(false);
+        }
+
+        if (
+            data.view.newOfferDetailView.meetingResult.employees.every(
+                (data) =>
+                    data.status !== undefined && data.remarks !== undefined,
+            )
+        ) {
+            isReadOnlyNewOfferMeetingResult.set(true);
+        } else {
+            isReadOnlyNewOfferMeetingResult.set(false);
+        }
+
+        if ($isReadOnlyNewOfferMeetingResult) {
+            data.view.newOfferDetailView.meetingResult.employees.every(
+                (data) => data.status === false,
+            )
+                ? newOfferMeetingResultsAreNotApproved.set(true)
+                : newOfferMeetingResultsAreNotApproved.set(false);
+        }
+
+        if (data.view.newOfferDetailView.process.isDraft === true) {
+            newOfferProcessIsDraft.set(true);
+        } else {
+            newOfferProcessIsDraft.set(false);
+        }
+
+        if (data.view.newOfferDetailView.process.isReadonly) {
+            isReadOnlyNewOfferProcess.set(true);
+        } else {
+            isReadOnlyNewOfferProcess.set(false);
+        }
+
+        if (
+            data.view.newOfferDetailView.setSupporterApprover.isDraft === true
+        ) {
+            newOfferSetApproversIsDraft.set(true);
+        } else {
+            newOfferSetApproversIsDraft.set(false);
+        }
+
+        if (data.view.newOfferDetailView.setSupporterApprover.isReadonly) {
+            isReadOnlyNewOfferSetApprovers.set(true);
+        } else {
+            isReadOnlyNewOfferSetApprovers.set(false);
+        }
+
+        if (data.view.newOfferDetailView.supporter.isDraft === true) {
+            newOfferSupporterResultIsDraft.set(true);
+        } else {
+            newOfferSupporterResultIsDraft.set(false);
+        }
+
+        data.view.newOfferDetailView.supporter.results.forEach(
+            (data, index) => {
+                if (data.status === null || data.remarks === null) {
+                    allNewOfferSupporterStatusAndRemarksNotNull = false;
+                }
+            },
+        );
+
+        if (allNewOfferSupporterStatusAndRemarksNotNull) {
+            isReadOnlyNewOfferSupporterResult.set(true);
+
+            // data.view.newOfferDetailView.supporter.status
+            //     ? newOfferSupporterIsApproved.set(true)
+            //     : newOfferSupporterIsApproved.set(false);
+        } else {
+            isReadOnlyNewOfferSupporterResult.set(false);
+        }
+
+        if (data.view.newOfferDetailView.approver.isDraft === true) {
+            newOfferApproverResultIsDraft.set(true);
+        } else {
+            newOfferApproverResultIsDraft.set(false);
+        }
+
+        data.view.newOfferDetailView.approver.results.forEach((data, index) => {
+            if (data.status === null || data.remarks === null) {
+                allNewOfferApproverStatusAndRemarksNotNull = false;
+            }
+        });
+
+        if (allNewOfferApproverStatusAndRemarksNotNull) {
+            isReadOnlyNewOfferApprovalResult.set(true);
+
+            // data.view.newOfferDetailView.approver.status
+            //     ? newOfferApproverIsApproved.set(true)
+            //     : newOfferApproverIsApproved.set(false);
+        } else {
+            isReadOnlyNewOfferApprovalResult.set(false);
+        }
+    }
+
+    // Superforms
+    const { form } = superForm(data.forms.includedEmployeesForm, {
+        SPA: true,
+        dataType: 'json',
+        validators: false,
+    });
+
+    const { form: employeeDetailForm } = superForm(
+        data.forms.employeeDetailForm,
+        {
+            SPA: true,
+            dataType: 'json',
+            validators: false,
+        },
+    );
+
+    const {
+        form: newOfferMeetingDetailForm,
+        errors: newOfferMeetingDetailFormErrors,
+        enhance: newOfferMeetingDetailFormEnhance,
+    } = superForm(data.forms.newOfferMeetingForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_meetingResultSchema),
+        taintedMessage: false,
+        onSubmit() {
+            _updateNewOfferMeetingResultForm(
+                Number(data.params.id),
+                $newOfferMeetingDetailForm,
+            );
+        },
+    });
+
+    const {
+        form: newOfferServiceDetailForm,
+        errors: newOfferServiceDetailFormErrors,
+        enhance: newOfferServiceDetailFormEnhance,
+    } = superForm(data.forms.newOfferServiceDetailForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_processSchema),
+        taintedMessage: false,
+        onSubmit() {
+            $newOfferServiceDetailForm.employees =
+                $newOfferServiceDetailForm.employees.filter((val, index) => {
+                    if (!$newOfferMeetingDetailForm.employees[index].status) {
+                        return (
+                            val.employeeNumber !==
+                            $newOfferMeetingDetailForm.employees[index]
+                                .employeeNumber
+                        );
+                    }
+                    return true; // Keep the element if the condition is not met
+                });
+
+            _updateNewOfferProcessForm(
+                Number(data.params.id),
+                $newOfferServiceDetailForm,
+            );
+        },
+    });
+
+    $newOfferServiceDetailForm.employees.forEach(
+        (emp) => (emp.serviceTypeId = 2),
+    );
+
+    const {
+        form: newOfferSetSupporterApproverDetailForm,
+        errors: newOfferSetSupporterApproverDetailFormErrors,
+        enhance: newOfferSetSupporterApproverDetailFormEnhance,
+    } = superForm(data.forms.newOfferSetSupporterApproverDetailForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_supporterApproverSchema),
+        taintedMessage: false,
+        onSubmit() {
+            _setNewOfferSupporterApproverForm(
+                Number(data.params.id),
+                $newOfferSetSupporterApproverDetailForm,
+            );
+        },
+    });
+
+    const {
+        form: newOfferSupporterResultForm,
+        errors: newOfferSupporterResultFormErrors,
+        enhance: newOfferSupporterResultFormEnhance,
+    } = superForm(data.forms.newOfferSupporterResultForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_approverSchema),
+        taintedMessage: false,
+        onSubmit() {
+            _newOfferSupporterResultForm(
+                Number(data.params.id),
+                $newOfferSupporterResultForm,
+            );
+        },
+    });
+
+    const {
+        form: newOfferApproverResultForm,
+        errors: newOfferApproverResultFormErrors,
+        enhance: newOfferApproverResultFormEnhance,
+    } = superForm(data.forms.newOfferApprovalResultForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        multipleSubmits: 'allow',
+        validationMethod: 'oninput',
+        validators: zod(_approverSchema),
+        taintedMessage: false,
+        onSubmit() {
+            _newOfferApproverResultForm(
+                Number(data.params.id),
+                $newOfferApproverResultForm,
+            );
+        },
+    });
+
+    // Table list
+    let includedEmployeesListTable: TableSettingDTO = {
+        param: data.param,
+        meta: {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: $form.employees ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['id'],
+        dictionary: [],
+        url: '',
+        id: 'includedEmployeesListTable',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
+    };
+</script>
+
+<ContentHeader title="Maklumat Tawaran Baru">
+    {#if $isReadOnlyNewOfferApprovalResult}
+        <Badge color="dark">Proses Tawaran Baru Tamat</Badge>
+    {/if}
+    {#if $isReadOnlyNewOfferMeetingResult && $newOfferMeetingResultsAreNotApproved}
+        <Badge color="red">Proses Tawaran Baru Diberhentikan</Badge>
+    {/if}
+
+    <TextIconButton
+        label="Kembali"
+        type="neutral"
+        onClick={() => {
+            goto('../new-offer');
+        }}
+    /></ContentHeader
+>
+<Stepper>
+    <StepperContent>
+        <StepperContentHeader title="Senarai Kakitangan Terlibat"
+        ></StepperContentHeader>
+        <StepperContentBody
+            ><!-- Maklumat Peperiksaan -->
+            <div class="flex w-full flex-col gap-2">
+                <div class="flex w-full flex-col gap-2.5">
+                    <DataTable
+                        title="Senarai Kakitangan Di Dalam Mesyuarat"
+                        bind:tableData={includedEmployeesListTable}
+                    />
+                </div>
+            </div>
+        </StepperContentBody>
+    </StepperContent>
+    <StepperContent>
+        <StepperContentHeader title="Maklumat Kakitangan Terlibat" />
+        <StepperContentBody>
+            <div class="flex w-full flex-col gap-2.5">
+                <Accordion>
+                    {#each $employeeDetailForm.employees as _, index}
+                        <AccordionItem
+                            activeClass="outline-none bg-blue-100 text-blue-600 dark:text-white"
+                            inactiveClasses="text-gray-500 hover:bg-blue-100"
+                            open={index == 0}
+                        >
+                            <span
+                                slot="header"
+                                class="flex items-center gap-2 text-base"
+                            >
+                                <svg
+                                    width="11"
+                                    height="10"
+                                    viewBox="0 0 11 10"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M10.2656 6.03906L6.51562 9.78906C6.375 9.92969 6.1875 10 6 10C5.78906 10 5.60156 9.92969 5.46094 9.78906C5.15625 9.50781 5.15625 9.01562 5.46094 8.73438L7.92188 6.25H0.75C0.328125 6.25 0 5.92188 0 5.5C0 5.10156 0.328125 4.75 0.75 4.75H7.92188L5.46094 2.28906C5.15625 2.00781 5.15625 1.51562 5.46094 1.23438C5.74219 0.929688 6.23438 0.929688 6.51562 1.23438L10.2656 4.98438C10.5703 5.26562 10.5703 5.75781 10.2656 6.03906Z"
+                                        fill="currentColor"
+                                    />
+                                </svg>
+                                <span class="font-semibold"
+                                    >{$employeeDetailForm.employees[index]
+                                        .employeeName} ({$employeeDetailForm
+                                        .employees[index].employeeNumber})</span
+                                >
+                            </span>
+
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="employeeNumber"
+                                label={'Nombor Pekerja'}
+                                type="text"
+                                placeholder="-"
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .employeeNumber}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="workStatus"
+                                label={'Status Pekerjaan'}
+                                type="text"
+                                placeholder="-"
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .workStatus}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="employeeName"
+                                label={'Nama Penuh'}
+                                type="text"
+                                placeholder="-"
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .employeeName}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="alternativeName"
+                                label={'Nama Lain'}
+                                type="text"
+                                placeholder="-"
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .alternativeName}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="identityDocumentNumber"
+                                label={'No. Kad Pengenalan'}
+                                type="text"
+                                placeholder="-"
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .identityDocumentNumber}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="email"
+                                label={'Emel'}
+                                type="text"
+                                placeholder="-"
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .email}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="homeNumber"
+                                label={'Telefon Rumah'}
+                                type="text"
+                                placeholder="-"
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .homeNumber}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="phoneNumber"
+                                label={'Telefon Bimbit'}
+                                type="text"
+                                placeholder="-"
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .phoneNumber}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                type="date"
+                                id="birthDate"
+                                label="Tarikh Lahir"
+                                placeholder="-"
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .birthDate}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="birthState"
+                                label="Tempat Lahir"
+                                placeholder="-"
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .birthState}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="birthCountry"
+                                label="Negara Dilahir"
+                                placeholder="-"
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .birthCountry}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="nationality"
+                                label="Warganegara"
+                                placeholder="-"
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .nationality}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="race"
+                                label="Bangsa"
+                                placeholder="-"
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .race}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="religion"
+                                label="Agama"
+                                placeholder="-"
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .religion}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="gender"
+                                label="Jantina"
+                                placeholder="-"
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .gender}
+                            ></CustomTextField>
+
+                            <CustomTextField
+                                disabled
+                                isRequired={false}
+                                id="marital"
+                                label="Status Perkahwinan"
+                                placeholder="-"
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .marital}
+                            ></CustomTextField>
+
+                            <CustomSelectField
+                                disabled
+                                isRequired={false}
+                                id="isExPoliceOrSoldier"
+                                label="Bekas Polis / Tentera"
+                                placeholder="-"
+                                options={data.lookups.generalLookup}
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .isExPoliceOrSoldier}
+                            ></CustomSelectField>
+
+                            <CustomSelectField
+                                disabled
+                                isRequired={false}
+                                id="isInternalRelationship"
+                                label="Perhubungan Dengan Kakitangan LKIM"
+                                placeholder="-"
+                                options={data.lookups.generalLookup}
+                                bind:val={$employeeDetailForm.employees[index]
+                                    .isInternalRelationship}
+                            ></CustomSelectField>
+
+                            {#if $employeeDetailForm.employees[index].isInternalRelationship}
+                                <CustomTextField
+                                    disabled
+                                    isRequired={false}
+                                    id="relationEmployeeNumber"
+                                    label="No. Pekerja LKIM"
+                                    bind:val={$employeeDetailForm.employees[
+                                        index
+                                    ].relationEmployeeNumber}
+                                ></CustomTextField>
+
+                                <CustomTextField
+                                    disabled
+                                    isRequired={false}
+                                    id="relationName"
+                                    label={'Nama Kakitangan LKIM'}
+                                    bind:val={$employeeDetailForm.employees[
+                                        index
+                                    ].relationName}
+                                ></CustomTextField>
+
+                                <CustomTextField
+                                    disabled
+                                    isRequired={false}
+                                    id="relationPosition"
+                                    label="Jawatan Kakitangan LKIM"
+                                    bind:val={$employeeDetailForm.employees[
+                                        index
+                                    ].relationPosition}
+                                ></CustomTextField>
+
+                                <CustomTextField
+                                    disabled
+                                    isRequired={false}
+                                    id="relationship"
+                                    label="Hubungan"
+                                    bind:val={$employeeDetailForm.employees[
+                                        index
+                                    ].relationship}
+                                ></CustomTextField>
+                            {/if}
+                        </AccordionItem>
+                    {/each}
+                </Accordion>
+            </div>
+        </StepperContentBody>
+    </StepperContent>
+    <StepperContent>
+        <StepperContentHeader title="Keputusan Mesyuarat">
+            {#if (!$isReadOnlyNewOfferMeetingResult || $newOfferMeetingResultIsDraft) && data.roles.isEmploymentSecretaryRole}
+                <TextIconButton
+                    label="Simpan"
+                    type="neutral"
+                    form="newOfferMeetingDetailForm"
+                    onClick={() => {
+                        $newOfferMeetingDetailForm.isDraft = true;
+                    }}
+                />
+                <TextIconButton
+                    label="Hantar"
+                    type="primary"
+                    form="newOfferMeetingDetailForm"
+                    onClick={() => {
+                        $newOfferMeetingDetailForm.isDraft = false;
+                    }}
+                />
+            {/if}
+        </StepperContentHeader>
+        <StepperContentBody>
+            <form
+                id="newOfferMeetingDetailForm"
+                method="POST"
+                use:newOfferMeetingDetailFormEnhance
+                class="flex w-full flex-col items-center gap-2"
+            >
+                <CustomTextField
+                    disabled={true}
+                    errors={$newOfferMeetingDetailFormErrors.meetingName}
+                    id="meetingName"
+                    label="Kumpulan Mesyuarat"
+                    placeholder="-"
+                    bind:val={$newOfferMeetingDetailForm.meetingName}
+                ></CustomTextField>
+                <CustomTextField
+                    disabled={true}
+                    errors={$newOfferMeetingDetailFormErrors.meetingNo}
+                    id="meetingNo"
+                    label="No. Mesyuarat"
+                    placeholder="-"
+                    type="text"
+                    bind:val={$newOfferMeetingDetailForm.meetingNo}
+                ></CustomTextField>
+                <CustomTextField
+                    disabled={true}
+                    errors={$newOfferMeetingDetailFormErrors.totalEmployee}
+                    id="totalEmployee"
+                    label="Jumlah Kakitangan Terlibat"
+                    placeholder="-"
+                    type="number"
+                    bind:val={$newOfferMeetingDetailForm.totalEmployee}
+                ></CustomTextField>
+                <CustomTextField
+                    disabled={true}
+                    errors={$newOfferMeetingDetailFormErrors.meetingDate}
+                    id="meetingDate"
+                    label="Tarikh Mesyuarat"
+                    type="date"
+                    bind:val={$newOfferMeetingDetailForm.meetingDate}
+                ></CustomTextField>
+
+                {#each $newOfferMeetingDetailForm.employees as _, index}
+                    <div
+                        class="mb-2.5 h-fit w-full space-y-3 rounded-[3px] border p-2.5"
+                    >
+                        <b class="w-full text-base text-system-primary"
+                            >{index + 1}. {$newOfferMeetingDetailForm.employees[
+                                index
+                            ].employeeName} ({$newOfferMeetingDetailForm
+                                .employees[index].employeeNumber})</b
+                        >
+                        <CustomTextField
+                            disabled={$isReadOnlyNewOfferMeetingResult ||
+                                !$newOfferMeetingResultIsDraft}
+                            id="employees[index].remarks"
+                            label="Catatan"
+                            placeholder="-"
+                            type="text"
+                            bind:val={$newOfferMeetingDetailForm.employees[
+                                index
+                            ].remarks}
+                        ></CustomTextField>
+                        <CustomRadioBoolean
+                            disabled={$isReadOnlyNewOfferMeetingResult ||
+                                !$newOfferMeetingResultIsDraft}
+                            id="employees[index].status"
+                            label="Keputusan Mesyuarat"
+                            options={approveOptions}
+                            bind:val={$newOfferMeetingDetailForm.employees[
+                                index
+                            ].status}
+                        ></CustomRadioBoolean>
+                    </div>
+                {/each}
+            </form>
+        </StepperContentBody>
+    </StepperContent>
+    {#if !$newOfferMeetingResultsAreNotApproved && !$newOfferMeetingResultIsDraft}
+        <StepperContent>
+            <StepperContentHeader title="Maklumat Tawaran Baru">
+                {#if (!$isReadOnlyNewOfferProcess || $newOfferProcessIsDraft) && data.roles.isEmploymentSecretaryRole}
+                    <TextIconButton
+                        label="Simpan"
+                        type="neutral"
+                        form="newOfferServiceDetailForm"
+                        onClick={() => {
+                            $newOfferServiceDetailForm.isDraft = true;
+                        }}
+                    />
+                    <TextIconButton
+                        label="Hantar"
+                        type="primary"
+                        form="newOfferServiceDetailForm"
+                        onClick={() => {
+                            $newOfferServiceDetailForm.isDraft = false;
+                        }}
+                    />
+                {/if}
+            </StepperContentHeader>
+            <StepperContentBody>
+                <div class="flex w-full flex-col gap-2.5">
+                    <Accordion>
+                        {#each $newOfferServiceDetailForm.employees as _, index}
+                            <AccordionItem
+                                activeClass="outline-none bg-blue-100 text-blue-600 dark:text-white"
+                                inactiveClasses="text-gray-500 hover:bg-blue-100"
+                                open={index == 0}
+                            >
+                                <span
+                                    slot="header"
+                                    class="flex items-center gap-2 text-base"
+                                >
+                                    <svg
+                                        width="11"
+                                        height="10"
+                                        viewBox="0 0 11 10"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            d="M10.2656 6.03906L6.51562 9.78906C6.375 9.92969 6.1875 10 6 10C5.78906 10 5.60156 9.92969 5.46094 9.78906C5.15625 9.50781 5.15625 9.01562 5.46094 8.73438L7.92188 6.25H0.75C0.328125 6.25 0 5.92188 0 5.5C0 5.10156 0.328125 4.75 0.75 4.75H7.92188L5.46094 2.28906C5.15625 2.00781 5.15625 1.51562 5.46094 1.23438C5.74219 0.929688 6.23438 0.929688 6.51562 1.23438L10.2656 4.98438C10.5703 5.26562 10.5703 5.75781 10.2656 6.03906Z"
+                                            fill="currentColor"
+                                        />
+                                    </svg>
+                                    <span class="font-semibold">
+                                        {!$newOfferMeetingDetailForm.employees[
+                                            index
+                                        ].status
+                                            ? '[TIDAK LULUS]'
+                                            : ''}
+                                        {$newOfferServiceDetailForm.employees[
+                                            index
+                                        ].employeeName} ({$newOfferServiceDetailForm
+                                            .employees[index]
+                                            .employeeNumber})</span
+                                    >
+                                </span>
+                                <form
+                                    id="newOfferServiceDetailForm"
+                                    method="POST"
+                                    use:newOfferServiceDetailFormEnhance
+                                    class="flex w-full flex-col gap-2.5"
+                                >
+                                    {#if !$newOfferMeetingDetailForm.employees[index].status}
+                                        <StepperFailStatement />
+                                    {:else}
+                                        <CustomSelectField
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="gradeId"
+                                            label="Gred"
+                                            placeholder="-"
+                                            options={data.lookups.gradeLookup}
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index].gradeId}
+                                        ></CustomSelectField>
+                                        <CustomSelectField
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="maxGradeId"
+                                            label="Gred Maksimum"
+                                            placeholder="-"
+                                            options={data.lookups.gradeLookup}
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index].maxGradeId}
+                                        ></CustomSelectField>
+                                        <CustomSelectField
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="positionId"
+                                            label="Jawatan"
+                                            placeholder="-"
+                                            options={data.lookups
+                                                .positionLookup}
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index].positionId}
+                                        ></CustomSelectField>
+                                        <CustomSelectField
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="placementId"
+                                            label="Penempatan"
+                                            placeholder="-"
+                                            options={data.lookups
+                                                .placementLookup}
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index].placementId}
+                                        ></CustomSelectField>
+                                        <CustomSelectField
+                                            disabled
+                                            id="serviceTypeId"
+                                            label="Jenis Perkhidmatan"
+                                            placeholder="-"
+                                            options={data.lookups
+                                                .serviceTypeLookup}
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index].serviceTypeId}
+                                        ></CustomSelectField>
+                                        <CustomSelectField
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="serviceGroupId"
+                                            label="Kumpulan Perkhidmatan"
+                                            placeholder="-"
+                                            options={data.lookups
+                                                .serviceGroupLookup}
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index]
+                                                .serviceGroupId}
+                                        ></CustomSelectField>
+
+                                        <CustomSelectField
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="employmentStatusId"
+                                            label="Sektor Perkhidmatan"
+                                            placeholder="-"
+                                            options={data.lookups
+                                                .employmentStatusLookup}
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index]
+                                                .employmentStatusId}
+                                        ></CustomSelectField>
+
+                                        <CustomSelectField
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="unitId"
+                                            label="Bahagian"
+                                            placeholder="-"
+                                            options={data.lookups.unitLookup}
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index].unitId}
+                                        ></CustomSelectField>
+
+                                        <CustomTextField
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            type="number"
+                                            id="eligibleLeaveCount"
+                                            label={'Kelayakan Cuti'}
+                                            placeholder="-"
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index]
+                                                .eligibleLeaveCount}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            type="date"
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="effectiveDate"
+                                            label={'Tarikh Kuatkuasa Lantikan Semasa'}
+                                            placeholder="-"
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index].effectiveDate}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            type="date"
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="newRecruitEffectiveDate"
+                                            label={'Tarikh Berkuatkuasa Lantikan Baru'}
+                                            placeholder="-"
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index]
+                                                .newRecruitEffectiveDate}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            type="date"
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="firstEffectiveDate"
+                                            label={'Tarikh Berkuatkuasa Lantikan Pertama'}
+                                            placeholder="-"
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index]
+                                                .firstEffectiveDate}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            type="date"
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="civilServiceStartDate"
+                                            label={'Mula Dilantik Perkhidmatan Kerajaan'}
+                                            placeholder="-"
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index]
+                                                .civilServiceStartDate}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            type="date"
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="serviceDate"
+                                            label={'Mula Dilantik Perkhidmatan LKIM'}
+                                            placeholder="-"
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index].serviceDate}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            type="date"
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="firstServiceDate"
+                                            label={'Mula Dilantik Perkhidmatan Pertama'}
+                                            placeholder="-"
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index]
+                                                .firstServiceDate}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            type="date"
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="confirmDate"
+                                            label={'Mula Disahkan Perkhidmatan Semasa'}
+                                            placeholder="-"
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index].confirmDate}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            placeholder="-"
+                                            type="date"
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="confirmServiceDate"
+                                            label={'Disahkan Dalam Jawatan Semasa LKIM'}
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index]
+                                                .confirmServiceDate}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            placeholder="-"
+                                            type="date"
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="firstEffectiveServiceDate"
+                                            label={'Mula Berkuatkuasa Perkhidmatan Pertama'}
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index]
+                                                .firstEffectiveServiceDate}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            placeholder="-"
+                                            type="date"
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="firstConfirmServiceDate"
+                                            label={'Disahkan Dalam Jawatan Pertama LKIM'}
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index]
+                                                .firstConfirmServiceDate}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            type="date"
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="retirementDate"
+                                            label={'Tarikh Bersara'}
+                                            placeholder="-"
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index]
+                                                .retirementDate}
+                                        ></CustomTextField>
+
+                                        <CustomSelectField
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="bankName"
+                                            label={'Name Bank'}
+                                            placeholder="-"
+                                            options={data.lookups.bankLookup}
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index].bankName}
+                                        ></CustomSelectField>
+
+                                        <CustomTextField
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="bankAccount"
+                                            type="number"
+                                            label={'Akaun Bank'}
+                                            placeholder="-"
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index].bankAccount}
+                                        ></CustomTextField>
+
+                                        <CustomSelectField
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="retirementBenefit"
+                                            label={'Kemudahan Persaraan'}
+                                            options={RetirementBenefitDropdownConstant.list}
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index]
+                                                .retirementBenefit}
+                                        ></CustomSelectField>
+
+                                        <CustomTextField
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="epfNumber"
+                                            type="number"
+                                            label={'Nombor EPF'}
+                                            placeholder="-"
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index].epfNumber}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="incomeNumber"
+                                            type="number"
+                                            label={'Nombor Pendapatan'}
+                                            placeholder="-"
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index].incomeNumber}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="pensionNumber"
+                                            type="text"
+                                            label={'Nombor Pencen'}
+                                            placeholder="-"
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index].pensionNumber}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled={$isReadOnlyNewOfferProcess ||
+                                                !$newOfferProcessIsDraft}
+                                            id="socsoNumber"
+                                            type="number"
+                                            label={'Nombor SOCSO'}
+                                            placeholder="-"
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index].socsoNumber}
+                                        ></CustomTextField>
+
+                                        <ContentHeader
+                                            title="Maklumat Gaji dan Elaun - Elaun"
+                                            fontSize="small"
+                                            color="system-primary"
+                                            fontWeight="bold"
+                                            borderClass="border-none"
+                                            titlePadding={false}
+                                        />
+
+                                        <div class="grid grid-cols-2 gap-10">
+                                            <div class="space-y-2.5">
+                                                <CustomSelectField
+                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                        !$newOfferProcessIsDraft}
+                                                    id="revisionMonth"
+                                                    label={'Bulan Berkuatkuasa'}
+                                                    placeholder="-"
+                                                    options={data.lookups
+                                                        .sentencingMonthLookup}
+                                                    bind:val={$newOfferServiceDetailForm
+                                                        .employees[index]
+                                                        .revisionMonth}
+                                                ></CustomSelectField>
+
+                                                <CustomTextField
+                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                        !$newOfferProcessIsDraft}
+                                                    id="kgt"
+                                                    type="number"
+                                                    label={'KGT (RM)'}
+                                                    placeholder="-"
+                                                    bind:val={$newOfferServiceDetailForm
+                                                        .employees[index].kgt}
+                                                ></CustomTextField>
+
+                                                <CustomTextField
+                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                        !$newOfferProcessIsDraft}
+                                                    id="maximumSalary"
+                                                    type="number"
+                                                    label={'Tangga Gaji (RM)'}
+                                                    placeholder="-"
+                                                    bind:val={$newOfferServiceDetailForm
+                                                        .employees[index]
+                                                        .maximumSalary}
+                                                ></CustomTextField>
+
+                                                <CustomTextField
+                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                        !$newOfferProcessIsDraft}
+                                                    id="baseSalary"
+                                                    label={'Gaji Pokok (RM)'}
+                                                    placeholder="-"
+                                                    bind:val={$newOfferServiceDetailForm
+                                                        .employees[index]
+                                                        .baseSalary}
+                                                ></CustomTextField>
+                                            </div>
+                                            <div class="space-y-2.5">
+                                                <CustomTextField
+                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                        !$newOfferProcessIsDraft}
+                                                    id="ITKA"
+                                                    label={'ITKA (RM)'}
+                                                    placeholder="-"
+                                                    bind:val={$newOfferServiceDetailForm
+                                                        .employees[index].itka}
+                                                ></CustomTextField>
+                                                <CustomTextField
+                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                        !$newOfferProcessIsDraft}
+                                                    id="ITP"
+                                                    label={'ITP (RM)'}
+                                                    placeholder="-"
+                                                    bind:val={$newOfferServiceDetailForm
+                                                        .employees[index].itp}
+                                                ></CustomTextField>
+                                                <CustomTextField
+                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                        !$newOfferProcessIsDraft}
+                                                    id="EPW"
+                                                    label={'EPW (RM)'}
+                                                    placeholder="-"
+                                                    bind:val={$newOfferServiceDetailForm
+                                                        .employees[index].epw}
+                                                ></CustomTextField>
+                                                <CustomTextField
+                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                        !$newOfferProcessIsDraft}
+                                                    id="COLA"
+                                                    label={'COLA (RM)'}
+                                                    placeholder="-"
+                                                    bind:val={$newOfferServiceDetailForm
+                                                        .employees[index].cola}
+                                                ></CustomTextField>
+                                            </div>
+                                        </div>
+                                    {/if}
+                                </form>
+                            </AccordionItem>
+                        {/each}
+                    </Accordion>
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+        {#if $isReadOnlyNewOfferProcess && !$newOfferProcessIsDraft}
+            <StepperContent>
+                <StepperContentHeader title="Maklumat Penyokong Dan Pelulus">
+                    {#if (!$isReadOnlyNewOfferSetApprovers || $newOfferSetApproversIsDraft) && data.roles.isEmploymentSecretaryRole}
+                        <TextIconButton
+                            label="Simpan"
+                            type="neutral"
+                            form="newOfferSetSupporterApproverDetailForm"
+                            onClick={() => {
+                                $newOfferSetSupporterApproverDetailForm.isDraft = true;
+                            }}
+                        />
+                        <TextIconButton
+                            label="Hantar"
+                            type="primary"
+                            form="newOfferSetSupporterApproverDetailForm"
+                            onClick={() => {
+                                $newOfferSetSupporterApproverDetailForm.isDraft = false;
+                            }}
+                        />
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <form
+                        id="newOfferSetSupporterApproverDetailForm"
+                        method="POST"
+                        use:newOfferSetSupporterApproverDetailFormEnhance
+                        class="flex w-full flex-col items-center gap-2"
+                    >
+                        <CustomSelectField
+                            disabled={$isReadOnlyNewOfferSetApprovers ||
+                                !$newOfferSetApproversIsDraft}
+                            errors={$newOfferSetSupporterApproverDetailFormErrors.supporterId}
+                            id="supporterId"
+                            label="Penyokong"
+                            placeholder="-"
+                            options={data.lookups.employeesListLookup}
+                            bind:val={$newOfferSetSupporterApproverDetailForm.supporterId}
+                        ></CustomSelectField>
+                        <CustomSelectField
+                            disabled={$isReadOnlyNewOfferSetApprovers ||
+                                !$newOfferSetApproversIsDraft}
+                            errors={$newOfferSetSupporterApproverDetailFormErrors.approverId}
+                            id="approverId"
+                            label="Pelulus"
+                            placeholder="-"
+                            options={data.lookups.employeesListLookup}
+                            bind:val={$newOfferSetSupporterApproverDetailForm.approverId}
+                        ></CustomSelectField>
+                    </form>
+                </StepperContentBody>
+            </StepperContent>
+            {#if $isReadOnlyNewOfferSetApprovers && !$newOfferSetApproversIsDraft}
+                <StepperContent>
+                    <StepperContentHeader
+                        title="Keputusan Pengesahan Dalam Perhidmatan Daripada Peranan - Peranan Bertanggungjawab"
+                    >
+                        {#if (!data.view.newOfferDetailView.supporter.isReadonly || $newOfferSupporterResultIsDraft) && data.roles.isSupporterRole}
+                            <TextIconButton
+                                type="neutral"
+                                label="Simpan"
+                                form="newOfferSupporterResultForm"
+                                onClick={() => {
+                                    $newOfferSupporterResultForm.isDraft = true;
+                                }}
+                            ></TextIconButton>
+                            <TextIconButton
+                                type="primary"
+                                label="Hantar"
+                                form="newOfferSupporterResultForm"
+                                onClick={() => {
+                                    $newOfferSupporterResultForm.isDraft = false;
+                                }}
+                            ></TextIconButton>
+                        {:else if (!data.view.newOfferDetailView.approver.isReadonly || $newOfferApproverResultIsDraft) && data.roles.isApproverRole}
+                            <TextIconButton
+                                type="neutral"
+                                label="Simpan"
+                                form="newOfferApproverResultForm"
+                                onClick={() => {
+                                    $newOfferApproverResultForm.isDraft = true;
+                                }}
+                            ></TextIconButton>
+                            <TextIconButton
+                                type="primary"
+                                label="Hantar"
+                                form="newOfferApproverResultForm"
+                                onClick={() => {
+                                    $newOfferApproverResultForm.isDraft = false;
+                                }}
+                            ></TextIconButton>
+                        {/if}
+                    </StepperContentHeader>
+                    <StepperContentBody>
+                        <div class="flex w-full flex-col gap-2.5">
+                            {#if (!data.view.newOfferDetailView.supporter.isReadonly || $newOfferSupporterResultIsDraft) && data.roles.isSupporterRole}
+                                <form
+                                    id="newOfferSupporterResultForm"
+                                    method="POST"
+                                    use:newOfferSupporterResultFormEnhance
+                                    class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                                >
+                                    <div class="mb-5">
+                                        <b class="text-sm text-system-primary"
+                                            >Penyokong</b
+                                        >
+                                    </div>
+                                    {#each $newOfferSupporterResultForm.results as _, i}
+                                        <CustomTextField
+                                            disabled={data.view
+                                                .newOfferDetailView.supporter
+                                                .isReadonly ||
+                                                !$newOfferSupporterResultIsDraft}
+                                            id="applicantId"
+                                            label="Nombor Kakitangan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].employeeNumber}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled={data.view
+                                                .newOfferDetailView.supporter
+                                                .isReadonly ||
+                                                !$newOfferSupporterResultIsDraft}
+                                            id="applicantName"
+                                            label="Nama Kakitangan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].employeeName}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled={data.view
+                                                .newOfferDetailView.supporter
+                                                .isReadonly ||
+                                                !$newOfferSupporterResultIsDraft}
+                                            id="supporterRemark"
+                                            label="Tindakan/Ulasan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].remarks}
+                                        ></CustomTextField>
+
+                                        <CustomRadioBoolean
+                                            disabled={data.view
+                                                .newOfferDetailView.supporter
+                                                .isReadonly ||
+                                                !$newOfferSupporterResultIsDraft}
+                                            id="supporterIsApproved"
+                                            options={supportOptions}
+                                            label={'Keputusan'}
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].status}
+                                        ></CustomRadioBoolean>
+                                    {/each}
+                                </form>
+                            {:else if (!data.view.newOfferDetailView.approver.isReadonly || $newOfferApproverResultIsDraft) && data.roles.isApproverRole}
+                                <form
+                                    id="newOfferApproverResultForm"
+                                    method="POST"
+                                    use:newOfferApproverResultFormEnhance
+                                    class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                                >
+                                    <div class="mb-5">
+                                        <b class="text-sm text-system-primary"
+                                            >Pelulus</b
+                                        >
+                                    </div>
+                                    {#each $newOfferApproverResultForm.results as _, i}
+                                        <CustomTextField
+                                            disabled={data.view
+                                                .newOfferDetailView.approver
+                                                .isReadonly ||
+                                                !$newOfferApproverResultIsDraft}
+                                            id="applicantId"
+                                            label="Nombor Kakitangan"
+                                            bind:val={$newOfferApproverResultForm
+                                                .results[i].employeeNumber}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled={data.view
+                                                .newOfferDetailView.approver
+                                                .isReadonly ||
+                                                !$newOfferApproverResultIsDraft}
+                                            id="applicantName"
+                                            label="Nama Kakitangan"
+                                            bind:val={$newOfferApproverResultForm
+                                                .results[i].employeeName}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled={data.view
+                                                .newOfferDetailView.approver
+                                                .isReadonly ||
+                                                !$newOfferApproverResultIsDraft}
+                                            id="approverRemark"
+                                            label="Tindakan/Ulasan"
+                                            bind:val={$newOfferApproverResultForm
+                                                .results[i].remarks}
+                                        ></CustomTextField>
+
+                                        <CustomRadioBoolean
+                                            disabled={data.view
+                                                .newOfferDetailView.approver
+                                                .isReadonly ||
+                                                !$newOfferApproverResultIsDraft}
+                                            id="approverIsApproved"
+                                            options={approveOptions}
+                                            label={'Keputusan'}
+                                            bind:val={$newOfferApproverResultForm
+                                                .results[i].status}
+                                        ></CustomRadioBoolean>
+                                    {/each}
+                                </form>
+                            {/if}
+
+                            <div
+                                class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                            >
+                                <div class="mb-5">
+                                    <b class="text-sm text-system-primary"
+                                        >1. Penyokong</b
+                                    >
+                                </div>
+                                {#if $isReadOnlyNewOfferSupporterResult}
+                                    {#each $newOfferSupporterResultForm.results as _, i}
+                                        <CustomTextField
+                                            disabled
+                                            id="applicantId"
+                                            label="Nombor Kakitangan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].employeeNumber}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled
+                                            id="applicantName"
+                                            label="Nama Kakitangan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].employeeName}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled
+                                            id="supporterRemark"
+                                            label="Tindakan/Ulasan"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].remarks}
+                                        ></CustomTextField>
+
+                                        <CustomSelectField
+                                            disabled
+                                            id="supporterStatus"
+                                            options={supportOptions}
+                                            label={'Keputusan'}
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].status}
+                                        ></CustomSelectField>
+                                        <CustomTextField
+                                            disabled
+                                            isRequired={false}
+                                            id="approvalDate"
+                                            label="Tarikh Kelulusan"
+                                            type="date"
+                                            placeholder="-"
+                                            bind:val={$newOfferSupporterResultForm
+                                                .results[i].approvalDate}
+                                        ></CustomTextField>
+                                    {/each}
+                                {:else}
+                                    <StepperOtherRolesResult />
+                                {/if}
+                                <hr />
+                                <div class="mb-5">
+                                    <b class="text-sm text-system-primary"
+                                        >2. Pelulus</b
+                                    >
+                                </div>
+                                {#if $isReadOnlyNewOfferApprovalResult}
+                                    {#each $newOfferApproverResultForm.results as _, i}
+                                        <CustomTextField
+                                            disabled
+                                            id="applicantId"
+                                            label="Nombor Kakitangan"
+                                            bind:val={$newOfferApproverResultForm
+                                                .results[i].employeeNumber}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled
+                                            id="applicantName"
+                                            label="Nama Kakitangan"
+                                            bind:val={$newOfferApproverResultForm
+                                                .results[i].employeeName}
+                                        ></CustomTextField>
+
+                                        <CustomTextField
+                                            disabled
+                                            id="approverRemark"
+                                            label="Tindakan/Ulasan"
+                                            bind:val={$newOfferApproverResultForm
+                                                .results[i].remarks}
+                                        ></CustomTextField>
+
+                                        <CustomSelectField
+                                            disabled
+                                            id="approverStatus"
+                                            options={approveOptions}
+                                            label={'Keputusan'}
+                                            bind:val={$newOfferApproverResultForm
+                                                .results[i].status}
+                                        ></CustomSelectField>
+                                        <CustomTextField
+                                            disabled
+                                            isRequired={false}
+                                            id="approvalDate"
+                                            label="Tarikh Kelulusan"
+                                            type="date"
+                                            placeholder="-"
+                                            bind:val={$newOfferApproverResultForm
+                                                .results[i].approvalDate}
+                                        ></CustomTextField>
+                                    {/each}
+                                {:else}
+                                    <StepperOtherRolesResult />
+                                {/if}
+                            </div>
+                        </div>
+                    </StepperContentBody>
+                </StepperContent>
+            {/if}
+        {/if}
+    {/if}
+</Stepper>
+
+<Toaster />
