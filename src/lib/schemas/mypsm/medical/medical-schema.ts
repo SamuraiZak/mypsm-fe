@@ -117,6 +117,21 @@ export const _clinicSuppAppIdSchema = z.object({
     supporterId: numberSchema,
     approverId: numberSchema,
 })
+const treatments = z.object({
+    name: z.string(),
+    total: z.number()
+})
+
+export const _claimToBePaid = z.object({
+    id: numberSchema,
+    remarkForClinic: z.string(),
+    remarkForEmployee: z.string(),
+    totalEmployeeToPay: z.number(),
+    totalLkimToPay: z.number(),
+    treatments: treatments.array(),
+})
+
+
 
 // =================================================
 // Tuntutan Kakitangan Schema

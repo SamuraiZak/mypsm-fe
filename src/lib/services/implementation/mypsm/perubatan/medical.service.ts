@@ -1619,6 +1619,30 @@ export class MedicalServices {
             return CommonResponseConstant.httpError;
         }
     }
+    //add bil tuntutan klinik tanggungan
+    static async addClaimsLiabilities(param: object) {
+        try {
+            let url: Input = '';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
     //add bil tuntutan klinik supporter approver
     static async addClinicPanelClaimSupporterApproval(param: ClinicCommonResult) {
         try {
