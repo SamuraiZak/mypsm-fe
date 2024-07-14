@@ -3,8 +3,10 @@ import * as z from 'zod';
 export const AllowanceEndorsementSchema = z.object({
     allowanceId: z.number(),
     allowanceTypeCode: z.string(),
+    isDraft: z.boolean(),
     remark: z.string(),
     status: z.boolean(),
+    approvalDate: z.string(),
 });
 
 export const AllowanceEndorserDetailSchema = z.object({
@@ -12,6 +14,15 @@ export const AllowanceEndorserDetailSchema = z.object({
     allowanceTypeCode: z.string(),
     supporter: z.string(),
     approver: z.string(),
+    isDraft: z.boolean(),
+});
+
+export const AllowanceDirectorAssignSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    isDraft: z.boolean(),
+    director: z.string(),
+    type: z.string(),
 });
 
 // family detail schema
@@ -21,15 +32,34 @@ export const AllowanceFamilyDetailSchema = z.object({
     relationshipCode: z.string(),
 });
 
+export const DocumentSchema = z.object({
+    base64: z.string(),
+    name: z.string(),
+});
+
+export type DocumentType = z.infer<typeof DocumentSchema>;
 
 // Schema by type
 //  1. ceremony clothing
 export const AllowanceCeremonyClothingSchema = z.object({
+    allowanceId: z.number().optional(),
     allowanceTypeCode: z.string(),
     reason: z.string(),
-    personal: z.number().multipleOf(0.01),
-    partner: z.number().multipleOf(0.01),
+    personal: z.number().step(0.01),
+    partner: z.number().step(0.01),
+    ceremonyClothingPrevious: z.boolean(),
+    ceremonyClothingPreviousDate: z.string().nullish(),
+    blackTiePrevious: z.boolean(),
+    blackTiePreviousDate: z.null().nullish(),
+    officialClothingPrevious: z.boolean(),
+    officialClothingPreviousDate: z.string().nullish(),
+    isDraft: z.boolean(),
+    documents: z.array(DocumentSchema),
 });
+
+export type AllowanceCeremonyClothingDetailType = z.infer<
+    typeof AllowanceCeremonyClothingSchema
+>;
 
 //  2. winter clothing
 export const AllowanceWinterClothingSchema = z.object({

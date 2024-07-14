@@ -5,6 +5,7 @@ import type { SwitchRoleDTO } from '$lib/dto/core/user-account/user-account.dto'
 import {
     toasterCommon,
     toasterGetMethod,
+    toasterSwitchRole,
 } from '$lib/helpers/core/french-toast.helper';
 import type {
     AccountPasswordResetDTO,
@@ -16,7 +17,7 @@ import http from '../../service-provider.service';
 export class AccountServices {
     static async resetPassword(param: AccountPasswordResetDTO) {
         try {
-            let url: Input = 'url';
+            let url: Input = 'auth/reset_password';
             const promiseResponse: Promise<Response> = http
                 .post(url, {
                     body: JSON.stringify(param),
@@ -59,8 +60,7 @@ export class AccountServices {
     static async getAccountDetails() {
         try {
             let url: Input = 'auth/detail';
-            const promiseResponse: Promise<Response> = http.get(url, {}).json();
-            const response = await toasterGetMethod(promiseResponse);
+            const response: Response = await http.get(url, {}).json();
             const result = CommonResponseConvert.fromResponse(response);
             if (result.status == 'success') {
                 return result;
@@ -80,9 +80,10 @@ export class AccountServices {
                     body: JSON.stringify(param),
                 })
                 .json();
-            const response = await toasterCommon(promiseResponse);
+            const response = await toasterSwitchRole(promiseResponse);
             const result = CommonResponseConvert.fromResponse(response);
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;

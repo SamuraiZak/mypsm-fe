@@ -14,6 +14,34 @@ export const toasterCommon = async (promise: Promise<Response>) => {
     );
 };
 
+export const toasterFilteringData = async (promise: Promise<Response>) => {
+    return toast.promise(
+        promise,
+        {
+            loading: 'Sila tunggu sebentar...',
+            success: 'Tapisan data berjaya!',
+            error: 'Tapisan data gagal. Sila cuba lagi.',
+        },
+        {
+            style: 'background: #333; color: #fff;',
+        },
+    );
+};
+
+export const toasterSwitchRole = async (promise: Promise<Response>) => {
+    return toast.promise(
+        promise,
+        {
+            loading: 'Sila tunggu sebentar...',
+            success: 'Peranan berjaya ditukar!',
+            error: 'Peranan tidak berjaya ditukar. Sila cuba lagi.',
+        },
+        {
+            style: 'background: #333; color: #fff;',
+        },
+    );
+};
+
 export const toasterGetMethod = async (promise: Promise<Response>) => {
     return toast.promise(
         promise,

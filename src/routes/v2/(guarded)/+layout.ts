@@ -32,15 +32,12 @@ export async function load() {
     };
 
     const accountDetailResponse: CommonResponseDTO =
-        await SystemServices.getAccountDetails();
+        await AccountServices.getAccountDetails();
 
     if (accountDetailResponse.status == 'success') {
         accountDetails = accountDetailResponse.data
             ?.details as AccountDetailsDTO;
     }
-
-    // console.log(accountDetails);
-    // console.log(accountDetailResponse);
 
     return {
         props: {
@@ -64,7 +61,6 @@ export const _switchRole = async (params: SwitchRoleDTO) => {
         );
 
         if (isStored) {
-            await invalidateAll();
             goto('/v2/dashboard');
         } else {
             await getErrorToast();

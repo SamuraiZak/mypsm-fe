@@ -34,6 +34,7 @@
     import SvgDetailsIcon from '$lib/assets/svg/SvgDetailsIcon.svelte';
     import SvgEditIcons from '$lib/assets/svg/SvgEditIcons.svelte';
     import SvgSelectIcon from '$lib/assets/svg/SvgSelectIcon.svelte';
+    import { toasterCommon, toasterFilteringData } from '$lib/helpers/core/french-toast.helper';
 
     // =====================================================================
     // Variables
@@ -96,12 +97,14 @@
     // handle data fetch
     async function fetchData() {
         try {
-            const response: Response = await http
+            const promiseResponse: Promise<Response> = http
                 .post(tableData.url, {
                     body: CommonListRequestConvert.toJson(tableData.param),
                 })
                 .json();
 
+            const response = await toasterFilteringData(promiseResponse);
+            
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
