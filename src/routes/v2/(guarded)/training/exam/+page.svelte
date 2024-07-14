@@ -1,30 +1,30 @@
 <script lang="ts">
-    import type { CourseExamApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto';
+    import type { LayoutData } from './$types';
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
-    import type { LayoutData } from './$types';
+    import type { CourseExamDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam.dto';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
 
     export let data: LayoutData;
-    let rowData: CourseExamApplicationDetailResponseDTO;
+    let rowData: CourseExamDetailResponseDTO;
 
     // Table list - new application view for secretary role
     let examTable: TableSettingDTO = {
         param: data.param ?? data.param,
-        meta: data.responses.examApplicationResponse.data?.meta ?? {
+        meta: data.responses.examListResponse.data?.meta ?? {
             pageSize: 1,
             pageNum: 1,
             totalData: 1,
             totalPage: 1,
         },
-        data: data.responses.examApplicationResponse.data?.dataList ?? [],
+        data: data.responses.examListResponse.data?.dataList ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['applicationId', 'examId'],
+        hiddenColumn: ['id'],
         dictionary: [
             {
                 english: 'examTitle',
@@ -35,18 +35,6 @@
                 malay: 'Jenis Peperiksaan',
             },
             {
-                english: 'identityDocumentNumber',
-                malay: 'No. Kad Pengenalan',
-            },
-            {
-                english: 'examApplicationOpenDate',
-                malay: 'Tarikh Buka Permohonan Peperiksaan',
-            },
-            {
-                english: 'examApplicationCloseDate',
-                malay: 'Tarikh Tutup Permohonan Peperiksaan',
-            },
-            {
                 english: 'examDate',
                 malay: 'Tarikh Peperiksaan',
             },
@@ -54,20 +42,8 @@
                 english: 'examLocation',
                 malay: 'Lokasi Peperiksaan',
             },
-            {
-                english: 'examResult',
-                malay: 'Keputusan Peperiksaan',
-            },
-            {
-                english: 'examStatus',
-                malay: 'Status Peperiksaan',
-            },
-            {
-                english: 'examAttendance',
-                malay: 'Kehadiran',
-            },
         ],
-        url: 'course/exam_application/list',
+        url: 'course/exam/list',
         id: 'examTable',
         option: {
             checkbox: false,
@@ -77,14 +53,14 @@
             filter: true,
         },
         controls: {
-            add: data.roles.isStaffRole,
+            add: data.role.isCourseSecretaryRole,
         },
     };
 </script>
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Rekod Permohonan Peperiksaan"></ContentHeader>
+    <ContentHeader title="Rekod Jenis - Jenis Peperiksaan"></ContentHeader>
 </section>
 
 <!-- content body starts here -->
@@ -96,30 +72,18 @@
         class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
     >
         <DataTable
-            title="Senarai Permohonan Peperiksaan"
+            title="Senarai Peperiksaan"
             bind:tableData={examTable}
             bind:passData={rowData}
             detailActions={() => {
-                const route = `./record/${rowData.applicationId}`;
+                const route = `./exam/${rowData.id}`;
                 goto(route);
             }}
-            addActions={() =>
-                goto('./record/add-record')}
+            addActions={() => {
+                goto('./exam/add-exam');
+            }}
         >
             <FilterWrapper slot="filter">
-                <FilterTextField
-                    label="No. Kad Pengenalan"
-                    bind:inputValue={examTable.param.filter
-                        .identityDocumentNumber}
-                ></FilterTextField>
-                <FilterTextField
-                    label="Nombor Pekerja"
-                    bind:inputValue={examTable.param.filter.employeeNumber}
-                ></FilterTextField>
-                <FilterTextField
-                    label="Nama Pekerja"
-                    bind:inputValue={examTable.param.filter.employeeName}
-                ></FilterTextField>
                 <FilterTextField
                     label="Tajuk Peperiksaan"
                     bind:inputValue={examTable.param.filter.examTitle}
@@ -128,16 +92,6 @@
                     label="Jenis Peperiksaan"
                     options={data.selectionOptions.examTypeLookup}
                     bind:inputValue={examTable.param.filter.examTypeId}
-                ></FilterSelectField>
-                <FilterSelectField
-                    label="Keputusan Peperiksaan"
-                    options={data.selectionOptions.examResultLookup}
-                    bind:inputValue={examTable.param.filter.examResult}
-                ></FilterSelectField>
-                <FilterSelectField
-                    label="Status"
-                    options={data.selectionOptions.statusLookup}
-                    bind:inputValue={examTable.param.filter.examStatus}
                 ></FilterSelectField>
             </FilterWrapper>
         </DataTable>

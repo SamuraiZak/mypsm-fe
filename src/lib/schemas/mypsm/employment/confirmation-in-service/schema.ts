@@ -33,6 +33,7 @@ export const _confirmationApprovalSchema = z.object({
     status: booleanSchema,
     approvalDate: z.boolean().readonly(),
     isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean().default(false),
 });
 
 export const _confirmationDiciplinarySchema = z.object({
@@ -99,6 +100,7 @@ export const _confirmationMeetingResultSchema = z.object({
     meetingRemark: shortTextSchema,
     meetingResult: booleanSchema,
     isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean().default(false),
 });
 
 export const _updateConfirmationMeetingResultSchema =
