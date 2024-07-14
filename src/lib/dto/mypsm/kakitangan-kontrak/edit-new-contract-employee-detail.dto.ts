@@ -34,6 +34,7 @@ export interface EditNewContractEmployeeDetailDTO {
     employeePosition?:        string | null;
     relationshipId?:           number | null;
     isReadonly?:                boolean;
+    isDraft: boolean;
 }
 
 // Converts JSON strings to/from your types

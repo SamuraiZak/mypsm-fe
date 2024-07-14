@@ -2,7 +2,7 @@ import {
     booleanSchema,
     shortTextSchema,
 } from '$lib/schemas/common/schema-type';
-import { z } from 'zod';
+import { boolean, z } from 'zod';
 
 const stringToMinDate = z.string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' }).refine((val) => {
     const convertedStringToDate = new Date(val);
@@ -55,6 +55,7 @@ const yearSchema = z.number({
 //==================================================
 export const _addNewContractEmployeeSchema = z.object({
     candidateId: numberSchema.optional(),
+    id: numberSchema.nullish(),
     name: shortTextSchema,
     email: z.string({
         invalid_type_error: "Medan ini tidak boleh dibiar kosong."
@@ -68,6 +69,7 @@ export const _addNewContractEmployeeSchema = z.object({
     wageRate: numberSchema.refine(x => x > 0, { message: "Medan ini tidak boleh dibiar kosong." }),
     designation: shortTextSchema,
     reportDutyDate: stringToMinDate,
+    isDraft: booleanSchema,
 })
 
 export const _editNewContractEmployeeSchema = z.object({
@@ -106,6 +108,12 @@ export const _editNewContractEmployeeSchema = z.object({
     employeePosition: z.string().nullable().default(null),
     relationshipId: optionalNumberSchema,
     isReadonly: booleanSchema.default(false),
+    isDraft: booleanSchema,
+})
+
+const academicDoc = z.object({
+    base64: z.string(),
+    name: z.string(),
 })
 
 export const _addContractAcademicSchema = z.object({
@@ -119,6 +127,7 @@ export const _addContractAcademicSchema = z.object({
     completionDate: stringToMaxDate,
     finalGrade: shortTextSchema,
     field: shortTextSchema,
+    document: academicDoc,
 })
 
 export const _addContractExperienceSchema = z.object({

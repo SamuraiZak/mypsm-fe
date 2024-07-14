@@ -1,5 +1,5 @@
 export interface GetContractEmployeeOffer {
-    candidateId:   number | null;
+    applicationId:   number | null;
     candidateName: string;
     temporaryId:   string;
     email:         string;

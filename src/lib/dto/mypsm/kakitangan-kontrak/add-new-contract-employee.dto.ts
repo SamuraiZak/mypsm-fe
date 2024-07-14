@@ -1,5 +1,6 @@
 export interface AddNewContractEmployeeDTO {
     candidateId?:    number;
+    id?:            number | null;
     name:           string;
     email:          string;
     startContract:  string;
@@ -8,6 +9,7 @@ export interface AddNewContractEmployeeDTO {
     wageRate:       number;
     designation:    string;
     reportDutyDate: string;
+    isDraft: boolean;
 }
 // Converts JSON strings to/from your types
 

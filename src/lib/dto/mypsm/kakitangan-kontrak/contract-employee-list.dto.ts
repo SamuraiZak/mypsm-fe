@@ -1,5 +1,5 @@
 export interface ContractEmployeeListDTO {
-    candidateId:    number;
+    applicationId: number;
     candidateName:  string;
     temporaryId:    string;
     identityCardNo: string;

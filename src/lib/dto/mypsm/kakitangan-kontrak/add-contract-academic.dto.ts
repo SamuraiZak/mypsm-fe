@@ -1,5 +1,8 @@
+import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-document-request.dto";
+
 export interface AddNewContractEmployeeAcademicDTO {
     academics: ContractAcademic[];
+    isDraft: boolean;
 }
 
 export interface ContractAcademic {
@@ -13,6 +16,7 @@ export interface ContractAcademic {
     completionDate:   string;
     finalGrade:       string;
     field:            string;
+    document: DocumentBase64RequestDTO;
 }
 
 // Converts JSON strings to/from your types

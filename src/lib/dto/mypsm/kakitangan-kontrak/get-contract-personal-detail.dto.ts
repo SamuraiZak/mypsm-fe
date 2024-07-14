@@ -35,6 +35,7 @@ export interface GetContractPersonalDetailDTO {
     relationshipId:           number | null;
     phoneNumber?:              string;
     isReadonly?:              boolean;
+    isDraft: boolean;
 }
 
 // Converts JSON strings to/from your types
