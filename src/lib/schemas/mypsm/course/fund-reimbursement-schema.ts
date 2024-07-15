@@ -30,7 +30,7 @@ export const _fundReimbursementResponseSchema = z.object({
     LNPTAverage: z.number(),
     totalClaim: z.number(),
     status: z.string().readonly(),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 export const _fundReimbursementListResponseSchema = z.array(
@@ -168,7 +168,7 @@ export const _fundReimbursementApprovalSchema = z.object({
     remark: shortTextSchema,
     status: booleanSchema,
     approvalDate: z.string().readonly(),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 // ==================================================
@@ -179,7 +179,7 @@ export const _fundReimbursementDocumentSchema = z.object({
 });
 export const _fundReimbursementUploadDocSchema = z.object({
     // id: numberIdSchema,
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
     documents: z
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
         .refine((f) => f.size < 10_000_000, 'Maximum 10 MB saiz muat naik.')

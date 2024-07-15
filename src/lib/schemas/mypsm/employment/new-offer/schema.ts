@@ -21,7 +21,7 @@ export const _approverSchema = z.object({
     name: z.string(),
     results: z.array(_meetingResultEmployeeSchema),
     isReadonly: z.boolean().readonly(),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 export const _setApproverResultSchema = _approverSchema.omit({
@@ -33,7 +33,7 @@ export const _createMeetingBatchSchema = z.object({
     meetingGroupName: codeSchema,
     meetingDate: requiredDateStringSchema,
     employees: z.array(z.object({ employeeId: z.number() })),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 export const _newOfferMeetingListSchema = z.object({
@@ -130,7 +130,7 @@ export const _supporterApproverSchema = z.object({
     supporterId: numberIdSchema,
     approverId: numberIdSchema,
     isReadonly: z.boolean().readonly(),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 export const _setSupporterApproverSchema = _supporterApproverSchema
@@ -160,7 +160,7 @@ export const _meetingResultSchema = z.object({
     meetingDate: z.string().readonly(),
     employees: z.array(_meetingResultEmployeeSchema),
     isReadonly: z.boolean().readonly(),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 export const _updateMeetingResultSchema = z.object({
@@ -171,7 +171,7 @@ export const _updateMeetingResultSchema = z.object({
 export const _processSchema = z.object({
     employees: z.array(_processEmployeeSchema),
     isReadonly: z.boolean().readonly(),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 export const _updateProcessSchema = z.object({

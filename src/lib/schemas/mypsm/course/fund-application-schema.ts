@@ -51,7 +51,7 @@ export const _fundApplicationDetailResponseSchema = z.object({
     applicationTypeId: z
         .array(z.number())
         .min(1, { message: 'Sila pilih pilihan anda.' }),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 export const _createFundApplicationRequestSchema =
@@ -146,7 +146,7 @@ export const _fundApplicationServiceInfoResponseSchema = z
 export const _setApproversSchema = z.object({
     id: z.number().readonly(),
     supporterId: numberIdSchema,
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 // ==================================================
@@ -156,7 +156,7 @@ export const _fundApplicationApprovalSchema = z.object({
     id: numberIdSchema,
     remark: shortTextSchema,
     status: booleanSchema,
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 // ==================================================
@@ -167,7 +167,7 @@ export const _fundApplicationDocumentSchema = z.object({
 });
 export const _fundApplicationUploadDocSchema = z.object({
     // id: numberIdSchema,
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
     documents: z
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
         .refine((f) => f.size < 10_000_000, 'Maximum 10 MB saiz muat naik.')
