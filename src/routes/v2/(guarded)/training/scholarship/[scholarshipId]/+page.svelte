@@ -150,15 +150,15 @@
                 const applicationTypeIdLastIndex =
                     $form.applicationTypeId.length - 1;
 
-                if ($form.applicationTypeId[applicationTypeIdLastIndex] === 8) {
-                    $form.applicationTypeId = $form.applicationTypeId.filter(
-                        (id) => id !== 9,
-                    );
-                } else if (
-                    $form.applicationTypeId[applicationTypeIdLastIndex] === 9
-                ) {
+                if ($form.applicationTypeId[applicationTypeIdLastIndex] === 7) {
                     $form.applicationTypeId = $form.applicationTypeId.filter(
                         (id) => id !== 8,
+                    );
+                } else if (
+                    $form.applicationTypeId[applicationTypeIdLastIndex] === 8
+                ) {
+                    $form.applicationTypeId = $form.applicationTypeId.filter(
+                        (id) => id !== 7,
                     );
                 }
             },
@@ -185,10 +185,10 @@
         multipleSubmits: 'prevent',
         validationMethod: 'auto',
         validators: zod(_setApproversSchema),
-        onSubmit(formData) {
+        onSubmit() {
             _submitSecretarySetApproverForm(
                 Number(data.params.scholarshipId),
-                formData.formData,
+                $form,
             );
         },
     });
@@ -872,7 +872,7 @@
                             disabled
                             isRequired={false}
                             id="salaryEffectiveDate"
-                            type="number"
+                            type="date"
                             label={'Tarikh Berkuatkuasa'}
                             placeholder="-"
                             bind:val={$serviceInfoForm.salaryEffectiveDate}
@@ -1018,11 +1018,11 @@
                     <CustomTextField
                         disabled={!$fundApplicationIsDraft}
                         errors={$errors.entryDateToInstituition}
-                        id="courseApplicationDate"
+                        id="entryDateToInstituition"
                         label="Tarikh Kemasukan Ke IPTA"
                         type="date"
                         placeholder="-"
-                        bind:val={$form.courseApplicationDate}
+                        bind:val={$form.entryDateToInstituition}
                     ></CustomTextField>
 
                     <CustomTextField
@@ -1045,7 +1045,9 @@
                             <span class="text-base text-system-danger">*</span>
                         </label>
                         <Checkbox
-                            class={'text-ios-labelColors-secondaryLabel-light'}
+                            class={$fundApplicationIsDraft
+                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                : ''}
                             disabled={!$fundApplicationIsDraft}
                             checked={$form.educationTypeId.includes(1)}
                             bind:group={$form.educationTypeId}
@@ -1055,7 +1057,9 @@
                                 .name}</Checkbox
                         >
                         <Checkbox
-                            class={'text-ios-labelColors-secondaryLabel-light'}
+                            class={$fundApplicationIsDraft
+                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                : ''}
                             disabled={!$fundApplicationIsDraft}
                             checked={$form.educationTypeId.includes(2)}
                             bind:group={$form.educationTypeId}
@@ -1065,7 +1069,9 @@
                                 .name}</Checkbox
                         >
                         <Checkbox
-                            class={'text-ios-labelColors-secondaryLabel-light'}
+                            class={$fundApplicationIsDraft
+                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                : ''}
                             disabled={!$fundApplicationIsDraft}
                             checked={$form.educationTypeId.includes(3)}
                             bind:group={$form.educationTypeId}
@@ -1075,7 +1081,9 @@
                                 .name}</Checkbox
                         >
                         <Checkbox
-                            class={'text-ios-labelColors-secondaryLabel-light'}
+                            class={$fundApplicationIsDraft
+                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                : ''}
                             disabled={!$fundApplicationIsDraft}
                             checked={$form.educationTypeId.includes(4)}
                             bind:group={$form.educationTypeId}
@@ -1096,7 +1104,9 @@
                             <span class="text-base text-system-danger">*</span>
                         </label>
                         <Checkbox
-                            class={'text-ios-labelColors-secondaryLabel-light'}
+                            class={$fundApplicationIsDraft
+                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                : ''}
                             disabled={!$fundApplicationIsDraft}
                             checked={$form.applicationTypeId.includes(1)}
                             bind:group={$form.applicationTypeId}
@@ -1106,7 +1116,9 @@
                                 .name}</Checkbox
                         >
                         <Checkbox
-                            class={'text-ios-labelColors-secondaryLabel-light'}
+                            class={$fundApplicationIsDraft
+                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                : ''}
                             disabled={!$fundApplicationIsDraft}
                             checked={$form.applicationTypeId.includes(2)}
                             bind:group={$form.applicationTypeId}
@@ -1116,7 +1128,9 @@
                                 .name}</Checkbox
                         >
                         <Checkbox
-                            class={'text-ios-labelColors-secondaryLabel-light'}
+                            class={$fundApplicationIsDraft
+                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                : ''}
                             disabled={!$fundApplicationIsDraft}
                             checked={$form.applicationTypeId.includes(3)}
                             bind:group={$form.applicationTypeId}
@@ -1126,7 +1140,9 @@
                                 .name}</Checkbox
                         >
                         <Checkbox
-                            class={'text-ios-labelColors-secondaryLabel-light'}
+                            class={$fundApplicationIsDraft
+                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                : ''}
                             disabled={!$fundApplicationIsDraft}
                             checked={$form.applicationTypeId.includes(4)}
                             bind:group={$form.applicationTypeId}
@@ -1136,7 +1152,9 @@
                                 .name}</Checkbox
                         >
                         <Checkbox
-                            class={'text-ios-labelColors-secondaryLabel-light'}
+                            class={$fundApplicationIsDraft
+                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                : ''}
                             disabled={!$fundApplicationIsDraft}
                             checked={$form.applicationTypeId.includes(5)}
                             bind:group={$form.applicationTypeId}
@@ -1333,7 +1351,7 @@
         {#if $fundApplicationFileUploadPass && !$fundApplicationDocumentIsDraft}
             <StepperContent>
                 <StepperContentHeader
-                    title="Tetapan Penyokong (Pengarah Bahagian/Negeri) (Jika Sah)"
+                    title="Tetapan Penyokong (Pengarah Bahagian/Negeri)"
                 >
                     {#if $fundApplicationSecretarySetApproversIsDraft && data.role.isCourseSecretaryRole}
                         <TextIconButton

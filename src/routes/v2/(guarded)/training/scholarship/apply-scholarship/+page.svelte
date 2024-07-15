@@ -52,15 +52,15 @@
             const applicationTypeIdLastIndex =
                 $form.applicationTypeId.length - 1;
 
-            if ($form.applicationTypeId[applicationTypeIdLastIndex] === 8) {
-                $form.applicationTypeId = $form.applicationTypeId.filter(
-                    (id) => id !== 9,
-                );
-            } else if (
-                $form.applicationTypeId[applicationTypeIdLastIndex] === 9
-            ) {
+            if ($form.applicationTypeId[applicationTypeIdLastIndex] === 7) {
                 $form.applicationTypeId = $form.applicationTypeId.filter(
                     (id) => id !== 8,
+                );
+            } else if (
+                $form.applicationTypeId[applicationTypeIdLastIndex] === 8
+            ) {
+                $form.applicationTypeId = $form.applicationTypeId.filter(
+                    (id) => id !== 7,
                 );
             }
         },

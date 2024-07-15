@@ -59,8 +59,8 @@
         : isReadonlySecretaryApprovalResult.set(true);
 
     $: data.responses.courseExamResultResponse.data?.details.isDraft === true
-        ? panelExamResultIsDraft.set(false)
-        : panelExamResultIsDraft.set(true);
+        ? panelExamResultIsDraft.set(true)
+        : panelExamResultIsDraft.set(false);
 
     $: data.responses.courseExamResultResponse.data?.details.examResult === ''
         ? isReadonlyExamResult.set(false)
@@ -657,7 +657,7 @@
                             disabled
                             isRequired={false}
                             id="salaryEffectiveDate"
-                            type="number"
+                            type="date"
                             label={'Tarikh Berkuatkuasa'}
                             placeholder="-"
                             bind:val={$serviceInfoForm.salaryEffectiveDate}
@@ -872,8 +872,7 @@
 
                     <CustomTextField
                         disabled={!data.role.isCourseSecretaryRole ||
-                            !$examSecretaryApprovalResultIsDraft ||
-                            $isReadonlySecretaryApprovalResult}
+                            !$examSecretaryApprovalResultIsDraft}
                         errors={$secretaryApprovalInfoErrors.remark}
                         id="remark"
                         label="Tindakan/Ulasan"
@@ -883,8 +882,7 @@
                     <CustomRadioBoolean
                         disabled={!!(
                             !data.role.isCourseSecretaryRole ||
-                            !$examSecretaryApprovalResultIsDraft ||
-                            $isReadonlySecretaryApprovalResult
+                            !$examSecretaryApprovalResultIsDraft
                         )}
                         errors={$secretaryApprovalInfoErrors.status}
                         id="status"
@@ -908,10 +906,10 @@
             <hr />
         </StepperContentBody>
     </StepperContent>
-    {#if $isReadonlySecretaryApprovalResult}
+    {#if $isReadonlySecretaryApprovalResult && !$examSecretaryApprovalResultIsDraft}
         <StepperContent>
             <StepperContentHeader title="Keputusan Panel">
-                {#if !$examApplicationIsFail && $panelExamResultIsDraft && !$isReadonlyExamResult && data.role.isCourseSecretaryRole}
+                {#if !$examApplicationIsFail && ($panelExamResultIsDraft || !$isReadonlyExamResult) && data.role.isCourseSecretaryRole}
                     <TextIconButton
                         type="neutral"
                         label="Simpan"
@@ -955,8 +953,7 @@
 
                     {#if !$examApplicationIsFail && (($isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole) || ($isReadonlyExamResult && (!data.role.isCourseSecretaryRole || data.role.isCourseSecretaryRole)))}
                         <CustomTextField
-                            disabled={$isReadonlyExamResult ||
-                                !$panelExamResultIsDraft}
+                            disabled={!$panelExamResultIsDraft}
                             errors={$examResultInfoErrors.examRemark}
                             id="examRemark"
                             label="Catatan"
@@ -965,8 +962,7 @@
                         ></CustomTextField>
 
                         <CustomSelectField
-                            disabled={$isReadonlyExamResult ||
-                                !$panelExamResultIsDraft}
+                            disabled={!$panelExamResultIsDraft}
                             errors={$examResultInfoErrors.examResult}
                             id="examResult"
                             label="Keputusan Panel"
