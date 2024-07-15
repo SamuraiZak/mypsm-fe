@@ -45,8 +45,6 @@ export async function load({ params, parent }) {
 
     const currentRoleCode = layoutData.accountDetails.currentRoleCode;
 
-    currentRoleCode === RoleConstant.urusSetiaLatihan.code;
-
     const idRequestBody: commonIdRequestDTO = {
         id: Number(params.scholarshipId),
     };
@@ -58,7 +56,7 @@ export async function load({ params, parent }) {
     const isIntegritySecretaryRole: boolean =
         currentRoleCode === RoleConstant.urusSetiaIntegriti.code;
     const isStateDirectorRole: boolean =
-        currentRoleCode === RoleConstant.pengarahNegeri.code;
+        currentRoleCode === RoleConstant.kakitangan.code;
     const isUnitDirectorRole: boolean =
         currentRoleCode === RoleConstant.kakitangan.code;
 
