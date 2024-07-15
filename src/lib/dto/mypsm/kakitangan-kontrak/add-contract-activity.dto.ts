@@ -1,5 +1,6 @@
 export interface AddNewContractEmployeeActivityDTO {
     activities: ContractActivity[];
+    isDraft: boolean;
 }
 
 export interface ContractActivity {

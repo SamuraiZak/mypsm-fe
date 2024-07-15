@@ -1,5 +1,6 @@
 export interface AddNewContractEmployeeExperienceDTO {
     experiences: ContractExperience[];
+    isDraft: boolean;
 }
 
 export interface ContractExperience {

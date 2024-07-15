@@ -1,5 +1,6 @@
 export interface AddContractNextOfKinDTO {
     nextOfKins: NextOfKin[];
+    isDraft: boolean;
 }
 
 export interface NextOfKin {
@@ -12,7 +13,7 @@ export interface NextOfKin {
     maritalId:              number;
     genderId:               number;
     name:                   string;
-    alternativeName:        string;
+    alternativeName:        string | null;
     identityDocumentColor:  string;
     identityDocumentNumber: string;
     address:                string;

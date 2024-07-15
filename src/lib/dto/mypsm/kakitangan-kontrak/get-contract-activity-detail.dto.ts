@@ -1,6 +1,7 @@
 export interface GetContractActivityDetailDTO {
     activityList: ActivityList[];
     isReadonly:   boolean;
+    isDraft: boolean;
 }
 
 export interface ActivityList {

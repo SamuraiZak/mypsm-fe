@@ -128,6 +128,7 @@ export const _addContractAcademicSchema = z.object({
     finalGrade: shortTextSchema,
     field: shortTextSchema,
     document: academicDoc,
+    isDraft: booleanSchema,
 })
 
 export const _addContractExperienceSchema = z.object({
@@ -138,6 +139,7 @@ export const _addContractExperienceSchema = z.object({
     startDate: stringToMaxDate,
     endDate: stringToMaxDate,
     salary: numberSchema,
+    isDraft: booleanSchema,
 })
 
 export const _addContractActivitySchema = z.object({
@@ -145,6 +147,7 @@ export const _addContractActivitySchema = z.object({
     joinDate: stringToMaxDate,
     position: shortTextSchema,
     description: shortTextSchema,
+    isDraft: booleanSchema,
 })
 
 export const _commonContractDependencySchema = z.object({
@@ -175,6 +178,7 @@ export const _uploadDocSchema = z.object({
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
         .refine((f) => f.size < 10_000_000, 'Maximum 10 MB saiz muat naik.')
         .nullable(),
+    isDraft: booleanSchema,
 });
 
 export const _addContractViewSecretaryUpdate = z.object({

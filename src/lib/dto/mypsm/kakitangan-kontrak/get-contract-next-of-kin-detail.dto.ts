@@ -1,6 +1,7 @@
 export interface GetContractNextOfKinDetailDTO {
     nextOfKinList: NextOfKinList[];
     isReadonly:    boolean;
+    isDraft: boolean;
 }
 
 export interface NextOfKinList {
