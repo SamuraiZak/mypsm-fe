@@ -19,9 +19,10 @@ import {
     CommonResponseConvert,
     type CommonResponseDTO,
 } from '$lib/dto/core/common/common-response.dto';
+import type { AccountDetailsRequestDTO } from '$lib/dto/core/user-account/user-account.dto';
+import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import type { Input } from 'ky';
 import http from '../../service-provider.service';
-import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 
 export class AccountServices {
     // get account details
@@ -38,6 +39,37 @@ export class AccountServices {
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // update password service
+    static async getTargetEmployeesDetail(param: AccountDetailsRequestDTO) {
+        try {
+            let url: Input = 'account/current_detail';
+
+            const response: Response = await http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                let errorResult: CommonResponseConstant = {
+                    status: 'error',
+                    message: result.message,
+                    data: {
+                        details: {},
+                        dataList: [],
+                    },
+                };
+                return errorResult;
             }
         } catch (error) {
             return CommonResponseConstant.httpError;

@@ -18,3 +18,7 @@ export interface Role {
 export interface SwitchRoleDTO {
     roleCode: string;
 }
+
+export interface AccountDetailsRequestDTO {
+    employeeId: number;
+}
