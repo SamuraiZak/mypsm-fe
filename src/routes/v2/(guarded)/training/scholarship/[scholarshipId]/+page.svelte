@@ -1399,7 +1399,7 @@
                     <StepperContentHeader
                         title="Keputusan daripada Peranan - Peranan Lain"
                     >
-                        {#if !$fundApplicationIsFail && !$isReadonlyStateUnitDirectorApprovalResult && (data.role.isStateDirectorRole || data.role.isUnitDirectorRole)}
+                        {#if !$fundApplicationIsFail && (!$isReadonlyStateUnitDirectorApprovalResult || $stateUnitDirectorApprovalResultIsDraft) && (data.role.isStateDirectorRole || data.role.isUnitDirectorRole)}
                             <TextIconButton
                                 type="neutral"
                                 label="Simpan"
@@ -1416,7 +1416,7 @@
                                     $stateUnitDirectorApprovalInfoForm.isDraft = false;
                                 }}
                             />
-                        {:else if !$fundApplicationIsFail && $isReadonlyStateUnitDirectorApprovalResult && !$isReadonlyIntegritySecretaryApprovalResult && data.role.isIntegritySecretaryRole && !$stateUnitDirectorApprovalResultIsDraft}
+                        {:else if !$fundApplicationIsFail && (($isReadonlyStateUnitDirectorApprovalResult && !$isReadonlyIntegritySecretaryApprovalResult) || $integritySecretaryApprovalResultIsDraft) && data.role.isIntegritySecretaryRole && !$stateUnitDirectorApprovalResultIsDraft}
                             <TextIconButton
                                 type="neutral"
                                 label="Simpan"
@@ -1433,7 +1433,7 @@
                                     $integritySecretaryApprovalInfoForm.isDraft = false;
                                 }}
                             />
-                        {:else if !$fundApplicationIsFail && $isReadonlyStateUnitDirectorApprovalResult && $isReadonlyIntegritySecretaryApprovalResult && !$isReadonlyCourseSecretaryApprovalResult && data.role.isCourseSecretaryRole && !$integritySecretaryApprovalResultIsDraft}
+                        {:else if !$fundApplicationIsFail && (($isReadonlyStateUnitDirectorApprovalResult && $isReadonlyIntegritySecretaryApprovalResult && !$isReadonlyCourseSecretaryApprovalResult) || $courseSecretaryApprovalResultIsDraft) && data.role.isCourseSecretaryRole && !$integritySecretaryApprovalResultIsDraft}
                             <TextIconButton
                                 type="neutral"
                                 label="Simpan"
@@ -1454,7 +1454,7 @@
                     </StepperContentHeader>
                     <StepperContentBody>
                         <div class="flex w-full flex-col gap-2.5">
-                            {#if !$fundApplicationIsFail && !$isReadonlyStateUnitDirectorApprovalResult && (data.role.isStateDirectorRole || data.role.isUnitDirectorRole)}
+                            {#if !$fundApplicationIsFail && (!$isReadonlyStateUnitDirectorApprovalResult || $stateUnitDirectorApprovalResultIsDraft) && (data.role.isStateDirectorRole || data.role.isUnitDirectorRole)}
                                 <form
                                     id="stateUnitDirectorApprovalForm"
                                     method="POST"
@@ -1467,16 +1467,14 @@
                                         >
                                     </div>
                                     <CustomTextField
-                                        disabled={$isReadonlyStateUnitDirectorApprovalResult &&
-                                            !$stateUnitDirectorApprovalResultIsDraft}
+                                        disabled={!$stateUnitDirectorApprovalResultIsDraft}
                                         errors={$stateUnitDirectorApprovalInfoErrors.remark}
                                         id="approverRemark"
                                         label="Tindakan/Ulasan"
                                         bind:val={$stateUnitDirectorApprovalInfoForm.remark}
                                     ></CustomTextField>
                                     <CustomRadioBoolean
-                                        disabled={$isReadonlyStateUnitDirectorApprovalResult &&
-                                            !$stateUnitDirectorApprovalResultIsDraft}
+                                        disabled={!$stateUnitDirectorApprovalResultIsDraft}
                                         errors={$stateUnitDirectorApprovalInfoErrors.status}
                                         id="approverIsApproved"
                                         options={supportOptions}
@@ -1484,7 +1482,7 @@
                                         bind:val={$stateUnitDirectorApprovalInfoForm.status}
                                     ></CustomRadioBoolean>
                                 </form>
-                            {:else if !$fundApplicationIsFail && $isReadonlyStateUnitDirectorApprovalResult && !$isReadonlyIntegritySecretaryApprovalResult && data.role.isIntegritySecretaryRole && !$stateUnitDirectorApprovalResultIsDraft}
+                            {:else if !$fundApplicationIsFail && (($isReadonlyStateUnitDirectorApprovalResult && !$isReadonlyIntegritySecretaryApprovalResult) || $integritySecretaryApprovalResultIsDraft) && data.role.isIntegritySecretaryRole && !$stateUnitDirectorApprovalResultIsDraft}
                                 <form
                                     id="integritySecretaryApprovalForm"
                                     method="POST"
@@ -1497,16 +1495,14 @@
                                         >
                                     </div>
                                     <CustomTextField
-                                        disabled={$isReadonlyIntegritySecretaryApprovalResult &&
-                                            !$integritySecretaryApprovalResultIsDraft}
+                                        disabled={!$integritySecretaryApprovalResultIsDraft}
                                         errors={$integritySecretaryApprovalInfoErrors.remark}
                                         id="approverRemark"
                                         label="Tindakan/Ulasan"
                                         bind:val={$integritySecretaryApprovalInfoForm.remark}
                                     ></CustomTextField>
                                     <CustomRadioBoolean
-                                        disabled={$isReadonlyIntegritySecretaryApprovalResult &&
-                                            !$integritySecretaryApprovalResultIsDraft}
+                                        disabled={!$integritySecretaryApprovalResultIsDraft}
                                         errors={$integritySecretaryApprovalInfoErrors.status}
                                         id="approverIsApproved"
                                         options={integrityOptions}
@@ -1514,7 +1510,7 @@
                                         bind:val={$integritySecretaryApprovalInfoForm.status}
                                     ></CustomRadioBoolean>
                                 </form>
-                            {:else if !$fundApplicationIsFail && $isReadonlyStateUnitDirectorApprovalResult && $isReadonlyIntegritySecretaryApprovalResult && !$isReadonlyCourseSecretaryApprovalResult && data.role.isCourseSecretaryRole && !$integritySecretaryApprovalResultIsDraft}
+                            {:else if !$fundApplicationIsFail && (($isReadonlyStateUnitDirectorApprovalResult && $isReadonlyIntegritySecretaryApprovalResult && !$isReadonlyCourseSecretaryApprovalResult) || $courseSecretaryApprovalResultIsDraft) && data.role.isCourseSecretaryRole && !$integritySecretaryApprovalResultIsDraft}
                                 <form
                                     id="courseSecretaryApprovalForm"
                                     method="POST"
@@ -1527,16 +1523,14 @@
                                         >
                                     </div>
                                     <CustomTextField
-                                        disabled={$isReadonlyCourseSecretaryApprovalResult &&
-                                            !$courseSecretaryApprovalResultIsDraft}
+                                        disabled={!$courseSecretaryApprovalResultIsDraft}
                                         errors={$courseSecretaryApprovalInfoErrors.remark}
                                         id="supporterRemark"
                                         label="Tindakan/Ulasan"
                                         bind:val={$courseSecretaryApprovalInfoForm.remark}
                                     ></CustomTextField>
                                     <CustomRadioBoolean
-                                        disabled={$isReadonlyCourseSecretaryApprovalResult &&
-                                            !$courseSecretaryApprovalResultIsDraft}
+                                        disabled={!$courseSecretaryApprovalResultIsDraft}
                                         errors={$courseSecretaryApprovalInfoErrors.status}
                                         id="supporterIsApproved"
                                         options={certifyOptions}
