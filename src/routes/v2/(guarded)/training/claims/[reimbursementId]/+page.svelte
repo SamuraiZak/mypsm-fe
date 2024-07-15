@@ -116,7 +116,8 @@
         enhance: fundReimbursementUploadDocumentEnhance,
     } = superForm(data.forms.fundReimbursementUploadDocumentForm, {
         SPA: true,
-        resetForm: false,
+        invalidateAll: true,
+        resetForm: true,
         id: 'documentUploadForm',
         validators: zod(_fundReimbursementUploadDocSchema),
         onSubmit() {
@@ -704,7 +705,7 @@
                             disabled
                             isRequired={false}
                             id="salaryEffectiveDate"
-                            type="number"
+                            type="date"
                             label={'Tarikh Berkuatkuasa'}
                             placeholder="-"
                             bind:val={$serviceInfoForm.salaryEffectiveDate}
