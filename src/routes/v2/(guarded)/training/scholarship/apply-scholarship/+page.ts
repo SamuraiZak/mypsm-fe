@@ -69,7 +69,7 @@ export const _createFundApplicationForm = async (formData: object) => {
 
     if (response.status === 'success')
         setTimeout(() => {
-            goto(`../pembiayaan/${response.data?.details.id}`);
+            goto(`../scholarship/${response.data?.details.id}`);
         }, 1000);
 
     return { response };
