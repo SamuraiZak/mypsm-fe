@@ -1,4 +1,3 @@
-import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant.js';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
@@ -6,10 +5,10 @@ import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { ConfirmationServices } from '$lib/services/implementation/mypsm/employment/confirmation-in-service/confirmation.service';
 
-export const load = async () => {
-    const currentRoleCode = localStorage.getItem(
-        LocalStorageKeyConstant.currentRoleCode,
-    );
+export const load = async ({ parent }) => {
+    const { layoutData } = await parent();
+
+    const currentRoleCode = layoutData.accountDetails.currentRoleCode;
 
     const isStaffRole = currentRoleCode === RoleConstant.kakitangan.code;
 

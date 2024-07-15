@@ -60,7 +60,7 @@ export async function load({ params, parent }) {
     const isStateDirectorRole: boolean =
         currentRoleCode === RoleConstant.pengarahNegeri.code;
     const isUnitDirectorRole: boolean =
-        currentRoleCode === RoleConstant.pengarahBahagian.code;
+        currentRoleCode === RoleConstant.kakitangan.code;
 
     let fundApplicationDetailResponse: CommonResponseDTO = {};
     let fundApplicationPersonalDetailResponse: CommonResponseDTO = {};
@@ -300,14 +300,6 @@ export async function load({ params, parent }) {
 
     // ===========================================================================
 
-    const schemeLookupResponse: CommonResponseDTO =
-        await LookupServices.getSchemeEnums();
-
-    const schemeLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsInString(schemeLookupResponse);
-
-    // ===========================================================================
-
     const groupLookupResponse: CommonResponseDTO =
         await LookupServices.getServiceGroupEnums();
 
@@ -317,7 +309,7 @@ export async function load({ params, parent }) {
     // ===========================================================================
 
     const programLookupResponse: CommonResponseDTO =
-        await LookupServices.getProgrammeEnums();
+        await LookupServices.getUnitEnums();
 
     const programLookup: DropdownDTO[] =
         LookupServices.setSelectOptionsValueIsDescription(
@@ -419,7 +411,6 @@ export async function load({ params, parent }) {
             placementLookup,
             serviceTypeLookup,
             retirementBenefitLookup,
-            schemeLookup,
             groupLookup,
             fundApplicationTypeLookup,
             programLookup,

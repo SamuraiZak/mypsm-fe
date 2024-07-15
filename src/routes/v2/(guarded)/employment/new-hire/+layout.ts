@@ -1,4 +1,3 @@
-import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant.js';
 import { RoleConstant } from '$lib/constants/core/role.constant.js';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
@@ -9,7 +8,7 @@ import { EmploymentServices } from '$lib/services/implementation/mypsm/perjawata
 
 // guard code WIP
 
-export const load = async () => {
+export const load = async ({ parent }) => {
     let candidateViewResponse: CommonResponseDTO = {};
     let candidateViewTable = [];
     let newCandidateResponse: CommonResponseDTO = {};
@@ -21,9 +20,9 @@ export const load = async () => {
     let approverViewResponse: CommonResponseDTO = {};
     let approverViewList = [];
 
-    const currentRoleCode = localStorage.getItem(
-        LocalStorageKeyConstant.currentRoleCode,
-    );
+    const { layoutData } = await parent();
+
+    const currentRoleCode = layoutData.accountDetails.currentRoleCode;
 
     const isCandidateRole = currentRoleCode === RoleConstant.calon.code;
     const isEmploymentSecretaryRole =

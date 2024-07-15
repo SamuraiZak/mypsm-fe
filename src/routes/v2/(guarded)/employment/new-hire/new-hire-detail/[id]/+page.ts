@@ -1,4 +1,3 @@
-import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { DocumentBase64RequestDTO } from '$lib/dto/core/common/base-64-document-request.dto';
 import type { CandidateIDRequestBody } from '$lib/dto/core/common/candidate-id-request.view-dto';
@@ -78,16 +77,16 @@ import { superValidate } from 'sveltekit-superforms/client';
 // const authorisedRoleCode : string[] = [
 //     UserRoleConstants.calon
 // ];
-export async function load({ params }) {
+export async function load({ params, parent }) {
     // const currentLoggedInUser = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode);
 
     const newHireId: number = Number(params.id);
 
     let newHireStatusResponse: CommonResponseDTO = {};
 
-    const currentRoleCode = localStorage.getItem(
-        LocalStorageKeyConstant.currentRoleCode,
-    );
+    const { layoutData } = await parent();
+
+    const currentRoleCode = layoutData.accountDetails.currentRoleCode;
 
     const isEmploymentSecretaryRole =
         currentRoleCode === RoleConstant.urusSetiaPerjawatan.code;
@@ -807,7 +806,7 @@ export const _submitDocumentForm = async (isDraft: boolean, files: File[]) => {
     const base64String = await _fileToBase64String(files[0]);
 
     const requestBody: {
-        isDraft: boolean,
+        isDraft: boolean;
         document?: DocumentBase64RequestDTO | undefined;
     } = {
         isDraft: isDraft,
@@ -851,7 +850,10 @@ export const _submitAcademicInfoForm = async (
     return { response };
 };
 
-export const _submitExperienceInfoForm = async (isDraft: boolean, formData: Experience[]) => {
+export const _submitExperienceInfoForm = async (
+    isDraft: boolean,
+    formData: Experience[],
+) => {
     if (formData.length < 1) {
         getErrorToast();
         return fail(400);
@@ -869,7 +871,10 @@ export const _submitExperienceInfoForm = async (isDraft: boolean, formData: Expe
     return { response };
 };
 
-export const _submitActivityInfoForm = async (isDraft: boolean, formData: Activity[]) => {
+export const _submitActivityInfoForm = async (
+    isDraft: boolean,
+    formData: Activity[],
+) => {
     if (formData.length < 1) {
         getErrorToast();
         return fail(400);
@@ -887,7 +892,10 @@ export const _submitActivityInfoForm = async (isDraft: boolean, formData: Activi
     return { response };
 };
 
-export const _submitFamilyInfoForm = async (isDraft: boolean, formData: Family[]) => {
+export const _submitFamilyInfoForm = async (
+    isDraft: boolean,
+    formData: Family[],
+) => {
     if (formData.length < 1) {
         getErrorToast();
         return fail(400);
@@ -905,7 +913,10 @@ export const _submitFamilyInfoForm = async (isDraft: boolean, formData: Family[]
     return { response };
 };
 
-export const _submitDependencyInfoForm = async (isDraft: boolean, formData: Dependency[]) => {
+export const _submitDependencyInfoForm = async (
+    isDraft: boolean,
+    formData: Dependency[],
+) => {
     if (formData.length < 1) {
         getErrorToast();
         return fail(400);
@@ -923,7 +934,10 @@ export const _submitDependencyInfoForm = async (isDraft: boolean, formData: Depe
     return { response };
 };
 
-export const _submitNextOfKinInfoForm = async (isDraft: boolean, formData: NextOfKin[]) => {
+export const _submitNextOfKinInfoForm = async (
+    isDraft: boolean,
+    formData: NextOfKin[],
+) => {
     if (formData.length < 1) {
         getErrorToast();
         return fail(400);
