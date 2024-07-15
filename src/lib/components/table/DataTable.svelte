@@ -18,7 +18,7 @@
     import { TextAppearanceHelper } from '$lib/helpers/core/text-appearance.helper';
     import { TableHelper } from '$lib/helpers/table-helper/table-helper';
     import http from '$lib/services/implementation/service-provider.service';
-    import { onMount } from 'svelte';
+    import { afterUpdate, onMount } from 'svelte';
     import IconButton from '../button/IconButton.svelte';
     import ImpactButton from '../button/ImpactButton.svelte';
     import TableCellButton from '../button/TableCellButton.svelte';
@@ -34,7 +34,10 @@
     import SvgDetailsIcon from '$lib/assets/svg/SvgDetailsIcon.svelte';
     import SvgEditIcons from '$lib/assets/svg/SvgEditIcons.svelte';
     import SvgSelectIcon from '$lib/assets/svg/SvgSelectIcon.svelte';
-    import { toasterCommon, toasterFilteringData } from '$lib/helpers/core/french-toast.helper';
+    import {
+        toasterCommon,
+        toasterFilteringData,
+    } from '$lib/helpers/core/french-toast.helper';
 
     // =====================================================================
     // Variables
@@ -65,6 +68,7 @@
 
     // action when add button is clicked
     export let addActions = () => {};
+
 
     // page size options
     const pageSizeOption = [
@@ -104,7 +108,7 @@
                 .json();
 
             const response = await toasterFilteringData(promiseResponse);
-            
+
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {

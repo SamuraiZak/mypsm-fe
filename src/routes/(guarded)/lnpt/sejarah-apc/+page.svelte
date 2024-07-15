@@ -99,13 +99,8 @@
                     _search();
                 }}
             >
-                <FilterWrapper
-                    slot="filter"
-                    handleSearch={() => {
-                        _search();
-                    }}
-                >
-                <FilterTextField
+                <FilterWrapper slot="filter" handleSearch={_search()}>
+                    <FilterTextField
                         label="No. Pekerja"
                         bind:inputValue={table.param.filter.employeeNumber}
                     ></FilterTextField>
@@ -115,12 +110,13 @@
                     ></FilterTextField>
                     <FilterTextField
                         label="No. Kad Pengenalan"
-                        bind:inputValue={table.param.filter.identityDocumentNumber}
+                        bind:inputValue={table.param.filter
+                            .identityDocumentNumber}
                     ></FilterTextField>
                     <FilterTextField
-                    label="Status"
-                    bind:inputValue={table.param.filter.status}
-                ></FilterTextField>
+                        label="Status"
+                        bind:inputValue={table.param.filter.status}
+                    ></FilterTextField>
                 </FilterWrapper>
             </ImpactTable>
         </div>

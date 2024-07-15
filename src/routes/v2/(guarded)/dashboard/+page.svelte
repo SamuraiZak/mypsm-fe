@@ -18,7 +18,11 @@
         <div
             class="flex h-40 min-h-40 w-full flex-col items-start justify-center rounded-xl bg-gradient-to-br from-blue-600 to-blue-300 p-6 shadow-md"
         >
-            <h1 class="text-xl font-medium text-white">Salam Sejahtera, {TextAppearanceHelper.toProper(data.props.layoutData.accountDetails.name)}</h1>
+            <h1 class="text-xl font-medium text-white">
+                Salam Sejahtera, {TextAppearanceHelper.toProper(
+                    data.props.layoutData.accountDetails.name,
+                )}
+            </h1>
             <p class="text-md font-medium text-white">
                 Selamat datang ke sistem MYPSM
             </p>
@@ -86,7 +90,9 @@
                                     <p
                                         class="w-fit text-wrap text-md font-medium text-slate-700"
                                     >
-                                        {TextAppearanceHelper.toProper(module.moduleName)}
+                                        {TextAppearanceHelper.toProper(
+                                            module.moduleName,
+                                        )}
                                     </p>
                                 </div>
                             </div>
@@ -120,29 +126,10 @@
         <div
             class="flex h-full w-full flex-col items-center justify-start overflow-y-auto overflow-x-hidden"
         >
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
-            <NotificationTile></NotificationTile>
+            {#each data.props.notification as notification}
+                <NotificationTile {notification}></NotificationTile>
+            {/each}
         </div>
     </div>
-
     <!-- notification section ends -->
 </div>

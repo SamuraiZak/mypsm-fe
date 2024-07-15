@@ -10,3 +10,11 @@ export interface PageSlug{
     status?: string;
     id?: number;
 }
+
+export interface NotificationDTO {
+    id:          number;
+    moduleName:  string;
+    moduleURL:   string;
+    description: string;
+    isRead:      boolean;
+}
