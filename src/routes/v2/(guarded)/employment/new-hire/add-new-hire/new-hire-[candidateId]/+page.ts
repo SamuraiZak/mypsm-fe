@@ -27,6 +27,8 @@ export const load = async ({ params, parent }) => {
         zod(_addNewHireSchema),
     );
 
+    candidateForm.data.id = candidateIdRequestBody.id;
+
     return {
         candidateForm,
         roles,
@@ -53,7 +55,7 @@ export const _submitCandidateForm = async (formData: object) => {
         );
 
     if (response.status === 'success') {
-        setTimeout(() => goto('../lantikan-baru'), 1500);
+        setTimeout(() => goto('../../new-hire'), 1500);
     }
 
     return { response };

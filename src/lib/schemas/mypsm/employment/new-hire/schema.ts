@@ -16,7 +16,8 @@ import { z } from 'zod';
 
 // creating schema
 export const _addNewHireSchema = z.object({
-    applicationId: z.number().nullable(),
+    id: z.number().nullable(),
+    // applicationId: z.number().nullable(),
     name: z.coerce
         .string({
             required_error: 'Sila tetapkan ID sementara calon',
@@ -34,7 +35,7 @@ export const _addNewHireSchema = z.object({
     email: z
         .string()
         .email({ message: 'Pastikan emel adalah betul dan lengkap' }),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 export const _personalInfoResponseSchema = z.object({
@@ -89,7 +90,7 @@ export const _personalInfoResponseSchema = z.object({
     employeePosition: z.string().nullable(),
     relationshipId: z.number().nullable(),
     isReadonly: z.boolean().readonly(),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 export const _personalInfoRequestSchema = _personalInfoResponseSchema
@@ -173,7 +174,7 @@ export const _academicInfoSchema = z
 export const _academicListResponseSchema = z.object({
     academics: z.array(_academicInfoSchema),
     isReadonly: z.boolean().readonly(),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 export const _academicListRequestSchema = _academicListResponseSchema.pick({
@@ -198,7 +199,7 @@ export const _experienceInfoSchema = z.object({
 export const _experienceListResponseSchema = z.object({
     experiences: z.array(_experienceInfoSchema),
     isReadonly: z.boolean().readonly(),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 export const _experienceListRequestSchema = _experienceListResponseSchema.pick({
@@ -220,7 +221,7 @@ export const _activityInfoSchema = z.object({
 export const _activityListResponseSchema = z.object({
     activities: z.array(_activityInfoSchema),
     isReadonly: z.boolean().readonly(),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 export const _activityListRequestSchema = _activityListResponseSchema.pick({
@@ -282,7 +283,7 @@ export const _relationsSchema = z
 export const _dependencyListResponseSchema = z.object({
     dependencies: z.array(_relationsSchema),
     isReadonly: z.boolean().readonly(),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 // export const _nextOfKinListResponseSchema = z.object({
@@ -302,7 +303,7 @@ export const _dependencyListRequestSchema = _dependencyListResponseSchema.pick({
 
 export const _nextOfKinListRequestSchema = z.object({
     nextOfKins: z.array(_relationsSchema),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 //==========================================================
@@ -353,7 +354,7 @@ export const _serviceDetailSchema = z.object({
     epw: numberSchema,
     cola: numberSchema,
     isReadonly: z.boolean().readonly(),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 export const _serviceInfoResponseSchema = _serviceDetailSchema.omit({
@@ -374,7 +375,7 @@ export const _approvalResultSchema = z.object({
     remark: longTextSchema,
     status: booleanSchema,
     isReadonly: z.boolean().readonly(),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
     approvalDate: z.string().readonly(),
 });
 
@@ -396,7 +397,7 @@ export const _getNewHireApproversSchema = z.object({
     supporterId: z.number().readonly(),
     approverId: z.number().readonly(),
     isReadonly: z.boolean().readonly(),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 //==========================================================
@@ -417,11 +418,11 @@ export const _documentsSchema = z.object({
     attachment: z.string().readonly(),
     attachmentName: z.string().readonly(),
     isReadonly: z.boolean().readonly(),
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
 });
 
 export const _uploadDocumentsSchema = z.object({
-    isDraft: z.boolean().default(false),
+    isDraft: z.boolean(),
     document: z
         .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
         .refine((f) => f.size < 10_000_000, 'Maximum 10 MB saiz muat naik.')

@@ -94,7 +94,7 @@
             use:enhance
             class="flex max-h-full w-full flex-col items-start justify-start"
         >
-        <input type="text" hidden bind:value={$form.applicationId}>
+        <input type="text" hidden bind:value={$form.id}>
 
             <CustomTextField
                 disabled={!$newHireRecordIsDraft}

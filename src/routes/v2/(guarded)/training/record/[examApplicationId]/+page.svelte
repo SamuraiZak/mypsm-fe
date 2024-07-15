@@ -835,7 +835,7 @@
     </StepperContent>
     <StepperContent>
         <StepperContentHeader title="Pengesahan Semakan Urus Setia Latihan">
-            {#if $examSecretaryApprovalResultIsDraft && data.role.isCourseSecretaryRole}
+            {#if (!$isReadonlySecretaryApprovalResult || $examSecretaryApprovalResultIsDraft) && data.role.isCourseSecretaryRole}
                 <TextIconButton
                     type="neutral"
                     label="Simpan"
@@ -955,7 +955,8 @@
 
                     {#if !$examApplicationIsFail && (($isReadonlySecretaryApprovalResult && data.role.isCourseSecretaryRole) || ($isReadonlyExamResult && (!data.role.isCourseSecretaryRole || data.role.isCourseSecretaryRole)))}
                         <CustomTextField
-                            disabled={$isReadonlyExamResult || !$panelExamResultIsDraft}
+                            disabled={$isReadonlyExamResult ||
+                                !$panelExamResultIsDraft}
                             errors={$examResultInfoErrors.examRemark}
                             id="examRemark"
                             label="Catatan"
@@ -964,7 +965,8 @@
                         ></CustomTextField>
 
                         <CustomSelectField
-                            disabled={$isReadonlyExamResult || !$panelExamResultIsDraft}
+                            disabled={$isReadonlyExamResult ||
+                                !$panelExamResultIsDraft}
                             errors={$examResultInfoErrors.examResult}
                             id="examResult"
                             label="Keputusan Panel"

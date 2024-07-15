@@ -1,5 +1,4 @@
 import { goto } from '$app/navigation';
-import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
@@ -18,12 +17,12 @@ import { superValidate } from 'sveltekit-superforms/client';
 //==================================================
 //=============== Load Function ====================
 //==================================================
-export async function load() {
+export async function load({ parent }) {
     let examListResponse: CommonResponseDTO = {};
 
-    const currentRoleCode = localStorage.getItem(
-        LocalStorageKeyConstant.currentRoleCode,
-    );
+    const { layoutData } = await parent();
+
+    const currentRoleCode = layoutData.accountDetails.currentRoleCode;
 
     const isStaffRole = currentRoleCode === RoleConstant.kakitangan.code;
 
@@ -87,7 +86,7 @@ export const _createExamForm = async (formData: object) => {
 
     if (response.status === 'success')
         setTimeout(() => {
-            goto('../rekod-peperiksaan');
+            goto('../record');
         }, 2000);
 
     return { response };

@@ -1,5 +1,4 @@
 import { goto } from '$app/navigation';
-import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { CourseAddFundReimbursementRequestDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement.dto';
@@ -17,10 +16,10 @@ import { superValidate } from 'sveltekit-superforms/client';
 //==================================================
 //=============== Load Function ====================
 //==================================================
-export async function load() {
-    const currentRoleCode = localStorage.getItem(
-        LocalStorageKeyConstant.currentRoleCode,
-    );
+export async function load({ parent }) {
+    const { layoutData } = await parent();
+
+    const currentRoleCode = layoutData.accountDetails.currentRoleCode;
 
     const isStaffRole = currentRoleCode === RoleConstant.kakitangan.code;
 
@@ -50,7 +49,7 @@ export async function load() {
 //==================================================
 //=============== Submit Functions =================
 //==================================================
-export const _createFundReimbursementForm = async (formData: FormData) => {
+export const _createFundReimbursementForm = async (formData: object) => {
     const form = await superValidate(
         formData,
         zod(_createFundReimbursementRequestSchema),

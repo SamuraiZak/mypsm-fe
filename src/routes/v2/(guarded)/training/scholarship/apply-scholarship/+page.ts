@@ -1,5 +1,4 @@
 import { goto } from '$app/navigation';
-import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { CourseAddFundApplicationRequestDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
@@ -17,10 +16,10 @@ import { superValidate } from 'sveltekit-superforms/client';
 //==================================================
 //=============== Load Function ====================
 //==================================================
-export async function load() {
-    const currentRoleCode = localStorage.getItem(
-        LocalStorageKeyConstant.currentRoleCode,
-    );
+export async function load({ parent }) {
+    const { layoutData } = await parent();
+
+    const currentRoleCode = layoutData.accountDetails.currentRoleCode;
 
     const isStaffRole = currentRoleCode === RoleConstant.kakitangan.code;
 

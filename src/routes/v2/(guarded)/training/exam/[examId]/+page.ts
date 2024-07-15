@@ -1,4 +1,3 @@
-import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto.js';
@@ -19,10 +18,9 @@ import { superValidate } from 'sveltekit-superforms/client';
 //==================================================
 //=============== Load Function ====================
 //==================================================
-export async function load({ params }) {
-    const currentRoleCode = localStorage.getItem(
-        LocalStorageKeyConstant.currentRoleCode,
-    );
+export async function load({ params, parent }) {
+    const { layoutData } = await parent();
+    const currentRoleCode = layoutData.accountDetails.currentRoleCode;
 
     const isCourseSecretaryRole =
         currentRoleCode === RoleConstant.urusSetiaLatihan.code;

@@ -1,4 +1,3 @@
-import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant.js';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
@@ -7,13 +6,12 @@ import type { CourseExamApplicationListResponseDTO } from '$lib/dto/mypsm/course
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { CourseServices } from '$lib/services/implementation/mypsm/latihan/course.service';
 
-export const load = async () => {
+export const load = async ({ parent }) => {
     let examApplicationResponse: CommonResponseDTO = {};
     let examApplicationList = [];
+    const { layoutData } = await parent();
 
-    const currentRoleCode = localStorage.getItem(
-        LocalStorageKeyConstant.currentRoleCode,
-    );
+    const currentRoleCode = layoutData.accountDetails.currentRoleCode;
 
     const isStaffRole = currentRoleCode === RoleConstant.kakitangan.code;
 
@@ -76,6 +74,7 @@ export const load = async () => {
         roles: {
             currentRoleCode,
             isStaffRole,
+            layoutData,
         },
         list: {
             examApplicationList,

@@ -1,4 +1,3 @@
-import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { DocumentBase64RequestDTO } from '$lib/dto/core/common/base-64-document-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
@@ -33,11 +32,11 @@ import { superValidate } from 'sveltekit-superforms/client';
 //==================================================
 //=============== Load Function ====================
 //==================================================
-export async function load({ params }) {
+export async function load({ params, parent }) {
     const fundReimbursementId = Number(params.reimbursementId);
-    const currentRoleCode = localStorage.getItem(
-        LocalStorageKeyConstant.currentRoleCode,
-    );
+    const { layoutData } = await parent();
+
+    const currentRoleCode = layoutData.accountDetails.currentRoleCode;
 
     const isStaffRole: boolean =
         currentRoleCode === RoleConstant.kakitangan.code;
@@ -375,7 +374,11 @@ export const _createFundReimbursementForm = async (formData: object) => {
     return { response };
 };
 
-export const _submitDocumentForm = async (id: number,isDraft: boolean, files: File[]) => {
+export const _submitDocumentForm = async (
+    id: number,
+    isDraft: boolean,
+    files: File[],
+) => {
     const documentData = new FormData();
 
     // check file size validation

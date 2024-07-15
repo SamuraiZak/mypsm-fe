@@ -34,10 +34,8 @@
         multipleSubmits: 'prevent',
         validationMethod: 'oninput',
         validators: zod(_fundReimbursementDetailResponseSchema),
-        async onSubmit(formData) {
-            const result = await _createFundReimbursementForm(
-                formData.formData,
-            );
+        async onSubmit() {
+            const result = await _createFundReimbursementForm($form);
 
             if (result.response.status === 'success') {
                 formSubmitted = true;
@@ -59,22 +57,22 @@
 <Stepper>
     <StepperContent>
         <StepperContentHeader title="Maklumat Pengajian Diikuti">
-                <TextIconButton
-                    type="neutral"
-                    label="Simpan"
-                    form="fundReimbursementFormStepper"
-                    onClick={() => {
-                        $form.isDraft = true;
-                    }}
-                />
-                <TextIconButton
-                    type="primary"
-                    label="Hantar"
-                    form="fundReimbursementFormStepper"
-                    onClick={() => {
-                        $form.isDraft = false;
-                    }}
-                />
+            <TextIconButton
+                type="neutral"
+                label="Simpan"
+                form="fundReimbursementFormStepper"
+                onClick={() => {
+                    $form.isDraft = true;
+                }}
+            />
+            <TextIconButton
+                type="primary"
+                label="Hantar"
+                form="fundReimbursementFormStepper"
+                onClick={() => {
+                    $form.isDraft = false;
+                }}
+            />
         </StepperContentHeader>
         <StepperContentBody
             ><!-- Maklumat Peperiksaan -->
