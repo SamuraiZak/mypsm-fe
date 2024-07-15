@@ -67,7 +67,8 @@
                             data.employeeContractOffer[0].applicationId,
                     )}
                 type="primary"
-                label="Kemaskini Maklumat"
+                icon="add"
+                label="Kemaskini"
             />
         {/if}
     </ContentHeader>
@@ -144,30 +145,35 @@
                         id="candidateName"
                         bind:val={data.employeeContractOffer[0].candidateName}
                         disabled
+                        isRequired={false}
                     />
                     <CustomTextField
                         label="Id Sementara"
                         id="temporaryId"
                         bind:val={data.employeeContractOffer[0].temporaryId}
                         disabled
+                        isRequired={false}
                     />
                     <CustomTextField
                         label="Emel"
                         id="email"
                         bind:val={data.employeeContractOffer[0].email}
                         disabled
+                        isRequired={false}
                     />
                     <CustomTextField
                         label="Status"
                         id="status"
                         bind:val={data.employeeContractOffer[0].status}
                         disabled
+                        isRequired={false}
                     />
                     <CustomTextField
                         label="Ulasan"
                         id="remark"
                         bind:val={data.employeeContractOffer[0].remark}
                         disabled
+                        isRequired={false}
                     />
                 </div>
             </div>

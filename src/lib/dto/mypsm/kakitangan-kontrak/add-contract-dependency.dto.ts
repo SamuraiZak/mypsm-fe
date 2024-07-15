@@ -1,5 +1,6 @@
 export interface AddNewContractEmployeeDependencyDTO {
     dependencies: ContractDependency[];
+    isDraft: boolean;
 }
 
 export interface ContractDependency {
@@ -12,7 +13,7 @@ export interface ContractDependency {
     maritalId:              number;
     genderId:               number;
     name:                   string;
-    alternativeName:        string;
+    alternativeName:        string | null;
     identityDocumentColor:  string;
     identityDocumentNumber: string;
     address:                string;

@@ -1,6 +1,7 @@
 export interface GetContractExperienceDetailDTO {
     experienceList: ExperienceList[];
     isReadonly:     boolean;
+    isDraft: boolean;
 }
 
 export interface ExperienceList {

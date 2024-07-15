@@ -15,7 +15,7 @@ export interface AcademicList {
     educationLevelId: number;
     sponsorshipId:    number;
     name:             string;
-    completionDate:   Date;
+    completionDate:   string;
     finalGrade:       string;
     field:            string;
     document: DocumentBase64RequestDTO;

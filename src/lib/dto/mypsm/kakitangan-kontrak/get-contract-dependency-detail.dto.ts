@@ -1,6 +1,7 @@
 export interface GetContractDependencyDetailDTO {
     dependenciesList: DependenciesList[];
     isReadonly:       boolean;
+    isDraft: boolean;
 }
 
 export interface DependenciesList {

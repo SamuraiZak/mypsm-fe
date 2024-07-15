@@ -1266,4 +1266,11 @@ export class LookupServices {
             ?.dataList as LookupClinic[];
         return LookupHelper.toDropdownClinicList(lookupItems);
     };
+
+    static setSelectOptionsCodeAndDesc = (
+        param: CommonResponseDTO,
+    ): DropdownDTO[] => {
+        const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
+        return LookupHelper.toDropdownCodeAndDesc(lookupItems);
+    };
 }

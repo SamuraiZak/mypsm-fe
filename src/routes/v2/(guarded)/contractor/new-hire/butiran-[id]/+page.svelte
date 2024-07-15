@@ -79,7 +79,6 @@
         certifyOptions,
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
-    import SvgPrinter from '$lib/assets/svg/SvgPrinter.svelte';
     import type { DocumentBase64RequestDTO } from '$lib/dto/core/common/base-64-document-request.dto';
     export let data: PageData;
 
@@ -88,20 +87,56 @@
         academics: [],
         isDraft: false,
     };
+    if (data.getContractAcademicDetails.academicList?.length > 0) {
+        tempAcademicRecord.academics =
+            data.getContractAcademicDetails.academicList;
+    }
+
     let tempExperienceRecord: AddNewContractEmployeeExperienceDTO = {
         experiences: [],
+        isDraft: false,
     };
+    if (data.getContractExperienceDetails.experienceList.length > 0) {
+        data.getContractExperienceDetails.experienceList.map((value) => {
+        
+           tempExperienceRecord.experiences.push({
+            company: value.company,
+            address: value.address,
+            endDate: value.endDate,
+            position: value.position,
+            positionCode: value.positionCode,
+            salary: Number(value.salary),
+            startDate: value.startDate,
+           })
+        })
+   
+    }
     let tempActivityRecord: AddNewContractEmployeeActivityDTO = {
         activities: [],
+        isDraft: false,
     };
+    if(data.getContractActivityDetails.activityList.length > 0){
+        tempActivityRecord.activities = data.getContractActivityDetails.activityList;
+        tempActivityRecord.isDraft = data.getContractActivityDetails.isDraft;
+    }
     let tempFamilyRecord: AddNewContractEmployeeDependencyDTO = {
         dependencies: [],
+        isDraft: false,
     };
+    if(data.getContractFamilyDetails.dependenciesList.length > 0){
+        tempFamilyRecord.dependencies = data.getContractFamilyDetails.dependenciesList;
+    }
     let tempNonFamilyRecord: AddNewContractEmployeeDependencyDTO = {
         dependencies: [],
+        isDraft: false,
     };
-    let tempNextOfKinRecord: AddContractNextOfKinDTO = { nextOfKins: [] };
-
+    if(data.getContractNonFamilyDetails.dependenciesList.length > 0){
+        tempNonFamilyRecord.dependencies = data.getContractNonFamilyDetails.dependenciesList;
+    }
+    let tempNextOfKinRecord: AddContractNextOfKinDTO = { nextOfKins: [], isDraft: false };
+    if(data.getContractNextOfKinDetails.nextOfKinList.length > 0){
+        tempNextOfKinRecord.nextOfKins = data.getContractNextOfKinDetails.nextOfKinList;
+    }
     // checkbox for 1st stepper if mail address is the same as home address
     let sameAddress: boolean = false;
     // modal button
@@ -194,14 +229,11 @@
         enhance: academicDetailEnhance,
     } = superForm(data.academicDetailForm, {
         SPA: true,
-        taintedMessage: false,
-        invalidateAll: true,
         resetForm: true,
         dataType: 'json',
-        multipleSubmits: 'prevent',
         id: 'academicDetailForm',
         validators: zod(_addContractAcademicSchema),
-        async onSubmit() {
+        onSubmit() {
             _fileToBase64Object(academicfiles[0], 2)
                 .then((resultObject) => {
                     $academicDetailForm.document =
@@ -212,7 +244,6 @@
                         $academicDetailForm,
                         zod(_addContractAcademicSchema),
                     );
-                    console.log(academicRecord);
                     if (academicRecord.valid) {
                         tempAcademicRecord.academics = [
                             ...tempAcademicRecord.academics,
@@ -833,7 +864,7 @@
             <StepperContentHeader
                 title="Maklumat Akademik / Kelayakan / Latihan yang Lalu"
             >
-                {#if data.getContractAcademicDetails.academicList.length < 1 && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
+                {#if (data.getContractAcademicDetails.academicList?.length < 1 || data.getContractAcademicDetails.isDraft) && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
                     <TextIconButton
                         label="Tambah Rekod"
                         type="neutral"
@@ -869,118 +900,24 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                {#if data.getContractAcademicDetails.academicList.length < 1}
-                    {#if tempAcademicRecord.academics.length < 1}
-                        <div class="flex w-full flex-col gap-10 px-3 pb-10">
-                            <Alert color="blue">
-                                <p>
-                                    <span class="font-medium"
-                                        >Tiada Maklumat!</span
-                                    >
-                                    Menunggu calon untuk mengemaskini maklumat.
-                                </p>
-                            </Alert>
-                        </div>
-                    {:else}
-                        <Accordion class="w-full pb-10">
-                            {#each tempAcademicRecord.academics as obj, i}
-                                <AccordionItem>
-                                    <span
-                                        slot="header"
-                                        class="text-sm text-ios-labelColors-link-light"
-                                        >Maklumat {i + 1}</span
-                                    >
-                                    <CustomSelectField
-                                        label="Jenis Jurusan"
-                                        disabled
-                                        id="academicsMajor{i}"
-                                        options={data.lookup.majorMinorLookup}
-                                        val={obj.majorId}
-                                    />
-                                    <CustomSelectField
-                                        label="Jenis Bidang"
-                                        disabled
-                                        id="academicsMinor{i}"
-                                        options={data.lookup.majorMinorLookup}
-                                        val={obj.minorId}
-                                    />
-                                    <CustomSelectField
-                                        label="Negara"
-                                        disabled
-                                        id="academicscountryId{i}"
-                                        options={data.lookup.countryLookup}
-                                        val={obj.countryId}
-                                    />
-                                    <CustomSelectField
-                                        label="Institusi"
-                                        disabled
-                                        id="academicsinstitutionId{i}"
-                                        options={data.lookup.institutionLookup}
-                                        val={obj.institutionId}
-                                    />
-                                    <CustomSelectField
-                                        label="Taraf Pendidikan"
-                                        disabled
-                                        id="academicseducationLevelId{i}"
-                                        options={data.lookup.educationLookup}
-                                        val={obj.educationLevelId}
-                                    />
-                                    <CustomSelectField
-                                        label="Penajaan"
-                                        disabled
-                                        id="academicssponsorshipId{i}"
-                                        options={data.lookup.sponsorshipLookup}
-                                        val={obj.sponsorshipId}
-                                    />
-                                    <CustomTextField
-                                        label="Nama Pencapaian/Sijil"
-                                        disabled
-                                        id="academicsname{i}"
-                                        val={obj.name}
-                                    />
-                                    <CustomTextField
-                                        label="Tarikh Kelulusan"
-                                        disabled
-                                        id="academicscompletionDate{i}"
-                                        type="date"
-                                        val={obj.completionDate}
-                                    />
-                                    <CustomTextField
-                                        label="Pencapaian Akhir (Gred)"
-                                        disabled
-                                        id="academicsfinalGrade{i}"
-                                        val={obj.finalGrade}
-                                    />
-                                    <CustomTextField
-                                        label="Catatan"
-                                        disabled
-                                        id="academicsfield{i}"
-                                        val={obj.field}
-                                    />
-                                    <a
-                                        href={obj.document.base64}
-                                        download={obj.document.name}
-                                        class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                        >{obj.document.name}</a
-                                    >
-                                </AccordionItem>
-                            {/each}
-                        </Accordion>
-                    {/if}
-                {:else if data.getContractAcademicDetails.academicList.length > 0}
+                {#if tempAcademicRecord.academics.length < 1}
+                    <div class="flex w-full flex-col gap-10 px-3 pb-10">
+                        <Alert color="blue">
+                            <p>
+                                <span class="font-medium">Tiada Maklumat!</span>
+                                Menunggu calon untuk mengemaskini maklumat.
+                            </p>
+                        </Alert>
+                    </div>
+                {:else}
                     <Accordion class="w-full pb-10">
-                        {#each data.getContractAcademicDetails.academicList as obj, i}
+                        {#each tempAcademicRecord.academics as obj, i}
                             <AccordionItem>
-                                <div
-                                    class="flex w-full items-center justify-end gap-3"
+                                <span
+                                    slot="header"
+                                    class="text-sm text-ios-labelColors-link-light"
+                                    >Maklumat {i + 1}</span
                                 >
-                                    <a
-                                        href={"obj.document.base64"}
-                                        download={"obj.document.name"}
-                                        class="flex h-7 text-sm max-h-7 min-h-7 flex-row items-center justify-center rounded bg-ios-systemColors-systemBlue-light px-2 text-txt-blend hover:bg-ios-systemColors-systemBlue-dark"
-                                        ><SvgPrinter />Cetak Sijil</a
-                                    >
-                                </div>
                                 <CustomSelectField
                                     label="Jenis Jurusan"
                                     disabled
@@ -1048,19 +985,17 @@
                                     id="academicsfield{i}"
                                     val={obj.field}
                                 />
-                                {#if obj.document}
+                                <div class="w-full flex flex-col justify-start gap-1">
+                                <span class="text-base text-slate-700 font-medium">
+                                    Dokumen
+                                </span>
                                 <a
                                     href={obj.document.base64}
                                     download={obj.document.name}
                                     class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
                                     >{obj.document.name}</a
                                 >
-                                {/if}
-                                <span
-                                    slot="header"
-                                    class="text-sm text-ios-labelColors-link-light"
-                                    >Maklumat {i + 1}</span
-                                >
+                                </div>
                             </AccordionItem>
                         {/each}
                     </Accordion>
@@ -1070,12 +1005,25 @@
 
         <StepperContent>
             <StepperContentHeader title="Maklumat Pengalaman">
-                {#if data.getContractExperienceDetails?.experienceList?.length < 1 && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
+                {#if (data.getContractExperienceDetails?.experienceList?.length < 1 || data.getContractExperienceDetails.isDraft) && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
                     <TextIconButton
                         label="Tambah Rekod"
                         type="neutral"
                         icon="add"
                         onClick={() => (experienceModal = true)}
+                    />
+                    <TextIconButton
+                        label="Simpan"
+                        type="neutral"
+                        icon="save"
+                        onClick={() => {
+                            if (tempExperienceRecord.experiences.length < 1) {
+                                alert('Maklumat Pengalaman tidak boleh kosong.');
+                            } else {
+                                tempExperienceRecord.isDraft = true;
+                                _submitExperienceDetailForm(tempExperienceRecord);
+                            }
+                        }}
                     />
                     <TextIconButton
                         label="Hantar"
@@ -1087,6 +1035,7 @@
                                     'Maklumat Pengalaman tidak boleh kosong.',
                                 );
                             } else {
+                                tempExperienceRecord.isDraft = false;
                                 _submitExperienceDetailForm(
                                     tempExperienceRecord,
                                 );
@@ -1096,7 +1045,6 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                {#if data.getContractExperienceDetails.experienceList == undefined}
                     {#if tempExperienceRecord.experiences.length < 1}
                         <div class="flex w-full flex-col gap-10 px-3 pb-10">
                             <Alert color="blue">
@@ -1138,6 +1086,7 @@
                                     <CustomTextField
                                         label="Kod Jawatan (Jika Ada)"
                                         disabled
+                                        isRequired={false}
                                         id="positionCode{i}"
                                         val={obj.positionCode}
                                     />
@@ -1165,75 +1114,33 @@
                             {/each}
                         </Accordion>
                     {/if}
-                {:else if data.getContractExperienceDetails.experienceList?.length > 0}
-                    <Accordion class="w-full pb-10">
-                        {#each data.getContractExperienceDetails.experienceList as obj, i}
-                            <AccordionItem>
-                                <span
-                                    slot="header"
-                                    class="text-sm text-ios-labelColors-link-light"
-                                    >Maklumat {i + 1}</span
-                                >
-                                <CustomTextField
-                                    label="Nama Majikan"
-                                    disabled
-                                    id="company{i}"
-                                    val={obj.company}
-                                />
-                                <CustomTextField
-                                    label="Alamat Majikan"
-                                    disabled
-                                    id="address{i}"
-                                    val={obj.address}
-                                />
-                                <CustomTextField
-                                    label="Jawatan"
-                                    disabled
-                                    id="position{i}"
-                                    val={obj.position}
-                                />
-                                <CustomTextField
-                                    label="Kod Jawatan (Jika Ada)"
-                                    placeholder=""
-                                    disabled
-                                    id="positionCode{i}"
-                                    val={obj.positionCode}
-                                />
-                                <CustomTextField
-                                    label="Tarikh Mula Bekerja"
-                                    disabled
-                                    id="startDate{i}"
-                                    type="date"
-                                    val={obj.startDate}
-                                />
-                                <CustomTextField
-                                    label="Tarikh Tamat Bekerja"
-                                    disabled
-                                    id="endDate{i}"
-                                    type="date"
-                                    val={obj.endDate}
-                                />
-                                <CustomTextField
-                                    label="Gaji (RM)"
-                                    disabled
-                                    id="salary{i}"
-                                    val={obj.salary}
-                                />
-                            </AccordionItem>
-                        {/each}
-                    </Accordion>
-                {/if}
+
             </StepperContentBody>
         </StepperContent>
 
         <StepperContent>
             <StepperContentHeader title="Maklumat Kegiatan / Keahlian">
-                {#if data.getContractActivityDetails.activityList?.length < 1 && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
+                {#if (data.getContractActivityDetails.activityList?.length < 1 || data.getContractActivityDetails.isDraft) && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
                     <TextIconButton
                         label="Tambah Rekod"
                         type="neutral"
                         icon="add"
                         onClick={() => (activityModal = true)}
+                    />
+                    <TextIconButton
+                        label="Simpan"
+                        type="neutral"
+                        icon="save"
+                        onClick={() => {
+                            if (tempActivityRecord.activities.length < 1) {
+                                alert(
+                                    'Maklumat Kegiatan/Keahlian tidak boleh kosong.',
+                                );
+                            } else {
+                                tempActivityRecord.isDraft = true;
+                                _submitActivityDetailForm(tempActivityRecord);
+                            }
+                        }}
                     />
                     <TextIconButton
                         label="Hantar"
@@ -1245,6 +1152,7 @@
                                     'Maklumat Kegiatan/Keahlian tidak boleh kosong.',
                                 );
                             } else {
+                                tempActivityRecord.isDraft = false;
                                 _submitActivityDetailForm(tempActivityRecord);
                             }
                         }}
@@ -1252,7 +1160,6 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                {#if data.getContractActivityDetails.activityList == undefined}
                     {#if tempActivityRecord.activities.length < 1}
                         <div class="flex w-full flex-col gap-10 px-3 pb-10">
                             <Alert color="blue">
@@ -1302,55 +1209,31 @@
                             {/each}
                         </Accordion>
                     {/if}
-                {:else if data.getContractActivityDetails.activityList?.length > 0}
-                    <Accordion class="w-full pb-10">
-                        {#each data.getContractActivityDetails.activityList as obj, i}
-                            <AccordionItem>
-                                <span
-                                    slot="header"
-                                    class="text-sm text-ios-labelColors-link-light"
-                                    >Maklumat {i + 1}</span
-                                >
-                                <CustomTextField
-                                    label="Nama Kegiatan/Keahlian"
-                                    disabled
-                                    id="name{i}"
-                                    val={obj.name}
-                                />
-                                <CustomTextField
-                                    label="Jawatan"
-                                    disabled
-                                    id="position{i}"
-                                    val={obj.position}
-                                />
-                                <CustomTextField
-                                    label="Tarikh Penyertaan"
-                                    disabled
-                                    id="joinDate{i}"
-                                    type="date"
-                                    val={obj.joinDate}
-                                />
-                                <CustomTextField
-                                    label="Catatan"
-                                    disabled
-                                    id="description{i}"
-                                    val={obj.description}
-                                />
-                            </AccordionItem>
-                        {/each}
-                    </Accordion>
-                {/if}
+
             </StepperContentBody>
         </StepperContent>
 
         <StepperContent>
             <StepperContentHeader title="Maklumat Keluarga">
-                {#if data.getContractFamilyDetails.dependenciesList?.length < 1 && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
+                {#if (data.getContractFamilyDetails.dependenciesList?.length < 1 || data.getContractFamilyDetails.isDraft) && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
                     <TextIconButton
                         label="Tambah Rekod"
                         type="neutral"
                         icon="add"
                         onClick={() => (familyModal = true)}
+                    />
+                    <TextIconButton
+                        label="Simpan"
+                        type="neutral"
+                        icon="save"
+                        onClick={() => {
+                            if (tempFamilyRecord.dependencies.length < 1) {
+                                alert('Maklumat Keluarga tidak boleh kosong.');
+                            } else {
+                                tempFamilyRecord.isDraft = true;
+                                _submitFamilyDetailForm(tempFamilyRecord);
+                            }
+                        }}
                     />
                     <TextIconButton
                         label="Hantar"
@@ -1360,6 +1243,7 @@
                             if (tempFamilyRecord.dependencies.length < 1) {
                                 alert('Maklumat Keluarga tidak boleh kosong.');
                             } else {
+                                tempFamilyRecord.isDraft = false;
                                 _submitFamilyDetailForm(tempFamilyRecord);
                             }
                         }}
@@ -1367,7 +1251,6 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                {#if data.getContractFamilyDetails.dependenciesList == undefined}
                     {#if tempFamilyRecord.dependencies.length < 1}
                         <div class="flex w-full flex-col gap-10 px-3 pb-10">
                             <Alert color="blue">
@@ -1532,157 +1415,7 @@
                             {/each}
                         </Accordion>
                     {/if}
-                {:else if data.getContractFamilyDetails.dependenciesList?.length > 0}
-                    <Accordion class="w-full pb-10">
-                        {#each data.getContractFamilyDetails.dependenciesList as obj, i}
-                            <AccordionItem>
-                                <span
-                                    slot="header"
-                                    class="text-sm text-ios-labelColors-link-light"
-                                    >Maklumat {i + 1}</span
-                                >
-                                <CustomTextField
-                                    label="Nama"
-                                    disabled
-                                    id="name{i}"
-                                    val={obj.name}
-                                />
-                                <CustomTextField
-                                    label="Nama Lain"
-                                    disabled
-                                    id="alternativeName{i}"
-                                    val={obj.alternativeName}
-                                />
-                                <CustomTextField
-                                    label="No. Kad Pengenalan"
-                                    disabled
-                                    id="identityDocumentNumber"
-                                    val={obj.identityDocumentNumber}
-                                />
-                                <CustomSelectField
-                                    label="Jenis Kad Pengenalan"
-                                    disabled
-                                    id="identityDocumentColor{i}"
-                                    options={data.lookup.identityCardTypeLookup}
-                                    val={obj.identityDocumentColor}
-                                />
-                                <CustomSelectField
-                                    label="Jantina"
-                                    disabled
-                                    id="genderId{i}"
-                                    options={data.lookup.genderLookup}
-                                    val={obj.genderId}
-                                />
-                                <CustomTextField
-                                    label="Tarikh Lahir"
-                                    disabled
-                                    id="birthDate{i}"
-                                    type="date"
-                                    val={obj.birthDate}
-                                />
-                                <CustomSelectField
-                                    label="Kewarganegaraan"
-                                    disabled
-                                    id="nationalityId{i}"
-                                    options={data.lookup.nationalityLookup}
-                                    val={obj.nationalityId}
-                                />
-                                <CustomSelectField
-                                    label="Negeri Kelahiran"
-                                    disabled
-                                    id="birthStateId{i}"
-                                    options={data.lookup.stateLookup}
-                                    val={obj.birthStateId}
-                                />
-                                <CustomSelectField
-                                    label="Negara Kelahiran"
-                                    disabled
-                                    id="birthCountryId{i}"
-                                    options={data.lookup.countryLookup}
-                                    val={obj.birthCountryId}
-                                />
-                                <CustomTextField
-                                    label="Alamat"
-                                    disabled
-                                    id="address{i}"
-                                    val={obj.address}
-                                />
-                                <CustomTextField
-                                    label="Poskod"
-                                    disabled
-                                    id="postcode{i}"
-                                    val={obj.postcode}
-                                />
-                                <CustomTextField
-                                    label="No. Telefon"
-                                    disabled
-                                    id="phoneNumber{i}"
-                                    val={obj.phoneNumber}
-                                />
-                                <CustomSelectField
-                                    label="Bangsa"
-                                    disabled
-                                    id="raceId{i}"
-                                    options={data.lookup.raceLookup}
-                                    val={obj.raceId}
-                                />
 
-                                <CustomSelectField
-                                    label="Status"
-                                    disabled
-                                    id="maritalId{i}"
-                                    options={data.lookup.maritalLookup}
-                                    val={obj.maritalId}
-                                />
-                                {#if obj.maritalId === 3}
-                                    <CustomTextField
-                                        label="Tarikh Perkahwinan"
-                                        disabled
-                                        id="marriageDate{i}"
-                                        type="date"
-                                        val={obj.marriageDate}
-                                    />
-                                {/if}
-                                <CustomSelectField
-                                    label="Hubungan"
-                                    disabled
-                                    id="relationshipId{i}"
-                                    options={data.lookup.relationshipIsFamily}
-                                    val={obj.relationshipId}
-                                />
-                                <CustomSelectField
-                                    label="Taraf Pendidikan"
-                                    disabled
-                                    id="educationLevelId{i}"
-                                    options={data.lookup.educationLookup}
-                                    val={obj.educationLevelId}
-                                />
-                                <CustomTextField
-                                    label="Alamat Majikan"
-                                    disabled
-                                    id="workAddress{i}"
-                                    val={obj.workAddress}
-                                />
-                                <CustomTextField
-                                    label="Poskod Alamat Majikan"
-                                    disabled
-                                    id="workPostcode{i}"
-                                    val={obj.workPostcode}
-                                />
-                                <CustomSelectField
-                                    label="Bersekolah"
-                                    disabled
-                                    id="inSchool{i}"
-                                    options={[
-                                        { value: true, name: 'Ya' },
-                                        { value: false, name: 'Tidak' },
-                                    ]}
-                                    val={obj.inSchool}
-                                />
-                            </AccordionItem>
-                        {/each}
-                    </Accordion>
-                {/if}
             </StepperContentBody>
         </StepperContent>
 
@@ -1690,12 +1423,27 @@
             <StepperContentHeader
                 title="Maklumat Tanggungan Selain Pasangan dan Anak"
             >
-                {#if data.getContractNonFamilyDetails.dependenciesList?.length < 1 && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
+                {#if (data.getContractNonFamilyDetails.dependenciesList?.length < 1 || tempNonFamilyRecord.isDraft) && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
                     <TextIconButton
                         label="Tambah Rekod"
                         type="neutral"
                         icon="add"
                         onClick={() => (dependantModal = true)}
+                    />
+                    <TextIconButton
+                        label="Simpan"
+                        type="neutral"
+                        icon="save"
+                        onClick={() => {
+                            if (tempNonFamilyRecord.dependencies.length < 1) {
+                                alert(
+                                    'Maklumat Tanggungan tidak boleh kosong.',
+                                );
+                            } else {
+                                tempNonFamilyRecord.isDraft = true;
+                                _submitDependantDetailForm(tempNonFamilyRecord);
+                            }
+                        }}
                     />
                     <TextIconButton
                         label="Hantar"
@@ -1707,6 +1455,7 @@
                                     'Maklumat Tanggungan tidak boleh kosong.',
                                 );
                             } else {
+                                tempNonFamilyRecord.isDraft = false;
                                 _submitDependantDetailForm(tempNonFamilyRecord);
                             }
                         }}
@@ -1714,7 +1463,6 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                {#if data.getContractNonFamilyDetails.dependenciesList == undefined}
                     {#if tempNonFamilyRecord.dependencies.length < 1}
                         <div class="flex w-full flex-col gap-10 px-3 pb-10">
                             <Alert color="blue">
@@ -1879,169 +1627,31 @@
                             {/each}
                         </Accordion>
                     {/if}
-                {:else if data.getContractNonFamilyDetails.dependenciesList?.length > 0}
-                    <Accordion class="w-full pb-10">
-                        {#each data.getContractNonFamilyDetails.dependenciesList as obj, i}
-                            <AccordionItem>
-                                <span
-                                    slot="header"
-                                    class="text-sm text-ios-labelColors-link-light"
-                                    >Maklumat {i + 1}</span
-                                >
-                                <CustomTextField
-                                    label="Nama"
-                                    disabled
-                                    id="name{i}"
-                                    val={obj.name}
-                                />
-                                <CustomTextField
-                                    label="Nama Lain"
-                                    disabled
-                                    id="alternativeName{i}"
-                                    val={obj.alternativeName}
-                                />
-                                <CustomTextField
-                                    label="No. Kad Pengenalan"
-                                    disabled
-                                    id="identityDocumentNumber{i}"
-                                    val={obj.identityDocumentNumber}
-                                />
-                                <CustomSelectField
-                                    label="Jenis Kad Pengenalan"
-                                    disabled
-                                    id="identityDocumentColor{i}"
-                                    options={data.lookup.identityCardTypeLookup}
-                                    val={obj.identityDocumentColor}
-                                />
-                                <CustomSelectField
-                                    label="Jantina"
-                                    disabled
-                                    id="genderId{i}"
-                                    options={data.lookup.genderLookup}
-                                    val={obj.genderId}
-                                />
-                                <CustomTextField
-                                    label="Tarikh Lahir"
-                                    disabled
-                                    id="birthDate{i}"
-                                    type="date"
-                                    val={obj.birthDate}
-                                />
-                                <CustomSelectField
-                                    label="Kewarganegaraan"
-                                    disabled
-                                    id="nationalityId{i}"
-                                    options={data.lookup.nationalityLookup}
-                                    val={obj.nationalityId}
-                                />
-                                <CustomSelectField
-                                    label="Negeri Kelahiran"
-                                    disabled
-                                    id="birthStateId{i}"
-                                    options={data.lookup.stateLookup}
-                                    val={obj.birthStateId}
-                                />
-                                <CustomSelectField
-                                    label="Negara Kelahiran"
-                                    disabled
-                                    id="birthCountryId{i}"
-                                    options={data.lookup.countryLookup}
-                                    val={obj.birthCountryId}
-                                />
-                                <CustomTextField
-                                    label="Alamat"
-                                    disabled
-                                    id="address{i}"
-                                    val={obj.address}
-                                />
-                                <CustomTextField
-                                    label="Poskod"
-                                    disabled
-                                    id="postcode{i}"
-                                    val={obj.postcode}
-                                />
-                                <CustomTextField
-                                    label="No. Telefon"
-                                    disabled
-                                    id="phoneNumber{i}"
-                                    val={obj.phoneNumber}
-                                />
-                                <CustomSelectField
-                                    label="Bangsa"
-                                    disabled
-                                    id="raceId{i}"
-                                    options={data.lookup.raceLookup}
-                                    val={obj.raceId}
-                                />
 
-                                <CustomSelectField
-                                    label="Status"
-                                    disabled
-                                    id="maritalId{i}"
-                                    options={data.lookup.maritalLookup}
-                                    val={obj.maritalId}
-                                />
-                                {#if obj.maritalId === 3}
-                                    <CustomTextField
-                                        label="Tarikh Perkahwinan"
-                                        disabled
-                                        id="marriageDate{i}"
-                                        type="date"
-                                        val={obj.marriageDate}
-                                    />
-                                {/if}
-                                <CustomSelectField
-                                    label="Hubungan"
-                                    disabled
-                                    id="relationshipId{i}"
-                                    options={data.lookup
-                                        .relationshipIsNonFamily}
-                                    val={obj.relationshipId}
-                                />
-                                <CustomSelectField
-                                    label="Taraf Pendidikan"
-                                    disabled
-                                    id="educationLevelId{i}"
-                                    options={data.lookup.educationLookup}
-                                    val={obj.educationLevelId}
-                                />
-                                <CustomTextField
-                                    label="Alamat Majikan"
-                                    disabled
-                                    id="workAddress{i}"
-                                    val={obj.workAddress}
-                                />
-                                <CustomTextField
-                                    label="Poskod Alamat Majikan"
-                                    disabled
-                                    id="workPostcode{i}"
-                                    val={obj.workPostcode}
-                                />
-                                <CustomSelectField
-                                    label="Bersekolah"
-                                    disabled
-                                    id="inSchool{i}"
-                                    options={[
-                                        { value: true, name: 'Ya' },
-                                        { value: false, name: 'Tidak' },
-                                    ]}
-                                    val={obj.inSchool}
-                                />
-                            </AccordionItem>
-                        {/each}
-                    </Accordion>
-                {/if}
             </StepperContentBody>
         </StepperContent>
 
         <StepperContent>
             <StepperContentHeader title="Maklumat Waris">
-                {#if data.getContractNextOfKinDetails.nextOfKinList?.length < 1 && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
+                {#if (data.getContractNextOfKinDetails.nextOfKinList?.length < 1 || tempNextOfKinRecord.isDraft) && data.currentRoleCode === UserRoleConstant.calonKontrak.code}
                     <TextIconButton
                         label="Tambah Rekod"
                         type="neutral"
                         icon="add"
                         onClick={() => (nextOfKinModal = true)}
+                    />
+                    <TextIconButton
+                        label="Simpan"
+                        type="neutral"
+                        icon="save"
+                        onClick={() => {
+                            if (tempNextOfKinRecord.nextOfKins.length < 1) {
+                                alert('Maklumat Waris tidak boleh kosong.');
+                            } else {
+                                tempNextOfKinRecord.isDraft = true;
+                                _submitNextOfKinForm(tempNextOfKinRecord);
+                            }
+                        }}
                     />
                     <TextIconButton
                         label="Hantar"
@@ -2051,6 +1661,7 @@
                             if (tempNextOfKinRecord.nextOfKins.length < 1) {
                                 alert('Maklumat Waris tidak boleh kosong.');
                             } else {
+                                tempNextOfKinRecord.isDraft = false;
                                 _submitNextOfKinForm(tempNextOfKinRecord);
                             }
                         }}
@@ -2058,7 +1669,6 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                {#if data.getContractNextOfKinDetails.nextOfKinList == undefined}
                     {#if tempNextOfKinRecord.nextOfKins.length < 1}
                         <div class="flex w-full flex-col gap-10 px-3 pb-10">
                             <Alert color="blue">
@@ -2222,157 +1832,7 @@
                             {/each}
                         </Accordion>
                     {/if}
-                {:else if data.getContractNextOfKinDetails.nextOfKinList?.length > 0}
-                    <Accordion class="w-full pb-10">
-                        {#each data.getContractNextOfKinDetails.nextOfKinList as obj, i}
-                            <AccordionItem>
-                                <span
-                                    slot="header"
-                                    class="text-sm text-ios-labelColors-link-light"
-                                    >Maklumat {i + 1}</span
-                                >
-                                <CustomTextField
-                                    label="Nama"
-                                    id="name{i}"
-                                    disabled
-                                    val={obj.name}
-                                />
-                                <CustomTextField
-                                    label="Nama Lain"
-                                    id="alternativeName{i}"
-                                    disabled
-                                    val={obj.alternativeName}
-                                />
-                                <CustomTextField
-                                    label="No. Kad Pengenalan"
-                                    id="identityDocumentNumber{i}"
-                                    disabled
-                                    val={obj.identityDocumentNumber}
-                                />
-                                <CustomSelectField
-                                    label="Jenis Kad Pengenalan"
-                                    id="identityDocumentColor{i}"
-                                    options={data.lookup.identityCardTypeLookup}
-                                    disabled
-                                    val={obj.identityDocumentColor}
-                                />
-                                <CustomSelectField
-                                    label="Jantina"
-                                    id="genderId{i}"
-                                    options={data.lookup.genderLookup}
-                                    disabled
-                                    val={obj.genderId}
-                                />
-                                <CustomTextField
-                                    label="Tarikh Lahir"
-                                    id="birthDate{i}"
-                                    type="date"
-                                    disabled
-                                    val={obj.birthDate}
-                                />
-                                <CustomSelectField
-                                    label="Kewarganegaraan"
-                                    id="nationalityId{i}"
-                                    options={data.lookup.nationalityLookup}
-                                    disabled
-                                    val={obj.nationalityId}
-                                />
-                                <CustomSelectField
-                                    label="Negeri Kelahiran"
-                                    id="birthStateId{i}"
-                                    options={data.lookup.stateLookup}
-                                    disabled
-                                    val={obj.birthStateId}
-                                />
-                                <CustomSelectField
-                                    label="Negara Kelahiran"
-                                    id="birthCountryId{i}"
-                                    options={data.lookup.countryLookup}
-                                    disabled
-                                    val={obj.birthCountryId}
-                                />
-                                <CustomTextField
-                                    label="Alamat"
-                                    id="address{i}"
-                                    disabled
-                                    val={obj.address}
-                                />
-                                <CustomTextField
-                                    label="Poskod"
-                                    id="postcode{i}"
-                                    disabled
-                                    val={obj.postcode}
-                                />
-                                <CustomTextField
-                                    label="No. Telefon"
-                                    id="phoneNumber{i}"
-                                    disabled
-                                    val={obj.phoneNumber}
-                                />
-                                <CustomSelectField
-                                    label="Bangsa"
-                                    id="raceId{i}"
-                                    options={data.lookup.raceLookup}
-                                    disabled
-                                    val={obj.raceId}
-                                />
 
-                                <CustomSelectField
-                                    label="Status"
-                                    id="maritalId{i}"
-                                    options={data.lookup.maritalLookup}
-                                    disabled
-                                    val={obj.maritalId}
-                                />
-                                {#if obj.maritalId === 3}
-                                    <CustomTextField
-                                        label="Tarikh Perkahwinan"
-                                        id="marriageDate{i}"
-                                        type="date"
-                                        disabled
-                                        val={obj.marriageDate}
-                                    />
-                                {/if}
-                                <CustomSelectField
-                                    label="Hubungan"
-                                    id="relationshipId{i}"
-                                    options={data.lookup.relationshipLookup}
-                                    disabled
-                                    val={obj.relationshipId}
-                                />
-                                <CustomSelectField
-                                    label="Taraf Pendidikan"
-                                    id="educationLevelId{i}"
-                                    options={data.lookup.educationLookup}
-                                    disabled
-                                    val={obj.educationLevelId}
-                                />
-                                <CustomTextField
-                                    label="Alamat Majikan"
-                                    id="workAddress{i}"
-                                    disabled
-                                    val={obj.workAddress}
-                                />
-                                <CustomTextField
-                                    label="Poskod Alamat Majikan"
-                                    id="workPostcode{i}"
-                                    disabled
-                                    val={obj.workPostcode}
-                                />
-                                <CustomSelectField
-                                    label="Bersekolah"
-                                    id="inSchool{i}"
-                                    options={[
-                                        { value: true, name: 'Ya' },
-                                        { value: false, name: 'Tidak' },
-                                    ]}
-                                    disabled
-                                    val={obj.inSchool}
-                                />
-                            </AccordionItem>
-                        {/each}
-                    </Accordion>
-                {/if}
             </StepperContentBody>
         </StepperContent>
 
@@ -2969,6 +2429,7 @@
         <CustomTextField
             label="Kod Jawatan (Jika Ada)"
             id="positionCode"
+            isRequired={false}
             bind:val={$experienceDetailForm.positionCode}
             errors={$experienceDetailError.positionCode}
         />

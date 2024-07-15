@@ -223,25 +223,21 @@
     dismissable={false}
 >
     <Alert color="blue">
-        <div class="w-full flex flex-col justify-start gap-3">
+        <div class="flex w-full flex-col justify-start gap-3">
             <p>
                 <span class="font-medium">Arahan: </span>
-                Masukkan gred pemangku dan jawatan untuk menetapkan tajuk proses pemangkuan.
+                Masukkan gred pemangku dan jawatan untuk menetapkan tajuk proses
+                pemangkuan.
             </p>
         </div>
     </Alert>
-    <div class="grid grid-cols-3 gap-2.5">
-        <div class="col-span-1">
-            <CustomSelectField id="actingGrade" options={data.gradeLookup} label="Gred" val="" />
-        </div>
-        <div class="col-span-2">
-            <CustomSelectField
-                id="actingPosition"
-                label="Jawatan"
-                options={data.positionLookup}
-                val=""
-            />
-        </div>
+    <div class="w-full">
+        <CustomSelectField
+            id="actingPosition"
+            label="Jawatan"
+            options={data.positionLookup}
+            val=""
+        />
     </div>
     <div class="flex justify-center gap-3">
         <TextIconButton
