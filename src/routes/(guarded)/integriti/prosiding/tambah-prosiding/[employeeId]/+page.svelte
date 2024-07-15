@@ -559,7 +559,7 @@
                         <CustomTextField
                             disabled
                             id="salaryEffectiveDate"
-                            type="number"
+                            type="date"
                             label={'Tarikh Berkuatkuasa'}
                             placeholder="-"
                             bind:val={$form.serviceDetail.salaryEffectiveDate}

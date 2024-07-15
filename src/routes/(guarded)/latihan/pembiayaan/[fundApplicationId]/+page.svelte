@@ -872,7 +872,7 @@
                             disabled
                             isRequired={false}
                             id="salaryEffectiveDate"
-                            type="number"
+                            type="date"
                             label={'Tarikh Berkuatkuasa'}
                             placeholder="-"
                             bind:val={$serviceInfoForm.salaryEffectiveDate}
