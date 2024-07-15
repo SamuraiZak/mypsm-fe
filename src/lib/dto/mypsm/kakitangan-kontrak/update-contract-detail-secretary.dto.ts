@@ -1,5 +1,5 @@
 export interface EditContractDetailSecretaryDTO {
-    candidateId:               number;
+    applicationId:               number;
     startContract:             string;
     endContract:               string;
     wageRate:                  number;
@@ -17,6 +17,7 @@ export interface EditContractDetailSecretaryDTO {
     civilServiceStartDate:     string;
     lkimServiceStartDate:      string;
     currentServiceStartDate:   string;
+    isDraft: boolean;
 }
 
 // Converts JSON strings to/from your types

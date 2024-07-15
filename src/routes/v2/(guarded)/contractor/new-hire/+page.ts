@@ -7,13 +7,15 @@ import type { GetContractEmployeeOffer } from '$lib/dto/mypsm/kakitangan-kontrak
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { ContractEmployeeServices } from '$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service';
 
-export const load = async ({parent}) => {
+export const load = async ({ parent }) => {
     const { layoutData } = await parent();
 
     const currentRoleCode: string = layoutData.accountDetails.currentRoleCode
-    
+
     let contractEmployeeListResponse: CommonResponseDTO = {};
     let contractEmployeeList: ContractEmployeeListDTO[] = [];
+    let contractEmployeeList2: ContractEmployeeListDTO[] = [];
+    let contractEmployeeList3: ContractEmployeeListDTO[] = [];
     let employeeContractOffer: GetContractEmployeeOffer[] = [];
     const contractEmployeeListParam: CommonListRequestDTO = {
         pageNum: 1,
@@ -38,24 +40,6 @@ export const load = async ({parent}) => {
             contractEmployeeList = contractEmployeeListResponse.data
                 ?.dataList as ContractEmployeeListDTO[];
         }
-    } else if (currentRoleCode === UserRoleConstant.penyokong.code) {
-        contractEmployeeListResponse =
-            await ContractEmployeeServices.getContractSupporterTable(
-                contractEmployeeListParam,
-            );
-        if (contractEmployeeListResponse.status == 'success') {
-            contractEmployeeList = contractEmployeeListResponse.data
-                ?.dataList as ContractEmployeeListDTO[];
-        }
-    } else if (currentRoleCode === UserRoleConstant.pelulus.code) {
-        contractEmployeeListResponse =
-            await ContractEmployeeServices.getContractApproverTable(
-                contractEmployeeListParam,
-            );
-        if (contractEmployeeListResponse.status == 'success') {
-            contractEmployeeList = contractEmployeeListResponse.data
-                ?.dataList as ContractEmployeeListDTO[];
-        }
     } else if (currentRoleCode === UserRoleConstant.calonKontrak.code) {
         contractEmployeeListResponse =
             await ContractEmployeeServices.getContractEmployeeOfferList();
@@ -64,7 +48,23 @@ export const load = async ({parent}) => {
                 ?.dataList as GetContractEmployeeOffer[];
         }
     }
+    contractEmployeeListResponse =
+        await ContractEmployeeServices.getContractSupporterTable(
+            contractEmployeeListParam,
+        );
+    if (contractEmployeeListResponse.status == 'success') {
+        contractEmployeeList2 = contractEmployeeListResponse.data
+            ?.dataList as ContractEmployeeListDTO[];
+    }
 
+    contractEmployeeListResponse =
+        await ContractEmployeeServices.getContractApproverTable(
+            contractEmployeeListParam,
+        );
+    if (contractEmployeeListResponse.status == 'success') {
+        contractEmployeeList3 = contractEmployeeListResponse.data
+            ?.dataList as ContractEmployeeListDTO[];
+    }
     // ==========================================================================
     // Get Lookup Functions
     // ==========================================================================
@@ -73,13 +73,14 @@ export const load = async ({parent}) => {
 
     const statusLookup: DropdownDTO[] =
         LookupServices.setSelectOptionsInString(statusLookupResponse);
-
     return {
         currentRoleCode,
         contractEmployeeListParam,
         contractEmployeeListResponse,
         contractEmployeeList,
         employeeContractOffer,
+        contractEmployeeList2,
+        contractEmployeeList3,
         selectionOptions: {
             statusLookup,
         },

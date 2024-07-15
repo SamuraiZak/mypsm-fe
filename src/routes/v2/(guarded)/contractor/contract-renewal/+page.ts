@@ -12,7 +12,7 @@ import { getSuccessToast } from '$lib/helpers/core/toast.helper';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { ContractEmployeeServices } from '$lib/services/implementation/mypsm/kakitangan-kontrak/contract-employee.service';
 
-export const load = async ({parent}) => {
+export const load = async ({ parent }) => {
     const { layoutData } = await parent();
 
     const currentRoleCode: string = layoutData.accountDetails.currentRoleCode
@@ -25,28 +25,28 @@ export const load = async ({parent}) => {
     let employeeTable: RenewContractEmployeeTable[] = [];
     let employeeTableResponse: CommonResponseDTO = {};
 
-    const suppAppResponse: CommonListRequestDTO = {
-        pageNum: 1,
-        pageSize: 10000,
-        orderBy: 'name',
-        orderType: 0,
-        filter: {
-            program: 'TETAP',
-            employeeNumber: null,
-            name: null,
-            identityCard: null,
-            scheme: null,
-            grade: null,
-            position: null,
-        },
-    };
-    const supporterApproverResponse: CommonResponseDTO =
-        await LookupServices.getEmployeeList(suppAppResponse);
+    // const suppAppResponse: CommonListRequestDTO = {
+    //     pageNum: 1,
+    //     pageSize: 10000,
+    //     orderBy: 'name',
+    //     orderType: 0,
+    //     filter: {
+    //         program: 'TETAP',
+    //         employeeNumber: null,
+    //         name: null,
+    //         identityCard: null,
+    //         scheme: null,
+    //         grade: null,
+    //         position: null,
+    //     },
+    // };
+    // const supporterApproverResponse: CommonResponseDTO =
+    //     await LookupServices.getEmployeeList(suppAppResponse);
 
-    const supporterApproverLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionSupporterAndApprover(
-            supporterApproverResponse,
-        );
+    // const supporterApproverLookup: DropdownDTO[] =
+    //     LookupServices.setSelectOptionSupporterAndApprover(
+    //         supporterApproverResponse,
+    //     );
 
     //near expired contract table
     const nearExpiredContractFilter: RenewContractListDTO = {
@@ -117,19 +117,9 @@ export const load = async ({parent}) => {
                 ?.dataList as RenewContractListResponseDTO[];
         }
     } else if (currentRoleCode === UserRoleConstant.penyokong.code) {
-        supporterApproverTableResponse =
-            await ContractEmployeeServices.getRenewContractSupporterTable(
-                supporterApproverParam,
-            );
-        supporterApproverTable = supporterApproverTableResponse.data
-            ?.dataList as RenewContractSuppAppTable[];
+
     } else if (currentRoleCode === UserRoleConstant.pelulus.code) {
-        supporterApproverTableResponse =
-            await ContractEmployeeServices.getRenewContractApproverTable(
-                supporterApproverParam,
-            );
-        supporterApproverTable = supporterApproverTableResponse.data
-            ?.dataList as RenewContractSuppAppTable[];
+
     } else if (currentRoleCode === UserRoleConstant.kakitanganKontrak.code) {
         employeeTableResponse =
             await ContractEmployeeServices.getRenewContractEmployeeTable(
@@ -139,6 +129,23 @@ export const load = async ({parent}) => {
             ?.dataList as RenewContractEmployeeTable[];
     }
 
+
+    // supporterApproverTableResponse =
+    //     await ContractEmployeeServices.getRenewContractSupporterTable(
+    //         supporterApproverParam,
+    //     );
+    // supporterApproverTable = supporterApproverTableResponse.data
+    //     ?.dataList as RenewContractSuppAppTable[];
+
+
+    supporterApproverTableResponse =
+        await ContractEmployeeServices.getRenewContractApproverTable(
+            supporterApproverParam,
+        );
+    supporterApproverTable = supporterApproverTableResponse.data
+        ?.dataList as RenewContractSuppAppTable[];
+
+
     // ==========================================================================
     // Get Lookup Functions
     // ==========================================================================
@@ -147,6 +154,8 @@ export const load = async ({parent}) => {
 
     const statusLookup: DropdownDTO[] =
         LookupServices.setSelectOptionsInString(statusLookupResponse);
+
+
 
     return {
         currentRoleCode,
@@ -161,7 +170,7 @@ export const load = async ({parent}) => {
         supporterApproverParam,
         employeeTableResponse,
         employeeTable,
-        supporterApproverLookup,
+        // supporterApproverLookup,
         selectionOptions: {
             statusLookup,
         },
@@ -169,10 +178,15 @@ export const load = async ({parent}) => {
 };
 
 export const _addSelectedContractForRenew = async (
-    selectedContract: RenewContractAddDTO,
+    selectedContract: RenewContractAddDTO
 ) => {
+    let temp: RenewContractAddDTO = { contractors: [] }
+
+    selectedContract.contractors.forEach((val) => {
+        temp.contractors.push({ applicationId: val.contractId })
+    })
     const response: CommonResponseDTO =
-        await ContractEmployeeServices.addRenewContract(selectedContract);
+        await ContractEmployeeServices.addRenewContract(temp);
 
     if (response.status == 'success') {
         return { response };

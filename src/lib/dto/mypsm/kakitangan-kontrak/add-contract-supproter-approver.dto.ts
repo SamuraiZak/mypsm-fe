@@ -1,5 +1,5 @@
 export interface AddContractApproverSupporterDTO {
-    candidateId: number;
+    applicationId: number;
     supporterId: number;
     approverId:  number;
     isReadonly?: boolean;

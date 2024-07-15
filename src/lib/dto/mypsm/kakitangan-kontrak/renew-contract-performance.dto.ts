@@ -1,5 +1,5 @@
 export interface RenewContractAddPerfomance {
-    contractId:      number;
+    applicationId:      number;
     year:            number;
     performanceMark: number;
     result:          boolean;

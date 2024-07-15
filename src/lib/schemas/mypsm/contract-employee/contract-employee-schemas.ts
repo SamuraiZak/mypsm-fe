@@ -182,7 +182,7 @@ export const _uploadDocSchema = z.object({
 });
 
 export const _addContractViewSecretaryUpdate = z.object({
-    candidateId: numberSchema,
+    applicationId: numberSchema,
     startContract: stringToMinDate,
     endContract: stringToMinDate,
     wageRate: numberSchema,
@@ -200,7 +200,8 @@ export const _addContractViewSecretaryUpdate = z.object({
     civilServiceStartDate: stringToMinDate,
     lkimServiceStartDate: stringToMinDate,
     currentServiceStartDate: stringToMinDate,
-    isReadonly: booleanSchema.default(false)
+    isReadonly: booleanSchema.default(false),
+    isDraft: booleanSchema,
 })
 
 export const _addContractCommonRoleResult = z.object({
@@ -208,12 +209,14 @@ export const _addContractCommonRoleResult = z.object({
     name: z.string().optional(),
     status: booleanSchema,
     remark: shortTextSchema,
-    isReadonly: booleanSchema.default(false)
+    isReadonly: booleanSchema.default(false),
+    isDraft: booleanSchema,
 })
 export const _addContractSupporterApprover = z.object({
-    candidateId: numberSchema,
+    applicationId: numberSchema,
     supporterId: numberSchema,
     approverId: numberSchema,
+    isDraft: booleanSchema,
     isReadonly: booleanSchema.default(false)
 })
 
@@ -225,7 +228,7 @@ export const _getContractEmployeeNumber = z.object({
 // Renew Contract Schema
 //==================================================
 export const _addPerformanceSchema = z.object({
-    contractId: z.number(),
+    applicationId: z.number(),
     year: yearSchema.default(2024),
     performanceMark: numberSchema.default(0),
     result: booleanSchema,
@@ -236,14 +239,16 @@ export const _contractMeetingSchema = z.object({
     name: shortTextSchema,
     remark: shortTextSchema,
     status: booleanSchema,
+    isDraft: booleanSchema,
     isReadonly: booleanSchema,
 })
 
 export const _renewContractSupporterApproverSchema = z.object({
     id: numberSchema.optional(),
-    contractId: numberSchema,
+    applicationId: numberSchema,
     supporterId: numberSchema,
     approverId: numberSchema,
+    isDraft: booleanSchema,
     isReadonly: booleanSchema.default(false),
 })
 
@@ -268,6 +273,7 @@ export const _renewContractSecretaryUpdateSchema = z.object({
     currentServiceStartDate:   stringToMinDate,
     firstConfirmServiceDate:   stringToMaxDate,
     currentConfirmServiceDate: stringToMinDate,
+    isDraft: booleanSchema,
     isReadonly:                booleanSchema.default(false),
 })
 

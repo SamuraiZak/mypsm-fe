@@ -20,14 +20,14 @@
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
+    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
 
     export let data: PageData;
-    let rowData = {} as RenewContractListResponseDTO;
+    let rowData: any;
     let employeeData = {} as RenewContractEmployeeTable;
     let selectedContract: RenewContractAddDTO = {
         contractors: [],
     };
-
     // table for near expired contract
     let nearExpiredContractTable: TableSettingDTO = {
         param: data.nearExpiredContractParam,
@@ -149,9 +149,10 @@
         },
     };
 
-    $: selectedContract.contractors =
+    $:{ selectedContract.contractors =
         (nearExpiredContractTable.selectedData as Contractor[]) ?? [];
-
+    }
+   
     let renewModal: boolean = false;
 </script>
 
@@ -172,7 +173,7 @@
                         bind:tableData={renewContractTable}
                         bind:passData={rowData}
                         detailActions={() =>
-                            goto('./pembaharuan/butiran/' + rowData.contractId)}
+                            goto('./contract-renewal/butiran/' + rowData.contractId)}
                     >
                         <FilterWrapper slot="filter">
                             <FilterTextField
@@ -250,7 +251,7 @@
                 </div>
             {/if}
         </div>
-    {:else if data.currentRoleCode == UserRoleConstant.penyokong.code || data.currentRoleCode == UserRoleConstant.pelulus.code}
+    {:else if data.currentRoleCode == UserRoleConstant.kakitangan.code}
         <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
             <div class="h h-fit w-full">
                 <DataTable
@@ -258,7 +259,7 @@
                     bind:tableData={supporterApproverTable}
                     bind:passData={rowData}
                     detailActions={() =>
-                        goto('./pembaharuan/butiran/' + rowData.contractId)}
+                        goto('./contract-renewal/butiran/' + rowData.candidateId)}
                 >
                     <FilterWrapper slot="filter">
                         <FilterTextField
@@ -342,15 +343,16 @@
                 untuk dinilai dan dimasukkan ke dalam proses pembaharuan kontrak.
             </p>
         </Alert>
-        <SearchSelect
-            id="directorId"
+        <!-- <CustomSelectField
+            label="Pengarah Bahagian/Negeri"
+            id="director"
             options={data.supporterApproverLookup}
-            val={1}
-            errors={[]}
-        />
+            bind:val={directorId}
+        /> -->
         <div class="flex justify-center gap-3">
             <TextIconButton
                 label="Hantar"
+                icon="check"
                 type="primary"
                 onClick={async () => {
                     await _addSelectedContractForRenew(selectedContract)
@@ -370,6 +372,7 @@
             />
             <TextIconButton
                 label="Batal"
+                icon="cancel"
                 type="neutral"
                 onClick={() => (renewModal = false)}
             />

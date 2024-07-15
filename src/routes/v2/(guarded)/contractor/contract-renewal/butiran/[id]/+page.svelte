@@ -66,7 +66,7 @@
         id: 'addPerformanceForm',
         validators: zod(_addPerformanceSchema),
         async onSubmit() {
-            $addPerformanceForm.contractId = data.contractId.id;
+            $addPerformanceForm.applicationId = data.contractId.id;
 
             const readOnly =
                 await _submitAddPerformanceForm($addPerformanceForm);
@@ -109,7 +109,8 @@
         id: 'contractSupporterApproverForm',
         validators: zod(_renewContractSupporterApproverSchema),
         async onSubmit() {
-            $contractSupporterApproverForm.contractId = data.contractId.id;
+            $contractSupporterApproverForm.applicationId = data.contractId.id;
+            $contractSupporterApproverForm.isDraft = false;
             const readOnly = await _submitContractSupporterApproverForm(
                 $contractSupporterApproverForm,
             );
@@ -132,6 +133,7 @@
         validators: zod(_addContractCommonRoleResult),
         async onSubmit() {
             $contractSupporterApprovalForm.id = data.contractId.id;
+            $contractSupporterApprovalForm.isDraft = false;
             const readOnly = await _submitContractSupporterApprovalForm(
                 $contractSupporterApprovalForm,
             );
@@ -154,6 +156,7 @@
         validators: zod(_addContractCommonRoleResult),
         async onSubmit() {
             $contractApproverApprovalForm.id = data.contractId.id;
+            $contractApproverApprovalForm.isDraft = false;
             const readOnly = await _submitContractApproverApprovalForm(
                 $contractApproverApprovalForm,
             );
@@ -198,6 +201,7 @@
         validators: zod(_addContractCommonRoleResult),
         async onSubmit() {
             $contractSecretaryApprovalForm.id = data.contractId.id;
+            $contractSecretaryApprovalForm.isDraft = false;
             const readOnly = await _submitContractSecretaryApprovalForm(
                 $contractSecretaryApprovalForm,
             );
@@ -259,7 +263,7 @@
             icon="cancel"
             type="neutral"
             label="Tutup"
-            onClick={() => goto('/kakitangan-kontrak/pembaharuan')}
+            onClick={() => goto('/v2/contractor/contract-renewal')}
         />
     </ContentHeader>
 </section>
@@ -1348,7 +1352,7 @@
             <StepperContentHeader title="Penilaian Pengarah Bahagian/Negeri">
                 {#if !data.getContractPerformanceDetail.isReadonly && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         icon="check"
                         form="addPerformanceForm"
                     />
@@ -1452,8 +1456,16 @@
                     {#if !$contractMeetingForm.isReadonly && data.currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code}
                         <TextIconButton
                             label="Simpan"
+                            icon="save"
+                            type="neutral"
+                            form="contractMeetingForm"
+                            onClick={() => $contractMeetingForm.isDraft = true}
+                        />    
+                        <TextIconButton
+                            label="Hantar"
                             icon="check"
                             form="contractMeetingForm"
+                            onClick={() => $contractMeetingForm.isDraft = false}
                         />
                     {/if}
                 </StepperContentHeader>
@@ -1501,7 +1513,7 @@
                 <StepperContentHeader title="Penyokong dan Pelulus"
                     >{#if !$contractSupporterApproverForm.isReadonly && data.currentRoleCode == UserRoleConstant.urusSetiaKhidmatSokongan.code}
                         <TextIconButton
-                            label="Simpan"
+                            label="Hantar"
                             icon="check"
                             form="contractSupporterApproverForm"
                         />
@@ -1556,16 +1568,16 @@
 
             <StepperContent>
                 <StepperContentHeader title="Keputusan Penyokong">
-                    {#if !$contractSupporterApprovalForm.isReadonly && data.currentRoleCode === UserRoleConstant.penyokong.code}
+                    {#if !$contractSupporterApprovalForm.isReadonly && data.currentRoleCode === UserRoleConstant.kakitangan.code}
                         <TextIconButton
-                            label="Simpan"
+                            label="Hantar"
                             icon="check"
                             form="contractSupporterApprovalForm"
                         />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
-                    {#if data.currentRoleCode !== UserRoleConstant.penyokong.code && $contractSupporterApprovalForm.remark == ''}
+                    {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code && $contractSupporterApprovalForm.remark == ''}
                         <div class="flex w-full flex-col gap-10 px-3 pb-10">
                             <Alert color="blue">
                                 <p>
@@ -1616,16 +1628,16 @@
 
             <StepperContent>
                 <StepperContentHeader title="Keputusan Pelulus">
-                    {#if !$contractApproverApprovalForm.isReadonly && data.currentRoleCode === UserRoleConstant.pelulus.code}
+                    {#if !$contractApproverApprovalForm.isReadonly && data.currentRoleCode === UserRoleConstant.kakitangan.code}
                         <TextIconButton
-                            label="Simpan"
+                            label="Hantar"
                             icon="check"
                             form="contractApproverApprovalForm"
                         />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
-                    {#if data.currentRoleCode !== UserRoleConstant.pelulus.code && $contractApproverApprovalForm.remark == ''}
+                    {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code && $contractApproverApprovalForm.remark == ''}
                         <div class="flex w-full flex-col gap-10 px-3 pb-10">
                             <Alert color="blue">
                                 <p>
@@ -1674,7 +1686,7 @@
                 </StepperContentBody>
             </StepperContent>
 
-            {#if data.getApproverApproval.remark !== null && data.currentRoleCode !== UserRoleConstant.pelulus.code && data.currentRoleCode !== UserRoleConstant.penyokong.code}
+            {#if data.getApproverApproval?.remark !== null && data.currentRoleCode !== UserRoleConstant.pelulus.code && data.currentRoleCode !== UserRoleConstant.penyokong.code}
                 <StepperContent>
                     <StepperContentHeader
                         title="Maklumat Penyambungan Kontrak Kakitangan"
@@ -1682,8 +1694,16 @@
                         {#if !$contractSecretaryUpdateForm.isReadonly && data.currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code}
                             <TextIconButton
                                 label="Simpan"
+                                icon="save"
+                                type="neutral"
+                                form="contractSecretaryUpdateForm"
+                                onClick={() => $contractSecretaryUpdateForm.isDraft = true}
+                            />
+                            <TextIconButton
+                                label="Hantar"
                                 icon="check"
                                 form="contractSecretaryUpdateForm"
+                                onClick={() => $contractSecretaryUpdateForm.isDraft = false}
                             />
                         {/if}
                     </StepperContentHeader>
@@ -1750,6 +1770,7 @@
                                 label="No. KWSP"
                                 disabled={$contractSecretaryUpdateForm.isReadonly}
                                 id="kwspNo"
+                                isRequired={false}
                                 bind:val={$contractSecretaryUpdateForm.kwspNo}
                                 errors={$contractSecretaryUpdateError.kwspNo}
                             />
@@ -1757,6 +1778,7 @@
                                 label="No. SOCSO"
                                 disabled={$contractSecretaryUpdateForm.isReadonly}
                                 id="socsoNo"
+                                isRequired={false}
                                 bind:val={$contractSecretaryUpdateForm.socsoNo}
                                 errors={$contractSecretaryUpdateError.socsoNo}
                             />
@@ -1764,6 +1786,7 @@
                                 label="No. Cukai"
                                 disabled={$contractSecretaryUpdateForm.isReadonly}
                                 id="taxNo"
+                                isRequired={false}
                                 bind:val={$contractSecretaryUpdateForm.taxNo}
                                 errors={$contractSecretaryUpdateError.taxNo}
                             />
@@ -1853,7 +1876,7 @@
                     <StepperContentHeader title="Borang Perjanjian Kontrak">
                         {#if data.getRenewContractDocument?.attachmentName == null && data.currentRoleCode == UserRoleConstant.kakitanganKontrak.code}
                             <TextIconButton
-                                label="Simpan"
+                                label="Hantar"
                                 icon="check"
                                 form="contractUploadDocument"
                             />
@@ -1939,7 +1962,7 @@
                     >
                         {#if $contractSecretaryApprovalForm.isReadonly == false && data.currentRoleCode == UserRoleConstant.urusSetiaKhidmatSokongan.code}
                             <TextIconButton
-                                label="Simpan"
+                                label="Hantar"
                                 icon="check"
                                 form="contractSecretaryApprovalForm"
                             />

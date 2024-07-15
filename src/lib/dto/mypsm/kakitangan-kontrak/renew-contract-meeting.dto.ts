@@ -5,6 +5,7 @@ export interface RenewContractMeeting {
     status:     boolean;
     // meetingName:       string;
     // meetingDate:       string;
+    isDraft: boolean;
     isReadonly?: boolean;
 }
 

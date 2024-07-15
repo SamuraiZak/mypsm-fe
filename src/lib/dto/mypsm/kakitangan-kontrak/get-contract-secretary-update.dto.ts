@@ -1,5 +1,5 @@
 export interface GetContractSecretaryUpdateDTO {
-    candidateId:               number;
+    applicationId:               number;
     startContract:             string;
     endContract:               string;
     wageRate:                  number;
@@ -18,4 +18,5 @@ export interface GetContractSecretaryUpdateDTO {
     lkimServiceStartDate:      string;
     currentServiceStartDate:   string;
     isReadonly?:                boolean;
+    isDraft: boolean;
 }
