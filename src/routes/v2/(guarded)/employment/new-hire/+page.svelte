@@ -191,7 +191,7 @@
             });
         }
 
-        const route = `./new-hire/new-hire-detail/${rowData.candidateId}`;
+        const route = `./new-hire/new-hire-detail/${rowData.applicationId}`;
         goto(route);
     };
 </script>
@@ -215,7 +215,7 @@
                 bind:tableData={newCandidateListTable}
                 bind:passData={rowData}
                 detailActions={() => {
-                    checkIfFail(rowData.candidateId);
+                    checkIfFail(rowData.applicationId);
                 }}
             >
                 <FilterWrapper slot="filter">
@@ -249,7 +249,7 @@
                         bind:tableData={submittedListTable}
                         bind:passData={rowData}
                         detailActions={() => {
-                            checkIfFail(rowData.candidateId);
+                            checkIfFail(rowData.applicationId);
                         }}
                     >
                         <FilterWrapper slot="filter">
@@ -290,7 +290,7 @@
                         bind:passData={rowData}
                         editActions={() => {
                             goto(
-                                `./new-hire/add-new-hire/new-hire-${rowData.candidateId}`,
+                                `./new-hire/add-new-hire/new-hire-${rowData.applicationId}`,
                             );
                         }}
                         addActions={() =>
@@ -332,7 +332,7 @@
                 bind:tableData={supporterViewTable}
                 bind:passData={rowData}
                 detailActions={() => {
-                    checkIfFail(rowData.candidateId);
+                    checkIfFail(rowData.applicationId);
                 }}
             >
                 <FilterWrapper slot="filter">
@@ -367,7 +367,7 @@
                 bind:tableData={approverViewTable}
                 bind:passData={rowData}
                 detailActions={async () => {
-                    checkIfFail(rowData.candidateId);
+                    checkIfFail(rowData.applicationId);
                 }}
             >
                 <FilterWrapper slot="filter">
