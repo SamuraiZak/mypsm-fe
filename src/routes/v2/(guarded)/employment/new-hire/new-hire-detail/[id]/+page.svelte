@@ -96,7 +96,7 @@
     let newHireApproverApprovalIsApproved = writable<boolean>(false);
 
     let isReadonlyPersonalFormStepper = writable<boolean>(false);
-    let personalFormStepperIdDraft = writable<boolean>(false);
+    let personalFormStepperIsDraft = writable<boolean>(false);
     let isReadonlyAcademicFormStepper = writable<boolean>(false);
     let academicFormStepperIsDraft = writable<boolean>(false);
     let isReadonlyExperienceFormStepper = writable<boolean>(false);
@@ -125,9 +125,9 @@
 
     $: {
         if (data.newHireFullDetailView.personalDetail.isDraft === true) {
-            personalFormStepperIdDraft.set(true);
+            personalFormStepperIsDraft.set(true);
         } else {
-            personalFormStepperIdDraft.set(false);
+            personalFormStepperIsDraft.set(false);
         }
 
         if (data.newHireFullDetailView.personalDetail.isReadonly) {
@@ -868,7 +868,7 @@
 
     <StepperContent>
         <StepperContentHeader title="Maklumat Peribadi">
-            {#if (!$isReadonlyPersonalFormStepper || $personalFormStepperIdDraft) && data.roles.isCandidateRole}
+            {#if (!$isReadonlyPersonalFormStepper || $personalFormStepperIsDraft) && data.roles.isCandidateRole}
                 <TextIconButton
                     type="neutral"
                     label="Simpan"
@@ -914,7 +914,7 @@
                 ></CustomTextField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.titleId}
                     id="titleId"
                     label={'Gelaran Nama'}
@@ -924,7 +924,7 @@
 
                 <CustomTextField
                     placeholder="-"
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     id="alternativeName"
                     label={'Nama Lain'}
                     type="text"
@@ -933,14 +933,14 @@
 
                 <CustomTextField
                     placeholder="-"
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     id="statusPekerjaan"
                     label="Emel Pekerja"
                     bind:val={$form.email}
                 ></CustomTextField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.identityDocumentColor}
                     id="identityDocumentColor"
                     label="Jenis Kad Pengenalan"
@@ -959,7 +959,7 @@
                     bind:val={$form.birthDate}
                 ></CustomTextField>
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.birthStateId}
                     id="birthStateId"
                     label="Negeri Kelahiran"
@@ -968,7 +968,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.birthCountryId}
                     id="birthCountryId"
                     label="Negara Kelahiran"
@@ -977,7 +977,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.nationalityId}
                     id="nationalityId"
                     label="Warganegara"
@@ -986,7 +986,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.raceId}
                     id="raceId"
                     label="Bangsa"
@@ -995,7 +995,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.ethnicId}
                     id="ethnicId"
                     label="Etnik"
@@ -1004,7 +1004,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.religionId}
                     id="religionId"
                     label="Agama"
@@ -1013,7 +1013,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.genderId}
                     id="genderId"
                     label="Jantina"
@@ -1022,7 +1022,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.maritalId}
                     id="maritalId"
                     label="Status Perkahwinan"
@@ -1033,14 +1033,14 @@
                 <CustomTextField
                     placeholder="-"
                     errors={$errors.homeAddress}
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     id="homeAddress"
                     label="Alamat Rumah"
                     bind:val={$form.homeAddress}
                 />
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.homeCountryId}
                     id="homeCountryId"
                     label="Negara Kediaman"
@@ -1049,7 +1049,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.homeStateId}
                     id="homeStateId"
                     label="Negeri Kediaman"
@@ -1058,7 +1058,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.homeCityId}
                     id="homeCityId"
                     label="Daerah Kediaman"
@@ -1069,7 +1069,7 @@
                 <CustomTextField
                     placeholder="-"
                     errors={$errors.homePostcode}
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     id="homePostcode"
                     label="Poskod Rumah"
                     bind:val={$form.homePostcode}
@@ -1078,14 +1078,14 @@
                 <CustomTextField
                     placeholder="-"
                     errors={$errors.mailAddress}
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     id="mailAddress"
                     label="Alamat Surat Menyurat"
                     bind:val={$form.mailAddress}
                 />
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.mailCountryId}
                     id="mailCountryId"
                     label="Negara Surat Menyurat"
@@ -1094,7 +1094,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.mailStateId}
                     id="mailStateId"
                     label="Negeri Surat Menyurat"
@@ -1103,7 +1103,7 @@
                 ></CustomSelectField>
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.mailCityId}
                     id="mailCityId"
                     label="Daerah Surat Menyurat"
@@ -1114,14 +1114,14 @@
                 <CustomTextField
                     placeholder="-"
                     errors={$errors.mailPostcode}
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     id="mailPostcode"
                     label="Poskod Surat Menyurat"
                     bind:val={$form.mailPostcode}
                 />
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.assetDeclarationStatusId}
                     id="assetDeclarationStatusId"
                     label="Status Pengisytiharan Harta"
@@ -1133,7 +1133,7 @@
                     <CustomTextField
                         placeholder="-"
                         errors={$errors.propertyDeclarationDate}
-                        disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                        disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                         id="propertyDeclarationDate"
                         type="date"
                         label="Tarikh Pengisytiharan Harta"
@@ -1142,7 +1142,7 @@
                 {/if}
 
                 <CustomSelectField
-                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                    disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                     errors={$errors.isExPoliceOrSoldier}
                     id="isExPoliceOrSoldier"
                     label="Bekas Polis / Tentera"
@@ -1156,7 +1156,7 @@
                     </p>
 
                     <CustomSelectField
-                        disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                        disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                         errors={$errors.isInternalRelationship}
                         id="isInternalRelationship"
                         label="Perhubungan Dengan Kakitangan LKIM"
@@ -1166,7 +1166,7 @@
 
                     {#if $form.isInternalRelationship}
                         <CustomSelectField
-                            disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                            disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                             errors={$errors.employeeNumber}
                             id="employeeNumber"
                             label="Nama Pekerja LKIM"
@@ -1176,7 +1176,7 @@
 
                         {#if !!data.newHireFullDetailView.personalDetail.employeeNumber}
                             <CustomTextField
-                                disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                                disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                                 errors={$errors.employeePosition}
                                 id="relationDetailPosition"
                                 label="Jawatan Kakitangan LKIM"
@@ -1185,7 +1185,7 @@
                         {/if}
 
                         <CustomSelectField
-                            disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIdDraft}
+                            disabled={$isReadonlyPersonalFormStepper || !$personalFormStepperIsDraft}
                             errors={$errors.relationshipId}
                             id="relationDetailRelationship"
                             label="Hubungan"
