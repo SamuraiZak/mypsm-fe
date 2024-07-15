@@ -47,7 +47,7 @@ export const load = async ({ params }) => {
         await LookupServices.getPositionEnums();
 
     const positionLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsValueIsDescription(positionLookupResponse)
+        LookupServices.setSelectOptionsCodeAndDesc(positionLookupResponse)
 
 
     const actingTypes: string = params.id;
