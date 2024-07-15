@@ -99,7 +99,7 @@ export class CourseFundApplicationServices {
     // create fund applications approver
     static async createFundApplicationApprover<T>(param: T) {
         try {
-            const url: Input = '';
+            const url: Input = 'course/fund_application/supporter/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
@@ -128,7 +128,7 @@ export class CourseFundApplicationServices {
     // get fund application approver
     static async getFundApplicationApprover(param: commonIdRequestDTO) {
         try {
-            const url: Input = '';
+            const url: Input = 'course/fund_application/supporter/get';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
