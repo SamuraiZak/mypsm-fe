@@ -56,15 +56,15 @@ export const load = async ({ params, parent }) => {
     let getContractAcedemicDetailsResponse: CommonResponseDTO = {};
     let getContractAcademicDetails: GetContractAcademicDetailDTO = { academicList: [], isReadonly: false, isDraft: false };
     let getContractExperienceDetailsResponse: CommonResponseDTO = {};
-    let getContractExperienceDetails: GetContractExperienceDetailDTO = { experienceList: [], isReadonly: false };
+    let getContractExperienceDetails: GetContractExperienceDetailDTO = { experienceList: [], isReadonly: false, isDraft: false };
     let getContractActivityDetailsResponse: CommonResponseDTO = {};
-    let getContractActivityDetails: GetContractActivityDetailDTO = { activityList: [], isReadonly: false };
+    let getContractActivityDetails: GetContractActivityDetailDTO = { activityList: [], isReadonly: false, isDraft: false };
     let getContractFamilyDetailsResponse: CommonResponseDTO = {};
-    let getContractFamilyDetails: GetContractDependencyDetailDTO = { dependenciesList: [], isReadonly: false };
+    let getContractFamilyDetails: GetContractDependencyDetailDTO = { dependenciesList: [], isReadonly: false, isDraft: false };
     let getContractNonFamilyDetailsResponse: CommonResponseDTO = {};
-    let getContractNonFamilyDetails: GetContractDependencyDetailDTO = { dependenciesList: [], isReadonly: false };
+    let getContractNonFamilyDetails: GetContractDependencyDetailDTO = { dependenciesList: [], isReadonly: false, isDraft: false };
     let getContractNextOfKinDetailsResponse: CommonResponseDTO = {};
-    let getContractNextOfKinDetails: GetContractNextOfKinDetailDTO = { nextOfKinList: [], isReadonly: false };
+    let getContractNextOfKinDetails: GetContractNextOfKinDetailDTO = { nextOfKinList: [], isReadonly: false, isDraft: false };
     let getContractDocumentsResponse: CommonResponseDTO = {};
     let getContractDocuments = {} as GetContractDocumentDTO;
     let getContractSecretaryUpdateResponse: CommonResponseDTO = {};
@@ -106,7 +106,6 @@ export const load = async ({ params, parent }) => {
         await ContractEmployeeServices.getContractActivityDetail(contractId)
     getContractActivityDetails =
         await getContractActivityDetailsResponse.data?.details as GetContractActivityDetailDTO;
-
     // ========================== get family detail
     getContractFamilyDetailsResponse =
         await ContractEmployeeServices.getContractFamilyDetail(contractId)
@@ -606,7 +605,8 @@ export function _fileToBase64Object(file: File, type: number): Promise<string | 
 
                         base64: base64String,
                         name: file.name
-                    }
+                    },
+                    isDraft: false
                 };
                 if(type == 1){
                     resolve(JSON.stringify(resultObject));
