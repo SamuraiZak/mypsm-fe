@@ -141,7 +141,7 @@ export class LookupServices {
     // Position Lookup Service
     static async getPositionEnums() {
         try {
-            const url: Input = 'service_lookup/positions';
+            const url: Input = 'lookup/positions';
 
             const response: Response = await http.get(url, {}).json();
 
@@ -1261,5 +1261,12 @@ export class LookupServices {
         const lookupItems: LookupClinic[] = param.data
             ?.dataList as LookupClinic[];
         return LookupHelper.toDropdownClinicList(lookupItems);
+    };
+
+    static setSelectOptionsCodeAndDesc = (
+        param: CommonResponseDTO,
+    ): DropdownDTO[] => {
+        const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
+        return LookupHelper.toDropdownCodeAndDesc(lookupItems);
     };
 }
