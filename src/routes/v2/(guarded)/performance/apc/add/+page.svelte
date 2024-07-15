@@ -1,5 +1,8 @@
 <script lang="ts">
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type {
+        TableDTO,
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
@@ -8,38 +11,52 @@
     import { goto } from '$app/navigation';
     import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
     import SvgInfoSolid from '$lib/assets/svg/SvgInfoSolid.svelte';
-        import type { PageData } from './$types';
+    import type { PageData } from './$types';
     import { _updateTable } from './+page';
+    import DataTable from '$lib/components/table/DataTable.svelte';
+    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
 
     export let data: PageData;
 
-    let param: CommonListRequestDTO = data.props.param;
+    // set up table
+    let selectedData: any;
 
-    let selectedDataRow: CommonEmployeeDTO | null = null;
-
-    let table: TableDTO = {
-        param: param,
-        meta: data.props.response.data?.meta ?? {
+    // POC
+    let employeeListTable: TableSettingDTO = {
+        param: data.props.employeeListRequest,
+        meta: data.props.employeeListResponse.data?.meta ?? {
             pageSize: 1,
             pageNum: 1,
             totalData: 1,
             totalPage: 1,
         },
-        data: data.props.response.data?.dataList ?? [],
+        data: data.props.employeeListResponse.data?.dataList ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['employeeId'],
+        dictionary: [
+            {
+                english: 'identityCardNumber',
+                malay: 'No. Kad Pengenalan',
+            },
+        ],
+        url: 'employee/list',
+        id: 'employeeListTable',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: false,
+            select: true,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
     };
 
-    async function _search() {
-        _updateTable(table.param).then((value) => {
-            table.data = value.props.response.data?.dataList ?? [];
-            table.meta = value.props.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            table.param.pageSize = table.meta.pageSize;
-            table.param.pageNum = table.meta.pageNum;
-        });
+    function selectActions(employeeNumber: number) {
+        goto('/v2/performance/apc/add/' + employeeNumber);
     }
 </script>
 
@@ -92,20 +109,28 @@
                     </span>
                 </div>
             </div>
-            <div class="h-fit max-h-full w-full pb-5">
-                <CustomTable
-                    title="Senarai Semua Kakitangan"
-                    bind:tableData={table}
-                    bind:passData={selectedDataRow}
-                    enableSelect
-                    onUpdate={_search}
+            <div class="h h-fit w-full">
+                <DataTable
+                    title="Senarai Kakitangan"
+                    bind:tableData={employeeListTable}
+                    bind:passData={selectedData}
                     selectActions={() => {
-                        const url =
-                            '/lnpt/sejarah-apc/tambah-rekod-apc/butiran-' +
-                            selectedDataRow?.employeeNumber;
-                        goto(url);
+                        selectActions(selectedData.employeeNumber);
                     }}
-                ></CustomTable>
+                >
+                    <FilterWrapper slot="filter">
+                        <FilterTextField
+                            label="Nama Pengguna"
+                            bind:inputValue={employeeListTable.param.filter
+                                .name}
+                        ></FilterTextField>
+                        <FilterTextField
+                            label="No. Kad Pengenalan"
+                            bind:inputValue={employeeListTable.param.filter
+                                .identityDocumentNumber}
+                        ></FilterTextField>
+                    </FilterWrapper>
+                </DataTable>
             </div>
         </div>
     </div>

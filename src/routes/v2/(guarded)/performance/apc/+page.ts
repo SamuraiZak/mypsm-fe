@@ -11,7 +11,6 @@ const guard: string[] = [UserRoleConstant.urusSetiaLnpt.code];
 
 export async function load() {
 
-
         // filter
         const filter: CommonFilterDTO = {
             identityDocumentNumber: null,

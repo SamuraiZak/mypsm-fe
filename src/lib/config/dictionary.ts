@@ -543,4 +543,8 @@ const dictionary: { [key: string]: string } = {
     //kenaikan pangkat
     promotionType: "Jenis Kenaikan Pangkat",
 
+    firstYear: "Tahun Pertama",
+    secondYear: "Tahun Kedua",
+    thirdYear: "Tahun Ketiga",
+    average: 'Jumlah Markah'
 };

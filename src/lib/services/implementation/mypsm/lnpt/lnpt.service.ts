@@ -9,6 +9,7 @@ import {
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import { ApcAddConvert, type ApcAddDTO } from '$lib/dto/mypsm/lnpt/apc-add.dto';
+import { toasterCommon } from '$lib/helpers/core/french-toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 
@@ -17,12 +18,13 @@ export class LNPTServices {
         try {
             let url: Input = 'performance/apc/histories';
 
-            const response: Response = await http
+            const promiseResponse: Promise<Response> = http
                 .post(url, {
                     body: CommonListRequestConvert.toJson(param),
                 })
                 .json();
 
+            const response = await toasterCommon(promiseResponse);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -39,11 +41,13 @@ export class LNPTServices {
         try {
             let url: Input = 'performance/apc/add';
 
-            const response: Response = await http
+            const promiseResponse: Promise<Response> = http
                 .post(url, {
-                    body: ApcAddConvert.toJson(param),
+                    body: JSON.stringify(param),
                 })
                 .json();
+
+            const response = await toasterCommon(promiseResponse);
 
             const result = CommonResponseConvert.fromResponse(response);
 
@@ -61,12 +65,13 @@ export class LNPTServices {
         try {
             let url: Input = 'performance/average/permanent';
 
-            const response: Response = await http
+            const promiseResponse: Promise<Response> = http
                 .post(url, {
                     body: CommonListRequestConvert.toJson(param),
                 })
                 .json();
 
+            const response = await toasterCommon(promiseResponse);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -83,12 +88,13 @@ export class LNPTServices {
         try {
             let url: Input = 'performance/average/probation';
 
-            const response: Response = await http
+            const promiseResponse: Promise<Response> = http
                 .post(url, {
                     body: CommonListRequestConvert.toJson(param),
                 })
                 .json();
 
+            const response = await toasterCommon(promiseResponse);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
