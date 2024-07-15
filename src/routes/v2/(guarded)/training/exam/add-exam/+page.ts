@@ -1,5 +1,4 @@
 import { goto } from '$app/navigation';
-import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { CourseCreateExamRequestDTO } from '$lib/dto/mypsm/course/exam/course-exam.dto';
@@ -13,10 +12,10 @@ import { superValidate } from 'sveltekit-superforms/client';
 //==================================================
 //=============== Load Function ====================
 //==================================================
-export async function load() {
-    const currentRoleCode = localStorage.getItem(
-        LocalStorageKeyConstant.currentRoleCode,
-    );
+export async function load({ parent }) {
+    const { layoutData } = await parent();
+
+    const currentRoleCode = layoutData.accountDetails.currentRoleCode;
 
     const isCourseSecretaryRole =
         currentRoleCode === RoleConstant.urusSetiaLatihan.code;
@@ -50,8 +49,9 @@ export const _createExamForm = async (formData: FormData) => {
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    const response: CommonResponseDTO =
-        await CourseServices.createCourseExam(form.data as CourseCreateExamRequestDTO);
+    const response: CommonResponseDTO = await CourseServices.createCourseExam(
+        form.data as CourseCreateExamRequestDTO,
+    );
 
     if (response.status === 'success')
         setTimeout(() => {
