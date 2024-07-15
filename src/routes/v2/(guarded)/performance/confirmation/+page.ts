@@ -13,83 +13,72 @@ import { error } from '@sveltejs/kit';
 const guard: string[] = [UserRoleConstant.urusSetiaLnpt.code];
 
 export async function load() {
-    // check guard
-    const currentRoleCode = localStorage.getItem(
-        LocalStorageKeyConstant.currentRoleCode,
-    );
+    // filter
+    const filter: CommonFilterDTO = {
+        program: 'PERCUBAAN',
+        identityDocumentNumber: null,
+        employeeNumber: null,
+        name: null,
+        position: null,
+        status: null,
+        grade: null,
+        scheme: null,
+    };
 
-    if (currentRoleCode !== null && guard.includes(currentRoleCode)) {
-        // TODO: your code here
+    // request body
+    const param: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: filter,
+    };
 
-        // filter
-        const filter: CommonFilterDTO = {
-            program: 'PERCUBAAN',
-            identityDocumentNumber: null,
-            employeeNumber: null,
-            name: null,
-            position: null,
-            status: null,
-            grade: null,
-            scheme: null,
-        };
+    // fetch employeelist
+    const response: CommonResponseDTO =
+        await EmployeeServices.getEmployeeList(param);
 
-        // request body
-        const param: CommonListRequestDTO = {
+    // convert to common employee list
+    const employeeList: CommonEmployeeDTO[] = response.data
+        ?.dataList as CommonEmployeeDTO[];
+
+    // prepare mocks for lnpt average filters
+    let lnptAverageFilters: object = {
+        employeeIds: [],
+        years: 2021,
+        duration: 2,
+    };
+
+    // prepare mocks for lnpt average params
+    let lnptAverageParams: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: lnptAverageFilters,
+    };
+
+    // lnpt average table
+    let tableLNPT: TableDTO = {
+        param: lnptAverageParams,
+        meta: {
+            pageSize: 1,
             pageNum: 1,
-            pageSize: 5,
-            orderBy: null,
-            orderType: null,
-            filter: filter,
-        };
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: [],
+        hiddenData: ['employeeId'],
+    };
 
-        // fetch employeelist
-        const response: CommonResponseDTO =
-            await EmployeeServices.getEmployeeList(param);
-
-        // convert to common employee list
-        const employeeList: CommonEmployeeDTO[] = response.data
-            ?.dataList as CommonEmployeeDTO[];
-
-        // prepare mocks for lnpt average filters
-        let lnptAverageFilters: object = {
-            employeeIds: [],
-            years: 2021,
-            duration: 2,
-        };
-
-        // prepare mocks for lnpt average params
-        let lnptAverageParams: CommonListRequestDTO = {
-            pageNum: 1,
-            pageSize: 5,
-            orderBy: null,
-            orderType: null,
-            filter: lnptAverageFilters,
-        };
-
-        // lnpt average table
-        let tableLNPT: TableDTO = {
-            param: lnptAverageParams,
-            meta: {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            },
-            data: [],
-            hiddenData: ['employeeId'],
-        };
-
-        return {
-            props: {
-                param,
-                response,
-                employeeList,
-                tableLNPT,
-            },
-        };
-    } else {
-        error(401);
-    }
+    return {
+        props: {
+            param,
+            response,
+            employeeList,
+            tableLNPT,
+        },
+    };
 }
 
 export async function _updateTable(param: CommonListRequestDTO) {

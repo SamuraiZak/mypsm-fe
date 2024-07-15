@@ -11,53 +11,42 @@ import { error } from '@sveltejs/kit';
 const guard: string[] = [UserRoleConstant.urusSetiaLnpt.code];
 
 export async function load() {
-    // check guard
-    const currentRoleCode = localStorage.getItem(
-        LocalStorageKeyConstant.currentRoleCode,
-    );
+    // filter
+    const filter: CommonFilterDTO = {
+        program: 'SEMUA',
+        identityDocumentNumber: null,
+        employeeNumber: null,
+        name: null,
+        position: null,
+        status: null,
+        grade: null,
+        scheme: null,
+    };
 
-    if (currentRoleCode !== null && guard.includes(currentRoleCode)) {
-        // TODO: your code here
+    // request body
+    const param: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: filter,
+    };
 
-        // filter
-        const filter: CommonFilterDTO = {
-            program: 'SEMUA',
-            identityCard: null,
-            employeeNumber: null,
-            name: null,
-            position: null,
-            status: null,
-            grade: null,
-            scheme: null,
-        };
+    // fetch apc history
+    const response: CommonResponseDTO =
+        await EmployeeServices.getEmployeeList(param);
 
-        // request body
-        const param: CommonListRequestDTO = {
-            pageNum: 1,
-            pageSize: 5,
-            orderBy: null,
-            orderType: null,
-            filter: filter,
-        };
+    // convert to apcdto
+    const employeeList: CommonEmployeeDTO[] = response.data
+        ?.dataList as CommonEmployeeDTO[];
 
-        // fetch apc history
-        const response: CommonResponseDTO =
-            await EmployeeServices.getEmployeeList(param);
-
-        // convert to apcdto
-        const employeeList: CommonEmployeeDTO[] = response.data
-            ?.dataList as CommonEmployeeDTO[];
-
-        return {
-            props: {
-                param,
-                response,
-                employeeList,
-            },
-        };
-    } else {
-        error(401);
-    }
+    return {
+        props: {
+            param,
+            response,
+            employeeList,
+        },
+    };
 }
 
 export async function _updateTable(param: CommonListRequestDTO) {

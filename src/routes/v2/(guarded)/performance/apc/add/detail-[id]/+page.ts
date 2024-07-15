@@ -21,41 +21,30 @@ export const _addApcSchema = z.object({
 });
 
 export async function load({ params }) {
-    // check guard
-    const currentRoleCode = localStorage.getItem(
-        LocalStorageKeyConstant.currentRoleCode,
-    );
+    const form = await superValidate(zod(_addApcSchema));
 
-    if (currentRoleCode !== null && guard.includes(currentRoleCode)) {
-        // TODO: your code here
+    form.data.employeeId = parseInt(params.id);
 
-        const form = await superValidate(zod(_addApcSchema));
+    const request: EmployeeDetailRequestDTO = {
+        employeeNumber: params.id,
+    };
 
-        form.data.employeeId = parseInt(params.id);
+    const response: CommonResponseDTO =
+        await EmployeeServices.getEmployeeDetail(request);
 
-        const request: EmployeeDetailRequestDTO = {
-            employeeNumber: params.id,
+    const employeeDetails: CommonEmployeeDTO = response.data
+        ?.details as CommonEmployeeDTO;
+
+    if (response.status == 'success') {
+        return {
+            form,
+            props: {
+                response,
+                employeeDetails,
+            },
         };
-
-        const response: CommonResponseDTO =
-            await EmployeeServices.getEmployeeDetail(request);
-
-        const employeeDetails: CommonEmployeeDTO = response.data
-            ?.details as CommonEmployeeDTO;
-
-        if (response.status == 'success') {
-            return {
-                form,
-                props: {
-                    response,
-                    employeeDetails,
-                },
-            };
-        } else {
-            return error(500);
-        }
     } else {
-        error(401);
+        return error(500);
     }
 }
 

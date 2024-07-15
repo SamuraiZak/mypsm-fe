@@ -10,13 +10,7 @@ import { error } from '@sveltejs/kit';
 const guard: string[] = [UserRoleConstant.urusSetiaLnpt.code];
 
 export async function load() {
-    // check guard
-    const currentRoleCode = localStorage.getItem(
-        LocalStorageKeyConstant.currentRoleCode,
-    );
 
-    if (currentRoleCode !== null && guard.includes(currentRoleCode)) {
-        // TODO: your code here
 
         // filter
         const filter: CommonFilterDTO = {
@@ -64,9 +58,7 @@ export async function load() {
                 printResponse,
             },
         };
-    } else {
-        error(401);
-    }
+
 }
 
 export async function _updateTable(param: CommonListRequestDTO) {
