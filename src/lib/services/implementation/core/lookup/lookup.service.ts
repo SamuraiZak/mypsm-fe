@@ -101,7 +101,7 @@ export class LookupServices {
     // Service Grade Lookup Service
     static async getServiceGradeEnums() {
         try {
-            const url: Input = 'service_lookup/grades';
+            const url: Input = 'lookup/positions';
 
             const response: Response = await http.get(url, {}).json();
 
@@ -141,7 +141,7 @@ export class LookupServices {
     // Position Lookup Service
     static async getPositionEnums() {
         try {
-            const url: Input = 'service_lookup/positions';
+            const url: Input = 'lookup/positions';
 
             const response: Response = await http.get(url, {}).json();
 
@@ -1190,6 +1190,10 @@ export class LookupServices {
     static setSelectOptions = (param: CommonResponseDTO): DropdownDTO[] => {
         const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
         return LookupHelper.toDropdownId(lookupItems);
+    };
+    static setSelectOptionCode = (param: CommonResponseDTO): DropdownDTO[] => {
+        const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
+        return LookupHelper.toDropdownGradeId(lookupItems);
     };
 
     static setSelectOptionsRelationship = (

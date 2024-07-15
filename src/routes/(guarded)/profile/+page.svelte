@@ -1098,13 +1098,12 @@
                                 >Maklumat Perkhidmatan</b
                             >
                             <!-- tambah endpoint after UAT -->
-                            <CustomSelectField
+                            <CustomTextField
                             disabled
-                            id="gradeId"
+                            id="employeeNumber"
                             label={'No Pekerja'}
-                            options={data.selectionOptions.gradeLookup}
-                            bind:val={$serviceInfoForm.gradeId}
-                        ></CustomSelectField>
+                            bind:val={$serviceInfoForm.employeeNumber}
+                        ></CustomTextField>
 
                             <CustomSelectField
                                 disabled

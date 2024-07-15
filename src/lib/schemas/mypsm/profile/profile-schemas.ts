@@ -170,6 +170,7 @@ export const _serviceDetailSchema = z.object({
     positionId: z.number(),
     placementId: z.number(),
     serviceTypeId: z.number(),
+    employeeNumber:z.string(),
     // maxGradeId: numberIdSchema,  
     // serviceTypeId: numberIdSchema,
     // serviceGroupId: numberIdSchema,

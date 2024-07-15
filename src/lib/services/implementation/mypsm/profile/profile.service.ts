@@ -249,7 +249,7 @@ export class ProfileServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                invalidateAll()
+               invalidateAll()
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
