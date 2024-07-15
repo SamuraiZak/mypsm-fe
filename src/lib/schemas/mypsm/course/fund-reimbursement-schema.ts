@@ -20,7 +20,7 @@ export const _fundReimbursementIDschema = z.object({
 });
 
 export const _fundReimbursementResponseSchema = z.object({
-    id: z.number().readonly(),
+    id: z.number().nullable().readonly(),
     employeeName: shortTextSchema,
     identityDocumentNumber: shortTextSchema,
     courseName: shortTextSchema,

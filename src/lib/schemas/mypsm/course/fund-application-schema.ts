@@ -36,7 +36,7 @@ export const _fundApplicationListResponseSchema = z.array(
 );
 
 export const _fundApplicationDetailResponseSchema = z.object({
-    id: z.number().readonly(),
+    id: z.number().nullable().readonly(),
     academicLevel: shortTextSchema,
     courseName: shortTextSchema,
     institution: shortTextSchema,
@@ -56,7 +56,6 @@ export const _fundApplicationDetailResponseSchema = z.object({
 
 export const _createFundApplicationRequestSchema =
     _fundApplicationDetailResponseSchema.omit({
-        id: true,
         courseApplicationDate: true,
     });
 
