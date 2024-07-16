@@ -6,13 +6,13 @@
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type { LayoutData } from './$types';
-    import type { CourseFundApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
+    import type { CourseFundApplicationResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application.dto';
     import FilterDateField from '$lib/components/table/filter/FilterDateField.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
 
     export let data: LayoutData;
-    let rowData: CourseFundApplicationDetailResponseDTO;
+    let rowData: CourseFundApplicationResponseDTO;
 
     let fundApplicationTable: TableSettingDTO = {
         param: data.param ?? data.param,
@@ -89,7 +89,7 @@
             bind:tableData={fundApplicationTable}
             bind:passData={rowData}
             detailActions={() => {
-                goto(`./scholarship/${rowData.id}`);
+                goto(`./scholarship/${rowData.id}-${rowData.status}`);
             }}
             addActions={() => goto('./scholarship/apply-scholarship')}
         >

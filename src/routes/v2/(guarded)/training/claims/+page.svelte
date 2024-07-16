@@ -93,7 +93,7 @@
             bind:tableData={fundReimbursementTable}
             bind:passData={rowData}
             detailActions={() => {
-                goto(`./claims/${rowData.id}`);
+                goto(`./claims/${rowData.id}-${rowData.status}`);
             }}
             addActions={() => goto('./claims/add-claim')}
         >
@@ -110,8 +110,7 @@
                 ></FilterTextField>
                 <FilterTextField
                     label="Nama Pekerja"
-                    bind:inputValue={fundReimbursementTable.param.filter
-                        .name}
+                    bind:inputValue={fundReimbursementTable.param.filter.name}
                 ></FilterTextField>
                 <FilterNumberField
                     label="Jumlah Tuntutan"

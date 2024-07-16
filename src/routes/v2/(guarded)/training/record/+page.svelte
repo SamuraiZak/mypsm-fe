@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { CourseExamApplicationDetailResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto';
+    import type { CourseExamApplicationInfoResponseDTO } from '$lib/dto/mypsm/course/exam/course-exam-application.dto';
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
@@ -10,7 +10,7 @@
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
 
     export let data: LayoutData;
-    let rowData: CourseExamApplicationDetailResponseDTO;
+    let rowData: CourseExamApplicationInfoResponseDTO;
 
     // Table list - new application view for secretary role
     let examTable: TableSettingDTO = {
@@ -100,11 +100,10 @@
             bind:tableData={examTable}
             bind:passData={rowData}
             detailActions={() => {
-                const route = `./record/${rowData.applicationId}`;
+                const route = `./record/${rowData.applicationId}-${rowData.examStatus}`;
                 goto(route);
             }}
-            addActions={() =>
-                goto('./record/add-record')}
+            addActions={() => goto('./record/add-record')}
         >
             <FilterWrapper slot="filter">
                 <FilterTextField
