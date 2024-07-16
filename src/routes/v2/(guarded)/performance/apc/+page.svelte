@@ -34,7 +34,7 @@
         data: data.props.response.data?.dataList ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['employeeId'],
+        hiddenColumn: ['employeeId', 'awardId'],
         dictionary: [
             {
                 english: 'identityCardNumber',
@@ -44,13 +44,14 @@
         url: 'performance/apc/histories',
         id: 'apcHistoryTable',
         option: {
-            checkbox: true,
+            checkbox: false,
             detail: false,
             edit: false,
             select: false,
             filter: true,
         },
         controls: {
+            excel: true,
             add: true,
         },
     };
@@ -62,7 +63,7 @@
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Sejarah Anugerah Pekerja Cemerlang (APC)"
+    <ContentHeader title="Sejarah Anugerah Perkhidmatan Cemerlang (APC)"
     ></ContentHeader>
 </section>
 
@@ -74,7 +75,7 @@
     >
         <div class="h h-fit w-full">
             <DataTable
-                title="Senarai Kakitangan"
+                title="Senarai APC"
                 bind:tableData={apcHistoryTable}
                 bind:passData={selectedData}
                 addActions={() => {
