@@ -2,18 +2,18 @@
     import { TextAppearanceHelper } from '$lib/helpers/core/text-appearance.helper';
 
     export let status: string =
-        'Baru' || 'Draf' || 'Sedang Diproses' || 'Selesai' || 'Gagal';
+        'baru' || 'Draf' || 'sedang diproses' || 'selesai' || 'gagal';
 </script>
 
 <div
-    class="flex h-6 min-h-6 flex-row items-center justify-center rounded-full {status ==
-    'Baru'
+    class="flex h-6 min-h-6 flex-row items-center justify-center rounded-full {status.toLowerCase() ==
+    'baru'
         ? 'bg-blue-200 text-blue-700'
-        : status == 'Draf'
+        : status.toLowerCase() == 'draf'
           ? 'bg-gray-200 text-gray-700'
-          : status == 'Sedang Diproses'
+          : status.toLowerCase() == 'sedang diproses'
             ? 'bg-slate-200 text-slate-700'
-            : status == 'Selesai'
+            : status.toLowerCase() == 'selesai'
               ? 'bg-lime-200 text-lime-700'
               : 'bg-red-200 text-red-700'} px-2"
 >
