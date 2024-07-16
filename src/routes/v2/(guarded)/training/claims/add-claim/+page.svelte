@@ -45,7 +45,7 @@
     });
 </script>
 
-<ContentHeader title="Maklumat Pembiayaan Pelajaran"
+<ContentHeader title="Maklumat Tuntutan Yuran Pengajian"
     ><TextIconButton
         label="Kembali"
         type="neutral"
