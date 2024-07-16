@@ -35,6 +35,7 @@
     import { zod } from 'sveltekit-superforms/adapters';
     import { error } from '@sveltejs/kit';
     import { Badge } from 'flowbite-svelte';
+    import StatusPill from '$lib/components/status-pills/StatusPill.svelte';
     export let data: PageData;
 
     let isReadonlySecretaryApprovalResult = writable<boolean>(false);
@@ -159,11 +160,7 @@
 </script>
 
 <ContentHeader title="Maklumat Peperiksaan Yang Dipohon">
-    {#if data.responses.courseExamResultResponse.data?.details && data.responses.courseExamResultResponse.data?.details.examResult !== ''}
-        <Badge color="dark">Proses Peperiksaan Tamat</Badge>
-    {:else if $examApplicationIsFail}
-        <Badge color="red">Proses Permohonan Diberhentikan</Badge>
-    {/if}
+    <StatusPill status={data.params.status} slot="status" />
     <TextIconButton
         label="Kembali"
         type="neutral"
@@ -466,16 +463,6 @@
                     placeholder="-"
                     bind:val={$serviceInfoForm.serviceType}
                     options={data.selectionOptions.serviceTypeLookup}
-                ></CustomSelectField>
-
-                <CustomSelectField
-                    disabled
-                    isRequired={false}
-                    id="program"
-                    label="Program"
-                    placeholder="-"
-                    bind:val={$serviceInfoForm.program}
-                    options={data.selectionOptions.programLookup}
                 ></CustomSelectField>
 
                 <CustomTextField

@@ -33,6 +33,8 @@
     import { CourseFundReimbursementServices } from '$lib/services/implementation/mypsm/latihan/fundReimbursement.service';
     import FileInputField from '$lib/components/inputs/file-input-field/FileInputField.svelte';
     import FileInputFieldChildren from '$lib/components/inputs/file-input-field/FileInputFieldChildren.svelte';
+    import SvgMinusCircle from '$lib/assets/svg/SvgMinusCircle.svelte';
+    import StatusPill from '$lib/components/status-pills/StatusPill.svelte';
     export let data: PageData;
 
     let isReadonlySecretaryApprovalResult = writable<boolean>(false);
@@ -116,8 +118,8 @@
         enhance: fundReimbursementUploadDocumentEnhance,
     } = superForm(data.forms.fundReimbursementUploadDocumentForm, {
         SPA: true,
+        resetForm: false,
         invalidateAll: true,
-        resetForm: true,
         id: 'documentUploadForm',
         validators: zod(_fundReimbursementUploadDocSchema),
         onSubmit() {
@@ -125,6 +127,7 @@
                 data.fundReimbursementId,
                 $fundReimbursementUploadDocumentForm.isDraft,
                 $fundReimbursementUploadDocumentForm.documents,
+                $reimbursementDocumentsForm,
             );
         },
         taintedMessage: 'Permohonon anda belum selesai.',
@@ -204,14 +207,18 @@
                 },
             );
     };
+
+    const handleDeleteUploadedFile = (i: number) => {
+        $reimbursementDocumentsForm.document =
+            $reimbursementDocumentsForm.document.filter((_, index) => {
+                return index !== i;
+            });
+    };
 </script>
 
 <ContentHeader title="Maklumat Tuntutan Pembiayaan Yuran Pembelajaran">
-    {#if data.responses.fundReimbursementSecretaryApprovalResponse.data?.details && data.responses.fundReimbursementSecretaryApprovalResponse.data?.details.status === true}
-        <Badge color="green">Permohonan LULUS</Badge>
-    {:else if $fundReimbursementIsFail}
-        <Badge color="red">Permohonan TIDAK BERJAYA</Badge>
-    {/if}
+    <StatusPill status={data.params.status} slot="status" />
+
     <TextIconButton
         label="Kembali"
         type="neutral"
@@ -514,16 +521,6 @@
                     placeholder="-"
                     bind:val={$serviceInfoForm.serviceType}
                     options={data.selectionOptions.serviceTypeLookup}
-                ></CustomSelectField>
-
-                <CustomSelectField
-                    disabled
-                    isRequired={false}
-                    id="program"
-                    label="Program"
-                    placeholder="-"
-                    bind:val={$serviceInfoForm.program}
-                    options={data.selectionOptions.programLookup}
                 ></CustomSelectField>
 
                 <CustomTextField
@@ -1021,6 +1018,93 @@
                                                 .documents[i]}
                                         />
                                     {/each}
+                                    {#each $reimbursementDocumentsForm.document as doc, i}
+                                        <div class="flex flex-row">
+                                            <!-- svelte-ignore a11y-no-static-element-interactions -->
+                                            <div
+                                                class="0 flex h-fit w-fit flex-col items-center justify-center gap-2.5 rounded-md bg-bgr-secondary p-2.5 text-sm hover:bg-bgr-tertiary"
+                                            >
+                                                <svg
+                                                    fill="#ffffff"
+                                                    class="mr-2 h-16 w-16 text-system-primary"
+                                                    viewBox="0 0 24 24"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    ><g
+                                                        id="SVGRepo_bgCarrier"
+                                                        stroke-width="0"
+                                                    ></g><g
+                                                        id="SVGRepo_tracerCarrier"
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                    ></g><g
+                                                        id="SVGRepo_iconCarrier"
+                                                    >
+                                                        <path
+                                                            d="M4 4C4 3.44772 4.44772 3 5 3H14H14.5858C14.851 3 15.1054 3.10536 15.2929 3.29289L19.7071 7.70711C19.8946 7.89464 20 8.149 20 8.41421V20C20 20.5523 19.5523 21 19 21H5C4.44772 21 4 20.5523 4 20V4Z"
+                                                            stroke="currentColor"
+                                                            stroke-width="2"
+                                                            stroke-linecap="round"
+                                                        ></path>
+                                                        <path
+                                                            d="M20 8H15V3"
+                                                            stroke="currentColor"
+                                                            stroke-width="2"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                        ></path>
+                                                        <path
+                                                            d="M11.5 13H11V17H11.5C12.6046 17 13.5 16.1046 13.5 15C13.5 13.8954 12.6046 13 11.5 13Z"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                        ></path>
+                                                        <path
+                                                            d="M15.5 17V13L17.5 13"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                        ></path>
+                                                        <path
+                                                            d="M16 15H17"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                        ></path>
+                                                        <path
+                                                            d="M7 17L7 15.5M7 15.5L7 13L7.75 13C8.44036 13 9 13.5596 9 14.25V14.25C9 14.9404 8.44036 15.5 7.75 15.5H7Z"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.5"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                        ></path>
+                                                    </g></svg
+                                                >
+                                                {#if doc.name.length < 15}
+                                                    {doc.name}
+                                                {:else}
+                                                    {doc.name.substring(0, 15) +
+                                                        '...'}
+                                                {/if}
+                                            </div>
+                                            <div
+                                                class=" flex h-fit w-fit flex-col items-center justify-center rounded-xl bg-bgr-primary"
+                                            >
+                                                <button
+                                                    type="button"
+                                                    on:click={() =>
+                                                        handleDeleteUploadedFile(
+                                                            i,
+                                                        )}
+                                                    class="text-system-danger"
+                                                    ><SvgMinusCircle size="22"
+                                                    ></SvgMinusCircle></button
+                                                >
+                                            </div>
+                                        </div>
+                                    {/each}
                                 </div>
                                 {#if $fundReimbursementUploadDocumentForm.documents.length < 1}
                                     <div
@@ -1053,40 +1137,6 @@
                                 {/if}
                             </div>
                         </form>
-                        {#if !$fundReimbursementNotUploaded}
-                            <div class="flex w-full flex-col gap-2">
-                                <div
-                                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
-                                >
-                                    <p
-                                        class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
-                                    >
-                                        Fail-fail yang dimuat naik:
-                                    </p>
-
-                                    {#each $reimbursementDocumentsForm.document as _, i}
-                                        <div
-                                            class="flex w-full flex-row items-center justify-between"
-                                        >
-                                            <label
-                                                for=""
-                                                class="block w-[20px] min-w-[20px] text-[11px] font-medium"
-                                                >{i + 1}.</label
-                                            >
-                                            <a
-                                                href={$reimbursementDocumentsForm
-                                                    .document[i].document}
-                                                download={$reimbursementDocumentsForm
-                                                    .document[i].name}
-                                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                                >{$reimbursementDocumentsForm
-                                                    .document[i].name}</a
-                                            >
-                                        </div>
-                                    {/each}
-                                </div>
-                            </div>
-                        {/if}
                     </div>
                 {:else}
                     <div class="flex w-full flex-col gap-2">

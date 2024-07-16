@@ -56,9 +56,9 @@ export async function load({ params, parent }) {
     const isIntegritySecretaryRole: boolean =
         currentRoleCode === RoleConstant.urusSetiaIntegriti.code;
     const isStateDirectorRole: boolean =
-        currentRoleCode === RoleConstant.kakitangan.code;
+        currentRoleCode === RoleConstant.pengarahBahagian.code;
     const isUnitDirectorRole: boolean =
-        currentRoleCode === RoleConstant.kakitangan.code;
+        currentRoleCode === RoleConstant.pengarahBahagian.code;
 
     let fundApplicationDetailResponse: CommonResponseDTO = {};
     let fundApplicationPersonalDetailResponse: CommonResponseDTO = {};
@@ -449,7 +449,13 @@ export const _submitDocumentForm = async (
     id: number,
     isDraft: boolean,
     files: File[],
+    uploadedfiles: CourseFundApplicationDocumentsResponseDTO,
 ) => {
+    if (files.length < 1 && uploadedfiles.document.length < 1) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
     const documentData = new FormData();
 
     // check file size validation
@@ -457,14 +463,17 @@ export const _submitDocumentForm = async (
         documentData.append('documents', file, file.name);
     });
 
-    const form = await superValidate(
-        documentData,
-        zod(_fundApplicationUploadDocSchema),
-    );
+    // validation only on the newly uploaded files
+    if (files.length > 0) {
+        const form = await superValidate(
+            documentData,
+            zod(_fundApplicationUploadDocSchema),
+        );
 
-    if (!form.valid || id === undefined) {
-        getErrorToast();
-        error(400, { message: 'Validation Not Passed!' });
+        if (!form.valid || id === undefined) {
+            getErrorToast();
+            error(400, { message: 'Validation Not Passed!' });
+        }
     }
 
     // turns file into base 64 format
@@ -475,6 +484,17 @@ export const _submitDocumentForm = async (
             isDraft: isDraft,
         };
 
+    // Adding existing files to the request body
+    for (let i = 0; i < uploadedfiles.document.length; i++) {
+        const content = uploadedfiles.document[i].document.split('base64,')[1];
+        const documentObject: DocumentBase64RequestDTO = {
+            base64: content,
+            name: uploadedfiles.document[i].name,
+        };
+        requestBody.documents?.push(documentObject);
+    }
+
+    // Adding new files
     for (let i = 0; i < files.length; i++) {
         const base64String = await _fileToBase64String(files[i]);
         const documentObject: DocumentBase64RequestDTO = {
@@ -499,6 +519,7 @@ export const _submitSecretarySetApproverForm = async (
     const form = await superValidate(formData, zod(_setApproversSchema));
     form.data.id = id;
 
+    console.log(form);
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
