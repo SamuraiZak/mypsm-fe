@@ -1,11 +1,16 @@
 import type {
     _addExamApplicationRequestSchema,
     _examApplicationDetailResponseSchema,
+    _examApplicationInfoResponseSchema,
     _examApplicationListResponseSchema,
     _examSetAttendanceRequestSchema,
     _examSetAttendanceResponseSchema,
 } from '$lib/schemas/mypsm/course/exam-schema';
 import type { z } from 'zod';
+
+export type CourseExamApplicationInfoResponseDTO = z.infer<
+    typeof _examApplicationInfoResponseSchema
+>;
 
 export type CourseExamApplicationListResponseDTO = z.infer<
     typeof _examApplicationListResponseSchema
