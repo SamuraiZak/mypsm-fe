@@ -47,7 +47,7 @@
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Rekod Lantikan Baru Kakitangan Tetap">
+    <ContentHeader title="Rekod Lantikan Baharu Kakitangan Tetap">
         <TextIconButton
             label="Kembali"
             type="neutral"
@@ -66,7 +66,7 @@
         class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
     >
         <ContentHeader
-            title="Sila Lengkapkan Butiran Penambahan Calon Lantikan Baru"
+            title="Sila Lengkapkan Butiran Penambahan Calon Lantikan Baharu"
             borderClass="border-none"
         >
             {#if $newHireRecordIsDraft && data.roles.isEmploymentSecretaryRole}

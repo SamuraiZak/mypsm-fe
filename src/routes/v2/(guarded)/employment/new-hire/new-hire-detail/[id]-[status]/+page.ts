@@ -467,22 +467,6 @@ export async function load({ params, parent }) {
 
     // ===========================================================================
 
-    const programLookupResponse: CommonResponseDTO =
-        await LookupServices.getProgrammeEnums();
-
-    const programLookup: DropdownDTO[] = LookupServices.setSelectOptions(
-        programLookupResponse,
-    );
-
-    // ===========================================================================
-
-    const schemeLookupResponse: CommonResponseDTO =
-        await LookupServices.getSchemeEnums();
-
-    const schemeLookup: DropdownDTO[] =
-        LookupServices.setSelectOptions(schemeLookupResponse);
-    // ===========================================================================
-
     const bankLookupResponse: CommonResponseDTO =
         await LookupServices.getBankEnums();
 
@@ -543,11 +527,9 @@ export async function load({ params, parent }) {
             genderLookup,
             maritalLookup,
             positionLookup,
-            programLookup,
             relationshipLookup,
             institutionLookup,
             bankLookup,
-            schemeLookup,
             educationLookup,
             sponsorshipLookup,
             majorMinorLookup,
@@ -692,7 +674,7 @@ export const _submitNextOfKinForm = async (formData: object) => {
 
 export const _submitServiceForm = async (id: number, formData: object) => {
     const form = await superValidate(formData, zod(_serviceInfoRequestSchema));
-    form.data.candidateId = id;
+    form.data.applicationId = id;
     console.log(form);
     if (!form.valid) {
         getErrorToast();
@@ -772,7 +754,7 @@ export const _submitSecretarySetApproverForm = async (
     formData: object,
 ) => {
     const form = await superValidate(formData, zod(_setApproversSchema));
-    form.data.candidateId = id;
+    form.data.applicationId = id;
 
     if (!form.valid) {
         getErrorToast();
@@ -833,7 +815,7 @@ export const _submitAcademicInfoForm = async (
     isDraft: boolean,
     formData: Academic[],
 ) => {
-    if (formData.length < 1) {
+    if (formData.length < 1 && isDraft === true) {
         getErrorToast();
         return fail(400);
     }
@@ -854,7 +836,7 @@ export const _submitExperienceInfoForm = async (
     isDraft: boolean,
     formData: Experience[],
 ) => {
-    if (formData.length < 1) {
+    if (formData.length < 1 && isDraft === true) {
         getErrorToast();
         return fail(400);
     }
@@ -875,7 +857,7 @@ export const _submitActivityInfoForm = async (
     isDraft: boolean,
     formData: Activity[],
 ) => {
-    if (formData.length < 1) {
+    if (formData.length < 1 && isDraft === true) {
         getErrorToast();
         return fail(400);
     }
@@ -896,7 +878,7 @@ export const _submitFamilyInfoForm = async (
     isDraft: boolean,
     formData: Family[],
 ) => {
-    if (formData.length < 1) {
+    if (formData.length < 1 && isDraft === true) {
         getErrorToast();
         return fail(400);
     }
@@ -917,7 +899,7 @@ export const _submitDependencyInfoForm = async (
     isDraft: boolean,
     formData: Dependency[],
 ) => {
-    if (formData.length < 1) {
+    if (formData.length < 1 && isDraft === true) {
         getErrorToast();
         return fail(400);
     }
@@ -938,7 +920,7 @@ export const _submitNextOfKinInfoForm = async (
     isDraft: boolean,
     formData: NextOfKin[],
 ) => {
-    if (formData.length < 1) {
+    if (formData.length < 1 && isDraft === true) {
         getErrorToast();
         return fail(400);
     }

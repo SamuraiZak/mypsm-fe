@@ -27,8 +27,8 @@ export const load = async ({ parent }) => {
     const isCandidateRole = currentRoleCode === RoleConstant.calon.code;
     const isEmploymentSecretaryRole =
         currentRoleCode === RoleConstant.urusSetiaPerjawatan.code;
-    const isSupporterRole = currentRoleCode === RoleConstant.penyokong.code;
-    const isApproverRole = currentRoleCode === RoleConstant.pelulus.code;
+    const isSupporterRole = currentRoleCode === RoleConstant.kakitangan.code;
+    const isApproverRole = currentRoleCode === RoleConstant.kakitangan.code;
 
     // const authorised =
     //     currentRoleCode === RoleConstant.urusSetiaPerjawatan.code ||
@@ -40,7 +40,7 @@ export const load = async ({ parent }) => {
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: 'candidateId',
+        orderBy: 'applicationId',
         orderType: 1,
         filter: {
             dataType: 0, // 0: New | 1: Other | null
@@ -54,7 +54,7 @@ export const load = async ({ parent }) => {
     const submittedTableParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: 'candidateId',
+        orderBy: 'applicationId',
         orderType: 1,
         filter: {
             dataType: 1, // 0: New | 1: Other | null
@@ -68,7 +68,7 @@ export const load = async ({ parent }) => {
     const allNewHireTableParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: 'candidateId',
+        orderBy: 'applicationId',
         orderType: 1,
         filter: {
             dataType: null, // 0: New | 1: Other | null
@@ -111,7 +111,7 @@ export const load = async ({ parent }) => {
         await LookupServices.getStatusEnums();
 
     const statusLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsInString(statusLookupResponse);
+        LookupServices.setSelectOptionsValueIsDescription(statusLookupResponse);
 
     // ===========================================================================
 

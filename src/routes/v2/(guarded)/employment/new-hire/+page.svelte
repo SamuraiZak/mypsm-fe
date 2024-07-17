@@ -39,7 +39,7 @@
         data: data.responses.newCandidateResponse.data?.dataList ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['candidateId'],
+        hiddenColumn: ['applicationId'],
         dictionary: [],
         url: 'employment/new_hire/list',
         id: 'notCompletedTable',
@@ -67,7 +67,7 @@
         data: data.responses.submittedFormResponse.data?.dataList ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['candidateId'],
+        hiddenColumn: ['applicationId'],
         dictionary: [],
         url: 'employment/new_hire/list',
         id: 'submittedListTable',
@@ -95,7 +95,7 @@
         data: data.responses.supporterViewResponse.data?.dataList ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['candidateId'],
+        hiddenColumn: ['applicationId'],
         dictionary: [],
         url: 'employment/new_hire/get_supporter_approval/list',
         id: 'supporterViewTable',
@@ -123,7 +123,7 @@
         data: data.responses.approverViewResponse.data?.dataList ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['candidateId'],
+        hiddenColumn: ['applicationId'],
         dictionary: [],
         url: 'employment/new_hire/get_approver_approval/list',
         id: 'approverViewTable',
@@ -191,14 +191,15 @@
             });
         }
 
-        const route = `./new-hire/new-hire-detail/${rowData.applicationId}`;
+        const route = `./new-hire/new-hire-detail/${rowData.applicationId}-${rowData.status}`;
         goto(route);
     };
 </script>
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Rekod Lantikan Baru Kakitangan Tetap"></ContentHeader>
+    <ContentHeader title="Rekod Lantikan Baharu Kakitangan Tetap"
+    ></ContentHeader>
 </section>
 
 <!-- content body starts here -->
@@ -211,7 +212,7 @@
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
             <DataTable
-                title="Senarai Baharu Pelantikan Baru"
+                title="Senarai Baharu Pelantikan Baharu"
                 bind:tableData={newCandidateListTable}
                 bind:passData={rowData}
                 detailActions={() => {
@@ -245,7 +246,7 @@
                     class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
                 >
                     <DataTable
-                        title="Senarai Lantikan Baru"
+                        title="Senarai Lantikan Baharu"
                         bind:tableData={submittedListTable}
                         bind:passData={rowData}
                         detailActions={() => {
@@ -279,13 +280,13 @@
                 </div>
             </CustomTabContent>
             <CustomTabContent
-                title="Senarai Rekod Penambahan Calon Lantikan Baru"
+                title="Senarai Rekod Penambahan Calon Lantikan Baharu"
             >
                 <div
                     class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
                 >
                     <DataTable
-                        title="Senarai Calon Yang Belum Melengkapkan e-Borang Lantikan Baru"
+                        title="Senarai Calon Yang Belum Melengkapkan e-Borang Lantikan Baharu"
                         bind:tableData={notCompletedTable}
                         bind:passData={rowData}
                         editActions={() => {
@@ -293,8 +294,7 @@
                                 `./new-hire/add-new-hire/new-hire-${rowData.applicationId}`,
                             );
                         }}
-                        addActions={() =>
-                            goto('./new-hire/add-new-hire')}
+                        addActions={() => goto('./new-hire/add-new-hire')}
                     >
                         <FilterWrapper slot="filter">
                             <FilterTextField
@@ -323,12 +323,12 @@
                 </div>
             </CustomTabContent>
         </CustomTab>
-    {:else if data.roles.isSupporterRole}
+    {:else}
         <div
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
             <DataTable
-                title="Senarai Lantikan Baru"
+                title="Senarai Lantikan Baharu"
                 bind:tableData={supporterViewTable}
                 bind:passData={rowData}
                 detailActions={() => {
@@ -358,12 +358,12 @@
                 </FilterWrapper>
             </DataTable>
         </div>
-    {:else if data.roles.isApproverRole}
+        <!-- {:else if data.roles.isApproverRole}
         <div
             class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
         >
             <DataTable
-                title="Senarai Lantikan Baru"
+                title="Senarai Lantikan Baharu"
                 bind:tableData={approverViewTable}
                 bind:passData={rowData}
                 detailActions={async () => {
@@ -392,7 +392,7 @@
                     ></FilterSelectField>
                 </FilterWrapper>
             </DataTable>
-        </div>
+        </div> -->
     {/if}
 </section>
 
