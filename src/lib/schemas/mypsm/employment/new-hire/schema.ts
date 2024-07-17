@@ -311,17 +311,17 @@ export const _nextOfKinListRequestSchema = z.object({
 //==========================================================
 
 export const _serviceDetailSchema = z.object({
-    candidateId: z.number().readonly(),
+    applicationId: z.number().readonly(),
     gradeId: numberIdSchema,
     maxGradeId: numberIdSchema,
-    positionId: numberIdSchema,
+    // positionId: numberIdSchema,
     placementId: numberIdSchema,
-    schemeId: numberIdSchema,
+    // schemeId: numberIdSchema,
     serviceTypeId: numberIdSchema,
     serviceGroupId: numberIdSchema,
     unitId: numberIdSchema,
-    programmeId: numberIdSchema,
-    employmentStatusId: numberIdSchema,
+    // programmeId: numberIdSchema,
+    // employmentStatusId: numberIdSchema,
     effectiveDate: dateStringSchema,
     retirementBenefit: codeSchema,
     epfNumber: shortTextSchema,
@@ -329,16 +329,16 @@ export const _serviceDetailSchema = z.object({
     incomeNumber: shortTextSchema,
     bankName: shortTextSchema,
     bankAccount: shortTextSchema,
-    eligibleLeaveCount: numberSchema,
+    // eligibleLeaveCount: numberSchema,
     civilServiceStartDate: dateStringSchema,
     newRecruitEffectiveDate: dateStringSchema,
     serviceDate: dateStringSchema,
-    firstServiceDate: dateStringSchema,
-    firstConfirmServiceDate: dateStringSchema,
-    firstEffectiveDate: dateStringSchema,
-    firstEffectiveServiceDate: dateStringSchema,
-    confirmServiceDate: dateStringSchema,
-    confirmDate: dateStringSchema,
+    // firstServiceDate: dateStringSchema,
+    // firstConfirmServiceDate: dateStringSchema,
+    // firstEffectiveDate: dateStringSchema,
+    // firstEffectiveServiceDate: dateStringSchema,
+    // confirmServiceDate: dateStringSchema,
+    // confirmDate: dateStringSchema,
     pensionNumber: z.string().nullish(),
     kgt: numberSchema,
     retirementAge: numberSchema,
@@ -346,7 +346,7 @@ export const _serviceDetailSchema = z.object({
         (data) => new Date(data) >= new Date(),
         { message: 'Tarikh bersara tidak boleh kurang dari tahun semasa.' },
     ),
-    revisionMonth: codeSchema,
+    revisionMonthId: numberIdSchema,
     maximumSalary: numberSchema,
     baseSalary: numberSchema,
     itka: numberSchema,
@@ -358,12 +358,10 @@ export const _serviceDetailSchema = z.object({
 });
 
 export const _serviceInfoResponseSchema = _serviceDetailSchema.omit({
-    candidateId: true,
+    applicationId: true,
 });
 
-export const _serviceInfoRequestSchema = _serviceDetailSchema.omit({
-    isReadonly: true,
-});
+export const _serviceInfoRequestSchema = _serviceDetailSchema;
 
 //==========================================================
 //========= Approval Info Schema ===========================
@@ -384,9 +382,10 @@ export const _approvalResultSchema = z.object({
 //==========================================================
 
 export const _setApproversSchema = z.object({
-    candidateId: z.number().readonly(),
+    applicationId: z.number().readonly(),
     supporterId: numberIdSchema,
     approverId: numberIdSchema,
+    isDraft: z.boolean(),
 });
 
 //==========================================================

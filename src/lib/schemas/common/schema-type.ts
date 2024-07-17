@@ -94,17 +94,18 @@ export const booleanSchema = z.boolean({
     invalid_type_error: 'Medan ini haruslah jenis boolean.',
 });
 
-export const numberSchema = z.coerce
-    .number({
-        required_error: 'Medan ini hendaklah diisi.',
-        invalid_type_error: 'Sila pastikan medan ini ditaip dengan angka',
-    })
-    .refine((x) => x >= 0, { message: 'Medan ini tidak boleh dibiar kosong.' });
+export const numberSchema = z.coerce.number({
+    required_error: 'Medan ini hendaklah diisi.',
+    invalid_type_error: 'Sila pastikan medan ini ditaip dengan angka',
+});
+// .refine((x) => x >= 0, { message: 'Medan ini tidak boleh dibiar kosong.' });
 
-export const numberIdSchema = z.coerce.number({
-    required_error: 'Tidak tepat.',
-    invalid_type_error: 'Sila pastikan ID ditaip dengan angka',
-}).min(1, {message:"Sila tetapkan pilihan"});
+export const numberIdSchema = z.coerce
+    .number({
+        required_error: 'Tidak tepat.',
+        invalid_type_error: 'Sila pastikan ID ditaip dengan angka',
+    })
+    .min(1, { message: 'Sila tetapkan pilihan' });
 
 export const dateStringSchema = z.coerce
     .string({ required_error: 'Tarikh tidak boleh kosong' })
