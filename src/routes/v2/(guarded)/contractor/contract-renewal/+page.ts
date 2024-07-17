@@ -116,11 +116,7 @@ export const load = async ({ parent }) => {
             nearExpiredContractList = nearExpiredContractListResponse.data
                 ?.dataList as RenewContractListResponseDTO[];
         }
-    } else if (currentRoleCode === UserRoleConstant.penyokong.code) {
-
-    } else if (currentRoleCode === UserRoleConstant.pelulus.code) {
-
-    } else if (currentRoleCode === UserRoleConstant.kakitanganKontrak.code) {
+    }  else if (currentRoleCode === UserRoleConstant.kakitanganKontrak.code) {
         employeeTableResponse =
             await ContractEmployeeServices.getRenewContractEmployeeTable(
                 supporterApproverParam,

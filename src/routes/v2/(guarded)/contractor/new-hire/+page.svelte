@@ -89,7 +89,7 @@
                 onClick={() => goto('./new-hire/permohonan-baru')}
                 icon="add"
                 type="primary"
-                label="Tambah Kontrak Baru"
+                label="Tambah Kontrak Baharu"
             />
         {:else if data.currentRoleCode === UserRoleConstant.calonKontrak.code}
             <TextIconButton

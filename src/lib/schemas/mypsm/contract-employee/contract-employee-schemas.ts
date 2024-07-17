@@ -253,7 +253,7 @@ export const _renewContractSupporterApproverSchema = z.object({
 })
 
 export const _renewContractSecretaryUpdateSchema = z.object({
-    contractId:                numberSchema,
+    applicationId:                numberSchema,
     startContract:             stringToMinDate,
     endContract:               stringToMinDate,
     wageRate:                  numberSchema,

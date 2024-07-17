@@ -178,7 +178,7 @@
         id: 'contractSecretaryUpdateForm',
         validators: zod(_renewContractSecretaryUpdateSchema),
         async onSubmit() {
-            $contractSecretaryUpdateForm.contractId = data.contractId.id;
+            $contractSecretaryUpdateForm.applicationId = data.contractId.id;
             const readOnly = await _submitContractSecretaryUpdateForm(
                 $contractSecretaryUpdateForm,
             );
@@ -1689,7 +1689,7 @@
             {#if data.getApproverApproval?.remark !== null && data.currentRoleCode !== UserRoleConstant.pelulus.code && data.currentRoleCode !== UserRoleConstant.penyokong.code}
                 <StepperContent>
                     <StepperContentHeader
-                        title="Maklumat Penyambungan Kontrak Kakitangan"
+                        title="Tawaran Pembaharuan Perkhidmatan Kakitangan Kontrak"
                     >
                         {#if !$contractSecretaryUpdateForm.isReadonly && data.currentRoleCode === UserRoleConstant.urusSetiaKhidmatSokongan.code}
                             <TextIconButton
@@ -1709,7 +1709,7 @@
                     </StepperContentHeader>
                     <StepperContentBody>
                         <ContentHeader
-                            title="Maklumat Kontrak Baru"
+                            title="Maklumat Kontrak Baharu"
                             borderClass="border-b-none"
                         >
                     </ContentHeader>
@@ -1958,7 +1958,7 @@
 
                 <StepperContent>
                     <StepperContentHeader
-                        title="Pengesahan Perjanjian Kontrak Baru"
+                        title="Pengesahan Perjanjian Kontrak Baharu"
                     >
                         {#if $contractSecretaryApprovalForm.isReadonly == false && data.currentRoleCode == UserRoleConstant.urusSetiaKhidmatSokongan.code}
                             <TextIconButton
@@ -1983,7 +1983,7 @@
                             </div>
                         {:else}
                             <ContentHeader
-                                title="Tetapkan Pengesahan Perjanjian Kontrak Baru"
+                                title="Tetapkan Pengesahan Perjanjian Kontrak Baharu"
                                 borderClass="border-b-none"
                             />
                             <form
