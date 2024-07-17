@@ -490,6 +490,7 @@ export async function load({ params, parent }) {
 
     return {
         params,
+        layoutData,
         newHireFullDetailView,
         newHireId,
         newHireStatusResponse,

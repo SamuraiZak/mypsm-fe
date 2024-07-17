@@ -2979,7 +2979,7 @@
                             bind:val={$serviceInfoForm.unitId}
                             options={data.selectionOptions.unitLookup}
                         ></CustomSelectField>
-                        <!-- 
+                        <!--
                         <CustomSelectField
                             disabled
                             errors={$serviceInfoErrors.employmentStatusId}
@@ -3059,7 +3059,7 @@
                             label={'No. Akaun'}
                             bind:val={$serviceInfoForm.bankAccount}
                         ></CustomTextField>
-                        <!-- 
+                        <!--
                         <CustomTextField
                             placeholder="-"
                             disabled={$isReadonlyServiceFormStepper &&
@@ -3428,39 +3428,43 @@
                     >
                         {#if $newHireSecretaryApprovalIsApproved}
                             {#if (!$isReadonlySupporterApprovalResult || $supporterApprovalResultIsDraft) && data.roles.isSupporterRole}
-                                <TextIconButton
-                                    type="neutral"
-                                    label="Simpan"
-                                    form="newEmploymentSupporterApproval"
-                                    onClick={() => {
-                                        $supporterApprovalForm.isDraft = true;
-                                    }}
-                                ></TextIconButton>
-                                <TextIconButton
-                                    type="primary"
-                                    label="Hantar"
-                                    form="newEmploymentSupporterApproval"
-                                    onClick={() => {
-                                        $supporterApprovalForm.isDraft = false;
-                                    }}
-                                ></TextIconButton>
+                                {#if data.layoutData.accountDetails.identityDocumentNumber == data.newHireFullDetailView.supporter.identityDocumentNumber}
+                                    <TextIconButton
+                                        type="neutral"
+                                        label="Simpan"
+                                        form="newEmploymentSupporterApproval"
+                                        onClick={() => {
+                                            $supporterApprovalForm.isDraft = true;
+                                        }}
+                                    ></TextIconButton>
+                                    <TextIconButton
+                                        type="primary"
+                                        label="Hantar"
+                                        form="newEmploymentSupporterApproval"
+                                        onClick={() => {
+                                            $supporterApprovalForm.isDraft = false;
+                                        }}
+                                    ></TextIconButton>
+                                {/if}
                             {:else if (!$isReadonlyApproverApprovalResult || $approverApprovalResultIsDraft) && data.roles.isApproverRole}
-                                <TextIconButton
-                                    type="neutral"
-                                    label="Simpan"
-                                    form="newEmploymentApprovalApproval"
-                                    onClick={() => {
-                                        $approverApprovalForm.isDraft = true;
-                                    }}
-                                ></TextIconButton>
-                                <TextIconButton
-                                    type="primary"
-                                    label="Hantar"
-                                    form="newEmploymentApprovalApproval"
-                                    onClick={() => {
-                                        $approverApprovalForm.isDraft = false;
-                                    }}
-                                ></TextIconButton>
+                                {#if data.layoutData.accountDetails.identityDocumentNumber == data.newHireFullDetailView.approver.identityDocumentNumber}
+                                    <TextIconButton
+                                        type="neutral"
+                                        label="Simpan"
+                                        form="newEmploymentApprovalApproval"
+                                        onClick={() => {
+                                            $approverApprovalForm.isDraft = true;
+                                        }}
+                                    ></TextIconButton>
+                                    <TextIconButton
+                                        type="primary"
+                                        label="Hantar"
+                                        form="newEmploymentApprovalApproval"
+                                        onClick={() => {
+                                            $approverApprovalForm.isDraft = false;
+                                        }}
+                                    ></TextIconButton>
+                                {/if}
                             {/if}
                         {/if}
                     </StepperContentHeader>
@@ -3468,68 +3472,72 @@
                         <div class="flex w-full flex-col gap-2.5">
                             {#if $newHireSecretaryApprovalIsApproved}
                                 {#if data.roles.isSupporterRole && (!$isReadonlySupporterApprovalResult || $supporterApprovalResultIsDraft)}
-                                    <form
-                                        id="newEmploymentSupporterApproval"
-                                        method="POST"
-                                        use:supporterApprovalEnhance
-                                        class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                                    >
-                                        <div class="mb-5">
-                                            <b
-                                                class="text-sm text-system-primary"
-                                                >Penyokong</b
-                                            >
-                                        </div>
-                                        <CustomTextField
-                                            placeholder="-"
-                                            disabled={$isReadonlySupporterApprovalResult &&
-                                                !$supporterApprovalResultIsDraft}
-                                            errors={$supporterApprovalErrors.remark}
-                                            id="supporterRemark"
-                                            label="Tindakan/Ulasan"
-                                            bind:val={$supporterApprovalForm.remark}
-                                        ></CustomTextField>
-                                        <CustomRadioBoolean
-                                            disabled={$isReadonlySupporterApprovalResult &&
-                                                !$supporterApprovalResultIsDraft}
-                                            errors={$supporterApprovalErrors.status}
-                                            id="supporterIsApproved"
-                                            options={supportOptions}
-                                            label={'Keputusan'}
-                                            bind:val={$supporterApprovalForm.status}
-                                        ></CustomRadioBoolean>
-                                    </form>
+                                    {#if data.layoutData.accountDetails.identityDocumentNumber == data.newHireFullDetailView.supporter.identityDocumentNumber}
+                                        <form
+                                            id="newEmploymentSupporterApproval"
+                                            method="POST"
+                                            use:supporterApprovalEnhance
+                                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                                        >
+                                            <div class="mb-5">
+                                                <b
+                                                    class="text-sm text-system-primary"
+                                                    >Penyokong</b
+                                                >
+                                            </div>
+                                            <CustomTextField
+                                                placeholder="-"
+                                                disabled={$isReadonlySupporterApprovalResult &&
+                                                    !$supporterApprovalResultIsDraft}
+                                                errors={$supporterApprovalErrors.remark}
+                                                id="supporterRemark"
+                                                label="Tindakan/Ulasan"
+                                                bind:val={$supporterApprovalForm.remark}
+                                            ></CustomTextField>
+                                            <CustomRadioBoolean
+                                                disabled={$isReadonlySupporterApprovalResult &&
+                                                    !$supporterApprovalResultIsDraft}
+                                                errors={$supporterApprovalErrors.status}
+                                                id="supporterIsApproved"
+                                                options={supportOptions}
+                                                label={'Keputusan'}
+                                                bind:val={$supporterApprovalForm.status}
+                                            ></CustomRadioBoolean>
+                                        </form>
+                                    {/if}
                                 {:else if data.roles.isApproverRole && (!$isReadonlyApproverApprovalResult || $approverApprovalResultIsDraft) && $newHireSupporterApprovalIsApproved}
-                                    <form
-                                        id="newEmploymentApprovalApproval"
-                                        method="POST"
-                                        use:approverApprovalEnhance
-                                        class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                                    >
-                                        <div class="mb-5">
-                                            <b
-                                                class="text-sm text-system-primary"
-                                                >Pelulus</b
-                                            >
-                                        </div>
-                                        <CustomTextField
-                                            placeholder="-"
-                                            disabled={$isReadonlyApproverApprovalResult &&
-                                                !$approverApprovalResultIsDraft}
-                                            errors={$approverApprovalErrors.remark}
-                                            id="approverRemark"
-                                            label="Tindakan/Ulasan"
-                                            bind:val={$approverApprovalForm.remark}
-                                        ></CustomTextField>
-                                        <CustomRadioBoolean
-                                            disabled={$isReadonlyApproverApprovalResult &&
-                                                !$approverApprovalResultIsDraft}
-                                            id="approverIsApproved"
-                                            options={approveOptions}
-                                            label={'Keputusan'}
-                                            bind:val={$approverApprovalForm.status}
-                                        ></CustomRadioBoolean>
-                                    </form>
+                                    {#if data.layoutData.accountDetails.identityDocumentNumber == data.newHireFullDetailView.approver.identityDocumentNumber}
+                                        <form
+                                            id="newEmploymentApprovalApproval"
+                                            method="POST"
+                                            use:approverApprovalEnhance
+                                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                                        >
+                                            <div class="mb-5">
+                                                <b
+                                                    class="text-sm text-system-primary"
+                                                    >Pelulus</b
+                                                >
+                                            </div>
+                                            <CustomTextField
+                                                placeholder="-"
+                                                disabled={$isReadonlyApproverApprovalResult &&
+                                                    !$approverApprovalResultIsDraft}
+                                                errors={$approverApprovalErrors.remark}
+                                                id="approverRemark"
+                                                label="Tindakan/Ulasan"
+                                                bind:val={$approverApprovalForm.remark}
+                                            ></CustomTextField>
+                                            <CustomRadioBoolean
+                                                disabled={$isReadonlyApproverApprovalResult &&
+                                                    !$approverApprovalResultIsDraft}
+                                                id="approverIsApproved"
+                                                options={approveOptions}
+                                                label={'Keputusan'}
+                                                bind:val={$approverApprovalForm.status}
+                                            ></CustomRadioBoolean>
+                                        </form>
+                                    {/if}
                                 {/if}
                             {/if}
 

@@ -375,6 +375,7 @@ export const _approvalResultSchema = z.object({
     isReadonly: z.boolean().readonly(),
     isDraft: z.boolean(),
     approvalDate: z.string().readonly(),
+    identityDocumentNumber: z.string().nullish(),
 });
 
 //==========================================================

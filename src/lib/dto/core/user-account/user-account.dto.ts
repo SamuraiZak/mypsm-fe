@@ -7,6 +7,7 @@ export interface AccountDetailsDTO {
     roles: Role[];
     module: ModuleDTO[];
     passwordExpired: boolean;
+    identityDocumentNumber: string;
 }
 
 export interface Role {
