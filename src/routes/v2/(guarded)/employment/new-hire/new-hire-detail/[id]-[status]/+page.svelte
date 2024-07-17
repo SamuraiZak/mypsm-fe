@@ -1266,7 +1266,9 @@
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
-                    onClick={() => activeIndex++}
+                    onClick={() => {
+                        triggerSubmitAcademicTempData(false);
+                        activeIndex++}}
                 />
                 <TextIconButton
                     type="neutral"
@@ -1443,7 +1445,7 @@
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
-                    onClick={() => activeIndex++}
+                    onClick={() => {triggerSubmitExperienceTempData(false);activeIndex++;}}
                 />
                 <TextIconButton
                     type="neutral"
@@ -1589,7 +1591,7 @@
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
-                    onClick={() => activeIndex++}
+                    onClick={() => {triggerSubmitActivityTempData(false); activeIndex++;}}
                 />
                 <TextIconButton
                     type="neutral"
@@ -1702,7 +1704,7 @@
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
-                    onClick={() => activeIndex++}
+                    onClick={() => {triggerSubmitFamilyTempData(false);activeIndex++;}}
                 />
                 <TextIconButton
                     type="neutral"
@@ -1996,7 +1998,7 @@
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
-                    onClick={() => activeIndex++}
+                    onClick={() => {triggerSubmitDependencyTempData(false);activeIndex++;}}
                 />
                 <TextIconButton
                     type="neutral"
