@@ -12,6 +12,7 @@
     import { TextAppearanceHelper } from '$lib/helpers/core/text-appearance.helper';
     import type { SwitchRoleDTO } from '$lib/dto/core/user-account/user-account.dto';
     import { Toaster } from 'svelte-french-toast';
+    import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
 
     export let data: LayoutData;
 
@@ -106,48 +107,61 @@
             <!-- account dropdown -->
             <Dropdown
                 triggeredBy="#accountTile"
-                containerClass="w-[250px] border divide-y z-10 top-10"
+                containerClass="w-[300px] border divide-y divide-gray-600 z-10 top-10 shadow-lg bg-gray-900"
             >
                 <div slot="header" class="px-4 py-2">
                     <div
                         class="flex h-5 w-full flex-col items-center justify-center"
                     >
                         <p
-                            class="font w-full text-start text-base font-medium text-slate-700"
+                            class="font w-full text-start text-base font-medium text-gray-200"
                         >
                             Tukar Peranan
                         </p>
                     </div>
                     {#each data.props.accountDetails.roles as role}
                         <DropdownItem
+                            defaultClass="hover:bg-gray-700 py-2 px-4"
                             on:click={() => {
                                 switchRole(role.code);
                             }}
                         >
                             <div
-                                class="flex h-5 w-full flex-col items-center justify-center"
+                                class="flex h-5 w-full flex-row items-center justify-between px-2"
                             >
                                 <p
-                                    class="font w-full text-wrap text-start text-base font-medium text-slate-700"
+                                    class="font w-full text-wrap text-start text-base font-medium text-gray-200"
                                 >
                                     {TextAppearanceHelper.toProper(role.name)}
                                 </p>
+                                {#if role.name == data.props.accountDetails.currentRole}
+                                    <div
+                                        class="flex h-5 w-5 min-w-5 flex-col items-center justify-center"
+                                    >
+                                        <span
+                                            class="font w-fit text-wrap text-center text-base font-medium text-gray-200"
+                                        >
+                                            <SvgCheck size="20"></SvgCheck>
+                                        </span>
+                                    </div>
+                                {/if}
                             </div>
                         </DropdownItem>
                     {/each}
                 </div>
-                <DropdownItem>
+                <DropdownItem defaultClass="hover:bg-gray-700 py-2 px-4">
                     <div
                         class="flex h-5 w-full flex-col items-center justify-center"
                     >
                         <p
-                            class="font w-full text-start text-base font-medium text-slate-700"
+                            class="font w-full text-start text-base font-medium text-gray-200"
                         >
                             Tetapan Akaun
                         </p>
                     </div>
                 </DropdownItem>
                 <DropdownItem
+                    defaultClass="hover:bg-gray-700 py-2 px-4"
                     slot="footer"
                     href="/v2/login"
                     on:click={() => {
@@ -158,7 +172,7 @@
                         class="flex h-5 w-full flex-col items-center justify-center"
                     >
                         <p
-                            class="font w-full text-start text-base font-medium text-slate-700"
+                            class="font w-full text-start text-base font-medium text-gray-200"
                         >
                             Log Keluar
                         </p>

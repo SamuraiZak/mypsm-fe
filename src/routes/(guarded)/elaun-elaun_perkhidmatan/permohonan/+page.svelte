@@ -5,7 +5,7 @@
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
-    import type { AllowanceTypeDTO } from '$lib/dto/mypsm/allowance/allowance.dto';
+    import type { AllowanceTypeDTO } from '$lib/dto/mypsm/backup/allowance.dto';
     import { AllowanceTypeConstant } from '$lib/constants/core/allowance-type.constant';
     import { goto } from '$app/navigation';
 
