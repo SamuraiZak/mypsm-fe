@@ -21,7 +21,7 @@ import type { OutsiderId } from "$lib/dto/mypsm/pinjaman/kuarters/outsider-id.dt
 import { goto } from "$app/navigation"
 import { UserRoleConstant } from "$lib/constants/core/user-role.constant.js"
 
-export const load = async ({ params, parent}) => {
+export const load = async ({ params, parent }) => {
     const { layoutData } = await parent();
 
     const currentRoleCode: string = layoutData.accountDetails.currentRoleCode
@@ -39,6 +39,26 @@ export const load = async ({ params, parent}) => {
         id: 0,
         document: [],
     };
+    let quartersOtherDocument: QuartersGetDocument = {
+        id: 0,
+        document: [],
+    }
+    let sijilAkuan: QuarterDocument = {
+        name: '',
+        document: ''
+    }
+    let guidelineDoc: QuarterDocument = {
+        name: '',
+        document: ''
+    }
+    let suratAkuanPatuh: QuarterDocument = {
+        name: '',
+        document: ''
+    }
+    let borangPemeriksaanMasuk: QuarterDocument = {
+        name: '',
+        document: ''
+    }
     let secretaryApproval = {} as QuarterSecretaryApproval;
     let quarterDetails = {} as QuarterDetails;
     let directorApproval = {} as QuarterCommonApproval;
@@ -85,6 +105,29 @@ export const load = async ({ params, parent}) => {
             quarterDocuments =
                 quarterDocumentsResponse.data?.details as QuartersGetDocument;
         }
+        const quarterOtherDocumentsResponse: CommonResponseDTO =
+            await QuartersServices.getOtherDocument(currentId);
+        if (quarterOtherDocumentsResponse.data?.details.document !== null) {
+            quartersOtherDocument =
+                quarterOtherDocumentsResponse.data?.details as QuartersGetDocument;
+        }
+
+        const sijilAkuanResponse: CommonResponseDTO =
+            await QuartersServices.getSijilAkuan()
+        sijilAkuan =
+            sijilAkuanResponse.data?.details as QuarterDocument;
+        const guidelineDocResponse: CommonResponseDTO =
+            await QuartersServices.getGuideline()
+        guidelineDoc =
+            guidelineDocResponse.data?.details as QuarterDocument;
+        const suratAkuanPatuhResponse: CommonResponseDTO =
+            await QuartersServices.getSuratAkuanPatuh()
+        suratAkuanPatuh =
+            suratAkuanPatuhResponse.data?.details as QuarterDocument;
+        const borangPemeriksaanResponse: CommonResponseDTO =
+            await QuartersServices.getPemeriksaanMasuk()
+        borangPemeriksaanMasuk =
+            borangPemeriksaanResponse.data?.details as QuarterDocument;
 
         const secretaryApprovalResponse: CommonResponseDTO =
             await QuartersServices.getApplicationSecretaryApproval(currentId);
@@ -140,6 +183,13 @@ export const load = async ({ params, parent}) => {
                 quarterDocumentsResponse.data?.details as QuartersGetDocument;
         }
 
+        const quarterOtherDocumentsResponse: CommonResponseDTO =
+            await QuartersServices.getOtherDocument(currentId);
+        if (quarterOtherDocumentsResponse.data?.details.document !== null) {
+            quartersOtherDocument =
+                quarterOtherDocumentsResponse.data?.details as QuartersGetDocument;
+        }
+
         const secretaryApprovalResponse: CommonResponseDTO =
             await QuartersServices.getApplicationSecretaryApproval(currentId);
         secretaryApproval =
@@ -177,49 +227,49 @@ export const load = async ({ params, parent}) => {
     }
 
     // new file
-let movingIncertificateLetter: QuarterDocument = {
-    name: "",
-    document: "",
-}
-let movingInGuidelineLetter: QuarterDocument = {
-    name: "",
-    document: "",
-}
-let movingInCertificationLetter: QuarterDocument = {
-    name: "",
-    document: "",
-}
-let movingInMovingInLetter: QuarterDocument = {
-    name: "",
-    document: "",
-}
+    let movingIncertificateLetter: QuarterDocument = {
+        name: "",
+        document: "",
+    }
+    let movingInGuidelineLetter: QuarterDocument = {
+        name: "",
+        document: "",
+    }
+    let movingInCertificationLetter: QuarterDocument = {
+        name: "",
+        document: "",
+    }
+    let movingInMovingInLetter: QuarterDocument = {
+        name: "",
+        document: "",
+    }
 
-const certificateLetter: CommonResponseDTO =
+    const certificateLetter: CommonResponseDTO =
         await QuartersServices.getCertificateDocumentMovingIn(currentId);
     if (certificateLetter.status == 'success') {
         movingIncertificateLetter =
-        certificateLetter.data?.details as QuarterDocument;
+            certificateLetter.data?.details as QuarterDocument;
     }
 
     const GuidelineLetter: CommonResponseDTO =
         await QuartersServices.getCertificateDocumentMovingIn(currentId);
     if (GuidelineLetter.status == 'success') {
         movingInGuidelineLetter =
-        GuidelineLetter.data?.details as QuarterDocument;
+            GuidelineLetter.data?.details as QuarterDocument;
     }
 
     const CertificationLetter: CommonResponseDTO =
         await QuartersServices.getCertificateDocumentMovingIn(currentId);
     if (CertificationLetter.status == 'success') {
         movingInCertificationLetter =
-        CertificationLetter.data?.details as QuarterDocument;
+            CertificationLetter.data?.details as QuarterDocument;
     }
 
     const MovingInLetter: CommonResponseDTO =
         await QuartersServices.getCertificateDocumentMovingIn(currentId);
     if (MovingInLetter.status == 'success') {
         movingInMovingInLetter =
-        MovingInLetter.data?.details as QuarterDocument;
+            MovingInLetter.data?.details as QuarterDocument;
     }
 
     let quartersOfferLetter: string = getSuratTawaranKuarters();
@@ -248,13 +298,23 @@ const certificateLetter: CommonResponseDTO =
         outsiderFamily,
         outsiderServiceForm,
         movingIncertificateLetter,
-movingInGuidelineLetter,
-movingInCertificationLetter,
-movingInMovingInLetter,
-certificateLetter,
-GuidelineLetter,
-CertificationLetter,
-MovingInLetter,
+        movingInGuidelineLetter,
+        movingInCertificationLetter,
+        movingInMovingInLetter,
+        certificateLetter,
+        GuidelineLetter,
+        CertificationLetter,
+        MovingInLetter,
+        quartersOtherDocument,
+        doc:
+            [
+                sijilAkuan,
+                guidelineDoc,
+                suratAkuanPatuh,
+                borangPemeriksaanMasuk,
+
+            ]
+
     }
 }
 
@@ -264,7 +324,7 @@ export const _applyQuarters = async () => {
         await QuartersServices.addMovingInApplication();
 
     if (response.status == "success") {
-        goto('/loan-and-quarters/quarters-entry/butiran/' + response.data?.details.id + '-kakitangan')
+        goto('/v2/loan-and-quarters/quarters-entry/butiran/' + response.data?.details.id + '-kakitangan')
     } else {
         throw new Error('Failed to create new application.')
     }
@@ -275,7 +335,7 @@ export const _applyMoveoutQuarters = async (form: commonIdRequestDTO) => {
 
     if (response.status == "success") {
         setTimeout(() => goto(
-            '/loan-and-quarters/quarters-exit'
+            '/v2/loan-and-quarters/quarters-exit'
         ), 1000)
     } else {
         throw new Error('Failed to create new application.')
@@ -287,7 +347,7 @@ export const _applyMoveoutQuartersForOutsiders = async (form: commonIdRequestDTO
 
     if (response.status == "success") {
         setTimeout(() => goto(
-            '/loan-and-quarters/quarters-exit'
+            '/v2/loan-and-quarters/quarters-exit'
         ), 1000)
     } else {
         throw new Error('Failed to create new application.')
@@ -306,6 +366,7 @@ export const _submitConfirmationForm = async (formData: QuartersAddConfirmation)
 }
 
 export const _submitQuartersDocument = async (formData: string) => {
+    console.log(formData)
     const response: CommonResponseDTO =
         await QuartersServices.addUploadDocument(formData)
 
@@ -383,7 +444,7 @@ export const _submitOutsiderServiceForm = async (formData: OutsiderServiceDetail
             }
             const res = await registerOutsider(outsiderId);
 
-            setTimeout(() => goto('/pinjaman-dan-kuarters/permohonan-masuk-kuarters/butiran/' + res.response.data?.details.id + "-" + "luar"), 1000)
+            setTimeout(() => goto('/v2/loan-and-quarters/quarters-entry/butiran/' + res.response.data?.details.id + "-" + "luar"), 1000)
         }
 
         return { response }
@@ -502,9 +563,9 @@ const getLookup = async () => {
     // -------------------------------------------------------
     const suppAppResponse: CommonListRequestDTO = {
         pageNum: 1,
-        pageSize: 350,
-        orderBy: null,
-        orderType: null,
+        pageSize: 1000,
+        orderBy: "name",
+        orderType: 0,
         filter: {
             program: "TETAP",
             employeeNumber: null,

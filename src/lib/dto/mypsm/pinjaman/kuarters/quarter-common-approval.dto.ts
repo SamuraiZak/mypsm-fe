@@ -2,6 +2,7 @@ export interface QuarterCommonApproval {
     id:     number;
     status: boolean;
     remark: string;
+    isDraft: boolean;
 }
 
 // Converts JSON strings to/from your types
@@ -19,6 +20,7 @@ export interface QuarterSecretaryApproval {
     id:     number;
     status: boolean;
     remark: string;
+    isDraft: boolean;
     directorApproverId: number;
 }
 

@@ -32,11 +32,13 @@ export const _quarterCommonApproval = z.object({
     id: z.number(),
     remark: shortTextSchema,
     status: booleanSchema,
+    isDraft: booleanSchema,
 })
 export const _quarterSecretaryApproval = z.object({
     id: z.number(),
     remark: shortTextSchema,
     status: booleanSchema,
+    isDraft: booleanSchema,
     directorApproverId: numberSchema.default(0).refine((val) => val > 0, {message: "Ruangan ini tidak boleh dibiar kosong."}),
 })
 
@@ -44,7 +46,8 @@ export const _addQuarterDetails = z.object({
     id: z.number(),
     directorApproverId: numberSchema,
     movingInDate: stringToMinDate,
-    quarterDetails: shortTextSchema,
+    unit: shortTextSchema,
+    quarter: shortTextSchema,
 })
 
 export const _quartersPayment = z.object({

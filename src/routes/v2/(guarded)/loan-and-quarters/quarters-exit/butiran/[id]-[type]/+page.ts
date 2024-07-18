@@ -20,7 +20,7 @@ import type { QuarterCommonApproval, QuarterSecretaryApproval } from "$lib/dto/m
 import type { QuartersAddConfirmation } from "$lib/dto/mypsm/pinjaman/kuarters/application-confirmation.dto"
 import type { MovingOutSetDirector } from "$lib/dto/mypsm/pinjaman/kuarters/moving-out-set-director.dto"
 
-export const load = async ({ params,parent}) => {
+export const load = async ({ params, parent }) => {
     const { layoutData } = await parent();
 
     const currentRoleCode: string = layoutData.accountDetails.currentRoleCode
@@ -48,6 +48,10 @@ export const load = async ({ params,parent}) => {
     let outsiderService = {} as OutsiderServiceDetail;
     let paymentDetail = {} as QuarterPayment;
     let quartersDeclarationLetter: QuarterDocument = {
+        name: "",
+        document: "",
+    };
+    let memoLetter: QuarterDocument = {
         name: "",
         document: "",
     };
@@ -79,14 +83,14 @@ export const load = async ({ params,parent}) => {
         await QuartersServices.getOutstandingDocument(currentId);
     if (outstandingLetter.status == 'success') {
         quartersDeclarationLetter =
-        outstandingLetter.data?.details as QuarterDocument;
+            outstandingLetter.data?.details as QuarterDocument;
     }
     const memoDocument: CommonResponseDTO =
-    await QuartersServices.getMemoDocument(currentId);
-if (memoDocument.status == 'success') {
-    quartersDeclarationLetter =
-    memoDocument.data?.details as QuarterDocument;
-}
+        await QuartersServices.getMemoDocument();
+    if (memoDocument.status == 'success') {
+        memoLetter =
+            memoDocument.data?.details as QuarterDocument;
+    }
     const checkingDocument: CommonResponseDTO =
         await QuartersServices.getCheckingDocument();
     quartersMovingOutCheckingLetter =
@@ -198,7 +202,7 @@ if (memoDocument.status == 'success') {
         declarationLetter,
         checkingDocument,
         memoMovingOutOutstandingLetter,
-memoDocument,
+        memoLetter,
     }
 }
 
@@ -313,9 +317,9 @@ const getLookup = async () => {
     // -------------------------------------------------------
     const suppAppResponse: CommonListRequestDTO = {
         pageNum: 1,
-        pageSize: 350,
-        orderBy: null,
-        orderType: null,
+        pageSize: 1000,
+        orderBy: "name",
+        orderType: 0,
         filter: {
             program: "TETAP",
             employeeNumber: null,

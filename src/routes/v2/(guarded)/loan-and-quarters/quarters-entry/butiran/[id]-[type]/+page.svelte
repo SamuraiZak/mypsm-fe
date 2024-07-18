@@ -59,7 +59,7 @@
     let submitPayment: boolean = false;
     let files: FileList;
     let applicantType: number = 1;
-
+    let successOtherDocUpload: boolean =  false;
     //for application type radio
     if (data.applicationType == 'luar') {
         applicantType = 2;
@@ -73,10 +73,7 @@
     if (data.quarterDocuments.document.length > 0) {
         successUpload = true;
     }
-    if (
-        data.quarterDetails.directorApproverId !== 0 &&
-        data.quarterDetails.directorApproverId !== undefined
-    ) {
+    if (data.quarterDetails.unit !== null) {
         submitQuarterDetails = true;
     }
     if (
@@ -84,6 +81,9 @@
         data.directorApproval.remark !== undefined
     ) {
         submitDirectorApproval = true;
+    }
+    if(data.quartersOtherDocument.document !== null) {
+        successOtherDocUpload = true;
     }
 
     function uploadDocument(stepper: number) {
@@ -95,25 +95,25 @@
                     let quartersDocument: QuartersUploadDocuments = {
                         id: data.currentId.id,
                         documents: result,
+                        isDraft: false,
                     };
                     if (stepper == 1) {
-                    const res = await _submitQuartersDocument(
-                        JSON.stringify(quartersDocument),
-                    );
-
-                    if (res.response.status == 'success') {
-                        successUpload = true;
-                    }
-                } else if (stepper == 2) {
-                    const res = await _submitOtherDocument(
+                        const res = await _submitQuartersDocument(
                             JSON.stringify(quartersDocument),
                         );
 
                         if (res.response.status == 'success') {
                             successUpload = true;
                         }
-                    }
+                    } else if (stepper == 2) {
+                        const res = await _submitOtherDocument(
+                            JSON.stringify(quartersDocument),
+                        );
 
+                        if (res.response.status == 'success') {
+                            successOtherDocUpload = true;
+                        }
+                    }
                 })
                 .catch((error) => {
                     throw new Error(error);
@@ -232,7 +232,7 @@
         validators: zod(_quarterSecretaryApproval),
         async onSubmit() {
             $secretaryApprovalForm.id = data.currentId.id;
-
+            $secretaryApprovalForm.isDraft = false;
             const readOnly = await _submitSecretaryApprovalForm(
                 $secretaryApprovalForm,
             );
@@ -254,7 +254,7 @@
         validators: zod(_quarterCommonApproval),
         async onSubmit() {
             $directorApprovalForm.id = data.currentId.id;
-
+            $directorApprovalForm.isDraft = false;
             const readOnly = await _submitDirectorApprovalForm(
                 $directorApprovalForm,
             );
@@ -286,7 +286,6 @@
             }
         },
     });
-    console.log($quarterDetailForm)
 
     const {
         form: quarterPaymentForm,
@@ -332,15 +331,10 @@
     if ($outsiderServiceForm.position !== '') {
         outsiderService = true;
     }
-    if($quarterPaymentForm.paymentMethod){
+    if ($quarterPaymentForm.paymentMethod) {
         submitPayment = true;
     }
-
-    const handleDownload = async (url: string) => {
-        await ContractEmployeeServices.downloadContractAttachment(url);
-    };
-
-    
+    console.log(data.quartersOtherDocument.document)
 </script>
 
 <!-- content header starts here -->
@@ -364,8 +358,7 @@
             label="Tutup"
             type="neutral"
             icon="cancel"
-            onClick={() =>
-                goto('/pinjaman-dan-kuarters/permohonan-masuk-kuarters')}
+            onClick={() => goto('/v2/loan-and-quarters/quarters-entry')}
         />
     </ContentHeader>
 </section>
@@ -393,16 +386,17 @@
             <StepperContent>
                 <StepperContentHeader title="Maklumat Peribadi Pemohon">
                     {#if !submitPersonalDetail && data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
-                        <TextIconButton
+                        <!-- <TextIconButton
                             label="Simpan"
-                            icon="check"
+                            type="draft"
+                            icon="save"
                             form="personalDetailForm"
-                        />
+                        /> -->
                         <TextIconButton
                             label="Hantar"
                             form="personalDetailForm"
+                            icon="check"
                         />
-                        
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -494,13 +488,15 @@
             <StepperContent>
                 <StepperContentHeader title="Maklumat Pasangan">
                     {#if !outsiderFamilyForm && data.applicationType == 'luar'}
-                        <TextIconButton
+                        <!-- <TextIconButton
                             label="Simpan"
-                            icon="check"
+                            icon="save"
+                            type="draft"
                             form="outsiderFamily"
-                        />
+                        /> -->
                         <TextIconButton
                             label="Hantar"
+                            icon="check"
                             form="outsiderFamily"
                         />
                     {/if}
@@ -601,16 +597,17 @@
                     title="Maklumat Perkhidmatan (Agensi/Jabatan)"
                 >
                     {#if !outsiderService && data.applicationType == 'luar'}
-                        <TextIconButton
+                        <!-- <TextIconButton
                             label="Simpan"
+                            icon="save"
+                            type="draft"
+                            form="outsiderServiceForm"
+                        /> -->
+                        <TextIconButton
+                            label="Hantar"
                             icon="check"
                             form="outsiderServiceForm"
                         />
-                        <TextIconButton
-                        label="Hantar"
-                        icon="check"
-                        form="outsiderServiceForm"
-                    />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -730,7 +727,7 @@
                 <StepperContentHeader title="Dokumen Sokongan">
                     {#if !successUpload}
                         <TextIconButton
-                            label="Simpan"
+                            label="Hantar"
                             icon="check"
                             onClick={() => uploadDocument(1)}
                         />
@@ -750,14 +747,17 @@
                             <div
                                 class="flex h-fit w-full flex-col justify-center gap-2 text-sm text-ios-labelColors-secondaryLabel-light"
                             >
-                                <span>Muat naik salinan</span>
+                                <span
+                                    >Muat naik dokumen-dokumen yang berkaitan:
+                                </span>
                                 <span>1. Kad Pengenalan Sendiri</span>
                                 <span>2. Kad Pengenalan Pasangan</span>
                                 <span>3. Kad Nikah</span>
-                                <span>4. Gambar Dalaman Kuarters</span>
-                                <span>5. Slip Gaji 3 Bulan Terkini</span>
-                                <span>6. Surat Pengesahan Jabatan/Majikan(Jabatan atau Agensi Luar)</span>
-                              
+                                <span>4. Slip Gaji 3 Bulan Terkini</span>
+                                <span
+                                    >5. Surat Pengesahan Jabatan/Majikan(Jabatan
+                                    atau Agensi Luar)</span
+                                >
                             </div>
                             <div class="flex w-full flex-col gap-2 px-3">
                                 <CustomFileField
@@ -768,13 +768,18 @@
                             </div>
                         {:else}
                             <div class="flex flex-col justify-start gap-3 p-3">
-                                {#each data.quarterDocuments.document as docs}
-                                    <a
-                                        href={docs.document}
-                                        download={docs.name}
-                                        class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                        >{docs.name}</a
+                                {#each data.quarterDocuments.document as docs, i}
+                                    <div
+                                        class="flex w-full items-center gap-3 text-sm"
                                     >
+                                        <span>{i + 1}</span>
+                                        <a
+                                            href={docs.document}
+                                            download={docs.name}
+                                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                            >{docs.name}</a
+                                        >
+                                    </div>
                                 {/each}
                             </div>
                         {/if}
@@ -788,7 +793,8 @@
                         {#if !submitConfirmation && data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
                             <TextIconButton
                                 label="Simpan"
-                                icon="check"
+                                icon="save"
+                                type="draft"
                                 form="confirmationForm"
                             />
                             <TextIconButton
@@ -827,11 +833,12 @@
                         title="Ulasan Kelulusan daripada Urus Setia"
                     >
                         {#if !submitSecretaryApproval && data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
-                            <TextIconButton
+                            <!-- <TextIconButton
                                 label="Simpan"
-                                icon="check"
+                                icon="save"
+                                type="draft"
                                 form="secretaryApprovalForm"
-                            />
+                            /> -->
                             <TextIconButton
                                 label="Hantar"
                                 icon="check"
@@ -853,6 +860,7 @@
                             <CustomTextField
                                 label="Tindakan Ulasan"
                                 id="remark"
+                                type="textarea"
                                 disabled={submitSecretaryApproval}
                                 bind:val={$secretaryApprovalForm.remark}
                                 errors={$secretaryApprovalError.remark}
@@ -885,11 +893,12 @@
                         title="Ulasan Kelulusan daripada Pengarah Negeri / Bahagian"
                     >
                         {#if !submitDirectorApproval && (data.currentRoleCode == UserRoleConstant.pengarahNegeri.code || data.currentRoleCode == UserRoleConstant.pengarahBahagian.code)}
-                            <TextIconButton
+                            <!-- <TextIconButton
                                 label="Simpan"
-                                icon="check"
+                                icon="save"
+                                type="draft"
                                 form="directorApprovalForm"
-                            />
+                            /> -->
                             <TextIconButton
                                 label="Hantar"
                                 icon="check"
@@ -908,7 +917,7 @@
                             method="POST"
                             use:directorApprovalEnhance
                         >
-                            {#if $directorApprovalForm.remark == null && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code && data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code}
+                            {#if $directorApprovalForm.remark == null && (data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code && data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code)}
                                 <div class="flex w-full flex-col gap-10 px-3">
                                     <Alert color="blue">
                                         <p>
@@ -924,6 +933,7 @@
                                 <CustomTextField
                                     label="Tindakan Ulasan"
                                     id="remark"
+                                    type="textarea"
                                     disabled={submitDirectorApproval}
                                     bind:val={$directorApprovalForm.remark}
                                     errors={$directorApprovalError.remark}
@@ -940,22 +950,23 @@
                     </StepperContentBody>
                 </StepperContent>
 
-                {#if data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code || data.currentRoleCode == UserRoleConstant.pengarahBahagian.code}
+                {#if data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code && data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code}
                     <StepperContent>
                         <StepperContentHeader
                             title="Kemaskini Maklumat Permohonan"
                         >
                             {#if !submitQuarterDetails && data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
-                                <TextIconButton
+                                <!-- <TextIconButton
                                     label="Simpan"
+                                    icon="save"
+                                    type="draft"
+                                    form="quarterDetailForm"
+                                /> -->
+                                <TextIconButton
+                                    label="Hantar"
                                     icon="check"
                                     form="quarterDetailForm"
                                 />
-                                <TextIconButton
-                                label="Hantar"
-                                icon="check"
-                                form="quarterDetailForm"
-                            />
                             {/if}
                         </StepperContentHeader>
                         <StepperContentBody paddingClass="p-none">
@@ -1027,6 +1038,14 @@
                                                 disabled
                                                 bind:val={$personalDetailForm.email}
                                             />
+                                        {:else}
+                                            <CustomTextField
+                                                label="Emel Kakitangan"
+                                                id="email"
+                                                placeholder=""
+                                                disabled
+                                                val={data.quarterDetails?.email}
+                                            />
                                         {/if}
                                         <CustomTextField
                                             label="Tarikh Masuk Kuarter"
@@ -1038,18 +1057,18 @@
                                         />
                                         <CustomTextField
                                             label="Unit"
-                                            id="quarterDetails"
+                                            id="unit"
                                             disabled={submitQuarterDetails}
-                                            bind:val={$quarterDetailForm.quarterDetails}
-                                            errors={$quarterDetailError.quarterDetails}
+                                            bind:val={$quarterDetailForm.unit}
+                                            errors={$quarterDetailError.unit}
                                         />
                                         <CustomTextField
-                                        label="Kuarter"
-                                        id="quarterDetails"
-                                        disabled={submitQuarterDetails}
-                                        bind:val={$quarterDetailForm.quarterDetails}
-                                        errors={$quarterDetailError.quarterDetails}
-                                    />
+                                            label="Kuarter"
+                                            id="quarter"
+                                            disabled={submitQuarterDetails}
+                                            bind:val={$quarterDetailForm.quarter}
+                                            errors={$quarterDetailError.quarter}
+                                        />
                                     </form>
 
                                     <form
@@ -1177,20 +1196,21 @@
                 {/if}
             {/if}
 
-            {#if data.currentRoleCode == UserRoleConstant.kakitangan.code || data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
+            {#if (data.currentRoleCode == UserRoleConstant.kakitangan.code || data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code) && successOtherDocUpload}
                 <StepperContent>
-                    <StepperContentHeader title="Surat Tawaran Kuarters"
-                    > <TextIconButton
-                    label="Simpan"
-                    icon="check"
-                    onClick={() => uploadDocument(2)}
-                /></StepperContentHeader>
+                    <StepperContentHeader title="Surat Tawaran Kuarters">
+                        <TextIconButton
+                            label="Hantar"
+                            icon="check"
+                            onClick={() => uploadDocument(2)}
+                        /></StepperContentHeader
+                    >
                     <StepperContentBody>
                         <div
-                            class="flex w-full flex-col justify-start gap-2.5 p-3"
+                            class="flex w-full flex-col justify-start gap-4 p-3"
                         >
-                            {#if !submitPayment}
-                                <div class="flex w-full flex-col gap-10 px-3">
+                            {#if !successOtherDocUpload}
+                                <div class="flex w-full flex-col">
                                     <Alert color="blue">
                                         <p>
                                             <span class="font-medium"
@@ -1202,45 +1222,70 @@
                                         </p>
                                     </Alert>
                                 </div>
-                            {:else}
-                                <DownloadAttachment
-                                    fileName="Surat Tawaran Menduduki Kuarters.pdf"
-                                    triggerDownload={() =>
-                                        handleDownload(
-                                            data.quartersOfferLetter,
-                                        )}
-                                />
+                            {:else if successOtherDocUpload && data.quartersOtherDocument.document.length == 0}
+                                <div class="flex w-full flex-col">
+                                    <Alert color="blue">
+                                        <p>
+                                            <span class="font-medium"
+                                                >Arahan:
+                                            </span>
+                                            Muat naik dokumen-dokumen yang berkaitan.
+                                        </p>
+                                    </Alert>
+                                </div>
                                 <a
-                                href={data.movingIncertificateLetter.document}
-                                download="Borang Akuan Keluar Kuarters.pdf"
-                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                >Borang Akuan Keluar Kuarters.pdf</a
-                            >
-                            <a
-                            href={data.movingInGuidelineLetter.document}
-                            download="Garis Panduan Permohonan.pdf"
-                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                            >Garis Panduan Permohonan.pdf</a
-                        >
-                        <a
-                        href={data.movingInCertificationLetter.document}
-                        download="Surat Akuan Patuh.pdf"
-                        class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                        >Surat Akuan Patuh.pdf</a
-                    >
-                    <a
-                    href={data.movingInMovingInLetter.document}
-                    download="Borang Pemeriksaan Masuk Rumah.pdf"
-                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                    >Borang Pemeriksaan Masuk Rumah.pdf</a
-                >
-                <div class="flex w-full flex-col gap-2 px-3">
-                    <CustomFileField
-                        label="Dokumen Sokongan"
-                        id="othersDocument"
-                        bind:files
-                    ></CustomFileField>
-                </div>
+                                    href={data.movingIncertificateLetter
+                                        .document}
+                                    download="Borang Akuan Keluar Kuarters.pdf"
+                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                    >Borang Akuan Keluar Kuarters.pdf</a
+                                >
+                                <a
+                                    href={data.movingInGuidelineLetter.document}
+                                    download="Garis Panduan Permohonan.pdf"
+                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                    >Garis Panduan Permohonan.pdf</a
+                                >
+                                <a
+                                    href={data.movingInCertificationLetter
+                                        .document}
+                                    download="Surat Akuan Patuh.pdf"
+                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                    >Surat Akuan Patuh.pdf</a
+                                >
+                                <a
+                                    href={data.movingInMovingInLetter.document}
+                                    download="Borang Pemeriksaan Masuk Rumah.pdf"
+                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                    >Borang Pemeriksaan Masuk Rumah.pdf</a
+                                >
+                                <div class="flex w-full flex-col gap-2">
+                                    <CustomFileField
+                                        label="Dokumen Sokongan"
+                                        id="othersDocument"
+                                        bind:files
+                                    ></CustomFileField>
+                                </div>
+                            {:else if successOtherDocUpload && data.quartersOtherDocument.document}
+                                    <Alert color="blue">
+                                        <p>
+                                            <span class="font-medium"
+                                                >Arahan:
+                                            </span>
+                                            Muat turun dokumen-dokumen yang telah
+                                            dimuat naik.
+                                        </p>
+                                    </Alert>
+                                    {#if data.quartersOtherDocument}
+                                        {#each data.quartersOtherDocument.document as otherDocument, i}
+                                            <a
+                                                href={otherDocument.document}
+                                                download={otherDocument.name}
+                                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                                >{i+1}. {otherDocument.name}</a
+                                            >
+                                        {/each}
+                                    {/if}
                             {/if}
                         </div>
                     </StepperContentBody>

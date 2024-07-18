@@ -2,7 +2,9 @@ export interface QuarterDetails {
     id:                 number;
     directorApproverId: number;
     movingInDate:       string;
-    quarterDetails:     string;
+    email?: string;
+    unit:     string;
+    quarter:     string;
 }
 
 // Converts JSON strings to/from your types

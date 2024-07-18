@@ -97,14 +97,14 @@
                 detailActions={() => {
                     if (rowData.employeeNumber !== null) {
                         goto(
-                            '/pinjaman-dan-kuarters/permohonan-masuk-kuarters/butiran/' +
+                            '/v2/loan-and-quarters/quarters-entry/butiran/' +
                                 rowData.id +
                                 '-' +
                                 'kakitangan',
                         );
                     } else {
                         goto(
-                            '/pinjaman-dan-kuarters/permohonan-masuk-kuarters/butiran/' +
+                            '/v2/loan-and-quarters/quarters-entry/butiran/' +
                                 rowData.id +
                                 '-' +
                                 'luar',
