@@ -1,6 +1,6 @@
 export interface InterimTermination {
     applicationDetail: ApplicationDetail;
-    detail:            TerminatioNDetail;
+    employeeDetail:    TerminationBackground;
     verify:            TerminationVerify;
     calculation:       TerminationCalculation;
     supportApprover:   TerminationSuppApp;
@@ -20,11 +20,16 @@ export interface ApplicationDetail {
     reason:          string;
 }
 
+interface TerminationBackground {
+    details: TerminationDetail;
+}
 export interface TerminationApproval {
     interimId:         number;
     name:              string;
     remark:            string;
     status:            boolean;
+    isDraft: boolean;
+    approvalDate: string;
 }
 
 export interface TerminationCalculation {
@@ -48,7 +53,7 @@ export interface TerminationBreakdown {
 export interface TerminationPersonalDetail {
     interimId:            number;
     name:                 string;
-    identityCardNumber:   string;
+    identityDocumentNumber:   string;
     employeeNumber:       string;
     currentPosition:      string;
     interimPosition:      string;
@@ -59,14 +64,13 @@ export interface TerminationPersonalDetail {
     placement:            string;
 }
 
-export interface TerminatioNDetail {
+export interface TerminationDetail {
     interimId:          number;
     name:               string;
-    identityCardNumber: string;
-    serviceDate:        string;
-    effectiveDate:      string;
+    identityDocumentNumber: string;
+    confirmServiceDate:        string;
     positionWithGrade:  string;
-    confirmDate:        string;
+    effectiveDate:      string;
     placement:          string;
 }
 
@@ -74,13 +78,14 @@ export interface TerminationSuppApp {
     interimId: number;
     supporter: string;
     approver:  string;
+    isDraft: boolean;
 }
 
 export interface TerminationVerify {
-    name:              string;
-    remark:            string;
-    status:            string;
-    statusDescription: string;
+   employeeId: string;
+   status: boolean;
+   remark: string;
+   approvalDate: string;
 }
 
 // Converts JSON strings to/from your types

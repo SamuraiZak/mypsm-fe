@@ -1,46 +1,57 @@
 export interface InterimApplicationDetailDTO {
-    applicationDetail:         InterimApplicationDetail;
-    employeeDetail:            InterimEmployeeDetail;
-    duration:                  InterimDuration;
-    download:                  InterimDownload;
-    skipping:                  InterimSkipping;
-    support:                   InterimSupport | null;
-    approval:                  InterimSupport | null;
-    verification:              InterimSupport | null;
-    checklist:                 InterimChecklist;
+    applicationDetail: InterimApplicationDetail;
+    employeeDetail: InterimEmployeeBackground;
+    duration: InterimDuration;
+    download: InterimDownload;
+    skipping: InterimSkipping;
+    support: InterimSupport | null;
+    approval: InterimSupport | null;
+    verify: InterimSupport | null;
+    checklist: InterimChecklist;
+    viewAssign: ViewAssign;
 }
 
 export interface InterimChecklist {
-    interimId:                 number;
-    preparer:                  string;
-    checker:                   string;
-    applicationLetterStatus:   boolean;
-    certifiedFormStatus:       boolean;
+    interimId: number;
+    preparer: string;
+    checker: string;
+    applicationLetterStatus: boolean;
+    certifiedFormStatus: boolean;
     organisationalChartStatus: boolean;
-    jobDescriptionStatus:      boolean;
-    orderLetterStatus:         boolean;
-    leaveStatementStatus:      boolean;
-    documentListStatus:        boolean;
-    justificationStatus:       boolean;
-    applicationLetterCheck:    boolean;
-    certifiedFormCheck:        boolean;
-    organisationalChartCheck:  boolean;
-    jobDescriptionCheck:       boolean;
-    orderLetterCheck:          boolean;
-    leaveStatementCheck:       boolean;
-    documentListCheck:         boolean;
-    justificationCheck:        boolean;
+    jobDescriptionStatus: boolean;
+    orderLetterStatus: boolean;
+    leaveStatementStatus: boolean;
+    documentListStatus: boolean;
+    justificationStatus: boolean;
+    applicationLetterCheck: boolean;
+    certifiedFormCheck: boolean;
+    organisationalChartCheck: boolean;
+    jobDescriptionCheck: boolean;
+    orderLetterCheck: boolean;
+    leaveStatementCheck: boolean;
+    documentListCheck: boolean;
+    justificationCheck: boolean;
+}
+
+export interface ViewAssign {
+    isDraft: boolean;
+    director: string;
+    type: string;
+}
+
+
+export interface InterimEmployeeBackground {
+    details: InterimEmployeeDetail;
 }
 
 export interface InterimEmployeeDetail {
-    interimId:          number;
-    name:               string;
-    identityCardNumber: string;
-    confirmDate:        string;
-    serviceDate:        string;
-    positionWithGrade:  string;
-    effectiveDate:      string;
-    placement:          string;
+    interimId:              number;
+    name:                   string;
+    identityDocumentNumber: string;
+    confirmServiceDate:     string;
+    positionWithGrade:      string;
+    effectiveDate:          string;
+    placement:              string;
 }
 
 export interface InterimDownload {
@@ -53,14 +64,14 @@ export interface InterimDocument {
 }
 
 export interface InterimDuration {
-    from:            string;
-    to:              string;
+    from: string;
+    to: string;
     previousInterim: PreviousInterim[];
 }
 
 export interface PreviousInterim {
     from: string;
-    to:   string;
+    to: string;
 }
 
 export interface InterimSkipping {
@@ -69,23 +80,22 @@ export interface InterimSkipping {
 }
 
 export interface InterimSupport {
-    name:              string;
-    remark:            string;
-    status?:            string;
-    statusCode?:            string;
-    statusDescription: string;
+    employeeId: string;
+    remark: string;
+    status?: boolean;
+    approvalDate?: string;
 }
 
 export interface InterimApplicationDetail {
-    interimId:       number;
-    grade:           number;
-    position:        number;
-    placement:       number;
-    newPlacement:    number;
+    interimId: number;
+    grade: number;
+    position: number;
+    placement: number;
+    newPlacement: number;
     referenceNumber: string;
-    startDate:       string;
-    endDate:         string;
-    reason:          string;
+    startDate: string;
+    endDate: string;
+    reason: string;
 }
 
 // Converts JSON strings to/from your types
@@ -104,6 +114,16 @@ export class InterimChecklistConvert {
     }
 
     public static toJson(value: InterimChecklist): string {
+        return JSON.stringify(value);
+    }
+}
+
+export class InterimViewAssignConvert {
+    public static fromJson(json: string): InterimViewAssignConvert {
+        return JSON.parse(json);
+    }
+
+    public static toJson(value: InterimViewAssignConvert): string {
         return JSON.stringify(value);
     }
 }

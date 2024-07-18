@@ -6,7 +6,7 @@ import { CommonResponseConstant } from "$lib/constants/core/common-response.cons
 import { getPromiseToast } from "$lib/helpers/core/toast.helper";
 import { invalidateAll } from "$app/navigation";
 import { EmployeeInterimApplicationDetailRequestDTOConvert, type EmployeeInterimApplicationDetailRequestDTO } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-employee-application-detail-request.dto";
-import { InterimChecklistConvert, type InterimChecklist } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-application-detail-response.dto";
+import { InterimChecklistConvert, InterimViewAssignConvert, type InterimChecklist, type ViewAssign } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-application-detail-response.dto";
 import type { InterimApplicationResponse } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-application-response.dto";
 import { InterimCommonApprovalConvert, type InterimCommonApproval } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-common-approval.dto";
 import { TerminationSuppAppConvert, type TerminationSuppApp } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-termination.dto";
@@ -18,7 +18,7 @@ export class EmploymentInterimServices {
     //Employees' POV: View Application Table
     static async getEmployeeApplicationList(param: CommonListRequestDTO) {
         try {
-            const url: Input = 'employment/interim/application/list_employee';
+            const url: Input = 'employment/interim/application/list';
 
             const promiseRes: Promise<Response> = http
                 .post(url, {
@@ -268,6 +268,31 @@ export class EmploymentInterimServices {
             const promiseRes: Promise<Response> = http
                 .put(url, {
                     body: InterimCommonApprovalConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //add interim approver approval
+    static async addDirector(param: ViewAssign) {
+        try {
+            let url: Input = 'employment/interim/application/assign_director';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: InterimViewAssignConvert.toJson(param),
                 })
                 .json();
 
