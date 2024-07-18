@@ -15,9 +15,9 @@ export const load = async ({ parent }) => {
     const isEmploymentSecretaryRole =
         currentRoleCode === RoleConstant.urusSetiaPerjawatan.code;
 
-    const isSupporterRole = currentRoleCode === RoleConstant.penyokong.code;
+    const isSupporterRole = currentRoleCode === RoleConstant.kakitangan.code;
 
-    const isApproverRole = currentRoleCode === RoleConstant.pelulus.code;
+    const isApproverRole = currentRoleCode === RoleConstant.kakitangan.code;
 
     let newOfferMeetingListResponse: CommonResponseDTO = {};
 
