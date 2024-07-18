@@ -17,6 +17,7 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
+    import StatusPill from '$lib/components/status-pills/StatusPill.svelte';
     import { Toaster } from 'svelte-french-toast';
     import { superForm } from 'sveltekit-superforms/client';
     import StepperOtherRolesResult from '$lib/components/stepper/StepperOtherRolesResult.svelte';
@@ -336,12 +337,7 @@
 </script>
 
 <ContentHeader title="Maklumat Tawaran Baru">
-    {#if $isReadOnlyNewOfferApprovalResult}
-        <Badge color="dark">Proses Tawaran Baru Tamat</Badge>
-    {/if}
-    {#if $isReadOnlyNewOfferMeetingResult && $newOfferMeetingResultsAreNotApproved}
-        <Badge color="red">Proses Tawaran Baru Diberhentikan</Badge>
-    {/if}
+    <StatusPill status={data.params.status} slot="status" />
 
     <TextIconButton
         label="Kembali"
