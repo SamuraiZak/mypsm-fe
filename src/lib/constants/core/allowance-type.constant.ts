@@ -1,4 +1,3 @@
-import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import type { AllowanceTypeDTO } from '$lib/dto/mypsm/allowance/allowance.dto';
 
 export class AllowanceTypeConstant {
@@ -164,6 +163,24 @@ export class AllowanceTypeConstant {
         },
     };
 
+    public static otherAllowance: AllowanceTypeDTO = {
+        id: 10,
+        code: '8b7f6462-512b-47cb-b5a8-5f04734c4968',
+        description: 'Lain-lain',
+        url: 'other_allowance',
+        stepper: {
+            detail: true,
+            upload: false,
+            directorFeedback: false,
+            secretaryCheck: false,
+            endorserDetail: true,
+            supporterFeedback: true,
+            approverFeedback: true,
+            secretaryVerification: false,
+            confirmation: false,
+        },
+    };
+
     public static list: AllowanceTypeDTO[] = [
         this.ceremonyClothing,
         this.winterClothing,
@@ -174,5 +191,6 @@ export class AllowanceTypeConstant {
         this.passportPayment,
         this.insurancePayment,
         this.cargoShipping,
+        this.otherAllowance,
     ];
 }
