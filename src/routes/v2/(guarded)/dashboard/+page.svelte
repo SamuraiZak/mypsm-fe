@@ -45,6 +45,7 @@
             >
                 {#each data.props.layoutData.accountDetails.module as module}
                     <a
+                    data-sveltekit-preload-data="false"
                         href={module.child.length == 0
                             ? module.url
                             : module.child[0].url}

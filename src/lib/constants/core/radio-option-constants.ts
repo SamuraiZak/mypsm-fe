@@ -108,3 +108,25 @@ export const existOptions: RadioDTO[] = [
         name: 'TIDAK ADA',
     },
 ];
+
+export const supportAltOptions: RadioDTO[] = [
+    {
+        value: true,
+        name: 'DISOKONG',
+    },
+    {
+        value: false,
+        name: 'TIDAK DISOKONG',
+    },
+];
+
+export const approveAltOptions: RadioDTO[] = [
+    {
+        value: true,
+        name: 'DILULUSKAN',
+    },
+    {
+        value: false,
+        name: 'TIDAK DILULUSKAN',
+    },
+];

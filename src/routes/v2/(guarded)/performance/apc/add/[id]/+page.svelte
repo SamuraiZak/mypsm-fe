@@ -5,8 +5,6 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import { superForm } from 'sveltekit-superforms/client';
-    import type { PageData } from '../../tambah-rekod-apc/butiran-[id]/$types';
-    import { _addApcSchema, _submitForm } from './+page';
     import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
@@ -17,6 +15,8 @@
     import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import { zodClient } from 'sveltekit-superforms/adapters';
+    import type { PageData } from './$types';
+    import { _addApcSchema, _submitForm } from './+page';
 
     export let data: PageData;
 
@@ -32,9 +32,7 @@
                 result = value.result;
 
                 if (result == 'success') {
-                    getLoginSuccessToast().then(() => {
-                        goto('/lnpt/sejarah-apc');
-                    });
+                    goto('/v2/performance/apc');
                 } else {
                     getErrorToast();
                 }

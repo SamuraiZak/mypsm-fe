@@ -4,47 +4,43 @@ import type { CommonFilterDTO } from '$lib/dto/core/common/common-filter.dto';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
-import type { ApcDTO } from '$lib/dto/mypsm/lnpt/apc.dto';
+import { AdminServices } from '$lib/services/implementation/core/admin/admin.service';
 import { EmployeeServices } from '$lib/services/implementation/mypsm/shared/employee.service';
-import { error } from '@sveltejs/kit';
-
-const guard: string[] = [UserRoleConstant.urusSetiaLnpt.code];
 
 export async function load() {
-    // filter
-    const filter: CommonFilterDTO = {
+    // get list of employee
+    let employeeList: CommonEmployeeDTO[] = [];
+
+    const employeeListFilter: CommonFilterDTO = {
         program: 'SEMUA',
-        identityDocumentNumber: null,
         employeeNumber: null,
         name: null,
-        position: null,
-        status: null,
-        grade: null,
+        identityDocumentNumber: null,
         scheme: null,
+        grade: null,
+        position: null,
     };
 
-    // request body
-    const param: CommonListRequestDTO = {
+    const employeeListRequest: CommonListRequestDTO = {
         pageNum: 1,
-        pageSize: 5,
+        pageSize: 10,
         orderBy: null,
         orderType: null,
-        filter: filter,
+        filter: employeeListFilter,
     };
 
-    // fetch apc history
-    const response: CommonResponseDTO =
-        await EmployeeServices.getEmployeeList(param);
+    const employeeListResponse: CommonResponseDTO =
+        await AdminServices.getEmployeeList(employeeListRequest);
 
-    // convert to apcdto
-    const employeeList: CommonEmployeeDTO[] = response.data
-        ?.dataList as CommonEmployeeDTO[];
-
+    if (employeeListResponse.status == 'success') {
+        employeeList = employeeListResponse.data
+            ?.dataList as CommonEmployeeDTO[];
+    }
     return {
         props: {
-            param,
-            response,
             employeeList,
+            employeeListRequest,
+            employeeListResponse,
         },
     };
 }

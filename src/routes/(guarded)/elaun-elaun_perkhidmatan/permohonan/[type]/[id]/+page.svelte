@@ -4,7 +4,7 @@
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import { AllowanceTypeConstant } from '$lib/constants/core/allowance-type.constant';
-    import type { AllowanceTypeDTO } from '$lib/dto/mypsm/allowance/allowance.dto';
+    import type { AllowanceTypeDTO } from '$lib/dto/mypsm/backup/allowance.dto';
     import {
         AllowanceCeremonyClothingSchema,
         AllowanceEndorsementSchema,

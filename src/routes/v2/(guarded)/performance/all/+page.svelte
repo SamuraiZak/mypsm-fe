@@ -16,50 +16,61 @@
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
     import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
-    import type { TableDTO } from '$lib/dto/core/table/table.dto';
+    import type {
+        TableDTO,
+        TableSettingDTO,
+    } from '$lib/dto/core/table/table.dto';
+    import DataTable from '$lib/components/table/DataTable.svelte';
+    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import type { PageData } from './$types';
     import { _getAverage, _updateTable } from './+page';
 
     export let data: PageData;
 
+    let activeStepper: number = 0;
+
     let tableLNPT: TableDTO = data.props.tableLNPT;
 
-    // set the table parameter
-    let param: CommonListRequestDTO = data.props.param;
-
     // set up table
-    let table: TableDTO = {
-        param: param,
-        meta: data.props.response.data?.meta ?? {
+    let selectedData: any;
+
+    // POC
+    let employeeListTable: TableSettingDTO = {
+        param: data.props.employeeListRequest,
+        meta: data.props.employeeListResponse.data?.meta ?? {
             pageSize: 1,
             pageNum: 1,
             totalData: 1,
             totalPage: 1,
         },
-        data: data.props.response.data?.dataList ?? [],
+        data: data.props.employeeListResponse.data?.dataList ?? [],
         selectedData: [],
-        hiddenData: ['employeeId'],
+        exportData: [],
+        hiddenColumn: ['employeeId'],
+        dictionary: [
+            {
+                english: 'identityCardNumber',
+                malay: 'No. Kad Pengenalan',
+            },
+        ],
+        url: 'employee/list',
+        id: 'employeeListTable',
+        option: {
+            checkbox: true,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
     };
-
-    // create funciton to handle table search
-    async function _search() {
-        _updateTable(table.param).then((value) => {
-            table.data = value.props.response.data?.dataList ?? [];
-            table.meta = value.props.response.data?.meta ?? {
-                pageSize: 1,
-                pageNum: 1,
-                totalData: 1,
-                totalPage: 1,
-            };
-            table.param.pageSize = table.meta.pageSize;
-            table.param.pageNum = table.meta.pageNum;
-        });
-    }
 
     async function _generateAverage() {
         let employeeIds: number[] = [];
 
-        table.selectedData?.forEach((element) => {
+        employeeListTable.selectedData?.forEach((element) => {
             let tempEmployee: CommonEmployeeDTO = element as CommonEmployeeDTO;
             employeeIds.push(tempEmployee.employeeId);
         });
@@ -90,55 +101,44 @@
 <section
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-    <Stepper>
+    <Stepper activeIndex={activeStepper}>
         <StepperContent>
-            <StepperContentHeader title="Pilih Kakitangan">
-                <!-- <TextIconButton label="Seterusnya" icon="next"></TextIconButton> -->
+            <StepperContentHeader title="Langkah 1: Pilih Kakitangan">
+                {#if employeeListTable.selectedData.length > 0}
+                    <TextIconButton
+                        label="Seterusnya"
+                        icon="next"
+                        onClick={() => {
+                            activeStepper = 1;
+                        }}
+                    ></TextIconButton>
+                {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <FilterCard onSearch={_search}>
-                    <FilterTextField
-                        bind:inputValue={table.param.filter.employeeNumber}
-                        label="No. Pekerja"
-                    ></FilterTextField>
-                    <FilterTextField
-                        bind:inputValue={table.param.filter.name}
-                        label="Nama Kakitangan"
-                    ></FilterTextField>
-                    <FilterTextField
-                        bind:inputValue={table.param.filter.identityCard}
-                        label="No. Kad Pengenalan"
-                    ></FilterTextField>
-                    <FilterTextField
-                        disabled
-                        bind:inputValue={table.param.filter.program}
-                        label="Program"
-                    ></FilterTextField>
-                    <FilterTextField
-                        bind:inputValue={table.param.filter.scheme}
-                        label="Skim"
-                    ></FilterTextField>
-                    <FilterTextField
-                        bind:inputValue={table.param.filter.grade}
-                        label="Gred"
-                    ></FilterTextField>
-                    <FilterTextField
-                        bind:inputValue={table.param.filter.position}
-                        label="Jawatan"
-                    ></FilterTextField>
-                </FilterCard>
-                <div class="h-fit max-h-full w-full pb-5">
-                    <CustomTable
-                        title="Senarai semua kakitangan"
-                        bind:tableData={table}
-                        onUpdate={_search}
-                        enableAdd
-                    ></CustomTable>
+                <div class="h h-fit w-full">
+                    <DataTable
+                        title="Senarai Kakitangan"
+                        bind:tableData={employeeListTable}
+                        bind:passData={selectedData}
+                    >
+                        <FilterWrapper slot="filter">
+                            <FilterTextField
+                                label="Nama Pengguna"
+                                bind:inputValue={employeeListTable.param.filter
+                                    .name}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="No. Kad Pengenalan"
+                                bind:inputValue={employeeListTable.param.filter
+                                    .identityDocumentNumber}
+                            ></FilterTextField>
+                        </FilterWrapper>
+                    </DataTable>
                 </div>
             </StepperContentBody>
         </StepperContent>
         <StepperContent>
-            <StepperContentHeader title="Jana Purata">
+            <StepperContentHeader title="Langkah 2: Jana Purata">
                 <!-- <TextIconButton label="Hantar" icon="next"></TextIconButton> -->
             </StepperContentHeader>
             <StepperContentBody>

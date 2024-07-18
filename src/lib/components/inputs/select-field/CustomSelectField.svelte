@@ -19,7 +19,7 @@
     <!-- input label starts here -->
     <label
         for={id}
-        class="block w-full text-start text-base font-medium text-ios-labelColors-secondaryLabel-light"
+        class="block w-full text-start text-base font-medium text-slate-700"
         >{label}
         <span class="text-base text-system-danger" hidden={!isRequired}>*</span>
     </label>
@@ -33,7 +33,7 @@
         bind:value={val}
         on:change={onValueChange}
         class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
-            ? 'bg-ios-systemColors-quaternarySystemFill-light'
+            ? 'bg-ios-systemColors-quaternarySystemFill-light cursor-not-allowed'
             : 'bg-ios-backgroundColors-systemBackground-light'} py-0 text-base focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
     >
         {#each options as item}

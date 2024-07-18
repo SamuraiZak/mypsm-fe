@@ -6,7 +6,7 @@
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import { AllowanceTypeConstant } from '$lib/constants/core/allowance-type.constant';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
-    import type { AllowanceTypeDTO } from '$lib/dto/mypsm/allowance/allowance.dto';
+    import type { AllowanceTypeDTO } from '$lib/dto/mypsm/backup/allowance.dto';
     import { Toaster } from 'svelte-french-toast';
     import type { LayoutData } from '../../$types';
     import type { PageData } from './$types';
@@ -72,6 +72,15 @@
         let url = `/v2/service-allowance/application/${allowanceTypeCode}/${applicationId}`;
         goto(url);
     }
+
+    function showDetails() {
+        let allowanceTypeCode: string = selectedData.allowanceTypeCode;
+        
+        let applicationId: number = selectedData.allowanceId;
+        
+        let url = `/v2/service-allowance/application/${allowanceTypeCode}/${applicationId}`;
+        goto(url);
+    }
 </script>
 
 <div
@@ -90,7 +99,7 @@
                 bind:tableData={applicationListTable}
                 bind:passData={selectedData}
                 detailActions={() => {
-                    // showDetails();
+                    showDetails();
                 }}
                 addActions={() => {
                     addApplication();
