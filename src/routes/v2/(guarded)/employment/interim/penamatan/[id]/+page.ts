@@ -148,6 +148,7 @@ const getLookup = async () => {
             name: null,
             identityCard: null,
             scheme: null,
+            role: null,
             grade: null,
             position: null,
         },

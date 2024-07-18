@@ -225,7 +225,7 @@ const getLookup = async () => {
             identityCard: null,
             scheme: null,
             grade: null,
-            role: UserRoleConstant.urusSetiaPerjawatan.code,
+            role: null,
             position: null,
         },
     }
