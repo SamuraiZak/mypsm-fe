@@ -10,8 +10,8 @@
     import { goto } from '$app/navigation';
     import type { PageData } from './$types';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
-    import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
     import {
+        _addDirectorSchema,
         _addInterimApprovalSchema,
         _addNewInterimApplicationSchema,
     } from '$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas';
@@ -22,6 +22,7 @@
         _submitChecklistForm,
         _submitDirectorForm,
         _submitInterimDocument,
+        _submitSetDirector,
         _submitSkippingForm,
     } from './+page';
     import type { InterimUploadDocuments } from '$lib/dto/mypsm/employment/tanggung-kerja/interim-upload-document.dto';
@@ -47,13 +48,13 @@
     let files3: FileList;
     let files4: FileList;
 
-    if (data.uploadedDocuments.document.length > 0) {
+    if (data.uploadedDocuments?.document?.length > 0) {
         submitDocument = true;
     }
-    if (data.interimSupportDetail.name !== '') {
+    if (data.interimSupportDetail.status !== null) {
         submitDirector = true;
     }
-    if (data.interimApprovalDetail.name !== '') {
+    if (data.interimApprovalDetail.employeeId !== '') {
         submitApprover = true;
     }
 
@@ -61,7 +62,7 @@
         if (files == undefined) {
             alert('Dokumen sokongan tidak boleh kosong.');
         } else {
-            let fileToUpload = [files, files2, files3, files4]
+            let fileToUpload = [files, files2, files3, files4];
             _fileToBase64Object(fileToUpload)
                 .then(async (result) => {
                     let interimDocuments: InterimUploadDocuments = {
@@ -96,13 +97,16 @@
         id: 'skippingForm',
         validators: zod(_addInterimApprovalSchema),
         async onSubmit() {
+            $skippingForm.approvalDate = "";
             $skippingForm.interimId = data.interimId.interimId;
             if (!$skippingForm.status) {
-                $skippingForm.remark = null;
+                $skippingForm.remark = "";
             }
             const res = await _submitSkippingForm($skippingForm);
             if (res?.response.status == 'success') {
-                submitSkip = true;
+                if (!$skippingForm.isDraft) {
+                    submitSkip = true;
+                }
             }
         },
     });
@@ -173,6 +177,30 @@
             }
         },
     });
+
+    // if ($checklistForm.checker !== undefined) {
+    //     submitChecklist = true;
+    // }
+    const {
+        form: setDirectorForm,
+        errors: setDirectorError,
+        enhance: setDirectorEnhance,
+    } = superForm(data.setDirectorForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        resetForm: false,
+        id: 'setDirectorForm',
+        validators: zod(_addDirectorSchema),
+        async onSubmit() {
+            $setDirectorForm.interimId = data.interimId.interimId;
+            $setDirectorForm.type = 'pengarah negeri';
+            const res = await _submitSetDirector($setDirectorForm);
+            if (res?.response.status == 'success') {
+                submitApprover = true;
+            }
+        },
+    });
 </script>
 
 <!-- content header starts here -->
@@ -204,21 +232,12 @@
                             class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
                         >
                             <CustomSelectField
-                                label="Gred"
+                                label="Gred dan Jawatan"
                                 id="grade"
                                 disabled
                                 isRequired={false}
                                 val={data.interimApplicationDetail
                                     .applicationDetail.grade}
-                                options={data.lookup.gradeLookup}
-                            />
-                            <CustomSelectField
-                                label="Jawatan"
-                                id="position"
-                                disabled
-                                isRequired={false}
-                                val={data.interimApplicationDetail
-                                    .applicationDetail.position}
                                 options={data.lookup.positionLookup}
                             />
                             <CustomSelectField
@@ -235,6 +254,10 @@
                                 disabled
                                 isRequired={false}
                                 label="Nombor Butiran Anggaran Belanjawan Mengurus/Waran Penjawatan"
+                                placeholder={data.interimApplicationDetail
+                                    .applicationDetail.referenceNumber == null
+                                    ? 'Tiada'
+                                    : ''}
                                 type="text"
                                 val={data.interimApplicationDetail
                                     .applicationDetail.referenceNumber}
@@ -295,7 +318,7 @@
                                 id="name"
                                 type="text"
                                 val={data.interimApplicationDetail
-                                    .employeeDetail.name}
+                                    .employeeDetail.details.name}
                             />
                             <CustomTextField
                                 label="No. Kad Pengenalan"
@@ -304,17 +327,18 @@
                                 id="identityCardNumber"
                                 type="text"
                                 val={data.interimApplicationDetail
-                                    .employeeDetail.identityCardNumber}
+                                    .employeeDetail.details
+                                    .identityDocumentNumber}
                             />
-                            <CustomTextField
+                            <!-- <CustomTextField
                                 label="Tarikh Lantikan Jawatan Sekarang"
                                 disabled
                                 isRequired={false}
                                 id="serviceDate"
                                 type="date"
                                 val={data.interimApplicationDetail
-                                    .employeeDetail.serviceDate}
-                            />
+                                    .employeeDetail.details.}
+                            /> -->
                             <CustomTextField
                                 label="Tarikh Sah Dalam Jawatan Sekarang"
                                 disabled
@@ -322,7 +346,7 @@
                                 id="effectiveDate"
                                 type="date"
                                 val={data.interimApplicationDetail
-                                    .employeeDetail.effectiveDate}
+                                    .employeeDetail.details.effectiveDate}
                             />
                             <CustomTextField
                                 label="Jawatan/Gred"
@@ -331,7 +355,7 @@
                                 id="positionWithGrade"
                                 type="text"
                                 val={data.interimApplicationDetail
-                                    .employeeDetail.positionWithGrade}
+                                    .employeeDetail.details.positionWithGrade}
                             />
                             <CustomTextField
                                 label="Tarikh Mula Bertugas di Jawatan Sekarang"
@@ -340,7 +364,7 @@
                                 id="confirmDate"
                                 type="date"
                                 val={data.interimApplicationDetail
-                                    .employeeDetail.confirmDate}
+                                    .employeeDetail.details.confirmServiceDate}
                             />
                             <CustomTextField
                                 label="Tempat Bertugas Semasa"
@@ -349,7 +373,7 @@
                                 id="placement"
                                 type="text"
                                 val={data.interimApplicationDetail
-                                    .employeeDetail.placement}
+                                    .employeeDetail.details.placement}
                             />
                         </div>
                     </div>
@@ -385,28 +409,32 @@
                                 type="date"
                                 val={data.interimApplicationDetail.duration?.to}
                             />
-                            <ContentHeader
-                                title="Tempoh Penanggungan Kerja Bagi Jawatan yang Sama Sebelum Ini (Jika Ada)"
-                                borderClass="border-none"
-                            />
-                            <CustomTextField
-                                label="Dari"
-                                disabled
-                                isRequired={false}
-                                id="from"
-                                type="date"
-                                val={data.interimApplicationDetail.duration
-                                    ?.previousInterim[0].from}
-                            />
-                            <CustomTextField
-                                label="Hingga"
-                                disabled
-                                isRequired={false}
-                                id="date"
-                                type="date"
-                                val={data.interimApplicationDetail.duration
-                                    ?.previousInterim[0].to}
-                            />
+                            <div class="hidden">
+                            {#if data.interimApplicationDetail.duration?.previousInterim.length > 0}
+                                <ContentHeader
+                                    title="Tempoh Penanggungan Kerja Bagi Jawatan yang Sama Sebelum Ini (Jika Ada)"
+                                    borderClass="border-none"
+                                />
+                                <CustomTextField
+                                    label="Dari"
+                                    disabled
+                                    isRequired={false}
+                                    id="from"
+                                    type="date"
+                                    val={data.interimApplicationDetail.duration
+                                        ?.previousInterim[0]?.from}
+                                />
+                                <CustomTextField
+                                    label="Hingga"
+                                    disabled
+                                    isRequired={false}
+                                    id="date"
+                                    type="date"
+                                    val={data.interimApplicationDetail.duration
+                                        ?.previousInterim[0]?.to}
+                                />
+                            {/if}
+                        </div>
                         </div>
                     </div>
                 </StepperContentBody>
@@ -427,20 +455,22 @@
                         <div
                             class="flex w-1/2 flex-col justify-start gap-6 p-3"
                         >
-                            {#if data.uploadedDocuments.document.length < 1}
+                            {#if data.uploadedDocuments?.document?.length < 1}
                                 <Alert color="blue">
                                     <p>
                                         <span class="font-medium"
                                             >Arahan:
                                         </span>
-                                        Muat naik semua dokumen-dokumen yang berkaitan dan tekan butang Hantar untuk menghantar ke sistem.
+                                        Muat naik semua dokumen-dokumen yang berkaitan
+                                        dan tekan butang Hantar untuk menghantar
+                                        ke sistem.
                                     </p>
                                 </Alert>
                                 <div class="flex w-full flex-col gap-6">
                                     <FileGreyField
                                         label="1. Carta Organisasi (Kedudukan Pegawai dan Jawatan yang Ditanggung Kerja)"
                                         id="files"
-                                        bind:files={files}
+                                        bind:files
                                     ></FileGreyField>
                                     <FileGreyField
                                         label="2. Salinan Surat Arahan Penangguhan Kerja"
@@ -467,21 +497,46 @@
                                         borderClass="border-none"
                                         titlePadding={false}
                                     />
-                                    <span
-                                        class="text-sm text-ios-labelColors-secondaryLabel-light"
-                                        >Borang-borang yang telah dimuat naik
-                                        oleh kakitangan:</span
+                                    <div
+                                        class="flex w-full flex-col gap-2.5 text-sm text-ios-labelColors-secondaryLabel-light"
                                     >
-                                    {#each data.uploadedDocuments.document as docs, i}
-                                    <div class="w-full flex flex-row gap-2.5 jusitfy-start items-center">
-                                        <span class="text-[12px]">{i+1}. </span>
-                                        <a
-                                            href={docs.document}
-                                            download={docs.name}
-                                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                            >{docs.name}</a
+                                        <span
+                                            >Borang-borang yang perlu dimuat
+                                            naik oleh kakitangan:</span
+                                        >
+                                        <span
+                                            >1. Carta Organisasi (Kedudukan
+                                            Pegawai dan Jawatan yang Ditanggung
+                                            Kerja)</span
+                                        >
+
+                                        <span
+                                            >2. Salinan Surat Arahan Penangguhan
+                                            Kerja</span
+                                        >
+
+                                        <span
+                                            >3. Maklumat Cuti yang Terkini</span
+                                        >
+                                        <span
+                                            >4. Senarai Tugas Jawatan Ditanggung
+                                            Kerja dan Pegawai Menanggung Kerja</span
                                         >
                                     </div>
+                                    {#each data.uploadedDocuments?.document as docs, i}
+                                        <div
+                                            class="jusitfy-start flex w-full flex-row items-center gap-2.5"
+                                        >
+                                            <span class="text-[12px]"
+                                                >{i + 1}.
+                                            </span>
+                                            <a
+                                                href={docs.document}
+                                                download={docs.name}
+                                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                                >{docs.name}</a
+                                            >
+                                        </div>
                                     {/each}
                                 </div>
                             {/if}
@@ -497,6 +552,7 @@
                             label="Hantar"
                             icon="check"
                             form="skippingForm"
+                            onClick={() => ($skippingForm.isDraft = false)}
                         />
                     {/if}
                 </StepperContentHeader>
@@ -540,6 +596,7 @@
                                 label="Hantar"
                                 icon="check"
                                 form="directorForm"
+                                onClick={() => ($directorForm.isDraft = true)}
                             />
                         {/if}
                     </StepperContentHeader>
@@ -551,7 +608,34 @@
                                 title="Ulasan Keputusan Daripada Pengarah Bahagian/Negeri"
                                 borderClass="border-none"
                             />
-                            {#if data.interimSupportDetail.name == '' && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
+                            {#if data.interimApplicationDetail.viewAssign == null && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                                <form
+                                    class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
+                                    method="POST"
+                                    id="setDirectorForm"
+                                    use:setDirectorEnhance
+                                >
+                                    <div class="flex items-center gap-2">
+                                        <CustomSelectField
+                                            label="Pilih Pengarah Bahagian/Negeri"
+                                            id="director"
+                                            disabled={false}
+                                            options={data.lookup
+                                                .supporterApproverLookup}
+                                            bind:val={$setDirectorForm.director}
+                                            errors={$setDirectorError.director}
+                                        />
+                                        <TextIconButton
+                                            label="Set"
+                                            icon="check"
+                                            form="setDirectorForm"
+                                            onClick={() =>
+                                                ($setDirectorForm.isDraft = false)}
+                                        />
+                                    </div>
+                                </form>
+                            {/if}
+                            {#if data.interimSupportDetail.status == null && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
                                 <form
                                     class="flex w-1/2 flex-col justify-start gap-2.5"
                                     method="POST"
@@ -574,17 +658,26 @@
                                         bind:val={$directorForm.status}
                                         errors={$directorError.status}
                                     />
+                                    <CustomTextField
+                                        label="Tarikh Sokongan"
+                                        disabled={submitDirector}
+                                        type="date"
+                                        id="approvalDate"
+                                        isRequired={false}
+                                        bind:val={$directorForm.approvalDate}
+                                        errors={$directorError.approvalDate}
+                                    />
                                 </form>
                             {:else}
                                 <div class="flex w-1/2 flex-col gap-2.5 p-3">
-                                    <CustomTextField
+                                    <!-- <CustomTextField
                                         label="Nama"
                                         disabled
                                         isRequired={false}
                                         placeholder="Menunggu keputusan..."
                                         id="name"
                                         val={data.interimSupportDetail?.name}
-                                    />
+                                    /> -->
                                     <CustomTextField
                                         label="Ulasan"
                                         disabled
@@ -593,18 +686,18 @@
                                         id="remark"
                                         val={data.interimSupportDetail?.remark}
                                     />
-                                    <CustomTextField
+                                    <CustomRadioBoolean
                                         label="Keputusan"
                                         disabled
                                         isRequired={false}
-                                        placeholder="Menunggu keputusan..."
+                                        options={supportOptions}
                                         id="status"
                                         val={data.interimSupportDetail?.status}
                                     />
                                 </div>
                             {/if}
                         </div>
-                        </StepperContentBody>
+                    </StepperContentBody>
                 </StepperContent>
 
                 {#if data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
@@ -1118,80 +1211,95 @@
                                     label="Hantar"
                                     icon="check"
                                     form="approverForm"
+                                    onClick={() =>
+                                        ($approverForm.isDraft = false)}
                                 />
                             {/if}
                         </StepperContentHeader>
                         <StepperContentBody>
-                            <div class="flex w-full flex-col items-start justify-start pb-10">
-                            <ContentHeader
-                                title="Ulasan Keputusan daripada Pengarah Khidmat Pengurusan"
-                                borderClass="border-none"
-                            />
-                            <form
-                                class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
-                                id="approverForm"
-                                method="POST"
-                                use:approverEnhance
+                            <div
+                                class="flex w-full flex-col items-start justify-start pb-10"
                             >
-                                {#if data.interimApprovalDetail.name == ''}
-                                    {#if data.currentRoleCode !== UserRoleConstant.pengarahKhidmatPengurusan.code}
-                                        <div
-                                            class="flex w-full flex-col gap-10 px-3"
-                                        >
-                                            <Alert color="blue">
-                                                <p>
-                                                    <span class="font-medium"
-                                                        >Tiada Maklumat!
-                                                    </span>
-                                                    Menunggu keputusan daripada Pengarah
-                                                    Khidmat Pengurusan.
-                                                </p>
-                                            </Alert>
-                                        </div>
+                                <ContentHeader
+                                    title="Ulasan Keputusan daripada Pengarah Khidmat Pengurusan"
+                                    borderClass="border-none"
+                                />
+                                <form
+                                    class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
+                                    id="approverForm"
+                                    method="POST"
+                                    use:approverEnhance
+                                >
+                                    {#if data.interimApprovalDetail.employeeId == ''}
+                                        {#if data.currentRoleCode !== UserRoleConstant.pengarahKhidmatPengurusan.code}
+                                            <div
+                                                class="flex w-full flex-col gap-10 px-3"
+                                            >
+                                                <Alert color="blue">
+                                                    <p>
+                                                        <span
+                                                            class="font-medium"
+                                                            >Tiada Maklumat!
+                                                        </span>
+                                                        Menunggu keputusan daripada
+                                                        Pengarah Khidmat Pengurusan.
+                                                    </p>
+                                                </Alert>
+                                            </div>
+                                        {:else}
+                                            <CustomTextField
+                                                label="Tindakan/Ulasan"
+                                                disabled={submitApprover}
+                                                id="remark"
+                                                isRequired={false}
+                                                bind:val={$approverForm.remark}
+                                                errors={$approverError.remark}
+                                            />
+                                            <CustomRadioBoolean
+                                                label="Keputusan"
+                                                id="status"
+                                                disabled={submitApprover}
+                                                options={approveOptions}
+                                                bind:val={$approverForm.status}
+                                            />
+                                            <CustomTextField
+                                                label="Tarikh Kelulusan"
+                                                disabled={submitApprover}
+                                                type="date"
+                                                id="approvalDate"
+                                                isRequired={false}
+                                                bind:val={$approverForm.approvalDate}
+                                                errors={$approverError.approvalDate}
+                                            />
+                                        {/if}
                                     {:else}
-                                        <CustomTextField
-                                            label="Tindakan/Ulasan"
-                                            disabled={submitApprover}
-                                            id="remark"
+                                        <!-- <CustomTextField
+                                            label="Nama"
+                                            disabled
                                             isRequired={false}
-                                            bind:val={$approverForm.remark}
-                                            errors={$approverError.remark}
+                                            id="name"
+                                            bind:val={data.interimApprovalDetail
+                                                .name}
+                                        /> -->
+                                        <CustomTextField
+                                            label="Ulasan"
+                                            disabled
+                                            isRequired={false}
+                                            id="remark"
+                                            bind:val={data.interimApprovalDetail
+                                                .remark}
                                         />
                                         <CustomRadioBoolean
                                             label="Keputusan"
                                             id="status"
-                                            disabled={submitApprover}
+                                            disabled
+                                            isRequired={false}
                                             options={approveOptions}
-                                            bind:val={$approverForm.status}
+                                            val={data.interimApprovalDetail
+                                                ?.status}
                                         />
                                     {/if}
-                                {:else}
-                                    <CustomTextField
-                                        label="Nama"
-                                        disabled
-                                        isRequired={false}
-                                        id="name"
-                                        bind:val={data.interimApprovalDetail
-                                            .name}
-                                    />
-                                    <CustomTextField
-                                        label="Ulasan"
-                                        disabled
-                                        isRequired={false}
-                                        id="remark"
-                                        bind:val={data.interimApprovalDetail
-                                            .remark}
-                                    />
-                                    <CustomTextField
-                                        label="Keputusan"
-                                        disabled
-                                        isRequired={false}
-                                        id="statusDescription"
-                                        bind:val={data.interimApprovalDetail
-                                            .statusDescription}
-                                    />
-                                {/if}
-                            </form>
+                                </form>
                             </div>
                         </StepperContentBody>
                     </StepperContent>
