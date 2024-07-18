@@ -1,0 +1,153 @@
+<script lang="ts">
+    import { goto } from '$app/navigation';
+    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
+    import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
+    import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
+    import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import { monthNumberLookup } from '$lib/constants/core/dropdown.constant';
+    import type { PageData } from './$types';
+    import { superForm } from 'sveltekit-superforms/client';
+    import { _clinicClaimDetailSchema } from '$lib/schemas/mypsm/medical/medical-schema';
+    import { zod } from 'sveltekit-superforms/adapters';
+    import { _fileToBase64Object, _submitClaimDetailForm } from './+page';
+    import { Toaster } from 'svelte-french-toast';
+    import CustomFileField from '$lib/components/inputs/file-field/CustomFileField.svelte';
+    import XCard from '$lib/components/card/XCard.svelte';
+
+
+    export let data: PageData;
+    let successSubmit: boolean = false;
+    let files: FileList;
+
+    const {
+        form: claimDetailForm,
+        errors: claimDetailError,
+        enhance: claimDetailEnhance,
+    } = superForm(data.claimDetailForm, {
+        SPA: true,
+        taintedMessage: false,
+        id: 'claimDetailForm',
+        validators: zod(_clinicClaimDetailSchema),
+        resetForm: false,
+        onSubmit() {
+            _fileToBase64Object(files)
+                .then((result) => {
+                    $claimDetailForm.documents = result;
+                })
+                .finally(async () => {
+                    const editMode = await _submitClaimDetailForm($claimDetailForm);
+                    if (editMode?.response.status == 'success') {
+                        successSubmit = true;
+                        goto('/v2/medical/clinic-panel/clinic-claims');
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
+    });
+</script>
+
+<!-- content header starts here -->
+<section class="flex w-full flex-col items-start justify-start">
+    <ContentHeader title="Maklumat Bil Tuntutan Klinik Panel">
+        <TextIconButton
+            label="Kembali"
+            icon="previous"
+            type="neutral"
+            onClick={() => goto('/v2/medical/clinic-panel/clinic-claims')}
+        />
+        {#if !successSubmit}
+            <TextIconButton
+                label="Hantar"
+                icon="check"
+                form="claimDetailForm"
+            />
+        {/if}
+    </ContentHeader>
+</section>
+
+<section
+    class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start overflow-y-auto"
+>
+    <div class="flex w-full justify-between gap-2.5 px-3 pb-10 pt-3">
+        <XCard title="Maklumat Invois">
+            <form
+                class="flex w-full flex-col justify-start gap-2.5"
+                method="POST"
+                id="claimDetailForm"
+                use:claimDetailEnhance
+            >
+                <CustomTextField
+                    label="Nama Klinik"
+                    id="clinicName"
+                    isRequired={false}
+                    disabled
+                    bind:val={data.profile.clinicName}
+                />
+                <CustomTextField
+                    label="Tarikh Invois"
+                    id="invoiceDate"
+                    disabled={successSubmit}
+                    type="date"
+                    bind:val={$claimDetailForm.invoiceDate}
+                    errors={$claimDetailError.invoiceDate}
+                />
+                <CustomTextField
+                    label="No. Invois"
+                    id="invoiceNumber"
+                    disabled={successSubmit}
+                    bind:val={$claimDetailForm.invoiceNumber}
+                    errors={$claimDetailError.invoiceNumber}
+                />
+                <CustomSelectField
+                    label="Bulan Rawatan"
+                    options={monthNumberLookup}
+                    id="treatmentMonth"
+                    disabled={successSubmit}
+                    bind:val={$claimDetailForm.treatmentMonth}
+                    errors={$claimDetailError.treatmentMonth}
+                />
+                <CustomTextField
+                    label="Tahun Rawatan"
+                    id="treatmentYear"
+                    disabled={successSubmit}
+                    type="number"
+                    bind:val={$claimDetailForm.treatmentYear}
+                    errors={$claimDetailError.treatmentYear}
+                />
+                <CustomTextField
+                    label="Jumlah (RM)"
+                    id="total"
+                    disabled={successSubmit}
+                    type="number"
+                    bind:val={$claimDetailForm.total}
+                    errors={$claimDetailError.total}
+                />
+            </form>
+            <ContentHeader
+                title="Dokumen Sokongan Yang Berkaitan"
+                borderClass="border-none"
+            />
+            <div class="flex w-full flex-col gap-2 px-3">
+                <CustomFileField
+                    label="Dokumen Sokongan"
+                    id="employeeClaimDocument"
+                    bind:files
+                ></CustomFileField>
+            </div>
+        </XCard>
+
+        <XCard title="Maklumat Rawatan">
+            <div class="w-full flex justify-end">
+                <TextIconButton
+                    label="Tambah"
+                    icon="add"
+                    type="neutral"
+                    onClick={() => console.log('')}
+                />
+            </div>
+        </XCard>
+    </div>
+</section>
+<Toaster />

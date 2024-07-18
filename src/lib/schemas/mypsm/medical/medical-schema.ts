@@ -90,6 +90,7 @@ export const _clinicCommonResultSchema = z.object({
     approverName: z.string().optional(),
     status: booleanSchema,
     remark: shortTextSchema,
+    isDraft: booleanSchema,
 })
 
 export const _clinicSupporterApproverSchema = z.object({

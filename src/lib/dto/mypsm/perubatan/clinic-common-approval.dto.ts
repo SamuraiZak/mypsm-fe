@@ -4,6 +4,7 @@ export interface ClinicCommonResult {
     approverName?: string;
     status: boolean;
     remark: string;
+    isDraft: boolean;
 }
 
 // Converts JSON strings to/from your types

@@ -14,8 +14,9 @@ import { MedicalServices } from '$lib/services/implementation/mypsm/perubatan/me
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export const load = async ({ params, parent }) => {
-    let currentRoleCode: string | null = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
+export const load = async ({ params, parent}) => {
+    const { layoutData } = await parent();
+    const currentRoleCode: string = layoutData.accountDetails.currentRoleCode
     let currentId: commonIdRequestDTO = {
         id: Number(params.employeeid)
     }
