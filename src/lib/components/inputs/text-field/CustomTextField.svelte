@@ -8,7 +8,7 @@
     export let id: string;
     export let disabled: boolean = false;
     export let val: string | number | Date | boolean | null | undefined;
-    export let placeholder: string = 'Taip jawapan anda di sini';
+    export let placeholder: string = '';
     export let type: string =
         'text' || 'number' || 'password' || 'email' || 'textarea';
     export let errors: string[] | undefined = [] ?? undefined;
@@ -61,7 +61,7 @@
             {id}
             step="0.01"
             class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
-                ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
+                ? 'b bg-gray-100 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
                 : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
     {:else if type == 'password'}
@@ -74,7 +74,7 @@
                 name={id}
                 {id}
                 class="autofill:hide-default-inner-shadow block {disabled
-                    ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
+                    ? 'b bg-gray-100 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
                     : 'bg-ios-backgroundColors-systemBackground-light'} h-8 w-full rounded border border-ios-labelColors-separator-light p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
             />
         {:else}
@@ -86,7 +86,7 @@
                 name={id}
                 {id}
                 class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
-                    ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
+                    ? 'b bg-gray-100 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
                     : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
             />
         {/if}
@@ -99,7 +99,7 @@
             name={id}
             {id}
             class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
-                ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
+                ? 'b bg-gray-100 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
                 : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
     {:else if type == 'textarea'}
@@ -110,7 +110,7 @@
             name={id}
             {id}
             class="autofill:hide-default-inner-shadow block min-h-10 w-full rounded border border-ios-labelColors-separator-light {disabled
-                ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
+                ? 'b bg-gray-100 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
                 : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         ></textarea>
     {:else if type == 'date'}
@@ -122,7 +122,7 @@
             name={id}
             {id}
             class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
-                ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
+                ? 'b bg-gray-100 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
                 : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
     {:else}
@@ -133,8 +133,8 @@
             type="text"
             name={id}
             {id}
-            class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
-                ? 'bg-ios-systemColors-quaternarySystemFill-light text-ios-labelColors-secondaryLabel-light'
+            class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {errors ? '' : ''} {disabled
+                ? 'b bg-gray-100 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
                 : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
     {/if}
@@ -142,10 +142,10 @@
     <!-- input field ends here -->
 
     <!-- input error message starts here -->
-    <div class="flex h-3 w-full flex-row items-center justify-start">
+    <div class="flex h-fit min-h-5 w-full flex-row items-center justify-start">
         {#if errors}
             <p
-                class="text-end text-sm font-medium leading-tight text-ios-basic-destructiveRed"
+                class="text-start text-sm font-medium leading-tight text-ios-basic-destructiveRed"
             >
                 {errors}
             </p>
