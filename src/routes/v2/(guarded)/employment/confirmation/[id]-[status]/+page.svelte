@@ -53,6 +53,7 @@
         _addConfirmationStateDirector,
     } from './+page';
     import { _addInterimApprovalSchema } from '$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas';
+    import StatusPill from '$lib/components/status-pills/StatusPill.svelte';
     export let data: PageData;
 
     let isContractContinuation: boolean = false;
@@ -439,13 +440,7 @@
         ? 'Melebihi Tempoh 3 Tahun'
         : 'Rasionalisasi'}"
 >
-    {#if $isReadOnlyConfirmationInServiceMeetingResult && $confirmationMeetingResultIsApproved}
-        <Badge color="dark">Proses Pengesahan dalam Perkhidmatan Tamat</Badge>
-    {/if}
-    {#if ($isReadOnlyEmploymentSecretaryConfirmationInServiceApproval && !$confirmationEmploymentSecretaryIsApproved) || ($isReadOnlyDivisionDirectorConfirmationInServiceApproval && !confirmationDivisionDirectorIsApproved) || ($isReadOnlyIntegrityDirectorConfirmationInServiceApproval && !confirmationIntegrityDirectorIsApproved) || ($isReadOnlyAuditDirectorConfirmationInServiceApproval && !confirmationAuditDirectorIsApproved) || ($isReadOnlyConfirmationInServiceMeetingResult && !$confirmationMeetingResultIsApproved)}
-        <Badge color="red">Proses Pengesahan dalam Perkhidmatan Tidak Sah</Badge
-        >
-    {/if}
+<StatusPill status={data.params.status} slot="status" />
 
     <TextIconButton
         label="Kembali"

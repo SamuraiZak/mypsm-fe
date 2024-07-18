@@ -2314,7 +2314,7 @@
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
-                    onClick={() => activeIndex++}
+                    onClick={() => {triggerSubmitNextOfKinTempData(false);activeIndex++;}}
                 />
                 <TextIconButton
                     type="neutral"

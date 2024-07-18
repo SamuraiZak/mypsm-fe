@@ -166,7 +166,7 @@
         },
     };
 
-    const checkIfFail = async (id: number) => {
+    const checkIfFail = async (id: number, status: string) => {
         const idRequestBody: commonIdRequestDTO = {
             id: Number(id),
         };
@@ -211,7 +211,7 @@
                         bind:tableData={confirmationListTable}
                         bind:passData={rowData}
                         detailActions={() => {
-                            checkIfFail(rowData.id);
+                            checkIfFail(rowData.id, rowData.status);
                         }}
                     >
                         <FilterWrapper slot="filter">
@@ -255,7 +255,7 @@
                                 bind:tableData={confirmationExceedsThreeYearsListTable}
                                 bind:passData={rowData}
                                 detailActions={() => {
-                                    checkIfFail(rowData.id);
+                                    checkIfFail(rowData.id, rowData.status);
                                 }}
                             >
                                 <FilterWrapper slot="filter">
@@ -272,7 +272,8 @@
                                     <FilterTextField
                                         label="No. Kad Pengenalan"
                                         bind:inputValue={confirmationExceedsThreeYearsListTable
-                                            .param.filter.identityDocumentNumber}
+                                            .param.filter
+                                            .identityDocumentNumber}
                                     ></FilterTextField>
                                     <FilterSelectField
                                         label="Status"
@@ -303,7 +304,7 @@
                             bind:tableData={confirmationRationalisationListTable}
                             bind:passData={rowData}
                             detailActions={() => {
-                                checkIfFail(rowData.id);
+                                checkIfFail(rowData.id, rowData.status);
                             }}
                         >
                             <FilterWrapper slot="filter">
