@@ -974,7 +974,7 @@
                             bind:val={$supporterInfoForm.supporterName}
                         ></CustomTextField> -->
                             <CustomRadioBoolean
-                                
+                            disabled={false}                                
                                 id="status"
                                 label="Status"
                                 errors={$supporterInfoError.status}
@@ -1044,7 +1044,7 @@
                             bind:val={$approverInfoForm.approverName}
                         ></CustomTextField> -->
                             <CustomRadioBoolean
-                                
+                            disabled={false}
                                 id="status"
                                 label="Status"
                                 errors={$approverInfoError.status}

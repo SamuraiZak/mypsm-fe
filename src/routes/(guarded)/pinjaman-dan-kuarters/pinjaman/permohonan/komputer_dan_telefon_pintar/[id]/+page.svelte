@@ -949,7 +949,7 @@
                 </div></StepperContentBody
             >
         </StepperContent>
-        {#if data.props.userMode == 'urusetia' || data.props.userMode == 'pelulus' || data.props.userMode == 'ketua Seksyen'}
+      
             <StepperContent>
                 <StepperContentHeader
                     title="Kemaskini Jadual Pertama dan Jadual Kedua"
@@ -1116,7 +1116,6 @@
                     </CustomTabContent>
                 </CustomTab>
             </StepperContent>
-        {/if}
 
         <StepperContent>
             <StepperContentHeader title="Surat Tawaran">

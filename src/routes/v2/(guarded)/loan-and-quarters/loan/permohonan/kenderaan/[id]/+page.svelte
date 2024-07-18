@@ -798,14 +798,14 @@
                         class="flex w-full flex-col gap-2"
                     >
                         <CustomSelectField
-                            disabled={noturusetia}
+                            disabled={false}
                             id="approverName"
                             label={'Pelulus'}
                             options={data.supporterApproverLookup}
                             bind:val={$approverInfoForm.approverId}
                         ></CustomSelectField>
                         <CustomSelectField
-                            disabled={noturusetia}
+                            disabled={false}
                             id="approverName"
                             label={'Ketua Seksyen'}
                             options={data.supporterApproverLookup}
@@ -828,14 +828,14 @@
                         title="Keputusan Dari Ketua Seksyen"
                         borderClass="border-none"
                     >
-                        {#if data.props.userMode == 'ketua Seksyen'}
+                        <!-- {#if data.props.userMode == 'ketua Seksyen'} -->
                             <TextIconButton
                                 type="primary"
                                 label="Hantar"
                                 icon="check"
                                 form="supporterApprovalDetail"
                             ></TextIconButton>
-                        {/if}
+                        <!-- {/if} -->
                     </ContentHeader>
 
                     <form
@@ -845,7 +845,7 @@
                         class="flex w-full flex-col gap-2"
                     >
                         <CustomTextField
-                            disabled={notketuaSeksyen}
+                            disabled={false}
                             id="remark"
                             label="Tindakan/ Ulasan"
                             errors={$supporterApprovalError.remark}
@@ -853,7 +853,7 @@
                         />
 
                         <CustomRadioBoolean
-                            disabled={notketuaSeksyen}
+                            disabled={false}
                             id="status"
                             label="Status"
                             errors={$supporterApprovalError.status}
@@ -868,14 +868,14 @@
                         title="Keputusan Dari Pelulus"
                         borderClass="border-none"
                     >
-                        {#if data.props.userMode == 'pelulus'}
+                        <!-- {#if data.props.userMode == 'pelulus'} -->
                             <TextIconButton
                                 type="primary"
                                 label="Hantar"
                                 icon="check"
                                 form="approverApprovalDetail"
                             ></TextIconButton>
-                        {/if}
+                        <!-- {/if} -->
                     </ContentHeader>
                     <form
                         id="approverApprovalDetail"
@@ -884,7 +884,7 @@
                         class="flex w-full flex-col gap-2"
                     >
                         <CustomTextField
-                            disabled={notpelulus}
+                            disabled={false}
                             id="remark"
                             label="Tindakan / Ulasan"
                             errors={$approverApprovalError.remark}
@@ -892,7 +892,7 @@
                         />
 
                         <CustomRadioBoolean
-                            disabled={notpelulus}
+                            disabled={false}
                             id="status"
                             label="Status"
                             errors={$approverApprovalError.status}
@@ -902,7 +902,7 @@
                 </div></StepperContentBody
             >
         </StepperContent>
-        {#if data.props.userMode == 'urusetia' || data.props.userMode == 'pelulus' || data.props.userMode == 'ketua Seksyen'}
+       
             <StepperContent>
                 <StepperContentHeader
                     title="Kemaskini Jadual Pertama Dan Jadual Kedua"
@@ -1173,7 +1173,7 @@
                     </CustomTabContent>
                 </CustomTab>
             </StepperContent>
-        {/if}
+        
 
         <!-- This stepper is for US upload signed surat perjanjian from dokumen sokongan stepper-->
         <StepperContent>

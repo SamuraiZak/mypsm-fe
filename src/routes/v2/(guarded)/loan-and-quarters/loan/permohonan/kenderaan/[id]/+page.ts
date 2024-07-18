@@ -28,7 +28,8 @@ import { LoanServices } from '$lib/services/implementation/mypsm/pinjaman/loan.s
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export async function load({ params }) {
+export const load = async ({ params, parent }) => {
+    const { layoutData } = await parent();
 
     let agreementLetter = getAgreementLetter()
     let loan = "Kenderaan";

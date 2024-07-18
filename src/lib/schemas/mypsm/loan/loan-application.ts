@@ -52,6 +52,7 @@ export const _loanDetail = z.object({
     requestedLoan: numberSchema,
     paymentPeriod: numberSchema,
     reason: shortTextSchema,
+    isDraft: booleanSchema,
 
 })
 
@@ -69,6 +70,7 @@ export const _vehicleDetail = z.object({
     registrationNumber: notRequiredString,
     registrationDate: notRequiredString,
     nettPrice: numberSchema,
+    isDraft: booleanSchema,
 })
 
 ///=====================================================
@@ -94,6 +96,7 @@ export const _vehicleDetail = z.object({
 const singleSupplier = z.object({
     name: shortTextSchema,
     address: shortTextSchema,
+    isDraft: booleanSchema,
 })
 export const _supplier = z.object({
     id: numberIdSchema,
@@ -120,6 +123,7 @@ export const _vehicleFirstSchedule = z.object({
     previousOwner: shortTextSchema,
     previousOwnerIC: notRequiredString,
     address: shortTextSchema,
+    isDraft: booleanSchema,
 
 })
 
@@ -132,6 +136,7 @@ export const _firstSchedule = z.object({
     purchasePrice: numberSchema,
     balancePayment: numberSchema,
     govFund: numberSchema,
+    isDraft: booleanSchema,
 
 })
 
@@ -146,6 +151,7 @@ export const _secondSchedule = z.object({
     govFund: numberSchema,
     installment: numberSchema,
     paymentPeriod: numberSchema,
+    isDraft: booleanSchema,
 
 })
 
@@ -187,6 +193,7 @@ export const _supportApproval = z.object({
     id: numberIdSchema,
     status: booleanSchema,
     remark: shortTextSchema,
+    isDraft: booleanSchema,
 })
 
 ///=====================================================
@@ -196,6 +203,7 @@ export const _supportApproval = z.object({
 export const _approver = z.object({
     id: numberIdSchema,
     approverId: numberIdSchema,
+    isDraft: booleanSchema,
 
 })
 
@@ -207,6 +215,7 @@ export const _approverApproval = z.object({
     id: numberIdSchema,
     status: booleanSchema,
     remark: shortTextSchema,
+    isDraft: booleanSchema,
 })
 
 

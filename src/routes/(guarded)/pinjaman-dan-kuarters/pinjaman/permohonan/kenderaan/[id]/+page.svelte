@@ -902,7 +902,7 @@
                 </div></StepperContentBody
             >
         </StepperContent>
-        {#if data.props.userMode == 'urusetia' || data.props.userMode == 'pelulus' || data.props.userMode == 'ketua Seksyen'}
+      
             <StepperContent>
                 <StepperContentHeader
                     title="Kemaskini Jadual Pertama Dan Jadual Kedua"
@@ -1173,7 +1173,7 @@
                     </CustomTabContent>
                 </CustomTab>
             </StepperContent>
-        {/if}
+      
 
         <!-- This stepper is for US upload signed surat perjanjian from dokumen sokongan stepper-->
         <StepperContent>
