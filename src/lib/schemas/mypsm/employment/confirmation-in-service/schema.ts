@@ -93,24 +93,14 @@ export const _confirmationServiceSchema = z.object({
     bankAccount: z.string().readonly(),
 });
 
-export const _confirmationMeetingResultSchema = z.object({
-    meetingName: codeSchema,
-    meetingDate: dateStringSchema,
-    confirmedPositionDate: dateStringSchema,
-    meetingRemark: shortTextSchema,
-    meetingResult: booleanSchema,
-    isReadonly: z.boolean().readonly(),
-    isDraft: z.boolean(),
-});
-
-export const _updateConfirmationMeetingResultSchema =
-    _confirmationMeetingResultSchema.omit({ isReadonly: true }).extend({
-        id: z.number().readonly(),
-    });
-
-export const _confirmationProbationContinuationSchema = z
+export const _confirmationMeetingResultSchema = z
     .object({
-        confirmationId: z.number(),
+        id: z.number().readonly(),
+        meetingName: codeSchema,
+        meetingDate: dateStringSchema,
+        confirmedPositionDate: dateStringSchema,
+        meetingRemark: shortTextSchema,
+        meetingResult: booleanSchema,
         isContractContinued: booleanSchema,
         effectiveDate: dateStringSchema,
         contractMonths: numberSchem0,
@@ -139,6 +129,40 @@ export const _confirmationProbationContinuationSchema = z
         },
     );
 
+export const _updateConfirmationMeetingResultSchema =
+    _confirmationMeetingResultSchema;
+
+// export const _confirmationProbationContinuationSchema = z
+//     .object({
+//         confirmationId: z.number(),
+//         isContractContinued: booleanSchema,
+//         effectiveDate: dateStringSchema,
+//         contractMonths: numberSchem0,
+//         isReadonly: z.boolean().readonly(),
+//         isDraft: z.boolean(),
+//     })
+//     .superRefine(
+//         ({ isContractContinued, effectiveDate, contractMonths }, ctx) => {
+//             if (isContractContinued) {
+//                 if (effectiveDate === '' || effectiveDate === 'undefined') {
+//                     ctx.addIssue({
+//                         code: 'custom',
+//                         message: 'Tarikh tidak boleh kosong.',
+//                         path: ['effectiveDate'],
+//                     });
+//                 }
+
+//                 if (contractMonths === null || contractMonths < 1) {
+//                     ctx.addIssue({
+//                         code: 'custom',
+//                         message: 'Bulan percubaan tidak boleh kosong.',
+//                         path: ['contractMonths'],
+//                     });
+//                 }
+//             }
+//         },
+//     );
+
 export const _confirmationExamsChecklistSchema = z.object({
     confirmationId: z.number(),
     checker: shortTextSchema,
@@ -155,7 +179,7 @@ export const _confirmationFullDetailSchema = z.object({
     service: _confirmationServiceSchema,
     examination: _confirmationExamsChecklistSchema,
     diciplinary: _confirmationDiciplinarySchema,
-    probationContinuation: _confirmationProbationContinuationSchema,
+    // probationContinuation: _confirmationProbationContinuationSchema,
     secretary: _confirmationApprovalSchema,
     division: _confirmationApprovalSchema,
     integrity: _confirmationApprovalSchema,
