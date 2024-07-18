@@ -9,7 +9,6 @@ import type {
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _confirmationApprovalSchema,
-    _confirmationProbationContinuationSchema,
     _confirmationDiciplinarySchema,
     _confirmationExamsChecklistSchema,
     _confirmationMeetingResultSchema,
@@ -62,12 +61,6 @@ export async function load({ params, parent }) {
     const diciplinaryInfoForm = await superValidate(
         confirmationInServiceView.diciplinary,
         zod(_confirmationDiciplinarySchema),
-        { errors: false },
-    );
-
-    const contractContinuationInfoForm = await superValidate(
-        confirmationInServiceView.probationContinuation,
-        zod(_confirmationProbationContinuationSchema),
         { errors: false },
     );
 
@@ -340,7 +333,6 @@ export async function load({ params, parent }) {
             examsInfoForm,
             diciplinaryInfoForm,
             employmentSecretaryInfoForm,
-            contractContinuationInfoForm,
             divisionDirectorInfoForm,
             integrityDirectorApprovalForm,
             auditDirectorInfoForm,
@@ -402,21 +394,21 @@ export const _addConfirmationEmploymentSecretary = async (
     return { response };
 };
 
-export const _addConfirmationContractContinuation = async (
-    id: number,
-    formData: object,
-) => {
-    const form = await superValidate(
-        formData,
-        zod(_confirmationProbationContinuationSchema),
-    );
-    form.data.confirmationId = id;
+// export const _addConfirmationContractContinuation = async (
+//     id: number,
+//     formData: object,
+// ) => {
+//     const form = await superValidate(
+//         formData,
+//         zod(_confirmationProbationContinuationSchema),
+//     );
+//     form.data.confirmationId = id;
 
-    console.log(form.data);
-    if (!form.valid) {
-        getErrorToast();
-        error(400, { message: 'Validation Not Passed!' });
-    }
+//     console.log(form.data);
+//     if (!form.valid) {
+//         getErrorToast();
+//         error(400, { message: 'Validation Not Passed!' });
+//     }
 
     // const response: CommonResponseDTO =
     //     await ConfirmationServices.createConfirmationContractContinuationResult(
@@ -424,7 +416,7 @@ export const _addConfirmationContractContinuation = async (
     //     );
 
     // return { response };
-};
+// };
 
 export const _addConfirmationStateDirector = async (
     id: number,
