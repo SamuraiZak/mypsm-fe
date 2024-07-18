@@ -4,31 +4,33 @@ import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-docu
 import type { CommonListRequestDTO } from "$lib/dto/core/common/common-list-request.dto";
 import type { CommonResponseDTO } from "$lib/dto/core/common/common-response.dto";
 import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto";
-import type { InterimApplicationDetailDTO, InterimChecklist, InterimDocument, InterimDownload, InterimSkipping, InterimSupport } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-application-detail-response.dto";
+import type { InterimApplicationDetailDTO, InterimChecklist, InterimDocument, InterimDownload, InterimSkipping, InterimSupport, ViewAssign } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-application-detail-response.dto";
 import type { InterimCommonApproval } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-common-approval.dto.js";
 import type { EmployeeInterimApplicationDetailRequestDTO } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-employee-application-detail-request.dto";
-import { _addInterimApprovalSchema, _addNewInterimApplicationSchema, _checklistSchema } from "$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas";
+import { _addDirectorSchema, _addInterimApprovalSchema, _addNewInterimApplicationSchema, _checklistSchema } from "$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas";
 import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.service";
 import { EmploymentInterimServices } from "$lib/services/implementation/mypsm/perjawatan/employment-interim.service";
 import { zod } from "sveltekit-superforms/adapters";
 import { superValidate } from "sveltekit-superforms/client";
 
-export const load = async ({ params }) => {
-    let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
+export const load = async ({ params, parent }) => {
+    const { layoutData } = await parent();
+
+    const currentRoleCode: string = layoutData.accountDetails.currentRoleCode
     let employeeInterimApplicationDetailResponse: CommonResponseDTO = {}
     let lookup = await getLookup();
     let interimApplicationDetail = {} as InterimApplicationDetailDTO;
     let interimSupportDetail: InterimSupport = {
-        name: "",
+        employeeId: "",
         remark: "",
-        status: "",
-        statusDescription: "",
+        status: false,
+        approvalDate: "",
     }
     let interimApprovalDetail: InterimSupport = {
-        name: "",
+        employeeId: "",
         remark: "",
-        statusCode: "",
-        statusDescription: "",
+        status: false,
+        approvalDate: "",
     }
     let uploadedDocuments: InterimDownload = {
         document: []
@@ -42,6 +44,7 @@ export const load = async ({ params }) => {
     const skippingForm = await superValidate(zod(_addInterimApprovalSchema));
     const approverForm = await superValidate(zod(_addInterimApprovalSchema))
     const directorForm = await superValidate(zod(_addInterimApprovalSchema));
+    const setDirectorForm = await superValidate(zod(_addDirectorSchema));
     let failToLoad: boolean = false;
 
 
@@ -84,6 +87,7 @@ export const load = async ({ params }) => {
         approverForm,
         interimApprovalDetail,
         failToLoad,
+        setDirectorForm,
     }
 }
 
@@ -105,7 +109,7 @@ export const _submitSkippingForm = async (formData: InterimCommonApproval) => {
 }
 export const _submitDirectorForm = async (formData: InterimCommonApproval) => {
     const form = await superValidate(formData, zod(_addInterimApprovalSchema))
-
+    console.log(form)
     if (form.valid) {
         const response: CommonResponseDTO =
             await EmploymentInterimServices.addInterimDirectorApproval(form.data as InterimCommonApproval)
@@ -129,6 +133,16 @@ export const _submitApproverForm = async (formData: InterimCommonApproval) => {
     if (form.valid) {
         const response: CommonResponseDTO =
             await EmploymentInterimServices.addInterimApproverApproval(form.data as InterimCommonApproval)
+
+        return { response }
+    }
+}
+
+export const _submitSetDirector = async (formData: ViewAssign) => {
+    const form = await superValidate(formData, zod(_addDirectorSchema))
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await EmploymentInterimServices.addDirector(form.data as ViewAssign)
 
         return { response }
     }
@@ -180,12 +194,6 @@ const getLookup = async () => {
     // =======================================================
     // Dropdown Lookup =======================================
     // =======================================================
-    const gradeLookupResponse: CommonResponseDTO =
-        await LookupServices.getServiceGradeEnums();
-
-    const gradeLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsNameIsCode(gradeLookupResponse);
-    // -------------------------------------------------------
     const placementLookupResponse: CommonResponseDTO =
         await LookupServices.getPlacementEnums();
 
@@ -196,14 +204,9 @@ const getLookup = async () => {
         await LookupServices.getPositionEnums();
 
     const positionLookup: DropdownDTO[] =
-        LookupServices.setSelectOptions(positionLookupResponse)
+        LookupServices.setSelectOptionCode(positionLookupResponse)
     // -------------------------------------------------------
-    const departmentLookupResponse: CommonResponseDTO =
-        await LookupServices.getDepartmentEnums();
 
-    const departmentLookup: DropdownDTO[] =
-        LookupServices.setSelectOptions(departmentLookupResponse)
-    // -------------------------------------------------------
 
     const columnLabel = [
         { name: 'Perkara' },
@@ -233,11 +236,8 @@ const getLookup = async () => {
         supporterApproverResponse,
     );
     return {
-
-        gradeLookup,
         placementLookup,
         positionLookup,
-        departmentLookup,
         supporterApproverLookup,
         columnLabel,
     }

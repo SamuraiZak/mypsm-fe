@@ -14,6 +14,7 @@
     import type { PageData } from './$types';
     export let data: PageData;
     let selectedRow = {} as ContractEmployeeListDTO;
+    let select2: any;
     let openModal: boolean = false;
     //table for urus setia/penyokong/pelulus
     let contractEmployeeListTable: TableSettingDTO = {
@@ -47,6 +48,37 @@
             add: false,
         },
     };
+    let contractEmployeeListTable2: TableSettingDTO = {
+        param: data.contractEmployeeListParam,
+        meta: data.contractEmployeeListResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 2,
+            totalPage: 1,
+        },
+        data: data.contractEmployeeList2 ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['candidateId', 'applicationId'],
+        dictionary: [],
+        url:
+            data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code
+                ? 'contracts/list'
+                : data.currentRoleCode == UserRoleConstant.penyokong.code
+                  ? 'contracts/supporter_approval/list'
+                  : 'contracts/approver_approval/list',
+        id: 'contractEmployeeListTable2',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: true,
+        },
+        controls: {
+            add: false,
+        },
+    };
 </script>
 
 <!-- content header starts here -->
@@ -57,7 +89,7 @@
                 onClick={() => goto('./new-hire/permohonan-baru')}
                 icon="add"
                 type="primary"
-                label="Tambah Kontrak Baru"
+                label="Tambah Kontrak Baharu"
             />
         {:else if data.currentRoleCode === UserRoleConstant.calonKontrak.code}
             <TextIconButton
@@ -78,7 +110,7 @@
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
     <div class="flex w-full flex-col justify-start gap-2.5 p-5">
-        {#if data.currentRoleCode !== UserRoleConstant.calonKontrak.code}
+        {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code}
             <div
                 class="flex max-h-full w-full flex-col items-start justify-start"
             >
@@ -175,6 +207,56 @@
                         disabled
                         isRequired={false}
                     />
+                </div>
+            </div>
+        {:else if data.currentRoleCode == UserRoleConstant.kakitangan.code}
+            <div
+                class="flex max-h-full w-full flex-col items-start justify-start"
+            >
+                <div class="h h-fit w-full p-3">
+                    <DataTable
+                        title="Senarai Rekod Kakitangan Kontrak"
+                        bind:tableData={contractEmployeeListTable2}
+                        bind:passData={select2}
+                        detailActions={() => {
+                            if (
+                                select2.remark ==
+                                    'Menunggu Calon Menghantar Maklumat Peribadi' ||
+                                select2.status == 'Draf'
+                            ) {
+                                openModal = true;
+                            } else if (select2.status !== 'Baru') {
+                                goto(
+                                    './new-hire/butiran-' +
+                                        select2.candidateId,
+                                );
+                            }
+                        }}
+                    >
+                        <FilterWrapper slot="filter">
+                            <FilterTextField
+                                label="ID Sementara"
+                                bind:inputValue={contractEmployeeListTable.param
+                                    .filter.temporaryId}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="Nama Kakitangan"
+                                bind:inputValue={contractEmployeeListTable.param
+                                    .filter.name}
+                            ></FilterTextField>
+                            <FilterTextField
+                                label="No. Kad Pengenalan"
+                                bind:inputValue={contractEmployeeListTable.param
+                                    .filter.identityDocumentNumber}
+                            ></FilterTextField>
+                            <FilterSelectField
+                                label="Status"
+                                options={data.selectionOptions.statusLookup}
+                                bind:inputValue={contractEmployeeListTable.param
+                                    .filter.status}
+                            ></FilterSelectField>
+                        </FilterWrapper>
+                    </DataTable>
                 </div>
             </div>
         {/if}

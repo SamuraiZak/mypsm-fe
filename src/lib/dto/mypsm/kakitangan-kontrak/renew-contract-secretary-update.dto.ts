@@ -1,5 +1,5 @@
 export interface RenewContractSecretaryUpdate {
-    contractId:                number;
+    applicationId:                number;
     startContract:             string;
     endContract:               string;
     wageRate:                  number;

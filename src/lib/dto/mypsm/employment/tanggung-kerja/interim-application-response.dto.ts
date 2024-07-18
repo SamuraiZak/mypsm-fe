@@ -1,12 +1,12 @@
 export interface InterimApplicationResponse {
     interimId?: number;
     gradeId: number;
-    positionId: number;
     placementId: number;
     newPlacementId: number;
-    referenceNumber: string;
+    referenceNumber: string | null;
     startDate: string;
     endDate: string;
     reason: string;
+    isDraft: boolean;
     isReadOnly?: boolean;
 }

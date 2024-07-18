@@ -3,7 +3,8 @@ export interface RenewContractAddDTO {
 }
 
 export interface Contractor {
-    contractId: number;
+    applicationId?: number;
+    contractId?: number;
 }
 
 // Converts JSON strings to/from your types

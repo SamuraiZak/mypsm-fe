@@ -80,6 +80,7 @@
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
     import type { DocumentBase64RequestDTO } from '$lib/dto/core/common/base-64-document-request.dto';
+    import { PrintHelper } from '$lib/helpers/print-helper/print-helper';
     export let data: PageData;
 
     // temporay arrays for list details
@@ -96,7 +97,7 @@
         experiences: [],
         isDraft: false,
     };
-    if (data.getContractExperienceDetails.experienceList.length > 0) {
+    if (data.getContractExperienceDetails.experienceList?.length > 0) {
         data.getContractExperienceDetails.experienceList.map((value) => {
         
            tempExperienceRecord.experiences.push({
@@ -115,7 +116,7 @@
         activities: [],
         isDraft: false,
     };
-    if(data.getContractActivityDetails.activityList.length > 0){
+    if(data.getContractActivityDetails.activityList?.length > 0){
         tempActivityRecord.activities = data.getContractActivityDetails.activityList;
         tempActivityRecord.isDraft = data.getContractActivityDetails.isDraft;
     }
@@ -123,18 +124,18 @@
         dependencies: [],
         isDraft: false,
     };
-    if(data.getContractFamilyDetails.dependenciesList.length > 0){
+    if(data.getContractFamilyDetails.dependenciesList?.length > 0){
         tempFamilyRecord.dependencies = data.getContractFamilyDetails.dependenciesList;
     }
     let tempNonFamilyRecord: AddNewContractEmployeeDependencyDTO = {
         dependencies: [],
         isDraft: false,
     };
-    if(data.getContractNonFamilyDetails.dependenciesList.length > 0){
+    if(data.getContractNonFamilyDetails.dependenciesList?.length > 0){
         tempNonFamilyRecord.dependencies = data.getContractNonFamilyDetails.dependenciesList;
     }
     let tempNextOfKinRecord: AddContractNextOfKinDTO = { nextOfKins: [], isDraft: false };
-    if(data.getContractNextOfKinDetails.nextOfKinList.length > 0){
+    if(data.getContractNextOfKinDetails.nextOfKinList?.length > 0){
         tempNextOfKinRecord.nextOfKins = data.getContractNextOfKinDetails.nextOfKinList;
     }
     // checkbox for 1st stepper if mail address is the same as home address
@@ -387,14 +388,20 @@
         id: 'updateContractDetailForm',
         validators: zod(_addContractViewSecretaryUpdate),
         async onSubmit() {
-            $updateContractDetailForm.candidateId = data.contractId.id;
+            $updateContractDetailForm.applicationId = data.contractId.id;
             const readOnly = await _submitUpdateContractDetailForm(
                 $updateContractDetailForm,
             );
 
             if (readOnly?.response.status == 'success') {
-                $updateContractDetailForm.isReadonly = true;
-                $secretaryContractResultForm.isReadonly = false;
+                if($updateContractDetailForm.isDraft){
+                    $updateContractDetailForm.isReadonly = false;
+                    $secretaryContractResultForm.isReadonly = true;
+                } else {
+                    $updateContractDetailForm.isReadonly = true;
+                    $secretaryContractResultForm.isReadonly = false;
+                }
+               
             }
         },
     });
@@ -451,7 +458,7 @@
         id: 'setSupporterApproverForm',
         validators: zod(_addContractSupporterApprover),
         async onSubmit() {
-            $setSupporterApproverForm.candidateId = data.contractId.id;
+            $setSupporterApproverForm.applicationId = data.contractId.id;
             const readOnly = await _submitSetSupporterApproverForm(
                 $setSupporterApproverForm,
             );
@@ -475,6 +482,7 @@
             const readOnly = await _submitApproverContractResultForm(
                 $approverContractResultForm,
             );
+            console.log(readOnly)
             if (readOnly?.response.status == 'success') {
                 $approverContractResultForm.isReadonly = true;
                 _submitGetContractEmployeeNumberForm(data.contractId);
@@ -1917,25 +1925,61 @@
         {/if}
 
         <!-- {#if isProcessEnded !== 1} -->
-        {#if data.currentRoleCode !== UserRoleConstant.calonKontrak.code && data.getContractDocuments == undefined}
+        {#if data.currentRoleCode !== UserRoleConstant.calonKontrak.code}
             <StepperContent>
                 <StepperContentHeader title="Maklumat Lantikan Baru (Kontrak)">
                     {#if !$updateContractDetailForm.isReadonly}
+                    <TextIconButton
+                        label="Simpan"
+                        type="neutral"
+                        icon="save"
+                        form="updateContractDetailForm"
+                        onClick={() => $updateContractDetailForm.isDraft = true}
+                    />
                         <TextIconButton
                             label="Hantar"
                             form="updateContractDetailForm"
                             type="primary"
                             icon="check"
+                            onClick={() => $updateContractDetailForm.isDraft = false}
                         />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
+                    <div class="flex w-full justify-end px-2">
+                        <TextIconButton
+                            label="Cetak"
+                            icon="print"
+                            onClick={() => PrintHelper.handleExportPDF('updateContractDetailForm')}
+                        />
+                    </div>
                     <form
                         class="flex w-full flex-col justify-start gap-2.5 pb-10"
                         method="POST"
                         id="updateContractDetailForm"
                         use:updateContractDetailEnhance
                     >
+                    <div class="hidden">
+                        <span class="font-medium font-14px pb-4">Kakitangan Kontrak (Lantikan Baru)</span>
+                        <CustomTextField
+                        label="Nama Penuh Calon"
+                        id="name"
+                        disabled
+                        bind:val={$editNewContractEmployeeDetailForm.name}
+                    />
+                    <CustomTextField
+                        label="No. Kad Pengenalan"
+                        id="identityDocumentNumber"
+                        disabled
+                        bind:val={$editNewContractEmployeeDetailForm.identityDocumentNumber}
+                    />
+                    <CustomTextField
+                        label="Emel"
+                        id="email"
+                        bind:disabled={$editNewContractEmployeeDetailForm.isReadonly}
+                        bind:val={$editNewContractEmployeeDetailForm.email}
+                    />
+                    </div>
                         <CustomTextField
                             label="Tarikh Mula Kontrak"
                             bind:disabled={$updateContractDetailForm.isReadonly}
@@ -2076,11 +2120,19 @@
             <StepperContent>
                 <StepperContentHeader title="Keputusan Urus Setia Perjawatan">
                     {#if data.currentRoleCode === UserRoleConstant.urusSetiaPerjawatan.code && !$secretaryContractResultForm.isReadonly}
+                    <TextIconButton
+                        label="Simpan"
+                        type="neutral"
+                        icon="save"
+                        form="secretaryContractResultForm"
+                        onClick={() => $secretaryContractResultForm.isDraft = true}
+                    />
                         <TextIconButton
                             label="Hantar"
                             form="secretaryContractResultForm"
                             type="primary"
                             icon="check"
+                            onClick={() => $secretaryContractResultForm.isDraft = false}
                         />
                     {/if}
                 </StepperContentHeader>
@@ -2126,6 +2178,7 @@
                                 form="setSupporterApproverForm"
                                 type="primary"
                                 icon="check"
+                                onClick={() => $setSupporterApproverForm.isDraft = false}
                             />
                         {/if}
                     </StepperContentHeader>
@@ -2158,39 +2211,36 @@
 
                 <StepperContent>
                     <StepperContentHeader title="Keputusan Penyokong">
-                        {#if !$supporterContractResultForm.isReadonly && data.currentRoleCode == UserRoleConstant.penyokong.code}
+                        <!-- {#if !$supporterContractResultForm.isReadonly && data.currentRoleCode == UserRoleConstant.penyokong.code} -->
+                        <TextIconButton
+                        label="Simpan"
+                        type="neutral"
+                        icon="save"
+                        form="supporterContractResultForm"
+                        onClick={() => $supporterContractResultForm.isDraft = true}
+                        />
                             <TextIconButton
                                 label="Hantar"
                                 form="supporterContractResultForm"
                                 type="primary"
                                 icon="check"
+                                onClick={() => $supporterContractResultForm.isDraft = false}
                             />
-                        {/if}
+                        <!-- {/if} -->
                     </StepperContentHeader>
                     <StepperContentBody>
-                        {#if $supporterContractResultForm.remark == '' && data.currentRoleCode !== UserRoleConstant.penyokong.code}
-                            <div class="flex w-full flex-col gap-10 px-3 pb-10">
-                                <Alert color="blue">
-                                    <p>
-                                        <span class="font-medium"
-                                            >Tiada Maklumat!</span
-                                        >
-                                        Menunggu keputusan daripada Penyokong.
-                                    </p>
-                                </Alert>
-                            </div>
-                        {:else}
                             <form
                                 class="flex w-full flex-col justify-start gap-2.5 pb-10"
                                 method="POST"
                                 id="supporterContractResultForm"
                                 use:supporterContractResultEnhance
                             >
-                                {#if $supporterContractResultForm.isReadonly}
+                                {#if $supporterContractResultForm.name !== ""}
                                     <CustomTextField
                                         label="Nama"
                                         disabled
                                         id="name"
+                                        placeholder="Menunggu Keputusan daripada Penyokong"
                                         val={$supporterContractResultForm.name}
                                     />
                                 {/if}
@@ -2198,6 +2248,7 @@
                                     label="Tindakan/Ulasan"
                                     bind:disabled={$supporterContractResultForm.isReadonly}
                                     id="remark"
+                                    placeholder="Menunggu Keputusan daripada Penyokong..."
                                     bind:val={$supporterContractResultForm.remark}
                                     errors={$supporterContractResultError.remark}
                                 />
@@ -2209,23 +2260,30 @@
                                     bind:val={$supporterContractResultForm.status}
                                 />
                             </form>
-                        {/if}
                     </StepperContentBody>
                 </StepperContent>
 
                 <StepperContent>
                     <StepperContentHeader title="Keputusan Pelulus">
-                        {#if !$approverContractResultForm.isReadonly && data.currentRoleCode == UserRoleConstant.pelulus.code}
+                        <!-- {#if !$approverContractResultForm.isReadonly && data.currentRoleCode == UserRoleConstant.pelulus.code} -->
+                        <TextIconButton
+                        label="Simpan"
+                        type="neutral"
+                        icon="save"
+                        form="approverContractResultForm"
+                        onClick={() => $approverContractResultForm.isDraft = true}
+                        />
                             <TextIconButton
                                 label="Hantar"
                                 form="approverContractResultForm"
                                 type="primary"
                                 icon="check"
+                                onClick={() => $approverContractResultForm.isDraft = false}
                             />
-                        {/if}
+                        <!-- {/if} -->
                     </StepperContentHeader>
                     <StepperContentBody>
-                        {#if $approverContractResultForm.remark == '' && data.currentRoleCode !== UserRoleConstant.pelulus.code}
+                        <!-- {#if $approverContractResultForm.remark == ''}
                             <div class="flex w-full flex-col gap-10 px-3 pb-10">
                                 <Alert color="blue">
                                     <p>
@@ -2236,17 +2294,18 @@
                                     </p>
                                 </Alert>
                             </div>
-                        {:else}
+                        {:else} -->
                             <form
                                 class="flex w-full flex-col justify-start gap-2.5 pb-10"
                                 method="POST"
                                 id="approverContractResultForm"
                                 use:approverContractResultEnhance
                             >
-                                {#if $approverContractResultForm.isReadonly}
+                                {#if $approverContractResultForm.name !== ""}
                                     <CustomTextField
                                         label="Nama"
                                         disabled
+                                        placeholder="Menunggu keputusan daripada Pelulus..."
                                         id="name"
                                         val={$approverContractResultForm.name}
                                     />
@@ -2255,6 +2314,7 @@
                                     label="Tindakan/Ulasan"
                                     bind:disabled={$approverContractResultForm.isReadonly}
                                     id="remark"
+                                    placeholder="Menunggu Keputusan daripada Pelulus..."
                                     bind:val={$approverContractResultForm.remark}
                                     errors={$approverContractResultError.remark}
                                 />
@@ -2266,7 +2326,7 @@
                                     bind:val={$approverContractResultForm.status}
                                 />
                             </form>
-                        {/if}
+                        <!-- {/if} -->
                     </StepperContentBody>
                 </StepperContent>
             {/if}

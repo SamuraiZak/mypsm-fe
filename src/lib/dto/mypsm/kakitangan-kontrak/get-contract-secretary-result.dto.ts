@@ -4,4 +4,5 @@ export interface GetContracSecretaryResultDTO {
     remark: string;
     status: boolean;
     isReadonly?: boolean;
+    isDraft: boolean;
 }

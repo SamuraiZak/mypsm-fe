@@ -22,8 +22,10 @@ import { ContractEmployeeServices } from '$lib/services/implementation/mypsm/kak
 import { superValidate } from 'sveltekit-superforms'
 import { zod } from 'sveltekit-superforms/adapters'
 
-export const load = async ({ params }) => {
-    let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
+export const load = async ({ params, parent }) => {
+    const { layoutData } = await parent();
+
+    const currentRoleCode: string = layoutData.accountDetails.currentRoleCode
     const contractId: CandidateIDRequestBody = {
         id: Number(params.id)
     }
@@ -489,7 +491,8 @@ export function _fileToBase64Object(file: File): Promise<string> {
 
                         base64: base64String,
                         name: file.name
-                    }
+                    },
+                    isDraft: false,
                 };
                 resolve(JSON.stringify(resultObject));
             } else {

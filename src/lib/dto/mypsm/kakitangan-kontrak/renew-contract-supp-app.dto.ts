@@ -1,8 +1,9 @@
 export interface RenewContractSupporterApprover {
     id?:  number;
-    contractId?: number;
+    applicationId?: number;
     supporterId: number;
     approverId:  number;
+    isDraft: boolean;
     isReadonly?: boolean;
 }
 

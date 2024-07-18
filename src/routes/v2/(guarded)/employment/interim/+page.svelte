@@ -69,8 +69,12 @@
         hiddenColumn: ['id'],
         dictionary: [
             {
-                english: 'icNumber',
-                malay: 'No. Kad Pengenalan',
+                english: 'interimPositon',
+                malay: 'Jawatan Ditanggung',
+            },
+            {
+                english: 'interimPlacement',
+                malay: 'Tempat Tanggung Kerja',
             },
         ],
         url: 'employment/interim/termination/list',
@@ -93,7 +97,7 @@
     {#if data.currentRoleCode === UserRoleConstant.kakitangan.code}
         <ContentHeader title="Tanggung Kerja">
             <TextIconButton
-                onClick={() => goto('/v2/employment/interim/baru')}
+                onClick={() => goto('/v2/employment/interim/baru permohonan')}
                 icon="add"
                 type="primary"
                 label="Permohonan Baru"
@@ -119,8 +123,55 @@
                             bind:tableData={employeeApplicationTable}
                             bind:passData={rowData}
                             detailActions={() => {
+                                if (rowData.status == 'Draf') {
+                                    goto(
+                                        '/v2/employment/interim/baru ' +
+                                            rowData.id,
+                                    );
+                                } else {
+                                    goto(
+                                        '/v2/employment/interim/butiran-' +
+                                            rowData.id,
+                                    );
+                                }
+                            }}
+                        >
+                            <FilterWrapper slot="filter">
+                                <FilterTextField
+                                    label="Nama"
+                                    bind:inputValue={employeeApplicationTable
+                                        .param.filter.name}
+                                ></FilterTextField>
+                                <FilterTextField
+                                    label="No. Pekerja"
+                                    bind:inputValue={employeeApplicationTable
+                                        .param.filter.employeeNumber}
+                                ></FilterTextField>
+                                <FilterTextField
+                                    label="No. Kad Pengenalan"
+                                    bind:inputValue={employeeApplicationTable
+                                        .param.filter.identityDocumentNumber}
+                                ></FilterTextField>
+                                <FilterDateField
+                                    label="Tarikh Permohonan"
+                                    bind:inputValue={employeeApplicationTable
+                                        .param.filter.applicationDate}
+                                ></FilterDateField>
+                            </FilterWrapper>
+                        </DataTable>
+                    </div>
+                </CustomTabContent>
+            {/if}
+            {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code}
+                <CustomTabContent title="Penamatan Tanggung Kerja">
+                    <div class="h h-fit w-full">
+                        <DataTable
+                            title="Senarai Kakitangan"
+                            bind:tableData={terminationTable}
+                            bind:passData={rowData}
+                            detailActions={() => {
                                 goto(
-                                    '/v2/employment/interim/butiran-' +
+                                    '/v2/employment/interim/penamatan/' +
                                         rowData.id,
                                 );
                             }}
@@ -151,46 +202,6 @@
                     </div>
                 </CustomTabContent>
             {/if}
-            {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code}
-            <CustomTabContent title="Penamatan Tanggung Kerja">
-                <div class="h h-fit w-full">
-                    <DataTable
-                        title="Senarai Kakitangan"
-                        bind:tableData={terminationTable}
-                        bind:passData={rowData}
-                        detailActions={() => {
-                            goto(
-                                '/v2/employment/interim/penamatan/' +
-                                    rowData.id,
-                            );
-                        }}
-                    >
-                        <FilterWrapper slot="filter">
-                            <FilterTextField
-                                label="Nama"
-                                bind:inputValue={employeeApplicationTable.param
-                                    .filter.name}
-                            ></FilterTextField>
-                            <FilterTextField
-                                label="No. Pekerja"
-                                bind:inputValue={employeeApplicationTable.param
-                                    .filter.employeeNumber}
-                            ></FilterTextField>
-                            <FilterTextField
-                                label="No. Kad Pengenalan"
-                                bind:inputValue={employeeApplicationTable.param
-                                    .filter.identityDocumentNumber}
-                            ></FilterTextField>
-                            <FilterDateField
-                                label="Tarikh Permohonan"
-                                bind:inputValue={employeeApplicationTable.param
-                                    .filter.applicationDate}
-                            ></FilterDateField>
-                        </FilterWrapper>
-                    </DataTable>
-                </div>
-            </CustomTabContent>
-            {/if}
         </CustomTab>
     {:else if data.currentRoleCode === UserRoleConstant.pengarahBahagian.code || data.currentRoleCode === UserRoleConstant.pengarahNegeri.code || data.currentRoleCode === UserRoleConstant.pengarahKhidmatPengurusan.code}
         <div class="flex w-full flex-col items-start justify-start gap-2.5 p-3">
@@ -200,9 +211,7 @@
                     bind:tableData={employeeApplicationTable}
                     bind:passData={rowData}
                     detailActions={() => {
-                        goto(
-                            '/v2/employment/interim/butiran-' + rowData.id,
-                        );
+                        goto('/v2/employment/interim/butiran-' + rowData.id);
                     }}
                 >
                     <FilterWrapper slot="filter">

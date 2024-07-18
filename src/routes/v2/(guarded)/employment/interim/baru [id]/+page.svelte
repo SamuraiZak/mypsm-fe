@@ -6,7 +6,6 @@
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import { goto } from '$app/navigation';
-    import type { PageData } from './$types';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
     import { superForm } from 'sveltekit-superforms/client';
@@ -16,6 +15,7 @@
     import { Toaster } from 'svelte-french-toast';
     import type { InterimApplicationResponse } from '$lib/dto/mypsm/employment/tanggung-kerja/interim-application-response.dto';
     import Alert from 'flowbite-svelte/Alert.svelte';
+    import type { PageData } from './$types';
 
     export let data: PageData;
     let afterSuccessApply = {} as InterimApplicationResponse;
@@ -40,7 +40,8 @@
             );
 
             if (res?.response.status == 'success') {
-                submitSuccess = true;
+                if(!$addNewInterimApplicationForm.isDraft){
+                    submitSuccess = true;
                 afterSuccessApply.interimId =
                     res.response.data?.details.interimId;
                 goto(
@@ -48,8 +49,8 @@
                         afterSuccessApply.interimId,
                 );
             }
-        },
-    });
+        }
+    }});
 </script>
 
 <!-- content header starts here -->
@@ -74,87 +75,87 @@
             <StepperContentHeader title="Butiran Permohonan Tanggung Kerja">
                 {#if !submitSuccess}
                     <TextIconButton
+                        type="neutral"
+                        label="Simpan"
+                        icon="save"
+                        form="addNewInterimApplicationForm"
+                        onClick={() => $addNewInterimApplicationForm.isDraft = true}
+                    />
+                    <TextIconButton
                         type="primary"
                         label="Hantar"
                         icon="check"
                         form="addNewInterimApplicationForm"
+                        onClick={() => $addNewInterimApplicationForm.isDraft = false}
                     />
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <div class="w-full flex flex-col justify-start pb-10">
-                <form
-                    class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
-                    id="addNewInterimApplicationForm"
-                    method="POST"
-                    use:addNewInterimApplicationEnhance
-                >
-                    <CustomSelectField
-                        label="Gred"
-                        id="gradeId"
-                        bind:val={$addNewInterimApplicationForm.gradeId}
-                        errors={$addNewInterimApplicationError.gradeId}
-                        options={data.lookup.gradeLookup}
-                    />
-                    <CustomSelectField
-                        label="Jawatan"
-                        id="positionId"
-                        bind:val={$addNewInterimApplicationForm.positionId}
-                        errors={$addNewInterimApplicationError.positionId}
-                        options={data.lookup.positionLookup}
-                    />
-                    <CustomSelectField
-                        label="Kementerian/Jabatan"
-                        id="placementId"
-                        bind:val={$addNewInterimApplicationForm.placementId}
-                        errors={$addNewInterimApplicationError.placementId}
-                        options={data.lookup.placementLookup}
-                    />
-                    <CustomTextField
-                        id="referenceNumber"
-                        label="Nombor Butiran Anggaran Belanjawan Mengurus/Waran Penjawatan"
-                        type="text"
-                        isRequired={false}
-                        placeholder="Contoh: Bekalan 12"
-                        bind:val={$addNewInterimApplicationForm.referenceNumber}
-                        errors={$addNewInterimApplicationError.referenceNumber}
-                    />
-                    <CustomTextField
-                        id="startDate"
-                        label="Tarikh Mula"
-                        type="date"
-                        bind:val={$addNewInterimApplicationForm.startDate}
-                        errors={$addNewInterimApplicationError.startDate}
-                    />
-                    <CustomTextField
-                        id="endDate"
-                        label="Tarikh Tamat"
-                        type="date"
-                        bind:val={$addNewInterimApplicationForm.endDate}
-                        errors={$addNewInterimApplicationError.endDate}
-                    />
-                    <CustomSelectField
-                        label="Tempat Kekosongan"
-                        id="newPlacementId"
-                        options={data.lookup.placementLookup}
-                        bind:val={$addNewInterimApplicationForm.newPlacementId}
-                        errors={$addNewInterimApplicationError.newPlacementId}
-                    />
-                    <CustomTextField
-                        id="reason"
-                        label="Sebab-sebab Kekosongan"
-                        type="text"
-                        bind:val={$addNewInterimApplicationForm.reason}
-                        errors={$addNewInterimApplicationError.reason}
-                    />
-                </form>
-            </div>
+                <div class="flex w-full flex-col justify-start pb-10">
+                    <form
+                        class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
+                        id="addNewInterimApplicationForm"
+                        method="POST"
+                        use:addNewInterimApplicationEnhance
+                    >
+                        <CustomSelectField
+                            label="Gred dan Jawatan"
+                            id="gradeId"
+                            bind:val={$addNewInterimApplicationForm.gradeId}
+                            errors={$addNewInterimApplicationError.gradeId}
+                            options={data.lookup.positionAndGradeLookup}
+                        />
+                        <CustomSelectField
+                            label="Kementerian/Jabatan"
+                            id="placementId"
+                            bind:val={$addNewInterimApplicationForm.placementId}
+                            errors={$addNewInterimApplicationError.placementId}
+                            options={data.lookup.placementLookup}
+                        />
+                        <CustomTextField
+                            id="referenceNumber"
+                            label="Nombor Butiran Anggaran Belanjawan Mengurus/Waran Penjawatan"
+                            type="text"
+                            isRequired={false}
+                            placeholder="Contoh: Bekalan 12"
+                            bind:val={$addNewInterimApplicationForm.referenceNumber}
+                            errors={$addNewInterimApplicationError.referenceNumber}
+                        />
+                        <CustomTextField
+                            id="startDate"
+                            label="Tarikh Mula"
+                            type="date"
+                            bind:val={$addNewInterimApplicationForm.startDate}
+                            errors={$addNewInterimApplicationError.startDate}
+                        />
+                        <CustomTextField
+                            id="endDate"
+                            label="Tarikh Tamat"
+                            type="date"
+                            bind:val={$addNewInterimApplicationForm.endDate}
+                            errors={$addNewInterimApplicationError.endDate}
+                        />
+                        <CustomSelectField
+                            label="Tempat Kekosongan"
+                            id="newPlacementId"
+                            options={data.lookup.placementLookup}
+                            bind:val={$addNewInterimApplicationForm.newPlacementId}
+                            errors={$addNewInterimApplicationError.newPlacementId}
+                        />
+                        <CustomTextField
+                            id="reason"
+                            label="Sebab-sebab Kekosongan"
+                            type="text"
+                            bind:val={$addNewInterimApplicationForm.reason}
+                            errors={$addNewInterimApplicationError.reason}
+                        />
+                    </form>
+                </div>
             </StepperContentBody>
         </StepperContent>
 
         <StepperContent>
-            <StepperContentHeader
-                title="Pegawai Yang Menanggung Kerja"
+            <StepperContentHeader title="Pegawai Yang Menanggung Kerja"
             ></StepperContentHeader>
             <StepperContentBody>
                 <Alert color="blue" class="w-full">
@@ -168,8 +169,7 @@
         </StepperContent>
 
         <StepperContent>
-            <StepperContentHeader
-                title="Tempoh Tanggung Kerja Kerja"
+            <StepperContentHeader title="Tempoh Tanggung Kerja Kerja"
             ></StepperContentHeader>
             <StepperContentBody>
                 <Alert color="blue" class="w-full">
@@ -183,8 +183,7 @@
         </StepperContent>
 
         <StepperContent>
-            <StepperContentHeader
-                title="Muat Naik Dokumen Berkaitan"
+            <StepperContentHeader title="Muat Naik Dokumen Berkaitan"
             ></StepperContentHeader>
             <StepperContentBody>
                 <Alert color="blue" class="w-full">
@@ -198,8 +197,7 @@
         </StepperContent>
 
         <StepperContent>
-            <StepperContentHeader
-                title="Pelangkauan Dari Segi Kekananan"
+            <StepperContentHeader title="Pelangkauan Dari Segi Kekananan"
             ></StepperContentHeader>
             <StepperContentBody>
                 <Alert color="blue" class="w-full">

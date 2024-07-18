@@ -11,18 +11,21 @@ import { EmploymentInterimServices } from '$lib/services/implementation/mypsm/pe
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export const load = async ({ params }) => {
-    let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode);
+export const load = async ({ params,parent }) => {
+    const { layoutData } = await parent();
+
+    const currentRoleCode: string = layoutData.accountDetails.currentRoleCode
+
     const interimId: EmployeeInterimApplicationDetailRequestDTO = {
         interimId: Number(params.id)
     }
     let lookup = await getLookup();
     let terminationDetail = {} as InterimTermination;
     let secretaryDetail: TerminationVerify = {
-        name: "",
-        status: "",
+        employeeId: "",
+        status: false,
         remark: "",
-        statusDescription: "",
+        approvalDate: "",
     }
 
     const secretaryApprovalForm = await superValidate(zod(_terminationCommonApproval));
@@ -36,6 +39,13 @@ export const load = async ({ params }) => {
         terminationDetaiLResponse.data?.details as InterimTermination;
     if (terminationDetail?.verify !== null) {
         secretaryDetail = terminationDetail.verify;
+        secretaryApprovalForm.data = {
+            interimId: interimId.interimId,
+            status: terminationDetail.verify.status,
+            remark: terminationDetail.verify.remark,
+            approvalDate: terminationDetail.verify.approvalDate,
+            isDraft: false,
+        }
     }
     if (terminationDetail?.supportApprover !== null) {
         suppAppForm.data = terminationDetail.supportApprover;
@@ -84,9 +94,8 @@ export const _submitSupporterApproval = async (formData: InterimCommonApproval) 
     const form = await superValidate(formData, zod(_terminationCommonApproval))
 
     if (form.valid) {
-        const {name, ...tempObj} = form.data;
         const response: CommonResponseDTO =
-            await EmploymentInterimServices.addTerminationSupporterApproval(tempObj as InterimCommonApproval)
+            await EmploymentInterimServices.addTerminationSupporterApproval(form.data as InterimCommonApproval)
 
         return { response }
     }
@@ -95,9 +104,8 @@ export const _submitApproverApproval = async (formData: InterimCommonApproval) =
     const form = await superValidate(formData, zod(_terminationCommonApproval))
 
     if (form.valid) {
-        const {name, ...tempObj} = form.data;
         const response: CommonResponseDTO =
-            await EmploymentInterimServices.addTerminationApproverApproval(tempObj as InterimCommonApproval)
+            await EmploymentInterimServices.addTerminationApproverApproval(form.data as InterimCommonApproval)
 
         return { response }
     }
@@ -109,11 +117,6 @@ const getLookup = async () => {
     // =======================================================
     // Dropdown Lookup =======================================
     // =======================================================
-    const gradeLookupResponse: CommonResponseDTO =
-        await LookupServices.getServiceGradeEnums();
-
-    const gradeLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsNameIsCode(gradeLookupResponse);
     // -------------------------------------------------------
     const placementLookupResponse: CommonResponseDTO =
         await LookupServices.getPlacementEnums();
@@ -124,14 +127,9 @@ const getLookup = async () => {
     const positionLookupResponse: CommonResponseDTO =
         await LookupServices.getPositionEnums();
 
-    const positionLookup: DropdownDTO[] =
-        LookupServices.setSelectOptions(positionLookupResponse)
-    // -------------------------------------------------------
-    const departmentLookupResponse: CommonResponseDTO =
-        await LookupServices.getDepartmentEnums();
+        const positionAndGradeLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionCode(positionLookupResponse)
 
-    const departmentLookup: DropdownDTO[] =
-        LookupServices.setSelectOptions(departmentLookupResponse)
     // -------------------------------------------------------
 
     const columnLabel = [
@@ -161,11 +159,8 @@ const getLookup = async () => {
         supporterApproverResponse,
     );
     return {
-
-        gradeLookup,
         placementLookup,
-        positionLookup,
-        departmentLookup,
+        positionAndGradeLookup,
         supporterApproverLookup,
         columnLabel,
     }

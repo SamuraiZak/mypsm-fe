@@ -21,23 +21,31 @@ const stringToMaxDate = z.string({ required_error: 'Medan ini tidak boleh kosong
 // ===========================
 export const _addNewInterimApplicationSchema = z.object({
     interimId: z.number().optional(),
-    gradeId: numberSchema.default(1),
-    positionId: numberSchema,
+    gradeId: numberSchema,
     placementId: numberSchema,
     newPlacementId: numberSchema,
-    referenceNumber: z.string(),
+    referenceNumber: z.string().nullable(),
     startDate: z.string(),
     endDate: z.string(),
     reason: shortTextSchema,
+    isDraft: booleanSchema,
     isReadOnly: z.boolean().optional(),
 })
 
 export const _addInterimApprovalSchema = z.object({
     interimId: numberSchema,
     status: booleanSchema,
-    remark: z.string().nullable(),
+    remark: z.string(),
     name: z.string().optional(),
-    statusDescription: z.string().optional(),
+    isDraft: booleanSchema,
+    approvalDate: z.string(),
+})
+
+export const _addDirectorSchema = z.object({
+    interimId: numberSchema,
+    isDraft: booleanSchema,
+    director: shortTextSchema,
+    type: shortTextSchema,
 })
 
 export const _checklistSchema = z.object ({
@@ -64,13 +72,15 @@ export const _checklistSchema = z.object ({
 
 export const _terminationCommonApproval = z.object({
     interimId: z.number(),
-    name: z.string().optional().default(""),
-    remark: shortTextSchema.nullable().default(""),
     status: booleanSchema,
+    remark: shortTextSchema.default(""),
+    isDraft: booleanSchema,
+    approvalDate: z.string(),
 })
 
 export const _terminationSuppApp = z.object({
     interimId: z.number(),
     supporter: shortTextSchema.default(""),
     approver: shortTextSchema.default(""),
+    isDraft: booleanSchema,
 })
