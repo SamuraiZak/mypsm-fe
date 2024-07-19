@@ -183,7 +183,7 @@
                     confirmationInServiceDetailViewResponse.message as string,
             });
         }
-        const route = `./confirmation/${id}`;
+        const route = `./confirmation/${id}-${status}`;
         goto(route);
     };
 </script>

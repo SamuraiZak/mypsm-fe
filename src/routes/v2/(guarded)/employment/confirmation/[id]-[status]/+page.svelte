@@ -41,12 +41,10 @@
     import { zod } from 'sveltekit-superforms/adapters';
     import {
         _confirmationApprovalSchema,
-        _confirmationProbationContinuationSchema,
         _confirmationMeetingResultSchema,
     } from '$lib/schemas/mypsm/employment/confirmation-in-service/schema';
     import {
         _addConfirmationAuditDirector,
-        _addConfirmationContractContinuation,
         _addConfirmationEmploymentSecretary,
         _addConfirmationIntegrityDirector,
         _addConfirmationMeetingResult,
@@ -90,14 +88,14 @@
             isTypeConfirmationExceedsThreeYears.set(false);
         }
 
-        if (
-            data.view.confirmationInServiceView.probationContinuation
-                .isDraft === true
-        ) {
-            confirmationProbationContinuedIsDraft.set(true);
-        } else {
-            confirmationProbationContinuedIsDraft.set(false);
-        }
+        // if (
+        //     data.view.confirmationInServiceView.probationContinuation
+        //         .isDraft === true
+        // ) {
+        //     confirmationProbationContinuedIsDraft.set(true);
+        // } else {
+        //     confirmationProbationContinuedIsDraft.set(false);
+        // }
 
         if (data.view.confirmationInServiceView.secretary.isDraft === true) {
             employmentSecretaryDetailIsDraft.set(true);
@@ -236,9 +234,9 @@
             validators: false,
         },
     );
-    // if ($checklistForm.checker !== undefined) {
-    //     submitChecklist = true;
-    // }
+    if ($checklistForm.checker !== undefined) {
+        submitChecklist = true;
+    }
 
     const { form: diciplinaryDetailForm } = superForm(
         data.forms.diciplinaryInfoForm,
@@ -270,30 +268,30 @@
         },
     });
 
-    const {
-        form: contractContinuationDetailForm,
-        errors: contractContinuationDetailFormErrors,
-        enhance: contractContinuationDetailFormEnhance,
-    } = superForm(data.forms.contractContinuationInfoForm, {
-        SPA: true,
-        dataType: 'json',
-        invalidateAll: false,
-        resetForm: false,
-        multipleSubmits: 'allow',
-        validationMethod: 'oninput',
-        validators: zod(_confirmationProbationContinuationSchema),
-        taintedMessage: false,
-        onChange() {
-            isContractContinuation =
-                $contractContinuationDetailForm.isContractContinued;
-        },
-        onSubmit() {
-            _addConfirmationContractContinuation(
-                Number(data.params.id),
-                $contractContinuationDetailForm,
-            );
-        },
-    });
+    // const {
+    //     form: contractContinuationDetailForm,
+    //     errors: contractContinuationDetailFormErrors,
+    //     enhance: contractContinuationDetailFormEnhance,
+    // } = superForm(data.forms.contractContinuationInfoForm, {
+    //     SPA: true,
+    //     dataType: 'json',
+    //     invalidateAll: false,
+    //     resetForm: false,
+    //     multipleSubmits: 'allow',
+    //     validationMethod: 'oninput',
+    //     validators: zod(_confirmationProbationContinuationSchema),
+    //     taintedMessage: false,
+    //     onChange() {
+    //         isContractContinuation =
+    //             $contractContinuationDetailForm.isContractContinued;
+    //     },
+    //     onSubmit() {
+    //         _addConfirmationContractContinuation(
+    //             Number(data.params.id),
+    //             $contractContinuationDetailForm,
+    //         );
+    //     },
+    // });
 
     const {
         form: divisionDirectorDetaiForm,
@@ -440,7 +438,7 @@
         ? 'Melebihi Tempoh 3 Tahun'
         : 'Rasionalisasi'}"
 >
-<StatusPill status={data.params.status} slot="status" />
+    <StatusPill status={data.params.status} slot="status" />
 
     <TextIconButton
         label="Kembali"
@@ -1033,7 +1031,7 @@
             </div>
         </StepperContentBody>
     </StepperContent>
-    {#if $isTypeConfirmationExceedsThreeYears}
+    <!-- {#if $isTypeConfirmationExceedsThreeYears}
         <StepperContent>
             <StepperContentHeader title="Lanjutan Percubaan Perkhidmatan">
                 {#if (!data.view.confirmationInServiceView.probationContinuation.isReadonly || $confirmationProbationContinuedIsDraft) && data.roles.isEmploymentSecretaryRole}
@@ -1067,7 +1065,7 @@
                             class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
                         >
                             <CustomSelectField
-                                disabled={$contractContinuationDetailForm.isReadonly ||
+                                disabled={$contractContinuationDetailForm.isReadonly &&
                                     !$confirmationProbationContinuedIsDraft}
                                 isRequired={false}
                                 id="gradeId"
@@ -1081,7 +1079,7 @@
                                 <CustomTextField
                                     type="date"
                                     errors={$contractContinuationDetailFormErrors.effectiveDate}
-                                    disabled={$contractContinuationDetailForm.isReadonly ||
+                                    disabled={$contractContinuationDetailForm.isReadonly &&
                                         !$confirmationProbationContinuedIsDraft}
                                     id="effectiveDate"
                                     label={'Tarikh Mula Lanjutan'}
@@ -1091,7 +1089,7 @@
                                 <CustomTextField
                                     type="number"
                                     errors={$contractContinuationDetailFormErrors.contractMonths}
-                                    disabled={$contractContinuationDetailForm.isReadonly ||
+                                    disabled={$contractContinuationDetailForm.isReadonly &&
                                         !$confirmationProbationContinuedIsDraft}
                                     id="effectiveDate"
                                     label={'Tempoh Lanjutan (Bulan)'}
@@ -1104,7 +1102,7 @@
                 {/if}
             </StepperContentBody>
         </StepperContent>
-    {/if}
+    {/if} -->
     {#if !$isTypeConfirmationExceedsThreeYears || isExceedsThreeYearsAndIsDraft}
         <StepperContent>
             <StepperContentHeader
@@ -1196,7 +1194,7 @@
                             </div>
                             <CustomTextField
                                 disabled={data.view.confirmationInServiceView
-                                    .secretary.isReadonly ||
+                                    .secretary.isReadonly &&
                                     !$employmentSecretaryDetailIsDraft}
                                 errors={$employmentSecretaryDetailFormErrors.remark}
                                 id="approverRemark"
@@ -1205,7 +1203,7 @@
                             ></CustomTextField>
                             <CustomRadioBoolean
                                 disabled={data.view.confirmationInServiceView
-                                    .secretary.isReadonly ||
+                                    .secretary.isReadonly &&
                                     !$employmentSecretaryDetailIsDraft}
                                 errors={$employmentSecretaryDetailFormErrors.status}
                                 id="approverIsApproved"
@@ -1228,7 +1226,7 @@
                             </div>
                             <CustomTextField
                                 disabled={data.view.confirmationInServiceView
-                                    .division.isReadonly ||
+                                    .division.isReadonly &&
                                     !$divisionDirectorDetailIsDraft}
                                 errors={$divisionDirectorDetaiFormErrors.remark}
                                 id="approverRemark"
@@ -1237,7 +1235,7 @@
                             ></CustomTextField>
                             <CustomRadioBoolean
                                 disabled={data.view.confirmationInServiceView
-                                    .division.isReadonly ||
+                                    .division.isReadonly &&
                                     !$divisionDirectorDetailIsDraft}
                                 errors={$divisionDirectorDetaiFormErrors.status}
                                 id="approverIsApproved"
@@ -1260,7 +1258,7 @@
                             </div>
                             <CustomTextField
                                 disabled={data.view.confirmationInServiceView
-                                    .integrity.isReadonly ||
+                                    .integrity.isReadonly &&
                                     !$integrityDirectorDetailIsDraft}
                                 errors={$integrityDirectorDetailFormErrors.remark}
                                 id="approverRemark"
@@ -1269,7 +1267,7 @@
                             ></CustomTextField>
                             <CustomRadioBoolean
                                 disabled={data.view.confirmationInServiceView
-                                    .integrity.isReadonly ||
+                                    .integrity.isReadonly &&
                                     !$integrityDirectorDetailIsDraft}
                                 errors={$integrityDirectorDetailFormErrors.status}
                                 id="approverIsApproved"
@@ -1292,7 +1290,7 @@
                             </div>
                             <CustomTextField
                                 disabled={data.view.confirmationInServiceView
-                                    .audit.isReadonly ||
+                                    .audit.isReadonly &&
                                     !$auditDirectorDetailIsDraft}
                                 errors={$auditDirectorDetailFormErrors.remark}
                                 id="approverRemark"
@@ -1301,7 +1299,7 @@
                             ></CustomTextField>
                             <CustomRadioBoolean
                                 disabled={data.view.confirmationInServiceView
-                                    .audit.isReadonly ||
+                                    .audit.isReadonly &&
                                     !$auditDirectorDetailIsDraft}
                                 errors={$auditDirectorDetailFormErrors.status}
                                 id="approverIsApproved"
@@ -1485,7 +1483,7 @@
                             class="flex w-full flex-col items-center gap-2"
                         >
                             <CustomTextField
-                                disabled={$isReadOnlyConfirmationInServiceMeetingResult ||
+                                disabled={$isReadOnlyConfirmationInServiceMeetingResult &&
                                     !$confirmationMeetingDetailIsDraft}
                                 errors={$confirmationMeetingDetailFormErrors.meetingName}
                                 id="meetingName"
@@ -1494,7 +1492,7 @@
                                 bind:val={$confirmationMeetingDetailForm.meetingName}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled={$isReadOnlyConfirmationInServiceMeetingResult ||
+                                disabled={$isReadOnlyConfirmationInServiceMeetingResult &&
                                     !$confirmationMeetingDetailIsDraft}
                                 errors={$confirmationMeetingDetailFormErrors.meetingDate}
                                 id="meetingDate"
@@ -1504,7 +1502,7 @@
                                 bind:val={$confirmationMeetingDetailForm.meetingDate}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled={$isReadOnlyConfirmationInServiceMeetingResult ||
+                                disabled={$isReadOnlyConfirmationInServiceMeetingResult &&
                                     !$confirmationMeetingDetailIsDraft}
                                 errors={$confirmationMeetingDetailFormErrors.confirmedPositionDate}
                                 id="confirmedPositionDate"
@@ -1514,7 +1512,7 @@
                                 bind:val={$confirmationMeetingDetailForm.confirmedPositionDate}
                             ></CustomTextField>
                             <CustomTextField
-                                disabled={$isReadOnlyConfirmationInServiceMeetingResult ||
+                                disabled={$isReadOnlyConfirmationInServiceMeetingResult &&
                                     !$confirmationMeetingDetailIsDraft}
                                 errors={$confirmationMeetingDetailFormErrors.meetingRemark}
                                 id="meetingRemark"
@@ -1524,7 +1522,7 @@
                                 bind:val={$confirmationMeetingDetailForm.meetingRemark}
                             ></CustomTextField>
                             <CustomRadioBoolean
-                                disabled={$isReadOnlyConfirmationInServiceMeetingResult ||
+                                disabled={$isReadOnlyConfirmationInServiceMeetingResult &&
                                     !$confirmationMeetingDetailIsDraft}
                                 errors={$confirmationMeetingDetailFormErrors.meetingResult}
                                 id="meetingResult"
@@ -1532,6 +1530,42 @@
                                 options={approveOptions}
                                 bind:val={$confirmationMeetingDetailForm.meetingResult}
                             ></CustomRadioBoolean>
+
+                            {#if $confirmationMeetingDetailForm.meetingResult}
+                                <CustomSelectField
+                                    disabled={$isReadOnlyConfirmationInServiceMeetingResult &&
+                                        !$confirmationMeetingDetailIsDraft}
+                                    isRequired={false}
+                                    id="gradeId"
+                                    label="Keputusan"
+                                    placeholder="-"
+                                    options={commonOptions}
+                                    bind:val={$confirmationMeetingDetailForm.isContractContinued}
+                                ></CustomSelectField>
+
+                                {#if $confirmationMeetingDetailForm.isContractContinued}
+                                    <CustomTextField
+                                        type="date"
+                                        errors={$confirmationMeetingDetailFormErrors.effectiveDate}
+                                        disabled={$isReadOnlyConfirmationInServiceMeetingResult &&
+                                            !$confirmationMeetingDetailIsDraft}
+                                        id="effectiveDate"
+                                        label={'Tarikh Mula Lanjutan'}
+                                        placeholder="-"
+                                        bind:val={$confirmationMeetingDetailForm.effectiveDate}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        type="number"
+                                        errors={$confirmationMeetingDetailFormErrors.contractMonths}
+                                        disabled={$isReadOnlyConfirmationInServiceMeetingResult &&
+                                            !$confirmationMeetingDetailIsDraft}
+                                        id="effectiveDate"
+                                        label={'Tempoh Lanjutan (Bulan)'}
+                                        placeholder="-"
+                                        bind:val={$confirmationMeetingDetailForm.contractMonths}
+                                    ></CustomTextField>
+                                {/if}
+                            {/if}
                         </form>
                     {/if}
                 </StepperContentBody>
