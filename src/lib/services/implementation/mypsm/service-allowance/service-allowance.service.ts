@@ -14,8 +14,10 @@ import type {
     ServiceAllowanceCeremonyClothingDetailType,
     ServiceAllowanceEndorsementType,
     ServiceAllowanceEndorserDetailType,
+    ServiceAllowanceHouseMovingDetailType,
     ServiceAllowanceOtherAllowanceDetailType,
     ServiceAllowancePassportPaymentDetailType,
+    ServiceAllowanceWinterClothingDetailType,
 } from '$lib/schemas/mypsm/service-allowance/service-allowance.schema';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
@@ -163,6 +165,62 @@ export class ServiceAllowanceServices {
     ) {
         try {
             const url: Input = 'service_allowance/others/add';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await toasterCommon(promiseResponse);
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    
+    // 4. other
+    static async addHouseMoving(
+        param: ServiceAllowanceHouseMovingDetailType,
+    ) {
+        try {
+            const url: Input = 'service_allowance/house_moving/add';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await toasterCommon(promiseResponse);
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    
+    // 4. other
+    static async addWinterClothing(
+        param: ServiceAllowanceWinterClothingDetailType,
+    ) {
+        try {
+            const url: Input = 'service_allowance/winter_clothing/add';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {

@@ -59,13 +59,13 @@ export const ServiceAllowanceCeremonyClothingDetailSchema = z
             .string()
             .min(1, { message: 'Ruangan ini tidak boleh dibiarkan kosong' })
             .trim(),
-        personal: z.number(),
-        partner: z.number(),
-        ceremonyClothingPrevious: z.boolean(),
+        personal: z.number().default(0),
+        partner: z.number().default(0),
+        ceremonyClothingPrevious: z.boolean().nullish(),
         ceremonyClothingPreviousDate: z.string().nullable().default(null),
-        blackTiePrevious: z.boolean(),
+        blackTiePrevious: z.boolean().nullish(),
         blackTiePreviousDate: z.string().nullable().default(null),
-        officialClothingPrevious: z.boolean(),
+        officialClothingPrevious: z.boolean().nullish(),
         officialClothingPreviousDate: z.string().nullable().default(null),
         isDraft: z.boolean(),
         documents: z
@@ -155,6 +155,7 @@ export type ServiceAllowanceOtherAllowanceDetailType = z.infer<
     typeof ServiceAllowanceOtherAllowanceDetailSchema
 >;
 
+// 4. house moving
 export const ServiceAllowanceHouseMovingDetailSchema = z.object({
     allowanceId: z.number(),
     allowanceTypeCode: z.string(),
@@ -168,4 +169,19 @@ export const ServiceAllowanceHouseMovingDetailSchema = z.object({
 });
 export type ServiceAllowanceHouseMovingDetailType = z.infer<
     typeof ServiceAllowanceHouseMovingDetailSchema
+>;
+
+// 5. winter clothing
+export const ServiceAllowanceWinterClothingDetailSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    reason: z.string(),
+    personal: z.number(),
+    isDraft: z.boolean(),
+    documents: z
+        .array(DocumentSchema)
+        .min(1, { message: 'Dokumen sokongan adalah wajib disertakan' }),
+});
+export type ServiceAllowanceWinterClothingDetailType = z.infer<
+    typeof ServiceAllowanceWinterClothingDetailSchema
 >;

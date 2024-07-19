@@ -21,26 +21,39 @@
         ServiceAllowanceAssignDirectorSchema,
         ServiceAllowanceCeremonyClothingDetailSchema,
         ServiceAllowanceEndorsementSchema,
+        ServiceAllowanceHouseMovingDetailSchema,
         ServiceAllowanceOtherAllowanceDetailSchema,
         ServiceAllowancePassportPaymentDetailSchema,
+        ServiceAllowanceWinterClothingDetailSchema,
         type ServiceAllowanceCeremonyClothingDetailType,
+        type ServiceAllowancePassportPaymentDetailType,
     } from '$lib/schemas/mypsm/service-allowance/service-allowance.schema';
     import {
         _approverFeedbackSubmit,
         _assignDirectorSubmit,
         _ceremonyClothingSubmit,
         _directorSupportSubmit,
+        _houseMovingSubmit,
         _otherAllowanceSubmit,
         _passportPaymentSubmit,
         _secretaryConfirmationSubmit,
         _secretaryVerificationSubmit,
         _supporterFeedbackSubmit,
+        _winterClothingSubmit,
     } from './+page';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import type { DocumentDTO } from '$lib/dto/core/document/document.dto';
     import FileInputComponent from '$lib/components/document-input/FileInputComponent.svelte';
     import DocumentInput from '$lib/components/document-input/DocumentInput.svelte';
+    import { onMount } from 'svelte';
+    import type {
+        ServiceAllowanceHouseMovingDetail,
+        ServiceAllowanceOtherAllowanceDetailDTO,
+        ServiceAllowanceWinterClothingDetail,
+    } from '$lib/dto/mypsm/service-allowance/service-allowance.dto';
+    import Jadual_2 from '$lib/components/notes/service-allowance/Jadual_2.svelte';
+    import SvgSave from '$lib/assets/svg/SvgSave.svelte';
 
     export let data: PageData;
 
@@ -69,11 +82,18 @@
             case AllowanceTypeConstant.otherAllowance.code:
                 currentFormId = 'otherAllowanceForm';
                 break;
+            case AllowanceTypeConstant.houseMoving.code:
+                currentFormId = 'houseMovingForm';
+                break;
 
             default:
                 break;
         }
     }
+
+    onMount(() => {
+        handleAllowanceTypeChange(currentAllowanceTypeCode);
+    });
 
     // create all forms by type
     // 1. ceremony clothing form
@@ -82,6 +102,7 @@
         errors: ceremonyClothingErrors,
         enhance: ceremonyClothingEnhance,
     } = superForm(data.forms.ceremonyClothingDetailsForm, {
+        dataType: 'json',
         id: 'ceremonyClothingForm',
         SPA: true,
         taintedMessage: false,
@@ -90,6 +111,7 @@
         validationMethod: 'oninput',
         validators: zodClient(ServiceAllowanceCeremonyClothingDetailSchema),
         async onSubmit(input) {
+            // alert('hello');
             $ceremonyClothingForm.isDraft = isDraft;
             _ceremonyClothingSubmit($ceremonyClothingForm).then((result) => {
                 if (result.status == 'success') {
@@ -102,10 +124,11 @@
                         applicationDetail.allowanceTypeCode +
                         '/' +
                         applicationDetail.allowanceId;
-
                     goto(url);
                 }
             });
+
+            // const response = await _ceremonyClothingSubmit($ceremonyClothingForm);
         },
     });
 
@@ -115,6 +138,7 @@
         errors: passportPaymentErrors,
         enhance: passportPaymentEnhance,
     } = superForm(data.forms.passportPaymentDetailsForm, {
+        dataType: 'json',
         id: 'passportPaymentForm',
         SPA: true,
         taintedMessage: false,
@@ -124,7 +148,20 @@
         validators: zodClient(ServiceAllowancePassportPaymentDetailSchema),
         async onSubmit(input) {
             $passportPaymentForm.isDraft = isDraft;
-            _passportPaymentSubmit($passportPaymentForm);
+            _passportPaymentSubmit($passportPaymentForm).then((result) => {
+                if (result.status == 'success') {
+                    const applicationDetail: ServiceAllowancePassportPaymentDetailType =
+                        result.data
+                            ?.details as ServiceAllowancePassportPaymentDetailType;
+
+                    let url: string =
+                        '/v2/service-allowance/application/' +
+                        applicationDetail.allowanceTypeCode +
+                        '/' +
+                        applicationDetail.allowanceId;
+                    goto(url);
+                }
+            });
         },
     });
 
@@ -134,6 +171,7 @@
         errors: otherAllowanceErrors,
         enhance: otherAllowanceEnhance,
     } = superForm(data.forms.otherAllowanceDetailsForm, {
+        dataType: 'json',
         id: 'otherAllowanceForm',
         SPA: true,
         taintedMessage: false,
@@ -143,7 +181,86 @@
         validators: zodClient(ServiceAllowanceOtherAllowanceDetailSchema),
         async onSubmit(input) {
             $otherAllowanceForm.isDraft = isDraft;
-            _otherAllowanceSubmit($otherAllowanceForm);
+            _otherAllowanceSubmit($otherAllowanceForm).then((result) => {
+                if (result.status == 'success') {
+                    const applicationDetail: ServiceAllowanceOtherAllowanceDetailDTO =
+                        result.data
+                            ?.details as ServiceAllowanceOtherAllowanceDetailDTO;
+
+                    let url: string =
+                        '/v2/service-allowance/application/' +
+                        applicationDetail.allowanceTypeCode +
+                        '/' +
+                        applicationDetail.allowanceId;
+                    goto(url);
+                }
+            });
+        },
+    });
+
+    // 4. house moving form
+    const {
+        form: houseMovingForm,
+        errors: houseMovingErrors,
+        enhance: houseMovingEnhance,
+    } = superForm(data.forms.houseMovingDetailsForm, {
+        dataType: 'json',
+        id: 'houseMovingForm',
+        SPA: true,
+        taintedMessage: false,
+        resetForm: false,
+        invalidateAll: true,
+        validationMethod: 'oninput',
+        validators: zodClient(ServiceAllowanceHouseMovingDetailSchema),
+        async onSubmit(input) {
+            $houseMovingForm.isDraft = isDraft;
+            _houseMovingSubmit($houseMovingForm).then((result) => {
+                if (result.status == 'success') {
+                    const applicationDetail: ServiceAllowanceHouseMovingDetail =
+                        result.data
+                            ?.details as ServiceAllowanceHouseMovingDetail;
+
+                    let url: string =
+                        '/v2/service-allowance/application/' +
+                        applicationDetail.allowanceTypeCode +
+                        '/' +
+                        applicationDetail.allowanceId;
+                    goto(url);
+                }
+            });
+        },
+    });
+
+    // 4. house moving form
+    const {
+        form: winterClothingForm,
+        errors: winterClothingErrors,
+        enhance: winterClothingEnhance,
+    } = superForm(data.forms.winterClothingDetailsForm, {
+        dataType: 'json',
+        id: 'winterClothingForm',
+        SPA: true,
+        taintedMessage: false,
+        resetForm: false,
+        invalidateAll: true,
+        validationMethod: 'oninput',
+        validators: zodClient(ServiceAllowanceWinterClothingDetailSchema),
+        async onSubmit(input) {
+            $winterClothingForm.isDraft = isDraft;
+            _winterClothingSubmit($winterClothingForm).then((result) => {
+                if (result.status == 'success') {
+                    const applicationDetail: ServiceAllowanceWinterClothingDetail =
+                        result.data
+                            ?.details as ServiceAllowanceWinterClothingDetail;
+
+                    let url: string =
+                        '/v2/service-allowance/application/' +
+                        applicationDetail.allowanceTypeCode +
+                        '/' +
+                        applicationDetail.allowanceId;
+                    goto(url);
+                }
+            });
         },
     });
 
@@ -184,7 +301,7 @@
         },
     });
 
-    // 2. Director Support Form
+    // 3. Secretary Verification Form
     const {
         form: secretaryVerificationForm,
         errors: secretaryVerificationErrors,
@@ -202,7 +319,7 @@
         },
     });
 
-    // 2. Supporter Feedback Form
+    // 4. Supporter Feedback Form
     const {
         form: supporterFeedbackForm,
         errors: supporterFeedbackErrors,
@@ -220,7 +337,7 @@
         },
     });
 
-    // 2. Supporter Feedback Form
+    // 5. Approver Feedback Form
     const {
         form: approverFeedbackForm,
         errors: approverFeedbackErrors,
@@ -238,7 +355,7 @@
         },
     });
 
-    // 2. Supporter Feedback Form
+    // 6. Supporter Confirmation Form
     const {
         form: secretaryConfirmationForm,
         errors: secretaryConfirmationErrors,
@@ -258,7 +375,10 @@
 </script>
 
 <section class="flex w-full flex-col items-center justify-center">
-    <ContentHeader title="Permohonan Elaun-elaun Perkhidmatan">
+    <ContentHeader
+        title="Permohonan Elaun-elaun Perkhidmatan {data.props
+            .currentAllowanceId}"
+    >
         <TextIconButton
             type="draft"
             label="Kembali"
@@ -280,6 +400,8 @@
         <!-- ======================================================================= -->
         <StepperContent>
             <StepperContentHeader title="Butir-butir Permohonan">
+
+                
                 <TextIconButton
                     type="draft"
                     label="Simpan"
@@ -288,16 +410,16 @@
                         isDraft = true;
                     }}
                 >
-                    <SvgChevronLeft></SvgChevronLeft>
+                    <SvgSave></SvgSave>
                 </TextIconButton>
                 <TextIconButton
                     type="primary"
                     label="Hantar"
                     form={currentFormId}
+                    icon="check"
                     onClick={() => {
                         isDraft = false;
                     }}
-                    icon="check"
                 ></TextIconButton>
             </StepperContentHeader>
             <StepperContentBody>
@@ -305,15 +427,62 @@
                     class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
                 >
                     <div
-                        class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
+                        class="flex w-full flex-col items-start justify-start gap-2 lg:w-1/2"
                     >
-                        <CustomSelectField
-                            disabled={data.props.currentAllowanceId !== 0}
-                            id="allowanceType"
-                            label={'Jenis Elaun'}
-                            bind:val={currentAllowanceTypeCode}
-                            options={data.lookup.allowanceDropdown}
-                        ></CustomSelectField>
+                        <div
+                            class="flex w-full flex-col items-start justify-start gap-2"
+                        >
+                            <CustomSelectField
+                                disabled={data.props.currentAllowanceId !== 0}
+                                id="allowanceType"
+                                label={'Jenis Elaun'}
+                                bind:val={currentAllowanceTypeCode}
+                                options={data.lookup.allowanceDropdown}
+                            ></CustomSelectField>
+                            <CustomTextField
+                                disabled
+                                id="name"
+                                label={'1. Nama Pemohon'}
+                                bind:val={data.props.currentEmployeeDetails
+                                    .fullName}
+                                errors={undefined}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                id="identityDocumentNumber"
+                                label={'2. No Kad Pengenalan'}
+                                bind:val={data.props.currentEmployeeDetails
+                                    .identityCardNumber}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                id="position"
+                                label={'3. Jawatan'}
+                                bind:val={data.props.currentEmployeeDetails
+                                    .position}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                id="grade"
+                                label={'4. Gred'}
+                                bind:val={data.props.currentEmployeeDetails
+                                    .grade}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                id="employeeNumber"
+                                label={'5. No. Pekerja'}
+                                bind:val={data.props.currentEmployeeDetails
+                                    .employeeNumber}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                id="placement"
+                                label={'6. Penempatan'}
+                                bind:val={data.props.currentEmployeeDetails
+                                    .placement}
+                            ></CustomTextField>
+                        </div>
 
                         {#if currentAllowanceTypeCode == AllowanceTypeConstant.ceremonyClothing.code}
                             <!-- ################################################################### -->
@@ -326,56 +495,12 @@
                                 class="flex w-full flex-col items-center justify-start gap-2"
                             >
                                 <CustomTextField
-                                    disabled
-                                    id="name"
-                                    label={'1. Nama Pemohon'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .fullName}
-                                    errors={undefined}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="identityDocumentNumber"
-                                    label={'2. No Kad Pengenalan'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .identityCardNumber}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="position"
-                                    label={'3. Jawatan'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .position}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="grade"
-                                    label={'4. Gred'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .grade}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="employeeNumber"
-                                    label={'5. No. Pekerja'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .employeeNumber}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="placement"
-                                    label={'6. Penempatan'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .placement}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled={$ceremonyClothingForm.isDraft ==
-                                        false}
                                     id="reason"
                                     label={'7. Tujuan Permohonan'}
                                     type="textarea"
                                     errors={$ceremonyClothingErrors.reason}
                                     bind:val={$ceremonyClothingForm.reason}
+                                    disabled={$ceremonyClothingForm.isDraft == false}
                                 ></CustomTextField>
                                 <div
                                     class="w-full flex-row items-center justify-start"
@@ -402,8 +527,7 @@
                                     </p>
                                 </div>
                                 <CustomRadioBoolean
-                                    disabled={$ceremonyClothingForm.isDraft ==
-                                        false}
+                                    disabled={false}
                                     id="ceremonyClothingPrevious"
                                     label="8.1 Bayaran Pakaian Istiadat"
                                     bind:errors={$ceremonyClothingErrors.ceremonyClothingPrevious}
@@ -411,8 +535,6 @@
                                     options={commonOptions}
                                 ></CustomRadioBoolean>
                                 <CustomTextField
-                                    disabled={$ceremonyClothingForm.isDraft ==
-                                        false}
                                     type="date"
                                     id="ceremonyClothingPreviousDate"
                                     label={'Jika pernah, sila nyatakan tarikh terakhir kemudahan diluluskan'}
@@ -420,8 +542,7 @@
                                     bind:val={$ceremonyClothingForm.ceremonyClothingPreviousDate}
                                 ></CustomTextField>
                                 <CustomRadioBoolean
-                                    disabled={$ceremonyClothingForm.isDraft ==
-                                        false}
+                                    disabled={false}
                                     id="blackTiePrevious"
                                     label="8.2 Bantuan Bayaran Black Tie"
                                     bind:errors={$ceremonyClothingErrors.blackTiePrevious}
@@ -429,8 +550,6 @@
                                     options={commonOptions}
                                 ></CustomRadioBoolean>
                                 <CustomTextField
-                                    disabled={$ceremonyClothingForm.isDraft ==
-                                        false}
                                     type="date"
                                     id="blackTiePreviousDate"
                                     label={'Jika pernah, sila nyatakan tarikh terakhir kemudahan diluluskan'}
@@ -438,8 +557,7 @@
                                     bind:val={$ceremonyClothingForm.blackTiePreviousDate}
                                 ></CustomTextField>
                                 <CustomRadioBoolean
-                                    disabled={$ceremonyClothingForm.isDraft ==
-                                        false}
+                                    disabled={false}
                                     id="officialClothingPrevious"
                                     label="8.3 Bayaran Pakaian Menghadiri Upacara Rasmi"
                                     bind:errors={$ceremonyClothingErrors.officialClothingPrevious}
@@ -447,8 +565,6 @@
                                     options={commonOptions}
                                 ></CustomRadioBoolean>
                                 <CustomTextField
-                                    disabled={$ceremonyClothingForm.isDraft ==
-                                        false}
                                     type="date"
                                     id="officialClothingPreviousDate"
                                     label={'Jika pernah, sila nyatakan tarikh terakhir kemudahan diluluskan'}
@@ -465,8 +581,6 @@
                                     </p>
                                 </div>
                                 <CustomTextField
-                                    disabled={$ceremonyClothingForm.isDraft ==
-                                        false}
                                     type="number"
                                     id="personal"
                                     label={'9.1 Sendiri (RM)'}
@@ -474,8 +588,6 @@
                                     bind:val={$ceremonyClothingForm.personal}
                                 ></CustomTextField>
                                 <CustomTextField
-                                    disabled={$ceremonyClothingForm.isDraft ==
-                                        false}
                                     type="number"
                                     id="partner"
                                     label={'9.2 Pasangan (RM)'}
@@ -669,48 +781,6 @@
                                 class="flex w-full flex-col items-center justify-start gap-2"
                             >
                                 <CustomTextField
-                                    disabled
-                                    id="name"
-                                    label={'1. Nama Pemohon'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .fullName}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="identityDocumentNumber"
-                                    label={'2. No Kad Pengenalan'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .identityCardNumber}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="position"
-                                    label={'3. Jawatan'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .position}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="grade"
-                                    label={'4. Gred'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .grade}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="employeeNumber"
-                                    label={'5. No. Pekerja'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .employeeNumber}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="placement"
-                                    label={'6. Penempatan'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .placement}
-                                ></CustomTextField>
-                                <CustomTextField
                                     disabled={$passportPaymentForm.isDraft ==
                                         false}
                                     id="reason"
@@ -761,48 +831,6 @@
                                 class="flex w-full flex-col items-center justify-start gap-2"
                             >
                                 <CustomTextField
-                                    disabled
-                                    id="name"
-                                    label={'1. Nama Pemohon'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .fullName}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="identityDocumentNumber"
-                                    label={'2. No Kad Pengenalan'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .identityCardNumber}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="position"
-                                    label={'3. Jawatan'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .position}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="grade"
-                                    label={'4. Gred'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .grade}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="employeeNumber"
-                                    label={'5. No. Pekerja'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .employeeNumber}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="placement"
-                                    label={'6. Penempatan'}
-                                    bind:val={data.props.currentEmployeeDetails
-                                        .placement}
-                                ></CustomTextField>
-                                <CustomTextField
                                     disabled={$otherAllowanceForm.isDraft ==
                                         false}
                                     id="reason"
@@ -841,6 +869,416 @@
                                     label="10. Dokumen Sokongan"
                                 ></DocumentInput>
                             </form>
+                        {:else if currentAllowanceTypeCode == AllowanceTypeConstant.houseMoving.code}
+                            <!-- ################################################################### -->
+                            <!-- HOUSE MOVING -->
+                            <!-- ################################################################### -->
+                            <form
+                                id="houseMovingForm"
+                                method="POST"
+                                use:houseMovingEnhance
+                                class="flex w-full flex-col items-center justify-start gap-2"
+                            >
+                                <CustomTextField
+                                    disabled={$houseMovingForm.isDraft == false}
+                                    id="movingDate"
+                                    label={'7. Tarikh Melaksanakan Perpindahan Rumah'}
+                                    type="date"
+                                    errors={$houseMovingErrors.movingDate}
+                                    bind:val={$houseMovingForm.movingDate}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled={$houseMovingForm.isDraft == false}
+                                    id="oldAddress"
+                                    label={'8. Alamat Rumah Lama'}
+                                    type="textarea"
+                                    errors={$houseMovingErrors.oldAddress}
+                                    bind:val={$houseMovingForm.oldAddress}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled={$houseMovingForm.isDraft == false}
+                                    id="newAddress"
+                                    label={'9. Alamat Rumah Baru'}
+                                    type="textarea"
+                                    errors={$houseMovingErrors.newAddress}
+                                    bind:val={$houseMovingForm.newAddress}
+                                ></CustomTextField>
+                                <DocumentInput
+                                    id="houseMovingDocument"
+                                    disabled={$houseMovingForm.isDraft == false}
+                                    errors={$houseMovingErrors.documents?._errors?.map(
+                                        (error) => error,
+                                    )}
+                                    bind:documents={$houseMovingForm.documents}
+                                    label="10. Dokumen Sokongan"
+                                ></DocumentInput>
+
+                                <!-- card starts -->
+                                <div
+                                    class=" flex w-full flex-col items-start justify-start gap-2 overflow-hidden rounded-md border"
+                                >
+                                    <!-- card header starts -->
+                                    <div
+                                        class="flex h-7 min-h-7 w-full flex-row items-center justify-start rounded-t bg-gray-100 px-4"
+                                    >
+                                        <p
+                                            class="w-full text-md font-medium leading-tight text-slate-500"
+                                        >
+                                            Pengakuan
+                                        </p>
+                                    </div>
+                                    <!-- card header ends -->
+                                    <!-- card body starts -->
+                                    <div
+                                        class="flex w-full flex-col items-start justify-start p-4"
+                                    >
+                                        <p
+                                            class="text-slate text-base text-slate-500"
+                                        >
+                                            Saya mengaku bahawa:
+                                        </p>
+                                        <ol
+                                            class="list-decimal pl-6 text-base text-slate-500"
+                                        >
+                                            <li class="mb-4">
+                                                <p class="mb-2">
+                                                    Perjalanan pada tarikh
+                                                    tersebut adalah benar.
+                                                </p>
+                                            </li>
+                                            <li class="mb-4">
+                                                <p class="mb-2">
+                                                    Tuntutan ini dibuat mengikut
+                                                    kadar dan syarat seperti
+                                                    yang berkuatkuasa semasa;
+                                                    dan
+                                                </p>
+                                            </li>
+                                            <li>
+                                                <p>
+                                                    Butir-butir seperti yang
+                                                    dinyatakan di atas adalah
+                                                    benar dan saya
+                                                    bertanggungjawab
+                                                    terhadapnya.
+                                                </p>
+                                            </li>
+                                        </ol>
+                                    </div>
+                                    <!-- card body ends -->
+                                </div>
+                                <!-- card ends -->
+                                <!-- card starts -->
+                                <div
+                                    class=" flex w-full flex-col items-start justify-start gap-2 overflow-hidden rounded-md border"
+                                >
+                                    <!-- card header starts -->
+                                    <div
+                                        class="flex h-7 min-h-7 w-full flex-row items-center justify-start rounded-t bg-gray-100 px-4"
+                                    >
+                                        <p
+                                            class="w-full text-md font-medium leading-tight text-slate-500"
+                                        >
+                                            Jadual 2
+                                        </p>
+                                    </div>
+                                    <!-- card header ends -->
+                                    <!-- card body starts -->
+                                    <div
+                                        class="flex w-full flex-col items-start justify-start p-4"
+                                    >
+                                        <Jadual_2></Jadual_2>
+                                    </div>
+                                    <!-- card body ends -->
+                                </div>
+                                <!-- card ends -->
+                            </form>
+                        {:else if currentAllowanceTypeCode == AllowanceTypeConstant.winterClothing.code}
+                            <!-- ################################################################### -->
+                            <!-- WINTER CLOTHING -->
+                            <!-- ################################################################### -->
+                            <form
+                                id="ceremonyClothingForm"
+                                method="POST"
+                                use:ceremonyClothingEnhance
+                                class="flex w-full flex-col items-center justify-start gap-2"
+                            >
+                                <CustomTextField
+                                    id="reason"
+                                    label={'7. Tujuan Permohonan'}
+                                    type="textarea"
+                                    errors={$ceremonyClothingErrors.reason}
+                                    bind:val={$ceremonyClothingForm.reason}
+                                ></CustomTextField>
+                                <div
+                                    class="w-full flex-row items-center justify-start"
+                                >
+                                    <p
+                                        class="w-full text-justify text-base italic text-slate-500"
+                                    >
+                                        (Sertakan resit <span
+                                            class="font-medium">ASAL</span
+                                        > yang disahkan perbelanjaan adalah di atas
+                                        urusan rasmi dan sesalinan jemputan ke majlis/upacara
+                                        rasmi atau surat arahan bertugas di Parlimen
+                                        atau Dewan Undangan Negeri)
+                                    </p>
+                                </div>
+                                <div
+                                    class="flex w-full flex-col items-start justify-start gap-1"
+                                >
+                                    <p
+                                        class="flex w-full flex-col text-base font-medium text-slate-700"
+                                    >
+                                        8. Pernah mendapat kemudahan ini dalam
+                                        tiga (3) tahun?
+                                    </p>
+                                </div>
+                                <CustomRadioBoolean
+                                    disabled={false}
+                                    id="ceremonyClothingPrevious"
+                                    label="8.1 Bayaran Pakaian Istiadat"
+                                    bind:errors={$ceremonyClothingErrors.ceremonyClothingPrevious}
+                                    bind:val={$ceremonyClothingForm.ceremonyClothingPrevious}
+                                    options={commonOptions}
+                                ></CustomRadioBoolean>
+                                <CustomTextField
+                                    type="date"
+                                    id="ceremonyClothingPreviousDate"
+                                    label={'Jika pernah, sila nyatakan tarikh terakhir kemudahan diluluskan'}
+                                    errors={$ceremonyClothingErrors.ceremonyClothingPreviousDate}
+                                    bind:val={$ceremonyClothingForm.ceremonyClothingPreviousDate}
+                                ></CustomTextField>
+                                <CustomRadioBoolean
+                                    disabled={false}
+                                    id="blackTiePrevious"
+                                    label="8.2 Bantuan Bayaran Black Tie"
+                                    bind:errors={$ceremonyClothingErrors.blackTiePrevious}
+                                    bind:val={$ceremonyClothingForm.blackTiePrevious}
+                                    options={commonOptions}
+                                ></CustomRadioBoolean>
+                                <CustomTextField
+                                    type="date"
+                                    id="blackTiePreviousDate"
+                                    label={'Jika pernah, sila nyatakan tarikh terakhir kemudahan diluluskan'}
+                                    errors={$ceremonyClothingErrors.blackTiePreviousDate}
+                                    bind:val={$ceremonyClothingForm.blackTiePreviousDate}
+                                ></CustomTextField>
+                                <CustomRadioBoolean
+                                    disabled={false}
+                                    id="officialClothingPrevious"
+                                    label="8.3 Bayaran Pakaian Menghadiri Upacara Rasmi"
+                                    bind:errors={$ceremonyClothingErrors.officialClothingPrevious}
+                                    bind:val={$ceremonyClothingForm.officialClothingPrevious}
+                                    options={commonOptions}
+                                ></CustomRadioBoolean>
+                                <CustomTextField
+                                    type="date"
+                                    id="officialClothingPreviousDate"
+                                    label={'Jika pernah, sila nyatakan tarikh terakhir kemudahan diluluskan'}
+                                    errors={$ceremonyClothingErrors.officialClothingPreviousDate}
+                                    bind:val={$ceremonyClothingForm.officialClothingPreviousDate}
+                                ></CustomTextField>
+                                <div
+                                    class="flex w-full flex-col items-start justify-start gap-1"
+                                >
+                                    <p
+                                        class="flex w-full flex-col text-base font-medium text-slate-700"
+                                    >
+                                        9. Jumlah Tuntutan
+                                    </p>
+                                </div>
+                                <CustomTextField
+                                    type="number"
+                                    id="personal"
+                                    label={'9.1 Sendiri (RM)'}
+                                    errors={$ceremonyClothingErrors.personal}
+                                    bind:val={$ceremonyClothingForm.personal}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    type="number"
+                                    id="partner"
+                                    label={'9.2 Pasangan (RM)'}
+                                    errors={$ceremonyClothingErrors.partner}
+                                    bind:val={$ceremonyClothingForm.partner}
+                                ></CustomTextField>
+
+                                <DocumentInput
+                                    errors={$ceremonyClothingErrors.documents?._errors?.map(
+                                        (error) => error,
+                                    )}
+                                    bind:documents={$ceremonyClothingForm.documents}
+                                    label="10. Sila muat naik dokumen sokongan"
+                                ></DocumentInput>
+
+                                <!-- card starts -->
+                                <div
+                                    class=" flex w-full flex-col items-start justify-start gap-2 overflow-hidden rounded-md border"
+                                >
+                                    <!-- card header starts -->
+                                    <div
+                                        class="flex h-7 min-h-7 w-full flex-row items-center justify-start rounded-t bg-gray-100 px-4"
+                                    >
+                                        <p
+                                            class="w-full text-md font-medium leading-tight text-slate-500"
+                                        >
+                                            Nota
+                                        </p>
+                                    </div>
+                                    <!-- card header ends -->
+                                    <!-- card body starts -->
+                                    <div
+                                        class="flex w-full flex-col items-start justify-start p-4"
+                                    >
+                                        <ol
+                                            class="list-decimal pl-6 text-base text-slate-500"
+                                        >
+                                            <li class="mb-4">
+                                                <p class="mb-2">
+                                                    Kadar bagi Bayaran Pakaian
+                                                    Istiadat, Bantuan Bayaran
+                                                    Pakaian <em>Black Tie</em> dan
+                                                    Bayaran Pakaian Menghadiri Upacara
+                                                    Rasmi adalah seperti berikut:
+                                                </p>
+                                                <table
+                                                    class="mb-4 w-full table-auto border-collapse border border-gray-400"
+                                                >
+                                                    <thead>
+                                                        <tr>
+                                                            <th
+                                                                class="border border-gray-400 px-4 py-2"
+                                                                >Bil</th
+                                                            >
+                                                            <th
+                                                                class="border border-gray-400 px-4 py-2"
+                                                                >Jenis Pakaian</th
+                                                            >
+                                                            <th
+                                                                class="border border-gray-400 px-4 py-2"
+                                                                >Kadar Bayaran
+                                                                (RM)</th
+                                                            >
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td
+                                                                class="border border-gray-400 px-4 py-2 text-center"
+                                                                >1.</td
+                                                            >
+                                                            <td
+                                                                class="border border-gray-400 px-4 py-2"
+                                                                >Bayaran Pakaian
+                                                                Istiadat</td
+                                                            >
+                                                            <td
+                                                                class="border border-gray-400 px-4 py-2 text-right"
+                                                                >1,500.00</td
+                                                            >
+                                                        </tr>
+                                                        <tr>
+                                                            <td
+                                                                class="border border-gray-400 px-4 py-2 text-center"
+                                                                >2.</td
+                                                            >
+                                                            <td
+                                                                class="border border-gray-400 px-4 py-2"
+                                                                >Bantuan Bayaran
+                                                                Pakaian <em
+                                                                    >Black Tie</em
+                                                                ></td
+                                                            >
+                                                            <td
+                                                                class="border border-gray-400 px-4 py-2 text-right"
+                                                                >1,000.00</td
+                                                            >
+                                                        </tr>
+                                                        <tr>
+                                                            <td
+                                                                class="border border-gray-400 px-4 py-2 text-center"
+                                                                >3.</td
+                                                            >
+                                                            <td
+                                                                class="border border-gray-400 px-4 py-2"
+                                                            >
+                                                                Bayaran Pakaian
+                                                                Menghadiri
+                                                                Upacara Rasmi<br
+                                                                />
+                                                                <span
+                                                                    class="block"
+                                                                    >(pegawai)</span
+                                                                >
+                                                                <span
+                                                                    class="block"
+                                                                    >(pasangan)</span
+                                                                >
+                                                            </td>
+                                                            <td
+                                                                class="border border-gray-400 px-4 py-2 text-right"
+                                                            >
+                                                                650.00<br />
+                                                                450.00
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </li>
+                                            <li class="mb-4">
+                                                <p class="mb-2">
+                                                    Kemudahan ini adalah
+                                                    tertakluk kepada syarat
+                                                    seperti berikut:
+                                                </p>
+                                                <ul class="list-disc pl-6">
+                                                    <li class="mb-1">
+                                                        Kemudahan bayaran
+                                                        pakaian ini diberi
+                                                        setiap tiga (3) tahun
+                                                        sekali.
+                                                    </li>
+                                                    <li class="mb-1">
+                                                        Pegawai yang telah
+                                                        diberi Bayaran Pakaian
+                                                        Istiadat <strong
+                                                            >tidak layak</strong
+                                                        > menuntut Bayaran Pakaian
+                                                        Menghadiri Upacara Rasmi
+                                                        dalam tempoh tiga (3) tahun
+                                                        yang sama;
+                                                    </li>
+                                                    <li class="mb-1">
+                                                        Tuntutan bayaran balik
+                                                        hendaklah disokong
+                                                        dengan resit; dan
+                                                    </li>
+                                                    <li class="mb-1">
+                                                        Tuntutan bayaran balik
+                                                        Pakaian Menghadiri
+                                                        Upacara Rasmi hendaklah
+                                                        disokong dengan maklumat
+                                                        mengenai jemputan
+                                                        upacara rasmi atau surat
+                                                        arahan bertugas di
+                                                        Parlimen atau Dewan
+                                                        Undangan Negeri.
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                <p>
+                                                    Penggunaan kemudahan ini
+                                                    hendaklah dicatatkan dalam
+                                                    Buku Perkhidmatan pegawai.
+                                                </p>
+                                            </li>
+                                        </ol>
+                                    </div>
+                                    <!-- card body ends -->
+                                </div>
+                                <!-- card ends -->
+                            </form>
                         {/if}
                     </div>
                 </div>
@@ -860,7 +1298,7 @@
                         isDraft = true;
                     }}
                 >
-                    <SvgChevronLeft></SvgChevronLeft>
+                    <SvgSave></SvgSave>
                 </TextIconButton>
                 <TextIconButton
                     type="primary"
@@ -912,7 +1350,7 @@
                         isDraft = true;
                     }}
                 >
-                    <SvgChevronLeft></SvgChevronLeft>
+                    <SvgSave></SvgSave>
                 </TextIconButton>
                 <TextIconButton
                     type="primary"
@@ -939,7 +1377,7 @@
                         >
                             <CustomRadioBoolean
                                 disabled={false}
-                                id="reason"
+                                id="status"
                                 label="Permohonan tuntutan pegawai di atas adalah"
                                 bind:val={$directorSupportForm.status}
                                 bind:errors={$directorSupportErrors.status}
@@ -971,7 +1409,7 @@
                         isDraft = true;
                     }}
                 >
-                    <SvgChevronLeft></SvgChevronLeft>
+                    <SvgSave></SvgSave>
                 </TextIconButton>
                 <TextIconButton
                     type="primary"
@@ -1032,7 +1470,7 @@
                         isDraft = true;
                     }}
                 >
-                    <SvgChevronLeft></SvgChevronLeft>
+                    <SvgSave></SvgSave>
                 </TextIconButton>
                 <TextIconButton
                     type="primary"
@@ -1093,7 +1531,7 @@
                         isDraft = true;
                     }}
                 >
-                    <SvgChevronLeft></SvgChevronLeft>
+                    <SvgSave></SvgSave>
                 </TextIconButton>
                 <TextIconButton
                     type="primary"
@@ -1151,7 +1589,7 @@
                         isDraft = true;
                     }}
                 >
-                    <SvgChevronLeft></SvgChevronLeft>
+                    <SvgSave></SvgSave>
                 </TextIconButton>
                 <TextIconButton
                     type="primary"
