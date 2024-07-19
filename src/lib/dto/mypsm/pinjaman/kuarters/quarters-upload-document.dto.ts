@@ -3,4 +3,5 @@ import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-docu
 export interface QuartersUploadDocuments {
     id?: number;
     documents: DocumentBase64RequestDTO[];
+    isDraft: boolean;
 };

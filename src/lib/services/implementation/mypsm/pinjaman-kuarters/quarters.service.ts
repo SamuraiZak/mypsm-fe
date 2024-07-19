@@ -122,7 +122,7 @@ export class QuartersServices {
             return CommonResponseConstant.httpError;
         }
     }
-    
+
     // get employee before register personal detail
     static async getEmployeePersonalDetail() {
         try {
@@ -423,8 +423,8 @@ export class QuartersServices {
             return CommonResponseConstant.httpError;
         }
     }
-      //get certificate document
-      static async getOutstandingDocument(param: commonIdRequestDTO) {
+    //get certificate document
+    static async getOutstandingDocument(param: commonIdRequestDTO) {
         try {
             let url: Input = 'quarter/moving_out/moving_out_certificate';
 
@@ -446,17 +446,14 @@ export class QuartersServices {
         }
     }
 
-    static async getMemoDocument(param: commonIdRequestDTO) {
+    static async getMemoDocument() {
         try {
-            let url: Input = 'loan/memorandum';
+            const url: Input = 'loan/memorandum';
 
-            const response: Response = await http
-                .get(url, {
-                    body: commonIdRequestDTOConvert.toJson(param),
-                })
-                .json();
+            const response: Response = await http.get(url, {}).json();
 
-            const result = CommonResponseConvert.fromResponse(response);
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
                 return result;
@@ -705,8 +702,8 @@ export class QuartersServices {
             return CommonResponseConstant.httpError;
         }
     }
-     //get move out date for employee
-     static async getEmployeeMoveOut(param: commonIdRequestDTO) {
+    //get move out date for employee
+    static async getEmployeeMoveOut(param: commonIdRequestDTO) {
         try {
             let url: Input = 'quarter/moving_out/quarter_detail/get';
 
@@ -962,53 +959,53 @@ export class QuartersServices {
             return CommonResponseConstant.httpError;
         }
     }
-//add mmoving out director approval
-static async addMovingOutDirectorApproval(param: QuarterCommonApproval) {
-    try {
-        let url: Input = 'quarter/moving_out/director_approval/add';
+    //add mmoving out director approval
+    static async addMovingOutDirectorApproval(param: QuarterCommonApproval) {
+        try {
+            let url: Input = 'quarter/moving_out/director_approval/add';
 
-        const promiseRes: Promise<Response> = http
-            .post(url, {
-                body: QuarterCommonApprovalConvert.toJson(param),
-            })
-            .json();
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: QuarterCommonApprovalConvert.toJson(param),
+                })
+                .json();
 
-        const response: Response = await getPromiseToast(promiseRes);
-        const result = CommonResponseConvert.fromResponse(response);
+            const response: Response = await getPromiseToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
 
-        if (result.status == 'success') {
-            invalidateAll()
-            return result;
-        } else {
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
             return CommonResponseConstant.httpError;
         }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
     }
-}
 
-//get mmoving out director approval
-static async getMovingOutDirectorApproval(param: commonIdRequestDTO) {
-    try {
-        let url: Input = 'quarter/moving_out/director_approval/get';
+    //get mmoving out director approval
+    static async getMovingOutDirectorApproval(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'quarter/moving_out/director_approval/get';
 
-        const response: Response = await http
-            .post(url, {
-                body: commonIdRequestDTOConvert.toJson(param),
-            })
-            .json();
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
 
-        const result = CommonResponseConvert.fromResponse(response);
+            const result = CommonResponseConvert.fromResponse(response);
 
-        if (result.status == 'success') {
-            return result;
-        } else {
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
             return CommonResponseConstant.httpError;
         }
-    } catch (error) {
-        return CommonResponseConstant.httpError;
     }
-}
 
     //================================================
     // Outsider Application
@@ -1173,8 +1170,8 @@ static async getMovingOutDirectorApproval(param: commonIdRequestDTO) {
     }
 
 
-     //get certificate document
-     static async getCertificateDocumentMovingIn(param: commonIdRequestDTO) {
+    //get certificate document
+    static async getCertificateDocumentMovingIn(param: commonIdRequestDTO) {
         try {
             let url: Input = 'quarter/moving_in/moving_in_certificate';
 
@@ -1284,8 +1281,125 @@ static async getMovingOutDirectorApproval(param: commonIdRequestDTO) {
             return CommonResponseConstant.httpError;
         }
 
+    }
 
-}
+    static async getOtherDocument(param: commonIdRequestDTO) {
+        try {
+            let url: Input = 'quarter/moving_in/other_document/download';
 
+            const response: Response = await http
+                .post(url, {
+                    body: commonIdRequestDTOConvert.toJson(param),
+                })
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    
+    // =============================== all related documents
+    static async getSijilAkuan() {
+        try {
+            const url: Input = 'quarter/moving_in/moving_in_certificate';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http.get(url).json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+            // const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getGuideline() {
+        try {
+            const url: Input = 'quarter/moving_in/guideline';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http.get(url).json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+            // const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getSuratAkuanPatuh() {
+        try {
+            const url: Input = 'quarter/moving_in/certificate_letter';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http.get(url).json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+            // const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getPemeriksaanMasuk() {
+        try {
+            const url: Input = 'quarter/moving_in/checking_document';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http.get(url).json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+            // const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
 }

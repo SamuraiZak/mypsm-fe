@@ -15,9 +15,7 @@
     import { goto } from '$app/navigation';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import { Toaster } from 'svelte-french-toast';
-    import {
-        approveOptions,
-    } from '$lib/constants/core/radio-option-constants';
+    import { approveOptions } from '$lib/constants/core/radio-option-constants';
     import { Alert, Checkbox, Helper, Radio } from 'flowbite-svelte';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import {
@@ -122,7 +120,7 @@
         validators: zod(_quarterSecretaryApproval),
         async onSubmit() {
             $secretaryApprovalForm.id = data.currentId.id;
-
+            $secretaryApprovalForm.isDraft = false;
             const readOnly = await _submitSecretaryApprovalForm(
                 $secretaryApprovalForm,
             );
@@ -147,7 +145,7 @@
         validators: zod(_quarterCommonApproval),
         async onSubmit() {
             $directorApprovalForm.id = data.currentId.id;
-
+            $directorApprovalForm.isDraft = false;
             const readOnly = await _submitDirectorApprovalForm(
                 $directorApprovalForm,
             );
@@ -169,6 +167,7 @@
                     let quartersDocument: QuartersUploadDocuments = {
                         id: data.currentId.id,
                         documents: result,
+                        isDraft: false,
                     };
                     if (stepper == 1) {
                         const res = await _submitOutstandingDocument(
@@ -202,8 +201,7 @@
             label="Tutup"
             type="neutral"
             icon="cancel"
-            onClick={() =>
-                goto('/pinjaman-dan-kuarters/permohonan-keluar-kuarters')}
+            onClick={() => goto('/v2/loan-and-quarters/quarters-exit')}
         />
     </ContentHeader>
 </section>
@@ -507,10 +505,16 @@
                         bind:val={data.quarterDetails.movingInDate}
                     />
                     <CustomTextField
-                        label="Unit dan Kuarters"
+                        label="Unit"
                         id="quarterDetails"
                         disabled
-                        bind:val={data.quarterDetails.quarterDetails}
+                        bind:val={data.quarterDetails.unit}
+                    />
+                    <CustomTextField
+                        label="Kuarter"
+                        id="quarterDetails"
+                        disabled
+                        bind:val={data.quarterDetails.quarter}
                     />
                     <ContentHeader
                         title="Kadar Bayaran Sewa Kuarters (Unit Pengurusan Fasiliti)"
@@ -602,16 +606,16 @@
         <StepperContent>
             <StepperContentHeader title="Maklumat Keluar Kuarters">
                 {#if (!moveOutSubmitted && data.currentRoleCode == UserRoleConstant.kakitangan.code) || data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
-                    <TextIconButton
+                    <!-- <TextIconButton
                         label="Simpan"
                         icon="check"
                         form="moveOutForm"
-                    />
+                    /> -->
                     <TextIconButton
-                    label="Hantar"
-                    icon="check"
-                    form="moveOutForm"
-                />
+                        label="Hantar"
+                        icon="check"
+                        form="moveOutForm"
+                    />
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
@@ -630,10 +634,16 @@
                         errors={$moveOutError.movingOutDate}
                     />
                     <CustomTextField
-                        label="Unit dan Kuarter"
+                        label="Unit"
                         id="quarterDetails"
                         disabled
-                        bind:val={data.quarterDetails.quarterDetails}
+                        bind:val={data.quarterDetails.unit}
+                    />
+                    <CustomTextField
+                        label="Kuarter"
+                        id="quarterDetails"
+                        disabled
+                        bind:val={data.quarterDetails.quarter}
                     />
 
                     {#if data.applicationType == 'luar'}
@@ -701,7 +711,7 @@
             <StepperContentHeader title="Dokumen Sokongan">
                 {#if !successUpload && (data.currentRoleCode == UserRoleConstant.kakitangan.code || data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code)}
                     <TextIconButton
-                        label="Simpan"
+                        label="Hantar"
                         icon="check"
                         onClick={() => uploadDocument(2)}
                     />
@@ -737,15 +747,9 @@
                             >Muat turun dan isi salinan borang di bawah dan muat
                             naik pada ruangan yang disediakan.</span
                         >
-                        <span
-                        >1. Sijil akuan Keluar Rumah.</span
-                    >
-                    <span
-                        >2. Borang Pemeriksaan Keluar Rumah.</span
-                    >
-                    <span
-                        >3. Gambar Dalam Rumah</span
-                    >
+                        <span>1. Sijil akuan Keluar Rumah.</span>
+                        <span>2. Borang Pemeriksaan Keluar Rumah.</span>
+                        <span>3. Gambar Dalam Rumah</span>
                         <a
                             href={data.quartersDeclarationLetter.document}
                             download="Borang Akuan Keluar Kuarters.pdf"
@@ -753,17 +757,18 @@
                             >Borang Akuan Keluar Kuarters.pdf</a
                         >
                         <a
-                        href={data.quartersMovingOutOutstandingLetter.document}
-                        download="Sijil Keluar Kuarters.pdf"
-                        class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                        >Sijil Keluar Kuarters.pdf</a
-                    >
-                    <a
-                    href={data.memoMovingOutOutstandingLetter.document}
-                    download="Memorandum.pdf"
-                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                    >Memorandum.pdf</a
-                >
+                            href={data.quartersMovingOutOutstandingLetter
+                                .document}
+                            download="Sijil Keluar Kuarters.pdf"
+                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                            >Sijil Keluar Kuarters.pdf</a
+                        >
+                        <a
+                            href={data.memoLetter.document}
+                            download="Memorandum.pdf"
+                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                            >Memorandum.pdf</a
+                        >
                         <a
                             href={data.quartersMovingOutCheckingLetter.document}
                             download={data.quartersMovingOutCheckingLetter.name}
@@ -782,20 +787,15 @@
             </StepperContentBody>
         </StepperContent>
 
-        {#if data.applicationType == 'kakitangan'}
+        <!-- {#if data.applicationType == 'kakitangan'}
             <StepperContent>
                 <StepperContentHeader title="Pengesahan">
                     {#if !submitConfirmation && data.currentRoleCode == UserRoleConstant.kakitangan.code}
                         <TextIconButton
-                            label="Simpan"
+                            label="Hantar"
                             icon="check"
                             form="confirmationForm"
                         />
-                        <TextIconButton
-                        label="Hantar"
-                        icon="check"
-                        form="confirmationForm"
-                    />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -818,24 +818,24 @@
                     </form>
                 </StepperContentBody>
             </StepperContent>
-        {/if}
-
+        {/if} -->
+    
         {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code}
             <StepperContent>
                 <StepperContentHeader
                     title="Ulasan Kelulusan daripada Urus Setia"
                 >
                     {#if !secretaryApproval && data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code}
-                        <TextIconButton
+                        <!-- <TextIconButton
                             label="Simpan"
                             icon="check"
                             form="secretaryApproval"
-                        />
+                        /> -->
                         <TextIconButton
-                        label="Hantar"
-                        icon="check"
-                        form="secretaryApproval"
-                    />
+                            label="Hantar"
+                            icon="check"
+                            form="secretaryApproval"
+                        />
                     {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -852,6 +852,7 @@
                         <CustomTextField
                             label="Tindakan Ulasan"
                             id="remark"
+                            type="textarea"
                             disabled={secretaryApproval}
                             bind:val={$secretaryApprovalForm.remark}
                             errors={$secretaryApprovalError.remark}
@@ -876,8 +877,7 @@
             </StepperContent>
 
             <StepperContent>
-                <StepperContentHeader
-                    title="Maklumat Permohonan"
+                <StepperContentHeader title="Maklumat Permohonan"
                 ></StepperContentHeader>
                 <StepperContentBody paddingClass="p-none">
                     <CustomTab>
@@ -898,11 +898,16 @@
                                     bind:val={data.quarterDetails.movingInDate}
                                 />
                                 <CustomTextField
-                                    label="Unit dan Kuarters"
+                                    label="Unit"
                                     id="quarterDetails"
                                     disabled
-                                    bind:val={data.quarterDetails
-                                        .quarterDetails}
+                                    bind:val={data.quarterDetails.unit}
+                                />
+                                <CustomTextField
+                                    label="Kuarters"
+                                    id="quarterDetails"
+                                    disabled
+                                    bind:val={data.quarterDetails.quarter}
                                 />
                                 <ContentHeader
                                     title="Kadar Bayaran Sewa Kuarters (Unit Pengurusan Fasiliti)"
@@ -1019,11 +1024,16 @@
                                     errors={$moveOutError.movingOutDate}
                                 />
                                 <CustomTextField
-                                    label="Unit dan Kuarters"
+                                    label="Unit"
                                     id="quarterDetails"
                                     disabled
-                                    bind:val={data.quarterDetails
-                                        .quarterDetails}
+                                    bind:val={data.quarterDetails.unit}
+                                />
+                                <CustomTextField
+                                    label="Kuarters"
+                                    id="quarterDetails"
+                                    disabled
+                                    bind:val={data.quarterDetails.quarter}
                                 />
                             </div>
                         </CustomTabContent>
@@ -1036,11 +1046,11 @@
                     title="Ulasan daripada Pengarah Bahagian/Negeri"
                 >
                     {#if !submitDirectorApproval && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
-                        <TextIconButton
+                        <!-- <TextIconButton
                             label="Simpan"
                             icon="check"
                             form="directorApprovalForm"
-                        />
+                        /> -->
                         <TextIconButton
                             label="Hantar"
                             icon="check"
@@ -1083,6 +1093,7 @@
                                 <CustomTextField
                                     label="Tindakan Ulasan"
                                     id="remark"
+                                    type="textarea"
                                     disabled={submitDirectorApproval}
                                     bind:val={$directorApprovalForm.remark}
                                     errors={$directorApprovalError.remark}
