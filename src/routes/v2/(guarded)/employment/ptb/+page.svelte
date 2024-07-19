@@ -213,7 +213,6 @@
 <section
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
-
         <CustomTab>
             <CustomTabContent
                 title="Senarai Kakitangan Baharu diberi PTB dan KWAP"
@@ -275,6 +274,7 @@
 <!--  -->
 
             </CustomTabContent>
+
 
             <CustomTabContent title="Senarai Kakitangan TIADA No. Pencen">
                 <div
