@@ -505,10 +505,10 @@ export const _addConfirmationMeetingResult = async (
         error(400, { message: 'Validation Not Passed!' });
     }
 
-    // const response: CommonResponseDTO =
-    //     await ConfirmationServices.createConfirmationMeetingResult(
-    //         form.data as ConfirmationMeetingResultRequestDTO,
-    //     );
+    const response: CommonResponseDTO =
+        await ConfirmationServices.createConfirmationMeetingResult(
+            form.data as ConfirmationMeetingResultRequestDTO,
+        );
 
-    // return { response };
+    return { response };
 };
