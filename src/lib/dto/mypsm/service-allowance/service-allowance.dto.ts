@@ -87,6 +87,26 @@ export interface ServiceAllowanceOtherAllowanceDetailDTO {
     documents:         DocumentDTO[];
 }
 
+// 4. house moving
+export interface ServiceAllowanceHouseMovingDetail {
+    allowanceId:       number;
+    allowanceTypeCode: string;
+    movingDate:        string;
+    oldAddress:        string;
+    newAddress:        string;
+    isDraft:           boolean;
+    documents:         DocumentDTO[];
+}
+
+// 5. winter clothing
+export interface ServiceAllowanceWinterClothingDetail {
+    allowanceId:       number;
+    allowanceTypeCode: string;
+    reason:            string;
+    personal:          number;
+    isDraft:           boolean;
+    documents:         DocumentDTO[];
+}
 
 // ===============================================================
 // APPLICATION DETAILS

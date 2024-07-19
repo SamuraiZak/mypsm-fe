@@ -12,6 +12,7 @@ import {
     type CommonEmployeeDTO,
 } from '$lib/dto/core/common/employee/employee.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+import type { EmployeeLookupDTO } from '$lib/dto/core/employee/employee.dto';
 import type { LookupClinic, LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import { LookupHelper } from '$lib/helpers/core/lookup.helper';
 import type { Input } from 'ky';
@@ -27,6 +28,28 @@ export class LookupServices {
             let url: Input = 'lookup/modules';
 
             const response: Response = await http.get(url).json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getEndorserDropdown(params: CommonListRequestDTO) {
+        try {
+            let url: Input = 'employee/list';
+
+            const response: Response = await http
+                .post(url, {
+                    body: JSON.stringify(params),
+                })
+                .json();
 
             const result = CommonResponseConvert.fromResponse(response);
 

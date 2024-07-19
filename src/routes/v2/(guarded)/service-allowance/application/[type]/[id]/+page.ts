@@ -1,5 +1,7 @@
 import { AllowanceTypeConstant } from '$lib/constants/core/allowance-type.constant';
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant.js';
+import { RoleConstant } from '$lib/constants/core/role.constant.js';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto.js';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { EmployeeDetailExtendedDTO } from '$lib/dto/core/employee/employee.dto';
@@ -15,14 +17,18 @@ import {
     ServiceAllowanceCeremonyClothingDetailSchema,
     ServiceAllowanceEndorsementSchema,
     ServiceAllowanceEndorserDetailSchema,
+    ServiceAllowanceHouseMovingDetailSchema,
     ServiceAllowanceOtherAllowanceDetailSchema,
     ServiceAllowancePassportPaymentDetailSchema,
+    ServiceAllowanceWinterClothingDetailSchema,
     type ServiceAllowanceAssignDirectorType,
     type ServiceAllowanceCeremonyClothingDetailType,
     type ServiceAllowanceEndorsementType,
     type ServiceAllowanceEndorserDetailType,
+    type ServiceAllowanceHouseMovingDetailType,
     type ServiceAllowanceOtherAllowanceDetailType,
     type ServiceAllowancePassportPaymentDetailType,
+    type ServiceAllowanceWinterClothingDetailType,
 } from '$lib/schemas/mypsm/service-allowance/service-allowance.schema.js';
 import { EmployeeExtendedServices } from '$lib/services/implementation/core/employee/employee.service.js';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
@@ -60,7 +66,9 @@ export async function load({ params }) {
     };
 
     let currentApplicationDetails: ServiceAllowanceApplicationDetailDTO = {
-        applicationDetail: undefined,
+        applicationDetail: {
+            isDraft: true,
+        },
         assignDirector: undefined,
         directorSupport: undefined,
         verification: undefined,
@@ -95,6 +103,22 @@ export async function load({ params }) {
 
     otherAllowanceDetailsForm.data.allowanceTypeCode =
         AllowanceTypeConstant.otherAllowance.code;
+
+    // 1.4 other allowance
+    const houseMovingDetailsForm = await superValidate(
+        zod(ServiceAllowanceHouseMovingDetailSchema),
+    );
+
+    houseMovingDetailsForm.data.allowanceTypeCode =
+        AllowanceTypeConstant.houseMoving.code;
+
+    // 1.5 other allowance
+    const winterClothingDetailsForm = await superValidate(
+        zod(ServiceAllowanceWinterClothingDetailSchema),
+    );
+
+    winterClothingDetailsForm.data.allowanceTypeCode =
+        AllowanceTypeConstant.winterClothing.code;
 
     // 2. assign director form
     const assignDirectorForm = await superValidate(
@@ -146,8 +170,12 @@ export async function load({ params }) {
         ceremonyClothingDetailsForm.data.isDraft = true;
 
         passportPaymentDetailsForm.data.isDraft = true;
-        
+
         otherAllowanceDetailsForm.data.isDraft = true;
+
+        houseMovingDetailsForm.data.isDraft = true;
+
+        winterClothingDetailsForm.data.isDraft = true;
     } else {
         // get employee details
         const employeeDetailsRequest: ServiceAllowanceEmployeeDetailRequestDTO =
@@ -197,6 +225,17 @@ export async function load({ params }) {
                     otherAllowanceDetailsForm.data =
                         currentApplicationDetails.applicationDetail as ServiceAllowanceOtherAllowanceDetailType;
                     break;
+
+                case AllowanceTypeConstant.houseMoving.code:
+                    houseMovingDetailsForm.data =
+                        currentApplicationDetails.applicationDetail as ServiceAllowanceHouseMovingDetailType;
+                    break;
+
+                case AllowanceTypeConstant.winterClothing.code:
+                    winterClothingDetailsForm.data =
+                        currentApplicationDetails.applicationDetail as ServiceAllowanceWinterClothingDetailType;
+                    break;
+
                 default:
                     break;
             }
@@ -296,6 +335,8 @@ export async function load({ params }) {
             ceremonyClothingDetailsForm,
             passportPaymentDetailsForm,
             otherAllowanceDetailsForm,
+            houseMovingDetailsForm,
+            winterClothingDetailsForm,
 
             // processes forms
             assignDirectorForm,
@@ -324,8 +365,9 @@ export async function _ceremonyClothingSubmit(
             zod(ServiceAllowanceCeremonyClothingDetailSchema),
         );
 
+        console.log(form.data.documents);
+
         if (form.valid) {
-            console.log(JSON.stringify(formData));
             const response =
                 await ServiceAllowanceServices.addCeremonyClothing(formData);
 
@@ -369,7 +411,7 @@ export async function _passportPaymentSubmit(
     }
 }
 
-// 2. passport payment
+// 3. other allowance
 export async function _otherAllowanceSubmit(
     formData: ServiceAllowanceOtherAllowanceDetailType,
 ) {
@@ -382,6 +424,60 @@ export async function _otherAllowanceSubmit(
         if (form.valid) {
             const response =
                 await ServiceAllowanceServices.addOtherAllowance(formData);
+
+            if (response.status == 'success') {
+                return response;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } catch (error) {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// 4. house moving
+export async function _houseMovingSubmit(
+    formData: ServiceAllowanceHouseMovingDetailType,
+) {
+    try {
+        const form = await superValidate(
+            formData,
+            zod(ServiceAllowanceHouseMovingDetailSchema),
+        );
+
+        if (form.valid) {
+            const response =
+                await ServiceAllowanceServices.addHouseMoving(formData);
+
+            if (response.status == 'success') {
+                return response;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } catch (error) {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// 5. winter clothing
+export async function _winterClothingSubmit(
+    formData: ServiceAllowanceWinterClothingDetailType,
+) {
+    try {
+        const form = await superValidate(
+            formData,
+            zod(ServiceAllowanceWinterClothingDetailSchema),
+        );
+
+        if (form.valid) {
+            const response =
+                await ServiceAllowanceServices.addWinterClothing(formData);
 
             if (response.status == 'success') {
                 return response;
@@ -580,3 +676,33 @@ export async function _getAllowanceTypeDropdown() {
 
     return allowanceTypeOption;
 }
+
+// config
+export async function _getDirectorDropdown() {
+    const directorOption: DropdownDTO[] = [];
+
+    // const filter = {
+    //     program: 'SEMUA',
+    //     employeeNumber: null,
+    //     name: null,
+    //     identityCard: null,
+    //     grade: null,
+    //     role: RoleConstant.pengarahNegeri.code,
+    // };
+
+    // const request: CommonListRequestDTO = {
+    //     pageNum: 1,
+    //     pageSize: 5,
+    //     orderBy: 'name',
+    //     orderType: 1,
+    //     filter: filter,
+    // };
+
+
+    // const directorListResponse: CommonResponseDTO =
+    //     await LookupServices.getEndorserDropdown(request);
+
+    return directorOption;
+}
+
+
