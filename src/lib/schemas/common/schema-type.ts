@@ -109,7 +109,7 @@ export const numberIdSchema = z.coerce
 
 export const dateStringSchema = z.coerce
     .string({ required_error: 'Tarikh tidak boleh kosong' })
-    .refine((value) => (value === 'null' ? null : value));
+    .refine((value) => (value === 'null' || value === '' ? null : value));
 
 export const requiredDateStringSchema = z.coerce
     .string({

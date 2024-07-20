@@ -118,7 +118,7 @@ export class ConfirmationServices {
     }
 
     // get confirmation full detail
-    static async getConfirmationFullDetail(param: commonIdRequestDTO) {
+    static async getConfirmationFullDetail(param: {applicationId: number, employeeId: number }) {
         try {
             const url: Input = 'employment/confirmation/detail';
 

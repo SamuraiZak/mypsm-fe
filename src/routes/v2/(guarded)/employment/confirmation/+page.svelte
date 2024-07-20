@@ -34,7 +34,7 @@
                 ?.dataList as ConfirmationListResponseDTO[]) ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['id'],
+        hiddenColumn: ['applicationId', 'employeeId'],
         dictionary: [
             {
                 english: 'positionByBoard',
@@ -48,7 +48,7 @@
         url:
             data.roles.isEmploymentSecretaryRole || data.roles.isStaffRole
                 ? 'employment/confirmation/list'
-                : data.roles.isStateDirectorRole
+                : data.roles.isStateDirectorRole || data.roles.isUnitDirectorRole
                   ? 'employment/confirmation/director/list'
                   : data.roles.isIntegrityDirectorRole
                     ? 'employment/confirmation/integrity/list'
@@ -83,7 +83,7 @@
                 .data?.dataList as ConfirmationListResponseDTO[]) ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['id'],
+        hiddenColumn: ['applicationId', 'employeeId'],
         dictionary: [
             {
                 english: 'positionByBoard',
@@ -97,7 +97,7 @@
         url:
             data.roles.isEmploymentSecretaryRole || data.roles.isStaffRole
                 ? 'employment/confirmation/list'
-                : data.roles.isStateDirectorRole
+                : data.roles.isStateDirectorRole || data.roles.isUnitDirectorRole
                   ? 'employment/confirmation/director/list'
                   : data.roles.isIntegrityDirectorRole
                     ? 'employment/confirmation/integrity/list'
@@ -132,7 +132,7 @@
                 .data?.dataList as ConfirmationListResponseDTO[]) ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['id'],
+        hiddenColumn: ['applicationId', 'employeeId'],
         dictionary: [
             {
                 english: 'positionByBoard',
@@ -146,7 +146,7 @@
         url:
             data.roles.isEmploymentSecretaryRole || data.roles.isStaffRole
                 ? 'employment/confirmation/list'
-                : data.roles.isStateDirectorRole
+                : data.roles.isStateDirectorRole || data.roles.isUnitDirectorRole
                   ? 'employment/confirmation/director/list'
                   : data.roles.isIntegrityDirectorRole
                     ? 'employment/confirmation/integrity/list'
@@ -166,9 +166,10 @@
         },
     };
 
-    const checkIfFail = async (id: number, status: string) => {
-        const idRequestBody: commonIdRequestDTO = {
-            id: Number(id),
+    const checkIfFail = async (applicationId: number, employeeId: number, status: string) => {
+        const idRequestBody: {applicationId: number, employeeId: number } = {
+            applicationId: Number(applicationId),
+            employeeId: Number(employeeId),
         };
 
         const confirmationInServiceDetailViewResponse: CommonResponseDTO =
@@ -183,7 +184,8 @@
                     confirmationInServiceDetailViewResponse.message as string,
             });
         }
-        const route = `./confirmation/${id}-${status}`;
+        const route = `./confirmation/${applicationId}-${employeeId}-${status}`;
+        console.log(route);
         goto(route);
     };
 </script>
@@ -211,7 +213,7 @@
                         bind:tableData={confirmationListTable}
                         bind:passData={rowData}
                         detailActions={() => {
-                            checkIfFail(rowData.id, rowData.status);
+                            checkIfFail(rowData.applicationId, rowData.employeeId, rowData.status);
                         }}
                     >
                         <FilterWrapper slot="filter">
@@ -255,7 +257,7 @@
                                 bind:tableData={confirmationExceedsThreeYearsListTable}
                                 bind:passData={rowData}
                                 detailActions={() => {
-                                    checkIfFail(rowData.id, rowData.status);
+                                    checkIfFail(rowData.applicationId, rowData.employeeId, rowData.status);
                                 }}
                             >
                                 <FilterWrapper slot="filter">
@@ -304,7 +306,7 @@
                             bind:tableData={confirmationRationalisationListTable}
                             bind:passData={rowData}
                             detailActions={() => {
-                                checkIfFail(rowData.id, rowData.status);
+                                checkIfFail(rowData.applicationId, rowData.employeeId, rowData.status);
                             }}
                         >
                             <FilterWrapper slot="filter">
