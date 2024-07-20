@@ -130,3 +130,13 @@ export const approveAltOptions: RadioDTO[] = [
         name: 'TIDAK DILULUSKAN',
     },
 ];
+export const certifyAltAltOptions: RadioDTO[] = [
+    {
+        value: true,
+        name: 'SAH',
+    },
+    {
+        value: false,
+        name: 'TIDAK SAH',
+    },
+];

@@ -272,7 +272,7 @@ export class ServiceAllowanceServices {
     // submit director support
     static async addDirectorSupport(param: ServiceAllowanceEndorsementType) {
         try {
-            const url: Input = 'url';
+            const url: Input = 'service_allowance/director_support';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -406,7 +406,7 @@ export class ServiceAllowanceServices {
         param: ServiceAllowanceEndorsementType,
     ) {
         try {
-            const url: Input = 'service_allowance/approver';
+            const url: Input = 'service_allowance/confirmation';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
