@@ -219,6 +219,7 @@
             }
         },
     });
+    
     const {
         form: secretaryApprovalForm,
         errors: secretaryApprovalError,
@@ -334,7 +335,11 @@
     if ($quarterPaymentForm.paymentMethod) {
         submitPayment = true;
     }
-    console.log(data.quartersOtherDocument.document)
+    let finalStep: boolean = false;
+
+    if($quarterPaymentForm.paymentMethod !== null){
+        finalStep = true;
+    }
 </script>
 
 <!-- content header starts here -->
@@ -654,7 +659,7 @@
                                 bind:val={data.serviceDetail.bank}
                             />
                             <CustomTextField
-                                label="Gaji Sekarang (Gaji Pokok/Hakiki)"
+                                label="Gaji Sekarang (Gaji Pokok/Hakiki) (RM)"
                                 id="salary"
                                 bind:val={data.serviceDetail.salary}
                                 disabled
@@ -737,6 +742,7 @@
                     <ContentHeader
                         title="Dokumen Permohonan Menduduki Kuarters"
                         borderClass="border-none"
+                        titlePadding={false}
                     />
                     <form
                         class="flex w-full flex-col justify-start gap-2.5"
@@ -791,12 +797,12 @@
                 <StepperContent>
                     <StepperContentHeader title="Pengesahan">
                         {#if !submitConfirmation && data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
-                            <TextIconButton
+                            <!-- <TextIconButton
                                 label="Simpan"
                                 icon="save"
                                 type="draft"
                                 form="confirmationForm"
-                            />
+                            /> -->
                             <TextIconButton
                                 label="Hantar"
                                 icon="check"
@@ -1029,6 +1035,7 @@
                                         <ContentHeader
                                             title="Butiran Penempatan Kuarter"
                                             borderClass="border-none"
+                                            titlePadding={false}
                                         />
                                         {#if data.applicationType == 'luar'}
                                             <CustomTextField
@@ -1196,15 +1203,17 @@
                 {/if}
             {/if}
 
-            {#if (data.currentRoleCode == UserRoleConstant.kakitangan.code || data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code) && successOtherDocUpload}
+            {#if (data.currentRoleCode == UserRoleConstant.kakitangan.code || data.currentRoleCode == UserRoleConstant.urusSetiaPeringkatNegeri.code) && finalStep}
                 <StepperContent>
                     <StepperContentHeader title="Surat Tawaran Kuarters">
+                        {#if successOtherDocUpload && data.quartersOtherDocument.document.length == 0}
                         <TextIconButton
                             label="Hantar"
                             icon="check"
                             onClick={() => uploadDocument(2)}
-                        /></StepperContentHeader
-                    >
+                        />
+                        {/if}
+                    </StepperContentHeader>
                     <StepperContentBody>
                         <div
                             class="flex w-full flex-col justify-start gap-4 p-3"
@@ -1234,11 +1243,10 @@
                                     </Alert>
                                 </div>
                                 <a
-                                    href={data.movingIncertificateLetter
-                                        .document}
-                                    download="Borang Akuan Keluar Kuarters.pdf"
+                                    href={data.doc[0].document}
+                                    download="Sijil Akuan.pdf"
                                     class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                    >Borang Akuan Keluar Kuarters.pdf</a
+                                    >Sijil Akuan.pdf</a
                                 >
                                 <a
                                     href={data.movingInGuidelineLetter.document}
@@ -1249,9 +1257,9 @@
                                 <a
                                     href={data.movingInCertificationLetter
                                         .document}
-                                    download="Surat Akuan Patuh.pdf"
+                                    download="Surat Akuan Patuh Kepada Peraturan.pdf"
                                     class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                    >Surat Akuan Patuh.pdf</a
+                                    >Surat Akuan Patuh Kepada Peraturan.pdf</a
                                 >
                                 <a
                                     href={data.movingInMovingInLetter.document}

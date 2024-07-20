@@ -30,7 +30,7 @@
     let param: CommonListRequestDTO = data.param;
     let paramNo: CommonListRequestDTO = data.paramNo;
     let paramEmp: CommonListRequestDTO = data.paramEmp;
- 
+    let paramAss: CommonListRequestDTO = data.paramAss;
     // urusetia
     let urusetia = UserRoleConstant.urusSetiaPerjawatan.code;
     // kakitangan
@@ -148,6 +148,40 @@
             add: false,
         },
     };
+
+
+    // assigned_list
+
+    // let PTBListAssignTable: TableSettingDTO = {
+    //     param: data.paramAss ?? data.paramAss,
+    //     meta: data.ptbEmployeeAssignResponse.data?.meta ?? {
+    //         pageSize: 1,
+    //         pageNum: 1,
+    //         totalData: 1,
+    //         totalPage: 1,
+    //     },
+    //     data:
+    //         (data.ptbViewResponse.data
+    //             ?.dataList ) ?? [],
+    //     selectedData: [],
+    //     exportData: [],
+    //     hiddenColumn: ['id',"employeeId"],
+    //     dictionary: [
+    //     ],
+    //     url: 'employment/pension_detail/assigned_list',
+    //     id: 'PTBListAssignTable',
+    //     option: {
+    //         checkbox: false,
+    //         detail: true,
+    //         edit: false,
+    //         select: false,
+    //         filter: true,
+    //     },
+    //     controls: {
+    //         add: false,
+    //     },
+    // };
+
     async function _searchNo() {
         _updateTableNo(PTBtableNo.param).then((value) => {
             PTBtableNo.data = value.props.response.data?.dataList ?? [];
@@ -214,6 +248,7 @@
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
 
+{#if data.currentRoleCode === urusetia}
         <CustomTab>
             <CustomTabContent
                 title="Senarai Kakitangan Baharu diberi PTB dan KWAP"
@@ -263,19 +298,13 @@
                     />
                     </FilterWrapper>
                 </DataTable>
-
-
-
-
                 </div>
 
 <!-- new -->
 
-
 <!--  -->
 
             </CustomTabContent>
-
             <CustomTabContent title="Senarai Kakitangan TIADA No. Pencen">
                 <div
                     class="flex max-h-full w-full flex-col items-start justify-start"
@@ -317,7 +346,55 @@
                 </div>
             </CustomTabContent>
         </CustomTab>
+        {/if}
+        <!-- {#if data.currentRoleCode === kakitangan}
         
+        <CustomTabContent title="Senarai Kakitangan">
+            <div
+                class="flex max-h-full w-full flex-col items-start justify-start"
+            >
+                <div class="h-fit w-full p-3">
+                    <DataTable
+                        title="Senarai Kakitangan"
+                        bind:tableData={PTBListAssignTable}
+                        bind:passData={rowData}
+                        detailActions={() => {
+                         goto(
+                            `/v2/employment/ptb/butiran/` +
+                                rowData.employeeId +
+                                '-' +
+                                rowData.id,
+                        );
+                        }}
+                            
+                    >
+                    <FilterWrapper slot="filter">
+                        <FilterTextField
+                            label="Nama"
+                            bind:inputValue={addActingTable.param
+                                .filter.name}
+                        ></FilterTextField>
+                        <FilterTextField
+                            label="No. Pekerja"
+                            bind:inputValue={addActingTable.param
+                                .filter.employeeNumber}
+                        ></FilterTextField>
+                        <FilterTextField
+                            label="No. Kad Pengenalan"
+                            bind:inputValue={addActingTable.param
+                                .filter.identityDocumentNumber}
+                        ></FilterTextField>
+                        <FilterTextField
+                            label="Jawatan"
+                            bind:inputValue={addActingTable.param
+                                .filter.position}
+                        ></FilterTextField>
+                    </FilterWrapper>
+                </DataTable>
+                </div>
+            </div>
+        </CustomTabContent>
+        {/if} -->
   
 
     {#if data.currentRoleCode === kakitangan}
@@ -343,4 +420,6 @@
             </div>
         </CustomTabContent>
     {/if}
+
+    
 </section>

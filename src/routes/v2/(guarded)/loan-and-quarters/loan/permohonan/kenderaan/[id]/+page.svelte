@@ -376,7 +376,7 @@
             label="Tutup"
             type="neutral"
             icon="cancel"
-            onClick={() => goto('/pinjaman-dan-kuarters/pinjaman/')}
+            onClick={() => goto('/v2/loan-and-quarters/loan/')}
         />
     </ContentHeader>
 </section>
@@ -597,7 +597,7 @@
                     <span>Fail-fail yang perlu dimuat naik:</span>
                     <span>1. Maklumat pinjaman yang telah dicetak beserta pengiraan</span>
                 </div>
-                {#if data.props.userMode == 'urusetia'}
+               
                     <div
                         class="flex h-fit w-full flex-col justify-center gap-2"
                     >
@@ -607,7 +607,7 @@
                             bind:files
                         ></CustomFileField>
                     </div>
-                {/if}
+               
                 {#if data.props.loanCalculation.document}
                     {#each data.props.loanCalculation.document as calculation}
                         <a
@@ -936,7 +936,7 @@
                                 >
                                     <!-- nullable -->
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled={false}
                                         isRequired={false}
                                         id="engineNumber"
                                         label="No. Enjin"
@@ -945,7 +945,7 @@
                                     />
                                     <!-- nullable -->
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled={false}
                                         id="chassisNumber"
                                         isRequired={false}
                                         label="No. Casis"
@@ -954,7 +954,7 @@
                                     />
                                     <!-- nullable -->
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled={false}
                                         id="countryOrigin"
                                         isRequired={false}
                                         label="Buatan"
@@ -963,7 +963,7 @@
                                     />
                                     <!-- nullable -->
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled={false}
                                         id="brandModel"
                                         isRequired={false}
                                         label="Nama Model"
@@ -972,7 +972,7 @@
                                     />
                                     <!-- nullable -->
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled={false}
                                         id="engineHP"
                                         isRequired={false}
                                         label="Kuasa Enjin"
@@ -981,7 +981,7 @@
                                     />
                                     <!-- nullable -->
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled={false}
                                         id="fuelType"
                                         isRequired={false}
                                         label="Bahan Bakar"
@@ -990,7 +990,7 @@
                                     />
                                     <!-- nullable -->
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled={false}
                                         id="class"
                                         isRequired={false}
                                         label="Kelas Kegunaan"
@@ -999,7 +999,7 @@
                                     />
                                     <!-- nullable -->
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled={false}
                                         id="bodyType"
                                         isRequired={false}
                                         label="Jenis Badan"
@@ -1008,7 +1008,7 @@
                                     />
                                     <!-- nullable -->
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled={false}
                                         id="makeYear"
                                         isRequired={false}
                                         label="Tahun Dibuat"
@@ -1023,7 +1023,7 @@
                                         class="flex w-full flex-col items-start justify-start gap-2.5"
                                     >
                                         <CustomTextField
-                                            disabled={noturusetia}
+                                            disabled={false}
                                             id="previousOwner"
                                             label="Nama Syarikat"
                                             errors={$vehicleFirstScheduleError.previousOwner}
@@ -1031,7 +1031,7 @@
                                         />
                                         <!-- nullable -->
                                         <CustomTextField
-                                            disabled={noturusetia}
+                                            disabled={false}
                                             id="previousOwnerIC"
                                             isRequired={false}
                                             label="No. Kad Pengenalan"
@@ -1039,7 +1039,7 @@
                                             bind:val={$vehicleFirstScheduleForm.previousOwnerIC}
                                         />
                                         <CustomTextField
-                                            disabled={noturusetia}
+                                            disabled={false}
                                             id="address"
                                             label="Alamat Syarikat"
                                             errors={$vehicleFirstScheduleError.address}
@@ -1070,21 +1070,21 @@
                                     use:firstScheduleEnhance
                                 >
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled={false}
                                         id="purchasePrice"
                                         label="Jumlah Harga Belian (RM)"
                                         errors={$firstScheduleError.purchasePrice}
                                         bind:val={$firstScheduleForm.purchasePrice}
                                     />
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled={false}
                                         id="balancePayment"
                                         label="Bayaran Muka (RM)"
                                         errors={$firstScheduleError.balancePayment}
                                         bind:val={$firstScheduleForm.balancePayment}
                                     />
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled={false}
                                         id="govFund"
                                         label="Amaun Pembiayaan Kerajaan (RM)"
                                         errors={$firstScheduleError.govFund}
@@ -1121,7 +1121,7 @@
                                     class="flex w-full flex-col gap-2"
                                 >
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled={false}
                                         id="sellingPrice"
                                         label="Jumlah Harga Jualan (RM)"
                                         errors={$secondScheduleError.sellingPrice}
@@ -1129,7 +1129,7 @@
                                     ></CustomTextField>
 
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled={false}
                                         id="sellingBalance"
                                         label="Bayaran Muka (RM)"
                                         errors={$secondScheduleError.sellingBalance}
@@ -1137,7 +1137,7 @@
                                     ></CustomTextField>
 
                                     <CustomTextField
-                                        disabled={noturusetia}
+                                        disabled={false}
                                         id="govFund"
                                         label="Amaun Pembiayaan dan Keuntungan Kerajaan (RM)"
                                         errors={$secondScheduleError.govFund}
@@ -1152,7 +1152,7 @@
                                         class="flex w-full flex-col items-start justify-start gap-2.5"
                                     >
                                         <CustomTextField
-                                            disabled={noturusetia}
+                                            disabled={false}
                                             id="installment"
                                             label="Amaun Bulanan (RM)"
                                             errors={$secondScheduleError.installment}
@@ -1160,7 +1160,7 @@
                                         ></CustomTextField>
 
                                         <CustomTextField
-                                            disabled={noturusetia}
+                                            disabled={false}
                                             id="paymentPeriod"
                                             label={'Tempoh Pembayaran (Bulan)'}
                                             errors={$secondScheduleError.paymentPeriod}
@@ -1178,13 +1178,13 @@
         <!-- This stepper is for US upload signed surat perjanjian from dokumen sokongan stepper-->
         <StepperContent>
             <StepperContentHeader title="Surat Tawaran">
-                {#if data.props.userMode == 'urusetia'}
+                
                     <TextIconButton
                         label="Muat Naik"
                         icon="check"
                         onClick={() => uploadOfferLetter()}
                     />
-                {/if}
+               
             </StepperContentHeader>
             <StepperContentBody>
                 <form class="flex w-full flex-col justify-start gap-3 p-3">
@@ -1200,7 +1200,7 @@
                         >
                         <span>2. Memorandum Penerimaan</span>
                     </div>
-                    {#if data.props.userMode == 'urusetia'}
+                   
                         <div
                             class="flex h-fit w-full flex-col justify-center gap-2"
                         >
@@ -1210,7 +1210,7 @@
                                 bind:files
                             ></CustomFileField>
                         </div>
-                    {/if}
+                   
                     {#if data.props.loanOfferLetter.document}
                         {#each data.props.loanOfferLetter.document as offer}
                             <a
@@ -1227,13 +1227,13 @@
 
         <StepperContent>
             <StepperContentHeader title="Surat Perjanjian">
-                {#if data.props.userMode == 'kakitangan'}
+                
                     <TextIconButton
                         label="Muat Naik"
                         icon="check"
                         onClick={() => uploadAgreementDocument()}
                     />
-                {/if}</StepperContentHeader
+                </StepperContentHeader
             >
             <StepperContentBody>
                 <form class="flex w-full flex-col justify-start gap-4 p-3">
@@ -1247,7 +1247,7 @@
                         <span>2. Surat Perjanjian</span>
                         <span>3. Duti Setem (Lembaga Hasil Dalam Negeri)</span>
                     </div>
-                    {#if data.props.userMode == 'kakitangan'}
+                  
                         <div
                             class="flex h-fit w-full flex-col justify-center gap-2"
                         >
@@ -1257,7 +1257,7 @@
                                 bind:files
                             ></CustomFileField>
                         </div>
-                    {/if}
+                   
 
                     <div class="flex w-full flex-col justify-start gap-2.5">
                         <ContentHeader
@@ -1288,13 +1288,13 @@
 
         <StepperContent>
             <StepperContentHeader title="Kemaskini Pembiayaan Pinjaman">
-                {#if data.props.userMode == 'urusetia'}
+               
                     <TextIconButton
                         label="Muat Naik"
                         icon="check"
                         onClick={() => uploadVoucher()}
                     />
-                {/if}
+                
             </StepperContentHeader>
             <StepperContentBody>
                 <form class="flex w-full flex-col justify-start gap-3 p-3">
@@ -1306,7 +1306,7 @@
                         >
                         <span>1. Baucar</span>
                     </div>
-                    {#if data.props.userMode == 'urusetia'}
+                    
                         <div
                             class="flex h-fit w-full flex-col justify-center gap-2"
                         >
@@ -1316,7 +1316,7 @@
                                 bind:files
                             ></CustomFileField>
                         </div>
-                    {/if}
+                    
                     {#if data.props.loanVoucher.document}
                         {#each data.props.loanVoucher.document as voucher}
                             <a
