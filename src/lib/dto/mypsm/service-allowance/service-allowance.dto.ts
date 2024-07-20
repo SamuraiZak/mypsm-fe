@@ -20,30 +20,39 @@ export interface DocumentDTO {
 
 // Assign Director
 export interface ServiceAllowanceAssignDirectorDTO {
-    allowanceId?:       number;
-    allowanceTypeCode: string;
-    isDraft:           boolean;
-    director:          string;
-    type:              string;
+    allowanceId:            number;
+    allowanceTypeCode:      string;
+    employeeId:             number;
+    identityDocumentNumber: string;
+    employeeName:                   string;
+    type:                   string;
 }
+
 
 // Assign Supporter and Approver
 export interface ServiceAllowanceEndorserDetailDTO {
-    allowanceId:       number;
-    allowanceTypeCode: string;
-    supporter:         string;
-    approver:          string;
-    isDraft:           boolean;
+    allowanceId:                     number;
+    allowanceTypeCode:               string;
+    supporterId:                     number;
+    supporterIdentityDocumentNumber: string;
+    supporterName:                   string;
+    approverId:                      number;
+    approverIdentityDocumentNumber:  string;
+    approverName:                    string;
+    isDraft:                         boolean;
 }
 
 // Endorsement
 export interface ServiceAllowanceEndorsementDTO {
-    allowanceId?:       number;
-    allowanceTypeCode: string;
-    isDraft:           boolean;
-    remark:            string | null;
-    status:            boolean;
-    approvalDate:      string;
+    allowanceId:            number;
+    allowanceTypeCode:      string;
+    employeeId:             number;
+    identityDocumentNumber: string;
+    name:                   string;
+    status:                 string | null;
+    remark:                 string | null;
+    date:                   string | null;
+    isDraft:                boolean;
 }
 
 // ===============================================================
@@ -116,8 +125,9 @@ export interface ServiceAllowanceApplicationDetailDTO{
     assignDirector?: ServiceAllowanceAssignDirectorDTO | null;
     directorSupport?: ServiceAllowanceEndorsementDTO | null;
     verification?: ServiceAllowanceEndorsementDTO | null;
-    supportApprover?: ServiceAllowanceEndorserDetailDTO | null;
+    supporterApprover?: ServiceAllowanceEndorserDetailDTO | null;
     support?: ServiceAllowanceEndorsementDTO | null;
     approval?: ServiceAllowanceEndorsementDTO | null;
     confirmation?: ServiceAllowanceEndorsementDTO | null;
+    status: string;
 }

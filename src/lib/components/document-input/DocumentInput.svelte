@@ -46,7 +46,13 @@
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = () => resolve((reader.result as string).replaceAll('data:application/pdf;base64,', ''));
+            reader.onload = () =>
+                resolve(
+                    (reader.result as string).replaceAll(
+                        'data:application/pdf;base64,',
+                        '',
+                    ),
+                );
             reader.onerror = (error) => reject(error);
         });
     }
@@ -141,53 +147,48 @@
                             {document.name}
                         </p>
                     </div>
-                    <button
-                        type="button"
-                        class="text-red-500 hover:text-red-700"
-                        on:click={() => removeFile(index)}
-                    >
-                        <svg
-                            width="15"
-                            height="15"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
+
+                    {#if !disabled}
+                        <button
+                            type="button"
+                            class="text-red-500 hover:text-red-700"
+                            on:click={() => removeFile(index)}
                         >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M6 18L18 6M6 6L18 18"
-                            ></path>
-                        </svg>
-                    </button>
+                            <svg
+                                width="15"
+                                height="15"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M6 18L18 6M6 6L18 18"
+                                ></path>
+                            </svg>
+                        </button>
+                    {/if}
                 </div>
             {/each}
         </div>
-        {:else}
+    {:else}
         <div
-                    class="flex h-8 min-h-8 w-full flex-row items-center justify-between rounded border bg-gray-50 px-2 hover:bg-gray-100"
-                >
-
-                    <div
-                        class="flex h-8 w-8 flex-col items-center justify-center"
-                    >
-                        <span class="text-gray-400">
-                            <SvgInfoSolid size="20"></SvgInfoSolid>
-                        </span>
-                    </div>
-                    <div
-                        class="flex w-full flex-row items-center justify-start"
-                    >
-                        <p
-                            class="text-start text-base font-medium text-slate-600"
-                        >
-                            Tiada dokumen telah dimuat naik.
-                        </p>
-                    </div>
-
-                </div>
+            class="flex h-8 min-h-8 w-full flex-row items-center justify-between rounded border bg-gray-50 px-2 hover:bg-gray-100"
+        >
+            <div class="flex h-8 w-8 flex-col items-center justify-center">
+                <span class="text-gray-400">
+                    <SvgInfoSolid size="20"></SvgInfoSolid>
+                </span>
+            </div>
+            <div class="flex w-full flex-row items-center justify-start">
+                <p class="text-start text-base font-medium text-slate-600">
+                    Tiada dokumen telah dimuat naik.
+                </p>
+            </div>
+        </div>
     {/if}
     <div class="flex h-fit min-h-5 w-full flex-row items-center justify-start">
         {#if errors && !disabled}

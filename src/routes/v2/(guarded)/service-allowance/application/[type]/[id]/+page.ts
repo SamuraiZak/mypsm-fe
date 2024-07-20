@@ -4,7 +4,10 @@ import { RoleConstant } from '$lib/constants/core/role.constant.js';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto.js';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
-import type { EmployeeDetailExtendedDTO } from '$lib/dto/core/employee/employee.dto';
+import type {
+    EmployeeDetailExtendedDTO,
+    EmployeeLookupItemDTO,
+} from '$lib/dto/core/employee/employee.dto';
 import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import type {
     ServiceAllowanceApplicationDetailDTO,
@@ -36,7 +39,10 @@ import { ServiceAllowanceServices } from '$lib/services/implementation/mypsm/ser
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export async function load({ params }) {
+export async function load({ params, parent }) {
+
+    const { layoutData } = await parent();
+
     // get the current application Id
     const currentAllowanceId: number = parseInt(params.id);
 
@@ -72,10 +78,11 @@ export async function load({ params }) {
         assignDirector: undefined,
         directorSupport: undefined,
         verification: undefined,
-        supportApprover: undefined,
+        supporterApprover: undefined,
         support: undefined,
         approval: undefined,
         confirmation: undefined,
+        status: 'Draf',
     };
 
     // create all forms
@@ -125,30 +132,42 @@ export async function load({ params }) {
         zod(ServiceAllowanceAssignDirectorSchema),
     );
 
+    assignDirectorForm.data.allowanceTypeCode = currentAllowanceTypeCode;
+
     // 3. director support form
     const directorSupportForm = await superValidate(
         zod(ServiceAllowanceEndorsementSchema),
     );
+
+    directorSupportForm.data.allowanceTypeCode = currentAllowanceTypeCode;
 
     // 4. secretary verification form
     const secretaryVerificationForm = await superValidate(
         zod(ServiceAllowanceEndorsementSchema),
     );
 
+    secretaryVerificationForm.data.allowanceTypeCode = currentAllowanceTypeCode;
+
     // 5. endorser details form
     const endorserDetailForm = await superValidate(
         zod(ServiceAllowanceEndorserDetailSchema),
     );
+
+    endorserDetailForm.data.allowanceTypeCode = currentAllowanceTypeCode;
 
     // 6. supporter feedback form
     const supporterFeedbackForm = await superValidate(
         zod(ServiceAllowanceEndorsementSchema),
     );
 
+    supporterFeedbackForm.data.allowanceTypeCode = currentAllowanceTypeCode;
+
     // 7. approver feedback form
     const approverFeedbackForm = await superValidate(
         zod(ServiceAllowanceEndorsementSchema),
     );
+
+    approverFeedbackForm.data.allowanceTypeCode = currentAllowanceTypeCode;
 
     // 8. secretary confirmation form
     const secretaryConfirmationForm = await superValidate(
@@ -249,6 +268,11 @@ export async function load({ params }) {
             ) {
                 assignDirectorForm.data =
                     currentApplicationDetails.assignDirector as ServiceAllowanceAssignDirectorType;
+            } else {
+                assignDirectorForm.data.allowanceId = currentAllowanceId;
+                assignDirectorForm.data.allowanceTypeCode =
+                    currentAllowanceTypeCode;
+                assignDirectorForm.data.type = 'pengarah negeri';
             }
 
             // director support form
@@ -258,6 +282,11 @@ export async function load({ params }) {
             ) {
                 directorSupportForm.data =
                     currentApplicationDetails.directorSupport as ServiceAllowanceEndorsementType;
+            } else {
+                directorSupportForm.data.allowanceId = currentAllowanceId;
+                directorSupportForm.data.allowanceTypeCode =
+                    currentAllowanceTypeCode;
+                directorSupportForm.data.date = Date.now().toString();
             }
 
             // secretary verification form
@@ -267,15 +296,24 @@ export async function load({ params }) {
             ) {
                 secretaryVerificationForm.data =
                     currentApplicationDetails.verification as ServiceAllowanceEndorsementType;
+            } else {
+                secretaryVerificationForm.data.allowanceId = currentAllowanceId;
+                secretaryVerificationForm.data.allowanceTypeCode =
+                    currentAllowanceTypeCode;
+                secretaryVerificationForm.data.date = Date.now().toString();
             }
 
             // endorser detail form
             if (
-                currentApplicationDetails.supportApprover != null ||
-                currentApplicationDetails.supportApprover != undefined
+                currentApplicationDetails.supporterApprover != null ||
+                currentApplicationDetails.supporterApprover != undefined
             ) {
                 endorserDetailForm.data =
-                    currentApplicationDetails.supportApprover as ServiceAllowanceEndorserDetailType;
+                    currentApplicationDetails.supporterApprover as ServiceAllowanceEndorserDetailType;
+            } else {
+                endorserDetailForm.data.allowanceId = currentAllowanceId;
+                endorserDetailForm.data.allowanceTypeCode =
+                    currentAllowanceTypeCode;
             }
 
             // supporter feedback form
@@ -285,6 +323,11 @@ export async function load({ params }) {
             ) {
                 supporterFeedbackForm.data =
                     currentApplicationDetails.support as ServiceAllowanceEndorsementType;
+            } else {
+                supporterFeedbackForm.data.allowanceId = currentAllowanceId;
+                supporterFeedbackForm.data.allowanceTypeCode =
+                    currentAllowanceTypeCode;
+                supporterFeedbackForm.data.date = Date.now().toString();
             }
 
             // approver feedback form
@@ -294,6 +337,11 @@ export async function load({ params }) {
             ) {
                 approverFeedbackForm.data =
                     currentApplicationDetails.approval as ServiceAllowanceEndorsementType;
+            } else {
+                approverFeedbackForm.data.allowanceId = currentAllowanceId;
+                approverFeedbackForm.data.allowanceTypeCode =
+                    currentAllowanceTypeCode;
+                approverFeedbackForm.data.date = Date.now().toString();
             }
 
             // secretary confirmation form
@@ -303,6 +351,11 @@ export async function load({ params }) {
             ) {
                 secretaryConfirmationForm.data =
                     currentApplicationDetails.confirmation as ServiceAllowanceEndorsementType;
+            } else {
+                secretaryConfirmationForm.data.allowanceId = currentAllowanceId;
+                secretaryConfirmationForm.data.allowanceTypeCode =
+                    currentAllowanceTypeCode;
+                secretaryConfirmationForm.data.date = Date.now().toString();
             }
         }
     }
@@ -323,8 +376,12 @@ export async function load({ params }) {
         },
     ];
 
+    // 3. director dropdown
+    const directorDrodpwon: DropdownDTO[] = await _getDirectorDropdown();
+
     return {
         props: {
+            layoutData,
             currentAllowanceId,
             currentAllowanceTypeCode,
             currentEmployeeDetails,
@@ -350,6 +407,7 @@ export async function load({ params }) {
         lookup: {
             allowanceDropdown,
             allowanceEndorsementOption,
+            directorDrodpwon,
         },
     };
 }
@@ -565,7 +623,7 @@ export async function _secretaryVerificationSubmit(
 
 // submit endorser detail
 export async function _endorserDetailSubmit(
-    formData: ServiceAllowanceEndorsementType,
+    formData: ServiceAllowanceEndorserDetailType,
 ) {
     try {
         const form = await superValidate(
@@ -645,7 +703,7 @@ export async function _secretaryConfirmationSubmit(
             zod(ServiceAllowanceEndorsementSchema),
         );
 
-        const response = await ServiceAllowanceServices.addApproverFeedback(
+        const response = await ServiceAllowanceServices.addSecretaryVerification(
             form.data,
         );
 
@@ -679,30 +737,32 @@ export async function _getAllowanceTypeDropdown() {
 
 // config
 export async function _getDirectorDropdown() {
-    const directorOption: DropdownDTO[] = [];
+    let directorOption: DropdownDTO[] = [];
 
-    // const filter = {
-    //     program: 'SEMUA',
-    //     employeeNumber: null,
-    //     name: null,
-    //     identityCard: null,
-    //     grade: null,
-    //     role: RoleConstant.pengarahNegeri.code,
-    // };
+    const filter = {
+        program: 'SEMUA',
+        employeeNumber: null,
+        name: null,
+        identityCard: null,
+        grade: null,
+        role: RoleConstant.pengarahNegeri.code,
+    };
 
-    // const request: CommonListRequestDTO = {
-    //     pageNum: 1,
-    //     pageSize: 5,
-    //     orderBy: 'name',
-    //     orderType: 1,
-    //     filter: filter,
-    // };
+    const request: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: 'name',
+        orderType: 1,
+        filter: filter,
+    };
 
+    const directorListResponse: CommonResponseDTO =
+        await LookupServices.getEndorserDropdown(request);
 
-    // const directorListResponse: CommonResponseDTO =
-    //     await LookupServices.getEndorserDropdown(request);
+    const directorList: EmployeeLookupItemDTO[] = directorListResponse.data
+        ?.dataList as EmployeeLookupItemDTO[];
+
+    directorOption = LookupHelper.employeeToDropdown(directorList);
 
     return directorOption;
 }
-
-

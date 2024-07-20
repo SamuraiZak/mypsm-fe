@@ -3,14 +3,24 @@
 // ===============================================================
 
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+import type { EmployeeLookupItemDTO } from '$lib/dto/core/employee/employee.dto';
 import type { LookupClinic, LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import { TextAppearanceHelper } from './text-appearance.helper';
 
 export class LookupHelper {
+
     static toDropdown(lookupList: LookupDTO[]) {
         const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
             value: lookup.code,
             name: lookup.description,
+        }));
+
+        return dropdownList;
+    }
+    static employeeToDropdown(lookupList: EmployeeLookupItemDTO[]) {
+        const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
+            value: lookup.identityCard,
+            name: lookup.name,
         }));
 
         return dropdownList;

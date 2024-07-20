@@ -13,9 +13,11 @@ export type DocumentType = z.infer<typeof DocumentSchema>;
 export const ServiceAllowanceAssignDirectorSchema = z.object({
     allowanceId: z.number(),
     allowanceTypeCode: z.string(),
-    isDraft: z.boolean(),
-    director: z.string(),
+    employeeId: z.number().nullish(),
+    identityDocumentNumber: z.string(),
+    employeeName: z.string().nullish(),
     type: z.string(),
+    isDraft: z.boolean(),
 });
 export type ServiceAllowanceAssignDirectorType = z.infer<
     typeof ServiceAllowanceAssignDirectorSchema
@@ -25,8 +27,12 @@ export type ServiceAllowanceAssignDirectorType = z.infer<
 export const ServiceAllowanceEndorserDetailSchema = z.object({
     allowanceId: z.number(),
     allowanceTypeCode: z.string(),
-    supporter: z.string(),
-    approver: z.string(),
+    supporterId: z.number().nullish(),
+    supporterIdentityDocumentNumber: z.string(),
+    supporterName: z.string().nullish(),
+    approverId: z.number().nullish(),
+    approverIdentityDocumentNumber: z.string(),
+    approverName: z.string().nullish(),
     isDraft: z.boolean(),
 });
 export type ServiceAllowanceEndorserDetailType = z.infer<
@@ -37,10 +43,13 @@ export type ServiceAllowanceEndorserDetailType = z.infer<
 export const ServiceAllowanceEndorsementSchema = z.object({
     allowanceId: z.number(),
     allowanceTypeCode: z.string(),
-    isDraft: z.boolean(),
+    employeeId: z.number().nullish(),
+    identityDocumentNumber: z.string().nullish(),
+    name: z.string().nullish(),
+    status: z.boolean().nullish(),
     remark: z.string(),
-    status: z.boolean(),
-    approvalDate: z.string().optional(),
+    date: z.string(),
+    isDraft: z.boolean(),
 });
 export type ServiceAllowanceEndorsementType = z.infer<
     typeof ServiceAllowanceEndorsementSchema

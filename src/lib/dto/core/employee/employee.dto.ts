@@ -20,23 +20,6 @@ export interface EmployeeDetailExtendedDTO {
     placement: string | null;
 }
 
-export interface EmployeeLookupDTO {
-    pageNum:   number;
-    pageSize:  number;
-    orderBy:   null;
-    orderType: null;
-    filter:    Filter;
-}
-
-export interface Filter {
-    program:        string;
-    employeeNumber: null;
-    name:           null;
-    identityCard:   null;
-    grade:          null;
-    role:           number;
-}
-
 export interface EmployeeLookupItemDTO {
     employeeId:     number;
     employeeNumber: string;

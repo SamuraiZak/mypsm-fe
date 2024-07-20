@@ -6,7 +6,6 @@
     import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
     import { AllowanceTypeConstant } from '$lib/constants/core/allowance-type.constant';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
-    import type { AllowanceTypeDTO } from '$lib/dto/mypsm/backup/allowance.dto';
     import { Toaster } from 'svelte-french-toast';
     import type { LayoutData } from '../../$types';
     import type { PageData } from './$types';
@@ -31,6 +30,7 @@
             'employeeNumber',
             'allowanceTypeCode',
             'category',
+            'total'
         ],
         dictionary: [
             {
