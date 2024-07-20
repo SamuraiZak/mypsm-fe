@@ -97,28 +97,20 @@ export const _confirmationMeetingResultSchema = z
     .object({
         id: z.number().readonly(),
         meetingName: codeSchema,
-        meetingDate: z.string(),
-        confirmedPositionDate: z.string().readonly().nullable(),
+        meetingDate: dateStringSchema,
+        confirmedPositionDate: dateStringSchema,
         meetingRemark: shortTextSchema,
         meetingResult: booleanSchema,
-        isContractContinued: z.boolean().default(false),
-        effectiveDate: z.string().nullable(),
-        contractMonths: z.number().nullable(),
+        isContractContinued: booleanSchema,
+        effectiveDate: dateStringSchema,
+        contractMonths: numberSchem0,
         isReadonly: z.boolean().readonly(),
         isDraft: z.boolean(),
     })
     .superRefine(
-        ({ meetingDate, meetingResult, isContractContinued, effectiveDate, contractMonths }, ctx) => {
-            if(meetingResult) isContractContinued = false;
-            if(meetingDate === '') {
-                ctx.addIssue({
-                    code: 'custom',
-                    message: 'Tarikh tidak boleh kosong.',
-                    path: ['meetingDate'],
-                });
-            };
+        ({ isContractContinued, effectiveDate, contractMonths }, ctx) => {
             if (isContractContinued) {
-                if (effectiveDate === '' || effectiveDate === 'undefined'|| effectiveDate === null) {
+                if (effectiveDate === '' || effectiveDate === 'undefined') {
                     ctx.addIssue({
                         code: 'custom',
                         message: 'Tarikh tidak boleh kosong.',

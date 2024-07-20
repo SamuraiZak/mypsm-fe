@@ -1,6 +1,5 @@
 export type loanIdRequestDTO = {
     id: number;
-    
 };
 
 export class loanIdRequestDTOConvert {

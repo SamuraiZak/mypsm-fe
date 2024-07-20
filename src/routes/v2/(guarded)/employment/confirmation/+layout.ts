@@ -36,7 +36,7 @@ export const load = async ({ parent }) => {
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: 'applicationId',
+        orderBy: 'id',
         orderType: 1,
         filter: {
             dataType: 0, // 0:semua | 1:Lebih 3 tahun | 2: Rasionalisasi (kurang 3 tahun)
@@ -50,7 +50,7 @@ export const load = async ({ parent }) => {
     const exceedsThreeYearsParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: 'applicationId',
+        orderBy: 'id',
         orderType: 1,
         filter: {
             dataType: 1, // 0:semua | 1:Lebih 3 tahun | 2: Rasionalisasi (kurang 3 tahun)
@@ -64,7 +64,7 @@ export const load = async ({ parent }) => {
     const rationalisationParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: 'applicationId',
+        orderBy: 'id',
         orderType: 1,
         filter: {
             dataType: 2, // 0:semua | 1:Lebih 3 tahun | 2: Rasionalisasi (kurang 3 tahun)
@@ -87,7 +87,7 @@ export const load = async ({ parent }) => {
             await ConfirmationServices.getConfirmationList(
                 rationalisationParam,
             );
-    } else if (isStateDirectorRole || isUnitDirectorRole) {
+    } else if (isStateDirectorRole) {
         confirmationInServiceListResponse =
             await ConfirmationServices.getConfirmationStateDirectorList(
                 rationalisationParam,

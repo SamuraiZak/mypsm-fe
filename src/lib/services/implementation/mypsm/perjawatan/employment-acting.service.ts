@@ -12,10 +12,11 @@ import { PlacementMeetingDetailConvert, PlacementResultConvert, PromotionMeeting
 import { commonIdRequestDTOConvert, type commonIdRequestDTO } from "$lib/dto/core/common/id-request.dto";
 import { ActingDetailsConvert, type ActingDetails } from "$lib/dto/mypsm/employment/acting/acting-result.dto";
 import { UpdateMainPromotionMeetingConvert, type UpdateMainPromotionMeeting } from "$lib/dto/mypsm/employment/acting/main-update-promotion-meeting.dto";
+import { QuarterCommonApprovalConvert, type QuarterCommonApproval } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto";
 import { EmployeePostponeConvert, PostponeDetailResultConvert, type EmployeePostpone, type PostponeDetailResult } from "$lib/dto/mypsm/employment/acting/acting-employee-form.dto";
 import { CertifySelectedConvert, MainActingDetailEditConvert, MainMeetingResultConvert, type CertifySelected, type MainActingDetailEdit, type MainMeetingResult } from "$lib/dto/mypsm/employment/acting/main-acting-form.dto";
 import { ActingCommonBatchIdConvert, ActingFinalResultIdConvert, type ActingCommonBatchId, type ActingFinalResultId } from "$lib/dto/mypsm/employment/acting/acting-batchid.dto";
-import { ActingCommonApprovalConvert, type ActingCommonApproval } from "$lib/dto/mypsm/employment/acting/acting-approval.dto";
+import type { ActingCommonApproval } from "$lib/dto/mypsm/employment/acting/acting-approval.dto";
 
 
 export class EmploymentActingServices {
@@ -353,7 +354,7 @@ export class EmploymentActingServices {
 
             const promiseRes: Promise<Response> = http
                 .put(url, {
-                    body: ActingCommonApprovalConvert.toJson(param),
+                    body: QuarterCommonApprovalConvert.toJson(param),
                 })
                 .json();
 
@@ -372,13 +373,13 @@ export class EmploymentActingServices {
         }
     }
     //update integrity approval
-    static async updateIntegrityApproval(param: ActingCommonApproval) {
+    static async updateIntegrityApproval(param: QuarterCommonApproval) {
         try {
             const url: Input = 'employment/acting/integrity_certifies/edit';
 
             const promiseRes: Promise<Response> = http
                 .put(url, {
-                    body: ActingCommonApprovalConvert.toJson(param),
+                    body: QuarterCommonApprovalConvert.toJson(param),
                 })
                 .json();
 
@@ -921,13 +922,13 @@ export class EmploymentActingServices {
         }
     }
     // update supporter approval
-    static async addSupporterApproval(param: ActingCommonApproval) {
+    static async addSupporterApproval(param: QuarterCommonApproval) {
         try {
             const url: Input = 'employment/acting/supports/edit';
 
             const promiseRes: Promise<Response> = http
                 .put(url, {
-                    body: ActingCommonApprovalConvert.toJson(param),
+                    body: QuarterCommonApprovalConvert.toJson(param),
                 })
                 .json();
 
@@ -946,13 +947,13 @@ export class EmploymentActingServices {
         }
     }
     // update approver approval
-    static async addApproverApproval(param: ActingCommonApproval) {
+    static async addApproverApproval(param: QuarterCommonApproval) {
         try {
             const url: Input = 'employment/acting/approves/edit';
 
             const promiseRes: Promise<Response> = http
                 .put(url, {
-                    body: ActingCommonApprovalConvert.toJson(param),
+                    body: QuarterCommonApprovalConvert.toJson(param),
                 })
                 .json();
 
@@ -1397,13 +1398,13 @@ export class EmploymentActingServices {
         }
     }
     //edit main acting detail
-    static async addMainActingSupporter(param: ActingCommonApproval) {
+    static async addMainActingSupporter(param: QuarterCommonApproval) {
         try {
             const url: Input = 'employment/acting/mains/support/edit';
 
             const promiseRes: Promise<Response> = http
                 .put(url, {
-                    body: ActingCommonApprovalConvert.toJson(param),
+                    body: QuarterCommonApprovalConvert.toJson(param),
                 })
                 .json();
 
@@ -1422,13 +1423,13 @@ export class EmploymentActingServices {
         }
     }
     //edit main acting detail
-    static async addMainActingApprover(param: ActingCommonApproval) {
+    static async addMainActingApprover(param: QuarterCommonApproval) {
         try {
             const url: Input = 'employment/acting/mains/approve/edit';
 
             const promiseRes: Promise<Response> = http
                 .put(url, {
-                    body: ActingCommonApprovalConvert.toJson(param),
+                    body: QuarterCommonApprovalConvert.toJson(param),
                 })
                 .json();
 

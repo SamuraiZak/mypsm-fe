@@ -22,14 +22,3 @@ export interface ActingCommonApproval {
     remark: string;
     directorCertifiedDate?: string;
 }
-
-// Converts JSON strings to/from your types
-export class ActingCommonApprovalConvert {
-    public static fromJson(json: string): ActingCommonApproval {
-        return JSON.parse(json);
-    }
-
-    public static toJson(value: ActingCommonApproval): string {
-        return JSON.stringify(value);
-    }
-}

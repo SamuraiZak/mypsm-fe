@@ -816,7 +816,7 @@
             );
         },
     });
-    if ($updatePlacementMeeting?.meetingDate !== undefined) {
+    if ($updatePlacementMeeting.meetingDate !== undefined) {
         updatedPlacementMeeting = true;
     }
 
@@ -897,7 +897,6 @@
         validators: zod(_actingApprovalSchema),
         onSubmit() {
             $supporterResultForm.id = selectedCandidate.actingId;
-            
             _submitSupporterResultForm($supporterResultForm).then((res) => {
                 if (res?.response.status == 'success') {
                     supporterApproval.supportedDate =

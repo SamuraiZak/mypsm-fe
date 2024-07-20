@@ -96,13 +96,10 @@ export const _vehicleDetail = z.object({
 const singleSupplier = z.object({
     name: shortTextSchema,
     address: shortTextSchema,
-    price: numberSchema,
-   
-    
- 
+    isDraft: booleanSchema,
 })
 export const _supplier = z.object({
-    id: numberIdSchema,  
+    id: numberIdSchema,
     suppliers: singleSupplier.array()
 
 })

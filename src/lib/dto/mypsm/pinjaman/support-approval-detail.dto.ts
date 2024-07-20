@@ -2,7 +2,6 @@ export interface SupportApprover {
     id:     number;
     status: boolean;
     remark: string;
-    isDraft: boolean;
 }
 
 // Converts JSON strings to/from your types

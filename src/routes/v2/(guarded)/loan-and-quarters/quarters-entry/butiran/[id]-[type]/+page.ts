@@ -366,6 +366,7 @@ export const _submitConfirmationForm = async (formData: QuartersAddConfirmation)
 }
 
 export const _submitQuartersDocument = async (formData: string) => {
+    console.log(formData)
     const response: CommonResponseDTO =
         await QuartersServices.addUploadDocument(formData)
 

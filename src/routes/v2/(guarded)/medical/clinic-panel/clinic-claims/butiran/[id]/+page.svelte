@@ -313,7 +313,7 @@
             <StepperContentHeader title="Pengesahan">
                 {#if !secretaryApproved && data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code}
                     <TextIconButton
-                        label="Hantar"
+                        label="Simpan"
                         icon="check"
                         form="secretaryApprovalForm"
                     />
@@ -359,7 +359,7 @@
             <StepperContentHeader title="Penyokong dan Pelulus">
                 {#if !suppAppExist && data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code}
                     <TextIconButton
-                        label="Hantar"
+                        label="Simpan"
                         icon="check"
                         form="supporterApproverForm"
                     />
@@ -407,7 +407,7 @@
             <StepperContentHeader title="Sokongan">
                 {#if !supporterApproved && data.currentRoleCode == UserRoleConstant.penyokong.code}
                     <TextIconButton
-                        label="Hantar"
+                        label="Simpan"
                         icon="check"
                         form="supporterApprovalForm"
                     />
@@ -453,7 +453,7 @@
             <StepperContentHeader title="Kelulusan">
                 {#if !approverApproved && data.currentRoleCode == UserRoleConstant.pelulus.code}
                     <TextIconButton
-                        label="Hantar"
+                        label="Simpan"
                         icon="check"
                         form="approverApprovalForm"
                     />

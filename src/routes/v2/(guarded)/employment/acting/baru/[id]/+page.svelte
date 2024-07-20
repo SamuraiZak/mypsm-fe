@@ -22,7 +22,6 @@
     export let data: PageData;
 
     let confirmModal: boolean = false;
-    let selectedGrade: string = '';
     let addActingTable: TableSettingDTO = {
         param: data.param,
         meta: data.actingEmployeeListResponse.data?.meta ?? {
@@ -103,7 +102,6 @@
         let tempChosenEmpployee: AddChosenActingEmployeeDTO = {
             actingType: data.actingTypes,
             employeeIds: tempEmployeeIdList,
-            grade: selectedGrade,
         };
         if (selectedEmployeeTable.data.length < 1) {
             alert('Senarai calon pemangkuan tidak boleh kosong.');
@@ -119,7 +117,7 @@
             setTimeout(
                 () =>
                     goto(
-                        '/v2/employment/acting/butiran/' +
+                        '/perjawatan/pemangkuan/butiran/' +
                             response.data?.details.batchId +
                             '-' +
                             data.actingTypes,
@@ -238,7 +236,7 @@
             id="actingPosition"
             label="Jawatan"
             options={data.positionLookup}
-            bind:val={selectedGrade}
+            val=""
         />
     </div>
     <div class="flex justify-center gap-3">

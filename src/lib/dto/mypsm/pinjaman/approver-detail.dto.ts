@@ -1,7 +1,6 @@
 export interface Approver {
     id:         number;
     approverId: number;
-    isDraft: boolean;
 }
 
 // Converts JSON strings to/from your types

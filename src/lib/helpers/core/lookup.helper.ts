@@ -162,13 +162,4 @@ export class LookupHelper {
 
         return dropdownList;
     }
-
-    static toDropdownValueIsCodeAndDesc(lookupList: LookupDTO[]) {
-        const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
-            value: lookup.code+ " - "+lookup.description,
-            name: lookup.code+ " - "+lookup.description,
-        }));
-
-        return dropdownList;
-    }
 }

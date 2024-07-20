@@ -414,11 +414,10 @@
     let tempSupplier: SupplierElement = {
         name: '',
         address: '',
-        price: 0,
     };
     function addSupplier() {
         $supplierForm.suppliers = [...$supplierForm.suppliers, tempSupplier];
-        tempSupplier = { name: '', address: '' ,price:0 };
+        tempSupplier = { name: '', address: '' };
     }
     function removeSupplier(index: number) {
         $supplierForm.suppliers.splice(index, 1);
@@ -689,13 +688,13 @@
 
         <StepperContent>
             <StepperContentHeader title="Dokumen Sokongan yang Berkaitan">
-              
+                {#if data.props.userMode == 'kakitangan'}
                     <TextIconButton
                         label="Muat Naik"
                         icon="check"
                         onClick={() => uploadDocument()}
                     />
-              
+                {/if}
                 </StepperContentHeader>
             <StepperContentBody>
                 <form
@@ -710,7 +709,7 @@
                         <span>3. Salinan Kad Pengenalan</span>
 
                     </div>
-                 
+                    {#if data.props.userMode == 'kakitangan'}
                         <div
                             class="flex h-fit w-full flex-col justify-center gap-2"
                         >
@@ -720,7 +719,7 @@
                                 bind:files
                             ></CustomFileField>
                         </div>
-                   
+                    {/if}
 
                     <div
                         class="flex w-full flex-col justify-start gap-2.5"
@@ -737,7 +736,7 @@
                         {#if loanComputerDocument.document !== null && loanComputerDocument.document !== undefined }
                             {#each loanComputerDocument.document as docs}
                                 <div
-                                   class="flex flex-col justify-start gap-2.5"
+                                    class="flex flex-col justify-start gap-2.5"
                                 >
                                     <a
                                         href={docs.document}
@@ -768,7 +767,7 @@
                     <span>Fail-fail yang perlu dimuat naik:</span>
                     <span>1. Maklumat pinjaman yang telah dicetak beserta pengiraan</span>
                 </div>
-               
+                {#if data.props.userMode == 'urusetia'}
                     <div
                         class="flex h-fit w-full flex-col justify-center gap-2"
                     >
@@ -778,7 +777,7 @@
                             bind:files
                         ></CustomFileField>
                     </div>
-               
+                {/if}
                 {#if data.props.loanCalculation.document}
                     {#each data.props.loanCalculation.document as calculation}
                         <a
@@ -794,14 +793,14 @@
 
         <StepperContent>
             <StepperContentHeader title="Pelulus Peminjam">
-          
+                {#if data.props.userMode == 'urusetia'}
                 <TextIconButton
                     type="primary"
                     label="Hantar"
                     icon="check"
                     form="approverDetail"
                     ></TextIconButton>
-          
+                {/if}
             </StepperContentHeader>
             <StepperContentBody>
                 <div
@@ -816,7 +815,7 @@
                         class="flex w-full flex-col gap-2"
                     >
                         <CustomSelectField
-                            disabled={false}
+                            disabled={noturusetia}
                             id="approverName"
                             label={'Nama Pelulus'}
                             options={data.supporterApproverLookup}
@@ -835,14 +834,14 @@
                     class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
                 >
                 <ContentHeader title="Keputusan Dari Ketua Seksyen" borderClass="border-none">
-                   
+                    {#if data.props.userMode == 'ketua Seksyen'}
                     <TextIconButton
                         type="primary"
                         label="Hantar"
                         icon="check"
                         form="supporterApprovalDetail"
                     ></TextIconButton>
-                   
+                    {/if}
                 </ContentHeader>
 
                 <form
@@ -852,7 +851,7 @@
                     class="flex w-full flex-col gap-2"
                 >
                     <CustomTextField
-                        disabled={false}
+                        disabled={notketuaSeksyen}
                         id="remark"
                         label="Tindakan/ Ulasan"
                         errors={$supporterApprovalError.remark}
@@ -860,7 +859,7 @@
                     />
 
                     <CustomRadioBoolean
-                        disabled={false}
+                        disabled={notketuaSeksyen}
                         id="status"
                         label="Status"
                         errors={$supporterApprovalError.status}
@@ -916,14 +915,14 @@
                     class="flex max-h-full w-full flex-col items-center justify-center gap-2.5 border-b border-bdr-primary pb-5"
                 >
                 <ContentHeader title="Keputusan Dari Pelulus" borderClass="border-none">
-                 
+                    {#if data.props.userMode == 'pelulus'}
                     <TextIconButton
                         type="primary"
                         label="Hantar"
                         icon="check"
                         form="approverApprovalDetail"
                     ></TextIconButton>
-                 
+                    {/if}
                 </ContentHeader>
                 <form
                     id="approverApprovalDetail"
@@ -932,7 +931,7 @@
                     class="flex w-full flex-col gap-2"
                 >
                     <CustomTextField
-                        disabled={false}
+                        disabled={notpelulus}
                         id="remark"
                         label="Tindakan / Ulasan"
                         errors={$approverApprovalError.remark}
@@ -940,7 +939,7 @@
                     />
 
                     <CustomRadioBoolean
-                        disabled={false}
+                        disabled={notpelulus}
                         id="status"
                         label="Status"
                         errors={$approverApprovalError.status}
@@ -950,6 +949,7 @@
                 </div></StepperContentBody
             >
         </StepperContent>
+        {#if data.props.userMode == 'urusetia' || data.props.userMode == 'pelulus' || data.props.userMode == 'ketua Seksyen'}
             <StepperContent>
                 <StepperContentHeader
                     title="Kemaskini Jadual Pertama dan Jadual Kedua"
@@ -969,7 +969,6 @@
                                 label="Hantar"
                                 icon="check"
                                 form="supplierForm"
-                                
                             ></TextIconButton>
                         </ContentHeader>
 
@@ -1010,7 +1009,7 @@
                                                     <span>
                                                         Tuntutan {i + 1}
                                                     </span>
-                                                    
+                                                    {#if data.props.userMode == 'urusetia'}
                                                         <TextIconButton
                                                             label=""
                                                             icon="delete"
@@ -1020,13 +1019,13 @@
                                                                     i,
                                                                 )}
                                                         />
-                                                 
+                                                    {/if}
                                                 </div>
                                                 <CustomTextField
                                                     label="Harga Belian"
-                                                    id="price{i}"
+                                                    id=""
                                                     disabled
-                                                    val={supplier.price}
+                                                    val=""
                                                 />
                                                 <CustomTextField
                                                     label="Nama Pembekal"
@@ -1117,17 +1116,17 @@
                     </CustomTabContent>
                 </CustomTab>
             </StepperContent>
-       
+        {/if}
 
         <StepperContent>
             <StepperContentHeader title="Surat Tawaran">
-               
+                {#if data.props.userMode == 'urusetia'}
                     <TextIconButton
                         label="Muat Naik"
                         icon="check"
                         onClick={() => uploadOfferLetter()}
                     />
-             
+                {/if}
             </StepperContentHeader>
             <StepperContentBody>
                 <form class="flex w-full flex-col justify-start gap-3 p-3">
@@ -1143,7 +1142,7 @@
                         >
                         <span>2. Memorandum Penerimaan</span>
                     </div>
-                   
+                    {#if data.props.userMode == 'urusetia'}
                         <div
                             class="flex h-fit w-full flex-col justify-center gap-2"
                         >
@@ -1153,7 +1152,7 @@
                                 bind:files
                             ></CustomFileField>
                         </div>
-                   
+                    {/if}
                     {#if data.props.loanOfferLetter.document}
                         {#each data.props.loanOfferLetter.document as offer}
                             <a
@@ -1170,13 +1169,13 @@
 
         <StepperContent>
             <StepperContentHeader title="Surat Perjanjian">
-                
+                {#if data.props.userMode == 'kakitangan'}
                     <TextIconButton
                         label="Muat Naik"
                         icon="check"
                         onClick={() => uploadAgreementDocument()}
                     />
-                </StepperContentHeader
+                {/if}</StepperContentHeader
             >
             <StepperContentBody>
                 <form class="flex w-full flex-col justify-start gap-4 p-3">
@@ -1190,7 +1189,7 @@
                         <span>2. Surat Perjanjian</span>
                         <span>3. Duti Setem (Lembaga Hasil Dalam Negeri)</span>
                     </div>
-            
+                    {#if data.props.userMode == 'kakitangan'}
                         <div
                             class="flex h-fit w-full flex-col justify-center gap-2"
                         >
@@ -1200,7 +1199,7 @@
                                 bind:files
                             ></CustomFileField>
                         </div>
-                    
+                    {/if}
 
                     <div class="flex w-full flex-col justify-start gap-2.5">
                         <ContentHeader
@@ -1231,13 +1230,13 @@
        
         <StepperContent>
             <StepperContentHeader title="Kemaskini Pembiayaan Pinjaman">
-               
+                {#if data.props.userMode == 'urusetia'}
                     <TextIconButton
                         label="Muat Naik"
                         icon="check"
                         onClick={() => uploadVoucher()}
                     />
-             
+                {/if}
             </StepperContentHeader>
             <StepperContentBody>
                 <form class="flex w-full flex-col justify-start gap-3 p-3">
@@ -1249,7 +1248,7 @@
                         >
                         <span>1. Baucar</span>
                     </div>
-                 
+                    {#if data.props.userMode == 'urusetia'}
                         <div
                             class="flex h-fit w-full flex-col justify-center gap-2"
                         >
@@ -1259,7 +1258,7 @@
                                 bind:files
                             ></CustomFileField>
                         </div>
-                   
+                    {/if}
                     {#if data.props.loanVoucher.document}
                         {#each data.props.loanVoucher.document as voucher}
                             <a
@@ -1276,13 +1275,13 @@
 
         <StepperContent>
             <StepperContentHeader title="Resit dan Invois">
-               
+                {#if data.props.userMode == 'kakitangan'}
                     <TextIconButton
                         label="Muat Naik"
                         icon="check"
                         onClick={() => uploadPayment()}
                     />
-             </StepperContentHeader
+                {/if}</StepperContentHeader
             >
             <StepperContentBody>
                 <form class="flex w-full flex-col justify-start gap-2.5 p-3">
@@ -1294,7 +1293,7 @@
                         <span>2. Polisi Insurans (Cover Note Insurans)</span>
                         <span>3. Geran</span>
                     </div>
-                   
+                    {#if data.props.userMode == 'kakitangan'}
                         <div
                             class="flex h-fit w-full flex-col justify-center gap-2"
                         >
@@ -1304,7 +1303,7 @@
                                 bind:files
                             ></CustomFileField>
                         </div>
-                   
+                    {/if}
 
                     <div class="flex w-full flex-col justify-start gap-2.5">
                         <ContentHeader
@@ -1340,8 +1339,8 @@
     <div class="flex w-full flex-col justify-start gap-2.5 pb-3">
         <CustomTextField
             label="Harga Belian (RM)"
-            id="price"
-            bind:val={tempSupplier.price}
+            id="name"
+            bind:val={tempSupplier.name}
         />
         <CustomTextField
             label="Nama Pembekal"
@@ -1359,7 +1358,6 @@
             onClick={() => {
                 addSupplier();
                 openModal = false;
-                
             }}
         />
     </div>

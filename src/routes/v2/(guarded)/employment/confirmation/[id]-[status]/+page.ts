@@ -26,9 +26,8 @@ import { superValidate } from 'sveltekit-superforms/client';
 //=============== Load Function ====================
 //==================================================
 export async function load({ params, parent }) {
-    const idRequestBody: {applicationId: number, employeeId: number } = {
-        applicationId: Number(params.applicationId),
-        employeeId: Number(params.employeeId),
+    const idRequestBody: commonIdRequestDTO = {
+        id: Number(params.id),
     };
 
     const { roles } = await parent();
@@ -496,10 +495,8 @@ export const _addConfirmationMeetingResult = async (
         formData,
         zod(_updateConfirmationMeetingResultSchema),
     );
-    
     form.data.id = id;
 
-    console.log(form)
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });

@@ -107,23 +107,6 @@ export const load = async ({parent}) => {
         },
     };
 
-    const paramAss: CommonListRequestDTO = {
-        pageNum: 1,
-        pageSize: 5,
-        orderBy: null,
-        orderType: null,
-        filter: {
-            dataType: 2,
-            staffName: "",
-            staffNo: "",
-            identityCard: "",
-            applicationDate: null,
-            grade: "",
-            position: "",
-            status: "" // status code from lookup | null | undefined;
-        },
-    };
-
     // ada pencen
     const paramUrusSetia: CommonListRequestDTO = {
         pageNum: 1,
@@ -179,10 +162,6 @@ export const load = async ({parent}) => {
     let ptbEmployeeResponse: CommonResponseDTO;
     let ptbEmployeeTable = [];
 
-    // assign
-    let ptbEmployeeAssignResponse: CommonResponseDTO;
-    let ptbEmployeeAssignTable = [];
-
 
 
     // ada pencen
@@ -197,15 +176,9 @@ export const load = async ({parent}) => {
     ptbEmployeeResponse = await PTBKWAPServices.getPTBKWAPEmployeeListDetails(paramEmp);
     ptbEmployeeTable = ptbEmployeeResponse.data?.dataList ?? [];
 
-    // assign 
-    ptbEmployeeAssignResponse = await PTBKWAPServices.getPTBKWAPEmployeeListAssignDetails(paramAss);
-    ptbEmployeeAssignTable = ptbEmployeeAssignResponse.data?.dataList ?? [];
 
     return {
-        param, paramUrusSetia, paramEmp,paramEm, ptbViewResponse, ptbViewTable, ptbNoViewResponse,
-         ptbNoViewTable, paramNo, ptbEmployeeTable, ptbEmployeeResponse, actingEmployeeListResponse,
-          actingEmployeeList, currentRoleCode,ptbEmployeeAssignResponse,
-          ptbEmployeeAssignTable,paramEmployee,paramAss
+        param, paramUrusSetia, paramEmp,paramEm, ptbViewResponse, ptbViewTable, ptbNoViewResponse, ptbNoViewTable, paramNo, ptbEmployeeTable, ptbEmployeeResponse, actingEmployeeListResponse, actingEmployeeList, currentRoleCode,
     };
 
 };

@@ -262,7 +262,7 @@
         taintedMessage: false,
         onSubmit() {
             _addConfirmationEmploymentSecretary(
-                Number(data.params.applicationId),
+                Number(data.params.id),
                 $employmentSecretaryDetailForm,
             );
         },
@@ -308,7 +308,7 @@
         taintedMessage: false,
         onSubmit() {
             _addConfirmationStateDirector(
-                Number(data.params.applicationId),
+                Number(data.params.id),
                 $divisionDirectorDetaiForm,
             );
         },
@@ -329,7 +329,7 @@
         taintedMessage: false,
         onSubmit() {
             _addConfirmationIntegrityDirector(
-                Number(data.params.applicationId),
+                Number(data.params.id),
                 $integrityDirectorDetailForm,
             );
         },
@@ -350,7 +350,7 @@
         taintedMessage: false,
         onSubmit() {
             _addConfirmationAuditDirector(
-                Number(data.params.applicationId),
+                Number(data.params.id),
                 $auditDirectorDetailForm,
             );
         },
@@ -371,7 +371,7 @@
         taintedMessage: false,
         onSubmit() {
             _addConfirmationMeetingResult(
-                Number(data.params.applicationId),
+                Number(data.params.id),
                 $confirmationMeetingDetailForm,
             );
         },
@@ -772,7 +772,7 @@
                     bind:val={$serviceDetailForm.firstServiceDate}
                 ></CustomTextField>
 
-                <!-- <CustomTextField
+                <CustomTextField
                     type="date"
                     disabled
                     isRequired={false}
@@ -780,9 +780,9 @@
                     label={'Mula Disahkan Perkhidmatan Semasa'}
                     placeholder="-"
                     bind:val={$serviceDetailForm.confirmDate}
-                ></CustomTextField> -->
+                ></CustomTextField>
 
-                <!-- <CustomTextField
+                <CustomTextField
                     type="date"
                     disabled
                     isRequired={false}
@@ -790,7 +790,7 @@
                     label={'Mula Disahkan Perkhidmatan Pertama'}
                     placeholder="-"
                     bind:val={$serviceDetailForm.firstConfirmServiceDate}
-                ></CustomTextField> -->
+                ></CustomTextField>
 
                 <CustomTextField
                     type="date"
@@ -890,8 +890,10 @@
                                         class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                     >
                                         <Checkbox
-                                            class="text-ios-labelColors-secondaryLabel-light"
-                                            disabled={true}
+                                            class={submitChecklist
+                                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                                : ''}
+                                            disabled={submitChecklist}
                                             bind:checked={$checklistForm.confirmationExamOneStatus}
                                         />
                                     </div>
@@ -917,8 +919,10 @@
                                         class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                     >
                                         <Checkbox
-                                            class="text-ios-labelColors-secondaryLabel-light"
-                                            disabled={true}
+                                            class={submitChecklist
+                                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                                : ''}
+                                            disabled={submitChecklist}
                                             bind:checked={$checklistForm.confirmationExamTwoStatus}
                                         />
                                     </div>
@@ -944,8 +948,10 @@
                                         class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                     >
                                         <Checkbox
-                                            class="text-ios-labelColors-secondaryLabel-light"
-                                            disabled={true}
+                                            class={submitChecklist
+                                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                                : ''}
+                                            disabled={submitChecklist}
                                             bind:checked={$checklistForm.confirmationExamThreeStatus}
                                         />
                                     </div>
@@ -968,8 +974,10 @@
                                         class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                     >
                                         <Checkbox
-                                            class="text-ios-labelColors-secondaryLabel-light"
-                                            disabled={true}
+                                            class={submitChecklist
+                                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                                : ''}
+                                            disabled={submitChecklist}
                                             bind:checked={$checklistForm.confirmationExamFourStatus}
                                         />
                                     </div>
@@ -992,8 +1000,10 @@
                                         class="flex h-9 items-center justify-center bg-ios-backgroundColors-systemBackground-light text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                     >
                                         <Checkbox
-                                            class="text-ios-labelColors-secondaryLabel-light"
-                                            disabled={true}
+                                            class={submitChecklist
+                                                ? 'text-ios-labelColors-secondaryLabel-light'
+                                                : ''}
+                                            disabled={submitChecklist}
                                             bind:checked={$checklistForm.confirmationExamFiveStatus}
                                         />
                                     </div>
@@ -1115,7 +1125,7 @@
                             $employmentSecretaryDetailForm.isDraft = false;
                         }}
                     ></TextIconButton>
-                {:else if (!data.view.confirmationInServiceView.division.isReadonly || $divisionDirectorDetailIsDraft) && (data.roles.isStateDirectorRole || data.roles.isUnitDirectorRole) && !$isTypeConfirmationExceedsThreeYears}
+                {:else if (!data.view.confirmationInServiceView.division.isReadonly || $divisionDirectorDetailIsDraft) && data.roles.isStateDirectorRole && !$isTypeConfirmationExceedsThreeYears}
                     <TextIconButton
                         type="neutral"
                         label="Simpan"
@@ -1202,7 +1212,7 @@
                                 bind:val={$employmentSecretaryDetailForm.status}
                             ></CustomRadioBoolean>
                         </form>
-                    {:else if (!data.view.confirmationInServiceView.division.isReadonly || $divisionDirectorDetailIsDraft) && (data.roles.isStateDirectorRole || data.roles.isUnitDirectorRole) && !$isTypeConfirmationExceedsThreeYears}
+                    {:else if (!data.view.confirmationInServiceView.division.isReadonly || $divisionDirectorDetailIsDraft) && data.roles.isStateDirectorRole && !$isTypeConfirmationExceedsThreeYears}
                         <form
                             id="divisionDirectorDetaiForm"
                             method="POST"
@@ -1440,7 +1450,7 @@
                 </div>
             </StepperContentBody>
         </StepperContent>
-        {#if ($auditDirectorDetailIsDraft && $integrityDirectorDetailIsDraft) || (($isReadOnlyAuditDirectorConfirmationInServiceApproval && $confirmationAuditDirectorIsApproved) || ($isTypeConfirmationExceedsThreeYears && $confirmationEmploymentSecretaryIsApproved))}
+        {#if $auditDirectorDetailIsDraft && (($isReadOnlyAuditDirectorConfirmationInServiceApproval && $confirmationAuditDirectorIsApproved) || ($isTypeConfirmationExceedsThreeYears && $confirmationEmploymentSecretaryIsApproved))}
             <StepperContent>
                 <StepperContentHeader title="Keputusan Mesyuarat">
                     {#if (!data.view.confirmationInServiceView.meeting.isReadonly || $confirmationMeetingDetailIsDraft) && data.roles.isEmploymentSecretaryRole}
@@ -1494,6 +1504,16 @@
                             <CustomTextField
                                 disabled={$isReadOnlyConfirmationInServiceMeetingResult &&
                                     !$confirmationMeetingDetailIsDraft}
+                                errors={$confirmationMeetingDetailFormErrors.confirmedPositionDate}
+                                id="confirmedPositionDate"
+                                label="Tarikh Sah Jawatan"
+                                placeholder="-"
+                                type="date"
+                                bind:val={$confirmationMeetingDetailForm.confirmedPositionDate}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled={$isReadOnlyConfirmationInServiceMeetingResult &&
+                                    !$confirmationMeetingDetailIsDraft}
                                 errors={$confirmationMeetingDetailFormErrors.meetingRemark}
                                 id="meetingRemark"
                                 label="Catatan Mesyuarat"
@@ -1510,54 +1530,40 @@
                                 options={approveOptions}
                                 bind:val={$confirmationMeetingDetailForm.meetingResult}
                             ></CustomRadioBoolean>
-                            {#if $isReadOnlyConfirmationInServiceMeetingResult && !$confirmationMeetingDetailIsDraft}
-                                <CustomTextField
-                                    disabled={true}
-                                    errors={$confirmationMeetingDetailFormErrors.confirmedPositionDate}
-                                    id="confirmedPositionDate"
-                                    label="Tarikh Pengesahan"
-                                    placeholder="-"
-                                    type="date"
-                                    bind:val={$confirmationMeetingDetailForm.confirmedPositionDate}
-                                ></CustomTextField>
-                            {/if}
-                            {#if $isTypeConfirmationExceedsThreeYears}
 
-                                {#if !$confirmationMeetingDetailForm.meetingResult}
-                                    <CustomSelectField
+                            {#if $confirmationMeetingDetailForm.meetingResult}
+                                <CustomSelectField
+                                    disabled={$isReadOnlyConfirmationInServiceMeetingResult &&
+                                        !$confirmationMeetingDetailIsDraft}
+                                    isRequired={false}
+                                    id="gradeId"
+                                    label="Keputusan"
+                                    placeholder="-"
+                                    options={commonOptions}
+                                    bind:val={$confirmationMeetingDetailForm.isContractContinued}
+                                ></CustomSelectField>
+
+                                {#if $confirmationMeetingDetailForm.isContractContinued}
+                                    <CustomTextField
+                                        type="date"
+                                        errors={$confirmationMeetingDetailFormErrors.effectiveDate}
                                         disabled={$isReadOnlyConfirmationInServiceMeetingResult &&
                                             !$confirmationMeetingDetailIsDraft}
-                                        isRequired={false}
-                                        id="gradeId"
-                                        label="Keputusan"
+                                        id="effectiveDate"
+                                        label={'Tarikh Mula Lanjutan'}
                                         placeholder="-"
-                                        options={commonOptions}
-                                        bind:val={$confirmationMeetingDetailForm.isContractContinued}
-                                    ></CustomSelectField>
-
-                                
-                                    {#if $confirmationMeetingDetailForm.isContractContinued}
-                                        <CustomTextField
-                                            type="date"
-                                            errors={$confirmationMeetingDetailFormErrors.effectiveDate}
-                                            disabled={$isReadOnlyConfirmationInServiceMeetingResult &&
-                                                !$confirmationMeetingDetailIsDraft}
-                                            id="effectiveDate"
-                                            label={'Tarikh Mula Lanjutan'}
-                                            placeholder="-"
-                                            bind:val={$confirmationMeetingDetailForm.effectiveDate}
-                                        ></CustomTextField>
-                                        <CustomTextField
-                                            type="number"
-                                            errors={$confirmationMeetingDetailFormErrors.contractMonths}
-                                            disabled={$isReadOnlyConfirmationInServiceMeetingResult &&
-                                                !$confirmationMeetingDetailIsDraft}
-                                            id="effectiveDate"
-                                            label={'Tempoh Lanjutan (Bulan)'}
-                                            placeholder="-"
-                                            bind:val={$confirmationMeetingDetailForm.contractMonths}
-                                        ></CustomTextField>
-                                    {/if}
+                                        bind:val={$confirmationMeetingDetailForm.effectiveDate}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        type="number"
+                                        errors={$confirmationMeetingDetailFormErrors.contractMonths}
+                                        disabled={$isReadOnlyConfirmationInServiceMeetingResult &&
+                                            !$confirmationMeetingDetailIsDraft}
+                                        id="effectiveDate"
+                                        label={'Tempoh Lanjutan (Bulan)'}
+                                        placeholder="-"
+                                        bind:val={$confirmationMeetingDetailForm.contractMonths}
+                                    ></CustomTextField>
                                 {/if}
                             {/if}
                         </form>
