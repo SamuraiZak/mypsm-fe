@@ -22,6 +22,7 @@
     import { zod } from 'sveltekit-superforms/adapters';
     import { Toaster } from 'svelte-french-toast';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import type { MedicalClaimAllocationList } from '$lib/dto/mypsm/perubatan/medical-claim-allocation-list.dto';
 
     export let data: PageData;
     let rowData: MedicalClinicEmployeeAllocationClaimList;
@@ -112,6 +113,60 @@
     };
     let readOnly: boolean = true;
 
+    let selectedRowData: MedicalClaimAllocationList;
+    let medicalClaimTable: TableSettingDTO = {
+        param: data.employeeParam,
+        meta: data.medicalClaimListResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 0,
+            totalPage: 1,
+        },
+        data: data.medicalClaimList ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['medicalClaimId'],
+        dictionary: [],
+        url: 'medical/employee_claim/list',
+        id: 'medicalClaimTable',
+        option: {
+            checkbox: false,
+            detail: false,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
+    };
+    let medicalClaimAllocationTable: TableSettingDTO = {
+        param: data.employeeParam,
+        meta: data.allocationListResponse.data?.meta ?? {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: data.allocationList ?? [],
+        selectedData: [],
+        exportData: [],
+        hiddenColumn: ['id'],
+        dictionary: [],
+        url: 'medical/payment/list',
+        id: 'medicalClaimAllocationTable',
+        option: {
+            checkbox: false,
+            detail: true,
+            edit: false,
+            select: false,
+            filter: false,
+        },
+        controls: {
+            add: false,
+        },
+    };
+
     const { form, enhance } = superForm(data.allocationForm, {
         SPA: true,
         taintedMessage: false,
@@ -139,6 +194,8 @@
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
     <CustomTab>
+
+        {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code}
         <CustomTabContent title="Senarai Tuntutan Kakitangan">
             <div class="flex w-full flex-col justify-start gap-2.5 p-5 pb-10">
                 <div
@@ -175,7 +232,7 @@
         </CustomTabContent>
         {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerubatan.code}
             <CustomTabContent
-                title="Senarai Kakitangan - Peruntukkan"
+                title="Senarai Kakitangan - Peruntukan"
                 paddingClass="p-none"
             >
                 <div
@@ -329,6 +386,49 @@
                     </div>
                 </div>
             </CustomTabContent>
+        {/if}
+        {:else if data.currentRoleCode == UserRoleConstant.kakitangan.code}
+        <CustomTabContent title="Tuntutan Perubatan">
+            <div class="flex w-full flex-col justify-start gap-5 p-5">
+                <div class="flex w-full items-end justify-end">
+                    <TextIconButton
+                        label="Tuntutan Baru"
+                        icon="add"
+                        onClick={() => {
+                            goto(
+                                '/v2/medical/claims-employee/baru/' +
+                                    data.currentEmployeeDetail.employeeId,
+                            );
+                        }}
+                    />
+                </div>
+                <div class="h h-fit w-full">
+                    <DataTable
+                        title="Senarai Rekod Tuntutan"
+                        bind:tableData={medicalClaimTable}
+                    >
+                    </DataTable>
+                </div>
+            </div>
+        </CustomTabContent>
+
+        <CustomTabContent title="Perkhidmatan">
+            <div class="flex w-full flex-col justify-start gap-5 p-5">
+                <div class="h h-fit w-full">
+                    <DataTable
+                        title="Senarai Baki Peruntukan Perubatan"
+                        bind:tableData={medicalClaimAllocationTable}
+                        bind:passData={rowData}
+                        detailActions={() => {
+                            goto(
+                                '/v2/medical/claims-employee/pembayaran/' +
+                                    selectedRowData.id,
+                            );
+                        }}
+                    ></DataTable>
+                </div>
+            </div>
+        </CustomTabContent>
         {/if}
     </CustomTab>
 </section>
