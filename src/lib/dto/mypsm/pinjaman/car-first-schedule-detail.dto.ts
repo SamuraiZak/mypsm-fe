@@ -12,6 +12,7 @@ export interface VehicleFirstSchedule {
     previousOwner:   string;
     previousOwnerIC: string;
     address:         string;
+    isDraft: boolean;
 }
 
 // Converts JSON strings to/from your types

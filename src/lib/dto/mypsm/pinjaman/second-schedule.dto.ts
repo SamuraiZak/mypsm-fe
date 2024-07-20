@@ -5,6 +5,7 @@ export interface SecondSchedule {
     govFund:        number;
     installment:    number;
     paymentPeriod:  number;
+    isDraft: boolean;
 }
 
 // Converts JSON strings to/from your types

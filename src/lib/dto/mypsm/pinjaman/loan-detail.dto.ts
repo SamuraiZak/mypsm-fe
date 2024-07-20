@@ -4,6 +4,7 @@ export interface loanDetail {
     requestedLoan: number;
     paymentPeriod: number;
     reason:        string;
+    isDraft: boolean;
 }
 
 // Converts JSON strings to/from your types

@@ -3,6 +3,7 @@ export interface FirstSchedule {
     purchasePrice:  number;
     balancePayment: number;
     govFund:        number;
+    isDraft: boolean;
 }
 
 // Converts JSON strings to/from your types

@@ -48,6 +48,35 @@ export class PTBKWAPServices {
             return CommonResponseConstant.httpError;
         }
     }
+    // list assign roles
+    static async getPTBKWAPEmployeeListAssignDetails(
+        param: CommonListRequestDTO,
+    ) {
+        try {
+            const url: Input = 'employment/pension_detail/assigned_list';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await promiseRes;
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
 
     // list kakitangn

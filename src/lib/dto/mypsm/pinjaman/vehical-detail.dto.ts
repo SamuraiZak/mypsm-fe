@@ -7,6 +7,7 @@ export interface vechicalDetail {
     registrationNumber: string;
     registrationDate:   string;
     nettPrice:          number;
+    isDraft: boolean;
 }
 
 // Converts JSON strings to/from your types

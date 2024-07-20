@@ -2,12 +2,14 @@
 
 export interface Supplier {
     id:        number;
+    price:     number;
     suppliers: SupplierElement[];
 }
 
 export interface SupplierElement {
     name:    string;
     address: string;
+    price:     number;
 }
 
 // Converts JSON strings to/from your types
