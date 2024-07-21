@@ -133,7 +133,7 @@ export const _createNewOfferMeetingForm = async (formData: object) => {
 
     if (response.status === 'success')
         setTimeout(() => {
-            goto(`../new-offer`);
+            goto(`../../new-offer`);
         }, 1000);
 
     return { response };
