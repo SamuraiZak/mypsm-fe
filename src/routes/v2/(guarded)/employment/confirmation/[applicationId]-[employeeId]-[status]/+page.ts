@@ -1,5 +1,4 @@
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
-import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto.js';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type {
     ConfirmationApprovalDTO,
@@ -26,8 +25,9 @@ import { superValidate } from 'sveltekit-superforms/client';
 //=============== Load Function ====================
 //==================================================
 export async function load({ params, parent }) {
-    const idRequestBody: commonIdRequestDTO = {
-        id: Number(params.id),
+    const idRequestBody: {applicationId: number, employeeId: number } = {
+        applicationId: Number(params.applicationId),
+        employeeId: Number(params.employeeId),
     };
 
     const { roles } = await parent();
@@ -495,8 +495,10 @@ export const _addConfirmationMeetingResult = async (
         formData,
         zod(_updateConfirmationMeetingResultSchema),
     );
+    
     form.data.id = id;
 
+    console.log(form)
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });

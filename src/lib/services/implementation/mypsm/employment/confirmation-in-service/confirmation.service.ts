@@ -5,7 +5,6 @@ import {
     type CommonListRequestDTO,
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
-import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import type {
     ConfirmationApprovalDTO,
     ConfirmationMeetingResultRequestDTO,
@@ -118,7 +117,7 @@ export class ConfirmationServices {
     }
 
     // get confirmation full detail
-    static async getConfirmationFullDetail(param: commonIdRequestDTO) {
+    static async getConfirmationFullDetail(param: {applicationId: number, employeeId: number }) {
         try {
             const url: Input = 'employment/confirmation/detail';
 
