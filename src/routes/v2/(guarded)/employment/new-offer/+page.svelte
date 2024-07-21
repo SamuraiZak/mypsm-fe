@@ -104,7 +104,7 @@
                 bind:tableData={newOfferMeetingBatchListTable}
                 bind:passData={rowData}
                 detailActions={() => {
-                    checkIfFail(rowData.meetingId);
+                    checkIfFail(rowData.applicationId);
                 }}
                 addActions={() => {
                     goto('./new-offer/add-new-offer');
