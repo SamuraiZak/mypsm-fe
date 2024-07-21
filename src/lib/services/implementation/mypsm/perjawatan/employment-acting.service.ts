@@ -142,6 +142,30 @@ export class EmploymentActingServices {
             return CommonResponseConstant.httpError;
         }
     }
+    //employee list for new pemangkuan (add list)
+    static async getActingEmployee41List(param: CommonListRequestDTO) {
+        try {
+            const url: Input = 'employment/acting/flexi41s/employee_list/list';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
     //add employee for pemangkuan
     static async addChosenActingEmployee(param: AddChosenActingEmployeeDTO) {

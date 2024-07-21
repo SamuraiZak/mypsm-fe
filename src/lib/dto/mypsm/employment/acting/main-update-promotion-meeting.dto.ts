@@ -1,6 +1,5 @@
 export interface UpdateMainPromotionMeeting {
     batchId:        number;
-    actingPosition: string;
     actingGrade:    string;
     placement:      string;
     meetingName:    string;

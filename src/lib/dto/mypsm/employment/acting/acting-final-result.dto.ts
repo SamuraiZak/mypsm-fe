@@ -1,6 +1,6 @@
 export interface ActingFinalResult {
     actingGrade:          string;
-    actingPosition:       string;
+    actingResult:       string;
     meetingDate:    string;
     newPlacement:   string;
     newDirector:    string;
