@@ -25,7 +25,6 @@ import type { UpdateInterviewResult } from "$lib/dto/mypsm/employment/acting/upd
 import type { PlacementMeetingDetail, PlacementResult, PromotionMeetingResult, UpdatePromotionMeeting } from "$lib/dto/mypsm/employment/acting/update-promotion-meeting.dto";
 import type { commonIdRequestDTO } from "$lib/dto/core/common/id-request.dto";
 import type { ActingDetails } from "$lib/dto/mypsm/employment/acting/acting-result.dto";
-import type { QuarterCommonApproval } from "$lib/dto/mypsm/pinjaman/kuarters/quarter-common-approval.dto";
 import type { UpdateMainPromotionMeeting } from "$lib/dto/mypsm/employment/acting/main-update-promotion-meeting.dto";
 import type { EmployeePostpone, PostponeDetailResult, PostponeResult } from "$lib/dto/mypsm/employment/acting/acting-employee-form.dto";
 import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-document-request.dto";
@@ -36,8 +35,10 @@ import type { MainActingInfo } from "$lib/dto/mypsm/employment/acting/main-actin
 import { _quarterCommonApproval } from "$lib/schemas/mypsm/quarters/quarters-schema.js";
 import type { ActingCommonApproval } from "$lib/dto/mypsm/employment/acting/acting-approval.dto.js";
 
-export const load = async ({ params }) => {
-    let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
+export const load = async ({ params, parent }) => {
+    const { layoutData } = await parent();
+
+    const currentRoleCode: string = layoutData.accountDetails.currentRoleCode
     let actingType: string = params.type;
     let commonId: commonIdRequestDTO = {
         id: Number(params.id)
@@ -136,7 +137,7 @@ export const load = async ({ params }) => {
             updateMeetingDetailForm.data.grade = interviewGeneral?.meeting?.grade;
             updateMeetingDetailForm.data.meetingName = interviewGeneral?.meeting?.meetingName;
             updateMeetingDetailForm.data.meetingDate = interviewGeneral?.meeting?.meetingDate;
-            updateMeetingDetailForm.data.position = interviewGeneral?.meeting?.position;
+            // updateMeetingDetailForm.data.position = interviewGeneral?.meeting?.position;
             updateMeetingDetailForm.data.interviewDate = interviewGeneral?.interview?.interviewDate;
             updateMeetingDetailForm.data.interviewTime = interviewGeneral?.interview?.interviewTime;
             updateMeetingDetailForm.data.state = interviewGeneral?.interview?.state;
@@ -161,10 +162,10 @@ export const load = async ({ params }) => {
             await EmploymentActingServices.getPlacementMeetingResultDetail(commonId);
         placementMeetingDetail =
             placementMeetingDetailResponse.data?.details as PlacementMeetingDetail;
+            console.log(placementMeetingDetailResponse)
         if (placementMeetingDetail.meetingName !== null) {
             updatePlacementMeeting.data = placementMeetingDetail;
         }
-
         promotionMeetingResponse =
             await EmploymentActingServices.getPromotionMeetingResult(chosenEmployeeParam);
         promotionMeetingResult =
@@ -368,14 +369,14 @@ export const _submitDirectorResultForm = async (formData: ActingCommonApproval) 
         return { response }
     }
 };
-export const _submitIntegrityResultForm = async (formData: QuarterCommonApproval) => {
+export const _submitIntegrityResultForm = async (formData: ActingCommonApproval) => {
     const form = await superValidate(
         formData,
         zod(_actingApprovalSchema),
     );
     if (form.valid) {
         const response: CommonResponseDTO =
-            await EmploymentActingServices.updateIntegrityApproval(form.data as QuarterCommonApproval)
+            await EmploymentActingServices.updateIntegrityApproval(form.data as ActingCommonApproval)
 
         return { response }
     }
@@ -466,26 +467,26 @@ export const _submitUpdateActingResultForm = async (formData: ActingDetails) => 
         return { response }
     }
 }
-export const _submitSupporterResultForm = async (formData: QuarterCommonApproval) => {
+export const _submitSupporterResultForm = async (formData: ActingCommonApproval) => {
     const form = await superValidate(
         formData,
         zod(_actingApprovalSchema),
     );
     if (form.valid) {
         const response: CommonResponseDTO =
-            await EmploymentActingServices.addSupporterApproval(form.data as QuarterCommonApproval)
+            await EmploymentActingServices.addSupporterApproval(form.data as ActingCommonApproval)
 
         return { response }
     }
 }
-export const _submitApproverResultForm = async (formData: QuarterCommonApproval) => {
+export const _submitApproverResultForm = async (formData: ActingCommonApproval) => {
     const form = await superValidate(
         formData,
         zod(_actingApprovalSchema),
     );
     if (form.valid) {
         const response: CommonResponseDTO =
-            await EmploymentActingServices.addApproverApproval(form.data as QuarterCommonApproval)
+            await EmploymentActingServices.addApproverApproval(form.data as ActingCommonApproval)
 
         return { response }
     }
@@ -540,26 +541,26 @@ export const _submitMainMeetingDetail = async (formData: MainActingDetailEdit) =
         return { response }
     }
 }
-export const _submitMainSupporter = async (formData: QuarterCommonApproval) => {
+export const _submitMainSupporter = async (formData: ActingCommonApproval) => {
     const form = await superValidate(
         formData,
         zod(_quarterCommonApproval),
     );
     if (form.valid) {
         const response: CommonResponseDTO =
-            await EmploymentActingServices.addMainActingSupporter(form.data as QuarterCommonApproval)
+            await EmploymentActingServices.addMainActingSupporter(form.data as ActingCommonApproval)
 
         return { response }
     }
 }
-export const _submitMainApprover = async (formData: QuarterCommonApproval) => {
+export const _submitMainApprover = async (formData: ActingCommonApproval) => {
     const form = await superValidate(
         formData,
         zod(_quarterCommonApproval),
     );
     if (form.valid) {
         const response: CommonResponseDTO =
-            await EmploymentActingServices.addMainActingApprover(form.data as QuarterCommonApproval)
+            await EmploymentActingServices.addMainActingApprover(form.data as ActingCommonApproval)
 
         return { response }
     }
@@ -709,7 +710,7 @@ const getLookup = async () => {
         await LookupServices.getServiceGradeEnums();
 
     const gradeLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsBothAreCode(gradeLookupResponse);
+        LookupServices.setSelectOptionsActingGrade(gradeLookupResponse);
     // -------------------------------------------------------
     const stateLookupResponse: CommonResponseDTO =
         await LookupServices.getStateEnums();

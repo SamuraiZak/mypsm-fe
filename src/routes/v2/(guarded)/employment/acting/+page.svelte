@@ -178,7 +178,7 @@
                         bind:passData={rowData}
                         detailActions={() => {
                             goto(
-                                '/v2/acting/butiran/' +
+                                '/v2/employment/acting/butiran/' +
                                     rowData.batchId +
                                     '-' +
                                     '1-54',
@@ -197,7 +197,7 @@
                         bind:passData={rowData}
                         detailActions={() => {
                             goto(
-                                '/v2/acting/butiran/' +
+                                '/v2/employment/acting/butiran/' +
                                     rowData.batchId +
                                     '-' +
                                     'Flexi 41',
@@ -217,7 +217,7 @@
                         bind:passData={rowData}
                         detailActions={() => {
                             goto(
-                                '/v2/acting/butiran/' +
+                                '/v2/employment/acting/butiran/' +
                                     rowData.batchId +
                                     '-' +
                                     'Utama',
@@ -237,7 +237,7 @@
                     bind:passData={employeeRowData}
                     detailActions={() => {
                         goto(
-                            '/v2/acting/butiran/' +
+                            '/v2/employment/acting/butiran/' +
                                 employeeRowData.actingId +
                                 '-' +
                                 employeeRowData.actingType,

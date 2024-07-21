@@ -3,7 +3,6 @@ import type { QuarterDocument } from "../../pinjaman/kuarters/application-get-do
 export interface UpdateActingInterview {
     batchId:       number;
     grade:         string;
-    position:      string;
     meetingName:   string;
     meetingDate:   string;
     state:         string;

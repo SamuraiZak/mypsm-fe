@@ -1296,4 +1296,12 @@ export class LookupServices {
         const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
         return LookupHelper.toDropdownCodeAndDesc(lookupItems);
     };
+
+    static setSelectOptionsActingGrade = (
+        param: CommonResponseDTO,
+    ): DropdownDTO[] => {
+        const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
+        return LookupHelper.toDropdownValueIsCodeAndDesc(lookupItems);
+    };
+
 }

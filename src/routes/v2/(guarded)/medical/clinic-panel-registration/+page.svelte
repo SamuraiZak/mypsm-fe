@@ -30,6 +30,11 @@
                 english: 'description',
                 malay: 'Nama',
             },
+            {
+                english: 'duration',
+                malay: 'Tempoh Masa (Tahun)',
+            },
+
         ],
         url: 'medical/clinic/list',
         id: 'clinicApplication',

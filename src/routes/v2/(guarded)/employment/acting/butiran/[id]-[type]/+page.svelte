@@ -164,6 +164,10 @@
                 english: 'programme',
                 malay: 'Program',
             },
+            {
+                english: 'hireDate',
+                malay: 'Tarikh Lantikan Perkhidmatan',
+            },
         ],
         url: 'employment/acting/chosen_employee_lists/list',
         id: 'chosenEmployeeTable',
@@ -200,6 +204,10 @@
             {
                 english: 'programme',
                 malay: 'Program',
+            },
+            {
+                english: 'hireDate',
+                malay: 'Tarikh Lantikan Perkhidmatan',
             },
         ],
         url: 'employment/acting/chosen_employee_lists/list',
@@ -665,7 +673,7 @@
         validators: zod(_actingApprovalSchema),
         onSubmit() {
             $directorResultForm.id = selectedCandidate.actingId;
-            $directorResultForm.directorCertifiedDate = undefined;
+            // $directorResultForm.directorCertifiedDate = undefined;
             _submitDirectorResultForm($directorResultForm).then((res) => {
                 if (res?.response.status == 'success') {
                     directorApproved = true;
@@ -816,7 +824,7 @@
             );
         },
     });
-    if ($updatePlacementMeeting.meetingDate !== undefined) {
+    if ($updatePlacementMeeting?.meetingDate !== undefined) {
         updatedPlacementMeeting = true;
     }
 
@@ -865,7 +873,6 @@
         validators: zod(_updateActingResultSchema),
         onSubmit() {
             if ($updateActingResultForm.actingResult == 'Tidak Berjaya') {
-                $updateActingResultForm.actingPosition = null;
                 $updateActingResultForm.actingGrade = null;
                 $updateActingResultForm.newPlacement = null;
                 $updateActingResultForm.reportDate = null;
@@ -897,6 +904,7 @@
         validators: zod(_actingApprovalSchema),
         onSubmit() {
             $supporterResultForm.id = selectedCandidate.actingId;
+            
             _submitSupporterResultForm($supporterResultForm).then((res) => {
                 if (res?.response.status == 'success') {
                     supporterApproval.supportedDate =
@@ -1228,8 +1236,6 @@
                                     employeeActingResult.actingDetails?.actingId;
                                 $updateActingResultForm.actingResult =
                                     employeeActingResult.actingDetails?.actingResult;
-                                $updateActingResultForm.actingPosition =
-                                    employeeActingResult.actingDetails?.actingPosition;
                                 $updateActingResultForm.actingGrade =
                                     employeeActingResult.actingDetails?.actingGrade;
                                 $updateActingResultForm.newPlacement =
@@ -1450,7 +1456,7 @@
             icon="cancel"
             type="neutral"
             label="Tutup"
-            onClick={() => goto('/perjawatan/pemangkuan')}
+            onClick={() => goto('/v2/employment/acting')}
         />
     </ContentHeader>
 </section>
@@ -2073,11 +2079,13 @@
                                     <ContentHeader
                                         title="Urus Setia Integriti"
                                         borderClass="border-none"
+                                        titlePadding={false}
                                     />
                                     <CustomTextField
                                         label="Tindakan/Ulasan"
                                         id="remark"
                                         isRequired={false}
+                                        type="textarea"
                                         placeholder="Menunggu keputusan daripada Urus Setia Integriti..."
                                         disabled={integrityApproved}
                                         bind:val={$integrityResultForm.remark}
@@ -2091,6 +2099,16 @@
                                         bind:val={$integrityResultForm.status}
                                         errors={$integrityResultError.status}
                                     />
+                                    {#if integrityApproved}
+                                    <CustomTextField
+                                        label="Tarikh"
+                                        id="dateApproved"
+                                        isRequired={false}
+                                        placeholder={new Date().toISOString().split('T')[0]}
+                                        disabled
+                                        bind:val={$integrityResultForm.date}
+                                    />
+                                    {/if}
                                 </form>
                                 <form
                                     class="flex w-full flex-col justify-start gap-2.5 p-3"
@@ -2101,11 +2119,13 @@
                                     <ContentHeader
                                         title="Pengarah Bahagian/Negeri"
                                         borderClass="border-none"
+                                        titlePadding={false}
                                     />
                                     <CustomTextField
                                         label="Tindakan/Ulasan"
                                         id="remark"
                                         isRequired={false}
+                                        type="textarea"
                                         placeholder="Menunggu keputusan daripada Pengarah Bahagian/Negeri..."
                                         disabled={directorApproved}
                                         errors={$directorResultError.remark}
@@ -2122,11 +2142,11 @@
                                     {#if directorApproved}
                                     <CustomTextField
                                         label="Tarikh"
-                                        id="directorCertifiedDate"
+                                        id="dateApproved"
                                         isRequired={false}
                                         placeholder={new Date().toISOString().split('T')[0]}
                                         disabled
-                                        bind:val={$directorResultForm.directorCertifiedDate}
+                                        bind:val={$directorResultForm.date}
                                     />
                                     {/if}
                                 </form>
@@ -2142,6 +2162,7 @@
                                 <ContentHeader
                                     title="Maklumat Peraku Keputusan Mesyuarat"
                                     borderClass="border-none"
+                                    titlePadding={false}
                                 />
                                 <CustomSelectField
                                     disabled={false}
@@ -2228,6 +2249,7 @@
                             <ContentHeader
                                 title="Butiran Tawaran dan Temuduga"
                                 borderClass="border-none"
+                                titlePadding={false}
                             />
                             <CustomSelectField
                                 label="Nama Mesyuarat"
@@ -2252,14 +2274,6 @@
                                 errors={$updateMeetingDetailErrors.grade}
                                 options={data.lookup.gradeLookup}
                                 bind:val={$updateMeetingDetailForm.grade}
-                            />
-                            <CustomSelectField
-                                label="Jawatan"
-                                id="position"
-                                disabled={meetingDetailExist}
-                                errors={$updateMeetingDetailErrors.position}
-                                options={data.lookup.positionLookup}
-                                bind:val={$updateMeetingDetailForm.position}
                             />
                             <CustomTextField
                                 label="Tarikh Temuduga"
@@ -2391,15 +2405,7 @@
                                     errors={$updatePromotionMeetingError.meetingDate}
                                 />
                                 <CustomSelectField
-                                    label="Jawatan Pemangkuan"
-                                    id="actingPosition"
-                                    disabled={updatedPromotionMeeting}
-                                    options={data.lookup.positionLookup}
-                                    bind:val={$updatePromotionMeetingForm.actingPosition}
-                                    errors={$updatePromotionMeetingError.actingPosition}
-                                />
-                                <CustomSelectField
-                                    label="Gred Pemangkuan"
+                                    label="Gred dan Jawatan Pemangkuan"
                                     id="actingGrade"
                                     disabled={updatedPromotionMeeting}
                                     options={data.lookup.gradeLookup}
@@ -2440,6 +2446,7 @@
                                 <CustomTextField
                                     label="No. Pekerja"
                                     disabled
+                                    isRequired={false}
                                     id="employeeNumber"
                                     bind:val={employeePromotionDetail.candidate
                                         .employeeNumber}
@@ -2447,6 +2454,7 @@
                                 <CustomTextField
                                     label="Nama Kakitangan"
                                     disabled
+                                    isRequired={false}
                                     id="employeeName"
                                     bind:val={employeePromotionDetail.candidate
                                         .employeeName}
@@ -2454,6 +2462,7 @@
                                 <CustomTextField
                                     label="No. Kad Pengenalan"
                                     disabled
+                                    isRequired={false}
                                     id="ICNumber"
                                     bind:val={employeePromotionDetail.candidate
                                         .ICNumber}
@@ -2461,6 +2470,7 @@
                                 <ContentHeader
                                     title="Keputusan Mesyuarat"
                                     borderClass="border-none"
+                                    titlePadding={false}
                                 />
                                 <CustomSelectField
                                     label="Keputusan"
@@ -2564,24 +2574,28 @@
                                 <CustomTextField
                                     label="No. Pekerja"
                                     disabled
+                                    isRequired={false}
                                     id="employeeNumber"
                                     val={selectedCandidate?.employeeNumber}
                                 />
                                 <CustomTextField
                                     label="Nama Kakitangan"
                                     disabled
+                                    isRequired={false}
                                     id="employeeName"
                                     val={selectedCandidate?.employeeName}
                                 />
                                 <CustomTextField
                                     label="No. Kad Pengenalan"
                                     disabled
+                                    isRequired={false}
                                     id="ICNumber"
                                     val={selectedCandidate?.ICNumber}
                                 />
                                 <ContentHeader
                                     title="Keputusan Mesyuarat"
                                     borderClass="border-none"
+                                    titlePadding={false}
                                 />
                                 <CustomSelectField
                                     label="Keputusan"
@@ -2705,6 +2719,7 @@
                                 <CustomTextField
                                     label="Kakitangan Memerlukan Penangguhan/Pindaan Penempatan?"
                                     disabled
+                                    isRequired={false}
                                     id="postponeNeeded"
                                     val={employeePostponeDetail?.postponeNeeded}
                                 />
@@ -2736,6 +2751,7 @@
                                     <CustomTextField
                                         label="Tarikh Asal Lapor Diri"
                                         disabled
+                                        isRequired={false}
                                         id="initialReportDate"
                                         type="date"
                                         val={employeePostponeDetail?.initialReportDate}
@@ -2743,12 +2759,14 @@
                                     <CustomTextField
                                         label="Penempatan Asal"
                                         disabled
+                                        isRequired={false}
                                         id="initialPlacement"
                                         val={employeePostponeDetail?.initialPlacement}
                                     />
                                     <CustomTextField
                                         label="Tarikh Lapor Diri Baru Dipohon"
                                         disabled
+                                        isRequired={false}
                                         id="requestedReportDate"
                                         type="date"
                                         val={employeePostponeDetail?.requestedReportDate}
@@ -2756,6 +2774,7 @@
                                     <CustomTextField
                                         label="Pindaan Penempatan Dipohon"
                                         disabled
+                                        isRequired={false}
                                         id="requestedPlacement"
                                         val={employeePostponeDetail?.requestedPlacement}
                                     />
@@ -2942,16 +2961,7 @@
                                     />
                                     {#if $updateActingResultForm.actingResult == 'Berjaya'}
                                         <CustomSelectField
-                                            label="Jawatan Pemangkuan"
-                                            id="actingPosition"
-                                            disabled={suppAppExist}
-                                            isRequired={!suppAppExist}
-                                            options={data.lookup.positionLookup}
-                                            errors={$updateActingResultError.actingPosition}
-                                            bind:val={$updateActingResultForm.actingPosition}
-                                        />
-                                        <CustomSelectField
-                                            label="Gred Pemangkuan"
+                                            label="Gred dan Jawatan Pemangkuan"
                                             id="actingGrade"
                                             disabled={suppAppExist}
                                             isRequired={!suppAppExist}
@@ -3342,20 +3352,15 @@
                                 label="Gred"
                                 placeholder=""
                                 disabled
+                                isRequired={false}
                                 id="grade"
                                 val={data.employeeMeetingDetail?.grade}
-                            />
-                            <CustomTextField
-                                label="Jawatan"
-                                placeholder=""
-                                disabled
-                                id="position"
-                                val={data.employeeMeetingDetail?.position}
                             />
                             <CustomTextField
                                 label="Tarikh Berkuatkuasa"
                                 placeholder=""
                                 disabled
+                                isRequired={false}
                                 id="date"
                                 val={data.employeeMeetingDetail?.date}
                             />
@@ -3363,6 +3368,7 @@
                                 label="Penempatan Baru"
                                 placeholder=""
                                 disabled
+                                isRequired={false}
                                 id="newPlacement"
                                 val={data.employeeMeetingDetail?.newPlacement}
                             />
@@ -3467,10 +3473,12 @@
                                 <ContentHeader
                                     title="Keputusan Mesyuarat"
                                     borderClass="border-none"
+                                    titlePadding={false}
                                 />
                                 <CustomTextField
                                     label="Keputusan"
                                     disabled
+                                    isRequired={false}
                                     placeholder="Menunggu keputusan daripada pihak yang berkenaan..."
                                     id="meetingResult"
                                     val={data.employeePostponeResult
@@ -3479,6 +3487,7 @@
                                 <CustomTextField
                                     label="Kelulusan Pindaan Penempatan Dipohon"
                                     disabled
+                                    isRequired={false}
                                     placeholder="Menunggu keputusan daripada pihak yang berkenaan..."
                                     id="postponeApproval"
                                     val={data.employeePostponeResult
@@ -3487,6 +3496,7 @@
                                 <CustomTextField
                                     label="Kelulusan Tarikh Lapor Diri Baru"
                                     disabled
+                                    isRequired={false}
                                     placeholder="Menunggu keputusan daripada pihak yang berkenaan..."
                                     id="newReportDate"
                                     val={data.employeePostponeResult

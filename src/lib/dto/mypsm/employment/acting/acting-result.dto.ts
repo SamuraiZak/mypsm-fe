@@ -8,7 +8,6 @@ export interface ActingDetails {
     actingId?:       number;
     id?:            number;
     actingResult:   string;
-    actingPosition: string | null;
     actingGrade:    string | null;
     newPlacement:   string | null;
     reportDate:     string | null;
