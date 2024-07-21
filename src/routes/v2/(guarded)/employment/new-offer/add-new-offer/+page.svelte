@@ -130,6 +130,12 @@
             header: false,
         },
     };
+
+    $: {
+        includedEmployeesListTable.data =
+            (newOfferMeetingBatchListTable.selectedData as CommonEmployeeDTO[]) ??
+            [];
+    }
 </script>
 
 <!-- content header starts here -->
