@@ -13,13 +13,14 @@ export const _meetingResultEmployeeSchema = z.object({
     employeeName: z.string(),
     remarks: z.string(),
     status: z.boolean(),
-    approvalDate: z.string().readonly(),
+    approvalDate: z.string().readonly().nullable(),
 });
 
 export const _approverSchema = z.object({
-    id: z.number(),
-    name: z.string(),
-    results: z.array(_meetingResultEmployeeSchema),
+    id: z.number().readonly(),
+    name: z.string().readonly(),
+    identityDocumentNumber: z.string().readonly(),
+    employees: z.array(_meetingResultEmployeeSchema),
     isReadonly: z.boolean().readonly(),
     isDraft: z.boolean(),
 });
@@ -88,32 +89,32 @@ export const _processEmployeeSchema = z.object({
     employeeName: z.string().readonly(),
     gradeId: numberIdSchema,
     maxGradeId: numberIdSchema,
-    positionId: numberIdSchema,
+    // positionId: numberIdSchema,
     placementId: numberIdSchema,
     serviceTypeId: numberIdSchema.default(2),
     serviceGroupId: numberIdSchema,
     unitId: numberIdSchema,
-    employmentStatusId: numberIdSchema,
-    effectiveDate: dateStringSchema,
+    // employmentStatusId: numberIdSchema,
+    effectiveDate: dateStringSchema, //
     retirementBenefit: codeSchema,
     epfNumber: numberToStringSchema,
     socsoNumber: numberToStringSchema,
     incomeNumber: numberToStringSchema,
-    bankName: numberToStringSchema,
+    bankName: numberIdSchema,
     bankAccount: numberToStringSchema,
-    eligibleLeaveCount: numberSchema,
-    civilServiceStartDate: dateStringSchema,
-    newRecruitEffectiveDate: dateStringSchema,
-    serviceDate: dateStringSchema,
-    firstServiceDate: dateStringSchema,
-    firstConfirmServiceDate: dateStringSchema,
-    firstEffectiveDate: dateStringSchema,
-    firstEffectiveServiceDate: dateStringSchema,
-    confirmServiceDate: dateStringSchema,
-    confirmDate: dateStringSchema,
+    // eligibleLeaveCount: numberSchema,
+    civilServiceStartDate: dateStringSchema, //
+    // newRecruitEffectiveDate: dateStringSchema,
+    serviceDate: dateStringSchema, //
+    // firstServiceDate: dateStringSchema,
+    // firstConfirmServiceDate: dateStringSchema,
+    // firstEffectiveDate: dateStringSchema,
+    // firstEffectiveServiceDate: dateStringSchema,
+    // confirmServiceDate: dateStringSchema,
+    // confirmDate: dateStringSchema,
     pensionNumber: z.string().nullish(),
     kgt: numberSchema,
-    retirementDate: dateStringSchema,
+    // retirementDate: dateStringSchema,
     revisionMonth: codeSchema,
     maximumSalary: numberSchema,
     baseSalary: numberSchema,
@@ -138,7 +139,7 @@ export const _supporterApproverSchema = z.object({
 export const _setSupporterApproverSchema = _supporterApproverSchema
     .omit({ isReadonly: true })
     .extend({
-        meetingId: z.number().readonly(),
+        applicationId: z.number().readonly(),
     });
 
 export const _createSupporterApproverSchema = _supporterApproverSchema
@@ -166,8 +167,9 @@ export const _meetingResultSchema = z.object({
 });
 
 export const _updateMeetingResultSchema = z.object({
-    meetingId: z.number().readonly(),
+    applicationId: z.number().readonly(),
     employees: z.array(_meetingResultEmployeeSchema),
+    isDraft: z.boolean(),
 });
 
 export const _processSchema = z.object({
@@ -177,8 +179,9 @@ export const _processSchema = z.object({
 });
 
 export const _updateProcessSchema = z.object({
-    meetingId: z.number().readonly(),
+    applicationId: z.number().readonly(),
     employees: z.array(_processEmployeeSchema),
+    isDraft: z.boolean(),
 });
 
 export const _newOfferFullDetailSchemaSchema = z.object({
