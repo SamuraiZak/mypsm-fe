@@ -13,8 +13,10 @@ import { EmploymentPromotionServices } from '$lib/services/implementation/mypsm/
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export const load = async ({ params }) => {
-    let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
+export const load = async ({ params, parent}) => {
+    const { layoutData } = await parent();
+
+    const currentRoleCode: string = layoutData.accountDetails.currentRoleCode
     let promotionType: string = params.type;
     let currentId: PromotionGroupID = {
         groupId: 0,
