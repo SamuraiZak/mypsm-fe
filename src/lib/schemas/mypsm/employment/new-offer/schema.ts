@@ -30,6 +30,7 @@ export const _setApproverResultSchema = _approverSchema.omit({
 });
 
 export const _createMeetingBatchSchema = z.object({
+    applicationId: z.number().nullable(),
     meetingGroupName: codeSchema,
     meetingDate: requiredDateStringSchema,
     employees: z.array(z.object({ employeeId: z.number() })),
@@ -37,6 +38,7 @@ export const _createMeetingBatchSchema = z.object({
 });
 
 export const _newOfferMeetingListSchema = z.object({
+    applicationId: z.number().readonly(),
     meetingId: z.number().readonly(),
     meetingNo: z.number().readonly(),
     totalEmployee: z.string().readonly(),
