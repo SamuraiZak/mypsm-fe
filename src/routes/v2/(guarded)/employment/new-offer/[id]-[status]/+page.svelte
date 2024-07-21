@@ -1277,7 +1277,7 @@
                         title="Keputusan Pengesahan Dalam Perhidmatan Daripada Peranan - Peranan Bertanggungjawab"
                     >
                         {#if (!data.view.newOfferDetailView.supporter.isReadonly || $newOfferSupporterResultIsDraft) && data.roles.isSupporterRole}
-                            <!-- {#if data.roles.layoutData.accountDetails.identityDocumentNumber === data.view.newOfferDetailView.supporter.identityDocumentNumber} -->
+                            {#if data.roles.layoutData.accountDetails.identityDocumentNumber === data.view.newOfferDetailView.supporter.identityDocumentNumber}
                                 <TextIconButton
                                     type="neutral"
                                     label="Simpan"
@@ -1294,7 +1294,7 @@
                                         $newOfferSupporterResultForm.isDraft = false;
                                     }}
                                 ></TextIconButton>
-                            <!-- {/if} -->
+                            {/if}
                         {:else if (!data.view.newOfferDetailView.approver.isReadonly || $newOfferApproverResultIsDraft) && data.roles.isApproverRole}
                             {#if data.roles.layoutData.accountDetails.identityDocumentNumber === data.view.newOfferDetailView.approver.identityDocumentNumber}
                                 <TextIconButton
@@ -1319,7 +1319,7 @@
                     <StepperContentBody>
                         <div class="flex w-full flex-col gap-2.5">
                             {#if (!data.view.newOfferDetailView.supporter.isReadonly || $newOfferSupporterResultIsDraft) && data.roles.isSupporterRole}
-                                <!-- {#if data.roles.layoutData.accountDetails.identityDocumentNumber === data.view.newOfferDetailView.supporter.identityDocumentNumber} -->
+                                {#if data.roles.layoutData.accountDetails.identityDocumentNumber === data.view.newOfferDetailView.supporter.identityDocumentNumber}
                                     <form
                                         id="newOfferSupporterResultForm"
                                         method="POST"
@@ -1373,7 +1373,7 @@
                                             ></CustomRadioBoolean>
                                         {/each}
                                     </form>
-                                <!-- {/if} -->
+                                {/if}
                             {:else if (!data.view.newOfferDetailView.approver.isReadonly || $newOfferApproverResultIsDraft) && data.roles.isApproverRole}
                                 {#if data.roles.layoutData.accountDetails.identityDocumentNumber === data.view.newOfferDetailView.approver.identityDocumentNumber}
                                     <form
