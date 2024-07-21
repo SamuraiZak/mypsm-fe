@@ -7,6 +7,7 @@ import type {
     _includedEmployeeEmployeeSchema,
     _includedEmployeeSchema,
     _meetingResultEmployeeSchema,
+    _meetingResultSchema,
     _newOfferFullDetailSchemaSchema,
     _newOfferMeetingListSchema,
     _processEmployeeSchema,
@@ -52,6 +53,9 @@ export type NewOfferFullDetailDTO = z.infer<
 
 export type NewOfferMeetingRequestDTO = z.infer<
     typeof _createMeetingBatchSchema
+>;
+export type NewOfferMeetingDTO = z.infer<
+    typeof _meetingResultSchema
 >;
 export type NewOfferProcessRequestDTO = z.infer<typeof _updateProcessSchema>;
 
