@@ -299,7 +299,7 @@ export async function load({ params }) {
         await LookupServices.getServiceGradeEnums();
 
     const gradeLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsNameIsCode(gradeLookupResponse);
+        LookupServices.setSelectOptionCode(gradeLookupResponse);
 
     // ===========================================================================
 
@@ -348,12 +348,12 @@ export async function load({ params }) {
 
     // ===========================================================================
 
-    const employmentStatusLookupResponse: CommonResponseDTO =
-        await LookupServices.getEmploymentStatusEnums();
+    // const employmentStatusLookupResponse: CommonResponseDTO =
+    //     await LookupServices.getEmploymentStatusEnums();
 
-    const employmentStatusLookup: DropdownDTO[] =
-        LookupServices.setSelectOptions(employmentStatusLookupResponse);
-    // ===========================================================================
+    // const employmentStatusLookup: DropdownDTO[] =
+    //     LookupServices.setSelectOptions(employmentStatusLookupResponse);
+    // // ===========================================================================
 
     const bankLookupResponse: CommonResponseDTO =
         await LookupServices.getBankEnums();
@@ -447,7 +447,7 @@ export async function load({ params }) {
             retirementBenefitLookup,
             generalMeetingLookup,
             sentencingMonthLookup,
-            employmentStatusLookup,
+            // employmentStatusLookup,
             employeesListLookup,
         },
     };
@@ -458,7 +458,7 @@ export const _updateNewOfferMeetingResultForm = async (
     formData: object,
 ) => {
     const form = await superValidate(formData, zod(_updateMeetingResultSchema));
-    form.data.meetingId = id;
+    form.data.applicationId = id;
 
     console.log(form);
     if (!form.valid) {
@@ -479,7 +479,7 @@ export const _updateNewOfferProcessForm = async (
     formData: object,
 ) => {
     const form = await superValidate(formData, zod(_updateProcessSchema));
-    form.data.meetingId = id;
+    form.data.applicationId = id;
 
     console.log(form);
     if (!form.valid) {
@@ -503,7 +503,7 @@ export const _setNewOfferSupporterApproverForm = async (
         formData,
         zod(_setSupporterApproverSchema),
     );
-    form.data.meetingId = id;
+    form.data.applicationId = id;
 
     console.log(form);
     if (!form.valid) {
