@@ -38,7 +38,6 @@ export const _updateChosenCandidate = z.object({
 export const _updateMeetingDetailSchema = z.object({
     batchId: z.number(),
     grade: z.string().min(1, {message: "Ruangan ini tidak boleh kosong."}),
-    position: shortTextSchema,
     meetingName: shortTextSchema,
     meetingDate: stringToMaxDate,
     state: shortTextSchema,
@@ -54,7 +53,6 @@ export const _updateMeetingResult = z.object({
 
 export const _updatePromotionDetail = z.object({
     batchId: z.number(),
-    actingPosition: shortTextSchema,
     actingGrade: z.string().min(1, {message: "Ruangan ini tidak boleh kosong."}),
     meetingName: shortTextSchema,
     meetingDate: stringToMaxDate,
@@ -83,7 +81,6 @@ export const _updateActingResultSchema = z.object({
     id: z.number().optional(),
     actingId: z.number().optional(),
     actingResult: shortTextSchema,
-    actingPosition: shortTextSchema.nullable().default(null),
     actingGrade: z.string().min(1, {message: "Ruangan ini tidak boleh kosong."}).nullish().default(null),
     newPlacement: shortTextSchema.nullish().default(null),
     reportDate: stringToMinDate.nullish().default(null),
@@ -96,7 +93,7 @@ export const _actingApprovalSchema = z.object({
     id: z.number(),
     remark: shortTextSchema,
     status: booleanSchema,
-    directorCertifiedDate: z.string().default("").optional(),
+    date: z.string().default("").optional(),
 })
 
 export const _postponeDetailSchema = z.object({

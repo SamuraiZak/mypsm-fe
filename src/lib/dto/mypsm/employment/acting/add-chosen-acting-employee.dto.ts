@@ -1,6 +1,7 @@
 export interface AddChosenActingEmployeeDTO {
     employeeIds: number[];
     actingType:  string;
+    grade: string;
 }
 
 // Converts JSON strings to/from your types
