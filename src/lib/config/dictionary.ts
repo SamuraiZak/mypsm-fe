@@ -327,7 +327,7 @@ const dictionary: { [key: string]: string } = {
     integritySecretariatCertification: 'Perakuan Urus Setia Integriti',
     districtOrStateDirectorCertification: 'Perakuan Pengarah Bahagian / Negeri',
     enforcedDate: 'Tarikh Kuatkuasa',
-    currentSalary: 'Gaji Semasa',
+    currentSalary: 'Gaji Semasa (RM)',
     newSalary: 'Gaji Baru (RM)',
     remarks: 'Catatan',
     secretariatConfirmation: 'Pengesahan Urus Setia',
