@@ -33,7 +33,7 @@
                 ?.dataList as NewOfferMeetingListResponseDTO[]) ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['meetingId'],
+        hiddenColumn: ['applicationId'],
         dictionary: [
             {
                 english: 'meetingNo',
@@ -58,7 +58,7 @@
         },
     };
 
-    const checkIfFail = async (id: number) => {
+    const checkIfFail = async (id: number, status: string) => {
         const idRequestBody: commonIdRequestDTO = {
             id: Number(id),
         };
@@ -79,7 +79,7 @@
         if (rowData.status === 'Draf') {
             route = `./new-offer/add-new-offer/edit-new-batch-${id}`;
         } else {
-            route = `./new-offer/${id}`;
+            route = `./new-offer/${id}-${status}`;
         }
         goto(route);
     };
@@ -104,7 +104,7 @@
                 bind:tableData={newOfferMeetingBatchListTable}
                 bind:passData={rowData}
                 detailActions={() => {
-                    checkIfFail(rowData.applicationId);
+                    checkIfFail(rowData.applicationId, rowData.status);
                 }}
                 addActions={() => {
                     goto('./new-offer/add-new-offer');
