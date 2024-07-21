@@ -2,6 +2,7 @@ import { goto } from '$app/navigation';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
 import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { NewOfferMeetingRequestDTO } from '$lib/dto/mypsm/employment/new-offer/new-offer-request-response.dto';
@@ -62,30 +63,26 @@ export const load = async ({ params, parent }) => {
     // List
     const employeesListResponse = await EmployeeServices.getEmployeeList(param);
 
-    const selectedEmployees: number[] =
-        newOfferMeetingDetailResponse.data?.details.includedEmployee.employees
-            .filter((selectedStaff: { employeeNumber: string }) => {
-                return employeesListResponse.data?.dataList?.some((staff) => {
-                    return (
-                        staff.employeeNumber === selectedStaff.employeeNumber
-                    );
-                });
-            })
-            .map(
-                (selectedStaff: { employeeNumber: string }) =>
-                    selectedStaff.employeeNumber,
-            );
-
-    console.log(
-        newOfferMeetingDetailResponse.data?.details.includedEmployee.employees,
-        selectedEmployees,
-    );
+    const selectedEmployees: CommonEmployeeDTO[] =
+        newOfferMeetingDetailResponse.data?.details.includedEmployee.employees;
 
     // Superform
     const newOfferMeetingDetailForm = await superValidate(
+        newOfferMeetingDetailResponse.data?.details.meetingResult,
         zod(_createMeetingBatchSchema),
         { errors: false },
     );
+
+    newOfferMeetingDetailForm.data.applicationId = Number(params.id);
+
+    newOfferMeetingDetailForm.data.meetingGroupName =
+        newOfferMeetingDetailResponse.data?.details.meetingResult.meetingName;
+
+    newOfferMeetingDetailForm.data.employees = (
+        selectedEmployees as CommonEmployeeDTO[]
+    ).map((data) => ({
+        employeeId: Number(data.id),
+    }));
     // ==========================================================================
     // Get Lookup Functions
     // ==========================================================================
@@ -123,6 +120,7 @@ export const load = async ({ params, parent }) => {
 export const _createNewOfferMeetingForm = async (formData: object) => {
     const form = await superValidate(formData, zod(_createMeetingBatchSchema));
 
+    console.log('function', form);
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
