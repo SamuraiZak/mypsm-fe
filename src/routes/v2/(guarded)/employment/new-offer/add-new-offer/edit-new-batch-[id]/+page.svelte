@@ -20,7 +20,7 @@
     import { zod } from 'sveltekit-superforms/adapters';
 
     export let data: PageData;
-    let openModal: boolean = false;
+    let openModal: boolean = true;
 
     // Table list - New Offer Meeting
     let newOfferMeetingBatchListTable: TableSettingDTO = {
@@ -34,7 +34,9 @@
         data:
             (data.responses.employeesListResponse.data
                 ?.dataList as ConfirmationListResponseDTO[]) ?? [],
-        selectedData: [],
+        selectedData:
+            (data.selectionOptions.selectedEmployees as CommonEmployeeDTO[]) ??
+            [],
         exportData: [],
         hiddenColumn: ['employeeId'],
         dictionary: [
@@ -86,7 +88,7 @@
             $form.employees = (
                 newOfferMeetingBatchListTable.selectedData as CommonEmployeeDTO[]
             ).map((data) => ({
-                employeeId: Number(data.employeeId),
+                employeeId: Number(data.id),
             }));
             openModal = true;
         }
@@ -104,17 +106,7 @@
         data:
             (newOfferMeetingBatchListTable.selectedData as CommonEmployeeDTO[]) ??
             [],
-        selectedData:
-            (
-                newOfferMeetingBatchListTable.selectedData as CommonEmployeeDTO[]
-            ).filter((staffs) => {
-                data.selectionOptions.selectedEmployees.some((empStaffs) => {
-                    return (
-                        empStaffs ===
-                        (staffs.employeeNumber as unknown as number)
-                    );
-                });
-            }) ?? [],
+        selectedData: [],
         exportData: [],
         hiddenColumn: [
             'employeeId',
@@ -140,6 +132,12 @@
             header: false,
         },
     };
+
+    $: {
+        includedEmployeesListTable.data =
+            (newOfferMeetingBatchListTable.selectedData as CommonEmployeeDTO[]) ??
+            [];
+    }
 </script>
 
 <!-- content header starts here -->
@@ -232,7 +230,8 @@
                 keputusan meyuarat di jadual hadapan
             </p>
             <p class="text-sm">
-                Bilangan Kakitangan Dipilih: {$form.employees.length}
+                Bilangan Kakitangan Dipilih: {newOfferMeetingBatchListTable
+                    .selectedData.length}
             </p>
             <DataTable title="" bind:tableData={includedEmployeesListTable}
             ></DataTable>
@@ -255,7 +254,7 @@
             </span>
             <div class="flex flex-row gap-x-4">
                 <TextIconButton
-                    label={$form.isDraft ? 'Simpan' : 'Tambah'}
+                    label={$form.isDraft ? 'Simpan' : 'Hantar'}
                     type="primary"
                     form="newOfferMeetingFormId"
                 />
@@ -263,7 +262,7 @@
                     label="Batal"
                     type="neutral"
                     onClick={() => {
-                        goto('../new-offer');
+                        openModal = false;
                     }}
                 />
             </div>
