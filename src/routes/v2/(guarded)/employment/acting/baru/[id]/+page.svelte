@@ -119,7 +119,7 @@
             setTimeout(
                 () =>
                     goto(
-                        '/v2/employment/acting/butiran/' +
+                        '/v2/employment/acting/butiran/1-' +
                             response.data?.details.batchId +
                             '-' +
                             data.actingTypes,
@@ -172,7 +172,7 @@
                 </Alert>
                 <div class="h-fit w-full">
                     <DataTable
-                        title="Senarai Kakitangan"
+                        title="Senarai Kakitangan {data.actingTypes =="Flexi 41" ? "Yang Layak Untuk Pemangkuan Gred Flexi 41": ""}"
                         bind:tableData={addActingTable}
                     >
                         <FilterWrapper slot="filter">
