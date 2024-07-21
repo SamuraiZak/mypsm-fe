@@ -24,7 +24,7 @@ export const load = async ({ parent }) => {
     const param: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: 'meetingId',
+        orderBy: 'applicationId',
         orderType: 1,
         filter: {
             meetingName: null, //string | null | undefined;
@@ -66,6 +66,7 @@ export const load = async ({ parent }) => {
             statusLookup,
         },
         roles: {
+            layoutData,
             isStaffRole,
             isEmploymentSecretaryRole,
             isSupporterRole,
