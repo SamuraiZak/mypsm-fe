@@ -17,6 +17,7 @@ import type {
     ServiceAllowanceEndorserDetailType,
     ServiceAllowanceFuneralDetailType,
     ServiceAllowanceHouseMovingDetailType,
+    ServiceAllowanceInsuranceDetailType,
     ServiceAllowanceOtherAllowanceDetailType,
     ServiceAllowancePassportPaymentDetailType,
     ServiceAllowanceSecretaryConfirmationType,
@@ -252,6 +253,30 @@ export class ServiceAllowanceServices {
     static async addFuneral(param: ServiceAllowanceFuneralDetailType) {
         try {
             const url: Input = 'service_allowance/funeral_arrangement/add';
+    
+            const promiseResponse: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+    
+            const response = await toasterCommon(promiseResponse);
+    
+            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
+    
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+    
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    
+    static async addInsurance(param: ServiceAllowanceInsuranceDetailType) {
+        try {
+            const url: Input = 'service_allowance/insurance_payment/add';
     
             const promiseResponse: Promise<Response> = http.post(url, {
                 body: JSON.stringify(param),

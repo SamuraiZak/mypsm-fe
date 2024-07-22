@@ -23,6 +23,7 @@ import {
     ServiceAllowanceEndorserDetailSchema,
     ServiceAllowanceFuneralDetailSchema,
     ServiceAllowanceHouseMovingDetailSchema,
+    ServiceAllowanceInsuranceDetailSchema,
     ServiceAllowanceOtherAllowanceDetailSchema,
     ServiceAllowancePassportPaymentDetailSchema,
     ServiceAllowanceSecretaryConfirmationSchema,
@@ -33,6 +34,7 @@ import {
     type ServiceAllowanceEndorserDetailType,
     type ServiceAllowanceFuneralDetailType,
     type ServiceAllowanceHouseMovingDetailType,
+    type ServiceAllowanceInsuranceDetailType,
     type ServiceAllowanceOtherAllowanceDetailType,
     type ServiceAllowancePassportPaymentDetailType,
     type ServiceAllowanceSecretaryConfirmationType,
@@ -140,6 +142,14 @@ export async function load({ params, parent }) {
     funeralDetailsForm.data.allowanceTypeCode =
         AllowanceTypeConstant.funeralArrangement.code;
 
+    // 1.7 funeral
+    const insuranceDetailsForm = await superValidate(
+        zod(ServiceAllowanceInsuranceDetailSchema),
+    );
+
+    insuranceDetailsForm.data.allowanceTypeCode =
+        AllowanceTypeConstant.insurancePayment.code;
+
     // 2. assign director form
     const assignDirectorForm = await superValidate(
         zod(ServiceAllowanceAssignDirectorSchema),
@@ -210,6 +220,8 @@ export async function load({ params, parent }) {
         winterClothingDetailsForm.data.isDraft = true;
 
         funeralDetailsForm.data.isDraft = true;
+
+        insuranceDetailsForm.data.isDraft = true;
     } else {
         // get employee details
         const employeeDetailsRequest: ServiceAllowanceEmployeeDetailRequestDTO =
@@ -275,6 +287,11 @@ export async function load({ params, parent }) {
                         currentApplicationDetails.applicationDetail as ServiceAllowanceFuneralDetailType;
                     break;
 
+                case AllowanceTypeConstant.insurancePayment.code:
+                    insuranceDetailsForm.data =
+                        currentApplicationDetails.applicationDetail as ServiceAllowanceInsuranceDetailType;
+                    break;
+
                 default:
                     break;
             }
@@ -297,8 +314,8 @@ export async function load({ params, parent }) {
 
             // director support form
             if (
-                currentApplicationDetails.directorSupport != null ||
-                currentApplicationDetails.directorSupport != undefined
+                currentApplicationDetails.directorSupport != undefined ||
+                currentApplicationDetails.directorSupport != null
             ) {
                 directorSupportForm.data =
                     currentApplicationDetails.directorSupport as ServiceAllowanceEndorsementType;
@@ -311,8 +328,8 @@ export async function load({ params, parent }) {
 
             // secretary verification form
             if (
-                currentApplicationDetails.verification != null ||
-                currentApplicationDetails.verification != undefined
+                currentApplicationDetails.verification != undefined ||
+                currentApplicationDetails.verification != null
             ) {
                 secretaryVerificationForm.data =
                     currentApplicationDetails.verification as ServiceAllowanceEndorsementType;
@@ -325,8 +342,8 @@ export async function load({ params, parent }) {
 
             // endorser detail form
             if (
-                currentApplicationDetails.supporterApprover != null ||
-                currentApplicationDetails.supporterApprover != undefined
+                currentApplicationDetails.supporterApprover != undefined ||
+                currentApplicationDetails.supporterApprover != null
             ) {
                 endorserDetailForm.data =
                     currentApplicationDetails.supporterApprover as ServiceAllowanceEndorserDetailType;
@@ -338,8 +355,8 @@ export async function load({ params, parent }) {
 
             // supporter feedback form
             if (
-                currentApplicationDetails.support != null ||
-                currentApplicationDetails.support != undefined
+                currentApplicationDetails.support != undefined ||
+                currentApplicationDetails.support != null
             ) {
                 supporterFeedbackForm.data =
                     currentApplicationDetails.support as ServiceAllowanceEndorsementType;
@@ -352,8 +369,8 @@ export async function load({ params, parent }) {
 
             // approver feedback form
             if (
-                currentApplicationDetails.approval != null ||
-                currentApplicationDetails.approval != undefined
+                currentApplicationDetails.approval != undefined ||
+                currentApplicationDetails.approval != null
             ) {
                 approverFeedbackForm.data =
                     currentApplicationDetails.approval as ServiceAllowanceEndorsementType;
@@ -366,8 +383,8 @@ export async function load({ params, parent }) {
 
             // secretary confirmation form
             if (
-                currentApplicationDetails.confirmation != null ||
-                currentApplicationDetails.confirmation != undefined
+                currentApplicationDetails.confirmation != undefined ||
+                currentApplicationDetails.confirmation != null
             ) {
                 secretaryConfirmationForm.data =
                     currentApplicationDetails.confirmation;
@@ -405,7 +422,7 @@ export async function load({ params, parent }) {
 
     // 5. supporter dropdown
     const supporterDropdown: DropdownDTO[] = await _getSectionChiefDropdown();
-    
+
     // 5. approver dropdown
     const approverDropdown: DropdownDTO[] = await _getPKPDropdown();
 
@@ -425,6 +442,7 @@ export async function load({ params, parent }) {
             houseMovingDetailsForm,
             winterClothingDetailsForm,
             funeralDetailsForm,
+            insuranceDetailsForm,
 
             // processes forms
             assignDirectorForm,
@@ -441,7 +459,7 @@ export async function load({ params, parent }) {
             directorDrodpwon,
             relationshipDropdown,
             supporterDropdown,
-            approverDropdown
+            approverDropdown,
         },
     };
 }
@@ -585,7 +603,7 @@ export async function _winterClothingSubmit(
     }
 }
 
-// 5. winter clothing
+// 6. winter clothing
 export async function _funeralSubmit(
     formData: ServiceAllowanceFuneralDetailType,
 ) {
@@ -598,6 +616,33 @@ export async function _funeralSubmit(
         if (form.valid) {
             const response =
                 await ServiceAllowanceServices.addFuneral(formData);
+
+            if (response.status == 'success') {
+                return response;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } catch (error) {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// 7. insurance
+export async function _insuranceSubmit(
+    formData: ServiceAllowanceInsuranceDetailType,
+) {
+    try {
+        const form = await superValidate(
+            formData,
+            zod(ServiceAllowanceFuneralDetailSchema),
+        );
+
+        if (form.valid) {
+            const response =
+                await ServiceAllowanceServices.addInsurance(formData);
 
             if (response.status == 'success') {
                 return response;

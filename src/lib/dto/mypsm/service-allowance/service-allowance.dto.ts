@@ -141,6 +141,19 @@ export interface ServiceAllowanceFuneralDetailDTO {
     documents: DocumentDTO[];
 }
 
+// 7. insurance
+export interface ServiceAllowanceInsuranceDetail {
+    allowanceId:       number;
+    allowanceTypeCode: string;
+    regionCode:        string;
+    insuranceType:     string;
+    startDate:         string;
+    endDate:           string;
+    reason:            string;
+    isDraft:           boolean;
+    documents:         DocumentDTO[];
+}
+
 // ===============================================================
 // APPLICATION DETAILS
 // ===============================================================

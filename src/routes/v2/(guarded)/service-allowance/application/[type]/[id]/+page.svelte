@@ -27,11 +27,13 @@
         ServiceAllowanceEndorserDetailSchema,
         ServiceAllowanceFuneralDetailSchema,
         ServiceAllowanceHouseMovingDetailSchema,
+        ServiceAllowanceInsuranceDetailSchema,
         ServiceAllowanceOtherAllowanceDetailSchema,
         ServiceAllowancePassportPaymentDetailSchema,
         ServiceAllowanceWinterClothingDetailSchema,
         type ServiceAllowanceCeremonyClothingDetailType,
         type ServiceAllowanceFuneralDetailType,
+        type ServiceAllowanceInsuranceDetailType,
         type ServiceAllowancePassportPaymentDetailType,
     } from '$lib/schemas/mypsm/service-allowance/service-allowance.schema';
     import {
@@ -42,6 +44,7 @@
         _endorserDetailSubmit,
         _funeralSubmit,
         _houseMovingSubmit,
+        _insuranceSubmit,
         _otherAllowanceSubmit,
         _passportPaymentSubmit,
         _secretaryConfirmationSubmit,
@@ -108,6 +111,9 @@
                 break;
             case AllowanceTypeConstant.funeralArrangement.code:
                 currentFormId = 'funeralForm';
+                break;
+            case AllowanceTypeConstant.insurancePayment.code:
+                currentFormId = 'insuranceForm';
                 break;
 
             default:
@@ -309,6 +315,39 @@
                     const applicationDetail: ServiceAllowanceFuneralDetailType =
                         result.data
                             ?.details as ServiceAllowanceFuneralDetailType;
+
+                    let url: string =
+                        '/v2/service-allowance/application/' +
+                        applicationDetail.allowanceTypeCode +
+                        '/' +
+                        applicationDetail.allowanceId;
+                    goto(url);
+                }
+            });
+        },
+    });
+
+    // 7. insurance form
+    const {
+        form: insuranceForm,
+        errors: insuranceErrors,
+        enhance: insuranceEnhance,
+    } = superForm(data.forms.insuranceDetailsForm, {
+        dataType: 'json',
+        id: 'insuranceForm',
+        SPA: true,
+        taintedMessage: false,
+        resetForm: false,
+        invalidateAll: true,
+        validationMethod: 'oninput',
+        validators: zodClient(ServiceAllowanceInsuranceDetailSchema),
+        async onSubmit(input) {
+            $insuranceForm.isDraft = isDraft;
+            _insuranceSubmit($insuranceForm).then((result) => {
+                if (result.status == 'success') {
+                    const applicationDetail: ServiceAllowanceInsuranceDetailType =
+                        result.data
+                            ?.details as ServiceAllowanceInsuranceDetailType;
 
                     let url: string =
                         '/v2/service-allowance/application/' +
@@ -1200,6 +1239,65 @@
                                     )}
                                     bind:documents={$funeralForm.documents}
                                     label="15. Sila muat naik dokumen sokongan"
+                                ></DocumentInput>
+                            </form>
+                        {:else if currentAllowanceTypeCode == AllowanceTypeConstant.insurancePayment.code}
+                            <!-- ################################################################### -->
+                            <!-- INSURANCE -->
+                            <!-- ################################################################### -->
+                            <form
+                                id="insuranceForm"
+                                method="POST"
+                                use:insuranceEnhance
+                                class="flex w-full flex-col items-center justify-start gap-2"
+                            >
+                                <CustomTextField
+                                    disabled={!$insuranceForm.isDraft}
+                                    id="regionCode"
+                                    label={'7. Kategori Kawasan'}
+                                    type="text"
+                                    errors={$insuranceErrors.regionCode}
+                                    bind:val={$insuranceForm.regionCode}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled={!$insuranceForm.isDraft}
+                                    type="text"
+                                    id="insuranceType"
+                                    label={'8. Pelan Perlindungan Perjalanan'}
+                                    errors={$insuranceErrors.insuranceType}
+                                    bind:val={$insuranceForm.insuranceType}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled={!$insuranceForm.isDraft}
+                                    type="date"
+                                    id="startDate"
+                                    label={'9. Tarikh Bertolak dari Malaysia/negara Pegawai Berkhidmat'}
+                                    errors={$insuranceErrors.startDate}
+                                    bind:val={$insuranceForm.startDate}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled={!$insuranceForm.isDraft}
+                                    type="date"
+                                    id="endDate"
+                                    label={'10. Tarikh Tiba di Malaysia/negara Pegawai Berkhidmat'}
+                                    errors={$insuranceErrors.endDate}
+                                    bind:val={$insuranceForm.endDate}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled={!$insuranceForm.isDraft}
+                                    type="text"
+                                    id="reason"
+                                    label={'11. Tujuan Permohonan'}
+                                    errors={$insuranceErrors.reason}
+                                    bind:val={$insuranceForm.reason}
+                                ></CustomTextField>
+                                <DocumentInput
+                                    disabled={!$insuranceForm.isDraft}
+                                    errors={$insuranceErrors.documents?._errors?.map(
+                                        (error) => error,
+                                    )}
+                                    bind:documents={$insuranceForm.documents}
+                                    label="12. Sila muat naik dokumen sokongan"
                                 ></DocumentInput>
                             </form>
                         {/if}

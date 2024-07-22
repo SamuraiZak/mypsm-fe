@@ -226,3 +226,19 @@ export const ServiceAllowanceFuneralDetailSchema = z.object({
 export type ServiceAllowanceFuneralDetailType = z.infer<
     typeof ServiceAllowanceFuneralDetailSchema
 >;
+
+// 7. Insurance
+export const ServiceAllowanceInsuranceDetailSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    regionCode: z.string(),
+    insuranceType: z.string(),
+    startDate: z.string(),
+    endDate: z.string(),
+    reason: z.string(),
+    isDraft: z.boolean(),
+    documents: z.array(DocumentSchema),
+});
+export type ServiceAllowanceInsuranceDetailType = z.infer<
+    typeof ServiceAllowanceInsuranceDetailSchema
+>;
