@@ -18,7 +18,6 @@ export const load = async ({parent}) => {
     // pengarah Integriti
     let pengarah = UserRoleConstant.pengarahIntegriti.code;
 
-   
 
     // ==========================================
     // ============= new Table ==================
