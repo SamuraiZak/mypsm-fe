@@ -437,6 +437,22 @@ export async function load({ params, parent }) {
     // 7. area dropdown
     const areaDropdown: DropdownDTO[] = await _getAreaDropdown();
 
+    // 8. insurance type dropdown
+    const insuranceTypeDropdown: DropdownDTO[] = [
+        {
+            name: 'Satu Perjalanan',
+            value: 'Satu Perjalanan',
+        },
+        {
+            name: 'Tahunan',
+            value: 'Tahunan',
+        },
+        {
+            name: 'Berkelompok',
+            value: 'Berkelompok',
+        },
+    ];
+
     return {
         props: {
             layoutData,
@@ -472,6 +488,7 @@ export async function load({ params, parent }) {
             supporterDropdown,
             approverDropdown,
             areaDropdown,
+            insuranceTypeDropdown,
         },
     };
 }

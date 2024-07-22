@@ -1260,14 +1260,15 @@
                                     bind:val={$insuranceForm.regionCode}
                                     options={data.lookup.areaDropdown}
                                 ></CustomSelectField>
-                                <CustomTextField
-                                    disabled={!$insuranceForm.isDraft}
-                                    type="text"
+                                <CustomSelectField
+                                    disabled={data.props.currentAllowanceId !==
+                                        0}
                                     id="insuranceType"
                                     label={'8. Pelan Perlindungan Perjalanan'}
                                     errors={$insuranceErrors.insuranceType}
                                     bind:val={$insuranceForm.insuranceType}
-                                ></CustomTextField>
+                                    options={data.lookup.insuranceTypeDropdown}
+                                ></CustomSelectField>
                                 <CustomTextField
                                     disabled={!$insuranceForm.isDraft}
                                     type="date"
