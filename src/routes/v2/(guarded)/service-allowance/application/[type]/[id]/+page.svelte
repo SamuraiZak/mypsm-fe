@@ -1176,7 +1176,7 @@
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled={!$funeralForm.isDraft}
-                                    type="text"
+                                    type="number"
                                     id="relationshipId"
                                     label={'14. Hubungan Dengan Kakitangan Yang Meninggal'}
                                     errors={$funeralErrors.relationshipId}
