@@ -402,6 +402,12 @@ export async function load({ params, parent }) {
     const relationshipDropdown: DropdownDTO[] =
         await _getRelationshipDropdown();
 
+    // 5. supporter dropdown
+    const supporterDropdown: DropdownDTO[] = await _getSectionChiefDropdown();
+    
+    // 5. approver dropdown
+    const approverDropdown: DropdownDTO[] = await _getPKPDropdown();
+
     return {
         props: {
             layoutData,
@@ -433,6 +439,8 @@ export async function load({ params, parent }) {
             allowanceEndorsementOption,
             directorDrodpwon,
             relationshipDropdown,
+            supporterDropdown,
+            approverDropdown
         },
     };
 }
@@ -821,6 +829,68 @@ export async function _getDirectorDropdown() {
     directorOption = LookupHelper.employeeToDropdown(directorList);
 
     return directorOption;
+}
+
+export async function _getSectionChiefDropdown() {
+    let sectionChiefOption: DropdownDTO[] = [];
+
+    const filter = {
+        program: 'SEMUA',
+        employeeNumber: null,
+        name: null,
+        identityCard: null,
+        grade: null,
+        role: RoleConstant.ketuaSeksyen.code,
+    };
+
+    const request: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: 'name',
+        orderType: 1,
+        filter: filter,
+    };
+
+    const sectionChiefListResponse: CommonResponseDTO =
+        await LookupServices.getEndorserDropdown(request);
+
+    const sectionChiefList: EmployeeLookupItemDTO[] = sectionChiefListResponse
+        .data?.dataList as EmployeeLookupItemDTO[];
+
+    sectionChiefOption = LookupHelper.employeeToDropdown(sectionChiefList);
+
+    return sectionChiefOption;
+}
+
+export async function _getPKPDropdown() {
+    let pkpOption: DropdownDTO[] = [];
+
+    const filter = {
+        program: 'SEMUA',
+        employeeNumber: null,
+        name: null,
+        identityCard: null,
+        grade: null,
+        role: RoleConstant.pengarahKhidmatPengurusan.code,
+    };
+
+    const request: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: 'name',
+        orderType: 1,
+        filter: filter,
+    };
+
+    const pkpListResponse: CommonResponseDTO =
+        await LookupServices.getEndorserDropdown(request);
+
+    const pkpList: EmployeeLookupItemDTO[] = pkpListResponse.data
+        ?.dataList as EmployeeLookupItemDTO[];
+
+    pkpOption = LookupHelper.employeeToDropdown(pkpList);
+
+    return pkpOption;
 }
 
 export async function _getRelationshipDropdown() {

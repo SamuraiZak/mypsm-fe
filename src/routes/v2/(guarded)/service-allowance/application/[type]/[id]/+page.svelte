@@ -1454,13 +1454,13 @@
                                         id="supporterIdentityDocumentNumber"
                                         label={'Sila pilih penyokong untuk permohonan ini'}
                                         bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
-                                        options={data.lookup.directorDrodpwon}
+                                        options={data.lookup.supporterDropdown}
                                     ></CustomSelectField>
                                     <CustomSelectField
                                         id="approverIdentityDocumentNumber"
                                         label={'Sila pilih pelulus untuk permohonan ini'}
                                         bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
-                                        options={data.lookup.directorDrodpwon}
+                                        options={data.lookup.approverDropdown}
                                     ></CustomSelectField>
                                 {:else}
                                     <CustomTextField
