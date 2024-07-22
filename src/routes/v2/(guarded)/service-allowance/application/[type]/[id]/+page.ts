@@ -435,7 +435,20 @@ export async function load({ params, parent }) {
     const approverDropdown: DropdownDTO[] = await _getPKPDropdown();
 
     // 7. area dropdown
-    const areaDropdown: DropdownDTO[] = await _getAreaDropdown();
+    const areaDropdown: DropdownDTO[] = [
+        {
+            name: 'Kawasan 1',
+            value: 'AR01',
+        },
+        {
+            name: 'Kawasan 2',
+            value: 'AR02',
+        },
+        {
+            name: 'Kawasan 3',
+            value: 'AR03',
+        },
+    ];
 
     // 8. insurance type dropdown
     const insuranceTypeDropdown: DropdownDTO[] = [
