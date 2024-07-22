@@ -64,7 +64,7 @@ export const load = async ({ params, parent }) => {
     const employeesListResponse = await EmployeeServices.getEmployeeList(param);
 
     const selectedEmployees: CommonEmployeeDTO[] =
-        newOfferMeetingDetailResponse.data?.details.includedEmployee.employees;
+        newOfferMeetingDetailResponse.data?.details.includedEmployee.employees as CommonEmployeeDTO[];
 
     // Superform
     const newOfferMeetingDetailForm = await superValidate(
@@ -81,7 +81,7 @@ export const load = async ({ params, parent }) => {
     newOfferMeetingDetailForm.data.employees = (
         selectedEmployees as CommonEmployeeDTO[]
     ).map((data) => ({
-        employeeId: Number(data.id),
+        employeeId: Number(data.employeeId),
     }));
     // ==========================================================================
     // Get Lookup Functions
