@@ -41,7 +41,7 @@
         _updateSuspensionCriminalDetail,
     } from './+page';
     import { zod } from 'sveltekit-superforms/adapters';
-    import { _addSuspensionDetailForm } from '../tambah-prosiding/[employeeId]/+page';
+    import { _addSuspensionDetailForm } from '../add-proceeding/[employeeId]/+page';
     import SvgCheck from '$lib/assets/svg/SvgCheck.svelte';
     import SvgEdit from '$lib/assets/svg/SvgEdit.svelte';
     import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
