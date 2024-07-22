@@ -79,13 +79,14 @@ export async function load({ params, parent }) {
         applicationDetail: {
             isDraft: true,
         },
-        assignDirector: undefined,
-        directorSupport: undefined,
-        verification: undefined,
-        supporterApprover: undefined,
-        support: undefined,
-        approval: undefined,
-        confirmation: undefined,
+        assignDirector: null,
+        directorSupport: null,
+        verification: null,
+        supporterApprover: null,
+        support: null,
+        approval: null,
+        confirmation: null,
+        secretaryVerification: undefined,
         status: 'Draf',
     };
 

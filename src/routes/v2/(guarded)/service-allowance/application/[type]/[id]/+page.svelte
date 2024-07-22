@@ -424,7 +424,8 @@
         validationMethod: 'oninput',
         validators: zodClient(ServiceAllowanceEndorsementSchema),
         async onSubmit(input) {
-            $secretaryConfirmationForm.allowanceId = data.props.currentAllowanceId;
+            $secretaryConfirmationForm.allowanceId =
+                data.props.currentAllowanceId;
             _secretaryConfirmationSubmit($secretaryConfirmationForm);
         },
     });
@@ -1203,15 +1204,17 @@
         <!-- ======================================================================= -->
         <StepperContent>
             <StepperContentHeader title="Lantikan Pengarah Bahagian/Negeri">
-                <TextIconButton
-                    type="primary"
-                    label="Hantar"
-                    form="assignDirectorForm"
-                    onClick={() => {
-                        isDraft = false;
-                    }}
-                    icon="check"
-                ></TextIconButton>
+                {#if data.props.currentApplicationDetails.assignDirector === null && data.props.layoutData.accountDetails.currentRoleCode === RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
+                    <TextIconButton
+                        type="primary"
+                        label="Hantar"
+                        form="assignDirectorForm"
+                        onClick={() => {
+                            isDraft = false;
+                        }}
+                        icon="check"
+                    ></TextIconButton>
+                {/if}
             </StepperContentHeader>
             <StepperContentBody>
                 <div
@@ -1226,8 +1229,8 @@
                             use:assignDirectorEnhance
                             class="flex w-full flex-col items-center justify-start gap-2"
                         >
-                            {#if data.props.currentApplicationDetails.assignDirector == null}
-                                {#if (data.props.layoutData.accountDetails.currentRoleCode = RoleConstant.urusSetiaElaunElaunPerkhidmatan.code)}
+                            {#if data.props.currentApplicationDetails.assignDirector === null}
+                                {#if data.props.layoutData.accountDetails.currentRoleCode === RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
                                     <CustomSelectField
                                         id="identityDocumentNumber"
                                         label={'Sila pilih Pengarah Bahagian/Negeri untuk memberi sokongan bagi permohonan ini'}
@@ -1273,15 +1276,17 @@
             <StepperContentHeader
                 title="Sokongan & Ulasan Pengarah Bahagian/Negeri"
             >
-                <TextIconButton
-                    type="primary"
-                    label="Hantar"
-                    form="directorSupportForm"
-                    onClick={() => {
-                        isDraft = false;
-                    }}
-                    icon="check"
-                ></TextIconButton>
+                {#if $directorSupportForm.isDraft && (data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.pengarahBahagian.code || data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.pengarahNegeri.code)}
+                    <TextIconButton
+                        type="primary"
+                        label="Hantar"
+                        form="directorSupportForm"
+                        onClick={() => {
+                            isDraft = false;
+                        }}
+                        icon="check"
+                    ></TextIconButton>
+                {/if}
             </StepperContentHeader>
             <StepperContentBody>
                 <div
@@ -1297,8 +1302,7 @@
                             class="flex w-full flex-col items-center justify-start gap-2"
                         >
                             <CustomRadioBoolean
-                                disabled={!data.props.currentApplicationDetails
-                                    .directorSupport?.status == null}
+                                disabled={!$directorSupportForm.isDraft}
                                 id="status"
                                 label="Permohonan tuntutan pegawai di atas adalah"
                                 bind:val={$directorSupportForm.status}
@@ -1306,8 +1310,7 @@
                                 options={supportAltOptions}
                             ></CustomRadioBoolean>
                             <CustomTextField
-                                disabled={!data.props.currentApplicationDetails
-                                    .directorSupport?.status == null}
+                                disabled={!$directorSupportForm.isDraft}
                                 type="textarea"
                                 id="remark"
                                 label={'Jika tidak disokong, sila nyatakan sebab'}
@@ -1349,7 +1352,7 @@
         <!-- ======================================================================= -->
         <StepperContent>
             <StepperContentHeader title="Pengesahan Urus Setia">
-                {#if data.props.currentApplicationDetails.verification?.status == null}
+                {#if $secretaryVerificationForm.isDraft && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
                     <TextIconButton
                         type="primary"
                         label="Hantar"
@@ -1375,8 +1378,7 @@
                             class="flex w-full flex-col items-center justify-start gap-2"
                         >
                             <CustomRadioBoolean
-                                disabled={!data.props.currentApplicationDetails
-                                    .verification?.status == null}
+                                disabled={!$secretaryVerificationForm.isDraft}
                                 id="reason"
                                 label="Adakah Permohonan Ini Sah?"
                                 bind:val={$secretaryVerificationForm.status}
@@ -1384,8 +1386,7 @@
                                 options={certifyAltAltOptions}
                             ></CustomRadioBoolean>
                             <CustomTextField
-                                disabled={!data.props.currentApplicationDetails
-                                    .verification?.status == null}
+                                disabled={!$secretaryVerificationForm.isDraft}
                                 type="textarea"
                                 id="reason"
                                 label={'Jika tidak diluluskan, sila nyatakan sebab'}
@@ -1428,15 +1429,17 @@
         {#if data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
             <StepperContent>
                 <StepperContentHeader title="Lantikan Penyokong dan Pelulus">
-                    <TextIconButton
-                        type="primary"
-                        label="Hantar"
-                        form="endorserDetailForm"
-                        onClick={() => {
-                            isDraft = false;
-                        }}
-                        icon="check"
-                    ></TextIconButton>
+                    {#if $endorserDetailForm.isDraft && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
+                        <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="endorserDetailForm"
+                            onClick={() => {
+                                isDraft = false;
+                            }}
+                            icon="check"
+                        ></TextIconButton>
+                    {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
                     <div
@@ -1453,12 +1456,14 @@
                             >
                                 {#if data.props.currentApplicationDetails.supporterApprover == null}
                                     <CustomSelectField
+                                        disabled={!$endorserDetailForm.isDraft}
                                         id="supporterIdentityDocumentNumber"
                                         label={'Sila pilih penyokong untuk permohonan ini'}
                                         bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
                                         options={data.lookup.supporterDropdown}
                                     ></CustomSelectField>
                                     <CustomSelectField
+                                        disabled={!$endorserDetailForm.isDraft}
                                         id="approverIdentityDocumentNumber"
                                         label={'Sila pilih pelulus untuk permohonan ini'}
                                         bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
@@ -1512,15 +1517,17 @@
             <StepperContentHeader
                 title="Ulasan & Syor Ketua Seksyen Pengurusan Sumber Manusia"
             >
-                <TextIconButton
-                    type="primary"
-                    label="Hantar"
-                    form="supporterFeedbackForm"
-                    onClick={() => {
-                        isDraft = false;
-                    }}
-                    icon="check"
-                ></TextIconButton>
+                {#if $supporterFeedbackForm.isDraft && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.ketuaSeksyen.code}
+                    <TextIconButton
+                        type="primary"
+                        label="Hantar"
+                        form="supporterFeedbackForm"
+                        onClick={() => {
+                            isDraft = false;
+                        }}
+                        icon="check"
+                    ></TextIconButton>
+                {/if}
             </StepperContentHeader>
             <StepperContentBody>
                 <div
@@ -1536,7 +1543,7 @@
                             class="flex w-full flex-col items-center justify-start gap-2"
                         >
                             <CustomRadioBoolean
-                                disabled={false}
+                                disabled={!$supporterFeedbackForm.isDraft}
                                 id="reason"
                                 label="Permohonan tuntutan pegawai di atas adalah"
                                 bind:val={$supporterFeedbackForm.status}
@@ -1544,6 +1551,7 @@
                                 options={supportAltOptions}
                             ></CustomRadioBoolean>
                             <CustomTextField
+                                disabled={!$supporterFeedbackForm.isDraft}
                                 type="textarea"
                                 id="reason"
                                 label={'Jika tidak disokong, sila nyatakan sebab'}
@@ -1584,18 +1592,18 @@
         <!-- APPROVER FEEDBACK -->
         <!-- ======================================================================= -->
         <StepperContent>
-            <StepperContentHeader
-                title="Kelulusan Pengarah Bahagian Khidmat Pengurusan"
-            >
-                <TextIconButton
-                    type="primary"
-                    label="Hantar"
-                    form="approverFeedbackForm"
-                    onClick={() => {
-                        isDraft = false;
-                    }}
-                    icon="check"
-                ></TextIconButton>
+            <StepperContentHeader title="Kelulusan Pengarah Khidmat Pengurusan">
+                {#if $approverFeedbackForm.isDraft && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.ketuaSeksyen.code}
+                    <TextIconButton
+                        type="primary"
+                        label="Hantar"
+                        form="approverFeedbackForm"
+                        onClick={() => {
+                            isDraft = false;
+                        }}
+                        icon="check"
+                    ></TextIconButton>
+                {/if}
             </StepperContentHeader>
             <StepperContentBody>
                 <div
@@ -1611,7 +1619,7 @@
                             class="flex w-full flex-col items-center justify-start gap-2"
                         >
                             <CustomRadioBoolean
-                                disabled={false}
+                                disabled={!$approverFeedbackForm.isDraft}
                                 id="reason"
                                 label="Permohonan ini"
                                 bind:val={$approverFeedbackForm.status}
@@ -1619,7 +1627,7 @@
                                 options={approveAltOptions}
                             ></CustomRadioBoolean>
                             <CustomTextField
-                                disabled={false}
+                                disabled={!$approverFeedbackForm.isDraft}
                                 type="textarea"
                                 id="reason"
                                 label={'Jika tidak diluluskan, sila nyatakan sebab'}

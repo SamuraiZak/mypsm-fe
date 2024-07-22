@@ -145,7 +145,7 @@ export interface ServiceAllowanceFuneralDetailDTO {
 // APPLICATION DETAILS
 // ===============================================================
 export interface ServiceAllowanceApplicationDetailDTO {
-    applicationDetail?: object | null;
+    applicationDetail?: object | null ;
     assignDirector?: ServiceAllowanceAssignDirectorDTO | null;
     directorSupport?: ServiceAllowanceEndorsementDTO | null;
     verification?: ServiceAllowanceEndorsementDTO | null;
