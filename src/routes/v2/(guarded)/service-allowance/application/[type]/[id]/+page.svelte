@@ -278,7 +278,7 @@
             });
         },
     });
-    
+
     // 6. funeral form
     const {
         form: funeralForm,
@@ -1226,12 +1226,25 @@
                             class="flex w-full flex-col items-center justify-start gap-2"
                         >
                             {#if data.props.currentApplicationDetails.assignDirector == null}
-                                <CustomSelectField
-                                    id="identityDocumentNumber"
-                                    label={'Sila pilih Pengarah Bahagian/Negeri untuk memberi sokongan bagi permohonan ini'}
-                                    bind:val={$assignDirectorForm.identityDocumentNumber}
-                                    options={data.lookup.directorDrodpwon}
-                                ></CustomSelectField>
+                                {#if (data.props.layoutData.accountDetails.currentRoleCode = RoleConstant.urusSetiaElaunElaunPerkhidmatan.code)}
+                                    <CustomSelectField
+                                        id="identityDocumentNumber"
+                                        label={'Sila pilih Pengarah Bahagian/Negeri untuk memberi sokongan bagi permohonan ini'}
+                                        bind:val={$assignDirectorForm.identityDocumentNumber}
+                                        options={data.lookup.directorDrodpwon}
+                                    ></CustomSelectField>
+                                {:else}
+                                    <div
+                                        class="flex w-full flex-row items-center justify-start gap-2 rounded-md bg-blue-200 p-2"
+                                    >
+                                        <p
+                                            class="text-base font-medium text-blue-700"
+                                        >
+                                            Bahagian ini adalah untuk kegunaan
+                                            Urus Setia Elaun-elaun Perkhidmatan
+                                        </p>
+                                    </div>
+                                {/if}
                             {:else}
                                 <CustomTextField
                                     disabled
@@ -1647,7 +1660,7 @@
         <!-- ======================================================================= -->
         <StepperContent>
             <StepperContentHeader title="Pengesahan Urus Setia">
-                {#if data.props.currentApplicationDetails.verification?.status == null}
+                {#if data.props.currentApplicationDetails.secretaryVerification?.status == null}
                     <TextIconButton
                         type="primary"
                         label="Hantar"
