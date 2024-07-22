@@ -13,6 +13,10 @@ export class RetirementBenefitDropdownConstant {
         value: 'pencen',
         name: 'Pencen',
     };
+    public static noRetirementBenefit: DropdownDTO = {
+        value: 'tiada',
+        name: 'Tiada Maklumat',
+    };
 
-    public static list: DropdownDTO[] = [this.kwsp, this.pencen];
+    public static list: DropdownDTO[] = [this.kwsp, this.pencen, this.noRetirementBenefit];
 }
