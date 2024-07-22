@@ -10,7 +10,6 @@
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import DataTable from '$lib/components/table/DataTable.svelte';
-    import type { ConfirmationListResponseDTO } from '$lib/dto/mypsm/employment/confirmation/confirmation_request_response.dto';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import { superForm } from 'sveltekit-superforms';
     import { Modal } from 'flowbite-svelte';
@@ -33,10 +32,8 @@
         },
         data:
             (data.responses.employeesListResponse.data
-                ?.dataList as ConfirmationListResponseDTO[]) ?? [],
-        selectedData:
-            (data.selectionOptions.selectedEmployees as CommonEmployeeDTO[]) ??
-            [],
+                ?.dataList as CommonEmployeeDTO[]) ?? [],
+        selectedData: [],
         exportData: [],
         hiddenColumn: ['employeeId'],
         dictionary: [
@@ -62,6 +59,8 @@
             add: false,
         },
     };
+    newOfferMeetingBatchListTable.selectedData = data.selectionOptions
+        .selectedEmployees as CommonEmployeeDTO[];
 
     // Superforms
     const { form, errors, enhance } = superForm(
@@ -88,7 +87,7 @@
             $form.employees = (
                 newOfferMeetingBatchListTable.selectedData as CommonEmployeeDTO[]
             ).map((data) => ({
-                employeeId: Number(data.id),
+                employeeId: Number(data.employeeId),
             }));
             openModal = true;
         }
@@ -109,10 +108,12 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: [
+            'id',
             'employeeId',
             'program',
             'scheme',
             'grade',
+            'educationLevel',
             'position',
             'placement',
         ],
