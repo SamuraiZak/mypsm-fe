@@ -33,7 +33,7 @@
                 ?.dataList as NewOfferMeetingListResponseDTO[]) ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['applicationId'],
+        hiddenColumn: ['applicationId', 'meetingNo'],
         dictionary: [
             {
                 english: 'meetingNo',
