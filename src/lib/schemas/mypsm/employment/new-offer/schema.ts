@@ -17,7 +17,7 @@ export const _meetingResultEmployeeSchema = z.object({
 });
 
 export const _approverSchema = z.object({
-    id: z.number().readonly(),
+    applicationId: z.number().readonly(),
     name: z.string().readonly(),
     identityDocumentNumber: z.string().readonly(),
     employees: z.array(_meetingResultEmployeeSchema),
@@ -113,7 +113,7 @@ export const _processEmployeeSchema = z.object({
     // confirmServiceDate: dateStringSchema,
     // confirmDate: dateStringSchema,
     pensionNumber: z.string().nullish(),
-    kgt: numberSchema,
+    kgt: z.number().nullable().readonly(),
     // retirementDate: dateStringSchema,
     revisionMonth: codeSchema,
     maximumSalary: numberSchema,
