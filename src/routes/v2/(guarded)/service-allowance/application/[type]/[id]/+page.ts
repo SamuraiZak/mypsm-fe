@@ -398,6 +398,10 @@ export async function load({ params, parent }) {
     // 3. director dropdown
     const directorDrodpwon: DropdownDTO[] = await _getDirectorDropdown();
 
+    // 4. relationship dropdown
+    const relationshipDropdown: DropdownDTO[] =
+        await _getRelationshipDropdown();
+
     return {
         props: {
             layoutData,
@@ -428,6 +432,7 @@ export async function load({ params, parent }) {
             allowanceDropdown,
             allowanceEndorsementOption,
             directorDrodpwon,
+            relationshipDropdown,
         },
     };
 }
@@ -816,4 +821,18 @@ export async function _getDirectorDropdown() {
     directorOption = LookupHelper.employeeToDropdown(directorList);
 
     return directorOption;
+}
+
+export async function _getRelationshipDropdown() {
+    let relationshipLookup: DropdownDTO[] = [];
+    const relationshipLookupResponse: CommonResponseDTO =
+        await LookupServices.getRelationshipEnums();
+
+    if (relationshipLookupResponse.status == 'success') {
+        relationshipLookup = LookupServices.setSelectOptions(
+            relationshipLookupResponse,
+        );
+    }
+
+    return relationshipLookup;
 }

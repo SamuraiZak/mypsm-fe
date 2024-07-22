@@ -1174,14 +1174,13 @@
                                     errors={$funeralErrors.nextOfKinAddress}
                                     bind:val={$funeralForm.nextOfKinAddress}
                                 ></CustomTextField>
-                                <CustomTextField
+                                <CustomSelectField
                                     disabled={!$funeralForm.isDraft}
-                                    type="number"
                                     id="relationshipId"
                                     label={'14. Hubungan Dengan Kakitangan Yang Meninggal'}
-                                    errors={$funeralErrors.relationshipId}
                                     bind:val={$funeralForm.relationshipId}
-                                ></CustomTextField>
+                                    options={data.lookup.relationshipDropdown}
+                                ></CustomSelectField>
                                 <DocumentInput
                                     disabled={!$funeralForm.isDraft}
                                     errors={$funeralErrors.documents?._errors?.map(
