@@ -310,6 +310,7 @@ export async function load({ params, parent }) {
                 assignDirectorForm.data.allowanceTypeCode =
                     currentAllowanceTypeCode;
                 assignDirectorForm.data.type = 'pengarah negeri';
+                assignDirectorForm.data.isDraft = true;
             }
 
             // director support form
@@ -324,6 +325,7 @@ export async function load({ params, parent }) {
                 directorSupportForm.data.allowanceTypeCode =
                     currentAllowanceTypeCode;
                 directorSupportForm.data.date = Date.now().toString();
+                directorSupportForm.data.isDraft = true;
             }
 
             // secretary verification form
@@ -338,6 +340,7 @@ export async function load({ params, parent }) {
                 secretaryVerificationForm.data.allowanceTypeCode =
                     currentAllowanceTypeCode;
                 secretaryVerificationForm.data.date = Date.now().toString();
+                secretaryVerificationForm.data.isDraft = true;
             }
 
             // endorser detail form
@@ -351,6 +354,8 @@ export async function load({ params, parent }) {
                 endorserDetailForm.data.allowanceId = currentAllowanceId;
                 endorserDetailForm.data.allowanceTypeCode =
                     currentAllowanceTypeCode;
+                endorserDetailForm.data.isDraft = true;
+                endorserDetailForm.data.isDraft = true;
             }
 
             // supporter feedback form
@@ -365,6 +370,7 @@ export async function load({ params, parent }) {
                 supporterFeedbackForm.data.allowanceTypeCode =
                     currentAllowanceTypeCode;
                 supporterFeedbackForm.data.date = Date.now().toString();
+                supporterFeedbackForm.data.isDraft = true;
             }
 
             // approver feedback form
@@ -379,6 +385,7 @@ export async function load({ params, parent }) {
                 approverFeedbackForm.data.allowanceTypeCode =
                     currentAllowanceTypeCode;
                 approverFeedbackForm.data.date = Date.now().toString();
+                approverFeedbackForm.data.isDraft = true;
             }
 
             // secretary confirmation form
@@ -393,6 +400,7 @@ export async function load({ params, parent }) {
                 secretaryConfirmationForm.data.allowanceTypeCode =
                     currentAllowanceTypeCode;
                 secretaryConfirmationForm.data.date = Date.now().toString();
+                secretaryConfirmationForm.data.isDraft = true;
             }
         }
     }
