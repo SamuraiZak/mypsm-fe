@@ -524,7 +524,7 @@ export const _newOfferSupporterResultForm = async (
     formData: object,
 ) => {
     const form = await superValidate(formData, zod(_setApproverResultSchema));
-    form.data.id = id;
+    form.data.applicationId = id;
 
     console.log(form);
     if (!form.valid) {
@@ -545,7 +545,7 @@ export const _newOfferApproverResultForm = async (
     formData: object,
 ) => {
     const form = await superValidate(formData, zod(_setApproverResultSchema));
-    form.data.id = id;
+    form.data.applicationId = id;
 
     console.log(form);
     if (!form.valid) {
