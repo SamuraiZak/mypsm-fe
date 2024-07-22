@@ -25,11 +25,13 @@
         ServiceAllowanceCeremonyClothingDetailSchema,
         ServiceAllowanceEndorsementSchema,
         ServiceAllowanceEndorserDetailSchema,
+        ServiceAllowanceFuneralDetailSchema,
         ServiceAllowanceHouseMovingDetailSchema,
         ServiceAllowanceOtherAllowanceDetailSchema,
         ServiceAllowancePassportPaymentDetailSchema,
         ServiceAllowanceWinterClothingDetailSchema,
         type ServiceAllowanceCeremonyClothingDetailType,
+        type ServiceAllowanceFuneralDetailType,
         type ServiceAllowancePassportPaymentDetailType,
     } from '$lib/schemas/mypsm/service-allowance/service-allowance.schema';
     import {
@@ -38,6 +40,7 @@
         _ceremonyClothingSubmit,
         _directorSupportSubmit,
         _endorserDetailSubmit,
+        _funeralSubmit,
         _houseMovingSubmit,
         _otherAllowanceSubmit,
         _passportPaymentSubmit,
@@ -90,6 +93,12 @@
                 break;
             case AllowanceTypeConstant.houseMoving.code:
                 currentFormId = 'houseMovingForm';
+                break;
+            case AllowanceTypeConstant.winterClothing.code:
+                currentFormId = 'winterClothingForm';
+                break;
+            case AllowanceTypeConstant.funeralArrangement.code:
+                currentFormId = 'funeralForm';
                 break;
 
             default:
@@ -237,7 +246,7 @@
         },
     });
 
-    // 4. house moving form
+    // 5. winter clothing form
     const {
         form: winterClothingForm,
         errors: winterClothingErrors,
@@ -269,6 +278,39 @@
             });
         },
     });
+    
+    // 6. funeral form
+    const {
+        form: funeralForm,
+        errors: funeralErrors,
+        enhance: funeralEnhance,
+    } = superForm(data.forms.funeralDetailsForm, {
+        dataType: 'json',
+        id: 'funeralForm',
+        SPA: true,
+        taintedMessage: false,
+        resetForm: false,
+        invalidateAll: true,
+        validationMethod: 'oninput',
+        validators: zodClient(ServiceAllowanceFuneralDetailSchema),
+        async onSubmit(input) {
+            $funeralForm.isDraft = isDraft;
+            _funeralSubmit($funeralForm).then((result) => {
+                if (result.status == 'success') {
+                    const applicationDetail: ServiceAllowanceFuneralDetailType =
+                        result.data
+                            ?.details as ServiceAllowanceFuneralDetailType;
+
+                    let url: string =
+                        '/v2/service-allowance/application/' +
+                        applicationDetail.allowanceTypeCode +
+                        '/' +
+                        applicationDetail.allowanceId;
+                    goto(url);
+                }
+            });
+        },
+    });
 
     // create all processes form
     // 1. Assign Director Form
@@ -285,6 +327,8 @@
         validationMethod: 'oninput',
         validators: zodClient(ServiceAllowanceAssignDirectorSchema),
         async onSubmit(input) {
+            $assignDirectorForm.allowanceId = data.props.currentAllowanceId;
+            $assignDirectorForm.type = 'pengarah bahagian negeri';
             _assignDirectorSubmit($assignDirectorForm);
         },
     });
@@ -303,6 +347,7 @@
         validationMethod: 'oninput',
         validators: zodClient(ServiceAllowanceEndorsementSchema),
         async onSubmit(input) {
+            $directorSupportForm.allowanceId = data.props.currentAllowanceId;
             _directorSupportSubmit($directorSupportForm);
         },
     });
@@ -321,6 +366,8 @@
         validationMethod: 'oninput',
         validators: zodClient(ServiceAllowanceEndorsementSchema),
         async onSubmit(input) {
+            $secretaryVerificationForm.allowanceId =
+                data.props.currentAllowanceId;
             _secretaryVerificationSubmit($secretaryVerificationForm);
         },
     });
@@ -339,6 +386,7 @@
         validationMethod: 'oninput',
         validators: zodClient(ServiceAllowanceEndorsementSchema),
         async onSubmit(input) {
+            $supporterFeedbackForm.allowanceId = data.props.currentAllowanceId;
             _supporterFeedbackSubmit($supporterFeedbackForm);
         },
     });
@@ -357,11 +405,12 @@
         validationMethod: 'oninput',
         validators: zodClient(ServiceAllowanceEndorsementSchema),
         async onSubmit(input) {
+            $approverFeedbackForm.allowanceId = data.props.currentAllowanceId;
             _approverFeedbackSubmit($approverFeedbackForm);
         },
     });
 
-    // 6. Supporter Confirmation Form
+    // 6. Secretary Confirmation Form
     const {
         form: secretaryConfirmationForm,
         errors: secretaryConfirmationErrors,
@@ -893,10 +942,10 @@
                                     id="otherAllowanceDocument"
                                     disabled={$otherAllowanceForm.isDraft ==
                                         false}
-                                    errors={$otherAllowanceErrors.documents?._errors?.map(
+                                    errors={$otherAllowanceErrors.document?._errors?.map(
                                         (error) => error,
                                     )}
-                                    bind:documents={$otherAllowanceForm.documents}
+                                    bind:documents={$otherAllowanceForm.document}
                                     label="10. Dokumen Sokongan"
                                 ></DocumentInput>
                             </form>
@@ -1029,286 +1078,118 @@
                             <!-- WINTER CLOTHING -->
                             <!-- ################################################################### -->
                             <form
-                                id="ceremonyClothingForm"
+                                id="winterClothingForm"
                                 method="POST"
-                                use:ceremonyClothingEnhance
+                                use:winterClothingEnhance
                                 class="flex w-full flex-col items-center justify-start gap-2"
                             >
                                 <CustomTextField
+                                    disabled={!$winterClothingForm.isDraft}
                                     id="reason"
                                     label={'7. Tujuan Permohonan'}
                                     type="textarea"
-                                    errors={$ceremonyClothingErrors.reason}
-                                    bind:val={$ceremonyClothingForm.reason}
+                                    errors={$winterClothingErrors.reason}
+                                    bind:val={$winterClothingForm.reason}
                                 ></CustomTextField>
-                                <div
-                                    class="w-full flex-row items-center justify-start"
-                                >
-                                    <p
-                                        class="w-full text-justify text-base italic text-slate-500"
-                                    >
-                                        (Sertakan resit <span
-                                            class="font-medium">ASAL</span
-                                        > yang disahkan perbelanjaan adalah di atas
-                                        urusan rasmi dan sesalinan jemputan ke majlis/upacara
-                                        rasmi atau surat arahan bertugas di Parlimen
-                                        atau Dewan Undangan Negeri)
-                                    </p>
-                                </div>
-                                <div
-                                    class="flex w-full flex-col items-start justify-start gap-1"
-                                >
-                                    <p
-                                        class="flex w-full flex-col text-base font-medium text-slate-700"
-                                    >
-                                        8. Pernah mendapat kemudahan ini dalam
-                                        tiga (3) tahun?
-                                    </p>
-                                </div>
-                                <CustomRadioBoolean
-                                    disabled={false}
-                                    id="ceremonyClothingPrevious"
-                                    label="8.1 Bayaran Pakaian Istiadat"
-                                    bind:errors={$ceremonyClothingErrors.ceremonyClothingPrevious}
-                                    bind:val={$ceremonyClothingForm.ceremonyClothingPrevious}
-                                    options={commonOptions}
-                                ></CustomRadioBoolean>
                                 <CustomTextField
-                                    type="date"
-                                    id="ceremonyClothingPreviousDate"
-                                    label={'Jika pernah, sila nyatakan tarikh terakhir kemudahan diluluskan'}
-                                    errors={$ceremonyClothingErrors.ceremonyClothingPreviousDate}
-                                    bind:val={$ceremonyClothingForm.ceremonyClothingPreviousDate}
-                                ></CustomTextField>
-                                <CustomRadioBoolean
-                                    disabled={false}
-                                    id="blackTiePrevious"
-                                    label="8.2 Bantuan Bayaran Black Tie"
-                                    bind:errors={$ceremonyClothingErrors.blackTiePrevious}
-                                    bind:val={$ceremonyClothingForm.blackTiePrevious}
-                                    options={commonOptions}
-                                ></CustomRadioBoolean>
-                                <CustomTextField
-                                    type="date"
-                                    id="blackTiePreviousDate"
-                                    label={'Jika pernah, sila nyatakan tarikh terakhir kemudahan diluluskan'}
-                                    errors={$ceremonyClothingErrors.blackTiePreviousDate}
-                                    bind:val={$ceremonyClothingForm.blackTiePreviousDate}
-                                ></CustomTextField>
-                                <CustomRadioBoolean
-                                    disabled={false}
-                                    id="officialClothingPrevious"
-                                    label="8.3 Bayaran Pakaian Menghadiri Upacara Rasmi"
-                                    bind:errors={$ceremonyClothingErrors.officialClothingPrevious}
-                                    bind:val={$ceremonyClothingForm.officialClothingPrevious}
-                                    options={commonOptions}
-                                ></CustomRadioBoolean>
-                                <CustomTextField
-                                    type="date"
-                                    id="officialClothingPreviousDate"
-                                    label={'Jika pernah, sila nyatakan tarikh terakhir kemudahan diluluskan'}
-                                    errors={$ceremonyClothingErrors.officialClothingPreviousDate}
-                                    bind:val={$ceremonyClothingForm.officialClothingPreviousDate}
-                                ></CustomTextField>
-                                <div
-                                    class="flex w-full flex-col items-start justify-start gap-1"
-                                >
-                                    <p
-                                        class="flex w-full flex-col text-base font-medium text-slate-700"
-                                    >
-                                        9. Jumlah Tuntutan
-                                    </p>
-                                </div>
-                                <CustomTextField
+                                    disabled={!$winterClothingForm.isDraft}
                                     type="number"
                                     id="personal"
-                                    label={'9.1 Sendiri (RM)'}
-                                    errors={$ceremonyClothingErrors.personal}
-                                    bind:val={$ceremonyClothingForm.personal}
+                                    label={'8. Jumlah Tuntutan (RM)'}
+                                    errors={$winterClothingErrors.personal}
+                                    bind:val={$winterClothingForm.personal}
                                 ></CustomTextField>
-                                <CustomTextField
-                                    type="number"
-                                    id="partner"
-                                    label={'9.2 Pasangan (RM)'}
-                                    errors={$ceremonyClothingErrors.partner}
-                                    bind:val={$ceremonyClothingForm.partner}
-                                ></CustomTextField>
-
                                 <DocumentInput
-                                    errors={$ceremonyClothingErrors.documents?._errors?.map(
+                                    disabled={!$winterClothingForm.isDraft}
+                                    errors={$winterClothingErrors.documents?._errors?.map(
                                         (error) => error,
                                     )}
-                                    bind:documents={$ceremonyClothingForm.documents}
-                                    label="10. Sila muat naik dokumen sokongan"
+                                    bind:documents={$winterClothingForm.documents}
+                                    label="9. Sila muat naik dokumen sokongan"
                                 ></DocumentInput>
-
-                                <!-- card starts -->
-                                <div
-                                    class=" flex w-full flex-col items-start justify-start gap-2 overflow-hidden rounded-md border"
-                                >
-                                    <!-- card header starts -->
-                                    <div
-                                        class="flex h-7 min-h-7 w-full flex-row items-center justify-start rounded-t bg-gray-100 px-4"
-                                    >
-                                        <p
-                                            class="w-full text-md font-medium leading-tight text-slate-500"
-                                        >
-                                            Nota
-                                        </p>
-                                    </div>
-                                    <!-- card header ends -->
-                                    <!-- card body starts -->
-                                    <div
-                                        class="flex w-full flex-col items-start justify-start p-4"
-                                    >
-                                        <ol
-                                            class="list-decimal pl-6 text-base text-slate-500"
-                                        >
-                                            <li class="mb-4">
-                                                <p class="mb-2">
-                                                    Kadar bagi Bayaran Pakaian
-                                                    Istiadat, Bantuan Bayaran
-                                                    Pakaian <em>Black Tie</em> dan
-                                                    Bayaran Pakaian Menghadiri Upacara
-                                                    Rasmi adalah seperti berikut:
-                                                </p>
-                                                <table
-                                                    class="mb-4 w-full table-auto border-collapse border border-gray-400"
-                                                >
-                                                    <thead>
-                                                        <tr>
-                                                            <th
-                                                                class="border border-gray-400 px-4 py-2"
-                                                                >Bil</th
-                                                            >
-                                                            <th
-                                                                class="border border-gray-400 px-4 py-2"
-                                                                >Jenis Pakaian</th
-                                                            >
-                                                            <th
-                                                                class="border border-gray-400 px-4 py-2"
-                                                                >Kadar Bayaran
-                                                                (RM)</th
-                                                            >
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td
-                                                                class="border border-gray-400 px-4 py-2 text-center"
-                                                                >1.</td
-                                                            >
-                                                            <td
-                                                                class="border border-gray-400 px-4 py-2"
-                                                                >Bayaran Pakaian
-                                                                Istiadat</td
-                                                            >
-                                                            <td
-                                                                class="border border-gray-400 px-4 py-2 text-right"
-                                                                >1,500.00</td
-                                                            >
-                                                        </tr>
-                                                        <tr>
-                                                            <td
-                                                                class="border border-gray-400 px-4 py-2 text-center"
-                                                                >2.</td
-                                                            >
-                                                            <td
-                                                                class="border border-gray-400 px-4 py-2"
-                                                                >Bantuan Bayaran
-                                                                Pakaian <em
-                                                                    >Black Tie</em
-                                                                ></td
-                                                            >
-                                                            <td
-                                                                class="border border-gray-400 px-4 py-2 text-right"
-                                                                >1,000.00</td
-                                                            >
-                                                        </tr>
-                                                        <tr>
-                                                            <td
-                                                                class="border border-gray-400 px-4 py-2 text-center"
-                                                                >3.</td
-                                                            >
-                                                            <td
-                                                                class="border border-gray-400 px-4 py-2"
-                                                            >
-                                                                Bayaran Pakaian
-                                                                Menghadiri
-                                                                Upacara Rasmi<br
-                                                                />
-                                                                <span
-                                                                    class="block"
-                                                                    >(pegawai)</span
-                                                                >
-                                                                <span
-                                                                    class="block"
-                                                                    >(pasangan)</span
-                                                                >
-                                                            </td>
-                                                            <td
-                                                                class="border border-gray-400 px-4 py-2 text-right"
-                                                            >
-                                                                650.00<br />
-                                                                450.00
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </li>
-                                            <li class="mb-4">
-                                                <p class="mb-2">
-                                                    Kemudahan ini adalah
-                                                    tertakluk kepada syarat
-                                                    seperti berikut:
-                                                </p>
-                                                <ul class="list-disc pl-6">
-                                                    <li class="mb-1">
-                                                        Kemudahan bayaran
-                                                        pakaian ini diberi
-                                                        setiap tiga (3) tahun
-                                                        sekali.
-                                                    </li>
-                                                    <li class="mb-1">
-                                                        Pegawai yang telah
-                                                        diberi Bayaran Pakaian
-                                                        Istiadat <strong
-                                                            >tidak layak</strong
-                                                        > menuntut Bayaran Pakaian
-                                                        Menghadiri Upacara Rasmi
-                                                        dalam tempoh tiga (3) tahun
-                                                        yang sama;
-                                                    </li>
-                                                    <li class="mb-1">
-                                                        Tuntutan bayaran balik
-                                                        hendaklah disokong
-                                                        dengan resit; dan
-                                                    </li>
-                                                    <li class="mb-1">
-                                                        Tuntutan bayaran balik
-                                                        Pakaian Menghadiri
-                                                        Upacara Rasmi hendaklah
-                                                        disokong dengan maklumat
-                                                        mengenai jemputan
-                                                        upacara rasmi atau surat
-                                                        arahan bertugas di
-                                                        Parlimen atau Dewan
-                                                        Undangan Negeri.
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <p>
-                                                    Penggunaan kemudahan ini
-                                                    hendaklah dicatatkan dalam
-                                                    Buku Perkhidmatan pegawai.
-                                                </p>
-                                            </li>
-                                        </ol>
-                                    </div>
-                                    <!-- card body ends -->
-                                </div>
-                                <!-- card ends -->
+                            </form>
+                        {:else if currentAllowanceTypeCode == AllowanceTypeConstant.funeralArrangement.code}
+                            <!-- ################################################################### -->
+                            <!-- FUNERAL -->
+                            <!-- ################################################################### -->
+                            <form
+                                id="funeralForm"
+                                method="POST"
+                                use:funeralEnhance
+                                class="flex w-full flex-col items-center justify-start gap-2"
+                            >
+                                <CustomTextField
+                                    disabled={!$funeralForm.isDraft}
+                                    id="name"
+                                    label={'7. Nama Kakitangan Yang Meninggal'}
+                                    type="text"
+                                    errors={$funeralErrors.name}
+                                    bind:val={$funeralForm.name}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled={!$funeralForm.isDraft}
+                                    type="text"
+                                    id="employeeNumber"
+                                    label={'8. Nombor Pekerja Kakitangan Yang Meninggal'}
+                                    errors={$funeralErrors.employeeNumber}
+                                    bind:val={$funeralForm.employeeNumber}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled={!$funeralForm.isDraft}
+                                    type="text"
+                                    id="identityDocumentNumber"
+                                    label={'9. No. Kad Pengenalan Kakitangan Yang Meninggal'}
+                                    errors={$funeralErrors.identityDocumentNumber}
+                                    bind:val={$funeralForm.identityDocumentNumber}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled={!$funeralForm.isDraft}
+                                    type="date"
+                                    id="deathDate"
+                                    label={'10. Tarikh Kematian'}
+                                    errors={$funeralErrors.deathDate}
+                                    bind:val={$funeralForm.deathDate}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled={!$funeralForm.isDraft}
+                                    type="text"
+                                    id="deathTime"
+                                    label={'11. Masa Kematian Disahkan'}
+                                    errors={$funeralErrors.deathTime}
+                                    bind:val={$funeralForm.deathTime}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled={!$funeralForm.isDraft}
+                                    type="text"
+                                    id="nextOfKinName"
+                                    label={'12. Nama Waris'}
+                                    errors={$funeralErrors.nextOfKinName}
+                                    bind:val={$funeralForm.nextOfKinName}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled={!$funeralForm.isDraft}
+                                    type="text"
+                                    id="nextOfKinAddress"
+                                    label={'13. Alamat Waris'}
+                                    errors={$funeralErrors.nextOfKinAddress}
+                                    bind:val={$funeralForm.nextOfKinAddress}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled={!$funeralForm.isDraft}
+                                    type="text"
+                                    id="relationshipId"
+                                    label={'14. Hubungan Dengan Kakitangan Yang Meninggal'}
+                                    errors={$funeralErrors.relationshipId}
+                                    bind:val={$funeralForm.relationshipId}
+                                ></CustomTextField>
+                                <DocumentInput
+                                    disabled={!$funeralForm.isDraft}
+                                    errors={$funeralErrors.documents?._errors?.map(
+                                        (error) => error,
+                                    )}
+                                    bind:documents={$funeralForm.documents}
+                                    label="15. Sila muat naik dokumen sokongan"
+                                ></DocumentInput>
                             </form>
                         {/if}
                     </div>
@@ -1316,78 +1197,227 @@
             </StepperContentBody>
         </StepperContent>
 
-        {#if data.props.currentApplicationDetails.status !== 'Draf'}
-            <!-- ======================================================================= -->
-            <!-- ASSIGN DIRECTOR -->
-            <!-- ======================================================================= -->
-            {#if data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
-                <StepperContent>
-                    <StepperContentHeader
-                        title="Lantikan Pengarah Bahagian/Negeri"
-                    >
-                        <TextIconButton
-                            type="primary"
-                            label="Hantar"
-                            form="assignDirectorForm"
-                            onClick={() => {
-                                isDraft = false;
-                            }}
-                            icon="check"
-                        ></TextIconButton>
-                    </StepperContentHeader>
-                    <StepperContentBody>
-                        <div
-                            class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
-                        >
-                            <div
-                                class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
-                            >
-                                <form
-                                    id="assignDirectorForm"
-                                    method="POST"
-                                    use:assignDirectorEnhance
-                                    class="flex w-full flex-col items-center justify-start gap-2"
-                                >
-                                    {#if data.props.currentApplicationDetails.assignDirector == null}
-                                        <CustomSelectField
-                                            id="identityDocumentNumber"
-                                            label={'Sila pilih Pengarah Bahagian/Negeri untuk memberi sokongan bagi permohonan ini'}
-                                            bind:val={$assignDirectorForm.identityDocumentNumber}
-                                            options={data.lookup
-                                                .directorDrodpwon}
-                                        ></CustomSelectField>
-                                    {:else}
-                                        <CustomTextField
-                                            disabled
-                                            id="identityDocumentNumber"
-                                            label={'No Kad Pengenalan'}
-                                            bind:val={$assignDirectorForm.identityDocumentNumber}
-                                        ></CustomTextField>
-                                        <CustomTextField
-                                            disabled
-                                            id="employeeName"
-                                            label={'Nama Pengarah'}
-                                            bind:val={$assignDirectorForm.employeeName}
-                                        ></CustomTextField>
-                                    {/if}
-                                </form>
-                            </div>
-                        </div>
-                    </StepperContentBody>
-                </StepperContent>
-            {/if}
-
-            <!-- ======================================================================= -->
-            <!-- DIRECTOR SUPPORT -->
-            <!-- ======================================================================= -->
-            <StepperContent>
-                <StepperContentHeader
-                    title="Sokongan & Ulasan Pengarah Bahagian/Negeri"
+        <!-- ======================================================================= -->
+        <!-- ASSIGN DIRECTOR -->
+        <!-- ======================================================================= -->
+        <StepperContent>
+            <StepperContentHeader title="Lantikan Pengarah Bahagian/Negeri">
+                <TextIconButton
+                    type="primary"
+                    label="Hantar"
+                    form="assignDirectorForm"
+                    onClick={() => {
+                        isDraft = false;
+                    }}
+                    icon="check"
+                ></TextIconButton>
+            </StepperContentHeader>
+            <StepperContentBody>
+                <div
+                    class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
                 >
+                    <div
+                        class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
+                    >
+                        <form
+                            id="assignDirectorForm"
+                            method="POST"
+                            use:assignDirectorEnhance
+                            class="flex w-full flex-col items-center justify-start gap-2"
+                        >
+                            {#if data.props.currentApplicationDetails.assignDirector == null}
+                                <CustomSelectField
+                                    id="identityDocumentNumber"
+                                    label={'Sila pilih Pengarah Bahagian/Negeri untuk memberi sokongan bagi permohonan ini'}
+                                    bind:val={$assignDirectorForm.identityDocumentNumber}
+                                    options={data.lookup.directorDrodpwon}
+                                ></CustomSelectField>
+                            {:else}
+                                <CustomTextField
+                                    disabled
+                                    id="identityDocumentNumber"
+                                    label={'No Kad Pengenalan'}
+                                    bind:val={$assignDirectorForm.identityDocumentNumber}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled
+                                    id="employeeName"
+                                    label={'Nama Pengarah'}
+                                    bind:val={$assignDirectorForm.employeeName}
+                                ></CustomTextField>
+                            {/if}
+                        </form>
+                    </div>
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+
+        <!-- ======================================================================= -->
+        <!-- DIRECTOR SUPPORT -->
+        <!-- ======================================================================= -->
+        <StepperContent>
+            <StepperContentHeader
+                title="Sokongan & Ulasan Pengarah Bahagian/Negeri"
+            >
+                <TextIconButton
+                    type="primary"
+                    label="Hantar"
+                    form="directorSupportForm"
+                    onClick={() => {
+                        isDraft = false;
+                    }}
+                    icon="check"
+                ></TextIconButton>
+            </StepperContentHeader>
+            <StepperContentBody>
+                <div
+                    class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
+                >
+                    <div
+                        class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
+                    >
+                        <form
+                            id="directorSupportForm"
+                            method="POST"
+                            use:directorSupportEnhance
+                            class="flex w-full flex-col items-center justify-start gap-2"
+                        >
+                            <CustomRadioBoolean
+                                disabled={!data.props.currentApplicationDetails
+                                    .directorSupport?.status == null}
+                                id="status"
+                                label="Permohonan tuntutan pegawai di atas adalah"
+                                bind:val={$directorSupportForm.status}
+                                bind:errors={$directorSupportErrors.status}
+                                options={supportAltOptions}
+                            ></CustomRadioBoolean>
+                            <CustomTextField
+                                disabled={!data.props.currentApplicationDetails
+                                    .directorSupport?.status == null}
+                                type="textarea"
+                                id="remark"
+                                label={'Jika tidak disokong, sila nyatakan sebab'}
+                                errors={$directorSupportErrors.remark}
+                                bind:val={$directorSupportForm.remark}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                type="text"
+                                id="name"
+                                label={'Nama'}
+                                errors={$directorSupportErrors.name}
+                                bind:val={$directorSupportForm.name}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                type="text"
+                                id="identityDocumentNumber"
+                                label={'No. Kad Pengenalan'}
+                                errors={$directorSupportErrors.identityDocumentNumber}
+                                bind:val={$directorSupportForm.identityDocumentNumber}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                type="text"
+                                id="date"
+                                label={'Tarikh'}
+                                errors={$directorSupportErrors.date}
+                                bind:val={$directorSupportForm.date}
+                            ></CustomTextField>
+                        </form>
+                    </div>
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+
+        <!-- ======================================================================= -->
+        <!-- SECRETARY VERIFICATION -->
+        <!-- ======================================================================= -->
+        <StepperContent>
+            <StepperContentHeader title="Pengesahan Urus Setia">
+                {#if data.props.currentApplicationDetails.verification?.status == null}
                     <TextIconButton
                         type="primary"
                         label="Hantar"
-                        form="directorSupportForm"
+                        form="secretaryVerificationForm"
+                        onClick={() => {
+                            isDraft = false;
+                        }}
+                        icon="check"
+                    ></TextIconButton>
+                {/if}
+            </StepperContentHeader>
+            <StepperContentBody>
+                <div
+                    class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
+                >
+                    <div
+                        class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
+                    >
+                        <form
+                            id="secretaryVerificationForm"
+                            method="POST"
+                            use:secretaryVerificationEnhance
+                            class="flex w-full flex-col items-center justify-start gap-2"
+                        >
+                            <CustomRadioBoolean
+                                disabled={!data.props.currentApplicationDetails
+                                    .verification?.status == null}
+                                id="reason"
+                                label="Adakah Permohonan Ini Sah?"
+                                bind:val={$secretaryVerificationForm.status}
+                                bind:errors={$secretaryVerificationErrors.status}
+                                options={certifyAltAltOptions}
+                            ></CustomRadioBoolean>
+                            <CustomTextField
+                                disabled={!data.props.currentApplicationDetails
+                                    .verification?.status == null}
+                                type="textarea"
+                                id="reason"
+                                label={'Jika tidak diluluskan, sila nyatakan sebab'}
+                                errors={$secretaryVerificationErrors.remark}
+                                bind:val={$secretaryVerificationForm.remark}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                type="text"
+                                id="name"
+                                label={'Nama'}
+                                errors={$secretaryVerificationErrors.name}
+                                bind:val={$secretaryVerificationForm.name}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                type="text"
+                                id="identityDocumentNumber"
+                                label={'No. Kad Pengenalan'}
+                                errors={$secretaryVerificationErrors.identityDocumentNumber}
+                                bind:val={$secretaryVerificationForm.identityDocumentNumber}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                type="text"
+                                id="date"
+                                label={'Tarikh'}
+                                errors={$secretaryVerificationErrors.date}
+                                bind:val={$secretaryVerificationForm.date}
+                            ></CustomTextField>
+                        </form>
+                    </div>
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+
+        <!-- ======================================================================= -->
+        <!-- ASSIGN SUPPORTER AND APPROVER -->
+        <!-- ======================================================================= -->
+        {#if data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
+            <StepperContent>
+                <StepperContentHeader title="Lantikan Penyokong dan Pelulus">
+                    <TextIconButton
+                        type="primary"
+                        label="Hantar"
+                        form="endorserDetailForm"
                         onClick={() => {
                             isDraft = false;
                         }}
@@ -1402,455 +1432,272 @@
                             class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
                         >
                             <form
-                                id="directorSupportForm"
+                                id="endorserDetailForm"
                                 method="POST"
-                                use:directorSupportEnhance
+                                use:endorserDetailEnhance
                                 class="flex w-full flex-col items-center justify-start gap-2"
                             >
-                                <CustomRadioBoolean
-                                    disabled={!data.props
-                                        .currentApplicationDetails
-                                        .directorSupport?.status == null}
-                                    id="status"
-                                    label="Permohonan tuntutan pegawai di atas adalah"
-                                    bind:val={$directorSupportForm.status}
-                                    bind:errors={$directorSupportErrors.status}
-                                    options={supportAltOptions}
-                                ></CustomRadioBoolean>
-                                <CustomTextField
-                                    disabled={!data.props
-                                        .currentApplicationDetails
-                                        .directorSupport?.status == null}
-                                    type="textarea"
-                                    id="remark"
-                                    label={'Jika tidak disokong, sila nyatakan sebab'}
-                                    errors={$directorSupportErrors.remark}
-                                    bind:val={$directorSupportForm.remark}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    type="text"
-                                    id="name"
-                                    label={'Nama'}
-                                    errors={$directorSupportErrors.name}
-                                    bind:val={$directorSupportForm.name}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    type="text"
-                                    id="identityDocumentNumber"
-                                    label={'No. Kad Pengenalan'}
-                                    errors={$directorSupportErrors.identityDocumentNumber}
-                                    bind:val={$directorSupportForm.identityDocumentNumber}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    type="text"
-                                    id="date"
-                                    label={'Tarikh'}
-                                    errors={$directorSupportErrors.date}
-                                    bind:val={$directorSupportForm.date}
-                                ></CustomTextField>
-                            </form>
-                        </div>
-                    </div>
-                </StepperContentBody>
-            </StepperContent>
-
-            <!-- ======================================================================= -->
-            <!-- SECRETARY Confirmation -->
-            <!-- ======================================================================= -->
-            <StepperContent>
-                <StepperContentHeader title="Pengesahan Urus Setia">
-                    {#if data.props.currentApplicationDetails.confirmation?.status == null}
-                        <TextIconButton
-                            type="primary"
-                            label="Hantar"
-                            form="secretaryConfirmationForm"
-                            onClick={() => {
-                                isDraft = false;
-                            }}
-                            icon="check"
-                        ></TextIconButton>
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <div
-                        class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
-                    >
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
-                        >
-                            <form
-                                id="secretaryConfirmationForm"
-                                method="POST"
-                                use:secretaryConfirmationEnhance
-                                class="flex w-full flex-col items-center justify-start gap-2"
-                            >
-                                <CustomRadioBoolean
-                                    disabled={!data.props
-                                        .currentApplicationDetails.confirmation
-                                        ?.status == null}
-                                    id="reason"
-                                    label="Adakah Permohonan Ini Sah?"
-                                    bind:val={$secretaryConfirmationForm.status}
-                                    bind:errors={$secretaryConfirmationErrors.status}
-                                    options={certifyAltAltOptions}
-                                ></CustomRadioBoolean>
-                                <CustomTextField
-                                    disabled={!data.props
-                                        .currentApplicationDetails.confirmation
-                                        ?.status == null}
-                                    type="textarea"
-                                    id="reason"
-                                    label={'Jika tidak diluluskan, sila nyatakan sebab'}
-                                    errors={$secretaryConfirmationErrors.remark}
-                                    bind:val={$secretaryConfirmationForm.remark}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    type="text"
-                                    id="name"
-                                    label={'Nama'}
-                                    errors={$secretaryConfirmationErrors.name}
-                                    bind:val={$secretaryConfirmationForm.name}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    type="text"
-                                    id="identityDocumentNumber"
-                                    label={'No. Kad Pengenalan'}
-                                    errors={$secretaryConfirmationErrors.identityDocumentNumber}
-                                    bind:val={$secretaryConfirmationForm.identityDocumentNumber}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    type="text"
-                                    id="date"
-                                    label={'Tarikh'}
-                                    errors={$secretaryConfirmationErrors.date}
-                                    bind:val={$secretaryConfirmationForm.date}
-                                ></CustomTextField>
-                            </form>
-                        </div>
-                    </div>
-                </StepperContentBody>
-            </StepperContent>
-
-            <!-- ======================================================================= -->
-            <!-- SECRETARY VERIFICATION -->
-            <!-- ======================================================================= -->
-            <!-- <StepperContent>
-                <StepperContentHeader title="Semakan Urus Setia">
-                    {#if $secretaryVerificationForm.isDraft}
-                        <TextIconButton
-                            type="primary"
-                            label="Hantar"
-                            form={currentFormId}
-                            onClick={() => {
-                                isDraft = false;
-                            }}
-                            icon="check"
-                        ></TextIconButton>
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <div
-                        class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
-                    >
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
-                        >
-                            <form
-                                id="secretaryVerificationForm"
-                                method="POST"
-                                use:secretaryVerificationEnhance
-                                class="flex w-full flex-col items-center justify-start gap-2"
-                            >
-                                <CustomRadioBoolean
-                                    disabled={false}
-                                    id="reason"
-                                    label="Butiran permohonan adalah lengkap dan sah"
-                                    bind:val={$secretaryVerificationForm.status}
-                                    bind:errors={$secretaryVerificationErrors.status}
-                                    options={certifyOptions}
-                                ></CustomRadioBoolean>
-                                <CustomTextField
-                                    type="textarea"
-                                    id="reason"
-                                    label={'Jika tidak sah, sila nyatakan sebab'}
-                                    errors={$secretaryVerificationErrors.remark}
-                                    bind:val={$secretaryVerificationForm.remark}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    type="text"
-                                    id="name"
-                                    label={'Nama'}
-                                    errors={$secretaryVerificationErrors.name}
-                                    bind:val={$secretaryVerificationForm.name}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    type="text"
-                                    id="identityDocumentNumber"
-                                    label={'No. Kad Pengenalan'}
-                                    errors={$secretaryVerificationErrors.identityDocumentNumber}
-                                    bind:val={$secretaryVerificationForm.identityDocumentNumber}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    type="text"
-                                    id="date"
-                                    label={'Tarikh'}
-                                    errors={$secretaryVerificationErrors.date}
-                                    bind:val={$secretaryVerificationForm.date}
-                                ></CustomTextField>
-                            </form>
-                        </div>
-                    </div>
-                </StepperContentBody>
-            </StepperContent> -->
-
-            <!-- ======================================================================= -->
-            <!-- ASSIGN SUPPORTER AND APPROVER -->
-            <!-- ======================================================================= -->
-            {#if data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
-                <StepperContent>
-                    <StepperContentHeader
-                        title="Lantikan Penyokong dan Pelulus"
-                    >
-                        <TextIconButton
-                            type="primary"
-                            label="Hantar"
-                            form="endorserDetailForm"
-                            onClick={() => {
-                                isDraft = false;
-                            }}
-                            icon="check"
-                        ></TextIconButton>
-                    </StepperContentHeader>
-                    <StepperContentBody>
-                        <div
-                            class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
-                        >
-                            <div
-                                class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
-                            >
-                                <form
-                                    id="endorserDetailForm"
-                                    method="POST"
-                                    use:endorserDetailEnhance
-                                    class="flex w-full flex-col items-center justify-start gap-2"
-                                >
-                                    {#if data.props.currentApplicationDetails.supporterApprover == null}
-                                        <CustomSelectField
-                                            id="supporterIdentityDocumentNumber"
-                                            label={'Sila pilih penyokong untuk permohonan ini'}
-                                            bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
-                                            options={data.lookup
-                                                .directorDrodpwon}
-                                        ></CustomSelectField>
-                                        <CustomSelectField
-                                            id="approverIdentityDocumentNumber"
-                                            label={'Sila pilih pelulus untuk permohonan ini'}
-                                            bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
-                                            options={data.lookup
-                                                .directorDrodpwon}
-                                        ></CustomSelectField>
-                                    {:else}
-                                        <CustomTextField
-                                            disabled
-                                            type="text"
-                                            id="supporterName"
-                                            label={'Nama Penyokong'}
-                                            errors={$endorserDetailErrors.supporterName}
-                                            bind:val={$endorserDetailForm.supporterName}
-                                        ></CustomTextField>
-                                        <CustomTextField
-                                            disabled
-                                            type="text"
-                                            id="supporterIdentityDocumentNumber"
-                                            label={'No. Kad Pengenalan  Penyokong'}
-                                            errors={$endorserDetailErrors.supporterIdentityDocumentNumber}
-                                            bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
-                                        ></CustomTextField>
-                                        <CustomTextField
-                                            disabled
-                                            type="text"
-                                            id="approverName"
-                                            label={'Nama Pelulus'}
-                                            errors={$endorserDetailErrors.approverName}
-                                            bind:val={$endorserDetailForm.approverName}
-                                        ></CustomTextField>
-                                        <CustomTextField
-                                            disabled
-                                            type="text"
-                                            id="approverIdentityDocumentNumber"
-                                            label={'No. Kad Pengenalan Pelulus'}
-                                            errors={$endorserDetailErrors.approverIdentityDocumentNumber}
-                                            bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
-                                        ></CustomTextField>
-                                    {/if}
-                                </form>
-                            </div>
-                        </div>
-                    </StepperContentBody>
-                </StepperContent>
-            {/if}
-
-            <!-- ======================================================================= -->
-            <!-- SUPPORTER FEEDBACK -->
-            <!-- ======================================================================= -->
-            <StepperContent>
-                <StepperContentHeader
-                    title="Ulasan & Syor Ketua Seksyen Pengurusan Sumber Manusia"
-                >
-                    <TextIconButton
-                        type="primary"
-                        label="Hantar"
-                        form="supporterFeedbackForm"
-                        onClick={() => {
-                            isDraft = false;
-                        }}
-                        icon="check"
-                    ></TextIconButton>
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <div
-                        class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
-                    >
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
-                        >
-                            <form
-                                id="supporterFeedbackForm"
-                                method="POST"
-                                use:supporterFeedbackEnhance
-                                class="flex w-full flex-col items-center justify-start gap-2"
-                            >
-                                <CustomRadioBoolean
-                                    disabled={false}
-                                    id="reason"
-                                    label="Permohonan tuntutan pegawai di atas adalah"
-                                    bind:val={$supporterFeedbackForm.status}
-                                    bind:errors={$supporterFeedbackErrors.status}
-                                    options={supportAltOptions}
-                                ></CustomRadioBoolean>
-                                <CustomTextField
-                                    type="textarea"
-                                    id="reason"
-                                    label={'Jika tidak disokong, sila nyatakan sebab'}
-                                    errors={$supporterFeedbackErrors.remark}
-                                    bind:val={$supporterFeedbackForm.remark}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    type="text"
-                                    id="name"
-                                    label={'Nama'}
-                                    errors={$supporterFeedbackErrors.name}
-                                    bind:val={$supporterFeedbackForm.name}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    type="text"
-                                    id="identityDocumentNumber"
-                                    label={'No. Kad Pengenalan'}
-                                    errors={$supporterFeedbackErrors.identityDocumentNumber}
-                                    bind:val={$supporterFeedbackForm.identityDocumentNumber}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    type="text"
-                                    id="date"
-                                    label={'Tarikh'}
-                                    errors={$supporterFeedbackErrors.date}
-                                    bind:val={$supporterFeedbackForm.date}
-                                ></CustomTextField>
-                            </form>
-                        </div>
-                    </div>
-                </StepperContentBody>
-            </StepperContent>
-
-            <!-- ======================================================================= -->
-            <!-- APPROVER FEEDBACK -->
-            <!-- ======================================================================= -->
-            <StepperContent>
-                <StepperContentHeader
-                    title="Kelulusan Pengarah Bahagian Khidmat Pengurusan"
-                >
-
-                        <TextIconButton
-                            type="primary"
-                            label="Hantar"
-                            form="approverFeedbackForm"
-                            onClick={() => {
-                                isDraft = false;
-                            }}
-                            icon="check"
-                        ></TextIconButton>
-
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <div
-                        class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
-                    >
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
-                        >
-                            <form
-                                id="approverFeedbackForm"
-                                method="POST"
-                                use:approverFeedbackEnhance
-                                class="flex w-full flex-col items-center justify-start gap-2"
-                            >
-                                <CustomRadioBoolean
-                                    disabled={false}
-                                    id="reason"
-                                    label="Permohonan ini"
-                                    bind:val={$approverFeedbackForm.status}
-                                    bind:errors={$approverFeedbackErrors.status}
-                                    options={approveAltOptions}
-                                ></CustomRadioBoolean>
-                                <CustomTextField
-                                    disabled={false}
-                                    type="textarea"
-                                    id="reason"
-                                    label={'Jika tidak diluluskan, sila nyatakan sebab'}
-                                    errors={$approverFeedbackErrors.remark}
-                                    bind:val={$approverFeedbackForm.remark}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    type="text"
-                                    id="name"
-                                    label={'Nama'}
-                                    errors={$approverFeedbackErrors.name}
-                                    bind:val={$approverFeedbackForm.name}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    type="text"
-                                    id="identityDocumentNumber"
-                                    label={'No. Kad Pengenalan'}
-                                    errors={$approverFeedbackErrors.identityDocumentNumber}
-                                    bind:val={$approverFeedbackForm.identityDocumentNumber}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    type="text"
-                                    id="date"
-                                    label={'Tarikh'}
-                                    errors={$approverFeedbackErrors.date}
-                                    bind:val={$approverFeedbackForm.date}
-                                ></CustomTextField>
+                                {#if data.props.currentApplicationDetails.supporterApprover == null}
+                                    <CustomSelectField
+                                        id="supporterIdentityDocumentNumber"
+                                        label={'Sila pilih penyokong untuk permohonan ini'}
+                                        bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
+                                        options={data.lookup.directorDrodpwon}
+                                    ></CustomSelectField>
+                                    <CustomSelectField
+                                        id="approverIdentityDocumentNumber"
+                                        label={'Sila pilih pelulus untuk permohonan ini'}
+                                        bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
+                                        options={data.lookup.directorDrodpwon}
+                                    ></CustomSelectField>
+                                {:else}
+                                    <CustomTextField
+                                        disabled
+                                        type="text"
+                                        id="supporterName"
+                                        label={'Nama Penyokong'}
+                                        errors={$endorserDetailErrors.supporterName}
+                                        bind:val={$endorserDetailForm.supporterName}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        disabled
+                                        type="text"
+                                        id="supporterIdentityDocumentNumber"
+                                        label={'No. Kad Pengenalan  Penyokong'}
+                                        errors={$endorserDetailErrors.supporterIdentityDocumentNumber}
+                                        bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        disabled
+                                        type="text"
+                                        id="approverName"
+                                        label={'Nama Pelulus'}
+                                        errors={$endorserDetailErrors.approverName}
+                                        bind:val={$endorserDetailForm.approverName}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        disabled
+                                        type="text"
+                                        id="approverIdentityDocumentNumber"
+                                        label={'No. Kad Pengenalan Pelulus'}
+                                        errors={$endorserDetailErrors.approverIdentityDocumentNumber}
+                                        bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
+                                    ></CustomTextField>
+                                {/if}
                             </form>
                         </div>
                     </div>
                 </StepperContentBody>
             </StepperContent>
         {/if}
+
+        <!-- ======================================================================= -->
+        <!-- SUPPORTER FEEDBACK -->
+        <!-- ======================================================================= -->
+        <StepperContent>
+            <StepperContentHeader
+                title="Ulasan & Syor Ketua Seksyen Pengurusan Sumber Manusia"
+            >
+                <TextIconButton
+                    type="primary"
+                    label="Hantar"
+                    form="supporterFeedbackForm"
+                    onClick={() => {
+                        isDraft = false;
+                    }}
+                    icon="check"
+                ></TextIconButton>
+            </StepperContentHeader>
+            <StepperContentBody>
+                <div
+                    class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
+                >
+                    <div
+                        class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
+                    >
+                        <form
+                            id="supporterFeedbackForm"
+                            method="POST"
+                            use:supporterFeedbackEnhance
+                            class="flex w-full flex-col items-center justify-start gap-2"
+                        >
+                            <CustomRadioBoolean
+                                disabled={false}
+                                id="reason"
+                                label="Permohonan tuntutan pegawai di atas adalah"
+                                bind:val={$supporterFeedbackForm.status}
+                                bind:errors={$supporterFeedbackErrors.status}
+                                options={supportAltOptions}
+                            ></CustomRadioBoolean>
+                            <CustomTextField
+                                type="textarea"
+                                id="reason"
+                                label={'Jika tidak disokong, sila nyatakan sebab'}
+                                errors={$supporterFeedbackErrors.remark}
+                                bind:val={$supporterFeedbackForm.remark}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                type="text"
+                                id="name"
+                                label={'Nama'}
+                                errors={$supporterFeedbackErrors.name}
+                                bind:val={$supporterFeedbackForm.name}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                type="text"
+                                id="identityDocumentNumber"
+                                label={'No. Kad Pengenalan'}
+                                errors={$supporterFeedbackErrors.identityDocumentNumber}
+                                bind:val={$supporterFeedbackForm.identityDocumentNumber}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                type="text"
+                                id="date"
+                                label={'Tarikh'}
+                                errors={$supporterFeedbackErrors.date}
+                                bind:val={$supporterFeedbackForm.date}
+                            ></CustomTextField>
+                        </form>
+                    </div>
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+
+        <!-- ======================================================================= -->
+        <!-- APPROVER FEEDBACK -->
+        <!-- ======================================================================= -->
+        <StepperContent>
+            <StepperContentHeader
+                title="Kelulusan Pengarah Bahagian Khidmat Pengurusan"
+            >
+                <TextIconButton
+                    type="primary"
+                    label="Hantar"
+                    form="approverFeedbackForm"
+                    onClick={() => {
+                        isDraft = false;
+                    }}
+                    icon="check"
+                ></TextIconButton>
+            </StepperContentHeader>
+            <StepperContentBody>
+                <div
+                    class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
+                >
+                    <div
+                        class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
+                    >
+                        <form
+                            id="approverFeedbackForm"
+                            method="POST"
+                            use:approverFeedbackEnhance
+                            class="flex w-full flex-col items-center justify-start gap-2"
+                        >
+                            <CustomRadioBoolean
+                                disabled={false}
+                                id="reason"
+                                label="Permohonan ini"
+                                bind:val={$approverFeedbackForm.status}
+                                bind:errors={$approverFeedbackErrors.status}
+                                options={approveAltOptions}
+                            ></CustomRadioBoolean>
+                            <CustomTextField
+                                disabled={false}
+                                type="textarea"
+                                id="reason"
+                                label={'Jika tidak diluluskan, sila nyatakan sebab'}
+                                errors={$approverFeedbackErrors.remark}
+                                bind:val={$approverFeedbackForm.remark}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                type="text"
+                                id="name"
+                                label={'Nama'}
+                                errors={$approverFeedbackErrors.name}
+                                bind:val={$approverFeedbackForm.name}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                type="text"
+                                id="identityDocumentNumber"
+                                label={'No. Kad Pengenalan'}
+                                errors={$approverFeedbackErrors.identityDocumentNumber}
+                                bind:val={$approverFeedbackForm.identityDocumentNumber}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                type="text"
+                                id="date"
+                                label={'Tarikh'}
+                                errors={$approverFeedbackErrors.date}
+                                bind:val={$approverFeedbackForm.date}
+                            ></CustomTextField>
+                        </form>
+                    </div>
+                </div>
+            </StepperContentBody>
+        </StepperContent>
+
+        <!-- ======================================================================= -->
+        <!-- SECRETARY  CONFIRMATION -->
+        <!-- ======================================================================= -->
+        <StepperContent>
+            <StepperContentHeader title="Pengesahan Urus Setia">
+                {#if data.props.currentApplicationDetails.verification?.status == null}
+                    <TextIconButton
+                        type="primary"
+                        label="Hantar"
+                        form="secretaryConfirmationForm"
+                        onClick={() => {
+                            isDraft = false;
+                        }}
+                        icon="check"
+                    ></TextIconButton>
+                {/if}
+            </StepperContentHeader>
+            <StepperContentBody>
+                <div
+                    class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
+                >
+                    <div
+                        class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
+                    >
+                        <form
+                            id="secretaryConfirmationForm"
+                            method="POST"
+                            use:secretaryConfirmationEnhance
+                            class="flex w-full flex-col items-center justify-start gap-2"
+                        >
+                            <CustomTextField
+                                type="number"
+                                id="total"
+                                label={'Jumlah Yang Diluluskan (RM)'}
+                                errors={$secretaryConfirmationErrors.total}
+                                bind:val={$secretaryConfirmationForm.total}
+                            ></CustomTextField>
+                            <CustomTextField
+                                type="text"
+                                id="referenceNumber"
+                                label={'Nombor Rujukan Surat/Arahan Bayaran'}
+                                errors={$secretaryConfirmationErrors.referenceNumber}
+                                bind:val={$secretaryConfirmationForm.referenceNumber}
+                            ></CustomTextField>
+                            <CustomTextField
+                                disabled
+                                type="text"
+                                id="date"
+                                label={'Tarikh'}
+                                errors={$secretaryConfirmationErrors.date}
+                                bind:val={$secretaryConfirmationForm.date}
+                            ></CustomTextField>
+                        </form>
+                    </div>
+                </div>
+            </StepperContentBody>
+        </StepperContent>
     </Stepper>
 </section>

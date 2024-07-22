@@ -1,3 +1,4 @@
+import { invalidateAll } from '$app/navigation';
 import { AllowanceTypeConstant } from '$lib/constants/core/allowance-type.constant';
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant.js';
 import { RoleConstant } from '$lib/constants/core/role.constant.js';
@@ -20,17 +21,21 @@ import {
     ServiceAllowanceCeremonyClothingDetailSchema,
     ServiceAllowanceEndorsementSchema,
     ServiceAllowanceEndorserDetailSchema,
+    ServiceAllowanceFuneralDetailSchema,
     ServiceAllowanceHouseMovingDetailSchema,
     ServiceAllowanceOtherAllowanceDetailSchema,
     ServiceAllowancePassportPaymentDetailSchema,
+    ServiceAllowanceSecretaryConfirmationSchema,
     ServiceAllowanceWinterClothingDetailSchema,
     type ServiceAllowanceAssignDirectorType,
     type ServiceAllowanceCeremonyClothingDetailType,
     type ServiceAllowanceEndorsementType,
     type ServiceAllowanceEndorserDetailType,
+    type ServiceAllowanceFuneralDetailType,
     type ServiceAllowanceHouseMovingDetailType,
     type ServiceAllowanceOtherAllowanceDetailType,
     type ServiceAllowancePassportPaymentDetailType,
+    type ServiceAllowanceSecretaryConfirmationType,
     type ServiceAllowanceWinterClothingDetailType,
 } from '$lib/schemas/mypsm/service-allowance/service-allowance.schema.js';
 import { EmployeeExtendedServices } from '$lib/services/implementation/core/employee/employee.service.js';
@@ -40,7 +45,6 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export async function load({ params, parent }) {
-
     const { layoutData } = await parent();
 
     // get the current application Id
@@ -119,13 +123,21 @@ export async function load({ params, parent }) {
     houseMovingDetailsForm.data.allowanceTypeCode =
         AllowanceTypeConstant.houseMoving.code;
 
-    // 1.5 other allowance
+    // 1.5 winter clothing
     const winterClothingDetailsForm = await superValidate(
         zod(ServiceAllowanceWinterClothingDetailSchema),
     );
 
     winterClothingDetailsForm.data.allowanceTypeCode =
         AllowanceTypeConstant.winterClothing.code;
+
+    // 1.6 funeral
+    const funeralDetailsForm = await superValidate(
+        zod(ServiceAllowanceFuneralDetailSchema),
+    );
+
+    funeralDetailsForm.data.allowanceTypeCode =
+        AllowanceTypeConstant.funeralArrangement.code;
 
     // 2. assign director form
     const assignDirectorForm = await superValidate(
@@ -171,7 +183,7 @@ export async function load({ params, parent }) {
 
     // 8. secretary confirmation form
     const secretaryConfirmationForm = await superValidate(
-        zod(ServiceAllowanceEndorsementSchema),
+        zod(ServiceAllowanceSecretaryConfirmationSchema),
     );
 
     // get the current allowance application details if the id received is != 0
@@ -195,6 +207,8 @@ export async function load({ params, parent }) {
         houseMovingDetailsForm.data.isDraft = true;
 
         winterClothingDetailsForm.data.isDraft = true;
+
+        funeralDetailsForm.data.isDraft = true;
     } else {
         // get employee details
         const employeeDetailsRequest: ServiceAllowanceEmployeeDetailRequestDTO =
@@ -255,6 +269,11 @@ export async function load({ params, parent }) {
                         currentApplicationDetails.applicationDetail as ServiceAllowanceWinterClothingDetailType;
                     break;
 
+                case AllowanceTypeConstant.funeralArrangement.code:
+                    funeralDetailsForm.data =
+                        currentApplicationDetails.applicationDetail as ServiceAllowanceFuneralDetailType;
+                    break;
+
                 default:
                     break;
             }
@@ -263,8 +282,8 @@ export async function load({ params, parent }) {
 
             // assign director form
             if (
-                currentApplicationDetails.assignDirector != null ||
-                currentApplicationDetails.assignDirector != undefined
+                currentApplicationDetails.assignDirector !== undefined &&
+                currentApplicationDetails.assignDirector !== null
             ) {
                 assignDirectorForm.data =
                     currentApplicationDetails.assignDirector as ServiceAllowanceAssignDirectorType;
@@ -350,7 +369,7 @@ export async function load({ params, parent }) {
                 currentApplicationDetails.confirmation != undefined
             ) {
                 secretaryConfirmationForm.data =
-                    currentApplicationDetails.confirmation as ServiceAllowanceEndorsementType;
+                    currentApplicationDetails.confirmation;
             } else {
                 secretaryConfirmationForm.data.allowanceId = currentAllowanceId;
                 secretaryConfirmationForm.data.allowanceTypeCode =
@@ -394,6 +413,7 @@ export async function load({ params, parent }) {
             otherAllowanceDetailsForm,
             houseMovingDetailsForm,
             winterClothingDetailsForm,
+            funeralDetailsForm,
 
             // processes forms
             assignDirectorForm,
@@ -484,6 +504,7 @@ export async function _otherAllowanceSubmit(
                 await ServiceAllowanceServices.addOtherAllowance(formData);
 
             if (response.status == 'success') {
+                await invalidateAll();
                 return response;
             } else {
                 return CommonResponseConstant.httpError;
@@ -549,6 +570,37 @@ export async function _winterClothingSubmit(
         return CommonResponseConstant.httpError;
     }
 }
+
+// 5. winter clothing
+export async function _funeralSubmit(
+    formData: ServiceAllowanceFuneralDetailType,
+) {
+    try {
+        const form = await superValidate(
+            formData,
+            zod(ServiceAllowanceFuneralDetailSchema),
+        );
+
+        if (form.valid) {
+            const response =
+                await ServiceAllowanceServices.addFuneral(formData);
+
+            if (response.status == 'success') {
+                return response;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } catch (error) {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// =========================================================================
+// PROCESSES
+// =========================================================================
 
 // submit assign director form
 export async function _assignDirectorSubmit(
@@ -695,17 +747,16 @@ export async function _approverFeedbackSubmit(
 
 // submit secretary confirmation
 export async function _secretaryConfirmationSubmit(
-    formData: ServiceAllowanceEndorsementType,
+    formData: ServiceAllowanceSecretaryConfirmationType,
 ) {
     try {
         const form = await superValidate(
             formData,
-            zod(ServiceAllowanceEndorsementSchema),
+            zod(ServiceAllowanceSecretaryConfirmationSchema),
         );
 
-        const response = await ServiceAllowanceServices.addSecretaryVerification(
-            form.data,
-        );
+        const response =
+            await ServiceAllowanceServices.addSecretaryConfirmation(form.data);
 
         if (response.status == 'success') {
             return response;

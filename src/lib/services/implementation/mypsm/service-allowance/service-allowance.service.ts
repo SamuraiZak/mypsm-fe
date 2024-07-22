@@ -1,3 +1,4 @@
+import { invalidateAll } from '$app/navigation';
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import {
@@ -14,9 +15,11 @@ import type {
     ServiceAllowanceCeremonyClothingDetailType,
     ServiceAllowanceEndorsementType,
     ServiceAllowanceEndorserDetailType,
+    ServiceAllowanceFuneralDetailType,
     ServiceAllowanceHouseMovingDetailType,
     ServiceAllowanceOtherAllowanceDetailType,
     ServiceAllowancePassportPaymentDetailType,
+    ServiceAllowanceSecretaryConfirmationType,
     ServiceAllowanceWinterClothingDetailType,
 } from '$lib/schemas/mypsm/service-allowance/service-allowance.schema';
 import http from '$lib/services/implementation/service-provider.service';
@@ -56,13 +59,11 @@ export class ServiceAllowanceServices {
         try {
             const url: Input = 'service_allowance/view';
 
-            const promiseResponse: Promise<Response> = http
+            const response: Response = await http
                 .post(url, {
                     body: JSON.stringify(param),
                 })
                 .json();
-
-            const response = await toasterCommon(promiseResponse);
 
             const result: CommonResponseDTO =
                 CommonResponseConvert.fromResponse(response);
@@ -122,6 +123,7 @@ export class ServiceAllowanceServices {
                 CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -150,6 +152,7 @@ export class ServiceAllowanceServices {
                 CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -178,6 +181,7 @@ export class ServiceAllowanceServices {
                 CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -206,6 +210,7 @@ export class ServiceAllowanceServices {
                 CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -215,7 +220,7 @@ export class ServiceAllowanceServices {
         }
     }
     
-    // 4. other
+    // 5. winter clothing
     static async addWinterClothing(
         param: ServiceAllowanceWinterClothingDetailType,
     ) {
@@ -234,10 +239,35 @@ export class ServiceAllowanceServices {
                 CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
+                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
             }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async addFuneral(param: ServiceAllowanceFuneralDetailType) {
+        try {
+            const url: Input = 'service_allowance/funeral_arrangement/add';
+    
+            const promiseResponse: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+    
+            const response = await toasterCommon(promiseResponse);
+    
+            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
+    
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+    
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
@@ -403,7 +433,7 @@ export class ServiceAllowanceServices {
 
     // submit secretary confirmation
     static async addSecretaryConfirmation(
-        param: ServiceAllowanceEndorsementType,
+        param: ServiceAllowanceSecretaryConfirmationType,
     ) {
         try {
             const url: Input = 'service_allowance/confirmation';

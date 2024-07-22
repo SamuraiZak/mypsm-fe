@@ -55,6 +55,18 @@ export type ServiceAllowanceEndorsementType = z.infer<
     typeof ServiceAllowanceEndorsementSchema
 >;
 
+export const ServiceAllowanceSecretaryConfirmationSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    total: z.number().nullish(),
+    referenceNumber: z.string().nullish(),
+    date: z.string().nullish(),
+    isDraft: z.boolean(),
+});
+export type ServiceAllowanceSecretaryConfirmationType = z.infer<
+    typeof ServiceAllowanceSecretaryConfirmationSchema
+>;
+
 // ===============================================================
 // DETAILS EACH TYPE
 // ===============================================================
@@ -156,7 +168,7 @@ export const ServiceAllowanceOtherAllowanceDetailSchema = z.object({
     amount: z.number(),
     reason: z.string(),
     isDraft: z.boolean(),
-    documents: z
+    document: z
         .array(DocumentSchema)
         .min(1, { message: 'Dokumen sokongan adalah wajib disertakan' }),
 });
@@ -193,4 +205,24 @@ export const ServiceAllowanceWinterClothingDetailSchema = z.object({
 });
 export type ServiceAllowanceWinterClothingDetailType = z.infer<
     typeof ServiceAllowanceWinterClothingDetailSchema
+>;
+
+// 6. funeral
+export const ServiceAllowanceFuneralDetailSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    employeeNumber: z.string(),
+    name: z.string(),
+    identityDocumentNumber: z.string(),
+    deathDate: z.string(),
+    deathTime: z.string(),
+    nextOfKinName: z.string(),
+    nextOfKinAddress: z.string(),
+    relationshipId: z.number(),
+    isDraft: z.boolean(),
+    documents: z.array(DocumentSchema),
+});
+
+export type ServiceAllowanceFuneralDetailType = z.infer<
+    typeof ServiceAllowanceFuneralDetailSchema
 >;
