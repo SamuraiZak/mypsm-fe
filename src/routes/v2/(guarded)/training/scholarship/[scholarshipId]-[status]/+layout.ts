@@ -6,6 +6,7 @@ import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto
 import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
 import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto.js';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+import type { TableDTO } from '$lib/dto/core/table/table.dto';
 import type {
     CourseFundApplicationApprovalDTO,
     CourseFundApplicationSetApproverDTO,
@@ -32,6 +33,7 @@ import {
 } from '$lib/schemas/mypsm/course/fund-application-schema';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { CourseFundApplicationServices } from '$lib/services/implementation/mypsm/latihan/fundApplication.service.js';
+import { LNPTServices } from '$lib/services/implementation/mypsm/lnpt/lnpt.service';
 import { EmployeeServices } from '$lib/services/implementation/mypsm/shared/employee.service';
 import { error } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -59,6 +61,35 @@ export async function load({ params, parent }) {
         currentRoleCode === RoleConstant.pengarahBahagian.code;
     const isUnitDirectorRole: boolean =
         currentRoleCode === RoleConstant.pengarahBahagian.code;
+
+            // prepare mocks for lnpt average filters
+    const lnptAverageFilters: object = {
+        employeeIds: [],
+        years: 2021,
+        duration: 3,
+    };
+
+    // prepare mocks for lnpt average params
+    const lnptAverageParams: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: null,
+        orderType: null,
+        filter: lnptAverageFilters,
+    };
+
+    // lnpt average table
+    const tableLNPT: TableDTO = {
+        param: lnptAverageParams,
+        meta: {
+            pageSize: 1,
+            pageNum: 1,
+            totalData: 1,
+            totalPage: 1,
+        },
+        data: [],
+        hiddenData: ['employeeId'],
+    };
 
     let fundApplicationDetailResponse: CommonResponseDTO = {};
     let fundApplicationPersonalDetailResponse: CommonResponseDTO = {};
@@ -372,6 +403,7 @@ export async function load({ params, parent }) {
     return {
         params,
         idRequestBody,
+        tableLNPT,
         responses: {
             fundApplicationDetailResponse,
             fundApplicationPersonalDetailResponse,
@@ -589,3 +621,28 @@ export const _addStateUnitSecretaryApprovalForm = async (formData: object) => {
 
     return { response };
 };
+
+
+export async function _updateTable(param: CommonListRequestDTO) {
+    const response: CommonResponseDTO =
+        await EmployeeServices.getEmployeeList(param);
+
+    return {
+        props: {
+            param,
+            response,
+        },
+    };
+}
+
+export async function _getAverage(lnptAverageParams: CommonListRequestDTO) {
+    const lnptAverageResponse: CommonResponseDTO =
+        await LNPTServices.getAveragePermanent(lnptAverageParams);
+
+    return {
+        props: {
+            lnptAverageParams,
+            lnptAverageResponse,
+        },
+    };
+}
