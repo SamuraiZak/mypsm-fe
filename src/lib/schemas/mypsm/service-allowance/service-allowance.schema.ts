@@ -47,7 +47,7 @@ export const ServiceAllowanceEndorsementSchema = z.object({
     identityDocumentNumber: z.string().nullish(),
     name: z.string().nullish(),
     status: z.boolean().nullish(),
-    remark: z.string(),
+    remark: z.string().nullish(),
     date: z.string(),
     isDraft: z.boolean(),
 });
