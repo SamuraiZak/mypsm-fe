@@ -168,7 +168,7 @@ export const ServiceAllowanceOtherAllowanceDetailSchema = z.object({
     amount: z.number(),
     reason: z.string(),
     isDraft: z.boolean(),
-    document: z
+    documents: z
         .array(DocumentSchema)
         .min(1, { message: 'Dokumen sokongan adalah wajib disertakan' }),
 });

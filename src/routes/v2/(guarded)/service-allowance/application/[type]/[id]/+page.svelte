@@ -942,10 +942,10 @@
                                     id="otherAllowanceDocument"
                                     disabled={$otherAllowanceForm.isDraft ==
                                         false}
-                                    errors={$otherAllowanceErrors.document?._errors?.map(
+                                    errors={$otherAllowanceErrors.documents?._errors?.map(
                                         (error) => error,
                                     )}
-                                    bind:documents={$otherAllowanceForm.document}
+                                    bind:documents={$otherAllowanceForm.documents}
                                     label="10. Dokumen Sokongan"
                                 ></DocumentInput>
                             </form>
