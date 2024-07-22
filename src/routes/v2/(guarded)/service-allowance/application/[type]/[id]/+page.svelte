@@ -70,6 +70,15 @@
 
     let currentAllowanceTypeCode: string = data.props.currentAllowanceTypeCode;
 
+    const applicationWithDirectorSupport: string[] = [
+        AllowanceTypeConstant.ceremonyClothing.code,
+        AllowanceTypeConstant.winterClothing.code,
+        AllowanceTypeConstant.welfareFund.code,
+        AllowanceTypeConstant.houseMoving.code,
+        AllowanceTypeConstant.passportPayment.code,
+        AllowanceTypeConstant.otherAllowance.code,
+    ];
+
     let files: FileList;
 
     let documents: DocumentDTO[] = [];
@@ -1199,153 +1208,157 @@
             </StepperContentBody>
         </StepperContent>
 
-        <!-- ======================================================================= -->
-        <!-- ASSIGN DIRECTOR -->
-        <!-- ======================================================================= -->
-        <StepperContent>
-            <StepperContentHeader title="Lantikan Pengarah Bahagian/Negeri">
-                {#if data.props.currentApplicationDetails.assignDirector === null && data.props.layoutData.accountDetails.currentRoleCode === RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
-                    <TextIconButton
-                        type="primary"
-                        label="Hantar"
-                        form="assignDirectorForm"
-                        onClick={() => {
-                            isDraft = false;
-                        }}
-                        icon="check"
-                    ></TextIconButton>
-                {/if}
-            </StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
-                >
+        {#if applicationWithDirectorSupport.includes(currentAllowanceTypeCode)}
+            <!-- ======================================================================= -->
+            <!-- ASSIGN DIRECTOR -->
+            <!-- ======================================================================= -->
+            <StepperContent>
+                <StepperContentHeader title="Lantikan Pengarah Bahagian/Negeri">
+                    {#if data.props.currentApplicationDetails.assignDirector === null && data.props.layoutData.accountDetails.currentRoleCode === RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
+                        <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="assignDirectorForm"
+                            onClick={() => {
+                                isDraft = false;
+                            }}
+                            icon="check"
+                        ></TextIconButton>
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
                     <div
-                        class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
+                        class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
                     >
-                        <form
-                            id="assignDirectorForm"
-                            method="POST"
-                            use:assignDirectorEnhance
-                            class="flex w-full flex-col items-center justify-start gap-2"
+                        <div
+                            class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
                         >
-                            {#if data.props.currentApplicationDetails.assignDirector === null}
-                                {#if data.props.layoutData.accountDetails.currentRoleCode === RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
-                                    <CustomSelectField
-                                        id="identityDocumentNumber"
-                                        label={'Sila pilih Pengarah Bahagian/Negeri untuk memberi sokongan bagi permohonan ini'}
-                                        bind:val={$assignDirectorForm.identityDocumentNumber}
-                                        options={data.lookup.directorDrodpwon}
-                                    ></CustomSelectField>
-                                {:else}
-                                    <div
-                                        class="flex w-full flex-row items-center justify-start gap-2 rounded-md bg-blue-200 p-2"
-                                    >
-                                        <p
-                                            class="text-base font-medium text-blue-700"
+                            <form
+                                id="assignDirectorForm"
+                                method="POST"
+                                use:assignDirectorEnhance
+                                class="flex w-full flex-col items-center justify-start gap-2"
+                            >
+                                {#if data.props.currentApplicationDetails.assignDirector === null}
+                                    {#if data.props.layoutData.accountDetails.currentRoleCode === RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
+                                        <CustomSelectField
+                                            id="identityDocumentNumber"
+                                            label={'Sila pilih Pengarah Bahagian/Negeri untuk memberi sokongan bagi permohonan ini'}
+                                            bind:val={$assignDirectorForm.identityDocumentNumber}
+                                            options={data.lookup
+                                                .directorDrodpwon}
+                                        ></CustomSelectField>
+                                    {:else}
+                                        <div
+                                            class="flex w-full flex-row items-center justify-start gap-2 rounded-md bg-blue-200 p-2"
                                         >
-                                            Bahagian ini adalah untuk kegunaan
-                                            Urus Setia Elaun-elaun Perkhidmatan
-                                        </p>
-                                    </div>
+                                            <p
+                                                class="text-base font-medium text-blue-700"
+                                            >
+                                                Bahagian ini adalah untuk
+                                                kegunaan Urus Setia Elaun-elaun
+                                                Perkhidmatan
+                                            </p>
+                                        </div>
+                                    {/if}
+                                {:else}
+                                    <CustomTextField
+                                        disabled
+                                        id="identityDocumentNumber"
+                                        label={'No Kad Pengenalan'}
+                                        bind:val={$assignDirectorForm.identityDocumentNumber}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        disabled
+                                        id="employeeName"
+                                        label={'Nama Pengarah'}
+                                        bind:val={$assignDirectorForm.employeeName}
+                                    ></CustomTextField>
                                 {/if}
-                            {:else}
-                                <CustomTextField
-                                    disabled
-                                    id="identityDocumentNumber"
-                                    label={'No Kad Pengenalan'}
-                                    bind:val={$assignDirectorForm.identityDocumentNumber}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="employeeName"
-                                    label={'Nama Pengarah'}
-                                    bind:val={$assignDirectorForm.employeeName}
-                                ></CustomTextField>
-                            {/if}
-                        </form>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            </StepperContentBody>
-        </StepperContent>
+                </StepperContentBody>
+            </StepperContent>
 
-        <!-- ======================================================================= -->
-        <!-- DIRECTOR SUPPORT -->
-        <!-- ======================================================================= -->
-        <StepperContent>
-            <StepperContentHeader
-                title="Sokongan & Ulasan Pengarah Bahagian/Negeri"
-            >
-                {#if $directorSupportForm.isDraft && (data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.pengarahBahagian.code || data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.pengarahNegeri.code)}
-                    <TextIconButton
-                        type="primary"
-                        label="Hantar"
-                        form="directorSupportForm"
-                        onClick={() => {
-                            isDraft = false;
-                        }}
-                        icon="check"
-                    ></TextIconButton>
-                {/if}
-            </StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
+            <!-- ======================================================================= -->
+            <!-- DIRECTOR SUPPORT -->
+            <!-- ======================================================================= -->
+            <StepperContent>
+                <StepperContentHeader
+                    title="Sokongan & Ulasan Pengarah Bahagian/Negeri"
                 >
+                    {#if $directorSupportForm.isDraft && (data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.pengarahBahagian.code || data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.pengarahNegeri.code)}
+                        <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="directorSupportForm"
+                            onClick={() => {
+                                isDraft = false;
+                            }}
+                            icon="check"
+                        ></TextIconButton>
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
                     <div
-                        class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
+                        class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
                     >
-                        <form
-                            id="directorSupportForm"
-                            method="POST"
-                            use:directorSupportEnhance
-                            class="flex w-full flex-col items-center justify-start gap-2"
+                        <div
+                            class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
                         >
-                            <CustomRadioBoolean
-                                disabled={!$directorSupportForm.isDraft}
-                                id="status"
-                                label="Permohonan tuntutan pegawai di atas adalah"
-                                bind:val={$directorSupportForm.status}
-                                bind:errors={$directorSupportErrors.status}
-                                options={supportAltOptions}
-                            ></CustomRadioBoolean>
-                            <CustomTextField
-                                disabled={!$directorSupportForm.isDraft}
-                                type="textarea"
-                                id="remark"
-                                label={'Jika tidak disokong, sila nyatakan sebab'}
-                                errors={$directorSupportErrors.remark}
-                                bind:val={$directorSupportForm.remark}
-                            ></CustomTextField>
-                            <CustomTextField
-                                disabled
-                                type="text"
-                                id="name"
-                                label={'Nama'}
-                                errors={$directorSupportErrors.name}
-                                bind:val={$directorSupportForm.name}
-                            ></CustomTextField>
-                            <CustomTextField
-                                disabled
-                                type="text"
-                                id="identityDocumentNumber"
-                                label={'No. Kad Pengenalan'}
-                                errors={$directorSupportErrors.identityDocumentNumber}
-                                bind:val={$directorSupportForm.identityDocumentNumber}
-                            ></CustomTextField>
-                            <CustomTextField
-                                disabled
-                                type="text"
-                                id="date"
-                                label={'Tarikh'}
-                                errors={$directorSupportErrors.date}
-                                bind:val={$directorSupportForm.date}
-                            ></CustomTextField>
-                        </form>
+                            <form
+                                id="directorSupportForm"
+                                method="POST"
+                                use:directorSupportEnhance
+                                class="flex w-full flex-col items-center justify-start gap-2"
+                            >
+                                <CustomRadioBoolean
+                                    disabled={!$directorSupportForm.isDraft}
+                                    id="status"
+                                    label="Permohonan tuntutan pegawai di atas adalah"
+                                    bind:val={$directorSupportForm.status}
+                                    bind:errors={$directorSupportErrors.status}
+                                    options={supportAltOptions}
+                                ></CustomRadioBoolean>
+                                <CustomTextField
+                                    disabled={!$directorSupportForm.isDraft}
+                                    type="textarea"
+                                    id="remark"
+                                    label={'Jika tidak disokong, sila nyatakan sebab'}
+                                    errors={$directorSupportErrors.remark}
+                                    bind:val={$directorSupportForm.remark}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled
+                                    type="text"
+                                    id="name"
+                                    label={'Nama'}
+                                    errors={$directorSupportErrors.name}
+                                    bind:val={$directorSupportForm.name}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled
+                                    type="text"
+                                    id="identityDocumentNumber"
+                                    label={'No. Kad Pengenalan'}
+                                    errors={$directorSupportErrors.identityDocumentNumber}
+                                    bind:val={$directorSupportForm.identityDocumentNumber}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled
+                                    type="text"
+                                    id="date"
+                                    label={'Tarikh'}
+                                    errors={$directorSupportErrors.date}
+                                    bind:val={$directorSupportForm.date}
+                                ></CustomTextField>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            </StepperContentBody>
-        </StepperContent>
+                </StepperContentBody>
+            </StepperContent>
+        {/if}
 
         <!-- ======================================================================= -->
         <!-- SECRETARY VERIFICATION -->
