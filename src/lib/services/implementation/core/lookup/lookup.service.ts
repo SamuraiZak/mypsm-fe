@@ -1208,6 +1208,7 @@ export class LookupServices {
             return CommonResponseConstant.httpError;
         }
     }
+    
 
     // Sets the dropdown selection options
     static setSelectOptions = (param: CommonResponseDTO): DropdownDTO[] => {

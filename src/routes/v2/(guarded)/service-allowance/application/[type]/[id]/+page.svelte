@@ -1251,14 +1251,15 @@
                                 use:insuranceEnhance
                                 class="flex w-full flex-col items-center justify-start gap-2"
                             >
-                                <CustomTextField
-                                    disabled={!$insuranceForm.isDraft}
+                                <CustomSelectField
+                                    disabled={data.props.currentAllowanceId !==
+                                        0}
                                     id="regionCode"
                                     label={'7. Kategori Kawasan'}
-                                    type="text"
                                     errors={$insuranceErrors.regionCode}
                                     bind:val={$insuranceForm.regionCode}
-                                ></CustomTextField>
+                                    options={data.lookup.areaDropdown}
+                                ></CustomSelectField>
                                 <CustomTextField
                                     disabled={!$insuranceForm.isDraft}
                                     type="text"

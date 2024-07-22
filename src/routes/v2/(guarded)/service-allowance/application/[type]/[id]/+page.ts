@@ -423,8 +423,11 @@ export async function load({ params, parent }) {
     // 5. supporter dropdown
     const supporterDropdown: DropdownDTO[] = await _getSectionChiefDropdown();
 
-    // 5. approver dropdown
+    // 6. approver dropdown
     const approverDropdown: DropdownDTO[] = await _getPKPDropdown();
+
+    // 7. area dropdown
+    const areaDropdown: DropdownDTO[] = await _getAreaDropdown();
 
     return {
         props: {
@@ -460,6 +463,7 @@ export async function load({ params, parent }) {
             relationshipDropdown,
             supporterDropdown,
             approverDropdown,
+            areaDropdown,
         },
     };
 }
@@ -951,4 +955,16 @@ export async function _getRelationshipDropdown() {
     }
 
     return relationshipLookup;
+}
+
+export async function _getAreaDropdown() {
+    let areaLookup: DropdownDTO[] = [];
+    const areaLookupResponse: CommonResponseDTO =
+        await LookupServices.getAreaEnums();
+
+    if (areaLookupResponse.status == 'success') {
+        areaLookup = LookupServices.setSelectOptionCode(areaLookupResponse);
+    }
+
+    return areaLookup;
 }
