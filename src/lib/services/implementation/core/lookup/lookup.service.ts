@@ -1175,7 +1175,7 @@ export class LookupServices {
 
     static async getWelfareTypeEnums() {
         try {
-            let url: Input = 'lookup/welfare_type';
+            const url: Input = 'lookup/welfare_type';
 
             const response: Response = await http.get(url).json();
 
@@ -1193,7 +1193,7 @@ export class LookupServices {
 
     static async getAreaEnums() {
         try {
-            let url: Input = 'lookup/areas';
+            const url: Input = 'lookup/areas';
 
             const response: Response = await http.get(url).json();
 
