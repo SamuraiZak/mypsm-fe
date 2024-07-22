@@ -23,12 +23,12 @@ import { RenewContractAddPerfomanceConvert, type RenewContractAddPerfomance } fr
 import { RenewContractAddDTOConvert, type RenewContractAddDTO } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-add.dto';
 import { EditContractDetailSecretaryDTOConvert, type EditContractDetailSecretaryDTO } from '$lib/dto/mypsm/kakitangan-kontrak/update-contract-detail-secretary.dto';
 import { ContractCommonRoleResultDTOConvert, type ContractCommonRoleResultDTO } from '$lib/dto/mypsm/kakitangan-kontrak/update-contract-secretary-result.dto';
-import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 import { RenewContractMeetingConvert, type RenewContractMeeting } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-meeting.dto';
 import { RenewContractSupporterApproverConvert, type RenewContractSupporterApprover, type RenewContractSuppAppApproval, RenewContractSuppAppApprovalConvert } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-supp-app.dto';
 import { RenewContractSecretaryUpdateConvert, type RenewContractSecretaryUpdate } from '$lib/dto/mypsm/kakitangan-kontrak/renew-contract-secretary-update.dto';
+import { getGeneralToast } from '$lib/helpers/core/toast.helper';
 
 export class ContractEmployeeServices {
 
@@ -63,7 +63,7 @@ export class ContractEmployeeServices {
             const promiseRes: Promise<Response> = http.get(url).json();
 
             // await toast for resolved or rejected state
-            // const response: Response = await getPromiseToast(promiseRes);
+            // const response: Response = await getGeneralToast(promiseRes);
             const response: Response = await promiseRes;
 
             // parse the json response to object
@@ -112,7 +112,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -160,7 +160,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -185,7 +185,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -210,7 +210,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -258,7 +258,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -306,7 +306,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -354,7 +354,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -402,7 +402,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -450,7 +450,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -500,7 +500,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
             // await toast for resolved or rejected state
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
 
             // parse the json response to object
             const result = CommonResponseConvert.fromResponse(response);
@@ -597,7 +597,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -645,7 +645,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -693,7 +693,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -762,7 +762,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -832,7 +832,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -928,7 +928,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -1201,7 +1201,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -1249,7 +1249,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -1297,7 +1297,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -1368,7 +1368,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -1439,7 +1439,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -1487,7 +1487,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -1535,7 +1535,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -1583,7 +1583,7 @@ export class ContractEmployeeServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {

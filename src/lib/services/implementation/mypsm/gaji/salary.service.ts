@@ -10,12 +10,13 @@ import {
 } from '$lib/dto/core/common/common-list-request.dto';
 import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
 import { commonIdRequestDTOConvert, type commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
+import { EmployeeSalaryDetailConvert, type EmployeeSalaryDetail } from '$lib/dto/mypsm/gaji/gaji-akhir/final-salary-detail.dto';
 import { SalaryAllowanceApprovalConvert, type SalaryAllowanceApproval } from '$lib/dto/mypsm/gaji/gaji-elaun/salary-allowance-approval.dto';
 import { SalaryAllowanceIDRequestConvert, type SalaryAllowanceIDRequest } from '$lib/dto/mypsm/gaji/gaji-elaun/salary-allowance-id-request.dto';
 import { SalaryAllowanceDeductionConvert, type SalaryAllowanceDeduction } from '$lib/dto/mypsm/gaji/gaji-elaun/salary-allowance-public-detail.dto';
-import { AddNewSalaryMovementConvert, type AddNewSalaryMovement } from '$lib/dto/mypsm/gaji/pergerakan-gaji/add-new-salary-movement.dto';
+import { AddNewSalaryMovementConvert, SalaryMovementCommentConvert, type AddNewSalaryMovement, type SalaryMovementComment } from '$lib/dto/mypsm/gaji/pergerakan-gaji/add-new-salary-movement.dto';
 import { SalaryMovementDirectorApprovalConvert, type SalaryMovementDirectorApproval } from '$lib/dto/mypsm/gaji/pergerakan-gaji/add-salary-movement-director-approval.dto';
-import { getPromiseToast } from '$lib/helpers/core/toast.helper';
+import { getGeneralToast, getGenerateToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 
@@ -57,7 +58,32 @@ export class SalaryServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    //add new salary movement comment
+    static async addSalaryMovementComment(param: SalaryMovementComment) {
+        try {
+            let url: Input = 'salary/movement/comment';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: SalaryMovementCommentConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -196,7 +222,7 @@ export class SalaryServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -356,7 +382,7 @@ export class SalaryServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -402,7 +428,7 @@ export class SalaryServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -448,7 +474,7 @@ export class SalaryServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -472,7 +498,7 @@ export class SalaryServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -518,7 +544,7 @@ export class SalaryServices {
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -623,17 +649,17 @@ export class SalaryServices {
         }
     }
     //add maklumat gaji
-    static async addEmployeeFinalPayslip(param: commonIdRequestDTO) {
+    static async addEmployeeFinalPayslip(param: EmployeeSalaryDetail) {
         try {
             let url: Input = 'salary/final_payslip/add';
 
             const promiseRes: Promise<Response> = http
                 .post(url, {
-                    body: commonIdRequestDTOConvert.toJson(param),
+                    body: EmployeeSalaryDetailConvert.toJson(param),
                 })
                 .json();
 
-            const response: Response = await getPromiseToast(promiseRes);
+            const response: Response = await getGeneralToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
@@ -651,12 +677,13 @@ export class SalaryServices {
         try {
             let url: Input = 'salary/final_payslip/slip';
 
-            const response: Response = await http
+            const promiseRes: Promise<Response> = http
                 .post(url, {
                     body: commonIdRequestDTOConvert.toJson(param),
                 })
                 .json();
 
+            const response: Response = await getGenerateToast(promiseRes);
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
