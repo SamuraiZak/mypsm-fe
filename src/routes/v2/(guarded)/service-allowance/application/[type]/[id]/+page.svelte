@@ -424,6 +424,7 @@
         validationMethod: 'oninput',
         validators: zodClient(ServiceAllowanceEndorsementSchema),
         async onSubmit(input) {
+            $secretaryConfirmationForm.allowanceId = data.props.currentAllowanceId;
             _secretaryConfirmationSubmit($secretaryConfirmationForm);
         },
     });
@@ -442,6 +443,7 @@
         validationMethod: 'oninput',
         validators: zodClient(ServiceAllowanceEndorserDetailSchema),
         async onSubmit(input) {
+            $endorserDetailForm.allowanceId = data.props.currentAllowanceId;
             _endorserDetailSubmit($endorserDetailForm);
         },
     });
