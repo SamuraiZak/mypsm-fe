@@ -520,6 +520,7 @@
         id: 'employeePromotion',
         validators: zod(_editEmployeePromotion),
         onSubmit() {
+            $employeePromotion.id = finalPromotionRowData.promotionId;
             if (!$employeePromotion.status) {
                 $employeePromotion.supporterName = null;
                 $employeePromotion.approverName = null;
