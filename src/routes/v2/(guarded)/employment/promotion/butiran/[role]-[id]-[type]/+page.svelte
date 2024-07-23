@@ -187,11 +187,7 @@
                             tempGroupId = res.response.data?.details.groupId;
                             confirmModal = false;
                             await goto(
-                                '/v2/employment/promotion/butiran/' +
-                                    tempGroupId +
-                                    '-' +
-                                    data.promotionType,
-                            );
+                                '/v2/employment/promotion');
                         }
                     },
                 );

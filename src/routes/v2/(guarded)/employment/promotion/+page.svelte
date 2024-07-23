@@ -19,17 +19,17 @@
         {
             value: 'Gred 1-54',
             name: 'Gred 1-54',
-            href: '/v2/employment/promotion/butiran/baru-1-54',
+            href: '/v2/employment/promotion/butiran/1-baru-1-54',
         },
         {
             value: 'TBK 1 dan 2 - Kumpulan Sokongan',
             name: 'TBK 1 dan 2 - Kumpulan Sokongan',
-            href: '/v2/employment/promotion/butiran/baru-TBK 1 dan 2',
+            href: '/v2/employment/promotion/butiran/1-baru-TBK 1 dan 2',
         },
         {
             value: 'Gred Utama',
             name: 'Gred Utama',
-            href: '/v2/employment/promotion/butiran/baru-Utama',
+            href: '/v2/employment/promotion/butiran/1-baru-Utama',
         },
     ];
 
