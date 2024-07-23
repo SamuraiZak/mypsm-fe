@@ -5,6 +5,7 @@ export interface PromotionCommonList {
     date:           string;
     candidateCount?: number;
     status:         string;
+    assignedRole?:   string;
 }
 
 // Converts JSON strings to/from your types

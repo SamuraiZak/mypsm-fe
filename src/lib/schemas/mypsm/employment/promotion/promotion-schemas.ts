@@ -15,6 +15,7 @@ const stringToMaxDate = z.string({ required_error: 'Medan ini tidak boleh kosong
 export const _addNewPromotion = z.object({
     promotionType: shortTextSchema,
     employeeIds: z.number().array(),
+    grade: shortTextSchema,
 })
 
 export const _promotionCommonApproval = z.object({
@@ -28,7 +29,6 @@ export const _promotionIntegrityApproval = z.object({
     id: z.number().array(),
     promotionType: shortTextSchema,
     status: booleanSchema,
-    remark: z.string(),
 })
 
 export const _editPromotionCertification = z.object({

@@ -161,11 +161,15 @@ export class LookupServices {
         }
     }
     // Placement Lookup Service
-    static async getSalaryMovementMonth() {
+    static async getSalaryMovementMonth(param: CommonListRequestDTO) {
         try {
-            const url: Input = 'lookup/salary_movement_months';
+            const url: Input = 'lookup/salary_movement_months/filter';
 
-            const response: Response = await http.get(url, {}).json();
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
 
             const result: CommonResponseDTO =
                 CommonResponseConvert.fromResponse(response);

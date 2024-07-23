@@ -237,7 +237,7 @@
                     bind:tableData={employeeOfferTable}
                     bind:passData={employeeRowData}
                     detailActions={() => {
-                        if (employeeRowData.assignedRole == 'kakitangan') {
+                        if (employeeRowData.assignedRole == 'Pemohon') {
                             goto(
                                 '/v2/employment/acting/butiran/kakitangan-' +
                                     employeeRowData.actingId +

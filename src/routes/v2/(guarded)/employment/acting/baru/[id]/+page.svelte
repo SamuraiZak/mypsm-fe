@@ -40,6 +40,10 @@
                 english: 'programme',
                 malay: 'Penempatan Sekarang',
             },
+            {
+                english: 'hireDate',
+                malay: 'Tarikh Lantikan'
+            },
         ],
         url: 'employment/acting/employee_lists/list',
         id: 'addActingTable',
@@ -66,11 +70,15 @@
         data: addActingTable.selectedData ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['employeeId', 'homeAddress'],
+        hiddenColumn: ['employeeId','homeAddress'],
         dictionary: [
             {
+                english: 'hireDate',
+                malay: 'Tarikh Lantikan'
+            },
+            {
                 english: 'programme',
-                malay: 'Program',
+                malay: 'Penempatan Sekarang',
             },
         ],
         url: '',
