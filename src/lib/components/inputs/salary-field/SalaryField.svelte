@@ -1,5 +1,6 @@
 <script lang="ts">
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
+    import type { SalaryDetail } from '$lib/dto/mypsm/gaji/gaji-akhir/final-salary-detail.dto';
     import { Alert, Modal } from 'flowbite-svelte';
 
     interface dataDTO {
@@ -8,10 +9,11 @@
 
     export let columnLabel = [{ name: 'Perkara' }, { name: 'Jumlah (RM)' }];
     export let title = 'Title';
-    export let rowData: dataDTO[] = [];
-    export let singleRowData: dataDTO = {
-        label: '',
-        total: 0,
+    export let rowData: SalaryDetail[] = [];
+    export let disabled: boolean = false;
+    export let singleRowData: SalaryDetail = {
+        decription: '',
+        amount: 0,
     };
     export let footer: string = 'Jumlah Bayaran';
     export let total: number = 0;
@@ -23,7 +25,7 @@
     }
 
     function addRow() {
-        if (singleRowData.label == '') {
+        if (singleRowData.decription == '') {
             return;
         }
         //insert new entered input
@@ -31,28 +33,35 @@
         rowData = [...rowData];
 
         //reset input after add
-        for (const key in singleRowData) {
-            if (typeof singleRowData[key] === 'string') {
-                singleRowData[key] = '';
-            } else if (typeof singleRowData[key] === 'number') {
-                singleRowData[key] = 0;
-            }
-            // other data type here
-        }
+        // for (const key in singleRowData) {
+        //     if (typeof singleRowData[key] === 'string') {
+        //         singleRowData[key] = '';
+        //     } else if (typeof singleRowData[key] === 'number') {
+        //         singleRowData[key] = 0;
+        //     }
+        //     // other data type here
+        // }
+
+        singleRowData.decription = '';
+        singleRowData.amount = 0;
+
         return total;
     }
 
     $: {
         //calculate total
         total = rowData.reduce((sum, obj) => {
-            for (const key in obj) {
-                if (typeof obj[key] === 'number') {
-                    sum += obj[key] as number;
-                }
-            }
+            // for (const key in obj) {
+            //     if (typeof obj[key] === 'number') {
+            //         sum += obj[key] as number;
+            //     }
+            // }
+            sum += obj.amount;
+
             return sum;
         }, 0);
     }
+
 </script>
 
 <div
@@ -89,6 +98,7 @@
                         </div>
                     </th>
                 {/each}
+                {#if !disabled}
                 <th class="h-full w-[20px] px-2.5">
                     <div
                         class="flex h-full flex-row items-center justify-center"
@@ -99,6 +109,7 @@
                         </span>
                     </div>
                 </th>
+                {/if}
             </tr>
         </thead>
 
@@ -115,7 +126,7 @@
                                 >{i + 1}
                             </span>
                         </td>
-                        {#each Object.values(val) as value, iy}
+                        {#each Object.values(val) as value}
                             <td class="h-full px-2.5 text-center">
                                 <div
                                     class="flex h-8 items-center rounded border border-ios-labelColors-separator-light bg-ios-backgroundColors-systemBackground-light px-3 text-sm font-normal text-ios-labelColors-secondaryLabel-light"
@@ -124,8 +135,9 @@
                                 </div>
                             </td>
                         {/each}
+                        {#if !disabled}
                         <td class="h-full px-2.5">
-                            <div class="flex h-full flex-row items-center">
+                            <div class="flex h-full flex-row items-center justify-center">
                                 <TextIconButton
                                     label=""
                                     icon="delete"
@@ -134,42 +146,41 @@
                                 />
                             </div>
                         </td>
+                        {/if}
                     </tr>
                 {/each}
             {/if}
 
+            {#if !disabled}
             <!-- enter input here -->
             <tr class=" h-10">
                 <td class="h-full px-2.5 text-left"> </td>
-                {#each Object.keys(singleRowData) as key, i}
-                    <td class="h-full px-2.5 text-left">
-                        {#if typeof singleRowData[key] === 'string'}
-                            <input
-                                class="autofill:hide-default-inner-shadow text-ios-labelColors-secondaryLabel-light' block h-8 w-full rounded border border-ios-labelColors-separator-light bg-ios-backgroundColors-systemBackground-light
+                <td class="h-full px-2.5 text-left">
+                    <input
+                        class="autofill:hide-default-inner-shadow text-ios-labelColors-secondaryLabel-light' block h-8 w-full rounded border border-ios-labelColors-separator-light bg-ios-backgroundColors-systemBackground-light
                                 p-2 text-sm focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
-                                type="text"
-                                id={key}
-                                bind:value={singleRowData[key]}
-                            />
-                        {:else}
-                            <input
-                                class="autofill:hide-default-inner-shadow text-ios-labelColors-secondaryLabel-light' block h-8 w-full rounded border border-ios-labelColors-separator-light bg-ios-backgroundColors-systemBackground-light p-2
-                                     text-left text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                                type="number"
-                                id={key}
-                                bind:value={singleRowData[key]}
-                            />
-                        {/if}
-                    </td>
-                {/each}
+                        type="text"
+                        id="decription"
+                        bind:value={singleRowData.decription}
+                    />
+                </td>
+                <td class="h-full px-2.5 text-left">
+                    <input
+                        class="autofill:hide-default-inner-shadow text-ios-labelColors-secondaryLabel-light' block h-8 w-full rounded border border-ios-labelColors-separator-light bg-ios-backgroundColors-systemBackground-light p-2
+                         text-left text-sm [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        type="number"
+                        id="amount"
+                        bind:value={singleRowData.amount}
+                    />
+                </td>
 
                 <td class="h-full px-2.5 text-center">
-                    <div class="flex h-full flex-row items-center">
+                    <div class="flex h-full flex-row items-center justify-center">
                         <TextIconButton
                             label=""
                             icon="add"
                             onClick={() => {
-                                if (singleRowData.label !== '') {
+                                if (singleRowData.decription !== '') {
                                     addRow();
                                 } else {
                                     emptyForm = true;
@@ -180,15 +191,17 @@
                 </td>
                 <!-- {/each} -->
             </tr>
+            {/if}
+
             <tr>
                 {#each columnLabel as _}
                     <td></td>
                 {/each}
                 <td class="h-full px-2.5 text-center">
                     <div
-                        class="flex h-8 items-center text-sm font-normal text-ios-labelColors-secondaryLabel-light"
+                        class="flex h-8 items-center text-base font-normal text-ios-labelColors-secondaryLabel-light"
                     >
-                        <span class="">{footer} (RM): {total}</span>
+                        <span>{footer} (RM): {total.toFixed(2)}</span>
                     </div>
                 </td>
             </tr>
