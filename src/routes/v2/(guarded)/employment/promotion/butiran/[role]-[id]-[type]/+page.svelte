@@ -676,19 +676,18 @@
                         }
 
                         $supporterApproval = res.suppResponse.data?.details;
+                        $approverApproval = res.appResponse.data?.details;
                         if (
-                            $supporterApproval.remark == null &&
+                            $supporterApproval.remark == "" &&
                             data.currentRoleCode ==
                                 UserRoleConstant.kakitangan.code
                         ) {
                             supporterApproved = false;
-                        }
-                        $approverApproval = res.appResponse.data?.details;
-                        if (
-                            $approverApproval.remark == null &&
+                            approverApproved = true;
+                        } else if (supporterApproved && ($approverApproval.remark == "" &&
                             data.currentRoleCode ==
-                                UserRoleConstant.kakitangan.code
-                        ) {
+                                UserRoleConstant.kakitangan.code))
+                       {
                             approverApproved = false;
                         }
                     })
@@ -1551,8 +1550,7 @@
                                     type="primary"
                                     label="Hantar"
                                     icon="check"
-                                    form={data.currentRoleCode ==
-                                    UserRoleConstant.penyokong.code
+                                    form={!supporterApproved
                                         ? 'supporterApproval'
                                         : 'approverApproval'}
                                 />
