@@ -513,10 +513,10 @@
                             <a
                                 href={payslip.document}
                                 target="_blank"
-                                download={'Slip Gaji Akhir - ' +
+                                download={'Sijil Gaji Akhir - ' +
                                     data.form.employeeSalaryDetail.name}
                                 class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                >Slip Gaji Akhir - {data.form
+                                >Sijil Gaji Akhir - {data.form
                                     .employeeSalaryDetail.name}</a
                             >
                         {:else}
