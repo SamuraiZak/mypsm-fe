@@ -85,6 +85,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
 

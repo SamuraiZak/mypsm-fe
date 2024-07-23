@@ -184,6 +184,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     let updatedChosenEmployeeTable: TableSettingDTO = {
@@ -233,6 +235,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     let interviewInfoTable: TableSettingDTO = {
@@ -268,6 +272,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     if (
@@ -319,6 +325,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
 
@@ -351,6 +359,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     let placementTable: TableSettingDTO = {
@@ -386,6 +396,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     let postponeTable: TableSettingDTO = {
@@ -421,6 +433,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     let postponeResultTable: TableSettingDTO = {
@@ -460,6 +474,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     $: if (stepperIndex !== 6 && UserRoleConstant.urusSetiaPerjawatan.code) {
@@ -500,6 +516,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
 
@@ -538,6 +556,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     let mainPromotionTable: TableSettingDTO = {
@@ -569,6 +589,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     $: {
@@ -631,6 +653,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
 
