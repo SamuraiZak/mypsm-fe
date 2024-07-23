@@ -154,6 +154,52 @@ export interface ServiceAllowanceInsuranceDetail {
     documents:         DocumentDTO[];
 }
 
+// 8. welfare fund
+export interface ServiceAllowanceWelfareFundDetailDTO {
+    allowanceId:       number;
+    allowanceTypeCode: string;
+    welfareTypeCode:   string;
+    isDraft:           boolean;
+    documents:         DocumentDTO[];
+}
+
+// 9. state visit
+export interface ServiceAllowanceStateVisitDetailDTO {
+    allowanceId:       number;
+    allowanceTypeCode: string;
+    applyCode:         string;
+    stateCode:         string;
+    isDraft:           boolean;
+    familyDetail:      FamilyDetailDTO[];
+    documents:         DocumentDTO[];
+}
+
+export interface FamilyDetailDTO {
+    name:             string;
+    age:              number;
+    relationshipCode: string;
+}
+
+export interface ServiceAllowanceCargoShippingDetailDTO {
+    allowanceId:       number;
+    allowanceTypeCode: string;
+    startDate:         string;
+    endDate:           string;
+    startPoint:        string;
+    endPoint:          string;
+    distance:          number;
+    reason:            string;
+    isDraft:           boolean;
+    documents:         DocumentDTO[];
+}
+
+export interface ServiceAllowanceCargoShippingInvoiceDTO {
+    allowanceId:       number;
+    allowanceTypeCode: string;
+    isDraft:           boolean;
+    documents:         DocumentDTO[];
+}
+
 // ===============================================================
 // APPLICATION DETAILS
 // ===============================================================
@@ -162,10 +208,11 @@ export interface ServiceAllowanceApplicationDetailDTO {
     assignDirector?: ServiceAllowanceAssignDirectorDTO | null;
     directorSupport?: ServiceAllowanceEndorsementDTO | null;
     verification?: ServiceAllowanceEndorsementDTO | null;
-    supporterApprover?: ServiceAllowanceEndorserDetailDTO | null;
+    supporterApprover: ServiceAllowanceEndorserDetailDTO | null;
     support?: ServiceAllowanceEndorsementDTO | null;
     approval?: ServiceAllowanceEndorsementDTO | null;
     confirmation?: ServiceAllowanceSecretaryConfirmationDTO | null;
     secretaryVerification?: ServiceAllowanceEndorsementDTO | null;
+    uploadInvoice?: ServiceAllowanceCargoShippingInvoiceDTO | null;
     status: string;
 }

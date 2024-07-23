@@ -18,6 +18,8 @@ import type {
 import { LookupHelper } from '$lib/helpers/core/lookup.helper';
 import {
     ServiceAllowanceAssignDirectorSchema,
+    ServiceAllowanceCargoShippingDetailSchema,
+    ServiceAllowanceCargoShippingInvoiceSchema,
     ServiceAllowanceCeremonyClothingDetailSchema,
     ServiceAllowanceEndorsementSchema,
     ServiceAllowanceEndorserDetailSchema,
@@ -27,8 +29,12 @@ import {
     ServiceAllowanceOtherAllowanceDetailSchema,
     ServiceAllowancePassportPaymentDetailSchema,
     ServiceAllowanceSecretaryConfirmationSchema,
+    ServiceAllowanceStateVisitDetailSchema,
+    ServiceAllowanceWelfareFundDetailSchema,
     ServiceAllowanceWinterClothingDetailSchema,
     type ServiceAllowanceAssignDirectorType,
+    type ServiceAllowanceCargoShippingDetailType,
+    type ServiceAllowanceCargoShippingInvoiceType,
     type ServiceAllowanceCeremonyClothingDetailType,
     type ServiceAllowanceEndorsementType,
     type ServiceAllowanceEndorserDetailType,
@@ -38,6 +44,8 @@ import {
     type ServiceAllowanceOtherAllowanceDetailType,
     type ServiceAllowancePassportPaymentDetailType,
     type ServiceAllowanceSecretaryConfirmationType,
+    type ServiceAllowanceStateVisitDetailType,
+    type ServiceAllowanceWelfareFundDetailType,
     type ServiceAllowanceWinterClothingDetailType,
 } from '$lib/schemas/mypsm/service-allowance/service-allowance.schema.js';
 import { EmployeeExtendedServices } from '$lib/services/implementation/core/employee/employee.service.js';
@@ -150,6 +158,30 @@ export async function load({ params, parent }) {
     insuranceDetailsForm.data.allowanceTypeCode =
         AllowanceTypeConstant.insurancePayment.code;
 
+    // 1.8 welfare fund
+    const welfareFundForm = await superValidate(
+        zod(ServiceAllowanceWelfareFundDetailSchema),
+    );
+
+    welfareFundForm.data.allowanceTypeCode =
+        AllowanceTypeConstant.welfareFund.code;
+
+    // 1.9 welfare fund
+    const stateVisitForm = await superValidate(
+        zod(ServiceAllowanceStateVisitDetailSchema),
+    );
+
+    stateVisitForm.data.allowanceTypeCode =
+        AllowanceTypeConstant.stateVisit.code;
+
+    // 1.10 welfare fund
+    const cargoShippingForm = await superValidate(
+        zod(ServiceAllowanceCargoShippingDetailSchema),
+    );
+
+    cargoShippingForm.data.allowanceTypeCode =
+        AllowanceTypeConstant.cargoShipping.code;
+
     // 2. assign director form
     const assignDirectorForm = await superValidate(
         zod(ServiceAllowanceAssignDirectorSchema),
@@ -196,6 +228,11 @@ export async function load({ params, parent }) {
     const secretaryConfirmationForm = await superValidate(
         zod(ServiceAllowanceSecretaryConfirmationSchema),
     );
+    
+    // 9. upload invoice form
+    const cargoShippingInvoiceForm = await superValidate(
+        zod(ServiceAllowanceCargoShippingInvoiceSchema),
+    );
 
     // get the current allowance application details if the id received is != 0
     if (currentAllowanceId == 0) {
@@ -222,6 +259,12 @@ export async function load({ params, parent }) {
         funeralDetailsForm.data.isDraft = true;
 
         insuranceDetailsForm.data.isDraft = true;
+
+        welfareFundForm.data.isDraft = true;
+
+        stateVisitForm.data.isDraft = true;
+
+        cargoShippingForm.data.isDraft = true;
     } else {
         // get employee details
         const employeeDetailsRequest: ServiceAllowanceEmployeeDetailRequestDTO =
@@ -290,6 +333,21 @@ export async function load({ params, parent }) {
                 case AllowanceTypeConstant.insurancePayment.code:
                     insuranceDetailsForm.data =
                         currentApplicationDetails.applicationDetail as ServiceAllowanceInsuranceDetailType;
+                    break;
+
+                case AllowanceTypeConstant.welfareFund.code:
+                    welfareFundForm.data =
+                        currentApplicationDetails.applicationDetail as ServiceAllowanceWelfareFundDetailType;
+                    break;
+
+                case AllowanceTypeConstant.stateVisit.code:
+                    stateVisitForm.data =
+                        currentApplicationDetails.applicationDetail as ServiceAllowanceStateVisitDetailType;
+                    break;
+
+                case AllowanceTypeConstant.cargoShipping.code:
+                    cargoShippingForm.data =
+                        currentApplicationDetails.applicationDetail as ServiceAllowanceCargoShippingDetailType;
                     break;
 
                 default:
@@ -402,6 +460,20 @@ export async function load({ params, parent }) {
                 secretaryConfirmationForm.data.date = Date.now().toString();
                 secretaryConfirmationForm.data.isDraft = true;
             }
+            
+            // Upload invoice
+            if (
+                currentApplicationDetails.uploadInvoice != undefined ||
+                currentApplicationDetails.uploadInvoice != null
+            ) {
+                cargoShippingInvoiceForm.data =
+                    currentApplicationDetails.uploadInvoice;
+            } else {
+                cargoShippingInvoiceForm.data.allowanceId = currentAllowanceId;
+                cargoShippingInvoiceForm.data.allowanceTypeCode =
+                    currentAllowanceTypeCode;
+                cargoShippingInvoiceForm.data.isDraft = true;
+            }
         }
     }
 
@@ -466,6 +538,87 @@ export async function load({ params, parent }) {
         },
     ];
 
+    // 9. insurance type dropdown
+    const stateVisitReasonDropdown: DropdownDTO[] =
+        await _getApplyForDropdown();
+
+    // 10. approver dropdown
+    const stateDropdown: DropdownDTO[] = await _getStateDropdown();
+    // const stateDropdown: DropdownDTO[] = [
+    //     {
+    //         name: 'Johor',
+    //         value: 'Johor',
+    //     },
+    //     {
+    //         name: 'Kedah',
+    //         value: 'Kedah',
+    //     },
+    //     {
+    //         name: 'Kelantan',
+    //         value: 'Kelantan',
+    //     },
+    //     {
+    //         name: 'Melaka',
+    //         value: 'Melaka',
+    //     },
+    //     {
+    //         name: 'Negeri Sembilan',
+    //         value: 'Negeri Sembilan',
+    //     },
+    //     {
+    //         name: 'Pahang',
+    //         value: 'Pahang',
+    //     },
+    //     {
+    //         name: 'Perak',
+    //         value: 'Perak',
+    //     },
+    //     {
+    //         name: 'Perlis',
+    //         value: 'Perlis',
+    //     },
+    //     {
+    //         name: 'Pulau Pinang',
+    //         value: 'Pulau Pinang',
+    //     },
+    //     {
+    //         name: 'Sabah',
+    //         value: 'Sabah',
+    //     },
+    //     {
+    //         name: 'Sarawak',
+    //         value: 'Sarawak',
+    //     },
+    //     {
+    //         name: 'Selangor',
+    //         value: 'Selangor',
+    //     },
+    //     {
+    //         name: 'Terengganu',
+    //         value: 'Terengganu',
+    //     },
+    //     {
+    //         name: 'Wilayah Perskutuan Kuala Lumpur',
+    //         value: 'Wilayah Perskutuan Kuala Lumpur',
+    //     },
+    //     {
+    //         name: 'Wilayah Persekutuan Labuan',
+    //         value: 'Wilayah Persekutuan Labuan',
+    //     },
+    //     {
+    //         name: 'Wilayah Persekutuan Putrajaya',
+    //         value: 'Wilayah Persekutuan Putrajaya',
+    //     },
+    // ];
+
+    // 11 relationship dropdown code
+    const relationshipCodeDropdown: DropdownDTO[] =
+        await _getRelationshipCodeDropdown();
+
+    // 12 welfare type dropdown code
+    const welfareTypeCodeDropdown: DropdownDTO[] =
+        await _getWelfareTypeDropdown();
+
     return {
         props: {
             layoutData,
@@ -483,6 +636,9 @@ export async function load({ params, parent }) {
             winterClothingDetailsForm,
             funeralDetailsForm,
             insuranceDetailsForm,
+            welfareFundForm,
+            stateVisitForm,
+            cargoShippingForm,
 
             // processes forms
             assignDirectorForm,
@@ -492,6 +648,7 @@ export async function load({ params, parent }) {
             supporterFeedbackForm,
             approverFeedbackForm,
             secretaryConfirmationForm,
+            cargoShippingInvoiceForm,
         },
         lookup: {
             allowanceDropdown,
@@ -502,6 +659,10 @@ export async function load({ params, parent }) {
             approverDropdown,
             areaDropdown,
             insuranceTypeDropdown,
+            stateVisitReasonDropdown,
+            stateDropdown,
+            relationshipCodeDropdown,
+            welfareTypeCodeDropdown,
         },
     };
 }
@@ -699,6 +860,87 @@ export async function _insuranceSubmit(
     }
 }
 
+// 8. welfare fund
+export async function _welfareFundSubmit(
+    formData: ServiceAllowanceWelfareFundDetailType,
+) {
+    try {
+        const form = await superValidate(
+            formData,
+            zod(ServiceAllowanceFuneralDetailSchema),
+        );
+
+        if (form.valid) {
+            const response =
+                await ServiceAllowanceServices.addWelfareFund(formData);
+
+            if (response.status == 'success') {
+                return response;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } catch (error) {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// 9. state visit
+export async function _stateVisitSubmit(
+    formData: ServiceAllowanceStateVisitDetailType,
+) {
+    try {
+        const form = await superValidate(
+            formData,
+            zod(ServiceAllowanceFuneralDetailSchema),
+        );
+
+        if (form.valid) {
+            const response =
+                await ServiceAllowanceServices.addStateVisit(formData);
+
+            if (response.status == 'success') {
+                return response;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } catch (error) {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// 10. cargo shipping
+export async function _cargoShippingSubmit(
+    formData: ServiceAllowanceCargoShippingDetailType,
+) {
+    try {
+        const form = await superValidate(
+            formData,
+            zod(ServiceAllowanceFuneralDetailSchema),
+        );
+
+        if (form.valid) {
+            const response =
+                await ServiceAllowanceServices.addCargoShipping(formData);
+
+            if (response.status == 'success') {
+                return response;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } catch (error) {
+        return CommonResponseConstant.httpError;
+    }
+}
+
 // =========================================================================
 // PROCESSES
 // =========================================================================
@@ -869,6 +1111,29 @@ export async function _secretaryConfirmationSubmit(
     }
 }
 
+// submit cargo shipping invoice
+export async function _cargoShippingInvoiceSubmit(
+    formData: ServiceAllowanceCargoShippingInvoiceType,
+) {
+    try {
+        const form = await superValidate(
+            formData,
+            zod(ServiceAllowanceCargoShippingInvoiceSchema),
+        );
+
+        const response =
+            await ServiceAllowanceServices.addCargoShippingInvoice(form.data);
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } catch (error) {
+        return CommonResponseConstant.httpError;
+    }
+}
+
 // config
 export async function _getAllowanceTypeDropdown() {
     let allowanceTypeOption: DropdownDTO[] = [];
@@ -995,6 +1260,20 @@ export async function _getRelationshipDropdown() {
     return relationshipLookup;
 }
 
+export async function _getRelationshipCodeDropdown() {
+    let relationshipLookup: DropdownDTO[] = [];
+    const relationshipLookupResponse: CommonResponseDTO =
+        await LookupServices.getRelationshipEnums();
+
+    if (relationshipLookupResponse.status == 'success') {
+        relationshipLookup = LookupServices.setSelectOptionsInString(
+            relationshipLookupResponse,
+        );
+    }
+
+    return relationshipLookup;
+}
+
 export async function _getAreaDropdown() {
     let areaLookup: DropdownDTO[] = [];
     const areaLookupResponse: CommonResponseDTO =
@@ -1005,4 +1284,55 @@ export async function _getAreaDropdown() {
     }
 
     return areaLookup;
+}
+
+export async function _getStateDropdown() {
+    let stateLookup: DropdownDTO[] = [];
+    const stateLookupResponse: CommonResponseDTO =
+        await LookupServices.getStateEnums();
+
+    if (stateLookupResponse.status == 'success') {
+        stateLookup = LookupServices.setSelectOptionsInString(stateLookupResponse);
+    }
+
+    return stateLookup;
+}
+
+export async function _getWelfareTypeDropdown() {
+    let stateLookup: DropdownDTO[] = [];
+    const stateLookupResponse: CommonResponseDTO =
+        await LookupServices.getWelfareTypeEnums();
+
+    if (stateLookupResponse.status == 'success') {
+        stateLookup =
+            LookupServices.setSelectOptionsInString(stateLookupResponse);
+    }
+
+    return stateLookup;
+}
+
+export async function _getApplyForDropdown() {
+    let stateLookup: DropdownDTO[] = [];
+    const stateLookupResponse: CommonResponseDTO =
+        await LookupServices.getApplyForEnums();
+
+    if (stateLookupResponse.status == 'success') {
+        stateLookup =
+            LookupServices.setSelectOptionsInString(stateLookupResponse);
+    }
+
+    return stateLookup;
+}
+
+export async function _getMalaysiaStateDropdown() {
+    let stateLookup: DropdownDTO[] = [];
+    const stateLookupResponse: CommonResponseDTO =
+        await LookupServices.getMalaysiaStateEnums();
+
+    if (stateLookupResponse.status == 'success') {
+        stateLookup =
+            LookupServices.setSelectOptionsInString(stateLookupResponse);
+    }
+
+    return stateLookup;
 }

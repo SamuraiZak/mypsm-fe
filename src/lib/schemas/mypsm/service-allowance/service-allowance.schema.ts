@@ -242,3 +242,63 @@ export const ServiceAllowanceInsuranceDetailSchema = z.object({
 export type ServiceAllowanceInsuranceDetailType = z.infer<
     typeof ServiceAllowanceInsuranceDetailSchema
 >;
+
+// 8. welfare fund
+export const ServiceAllowanceWelfareFundDetailSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    welfareTypeCode: z.string(),
+    isDraft: z.boolean(),
+    documents: z.array(DocumentSchema),
+});
+export type ServiceAllowanceWelfareFundDetailType = z.infer<
+    typeof ServiceAllowanceWelfareFundDetailSchema
+>;
+
+// 9. state visit
+export const FamilyDetailSchema = z.object({
+    name: z.string(),
+    age: z.number(),
+    relationshipCode: z.string(),
+});
+export type FamilyDetailType = z.infer<typeof FamilyDetailSchema>;
+
+export const ServiceAllowanceStateVisitDetailSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    applyCode: z.string(),
+    stateCode: z.string(),
+    isDraft: z.boolean(),
+    familyDetail: z.array(FamilyDetailSchema),
+    documents: z.array(DocumentSchema),
+});
+export type ServiceAllowanceStateVisitDetailType = z.infer<
+    typeof ServiceAllowanceStateVisitDetailSchema
+>;
+
+// 10. cargo shipping
+export const ServiceAllowanceCargoShippingDetailSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    startDate: z.string(),
+    endDate: z.string(),
+    startPoint: z.string(),
+    endPoint: z.string(),
+    distance: z.number(),
+    reason: z.string(),
+    isDraft: z.boolean(),
+    documents: z.array(DocumentSchema),
+});
+export type ServiceAllowanceCargoShippingDetailType = z.infer<
+    typeof ServiceAllowanceCargoShippingDetailSchema
+>;
+
+export const ServiceAllowanceCargoShippingInvoiceSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    isDraft: z.boolean(),
+    documents: z.array(DocumentSchema),
+});
+export type ServiceAllowanceCargoShippingInvoiceType = z.infer<
+    typeof ServiceAllowanceCargoShippingInvoiceSchema
+>;

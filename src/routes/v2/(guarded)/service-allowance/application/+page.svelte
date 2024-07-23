@@ -30,7 +30,8 @@
             'employeeNumber',
             'allowanceTypeCode',
             'category',
-            'total'
+            'total',
+            'remark',
         ],
         dictionary: [
             {
@@ -64,20 +65,20 @@
     };
 
     function addApplication() {
-        
-        let allowanceTypeCode: string = AllowanceTypeConstant.ceremonyClothing.code;
-        
+        let allowanceTypeCode: string =
+            AllowanceTypeConstant.ceremonyClothing.code;
+
         let applicationId: number = 0;
-        
+
         let url = `/v2/service-allowance/application/${allowanceTypeCode}/${applicationId}`;
         goto(url);
     }
 
     function showDetails() {
         let allowanceTypeCode: string = selectedData.allowanceTypeCode;
-        
+
         let applicationId: number = selectedData.allowanceId;
-        
+
         let url = `/v2/service-allowance/application/${allowanceTypeCode}/${applicationId}`;
         goto(url);
     }

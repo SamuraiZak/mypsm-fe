@@ -1,4 +1,3 @@
-import { invalidateAll } from '$app/navigation';
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import {
@@ -12,6 +11,8 @@ import type {
 import { toasterCommon } from '$lib/helpers/core/french-toast.helper';
 import type {
     ServiceAllowanceAssignDirectorType,
+    ServiceAllowanceCargoShippingDetailType,
+    ServiceAllowanceCargoShippingInvoiceType,
     ServiceAllowanceCeremonyClothingDetailType,
     ServiceAllowanceEndorsementType,
     ServiceAllowanceEndorserDetailType,
@@ -21,6 +22,8 @@ import type {
     ServiceAllowanceOtherAllowanceDetailType,
     ServiceAllowancePassportPaymentDetailType,
     ServiceAllowanceSecretaryConfirmationType,
+    ServiceAllowanceStateVisitDetailType,
+    ServiceAllowanceWelfareFundDetailType,
     ServiceAllowanceWinterClothingDetailType,
 } from '$lib/schemas/mypsm/service-allowance/service-allowance.schema';
 import http from '$lib/services/implementation/service-provider.service';
@@ -124,7 +127,6 @@ export class ServiceAllowanceServices {
                 CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -133,7 +135,7 @@ export class ServiceAllowanceServices {
             return CommonResponseConstant.httpError;
         }
     }
-    
+
     // 2. pasport payment
     static async addPassportPayment(
         param: ServiceAllowancePassportPaymentDetailType,
@@ -153,7 +155,6 @@ export class ServiceAllowanceServices {
                 CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -162,7 +163,7 @@ export class ServiceAllowanceServices {
             return CommonResponseConstant.httpError;
         }
     }
-    
+
     // 3. other
     static async addOtherAllowance(
         param: ServiceAllowanceOtherAllowanceDetailType,
@@ -182,7 +183,6 @@ export class ServiceAllowanceServices {
                 CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -191,11 +191,9 @@ export class ServiceAllowanceServices {
             return CommonResponseConstant.httpError;
         }
     }
-    
+
     // 4. other
-    static async addHouseMoving(
-        param: ServiceAllowanceHouseMovingDetailType,
-    ) {
+    static async addHouseMoving(param: ServiceAllowanceHouseMovingDetailType) {
         try {
             const url: Input = 'service_allowance/house_moving/add';
 
@@ -211,7 +209,6 @@ export class ServiceAllowanceServices {
                 CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -220,7 +217,7 @@ export class ServiceAllowanceServices {
             return CommonResponseConstant.httpError;
         }
     }
-    
+
     // 5. winter clothing
     static async addWinterClothing(
         param: ServiceAllowanceWinterClothingDetailType,
@@ -240,7 +237,6 @@ export class ServiceAllowanceServices {
                 CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -253,46 +249,151 @@ export class ServiceAllowanceServices {
     static async addFuneral(param: ServiceAllowanceFuneralDetailType) {
         try {
             const url: Input = 'service_allowance/funeral_arrangement/add';
-    
-            const promiseResponse: Promise<Response> = http.post(url, {
-                body: JSON.stringify(param),
-            }).json();
-    
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
             const response = await toasterCommon(promiseResponse);
-    
-            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
-    
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
             }
-    
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async addInsurance(param: ServiceAllowanceInsuranceDetailType) {
+        try {
+            const url: Input = 'service_allowance/insurance_payment/add';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await toasterCommon(promiseResponse);
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    static async addWelfareFund(param: ServiceAllowanceWelfareFundDetailType) {
+        try {
+            const url: Input = 'service_allowance/welfare_fund/add';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await toasterCommon(promiseResponse);
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async addStateVisit(param: ServiceAllowanceStateVisitDetailType) {
+        try {
+            const url: Input = 'service_allowance/state_visit/add';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await toasterCommon(promiseResponse);
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async addCargoShipping(
+        param: ServiceAllowanceCargoShippingDetailType,
+    ) {
+        try {
+            const url: Input = 'service_allowance/cargo_shipping/add';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await toasterCommon(promiseResponse);
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
     
-    static async addInsurance(param: ServiceAllowanceInsuranceDetailType) {
+    static async addCargoShippingInvoice(
+        param: ServiceAllowanceCargoShippingInvoiceType,
+    ) {
         try {
-            const url: Input = 'service_allowance/insurance_payment/add';
-    
-            const promiseResponse: Promise<Response> = http.post(url, {
-                body: JSON.stringify(param),
-            }).json();
-    
+            const url: Input = 'service_allowance/cargo_shipping/upload_invoice';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
             const response = await toasterCommon(promiseResponse);
-    
-            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
-    
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
             }
-    
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
@@ -483,6 +584,4 @@ export class ServiceAllowanceServices {
             return CommonResponseConstant.httpError;
         }
     }
-
-    
 }

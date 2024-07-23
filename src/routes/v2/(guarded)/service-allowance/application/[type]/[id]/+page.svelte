@@ -1,4 +1,6 @@
 <script lang="ts">
+    import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
+    import CustomBanner from '$lib/components/banner/CustomBanner.svelte';
     import {
         approveAltOptions,
         certifyAltAltOptions,
@@ -30,15 +32,25 @@
         ServiceAllowanceInsuranceDetailSchema,
         ServiceAllowanceOtherAllowanceDetailSchema,
         ServiceAllowancePassportPaymentDetailSchema,
+        ServiceAllowanceWelfareFundDetailSchema,
         ServiceAllowanceWinterClothingDetailSchema,
         type ServiceAllowanceCeremonyClothingDetailType,
         type ServiceAllowanceFuneralDetailType,
         type ServiceAllowanceInsuranceDetailType,
         type ServiceAllowancePassportPaymentDetailType,
+        type ServiceAllowanceWelfareFundDetailType,
+        type ServiceAllowanceStateVisitDetailType,
+        ServiceAllowanceStateVisitDetailSchema,
+        type ServiceAllowanceCargoShippingDetailType,
+        ServiceAllowanceCargoShippingDetailSchema,
+        type FamilyDetailType,
+        ServiceAllowanceCargoShippingInvoiceSchema,
     } from '$lib/schemas/mypsm/service-allowance/service-allowance.schema';
     import {
         _approverFeedbackSubmit,
         _assignDirectorSubmit,
+        _cargoShippingInvoiceSubmit,
+        _cargoShippingSubmit,
         _ceremonyClothingSubmit,
         _directorSupportSubmit,
         _endorserDetailSubmit,
@@ -49,7 +61,9 @@
         _passportPaymentSubmit,
         _secretaryConfirmationSubmit,
         _secretaryVerificationSubmit,
+        _stateVisitSubmit,
         _supporterFeedbackSubmit,
+        _welfareFundSubmit,
         _winterClothingSubmit,
     } from './+page';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
@@ -59,6 +73,7 @@
     import DocumentInput from '$lib/components/document-input/DocumentInput.svelte';
     import { onMount } from 'svelte';
     import type {
+        ServiceAllowanceApplicationDetailDTO,
         ServiceAllowanceHouseMovingDetail,
         ServiceAllowanceOtherAllowanceDetailDTO,
         ServiceAllowanceWinterClothingDetail,
@@ -72,6 +87,9 @@
     let currentAllowanceId: number = data.props.currentAllowanceId;
 
     let currentAllowanceTypeCode: string = data.props.currentAllowanceTypeCode;
+
+    let currentApplicationDetails: ServiceAllowanceApplicationDetailDTO =
+        data.props.currentApplicationDetails;
 
     const applicationWithDirectorSupport: string[] = [
         AllowanceTypeConstant.ceremonyClothing.code,
@@ -114,6 +132,15 @@
                 break;
             case AllowanceTypeConstant.insurancePayment.code:
                 currentFormId = 'insuranceForm';
+                break;
+            case AllowanceTypeConstant.welfareFund.code:
+                currentFormId = 'welfareFundForm';
+                break;
+            case AllowanceTypeConstant.stateVisit.code:
+                currentFormId = 'stateVisitForm';
+                break;
+            case AllowanceTypeConstant.cargoShipping.code:
+                currentFormId = 'cargoShippingForm';
                 break;
 
             default:
@@ -360,6 +387,105 @@
         },
     });
 
+    // 8. welfare fund
+    const {
+        form: welfareFundForm,
+        errors: welfareFundErrors,
+        enhance: welfareFundEnhance,
+    } = superForm(data.forms.welfareFundForm, {
+        dataType: 'json',
+        id: 'welfareFundForm',
+        SPA: true,
+        taintedMessage: false,
+        resetForm: false,
+        invalidateAll: true,
+        validationMethod: 'oninput',
+        validators: zodClient(ServiceAllowanceWelfareFundDetailSchema),
+        async onSubmit(input) {
+            $welfareFundForm.isDraft = isDraft;
+            _welfareFundSubmit($welfareFundForm).then((result) => {
+                if (result.status == 'success') {
+                    const applicationDetail: ServiceAllowanceWelfareFundDetailType =
+                        result.data
+                            ?.details as ServiceAllowanceWelfareFundDetailType;
+
+                    let url: string =
+                        '/v2/service-allowance/application/' +
+                        applicationDetail.allowanceTypeCode +
+                        '/' +
+                        applicationDetail.allowanceId;
+                    goto(url);
+                }
+            });
+        },
+    });
+
+    // 9. state visit
+    const {
+        form: stateVisitForm,
+        errors: stateVisitErrors,
+        enhance: stateVisitEnhance,
+    } = superForm(data.forms.stateVisitForm, {
+        dataType: 'json',
+        id: 'stateVisitForm',
+        SPA: true,
+        taintedMessage: false,
+        resetForm: false,
+        invalidateAll: true,
+        validationMethod: 'oninput',
+        validators: zodClient(ServiceAllowanceStateVisitDetailSchema),
+        async onSubmit(input) {
+            $stateVisitForm.isDraft = isDraft;
+            _stateVisitSubmit($stateVisitForm).then((result) => {
+                if (result.status == 'success') {
+                    const applicationDetail: ServiceAllowanceStateVisitDetailType =
+                        result.data
+                            ?.details as ServiceAllowanceStateVisitDetailType;
+
+                    let url: string =
+                        '/v2/service-allowance/application/' +
+                        applicationDetail.allowanceTypeCode +
+                        '/' +
+                        applicationDetail.allowanceId;
+                    goto(url);
+                }
+            });
+        },
+    });
+
+    // cargo shipping
+    const {
+        form: cargoShippingForm,
+        errors: cargoShippingErrors,
+        enhance: cargoShippingEnhance,
+    } = superForm(data.forms.cargoShippingForm, {
+        dataType: 'json',
+        id: 'cargoShippingForm',
+        SPA: true,
+        taintedMessage: false,
+        resetForm: false,
+        invalidateAll: true,
+        validationMethod: 'oninput',
+        validators: zodClient(ServiceAllowanceCargoShippingDetailSchema),
+        async onSubmit(input) {
+            $cargoShippingForm.isDraft = isDraft;
+            _cargoShippingSubmit($cargoShippingForm).then((result) => {
+                if (result.status == 'success') {
+                    const applicationDetail: ServiceAllowanceCargoShippingDetailType =
+                        result.data
+                            ?.details as ServiceAllowanceCargoShippingDetailType;
+
+                    let url: string =
+                        '/v2/service-allowance/application/' +
+                        applicationDetail.allowanceTypeCode +
+                        '/' +
+                        applicationDetail.allowanceId;
+                    goto(url);
+                }
+            });
+        },
+    });
+
     // create all processes form
     // 1. Assign Director Form
     const {
@@ -377,6 +503,7 @@
         async onSubmit(input) {
             $assignDirectorForm.allowanceId = data.props.currentAllowanceId;
             $assignDirectorForm.type = 'pengarah bahagian negeri';
+            $assignDirectorForm.isDraft = false;
             _assignDirectorSubmit($assignDirectorForm);
         },
     });
@@ -396,6 +523,7 @@
         validators: zodClient(ServiceAllowanceEndorsementSchema),
         async onSubmit(input) {
             $directorSupportForm.allowanceId = data.props.currentAllowanceId;
+            $directorSupportForm.isDraft = false;
             _directorSupportSubmit($directorSupportForm);
         },
     });
@@ -416,6 +544,8 @@
         async onSubmit(input) {
             $secretaryVerificationForm.allowanceId =
                 data.props.currentAllowanceId;
+            $secretaryVerificationForm.isDraft = false;
+            $secretaryVerificationForm.date = Date.now().toString();
             _secretaryVerificationSubmit($secretaryVerificationForm);
         },
     });
@@ -435,6 +565,7 @@
         validators: zodClient(ServiceAllowanceEndorsementSchema),
         async onSubmit(input) {
             $supporterFeedbackForm.allowanceId = data.props.currentAllowanceId;
+            $supporterFeedbackForm.isDraft = false;
             _supporterFeedbackSubmit($supporterFeedbackForm);
         },
     });
@@ -448,12 +579,13 @@
         id: 'approverFeedbackForm',
         SPA: true,
         taintedMessage: false,
-        resetForm: false,
+        resetForm: true,
         invalidateAll: true,
         validationMethod: 'oninput',
         validators: zodClient(ServiceAllowanceEndorsementSchema),
         async onSubmit(input) {
             $approverFeedbackForm.allowanceId = data.props.currentAllowanceId;
+            $approverFeedbackForm.isDraft = false;
             _approverFeedbackSubmit($approverFeedbackForm);
         },
     });
@@ -471,9 +603,10 @@
         invalidateAll: true,
         validationMethod: 'oninput',
         validators: zodClient(ServiceAllowanceEndorsementSchema),
-        async onSubmit(input) {
+        onSubmit(input) {
             $secretaryConfirmationForm.allowanceId =
                 data.props.currentAllowanceId;
+            $secretaryConfirmationForm.isDraft = false;
             _secretaryConfirmationSubmit($secretaryConfirmationForm);
         },
     });
@@ -493,16 +626,52 @@
         validators: zodClient(ServiceAllowanceEndorserDetailSchema),
         async onSubmit(input) {
             $endorserDetailForm.allowanceId = data.props.currentAllowanceId;
+            $endorserDetailForm.isDraft = false;
             _endorserDetailSubmit($endorserDetailForm);
         },
     });
+
+    // 6. Cargo shipping upload invoice
+    const {
+        form: cargoShippingInvoiceForm,
+        errors: cargoShippingInvoiceErrors,
+        enhance: cargoShippingInvoiceEnhance,
+    } = superForm(data.forms.cargoShippingInvoiceForm, {
+        dataType: 'json',
+        id: 'cargoShippingInvoiceForm',
+        SPA: true,
+        taintedMessage: false,
+        resetForm: false,
+        invalidateAll: true,
+        validationMethod: 'oninput',
+        validators: zodClient(ServiceAllowanceCargoShippingInvoiceSchema),
+        onSubmit(input) {
+            $cargoShippingInvoiceForm.allowanceId =
+                data.props.currentAllowanceId;
+            $cargoShippingInvoiceForm.isDraft = false;
+            _cargoShippingInvoiceSubmit($cargoShippingInvoiceForm);
+        },
+    });
+
+    function addFamilyDetail() {
+        const newFam: FamilyDetailType = {
+            name: '',
+            age: 0,
+            relationshipCode: '1qw',
+        };
+        $stateVisitForm.familyDetail.push(newFam);
+
+        $stateVisitForm = $stateVisitForm;
+    }
+
+    function removeFamilyDetail(index: number) {
+        $stateVisitForm.familyDetail.splice(index, 1);
+        $stateVisitForm = $stateVisitForm;
+    }
 </script>
 
 <section class="flex w-full flex-col items-center justify-center">
-    <ContentHeader
-        title="Permohonan Elaun-elaun Perkhidmatan {data.props
-            .currentAllowanceId}"
-    >
+    <ContentHeader title="Permohonan Elaun-elaun Perkhidmatan">
         <TextIconButton
             type="draft"
             label="Kembali"
@@ -1159,86 +1328,218 @@
                                     label="9. Sila muat naik dokumen sokongan"
                                 ></DocumentInput>
                             </form>
-                        {:else if currentAllowanceTypeCode == AllowanceTypeConstant.funeralArrangement.code}
+                        {:else if currentAllowanceTypeCode == AllowanceTypeConstant.welfareFund.code}
                             <!-- ################################################################### -->
-                            <!-- FUNERAL -->
+                            <!-- WELFARE FUND -->
                             <!-- ################################################################### -->
                             <form
-                                id="funeralForm"
+                                id="welfareFundForm"
                                 method="POST"
-                                use:funeralEnhance
+                                use:welfareFundEnhance
                                 class="flex w-full flex-col items-center justify-start gap-2"
                             >
-                                <CustomTextField
-                                    disabled={!$funeralForm.isDraft}
-                                    id="name"
-                                    label={'7. Nama Kakitangan Yang Meninggal'}
-                                    type="text"
-                                    errors={$funeralErrors.name}
-                                    bind:val={$funeralForm.name}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled={!$funeralForm.isDraft}
-                                    type="text"
-                                    id="employeeNumber"
-                                    label={'8. Nombor Pekerja Kakitangan Yang Meninggal'}
-                                    errors={$funeralErrors.employeeNumber}
-                                    bind:val={$funeralForm.employeeNumber}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled={!$funeralForm.isDraft}
-                                    type="text"
-                                    id="identityDocumentNumber"
-                                    label={'9. No. Kad Pengenalan Kakitangan Yang Meninggal'}
-                                    errors={$funeralErrors.identityDocumentNumber}
-                                    bind:val={$funeralForm.identityDocumentNumber}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled={!$funeralForm.isDraft}
-                                    type="date"
-                                    id="deathDate"
-                                    label={'10. Tarikh Kematian'}
-                                    errors={$funeralErrors.deathDate}
-                                    bind:val={$funeralForm.deathDate}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled={!$funeralForm.isDraft}
-                                    type="text"
-                                    id="deathTime"
-                                    label={'11. Masa Kematian Disahkan'}
-                                    errors={$funeralErrors.deathTime}
-                                    bind:val={$funeralForm.deathTime}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled={!$funeralForm.isDraft}
-                                    type="text"
-                                    id="nextOfKinName"
-                                    label={'12. Nama Waris'}
-                                    errors={$funeralErrors.nextOfKinName}
-                                    bind:val={$funeralForm.nextOfKinName}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled={!$funeralForm.isDraft}
-                                    type="text"
-                                    id="nextOfKinAddress"
-                                    label={'13. Alamat Waris'}
-                                    errors={$funeralErrors.nextOfKinAddress}
-                                    bind:val={$funeralForm.nextOfKinAddress}
-                                ></CustomTextField>
                                 <CustomSelectField
-                                    disabled={!$funeralForm.isDraft}
-                                    id="relationshipId"
-                                    label={'14. Hubungan Dengan Kakitangan Yang Meninggal'}
-                                    bind:val={$funeralForm.relationshipId}
-                                    options={data.lookup.relationshipDropdown}
+                                    disabled={!$welfareFundForm.isDraft}
+                                    id="welfareTypeCode"
+                                    label={'7. Kategori'}
+                                    bind:val={$welfareFundForm.welfareTypeCode}
+                                    options={data.lookup
+                                        .welfareTypeCodeDropdown}
                                 ></CustomSelectField>
+
                                 <DocumentInput
-                                    disabled={!$funeralForm.isDraft}
-                                    errors={$funeralErrors.documents?._errors?.map(
+                                    disabled={!$welfareFundForm.isDraft}
+                                    errors={$welfareFundErrors.documents?._errors?.map(
+                                        (error) => error,
+                                    )}
+                                    bind:documents={$welfareFundForm.documents}
+                                    label="8. Sila muat naik dokumen sokongan"
+                                ></DocumentInput>
+                            </form>
+                        {:else if currentAllowanceTypeCode == AllowanceTypeConstant.stateVisit.code}
+                            <!-- ################################################################### -->
+                            <!-- STATE VISIT -->
+                            <!-- ################################################################### -->
+                            <form
+                                id="stateVisitForm"
+                                method="POST"
+                                use:stateVisitEnhance
+                                class="flex w-full flex-col items-center justify-start gap-2"
+                            >
+                                <CustomSelectField
+                                    id="welfareTypeCode"
+                                    label={'7. Saya memohon menggunakan kemudahan tambang mengunjungi Wilayah Asal untuk:'}
+                                    bind:val={$stateVisitForm.applyCode}
+                                    options={data.lookup
+                                        .stateVisitReasonDropdown}
+                                ></CustomSelectField>
+                                <CustomSelectField
+                                    id="stateCode"
+                                    label={'8. Wilayah Asal'}
+                                    bind:val={$stateVisitForm.stateCode}
+                                    options={data.lookup.stateDropdown}
+                                ></CustomSelectField>
+
+                                <div
+                                    class="flex w-full flex-col items-start justify-start gap-2 py-2 pb-4"
+                                >
+                                    <div
+                                        class="flex w-full flex-row items-center justify-between"
+                                    >
+                                        <p
+                                            class=" w-full text-start text-base font-medium text-slate-700"
+                                        >
+                                            9. Tambang Untuk Ahli Keluarga
+                                        </p>
+                                    </div>
+                                    {#each $stateVisitForm.familyDetail as family, index}
+                                        <div
+                                            class="flex w-full flex-col items-start justify-start rounded-md border border-slate-200 bg-slate-100 p-4"
+                                        >
+                                            <div
+                                                class="flex w-full flex-row items-center justify-between py-2"
+                                            >
+                                                <p
+                                                    class="text-base font-semibold text-slate-700"
+                                                >
+                                                    Ahli Keluarga {index + 1}
+                                                </p>
+                                                <button
+                                                    type="button"
+                                                    on:click={() => {
+                                                        removeFamilyDetail(
+                                                            index,
+                                                        );
+                                                    }}
+                                                >
+                                                    <span>
+                                                        <SvgXMark></SvgXMark>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div
+                                                class="flex w-full flex-col items-start justify-start gap-0"
+                                            >
+                                                <CustomTextField
+                                                    disabled={!$winterClothingForm.isDraft}
+                                                    type="text"
+                                                    id="family-name-{index}"
+                                                    label={'Nama'}
+                                                    errors={$stateVisitErrors.familyDetail
+                                                        ? $stateVisitErrors
+                                                              .familyDetail[
+                                                              index
+                                                          ]?.name
+                                                        : undefined}
+                                                    bind:val={family.name}
+                                                ></CustomTextField>
+                                                <CustomTextField
+                                                    disabled={!$winterClothingForm.isDraft}
+                                                    type="number"
+                                                    id="family-age-{index}"
+                                                    label={'Umur'}
+                                                    errors={$stateVisitErrors.familyDetail
+                                                        ? $stateVisitErrors
+                                                              .familyDetail[
+                                                              index
+                                                          ]?.age
+                                                        : undefined}
+                                                    bind:val={family.age}
+                                                ></CustomTextField>
+
+                                                <CustomSelectField
+                                                    id="family-relationshipCode-{index}"
+                                                    label={'Pertalian Kekeluargaan'}
+                                                    bind:val={family.relationshipCode}
+                                                    options={data.lookup
+                                                        .relationshipCodeDropdown}
+                                                ></CustomSelectField>
+                                            </div>
+                                        </div>
+                                    {/each}
+                                    <button
+                                        class="h-8 min-h-8 w-full rounded border border-slate-400 bg-slate-100"
+                                        type="button"
+                                        on:click={() => {
+                                            addFamilyDetail();
+                                        }}
+                                    >
+                                        <p
+                                            class="text-base font-medium text-slate-700"
+                                        >
+                                            + Tambah
+                                        </p>
+                                    </button>
+                                </div>
+
+                                <DocumentInput
+                                    disabled={!$stateVisitForm.isDraft}
+                                    errors={$stateVisitErrors.documents?._errors?.map(
                                         (error) => error,
                                     )}
                                     bind:documents={$funeralForm.documents}
-                                    label="15. Sila muat naik dokumen sokongan"
+                                    label="10. Sila muat naik dokumen sokongan"
+                                ></DocumentInput>
+                            </form>
+                        {:else if currentAllowanceTypeCode == AllowanceTypeConstant.cargoShipping.code}
+                            <!-- ################################################################### -->
+                            <!-- CARGO SHIPPING -->
+                            <!-- ################################################################### -->
+                            <form
+                                id="cargoShippingForm"
+                                method="POST"
+                                use:cargoShippingEnhance
+                                class="flex w-full flex-col items-center justify-start gap-2"
+                            >
+                                <!-- <CustomSelectField
+                                    disabled={!$cargoShippingForm.isDraft}
+                                    id="welfareTypeCode"
+                                    label={'7. Kategori'}
+                                    bind:val={$cargoShippingForm.welfareTypeCode}
+                                    options={data.lookup.relationshipDropdown}
+                                ></CustomSelectField> -->
+                                <CustomTextField
+                                    id="reason"
+                                    label={'7. Tujuan Permohonan'}
+                                    type="text"
+                                    errors={$cargoShippingErrors.reason}
+                                    bind:val={$cargoShippingForm.reason}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    id="startDate"
+                                    label={'8. Tarikh Penghantaran'}
+                                    type="date"
+                                    errors={$cargoShippingErrors.startDate}
+                                    bind:val={$cargoShippingForm.startDate}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    id="endDate"
+                                    label={'9. Anggaran Tarikh Barang-barang Tiba di Destinasi'}
+                                    type="date"
+                                    errors={$cargoShippingErrors.endDate}
+                                    bind:val={$cargoShippingForm.endDate}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    id="startPoint"
+                                    label={'10. Tempat Titik Mula Penghantaran'}
+                                    type="text"
+                                    errors={$cargoShippingErrors.startPoint}
+                                    bind:val={$cargoShippingForm.startPoint}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    id="endPoint"
+                                    label={'11. Tempat Titik Tamat Penghantaran'}
+                                    type="text"
+                                    errors={$cargoShippingErrors.endPoint}
+                                    bind:val={$cargoShippingForm.endPoint}
+                                ></CustomTextField>
+
+                                <DocumentInput
+                                    errors={$cargoShippingErrors.documents?._errors?.map(
+                                        (error) => error,
+                                    )}
+                                    bind:documents={$cargoShippingForm.documents}
+                                    label="12. Sila muat naik dokumen sokongan"
                                 ></DocumentInput>
                             </form>
                         {:else if currentAllowanceTypeCode == AllowanceTypeConstant.insurancePayment.code}
@@ -1302,6 +1603,56 @@
                                     label="12. Sila muat naik dokumen sokongan"
                                 ></DocumentInput>
                             </form>
+                        {:else if currentAllowanceTypeCode == AllowanceTypeConstant.passportPayment.code}
+                            <!-- ################################################################### -->
+                            <!-- PASSPORT PAYMENT -->
+                            <!-- ################################################################### -->
+                            <form
+                                id="passportPaymentForm"
+                                method="POST"
+                                use:passportPaymentEnhance
+                                class="flex w-full flex-col items-center justify-start gap-2"
+                            >
+                                <CustomTextField
+                                    disabled={$passportPaymentForm.isDraft ==
+                                        false}
+                                    id="reason"
+                                    label={'7. Tujuan Pembaharuan Pasport'}
+                                    type="textarea"
+                                    errors={$passportPaymentErrors.reason}
+                                    bind:val={$passportPaymentForm.reason}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled={$passportPaymentForm.isDraft ==
+                                        false}
+                                    id="renewDate"
+                                    label={'8. Tarikh Pembaharuan Pasport'}
+                                    type="date"
+                                    errors={$passportPaymentErrors.renewDate}
+                                    bind:val={$passportPaymentForm.renewDate}
+                                ></CustomTextField>
+                                <div
+                                    class="w-full flex-row items-center justify-start"
+                                >
+                                    <p
+                                        class="w-full text-justify text-base italic text-slate-500"
+                                    >
+                                        (Sertakan resit <span
+                                            class="font-medium">ASAL</span
+                                        >)
+                                    </p>
+                                </div>
+
+                                <DocumentInput
+                                    disabled={$passportPaymentForm.isDraft ==
+                                        false}
+                                    errors={$passportPaymentErrors.documents?._errors?.map(
+                                        (error) => error,
+                                    )}
+                                    bind:documents={$passportPaymentForm.documents}
+                                    label="10. Dokumen Sokongan"
+                                ></DocumentInput>
+                            </form>
                         {/if}
                     </div>
                 </div>
@@ -1319,9 +1670,6 @@
                             type="primary"
                             label="Hantar"
                             form="assignDirectorForm"
-                            onClick={() => {
-                                isDraft = false;
-                            }}
                             icon="check"
                         ></TextIconButton>
                     {/if}
@@ -1388,17 +1736,12 @@
                 <StepperContentHeader
                     title="Sokongan & Ulasan Pengarah Bahagian/Negeri"
                 >
-                    {#if $directorSupportForm.isDraft && (data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.pengarahBahagian.code || data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.pengarahNegeri.code)}
-                        <TextIconButton
-                            type="primary"
-                            label="Hantar"
-                            form="directorSupportForm"
-                            onClick={() => {
-                                isDraft = false;
-                            }}
-                            icon="check"
-                        ></TextIconButton>
-                    {/if}
+                    <TextIconButton
+                        type="primary"
+                        label="Hantar"
+                        form="directorSupportForm"
+                        icon="check"
+                    ></TextIconButton>
                 </StepperContentHeader>
                 <StepperContentBody>
                     <div
@@ -1414,7 +1757,7 @@
                                 class="flex w-full flex-col items-center justify-start gap-2"
                             >
                                 <CustomRadioBoolean
-                                    disabled={!$directorSupportForm.isDraft}
+                                    disabled={false}
                                     id="status"
                                     label="Permohonan tuntutan pegawai di atas adalah"
                                     bind:val={$directorSupportForm.status}
@@ -1422,7 +1765,6 @@
                                     options={supportAltOptions}
                                 ></CustomRadioBoolean>
                                 <CustomTextField
-                                    disabled={!$directorSupportForm.isDraft}
                                     type="textarea"
                                     id="remark"
                                     label={'Jika tidak disokong, sila nyatakan sebab'}
@@ -1465,14 +1807,11 @@
         <!-- ======================================================================= -->
         <StepperContent>
             <StepperContentHeader title="Pengesahan Urus Setia">
-                {#if $secretaryVerificationForm.isDraft && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
+                {#if currentApplicationDetails.verification?.status == null && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
                     <TextIconButton
                         type="primary"
                         label="Hantar"
                         form="secretaryVerificationForm"
-                        onClick={() => {
-                            isDraft = false;
-                        }}
                         icon="check"
                     ></TextIconButton>
                 {/if}
@@ -1491,7 +1830,12 @@
                             class="flex w-full flex-col items-center justify-start gap-2"
                         >
                             <CustomRadioBoolean
-                                disabled={!$secretaryVerificationForm.isDraft}
+                                disabled={data.props.layoutData.accountDetails
+                                    .currentRoleCode !==
+                                    RoleConstant.urusSetiaElaunElaunPerkhidmatan
+                                        .code ||
+                                    currentApplicationDetails.verification !==
+                                        null}
                                 id="reason"
                                 label="Adakah Permohonan Ini Sah?"
                                 bind:val={$secretaryVerificationForm.status}
@@ -1499,7 +1843,12 @@
                                 options={certifyAltAltOptions}
                             ></CustomRadioBoolean>
                             <CustomTextField
-                                disabled={!$secretaryVerificationForm.isDraft}
+                                disabled={data.props.layoutData.accountDetails
+                                    .currentRoleCode !==
+                                    RoleConstant.urusSetiaElaunElaunPerkhidmatan
+                                        .code ||
+                                    currentApplicationDetails.verification !==
+                                        null}
                                 type="textarea"
                                 id="reason"
                                 label={'Jika tidak diluluskan, sila nyatakan sebab'}
@@ -1542,17 +1891,14 @@
         {#if data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
             <StepperContent>
                 <StepperContentHeader title="Lantikan Penyokong dan Pelulus">
-                    {#if $endorserDetailForm.isDraft && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
+
                         <TextIconButton
                             type="primary"
                             label="Hantar"
                             form="endorserDetailForm"
-                            onClick={() => {
-                                isDraft = false;
-                            }}
                             icon="check"
                         ></TextIconButton>
-                    {/if}
+
                 </StepperContentHeader>
                 <StepperContentBody>
                     <div
@@ -1567,16 +1913,14 @@
                                 use:endorserDetailEnhance
                                 class="flex w-full flex-col items-center justify-start gap-2"
                             >
-                                {#if data.props.currentApplicationDetails.supporterApprover == null}
+                                {#if currentApplicationDetails.supporterApprover == null}
                                     <CustomSelectField
-                                        disabled={!$endorserDetailForm.isDraft}
                                         id="supporterIdentityDocumentNumber"
                                         label={'Sila pilih penyokong untuk permohonan ini'}
                                         bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
                                         options={data.lookup.supporterDropdown}
                                     ></CustomSelectField>
                                     <CustomSelectField
-                                        disabled={!$endorserDetailForm.isDraft}
                                         id="approverIdentityDocumentNumber"
                                         label={'Sila pilih pelulus untuk permohonan ini'}
                                         bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
@@ -1627,20 +1971,16 @@
         <!-- SUPPORTER FEEDBACK -->
         <!-- ======================================================================= -->
         <StepperContent>
-            <StepperContentHeader
-                title="Ulasan & Syor Ketua Seksyen Pengurusan Sumber Manusia"
-            >
-                {#if $supporterFeedbackForm.isDraft && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.ketuaSeksyen.code}
+            <StepperContentHeader title="Ulasan & Syor Ketua Seksyen">
+                <!-- TESTED -->
+
                     <TextIconButton
                         type="primary"
                         label="Hantar"
                         form="supporterFeedbackForm"
-                        onClick={() => {
-                            isDraft = false;
-                        }}
                         icon="check"
                     ></TextIconButton>
-                {/if}
+
             </StepperContentHeader>
             <StepperContentBody>
                 <div
@@ -1656,15 +1996,15 @@
                             class="flex w-full flex-col items-center justify-start gap-2"
                         >
                             <CustomRadioBoolean
-                                disabled={!$supporterFeedbackForm.isDraft}
-                                id="reason"
+disabled={false}
+                                id="status"
                                 label="Permohonan tuntutan pegawai di atas adalah"
                                 bind:val={$supporterFeedbackForm.status}
                                 bind:errors={$supporterFeedbackErrors.status}
                                 options={supportAltOptions}
                             ></CustomRadioBoolean>
                             <CustomTextField
-                                disabled={!$supporterFeedbackForm.isDraft}
+disabled={false}
                                 type="textarea"
                                 id="reason"
                                 label={'Jika tidak disokong, sila nyatakan sebab'}
@@ -1706,14 +2046,11 @@
         <!-- ======================================================================= -->
         <StepperContent>
             <StepperContentHeader title="Kelulusan Pengarah Khidmat Pengurusan">
-                {#if $approverFeedbackForm.isDraft && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.ketuaSeksyen.code}
+                {#if currentApplicationDetails.approval?.status == null && data.props.layoutData.accountDetails.identityDocumentNumber == currentApplicationDetails.approval?.identityDocumentNumber}
                     <TextIconButton
                         type="primary"
                         label="Hantar"
                         form="approverFeedbackForm"
-                        onClick={() => {
-                            isDraft = false;
-                        }}
                         icon="check"
                     ></TextIconButton>
                 {/if}
@@ -1732,7 +2069,12 @@
                             class="flex w-full flex-col items-center justify-start gap-2"
                         >
                             <CustomRadioBoolean
-                                disabled={!$approverFeedbackForm.isDraft}
+                                disabled={currentApplicationDetails.approval
+                                    ?.status !== null ||
+                                    data.props.layoutData.accountDetails
+                                        .identityDocumentNumber !==
+                                        currentApplicationDetails.approval
+                                            ?.identityDocumentNumber}
                                 id="reason"
                                 label="Permohonan ini"
                                 bind:val={$approverFeedbackForm.status}
@@ -1740,7 +2082,12 @@
                                 options={approveAltOptions}
                             ></CustomRadioBoolean>
                             <CustomTextField
-                                disabled={!$approverFeedbackForm.isDraft}
+                                disabled={currentApplicationDetails.approval
+                                    ?.status !== null ||
+                                    data.props.layoutData.accountDetails
+                                        .identityDocumentNumber !==
+                                        currentApplicationDetails.approval
+                                            ?.identityDocumentNumber}
                                 type="textarea"
                                 id="reason"
                                 label={'Jika tidak diluluskan, sila nyatakan sebab'}
@@ -1777,12 +2124,62 @@
             </StepperContentBody>
         </StepperContent>
 
+        {#if currentAllowanceTypeCode == AllowanceTypeConstant.cargoShipping.code}
+            <!-- ======================================================================= -->
+            <!-- UPLOAD INVOICE -->
+            <!-- ======================================================================= -->
+            <StepperContent>
+                <StepperContentHeader title="Muat Naik Invois">
+                    {#if data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
+                        <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="cargoShippingInvoiceForm"
+                            onClick={() => {
+                                isDraft = false;
+                            }}
+                            icon="check"
+                        ></TextIconButton>
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <div
+                        class="flex h-full max-h-full w-full max-w-full flex-col items-start justify-start overflow-y-auto overflow-x-hidden p-4"
+                    >
+                        <div
+                            class="flex w-full flex-col items-start justify-start gap-4 lg:w-1/2"
+                        >
+                            <form
+                                id="cargoShippingInvoiceForm"
+                                method="POST"
+                                use:cargoShippingInvoiceEnhance
+                                class="flex w-full flex-col items-center justify-start gap-2"
+                            >
+                                <CustomBanner
+                                    text="Muat nak invois Perkhidmatan Pengangkutan di ruangan yang disediakan di bawah."
+                                ></CustomBanner>
+                                <DocumentInput
+                                    id="cargoShippingInvoice"
+                                    disabled={currentApplicationDetails.uploadInvoice !=
+                                        null}
+                                    errors={$cargoShippingInvoiceErrors.documents?._errors?.map(
+                                        (error) => error,
+                                    )}
+                                    bind:documents={$cargoShippingInvoiceForm.documents}
+                                    label="Klik butang Tambah Fail untuk muat naik."
+                                ></DocumentInput>
+                            </form>
+                        </div>
+                    </div>
+                </StepperContentBody>
+            </StepperContent>
+        {/if}
         <!-- ======================================================================= -->
         <!-- SECRETARY  CONFIRMATION -->
         <!-- ======================================================================= -->
         <StepperContent>
             <StepperContentHeader title="Pengesahan Urus Setia">
-                {#if data.props.currentApplicationDetails.secretaryVerification?.status == null}
+                {#if currentApplicationDetails.confirmation?.total !== null || data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
                     <TextIconButton
                         type="primary"
                         label="Hantar"
@@ -1808,6 +2205,13 @@
                             class="flex w-full flex-col items-center justify-start gap-2"
                         >
                             <CustomTextField
+                                disabled={currentApplicationDetails.confirmation
+                                    ?.referenceNumber !== null ||
+                                    data.props.layoutData.accountDetails
+                                        .currentRoleCode !==
+                                        RoleConstant
+                                            .urusSetiaElaunElaunPerkhidmatan
+                                            .code}
                                 type="number"
                                 id="total"
                                 label={'Jumlah Yang Diluluskan (RM)'}
@@ -1815,6 +2219,13 @@
                                 bind:val={$secretaryConfirmationForm.total}
                             ></CustomTextField>
                             <CustomTextField
+                                disabled={currentApplicationDetails.confirmation
+                                    ?.referenceNumber !== null ||
+                                    data.props.layoutData.accountDetails
+                                        .currentRoleCode !==
+                                        RoleConstant
+                                            .urusSetiaElaunElaunPerkhidmatan
+                                            .code}
                                 type="text"
                                 id="referenceNumber"
                                 label={'Nombor Rujukan Surat/Arahan Bayaran'}
