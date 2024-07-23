@@ -266,10 +266,10 @@
                                 tempPromotionType = 'Utama';
                             }
 
-                            if (rowData.assignedRole !== 'Kakitangan') {
+                            if (rowData.assignedRole !== 'Pemohon') {
                                 goto(
                                     '/v2/employment/promotion/butiran/1-' +
-                                        rowData.promotionId +
+                                        rowData.groupId +
                                         '-' +
                                         tempPromotionType,
                                 );

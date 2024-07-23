@@ -1279,7 +1279,7 @@
                                                 val={currentEmployeeDetail?.employeeNumber}
                                             />
                                             <CustomTextField
-                                                label="Nama Pekerja"
+                                                label="Nama Kakitangan"
                                                 id="employeeName"
                                                 disabled
                                                 isRequired={false}
@@ -1678,13 +1678,15 @@
                                 label="No. Pekerja"
                                 id="employeeNumber"
                                 disabled
+                                isRequired={false}
                                 val={data.employeePOV?.employeePromotionInfo
                                     .employeeNumber}
                             />
                             <CustomTextField
-                                label="Nama Pekerja"
+                                label="Nama Kakitangan"
                                 id="employeeName"
                                 disabled
+                                isRequired={false}
                                 val={data.employeePOV?.employeePromotionInfo
                                     ?.employeeName}
                             />
@@ -1692,6 +1694,7 @@
                                 label="Tarikh Kenaikan Pangkat"
                                 id="promotionDate"
                                 disabled
+                                isRequired={false}
                                 type="date"
                                 val={data.employeePOV?.employeePromotionInfo
                                     ?.promotionDate}
@@ -1700,6 +1703,7 @@
                                 label="Bulan Pergerakan Gaji Baru"
                                 id="salaryMovementMonth"
                                 disabled
+                                isRequired={false}
                                 options={kgtMonthValueIsStringLookup}
                                 val={data.employeePOV?.employeePromotionInfo
                                     ?.salaryMovementMonth}
@@ -1708,6 +1712,7 @@
                                 label="Gaji Minimum - Gaji Maksimum (Gred Lama)"
                                 id="firstMinimumSalary"
                                 disabled
+                                isRequired={false}
                                 val={'RM ' +
                                     data.employeePOV?.employeePromotionInfo
                                         ?.firstMinimumSalary +
@@ -1719,6 +1724,7 @@
                                 label="Kenaikan Gaji Tahunan (Gred Lama)"
                                 id="firstSalaryRaise"
                                 disabled
+                                isRequired={false}
                                 val={'RM ' +
                                     data.employeePOV?.employeePromotionInfo
                                         ?.firstSalaryRaise}
@@ -1727,6 +1733,7 @@
                                 label="Gred Baru"
                                 id="newGrade"
                                 disabled
+                                isRequired={false}
                                 options={data.lookup.gradeLookup}
                                 val={data.employeePOV?.employeePromotionInfo
                                     ?.newGrade}
@@ -1736,6 +1743,7 @@
                                 id="minMaxSalaryNewGrade"
                                 placeholder=""
                                 disabled
+                                isRequired={false}
                                 val={'RM ' +
                                     data.employeePOV?.employeePromotionInfo
                                         ?.secondMinimumSalary +
@@ -1747,6 +1755,7 @@
                                 label="Kenaikan Gaji Tahunan (Gred Baru)"
                                 id="secondSalaryRaise"
                                 disabled
+                                isRequired={false}
                                 placeholder=""
                                 val={data.employeePOV?.employeePromotionInfo
                                     ?.secondSalaryRaise}
@@ -1754,6 +1763,7 @@
                             <CustomTextField
                                 label="Penempatan Sekarang"
                                 disabled
+                                isRequired={false}
                                 id="currentPlacement"
                                 val={data.employeePOV?.employeePromotionInfo
                                     ?.currentPlacement}
@@ -1762,6 +1772,7 @@
                                 label="Penempatan Baru"
                                 id="newPlacement"
                                 disabled
+                                isRequired={false}
                                 options={data.lookup.placementLookup}
                                 val={data.employeePOV?.employeePromotionInfo
                                     ?.newPlacement}
