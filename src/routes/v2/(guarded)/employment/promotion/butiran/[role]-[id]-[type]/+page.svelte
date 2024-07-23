@@ -98,8 +98,12 @@
                 malay: 'Program',
             },
             {
-                english: 'employeeName',
+                english: 'name',
                 malay: 'Nama Kakitangan',
+            },
+            {
+                english: 'actingStartDate',
+                malay: 'Tarikh Pemangkuan',
             },
         ],
         url: 'employment/promotion/employee_lists/list',
@@ -137,6 +141,14 @@
                 english: 'programme',
                 malay: 'Program',
             },
+            {
+                english: 'name',
+                malay: 'Nama Kakitangan',
+            },
+            {
+                english: 'actingStartDate',
+                malay: 'Tarikh Pemangkuan',
+            },
         ],
         url: '',
         id: 'selectedEmployeeList',
@@ -149,6 +161,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
 
@@ -195,6 +209,7 @@
         },
     });
 
+    let controlIntegrity: boolean = false;
     let certificationTable: TableSettingDTO = {
         param: data.commonParam,
         meta: data.certificationListResponse.data?.meta ?? {
@@ -240,8 +255,13 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
+    
+    $: controlIntegrity = data.certificationList.every((item) => item.integrityCertification !== "Sedang diproses");
+    $: certificationTable.option.checkbox = !controlIntegrity;
 
     let promotionmeetingTable: TableSettingDTO = {
         param: data.commonParam,
@@ -276,6 +296,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     $: promotionmeetingTable.data = data.promotionMeetingList;
@@ -313,6 +335,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     $: promotionTable.data = data.placementList;
@@ -346,6 +370,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     $: promotionEmployee.data = data.promotionDetail;
@@ -379,6 +405,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     $: promotionFinalResult.data = data.finalResult;
@@ -454,6 +482,7 @@
 
             _submitIntegrityForm($integrityForm).then((res) => {
                 if (res?.response.status == 'success') {
+                    certificationTable.data = data.certificationList;
                     integrityApproved = true;
                     integrityModal = false;
                 }
@@ -650,7 +679,7 @@
                         if (
                             $supporterApproval.remark == null &&
                             data.currentRoleCode ==
-                                UserRoleConstant.penyokong.code
+                                UserRoleConstant.kakitangan.code
                         ) {
                             supporterApproved = false;
                         }
@@ -658,7 +687,7 @@
                         if (
                             $approverApproval.remark == null &&
                             data.currentRoleCode ==
-                                UserRoleConstant.pelulus.code
+                                UserRoleConstant.kakitangan.code
                         ) {
                             approverApproved = false;
                         }
@@ -727,6 +756,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     $: certificationTable.data = data.certificationList;
@@ -787,7 +818,7 @@
                                             <span class="font-medium"
                                                 >Arahan:
                                             </span>
-                                            Sila tekan butang tambah di pada sebelah
+                                            Sila tekan butang tambah di sebelah
                                             kiri jadual untuk masukkan kakitangan
                                             ke dalam senarai calon kenaikan pangkat.
                                             Klik butang
@@ -881,7 +912,7 @@
                                 class="flex w-full flex-col justify-start gap-2.5 p-3"
                             >
                                 <div class="flex w-full flex-col gap-2.5 pb-10">
-                                    {#if data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code}
+                                    {#if (data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code && data.currentRoleCode !== UserRoleConstant.kakitangan.code)}
                                         <Alert color="blue">
                                             <p>
                                                 <span class="font-medium"
@@ -893,7 +924,7 @@
                                             </p>
                                         </Alert>
                                     {/if}
-                                    {#if data.currentRoleCode === UserRoleConstant.urusSetiaIntegriti.code}
+                                    {#if !controlIntegrity && data.currentRoleCode === UserRoleConstant.urusSetiaIntegriti.code}
                                         <div class="flex w-full justify-end">
                                             <TextIconButton
                                                 label="Tindakan"
@@ -1533,7 +1564,7 @@
                             <div
                                 class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
                             >
-                                {#if data.currentRoleCode == UserRoleConstant.penyokong.code || data.currentRoleCode == UserRoleConstant.pelulus.code}
+                                {#if data.currentRoleCode == UserRoleConstant.kakitangan.code}
                                     <Alert color="blue">
                                         <p>
                                             <span class="font-medium"
