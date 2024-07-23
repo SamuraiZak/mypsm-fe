@@ -28,7 +28,7 @@
                     <SidebarItem
                         spanClass="text-base font-medium text-slate-500"
                         nonActiveClass="flex items-center p-2 text-base font-medium text-ios-labelColors-secondaryLabel-light transition duration-75 group hover:bg-ios-ui-sidebarItem-light-hover"
-                        label={TextAppearanceHelper.toProper(item.moduleName)}
+                        label={item.moduleName}
                         href={item.url}
                         active={activeUrl.includes(item.url)}
                         activeClass="flex items-center p-2 text-base font-medium text-ios-activeColors-activeBlue-light transition duration-75 group bg-ios-ui-sidebarItem-light-active border-l-4 border-ios-activeColors-activeBlue-light "
@@ -40,7 +40,7 @@
                         ulClass="py-0 space-y-0"
                         spanClass="text-base font-medium text-slate-500 w-full flex"
                         btnClass="flex items-center p-2 text-base font-medium text-ios-labelColors-secondaryLabel-light transition duration-75 group hover:bg-ios-ui-sidebarItem-light-hover w-full"
-                        label={TextAppearanceHelper.toProper(item.moduleName)}
+                        label={item.moduleName}
                     >
                         <svelte:fragment slot="arrowup"
                             ><SvgChevronUp size="12" /></svelte:fragment
@@ -52,7 +52,7 @@
                         {#each item.child as dropdownItem}
                             <SidebarDropdownItem
                                 aClass="flex items-center p-2 pl-6 text-base font-medium text-slate-500 transition duration-75 group hover:bg-ios-ui-sidebarItem-light-hover"
-                                label={TextAppearanceHelper.toProper(dropdownItem.moduleName)}
+                                label={dropdownItem.moduleName}
                                 href={dropdownItem.url}
                                 active={!!dropdownItem.url &&
                                     activeUrl.includes(dropdownItem.url)}
