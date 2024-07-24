@@ -13,11 +13,11 @@
             <SvgInfoSolid></SvgInfoSolid>
         </span>
     </div>
-    <div class="flex w-full flex-col items-start justify-start">
-        <span
-            class="flex w-full flex-col items-start justify-center text-start align-middle text-base font-medium text-ios-systemColors-systemBlue-light"
+    <div class="flex w-full h-full flex-col items-center justify-start">
+        <p
+            class="flex w-full flex-col items-start justify-center text-start align-middle text-base font-medium text-ios-systemColors-systemBlue-light leading-normal"
         >
             {text}
-        </span>
+        </p>
     </div>
 </div>
