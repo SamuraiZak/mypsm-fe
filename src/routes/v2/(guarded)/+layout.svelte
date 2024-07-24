@@ -189,7 +189,7 @@
     >
         <!-- sidebar starts here -->
         <aside
-            class="flex h-full w-60 min-w-60 flex-col items-center justify-start overflow-y-auto border-r bg-white"
+            class="flex no-print h-full w-60 min-w-60 flex-col items-center justify-start overflow-y-auto border-r bg-white"
         >
             <SideNavBar menu={data.props.accountDetails.module}></SideNavBar>
         </aside>
