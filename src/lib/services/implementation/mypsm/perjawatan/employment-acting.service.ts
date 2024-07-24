@@ -4,7 +4,7 @@ import http from '$lib/services/implementation/service-provider.service';
 import { CommonResponseConvert } from "$lib/dto/core/common/common-response.dto";
 import { CommonResponseConstant } from "$lib/constants/core/common-response.constant";
 import { AddChosenActingEmployeeDTOConvert, UpdateChosenEmployeeConvert, type AddChosenActingEmployeeDTO, type UpdateChosenEmployee } from "$lib/dto/mypsm/employment/acting/add-chosen-acting-employee.dto";
-import { getPromiseToast } from "$lib/helpers/core/toast.helper";
+import { getGeneralToast,  } from "$lib/helpers/core/toast.helper";
 import { invalidateAll } from "$app/navigation";
 import { UpdateActingInterviewConvert, type UpdateActingInterview } from "$lib/dto/mypsm/employment/acting/update-interview-detail.dto";
 import { UpdateInterviewResultConvert, type UpdateInterviewResult } from "$lib/dto/mypsm/employment/acting/update-interview-result.dto";
@@ -14,7 +14,7 @@ import { ActingDetailsConvert, type ActingDetails } from "$lib/dto/mypsm/employm
 import { UpdateMainPromotionMeetingConvert, type UpdateMainPromotionMeeting } from "$lib/dto/mypsm/employment/acting/main-update-promotion-meeting.dto";
 import { EmployeePostponeConvert, PostponeDetailResultConvert, type EmployeePostpone, type PostponeDetailResult } from "$lib/dto/mypsm/employment/acting/acting-employee-form.dto";
 import { CertifySelectedConvert, MainActingDetailEditConvert, MainMeetingResultConvert, type CertifySelected, type MainActingDetailEdit, type MainMeetingResult } from "$lib/dto/mypsm/employment/acting/main-acting-form.dto";
-import { ActingCommonBatchIdConvert, ActingFinalResultIdConvert, type ActingCommonBatchId, type ActingFinalResultId } from "$lib/dto/mypsm/employment/acting/acting-batchid.dto";
+import { ActingFinalResultIdConvert, type ActingFinalResultId } from "$lib/dto/mypsm/employment/acting/acting-batchid.dto";
 import { ActingCommonApprovalConvert, type ActingCommonApproval } from "$lib/dto/mypsm/employment/acting/acting-approval.dto";
 
 
@@ -142,6 +142,30 @@ export class EmploymentActingServices {
             return CommonResponseConstant.httpError;
         }
     }
+    //employee list for new pemangkuan (add list)
+    static async getActingEmployee41List(param: CommonListRequestDTO) {
+        try {
+            const url: Input = 'employment/acting/flexi41s/employee_list/list';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await promiseRes;
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
     //add employee for pemangkuan
     static async addChosenActingEmployee(param: AddChosenActingEmployeeDTO) {
@@ -154,7 +178,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -205,7 +229,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -280,7 +304,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -331,7 +355,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -357,7 +381,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -382,7 +406,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -484,7 +508,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -535,7 +559,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -586,7 +610,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -612,7 +636,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -762,7 +786,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -931,7 +955,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -956,7 +980,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -981,7 +1005,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -1081,7 +1105,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -1157,7 +1181,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -1259,7 +1283,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -1283,7 +1307,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -1382,7 +1406,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -1407,7 +1431,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -1432,7 +1456,7 @@ export class EmploymentActingServices {
                 })
                 .json();
 
-            const reponse: Response = await getPromiseToast(promiseRes);
+            const reponse: Response = await getGeneralToast(promiseRes);
 
             const result = CommonResponseConvert.fromResponse(reponse);
 

@@ -116,6 +116,24 @@ export const getSuccessToast = async () => {
     });
 };
 
+
+// =======================================================
+// general promise toast using resolved and rejected state
+// =======================================================
+export const getGeneralToast = async (promise: Promise<Response>) => {
+    return toast.promise(
+        promise,
+        {
+            loading: 'Sedang diproses...',
+            success: 'Berjaya!',
+            error: 'Tidak berjaya.',
+        },
+        {
+            style: 'background: #333; color: #fff;',
+        },
+    );
+};
+
 // =======================================================
 // forgot password
 // =======================================================
@@ -132,6 +150,23 @@ export const getPasswordResetSuccessToast = async () => {
 export const getPasswordResetErroToast = async () => {
     toast.error(
         'Ralat! Sila pastikan maklumat diisi dengan lengkap dan tepat',
+        {
+            style: 'background: #333; color: #fff;',
+        },
+    );
+};
+
+// =======================================================
+// generate promise toast using resolved and rejected state
+// =======================================================
+export const getGenerateToast = async (promise: Promise<Response>) => {
+    return toast.promise(
+        promise,
+        {
+            loading: 'Sedang menjana...',
+            success: 'Berjaya dijana!',
+            error: 'Tidak dapat dijana.',
+        },
         {
             style: 'background: #333; color: #fff;',
         },

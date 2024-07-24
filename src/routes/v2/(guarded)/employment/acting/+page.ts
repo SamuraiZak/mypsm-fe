@@ -29,7 +29,7 @@ export const load = async ({parent}) => {
     const employeeParam: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 5,
-        orderBy: "createdAt",
+        orderBy: "actingId",
         orderType: 1,
         filter: {},
     };

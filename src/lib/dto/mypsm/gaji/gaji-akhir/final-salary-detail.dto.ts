@@ -1,33 +1,31 @@
-export interface FinalSalaryDetail {
-    adjustment: FinalSalaryAdjustment[];
-    deduction:  FinalSalaryDeduction[];
+export interface EmployeeSalaryDetail {
+    name?:         string;
+    grade?:        string;
+    annualSalary?: number;
+    untilDate?:    string;
+    isDraft:       boolean;
+    employeeId?:    number;
+    allowance:    SalaryDetail[];
+    deduction:    SalaryDetail[];
 }
 
-export interface FinalSalaryAdjustment {
-    name:        string;
-    monthYear:   string;
-    description: string;
-    price:       number;
-    total:       number;
-    remark:      string;
-}
-
-export interface FinalSalaryDeduction {
-    name:        string;
-    monthYear:   string;
-    description: string;
-    price:       number;
-    total:       number;
-    remark:      string;
+export interface SalaryDetail {
+    decription: string;
+    amount:     number;
 }
 
 // Converts JSON strings to/from your types
-export class FinalSalaryDetailConvert {
-    public static fromJson(json: string): FinalSalaryDetail {
+export class EmployeeSalaryDetailConvert {
+    public static fromJson(json: string): EmployeeSalaryDetail {
         return JSON.parse(json);
     }
 
-    public static toJson(value: FinalSalaryDetail): string {
+    public static toJson(value: EmployeeSalaryDetail): string {
         return JSON.stringify(value);
     }
+}
+
+export interface FinalSalaryCert {
+    id:       number;
+    document: string;
 }

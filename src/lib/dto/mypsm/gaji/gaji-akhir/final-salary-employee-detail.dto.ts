@@ -15,8 +15,8 @@ export interface FinalSalaryEmployeeDetail {
     identityDocumentColor:    string;
     identityDocumentNumber:   string;
     email:                    string;
-    propertyDeclarationDate:  Date;
-    birthDate:                Date;
+    propertyDeclarationDate:  string;
+    birthDate:                string;
     homeAddress:              string;
     homeCountryId:            string;
     homeStateId:              string;
@@ -32,7 +32,7 @@ export interface FinalSalaryEmployeeDetail {
     employeeNumber:           string;
     employeeName:             string;
     employeePosition:         string;
-    relationshipId:           null;
+    relationshipId:           number;
 }
 
 // Converts JSON strings to/from your types

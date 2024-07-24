@@ -1,36 +1,26 @@
 export interface SalaryMovementList {
-    meetingId: string;
+    applicationId: number;
     meetingName: string;
-    meetingDate: Date;
-    salaryMovementMonth: number;
-    specialAid: number;
-    specialRaiseType: string;
-    specialRaise: number;
-    employeeName: string;
-    employeeNumber: string;
-    employeeGrade: string;
-    tpg: number;
-    kgt: number;
-    salary1: number;
-    wilayahAllowance1: number;
-    criticalAllowance1: number;
-    salary2: number;
-    wilayahAllowance2: number;
-    criticalAllowance2: number;
-    specialkgt: number;
-    specialSalary: number;
-    specialWilayahAllowance: number;
+    movementType: string;
+    totalEmployee: number;
+    salaryMovementMonth: string;
+    salaryMovementYear: number;
+    meetingDate: string;
     status: string;
 }
 
 export interface SalaryMovementFilter {
+    month: number;
+    year: number;
+}
+
+export interface SalaryAllowanceFilter {
     employeeNumber: string;
     name: string;
     identityDocumentNumber: string;
     month: number;
     year: number;
 }
-
 // Converts JSON strings to/from your types
 export class SalaryMovementListConvert {
     public static fromJson(json: string): SalaryMovementList {
@@ -40,4 +30,33 @@ export class SalaryMovementListConvert {
     public static toJson(value: SalaryMovementList): string {
         return JSON.stringify(value);
     }
+}
+
+export interface SalaryMovementApplicationDetail {
+    applicationId: number;
+    meetingName: string;
+    movementType: string;
+    totalEmployee: number;
+    salaryMovementMonth: string;
+    salaryMovementYear: number;
+    meetingDate: string;
+    status: string;
+    employeeList: ExcludedEmployee[];
+}
+
+export interface ExcludedEmployee {
+    employeeId: number;
+    employeeNumber: string;
+    name: string;
+    grade: string;
+    salaryMovementMonth: string;
+    kgt: number;
+    currentSalary: number;
+    currentAllowance: number;
+    currentCriticalAllowance: number;
+    newSalary: number;
+    newAllowance: number;
+    newCriticalAllowance: number;
+    remark: string;
+    isIncluded: boolean;
 }

@@ -1,6 +1,7 @@
 export interface AddNewPromotion {
     employeeIds:   number[];
     promotionType: string;
+    grade: string;
 }
 
 // Converts JSON strings to/from your types

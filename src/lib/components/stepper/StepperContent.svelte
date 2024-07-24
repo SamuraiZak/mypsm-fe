@@ -10,7 +10,7 @@
 </script>
 
 <div
-    class="stepper-content flex h-full max-h-full w-full max-w-[calc(100vw-450px)] flex-col justify-start"
+    class="stepper-content flex h-full max-h-full w-full max-w-[calc(100vw-490px)] flex-col justify-start"
     id={stepperId}
 >
     <!-- content header -->

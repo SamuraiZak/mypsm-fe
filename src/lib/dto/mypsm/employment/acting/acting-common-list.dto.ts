@@ -19,11 +19,13 @@ export class ActingCommonListConvert {
 
 export interface EmployeeActingOffer {
     actingId:      number;
+    batchId:       number;
     offerDate:     string | null;
     actingType:    string;
     grade:         string;
     position:      string;
     meetingResult: string;
+    assignedRole:  string;
 }
 
 // Converts JSON strings to/from your types

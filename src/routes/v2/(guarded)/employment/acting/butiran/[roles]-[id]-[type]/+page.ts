@@ -39,6 +39,12 @@ export const load = async ({ params, parent }) => {
     const { layoutData } = await parent();
 
     const currentRoleCode: string = layoutData.accountDetails.currentRoleCode
+
+    let assignedRoles: boolean = false;
+
+    if(params.roles !== 'kakitangan'){
+        assignedRoles = true;
+    }
     let actingType: string = params.type;
     let commonId: commonIdRequestDTO = {
         id: Number(params.id)
@@ -97,8 +103,8 @@ export const load = async ({ params, parent }) => {
     const certifySelected = await superValidate(zod(_certifySelected));
     const mainMeetingResultForm = await superValidate(zod(_mainMeetingResult));
     const mainMeetingDetailForm = await superValidate(zod(_mainMeetingDetail));
-    const mainSupporterApproval = await superValidate(zod(_quarterCommonApproval));
-    const mainApproverApproval = await superValidate(zod(_quarterCommonApproval));
+    const mainSupporterApproval = await superValidate(zod(_actingApprovalSchema));
+    const mainApproverApproval = await superValidate(zod(_actingApprovalSchema));
     const updateMainPromotionMeetingResultForm = await superValidate(zod(_mainUpdatePromotionMeetingResultSchema));
     const updatePlacementMeeting = await superValidate(zod(_updatePlacementMeeting));
 
@@ -119,7 +125,7 @@ export const load = async ({ params, parent }) => {
         filter: batchId,
     }
 
-    if (currentRoleCode !== UserRoleConstant.kakitangan.code) {
+    if (assignedRoles) {
         chosenEmployeeResponse =
             await EmploymentActingServices.getChosenEmployees(chosenEmployeeParam);
         chosenEmployee =
@@ -162,7 +168,6 @@ export const load = async ({ params, parent }) => {
             await EmploymentActingServices.getPlacementMeetingResultDetail(commonId);
         placementMeetingDetail =
             placementMeetingDetailResponse.data?.details as PlacementMeetingDetail;
-            console.log(placementMeetingDetailResponse)
         if (placementMeetingDetail.meetingName !== null) {
             updatePlacementMeeting.data = placementMeetingDetail;
         }
@@ -237,7 +242,7 @@ export const load = async ({ params, parent }) => {
     let employeeFinalResult = {} as ActingFinalResult;
     let employeeMainFinalResult = {} as ActingMainFinalResult;
 
-    if (currentRoleCode == UserRoleConstant.kakitangan.code) {
+    if (!assignedRoles) {
 
         if (actingType !== "Utama") {
             const employeeInterviewResponse: CommonResponseDTO =
@@ -326,6 +331,7 @@ export const load = async ({ params, parent }) => {
         mainMeetingDetailForm,
         mainSupporterApproval,
         mainApproverApproval,
+        assignedRoles,
 
 
         //employee
@@ -544,7 +550,7 @@ export const _submitMainMeetingDetail = async (formData: MainActingDetailEdit) =
 export const _submitMainSupporter = async (formData: ActingCommonApproval) => {
     const form = await superValidate(
         formData,
-        zod(_quarterCommonApproval),
+        zod(_actingApprovalSchema),
     );
     if (form.valid) {
         const response: CommonResponseDTO =
@@ -556,7 +562,7 @@ export const _submitMainSupporter = async (formData: ActingCommonApproval) => {
 export const _submitMainApprover = async (formData: ActingCommonApproval) => {
     const form = await superValidate(
         formData,
-        zod(_quarterCommonApproval),
+        zod(_actingApprovalSchema),
     );
     if (form.valid) {
         const response: CommonResponseDTO =
@@ -730,12 +736,6 @@ const getLookup = async () => {
     const positionLookup: DropdownDTO[] =
         LookupServices.setSelectOptionsValueIsDescription(positionLookupResponse)
     // -------------------------------------------------------
-    const departmentLookupResponse: CommonResponseDTO =
-        await LookupServices.getDepartmentEnums();
-
-    const departmentLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsValueIsDescription(departmentLookupResponse)
-    // -------------------------------------------------------
     const meetingNameLookup: DropdownDTO[] = [
         { value: 'Mesyuarat 1/12', name: 'Mesyuarat 1/12' },
         { value: 'Mesyuarat 1/102', name: 'Mesyuarat 1/102' },
@@ -769,7 +769,6 @@ const getLookup = async () => {
         meetingNameLookup,
         placementLookup,
         positionLookup,
-        departmentLookup,
         supporterApproverLookup,
     }
 }

@@ -3,14 +3,15 @@
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
-    import type {
-        TableSettingDTO,
-    } from '$lib/dto/core/table/table.dto';
+    import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import type { PageData } from './$types';
     import { goto } from '$app/navigation';
     import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
     import DataTable from '$lib/components/table/DataTable.svelte';
-    import type { ActingCommonList, EmployeeActingOffer } from '$lib/dto/mypsm/employment/acting/acting-common-list.dto';
+    import type {
+        ActingCommonList,
+        EmployeeActingOffer,
+    } from '$lib/dto/mypsm/employment/acting/acting-common-list.dto';
     export let data: PageData;
 
     let rowData = {} as ActingCommonList;
@@ -129,7 +130,7 @@
         data: data.employeeOffer ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['actingId','createdAt'],
+        hiddenColumn: ['actingId', 'createdAt', 'assignedRole', 'batchId'],
         dictionary: [],
         url: 'employment/acting/employee/list',
         id: 'tableListMain',
@@ -178,7 +179,7 @@
                         bind:passData={rowData}
                         detailActions={() => {
                             goto(
-                                '/v2/employment/acting/butiran/' +
+                                '/v2/employment/acting/butiran/1-' +
                                     rowData.batchId +
                                     '-' +
                                     '1-54',
@@ -197,7 +198,7 @@
                         bind:passData={rowData}
                         detailActions={() => {
                             goto(
-                                '/v2/employment/acting/butiran/' +
+                                '/v2/employment/acting/butiran/1-' +
                                     rowData.batchId +
                                     '-' +
                                     'Flexi 41',
@@ -208,24 +209,24 @@
             </CustomTabContent>
 
             {#if data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code && data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code}
-            <!-- Gred Utama -->
-            <CustomTabContent title="Gred Utama">
-                <div class="h h-fit w-full p-3">
-                    <DataTable
-                        title="Rekod Pemangkuan Gred Utama"
-                        bind:tableData={tableListMain}
-                        bind:passData={rowData}
-                        detailActions={() => {
-                            goto(
-                                '/v2/employment/acting/butiran/' +
-                                    rowData.batchId +
-                                    '-' +
-                                    'Utama',
-                            );
-                        }}
-                    ></DataTable>
-                </div>
-            </CustomTabContent>
+                <!-- Gred Utama -->
+                <CustomTabContent title="Gred Utama">
+                    <div class="h h-fit w-full p-3">
+                        <DataTable
+                            title="Rekod Pemangkuan Gred Utama"
+                            bind:tableData={tableListMain}
+                            bind:passData={rowData}
+                            detailActions={() => {
+                                goto(
+                                    '/v2/employment/acting/butiran/1-' +
+                                        rowData.batchId +
+                                        '-' +
+                                        'Utama',
+                                );
+                            }}
+                        ></DataTable>
+                    </div>
+                </CustomTabContent>
             {/if}
         </CustomTab>
     {:else if data.currentRoleCode === UserRoleConstant.kakitangan.code}
@@ -236,12 +237,22 @@
                     bind:tableData={employeeOfferTable}
                     bind:passData={employeeRowData}
                     detailActions={() => {
-                        goto(
-                            '/v2/employment/acting/butiran/' +
-                                employeeRowData.actingId +
-                                '-' +
-                                employeeRowData.actingType,
-                        );
+                        if (employeeRowData.assignedRole == 'Pemohon') {
+                            goto(
+                                '/v2/employment/acting/butiran/kakitangan-' +
+                                    employeeRowData.actingId +
+                                    '-' +
+                                    employeeRowData.actingType,
+                            );
+                        }
+                        else {
+                            goto(
+                                    '/v2/employment/acting/butiran/1-' +
+                                        employeeRowData.batchId +
+                                        '-' +
+                                        employeeRowData.actingType,
+                                );
+                        }
                     }}
                 ></DataTable>
             </div>

@@ -32,11 +32,9 @@ export class MainMeetingResultConvert {
 
 export interface MainActingDetailEdit {
     id:             number;
-    actingPosition: string;
     actingGrade:    string;
     newPlacement:   string;
     reportDate:     string;
-    actingEndDate:  string;
     supporterName:  string;
     approverName:   string;
 }

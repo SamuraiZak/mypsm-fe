@@ -78,6 +78,7 @@
     let employeePromotionExist: boolean = true;
     let supporterApproved: boolean = true;
     let approverApproved: boolean = true;
+    let confirmModal: boolean = false;
 
     let employeeListTable: TableSettingDTO = {
         param: data.param,
@@ -97,14 +98,22 @@
                 malay: 'Program',
             },
             {
-                english: 'employeeName',
+                english: 'name',
                 malay: 'Nama Kakitangan',
             },
+            {
+                english: 'actingStartDate',
+                malay: 'Tarikh Pemangkuan',
+            },
         ],
-        url: 'employment/promotion/employee_lists/list',
+        url: 'employee/acting',
         id: 'employeeListTable',
         option: {
-            checkbox: true,
+            checkbox:
+                data.currentRoleCode !== UserRoleConstant.pengarahNegeri.code ||
+                data.currentRoleCode !== UserRoleConstant.pengarahBahagian.code
+                    ? true
+                    : false,
             detail: false,
             edit: false,
             select: false,
@@ -132,6 +141,14 @@
                 english: 'programme',
                 malay: 'Program',
             },
+            {
+                english: 'name',
+                malay: 'Nama Kakitangan',
+            },
+            {
+                english: 'actingStartDate',
+                malay: 'Tarikh Pemangkuan',
+            },
         ],
         url: '',
         id: 'selectedEmployeeList',
@@ -144,6 +161,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
 
@@ -176,24 +195,21 @@
                     'Sila tambah senarai calon untuk pengesahan kenaikan pangkat terlebih dahulu.',
                 );
             } else {
-                await _submitAddNewPromotion($addnewPromotionForm)
-                    .then((res) => {
+                await _submitAddNewPromotion($addnewPromotionForm).then(
+                    async (res) => {
                         if (res?.response?.status == 'success') {
                             tempGroupId = res.response.data?.details.groupId;
+                            confirmModal = false;
+                            await goto(
+                                '/v2/employment/promotion');
                         }
-                    })
-                    .finally(async () => {
-                        await goto(
-                            '/v2/employment/promotion/butiran/' +
-                                tempGroupId +
-                                '-' +
-                                data.promotionType,
-                        );
-                    });
+                    },
+                );
             }
         },
     });
 
+    let controlIntegrity: boolean = false;
     let certificationTable: TableSettingDTO = {
         param: data.commonParam,
         meta: data.certificationListResponse.data?.meta ?? {
@@ -239,8 +255,13 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
+    
+    $: controlIntegrity = data.certificationList.every((item) => item.integrityCertification !== "Sedang diproses");
+    $: certificationTable.option.checkbox = !controlIntegrity;
 
     let promotionmeetingTable: TableSettingDTO = {
         param: data.commonParam,
@@ -275,6 +296,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     $: promotionmeetingTable.data = data.promotionMeetingList;
@@ -312,6 +335,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     $: promotionTable.data = data.placementList;
@@ -345,6 +370,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     $: promotionEmployee.data = data.promotionDetail;
@@ -378,6 +405,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     $: promotionFinalResult.data = data.finalResult;
@@ -446,7 +475,6 @@
         validators: zod(_promotionIntegrityApproval),
         onSubmit() {
             $integrityForm.promotionType = data.promotionType;
-            // $integrityForm.id = rowData.promotionId;
             // ======================= push the id here
             certificationTable.selectedData.map((item: any) => {
                 $integrityForm.id.push(item.promotionId);
@@ -454,7 +482,9 @@
 
             _submitIntegrityForm($integrityForm).then((res) => {
                 if (res?.response.status == 'success') {
+                    certificationTable.data = data.certificationList;
                     integrityApproved = true;
+                    integrityModal = false;
                 }
             });
         },
@@ -490,6 +520,7 @@
         id: 'employeePromotion',
         validators: zod(_editEmployeePromotion),
         onSubmit() {
+            $employeePromotion.id = finalPromotionRowData.promotionId;
             if (!$employeePromotion.status) {
                 $employeePromotion.supporterName = null;
                 $employeePromotion.approverName = null;
@@ -583,7 +614,7 @@
                         $directorForm = res.directorResponse.data?.details;
                         $integrityForm = res.integrityResponse.data?.details;
                         if (
-                            $directorForm.remark == null &&
+                            $directorForm.status == null &&
                             (data.currentRoleCode ==
                                 UserRoleConstant.pengarahBahagian.code ||
                                 data.currentRoleCode ==
@@ -592,7 +623,7 @@
                             directorApproved = false;
                         }
                         if (
-                            $integrityForm.remark == null &&
+                            $integrityForm.status == null &&
                             data.currentRoleCode ==
                                 UserRoleConstant.urusSetiaIntegriti.code
                         ) {
@@ -614,7 +645,6 @@
                         }
                         if ($placementForm.newGrade == null) {
                             placementMeetingExist = false;
-                            $placementForm.newGrade = 'VU1';
                         } else {
                             placementMeetingExist = true;
                         }
@@ -647,19 +677,18 @@
                         }
 
                         $supporterApproval = res.suppResponse.data?.details;
-                        if (
-                            $supporterApproval.remark == null &&
-                            data.currentRoleCode ==
-                                UserRoleConstant.penyokong.code
-                        ) {
-                            supporterApproved = false;
-                        }
                         $approverApproval = res.appResponse.data?.details;
                         if (
-                            $approverApproval.remark == null &&
+                            $supporterApproval.remark == "" &&
                             data.currentRoleCode ==
-                                UserRoleConstant.pelulus.code
+                                UserRoleConstant.kakitangan.code
                         ) {
+                            supporterApproved = false;
+                            approverApproved = true;
+                        } else if (supporterApproved && ($approverApproval.remark == "" &&
+                            data.currentRoleCode ==
+                                UserRoleConstant.kakitangan.code))
+                       {
                             approverApproved = false;
                         }
                     })
@@ -727,6 +756,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
     $: certificationTable.data = data.certificationList;
@@ -753,7 +784,7 @@
     class="max-h-[calc(100vh - 172px)] flex h-full w-full flex-col items-center justify-start"
 >
     <Stepper>
-        {#if data.currentRoleCode !== UserRoleConstant.kakitangan.code}
+        {#if data.assignedRole}
             {#if data.isNewPromotion}
                 <!-- ========================================================= -->
                 <!-- PEMILIHAN CALON -->
@@ -766,7 +797,7 @@
                             type="primary"
                             label="Tambah"
                             icon="add"
-                            form="addnewPromotionForm"
+                            onClick={() => (confirmModal = true)}
                         />
                     </StepperContentHeader>
                     <StepperContentBody paddingClass="p-none">
@@ -787,7 +818,7 @@
                                             <span class="font-medium"
                                                 >Arahan:
                                             </span>
-                                            Sila tekan butang tambah di pada sebelah
+                                            Sila tekan butang tambah di sebelah
                                             kiri jadual untuk masukkan kakitangan
                                             ke dalam senarai calon kenaikan pangkat.
                                             Klik butang
@@ -810,10 +841,16 @@
                                                             .employeeNumber}
                                                     />
                                                     <FilterTextField
+                                                        label="Nama Kakitangan"
+                                                        bind:inputValue={employeeListTable
+                                                            .param.filter
+                                                            .name}
+                                                    />
+                                                    <FilterTextField
                                                         label="No. Kad Pengenalan"
                                                         bind:inputValue={employeeListTable
                                                             .param.filter
-                                                            .ICNumber}
+                                                            .identityCard}
                                                     />
                                                     <FilterSelectField
                                                         label="Gred"
@@ -822,14 +859,6 @@
                                                         bind:inputValue={employeeListTable
                                                             .param.filter.grade}
                                                     />
-                                                    <FilterSelectField
-                                                        label="Jawatan"
-                                                        options={data.lookup
-                                                            .positionLookup}
-                                                        bind:inputValue={employeeListTable
-                                                            .param.filter
-                                                            .position}
-                                                    />
                                                 </FilterWrapper>
                                             </DataTable>
                                         </div>
@@ -837,7 +866,7 @@
                                 </div>
                             </CustomTabContent>
                             <CustomTabContent
-                                title="Senarai Calon Kenaikan Pangkat"
+                                title="Senarai Calon Kenaikan Pangkat Dipilih"
                             >
                                 <div class="flex w-full p-3 pb-10">
                                     <div class="h-fit w-full">
@@ -866,14 +895,11 @@
                                 icon="previous"
                                 onClick={() => (stepperControl[0] = false)}
                             />
-                            {#if !directorApproved || !integrityApproved}
+                            {#if !directorApproved}
                                 <TextIconButton
                                     label="Hantar"
                                     icon="check"
-                                    form={data.currentRoleCode !==
-                                    UserRoleConstant.urusSetiaIntegriti.code
-                                        ? 'directorForm'
-                                        : 'integrityForm'}
+                                    form="directorForm"
                                 />
                             {/if}
                         {/if}
@@ -884,7 +910,7 @@
                                 class="flex w-full flex-col justify-start gap-2.5 p-3"
                             >
                                 <div class="flex w-full flex-col gap-2.5 pb-10">
-                                    {#if data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code}
+                                    {#if (data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code && data.currentRoleCode !== UserRoleConstant.kakitangan.code)}
                                         <Alert color="blue">
                                             <p>
                                                 <span class="font-medium"
@@ -896,7 +922,7 @@
                                             </p>
                                         </Alert>
                                     {/if}
-                                    {#if data.currentRoleCode === UserRoleConstant.urusSetiaIntegriti.code}
+                                    {#if !controlIntegrity && data.currentRoleCode === UserRoleConstant.urusSetiaIntegriti.code}
                                         <div class="flex w-full justify-end">
                                             <TextIconButton
                                                 label="Tindakan"
@@ -989,11 +1015,7 @@
                                             <span class="font-medium"
                                                 >Arahan:
                                             </span>
-                                            Sila kemaskini
-                                            <span class="font-medium"
-                                                >Keputusan Mesyuarat
-                                                Jawatankuasa
-                                            </span>
+                                            Sila kemaskini Keputusan Mesyuarat Jawatankuasa
                                             bagi setiap calon kenaikan pangkat yang
                                             terlibat.
                                         </p>
@@ -1050,7 +1072,7 @@
                                         <CustomTextField
                                             label="Tindakan/Ulasan Mesyuarat"
                                             id="meetingRemark"
-                                            type="text"
+                                            type="textarea"
                                             disabled={promotionMeetingExist}
                                             bind:val={$certificationForm.meetingRemark}
                                             errors={$certificationError.meetingRemark}
@@ -1110,8 +1132,8 @@
                                             id="meetingName"
                                             disabled
                                             options={data.lookup
-                                                .meetingLookup}
-                                            val={certificationResult?.meetingName}
+                                                .meetingNameLookup}
+                                            val={certificationResult?.meetingNameCount}
                                         />
                                         <CustomTextField
                                             label="Tarikh Mesyuarat"
@@ -1198,9 +1220,11 @@
                             {/if}
                         {/if}
                     </StepperContentHeader>
-                    <StepperContentBody paddingClass="p-0">
+                    <StepperContentBody>
                         {#if !stepperControl[2]}
-                            <div class="flex w-full flex-col gap-2.5 p-6 pb-10">
+                            <div
+                                class="flex w-full flex-col justify-center gap-2.5 p-3 pb-10"
+                            >
                                 {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                     <Alert color="blue">
                                         <p>
@@ -1249,12 +1273,14 @@
                                                 label="No. Pekerja"
                                                 id="employeeNumber"
                                                 disabled
+                                                isRequired={false}
                                                 val={currentEmployeeDetail?.employeeNumber}
                                             />
                                             <CustomTextField
-                                                label="Nama Pekerja"
+                                                label="Nama Kakitangan"
                                                 id="employeeName"
                                                 disabled
+                                                isRequired={false}
                                                 val={currentEmployeeDetail?.employeeName}
                                             />
                                             <CustomTextField
@@ -1277,6 +1303,7 @@
                                                 label="Gaji Minimum - Gaji Maksimum (Gred Lama)"
                                                 id="firstMinimumSalary"
                                                 disabled
+                                                isRequired={false}
                                                 val={'RM ' +
                                                     currentEmployeeDetail?.firstMinimumSalary +
                                                     ' -  RM ' +
@@ -1286,6 +1313,7 @@
                                                 label="Kenaikan Gaji Tahunan (Gred Lama)"
                                                 id="firstSalaryRaise"
                                                 disabled
+                                                isRequired={false}
                                                 val={'RM ' +
                                                     currentEmployeeDetail?.firstSalaryRaise}
                                             />
@@ -1303,6 +1331,7 @@
                                                 id="minMaxSalaryNewGrade"
                                                 placeholder=""
                                                 disabled
+                                                isRequired={false}
                                                 val={currentEmployeeDetail?.secondMinimumSalary !==
                                                 null
                                                     ? 'RM ' +
@@ -1315,6 +1344,7 @@
                                                 label="Kenaikan Gaji Tahunan (Gred Baru)"
                                                 id="secondSalaryRaise"
                                                 disabled
+                                                isRequired={false}
                                                 placeholder=""
                                                 val={currentEmployeeDetail?.secondSalaryRaise !==
                                                 null
@@ -1325,6 +1355,7 @@
                                             <CustomTextField
                                                 label="Penempatan Sekarang"
                                                 disabled
+                                                isRequired={false}
                                                 id="currentPlacement"
                                                 val={currentEmployeeDetail?.currentPlacement}
                                             />
@@ -1340,7 +1371,7 @@
                                         </form>
                                     </div>
                                 </CustomTabContent>
-                                <CustomTabContent
+                                <!-- <CustomTabContent
                                     title="Jadual Pelarasan Gaji Kakitangan"
                                 >
                                     <div
@@ -1390,7 +1421,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </CustomTabContent>
+                                </CustomTabContent> -->
                             </CustomTab>
                         {/if}
                     </StepperContentBody>
@@ -1474,6 +1505,7 @@
                                         <CustomTextField
                                             label="Ulasan"
                                             id="remark"
+                                            type="textarea"
                                             disabled={employeePromotionExist}
                                             bind:val={$employeePromotion.remark}
                                             errors={$employeePromotionError.remark}
@@ -1517,8 +1549,7 @@
                                     type="primary"
                                     label="Hantar"
                                     icon="check"
-                                    form={data.currentRoleCode ==
-                                    UserRoleConstant.penyokong.code
+                                    form={!supporterApproved
                                         ? 'supporterApproval'
                                         : 'approverApproval'}
                                 />
@@ -1530,7 +1561,7 @@
                             <div
                                 class="flex w-full flex-col justify-start gap-2.5 p-3 pb-10"
                             >
-                                {#if data.currentRoleCode == UserRoleConstant.penyokong.code || data.currentRoleCode == UserRoleConstant.pelulus.code}
+                                {#if data.currentRoleCode == UserRoleConstant.kakitangan.code}
                                     <Alert color="blue">
                                         <p>
                                             <span class="font-medium"
@@ -1633,7 +1664,7 @@
                     </StepperContentBody>
                 </StepperContent>
             {/if}
-        {:else if data.currentRoleCode === UserRoleConstant.kakitangan.code}
+        {:else}
             <StepperContent>
                 <StepperContentHeader title="Butiran Kenaikan Pangkat"
                 ></StepperContentHeader>
@@ -1644,13 +1675,15 @@
                                 label="No. Pekerja"
                                 id="employeeNumber"
                                 disabled
+                                isRequired={false}
                                 val={data.employeePOV?.employeePromotionInfo
                                     .employeeNumber}
                             />
                             <CustomTextField
-                                label="Nama Pekerja"
+                                label="Nama Kakitangan"
                                 id="employeeName"
                                 disabled
+                                isRequired={false}
                                 val={data.employeePOV?.employeePromotionInfo
                                     ?.employeeName}
                             />
@@ -1658,6 +1691,7 @@
                                 label="Tarikh Kenaikan Pangkat"
                                 id="promotionDate"
                                 disabled
+                                isRequired={false}
                                 type="date"
                                 val={data.employeePOV?.employeePromotionInfo
                                     ?.promotionDate}
@@ -1666,6 +1700,7 @@
                                 label="Bulan Pergerakan Gaji Baru"
                                 id="salaryMovementMonth"
                                 disabled
+                                isRequired={false}
                                 options={kgtMonthValueIsStringLookup}
                                 val={data.employeePOV?.employeePromotionInfo
                                     ?.salaryMovementMonth}
@@ -1674,6 +1709,7 @@
                                 label="Gaji Minimum - Gaji Maksimum (Gred Lama)"
                                 id="firstMinimumSalary"
                                 disabled
+                                isRequired={false}
                                 val={'RM ' +
                                     data.employeePOV?.employeePromotionInfo
                                         ?.firstMinimumSalary +
@@ -1685,6 +1721,7 @@
                                 label="Kenaikan Gaji Tahunan (Gred Lama)"
                                 id="firstSalaryRaise"
                                 disabled
+                                isRequired={false}
                                 val={'RM ' +
                                     data.employeePOV?.employeePromotionInfo
                                         ?.firstSalaryRaise}
@@ -1693,6 +1730,7 @@
                                 label="Gred Baru"
                                 id="newGrade"
                                 disabled
+                                isRequired={false}
                                 options={data.lookup.gradeLookup}
                                 val={data.employeePOV?.employeePromotionInfo
                                     ?.newGrade}
@@ -1702,6 +1740,7 @@
                                 id="minMaxSalaryNewGrade"
                                 placeholder=""
                                 disabled
+                                isRequired={false}
                                 val={'RM ' +
                                     data.employeePOV?.employeePromotionInfo
                                         ?.secondMinimumSalary +
@@ -1713,6 +1752,7 @@
                                 label="Kenaikan Gaji Tahunan (Gred Baru)"
                                 id="secondSalaryRaise"
                                 disabled
+                                isRequired={false}
                                 placeholder=""
                                 val={data.employeePOV?.employeePromotionInfo
                                     ?.secondSalaryRaise}
@@ -1720,6 +1760,7 @@
                             <CustomTextField
                                 label="Penempatan Sekarang"
                                 disabled
+                                isRequired={false}
                                 id="currentPlacement"
                                 val={data.employeePOV?.employeePromotionInfo
                                     ?.currentPlacement}
@@ -1728,6 +1769,7 @@
                                 label="Penempatan Baru"
                                 id="newPlacement"
                                 disabled
+                                isRequired={false}
                                 options={data.lookup.placementLookup}
                                 val={data.employeePOV?.employeePromotionInfo
                                     ?.newPlacement}
@@ -1755,14 +1797,6 @@
                 use:integrityEnhance
                 method="POST"
             >
-                <CustomTextField
-                    label="Ulasan/Tindakan"
-                    id="remark"
-                    disabled={integrityApproved}
-                    placeholder="Menunggu perakuan daripada Urus Setia Integriti..."
-                    bind:val={$integrityForm.remark}
-                    errors={$integrityError.remark}
-                />
                 <CustomRadioBoolean
                     label="Keputusan"
                     id="status"
@@ -1789,3 +1823,44 @@
         </div>
     </div>
 </Modal>
+
+<Modal
+    title="Sistem MyPSM"
+    bind:open={confirmModal}
+    size="sm"
+    dismissable={false}
+>
+    <Alert color="blue">
+        <div class="flex w-full flex-col justify-start gap-3">
+            <p>
+                <span class="font-medium">Arahan: </span>
+                Masukkan gred dan jawatan kenaikan pangkat untuk menetapkan tajuk
+                proses pemangkuan.
+            </p>
+        </div>
+    </Alert>
+    <div class="w-full">
+        <CustomSelectField
+            id="grade"
+            label="Jawatan"
+            options={data.lookup.positionLookup}
+            bind:val={$addnewPromotionForm.grade}
+            errors={$addnewPromotionError.grade}
+        />
+    </div>
+    <div class="flex justify-center gap-3">
+        <TextIconButton
+            label="Batal"
+            type="neutral"
+            icon="cancel"
+            onClick={() => (confirmModal = false)}
+        />
+        <TextIconButton
+            label="Hantar"
+            type="primary"
+            icon="check"
+            form="addnewPromotionForm"
+        />
+    </div>
+</Modal>
+<Toaster />

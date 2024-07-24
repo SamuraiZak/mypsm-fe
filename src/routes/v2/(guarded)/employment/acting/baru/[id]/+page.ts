@@ -5,6 +5,10 @@ import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.
 import { EmploymentActingServices } from '$lib/services/implementation/mypsm/perjawatan/employment-acting.service';
 
 export const load = async ({ params }) => {
+    let actingEmployeeListResponse: CommonResponseDTO = {}
+    let actingEmployeeList: CommonEmployeeDTO[] = [];
+    const actingTypes: string = params.id;
+
     const param = {
         pageNum: 1,
         pageSize: 5,
@@ -21,14 +25,21 @@ export const load = async ({ params }) => {
         },
     };
 
-    const actingEmployeeListResponse: CommonResponseDTO =
-        await EmploymentActingServices.getActingEmployeeList(param);
 
-    let actingEmployeeList: CommonEmployeeDTO[] = [];
-
-    if (actingEmployeeListResponse.status == "success") {
-        actingEmployeeList = actingEmployeeListResponse.data?.dataList as CommonEmployeeDTO[];
+    if (actingTypes !== "Flexi 41") {
+        actingEmployeeListResponse =
+            await EmploymentActingServices.getActingEmployeeList(param);
+        if (actingEmployeeListResponse.status == "success") {
+            actingEmployeeList = actingEmployeeListResponse.data?.dataList as CommonEmployeeDTO[];
+        }
+    } else {
+        actingEmployeeListResponse =
+            await EmploymentActingServices.getActingEmployee41List(param);
+        if (actingEmployeeListResponse.status == "success") {
+            actingEmployeeList = actingEmployeeListResponse.data?.dataList as CommonEmployeeDTO[];
+        }
     }
+
 
     //lookup
     const gradeLookupResponse: CommonResponseDTO =
@@ -50,7 +61,6 @@ export const load = async ({ params }) => {
         LookupServices.setSelectOptionsActingGrade(positionLookupResponse)
 
 
-    const actingTypes: string = params.id;
     return {
         actingEmployeeList,
         actingEmployeeListResponse,

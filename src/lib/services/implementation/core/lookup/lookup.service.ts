@@ -160,6 +160,29 @@ export class LookupServices {
             return CommonResponseConstant.httpError;
         }
     }
+    // Placement Lookup Service
+    static async getSalaryMovementMonth(param: CommonListRequestDTO) {
+        try {
+            const url: Input = 'lookup/salary_movement_months/filter';
+
+            const response: Response = await http
+                .post(url, {
+                    body: CommonListRequestConvert.toJson(param),
+                })
+                .json();
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
     // Position Lookup Service
     static async getPositionEnums() {

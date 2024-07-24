@@ -3,7 +3,7 @@ import type { Input } from "ky";
 import http from '$lib/services/implementation/service-provider.service';
 import { CommonResponseConstant } from "$lib/constants/core/common-response.constant";
 import { invalidateAll } from "$app/navigation";
-import { getPromiseToast } from "$lib/helpers/core/toast.helper";
+import { getGeneralToast } from "$lib/helpers/core/toast.helper";
 import { CommonResponseConvert } from "$lib/dto/core/common/common-response.dto";
 import { AddNewPromotionConvert, type AddNewPromotion } from "$lib/dto/mypsm/employment/promotion/add-promotion.dto";
 import { PromotionCertificationConvert, PromotionCommonApprovalConvert, PromotionEmployeeEditConvert, PromotionIntegrityApprovalConvert, PromotionPlacementEditConvert, type PromotionCertification, type PromotionCommonApproval, type PromotionEmployeeEdit, type PromotionIntegrityApproval, type PromotionPlacementEdit } from "$lib/dto/mypsm/employment/promotion/promotion-form.dto";
@@ -97,7 +97,7 @@ export class EmploymentPromotionServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+                const reponse: Response = await getGeneralToast(promiseRes);
 
                 const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -197,7 +197,7 @@ export class EmploymentPromotionServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+                const reponse: Response = await getGeneralToast(promiseRes);
 
                 const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -298,7 +298,7 @@ export class EmploymentPromotionServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+                const reponse: Response = await getGeneralToast(promiseRes);
 
                 const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -448,7 +448,7 @@ export class EmploymentPromotionServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+                const reponse: Response = await getGeneralToast(promiseRes);
 
                 const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -474,7 +474,7 @@ export class EmploymentPromotionServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+                const reponse: Response = await getGeneralToast(promiseRes);
 
                 const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -524,7 +524,7 @@ export class EmploymentPromotionServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+                const reponse: Response = await getGeneralToast(promiseRes);
 
                 const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -575,7 +575,7 @@ export class EmploymentPromotionServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+                const reponse: Response = await getGeneralToast(promiseRes);
 
                 const result = CommonResponseConvert.fromResponse(reponse);
 
@@ -625,7 +625,7 @@ export class EmploymentPromotionServices {
                 })
                 .json();
 
-                const reponse: Response = await getPromiseToast(promiseRes);
+                const reponse: Response = await getGeneralToast(promiseRes);
 
                 const result = CommonResponseConvert.fromResponse(reponse);
 

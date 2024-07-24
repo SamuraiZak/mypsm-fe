@@ -40,6 +40,10 @@
                 english: 'programme',
                 malay: 'Penempatan Sekarang',
             },
+            {
+                english: 'hireDate',
+                malay: 'Tarikh Lantikan'
+            },
         ],
         url: 'employment/acting/employee_lists/list',
         id: 'addActingTable',
@@ -66,11 +70,15 @@
         data: addActingTable.selectedData ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['employeeId', 'homeAddress'],
+        hiddenColumn: ['employeeId','homeAddress'],
         dictionary: [
             {
+                english: 'hireDate',
+                malay: 'Tarikh Lantikan'
+            },
+            {
                 english: 'programme',
-                malay: 'Program',
+                malay: 'Penempatan Sekarang',
             },
         ],
         url: '',
@@ -85,6 +93,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
 
@@ -119,7 +129,7 @@
             setTimeout(
                 () =>
                     goto(
-                        '/v2/employment/acting/butiran/' +
+                        '/v2/employment/acting/butiran/1-' +
                             response.data?.details.batchId +
                             '-' +
                             data.actingTypes,
@@ -172,7 +182,7 @@
                 </Alert>
                 <div class="h-fit w-full">
                     <DataTable
-                        title="Senarai Kakitangan"
+                        title="Senarai Kakitangan {data.actingTypes =="Flexi 41" ? "Yang Layak Untuk Pemangkuan Gred Flexi 41": ""}"
                         bind:tableData={addActingTable}
                     >
                         <FilterWrapper slot="filter">
@@ -236,7 +246,7 @@
     <div class="w-full">
         <CustomSelectField
             id="actingPosition"
-            label="Jawatan"
+            label="Gred dan Jawatan"
             options={data.positionLookup}
             bind:val={selectedGrade}
         />

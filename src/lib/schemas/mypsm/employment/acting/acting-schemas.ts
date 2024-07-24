@@ -121,7 +121,6 @@ export const _mainMeetingResult = z.object({
 
 export const _mainUpdatePromotionMeetingResultSchema = z.object({
     batchId: z.number(),
-    actingPosition: z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
     actingGrade: z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
     placement: z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
     meetingName: shortTextSchema,
@@ -138,11 +137,9 @@ export const _mainUpdatePromotionMeetingResultDetailSchema = z.object({
 
 export const _mainMeetingDetail = z.object({
     id:             z.number(),
-    actingPosition: z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
     actingGrade:    z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
     newPlacement:   z.string().min(1, {message: "Medan ini tidak boleh kosong."}),
     reportDate:     stringToMinDate,
-    actingEndDate:  stringToMinDate,
     supporterName:  shortTextSchema,
     approverName:   shortTextSchema,
 })

@@ -13,8 +13,10 @@ import { EmploymentPromotionServices } from '$lib/services/implementation/mypsm/
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export const load = async ({ params }) => {
-    let currentRoleCode = localStorage.getItem(LocalStorageKeyConstant.currentRoleCode)
+export const load = async ({ params, parent }) => {
+    const { layoutData } = await parent();
+
+    const currentRoleCode: string = layoutData.accountDetails.currentRoleCode
     let promotionType: string = params.type;
     let currentId: PromotionGroupID = {
         groupId: 0,
@@ -30,6 +32,11 @@ export const load = async ({ params }) => {
         promotionType: params.type,
     }
     let lookup = await getLookup();
+    let assignedRole: boolean = false;
+
+    if(params.role == "1"){
+        assignedRole = true;
+    }
 
     let employeeListResponse: CommonResponseDTO = {};
     let employeeList: PromotionCommonEmployee[] = [];
@@ -79,7 +86,7 @@ export const load = async ({ params }) => {
     const supporterApproval = await superValidate(zod(_promotionCommonApproval));
     const approverApproval = await superValidate(zod(_promotionCommonApproval));
 
-    if (currentRoleCode !== UserRoleConstant.kakitangan.code && params.id !== 'baru') {
+    if (assignedRole && params.id !== 'baru') {
         certificationListResponse =
             await EmploymentPromotionServices.getCertificationList(commonParam);
         certificationList =
@@ -100,8 +107,9 @@ export const load = async ({ params }) => {
             await EmploymentPromotionServices.getPromotionFinalResultList(commonParam);
         finalResult =
             finalResultResponse.data?.dataList as PromotionDetail[]
+
     }
-    else if (currentRoleCode == UserRoleConstant.kakitangan.code) {
+    else if (!assignedRole) {
         const employeePromotionInfoResponse: CommonResponseDTO =
             await EmploymentPromotionServices.getPlacementDetail(employeeIdRequest);
         employeePromotionInfo =
@@ -147,7 +155,7 @@ export const load = async ({ params }) => {
         integrityForm,
         supporterApproval,
         approverApproval,
-
+        assignedRole,
         employeePOV: {
             employeePromotionInfo,
         }
@@ -208,6 +216,7 @@ export const _submitPlacement = async (formData: PromotionPlacementEdit) => {
 
 export const _submitEmployeePromotion = async (formData: PromotionEmployeeEdit) => {
     const form = await superValidate(formData, zod(_editEmployeePromotion));
+    console.log(form)
     if (form.valid) {
         const response: CommonResponseDTO =
             await EmploymentPromotionServices.editEmployeePromotion(form.data as PromotionEmployeeEdit)
@@ -282,19 +291,24 @@ const getLookup = async () => {
     // =======================================================
     // Dropdown Lookup =======================================
     // =======================================================
+    // const gradeLookupResponse: CommonResponseDTO =
+    //     await LookupServices.getServiceGradeEnums();
+
+    // const gradeLookup: DropdownDTO[] =
+    //     LookupServices.setSelectOptionsBothAreCode(gradeLookupResponse);
+
+    // const nullGrade: DropdownDTO = {
+    //     value: null,
+    //     name: "Semua"
+    // }
+
+    // gradeLookup.push(nullGrade);
+
     const gradeLookupResponse: CommonResponseDTO =
         await LookupServices.getServiceGradeEnums();
 
     const gradeLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsBothAreCode(gradeLookupResponse);
-    
-    const nullGrade: DropdownDTO = {
-        value: null,
-        name: "Semua"
-    }
-
-    gradeLookup.push(nullGrade);
-
+        LookupServices.setSelectOptionsActingGrade(gradeLookupResponse);
     // -------------------------------------------------------
     const stateLookupResponse: CommonResponseDTO =
         await LookupServices.getStateEnums();
@@ -312,26 +326,27 @@ const getLookup = async () => {
         await LookupServices.getPositionEnums();
 
     const positionLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsValueIsDescription(positionLookupResponse)
+        LookupServices.setSelectOptionsActingGrade(positionLookupResponse)
     // -------------------------------------------------------
-    const departmentLookupResponse: CommonResponseDTO =
-        await LookupServices.getDepartmentEnums();
 
-    const departmentLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsValueIsDescription(departmentLookupResponse)
-
-        const meetingLookupResponse: CommonResponseDTO =
+    const meetingLookupResponse: CommonResponseDTO =
         await LookupServices.getMeetingTypeEnums();
 
-        const meetingLookup: DropdownDTO[] =
+    const meetingLookup: DropdownDTO[] =
         LookupServices.setSelectOptionsValueIsDescription(meetingLookupResponse)
-    
     // -------------------------------------------------------
     const meetingNameLookup: DropdownDTO[] = [
         { value: 'Mesyuarat 1/12', name: 'Mesyuarat 1/12' },
         { value: 'Mesyuarat 1/102', name: 'Mesyuarat 1/102' },
         { value: 'Mesyuarat 2/101', name: 'Mesyuarat 2/101' },
     ]
+    let nullGrade: DropdownDTO = {
+        value: null,
+        name: "Semua"
+    }
+
+    gradeLookup.push(nullGrade)
+
     const suppAppResponse: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 10000,
@@ -360,10 +375,9 @@ const getLookup = async () => {
         meetingNameLookup,
         placementLookup,
         positionLookup,
-        departmentLookup,
         supporterApproverLookup,
         meetingLookupResponse,
-meetingLookup,
-        
+        meetingLookup,
+
     }
 }

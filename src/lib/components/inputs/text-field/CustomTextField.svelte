@@ -142,7 +142,7 @@
     <!-- input field ends here -->
 
     <!-- input error message starts here -->
-    <div class="flex h-fit min-h-5 w-full flex-row items-center justify-start">
+    <div class="flex h-3 w-full flex-row items-center justify-end">
         {#if errors}
             <p
                 class="text-start text-sm font-medium leading-tight text-ios-basic-destructiveRed"

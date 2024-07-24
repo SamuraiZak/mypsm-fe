@@ -98,7 +98,7 @@ export interface PromotionProcessDetail {
 }
 
 export interface PromotionCertificationResult {
-    meetingName:      string;
+    meetingNameCount:      string;
     numberOfMeetings: number;
     meetingDate:      string;
     meetingRemarks:   string;

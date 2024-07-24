@@ -19,17 +19,17 @@
         {
             value: 'Gred 1-54',
             name: 'Gred 1-54',
-            href: '/v2/employment/promotion/butiran/baru-1-54',
+            href: '/v2/employment/promotion/butiran/1-baru-1-54',
         },
         {
             value: 'TBK 1 dan 2 - Kumpulan Sokongan',
             name: 'TBK 1 dan 2 - Kumpulan Sokongan',
-            href: '/v2/employment/promotion/butiran/baru-TBK 1 dan 2',
+            href: '/v2/employment/promotion/butiran/1-baru-TBK 1 dan 2',
         },
         {
             value: 'Gred Utama',
             name: 'Gred Utama',
-            href: '/v2/employment/promotion/butiran/baru-Utama',
+            href: '/v2/employment/promotion/butiran/1-baru-Utama',
         },
     ];
 
@@ -126,7 +126,16 @@
         selectedData: [],
         exportData: [],
         hiddenColumn: ['promotionId'],
-        dictionary: [],
+        dictionary: [
+            {
+                english: 'assignedRole',
+                malay: 'Dilantik Sebagai',
+            },
+            {
+                english: 'confirmedDate',
+                malay: 'Tarikh Pengesahan',
+            },
+        ],
         url: 'employment/promotion/employee/list',
         id: 'employeeTable',
         option: {
@@ -176,7 +185,7 @@
                             bind:passData={rowData}
                             detailActions={() => {
                                 goto(
-                                    '/v2/employment/promotion/butiran/' +
+                                    '/v2/employment/promotion/butiran/1-' +
                                         rowData.groupId +
                                         '-' +
                                         '1-54',
@@ -201,7 +210,7 @@
                             bind:passData={rowData}
                             detailActions={() => {
                                 goto(
-                                    '/v2/employment/promotion/butiran/' +
+                                    '/v2/employment/promotion/butiran/1-' +
                                         rowData.groupId +
                                         '-' +
                                         'TBK 1 dan 2',
@@ -226,7 +235,7 @@
                                 bind:passData={rowData}
                                 detailActions={() => {
                                     goto(
-                                        '/v2/employment/promotion/butiran/' +
+                                        '/v2/employment/promotion/butiran/1-' +
                                             rowData.groupId +
                                             '-' +
                                             'Utama',
@@ -256,12 +265,22 @@
                             } else if (rowData.promotionType == 'Gred Utama') {
                                 tempPromotionType = 'Utama';
                             }
-                            goto(
-                                '/v2/employment/promotion/butiran/' +
-                                    rowData.promotionId +
-                                    '-' +
-                                    tempPromotionType,
-                            );
+
+                            if (rowData.assignedRole !== 'Pemohon') {
+                                goto(
+                                    '/v2/employment/promotion/butiran/1-' +
+                                        rowData.groupId +
+                                        '-' +
+                                        tempPromotionType,
+                                );
+                            } else {
+                                goto(
+                                    '/v2/employment/promotion/butiran/2-' +
+                                        rowData.promotionId +
+                                        '-' +
+                                        tempPromotionType,
+                                );
+                            }
                         }}
                     ></DataTable>
                 </div>

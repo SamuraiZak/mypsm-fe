@@ -1,11 +1,13 @@
 export interface AddNewSalaryMovement {
-    meetingName:         string;
-    meetingDate:         string;
-    salaryMovementMonth: number;
-    specialAid:          number;
-    specialRaiseType:    string;
-    specialRaise:        number;
-    employees:           SalaryMovementEmployee[];
+    id: number | null;
+    meetingName: string | null;
+    meetingDate: string | null;
+    salaryMovementTypeId: number;
+    salaryMovementMonthId: number;
+    amount: number | null;
+    isPercentage: boolean;
+    isDraft: boolean;
+    employees: SalaryMovementEmployee[];
 }
 
 export interface SalaryMovementEmployee {
@@ -18,7 +20,24 @@ export class AddNewSalaryMovementConvert {
         return JSON.parse(json);
     }
 
-    public static toJson (value: AddNewSalaryMovement): string {
+    public static toJson(value: AddNewSalaryMovement): string {
+        return JSON.stringify(value);
+    }
+}
+
+export interface SalaryMovementComment {
+    id:         number;
+    employeeId: number;
+    remarks:    string;
+}
+
+// Converts JSON strings to/from your types
+export class SalaryMovementCommentConvert {
+    public static fromJson(json: string): SalaryMovementComment {
+        return JSON.parse(json);
+    }
+
+    public static toJson(value: SalaryMovementComment): string {
         return JSON.stringify(value);
     }
 }

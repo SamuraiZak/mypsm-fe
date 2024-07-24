@@ -74,7 +74,6 @@ export interface PromotionIntegrityApproval {
     id:                  number[];
     promotionType:       string;
     status:              boolean;
-    remark:              string;
 }
 
 // Converts JSON strings to/from your types
