@@ -16,7 +16,7 @@ const stringToMaxDate = z.string({ required_error: 'Medan ini tidak boleh kosong
     return convertedStringToDate < currentDate;
 }, { message: "Tarikh tidak boleh lebih dari tarikh semasa." })
 
-export const numberSchema = z.coerce.number({
+export const numberSchema = z.number({
     required_error: 'Medan ini hendaklah diisi.',
     invalid_type_error: 'Sila pastikan medan ini ditaip dengan angka',
 }).refine(x => x > 0, { message: "Medan ini tidak boleh dibiar kosong." });
@@ -28,13 +28,21 @@ const employeesListSchema = z.object({
     employeeId: numberSchema,
 })
 export const _addNewSalaryMovementSchema = z.object({
-    meetingName:         z.string().default("Mesyuarat 1/12"),
-    meetingDate:         stringToMinDate,
-    salaryMovementMonth: numberSchema.default(1),
-    specialAid:          numberSchema,
-    specialRaiseType:    z.string().default("Peratusan Daripada KGT"),
-    specialRaise:        numberSchema,
-    employees:           employeesListSchema.array(),
+    id: z.number().nullable(),
+    salaryMovementTypeId: numberSchema,
+    salaryMovementMonthId: numberSchema,
+    meetingName: shortTextSchema.nullable(),
+    meetingDate: shortTextSchema.nullable(),
+    isPercentage: booleanSchema,
+    amount: numberSchema.nullable(),
+    isDraft: booleanSchema,
+    employees: employeesListSchema.array(),
+})
+
+export const _salaryMovementComment = z.object ({
+    id: z.number(),
+    employeeId: z.number(),
+    remarks: shortTextSchema,
 })
 
 export const _directorApprovalSchema = z.object({
@@ -54,7 +62,7 @@ export const _finalPayslipSchema = z.object({
 // ==================================
 // salary allowance schema
 // ==================================
-export const  _salaryAllowanceDeductionSchema = z.object({
+export const _salaryAllowanceDeductionSchema = z.object({
     id: numberSchema,
     type: shortTextSchema,
     amount: numberSchema,
@@ -81,11 +89,12 @@ export const _salaryAllowancePublicSchema = z.object({
 })
 
 export const _salaryAllowanceActingSchema = z.object({
-    acting: z.object({id: numberSchema,
-    type: shortTextSchema,
-    amount: numberSchema,
-    remark: shortTextSchema,
-    description: shortTextSchema.optional(),
+    acting: z.object({
+        id: numberSchema,
+        type: shortTextSchema,
+        amount: numberSchema,
+        remark: shortTextSchema,
+        description: shortTextSchema.optional(),
     }).array()
 })
 
@@ -102,4 +111,19 @@ export const _salaryAllowanceApprovalSchema = z.object({
     status: booleanSchema,
     remark: shortTextSchema,
     name: z.string().optional(),
+})
+
+// ==================================
+// final cert schema
+// ==================================
+const adjustmentSchema = z.object({
+    decription: z.string(),
+    amount: z.number(),
+})
+
+export const _finalCertSchema = z.object({
+    employeeId: z.number(),
+    allowance: adjustmentSchema.array(),
+    deduction: adjustmentSchema.array(),
+    isDraft: booleanSchema,
 })
