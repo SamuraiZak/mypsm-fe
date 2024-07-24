@@ -106,7 +106,7 @@
                 malay: 'Tarikh Pemangkuan',
             },
         ],
-        url: 'employment/promotion/employee_lists/list',
+        url: 'employee/acting',
         id: 'employeeListTable',
         option: {
             checkbox:
@@ -841,10 +841,16 @@
                                                             .employeeNumber}
                                                     />
                                                     <FilterTextField
+                                                        label="Nama Kakitangan"
+                                                        bind:inputValue={employeeListTable
+                                                            .param.filter
+                                                            .name}
+                                                    />
+                                                    <FilterTextField
                                                         label="No. Kad Pengenalan"
                                                         bind:inputValue={employeeListTable
                                                             .param.filter
-                                                            .ICNumber}
+                                                            .identityCard}
                                                     />
                                                     <FilterSelectField
                                                         label="Gred"
@@ -852,14 +858,6 @@
                                                             .gradeLookup}
                                                         bind:inputValue={employeeListTable
                                                             .param.filter.grade}
-                                                    />
-                                                    <FilterSelectField
-                                                        label="Jawatan"
-                                                        options={data.lookup
-                                                            .positionLookup}
-                                                        bind:inputValue={employeeListTable
-                                                            .param.filter
-                                                            .position}
                                                     />
                                                 </FilterWrapper>
                                             </DataTable>

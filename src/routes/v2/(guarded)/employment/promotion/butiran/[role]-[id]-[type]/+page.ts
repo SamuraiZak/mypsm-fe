@@ -216,6 +216,7 @@ export const _submitPlacement = async (formData: PromotionPlacementEdit) => {
 
 export const _submitEmployeePromotion = async (formData: PromotionEmployeeEdit) => {
     const form = await superValidate(formData, zod(_editEmployeePromotion));
+    console.log(form)
     if (form.valid) {
         const response: CommonResponseDTO =
             await EmploymentPromotionServices.editEmployeePromotion(form.data as PromotionEmployeeEdit)
@@ -339,6 +340,13 @@ const getLookup = async () => {
         { value: 'Mesyuarat 1/102', name: 'Mesyuarat 1/102' },
         { value: 'Mesyuarat 2/101', name: 'Mesyuarat 2/101' },
     ]
+    let nullGrade: DropdownDTO = {
+        value: null,
+        name: "Semua"
+    }
+
+    gradeLookup.push(nullGrade)
+
     const suppAppResponse: CommonListRequestDTO = {
         pageNum: 1,
         pageSize: 10000,
