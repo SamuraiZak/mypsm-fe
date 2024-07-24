@@ -511,7 +511,7 @@
                         bind:val={data.quarterDetails.unit}
                     />
                     <CustomTextField
-                        label="Kuarter"
+                        label="Kuarters"
                         id="quarterDetails"
                         disabled
                         bind:val={data.quarterDetails.quarter}
@@ -626,7 +626,7 @@
                     use:moveOutEnhance
                 >
                     <CustomTextField
-                        label="Tarikh Keluar Kuarter Yang Dipohon"
+                        label="Tarikh Keluar Kuarters Yang Dipohon"
                         id="movingOutDate"
                         disabled={moveOutSubmitted}
                         type="date"
@@ -652,7 +652,7 @@
                             borderClass="border-none"
                         />
                         <CustomRadioBoolean
-                            label="Unit dan Kuarter"
+                            label="Unit dan Kuarters"
                             id="outstandingBalance"
                             disabled={moveOutSubmitted}
                             bind:val={$moveOutForm.outstandingBalance}
@@ -1011,12 +1011,12 @@
                                 class="flex w-full flex-col justify-start gap-2.5 p-3"
                             >
                                 <ContentHeader
-                                    title="Butiran Keluar Kuarter"
+                                    title="Butiran Keluar Kuarters"
                                     borderClass="border-none"
                                 />
 
                                 <CustomTextField
-                                    label="Tarikh Keluar Kuarter"
+                                    label="Tarikh Keluar Kuarters"
                                     id="movingOutDate"
                                     type="date"
                                     disabled

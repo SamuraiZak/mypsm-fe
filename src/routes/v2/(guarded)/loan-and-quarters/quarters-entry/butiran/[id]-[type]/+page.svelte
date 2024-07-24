@@ -1033,7 +1033,7 @@
                                         use:quarterDetailEnhance
                                     >
                                         <ContentHeader
-                                            title="Butiran Penempatan Kuarter"
+                                            title="Butiran Penempatan Kuarters"
                                             borderClass="border-none"
                                             titlePadding={false}
                                         />
@@ -1055,7 +1055,7 @@
                                             />
                                         {/if}
                                         <CustomTextField
-                                            label="Tarikh Masuk Kuarter"
+                                            label="Tarikh Masuk Kuarters"
                                             id="movingInDate"
                                             disabled={submitQuarterDetails}
                                             type="date"
@@ -1070,7 +1070,7 @@
                                             errors={$quarterDetailError.unit}
                                         />
                                         <CustomTextField
-                                            label="Kuarter"
+                                            label="Kuarters"
                                             id="quarter"
                                             disabled={submitQuarterDetails}
                                             bind:val={$quarterDetailForm.quarter}
@@ -1129,7 +1129,7 @@
                                                     <Helper
                                                         id="moreThan25Km"
                                                         class="ps-9"
-                                                        >Potongan COLA 50%</Helper
+                                                        >Potongan ITP 75%%</Helper
                                                     >
                                                 </li>
 

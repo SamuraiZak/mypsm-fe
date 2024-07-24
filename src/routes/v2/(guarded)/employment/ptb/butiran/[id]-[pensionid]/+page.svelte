@@ -488,48 +488,6 @@
                     <b class="text-sm text-system-primary"
                         >Maklumat Perkhidmatan</b
                     >
-                    <!-- <CustomTextField
-                        disabled
-                        id="grade"
-                        label={'Gred Semasa'}
-                        type="text"
-                        errors={$serviceInfoError.grade}
-                        bind:val={$serviceInfoForm.grade}
-                    ></CustomTextField> -->
-                    <!-- <CustomTextField
-                        disabled
-                        id="position"
-                        label={'Jawatan'}
-                        type="text"
-                        errors={$serviceInfoError.position}
-                        bind:val={$serviceInfoForm.position}
-                    ></CustomTextField> -->
-
-                    <!-- <CustomTextField
-                        disabled
-                        id="placement"
-                        label={'Penempatan'}
-                        type="text"
-                        errors={$serviceInfoError.placement}
-                        bind:val={$serviceInfoForm.placement}
-                    ></CustomTextField> -->
-<!-- 
-                    <CustomTextField
-                        disabled
-                        id="serviceLevel"
-                        label={'Taraf Perkhidmatan'}
-                        type="text"
-                        errors={$serviceInfoError.serviceLevel}
-                        bind:val={$serviceInfoForm.serviceLevel}
-                    ></CustomTextField> -->
-<!-- 
-                    <CustomTextField
-                        disabled
-                        id="retirementType"
-                        label="Faedah Persaraan"
-                        errors={$serviceInfoError.retirementType}
-                        bind:val={$serviceInfoForm.retirementType}
-                    /> -->
 
                     <CustomTextField
                         disabled
@@ -629,68 +587,6 @@
                     ></CustomTextField>
 
                     <div class="grid grid-cols-2 gap-10">
-                        <!-- <div class="space-y-2.5">
-                             <CustomTextField
-                                    id="tarikhBerkuatkuasa"
-                                    label={'Tarikh Berkuatkuasa'}
-                                    type="text"
-                                    val=""
-                                    placeholder=""
-                                ></CustomTextField> 
-                            <CustomTextField
-                                id="maximumSalary"
-                                label={'Tangga Gaji'}
-                                type="text"
-                                errors={$serviceInfoError.maximumSalary}
-                                bind:val={data.serviceDetails.maximumSalary}
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="baseSalary"
-                                label={'Gaji Pokok'}
-                                type="text"
-                                errors={$serviceInfoError.baseSalary}
-                                bind:val={data.serviceDetails.baseSalary}
-                            ></CustomTextField>
-                        </div> -->
-                        <!-- hasTooltip={true}
-                                toolTipID="type-itka" -->
-                        <!-- <div class="space-y-2.5">
-                            <CustomTextField
-                                id="itka"
-                                label={'ITKA'}
-                                type="text"
-                                errors={$serviceInfoError.itka}
-                                bind:val={data.serviceDetails.itka}
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="itp"
-                                label={'ITP'}
-                                type="text"
-                                errors={$serviceInfoError.itp}
-                                bind:val={data.serviceDetails.itp}
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="epw"
-                                label={'EPW'}
-                                type="text"
-                                errors={$serviceInfoError.epw}
-                                bind:val={data.serviceDetails.epw}
-                            ></CustomTextField>
-                            <CustomTextField
-                                id="cola"
-                                label={'COLA'}
-                                type="text"
-                                errors={$serviceInfoError.cola}
-                                bind:val={data.serviceDetails.cola}
-                            ></CustomTextField> -->
-                        <!-- Tooltip body -->
-                        <!-- <Tooltip
-                                    type="dark"
-                                    triggeredBy="[id^='type-']"
-                                    on:show={assignContent}
-                                    >"{tooltipContent}"</Tooltip
-                                > -->
-                        <!-- </div> -->
                     </div>
                 </form></StepperContentBody
             >
@@ -700,7 +596,7 @@
 <!-- && currentRoleCode == urusetia -->
         <StepperContent>
             <StepperContentHeader title="Kemaskini Maklumat PTB dan KWAP">
-                {#if data.pensionDetail == null && data.currentRoleCode == urusetia}
+                {#if data.currentRoleCode == urusetia}
                     <TextIconButton
                         label="Simpan"
                         type="primary"
@@ -718,7 +614,7 @@
                 >
                 <!-- nullabale currentRoleCode !== urusetia -->
                     <CustomTextField
-                        disabled={data.currentRoleCode !== urusetia }
+                        disabled={data.currentRoleCode !== urusetia || data.pensionDetail !== null }
                         id="PTBdate"
                         type="date"
                         label="Tarikh Berkuatkuasa PTB / Tarikh Mula Caruman KWAP"
@@ -726,7 +622,7 @@
                         bind:val={$PTBPensionInfoForm.PTBDate}
                     ></CustomTextField>
                     <CustomTextField
-                        disabled={data.currentRoleCode !== urusetia }
+                        disabled={data.currentRoleCode !== urusetia || data.pensionDetail !== null}
                         id="referenceNumber"
                         type="text"
                         label="No. Rujukan Surat JPA"
@@ -735,7 +631,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
-                        disabled={data.currentRoleCode !== urusetia }
+                        disabled={data.currentRoleCode !== urusetia || data.pensionDetail !== null}
                         id="referenceDate"
                         type="date"
                         label="Tarikh Rujukan"
@@ -753,7 +649,7 @@
                     ></CustomTextField>
 
                     <CustomTextField
-                        disabled={data.currentRoleCode !== urusetia }
+                        disabled={data.currentRoleCode !== urusetia || data.pensionDetail !== null}
                         id="KWAPEmailDate"
                         type="date"
                         label="Tarikh Emel (KWAP)"

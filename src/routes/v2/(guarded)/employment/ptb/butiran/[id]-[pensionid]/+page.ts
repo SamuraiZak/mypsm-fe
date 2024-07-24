@@ -29,8 +29,8 @@ export const load = async ({parent,params}) => {
     // -------------------------------------------------------
     const suppAppResponse: CommonListRequestDTO = {
         pageNum: 1,
-        pageSize: 350,
-        orderBy: " ",
+        pageSize: 10000,
+        orderBy: 'name',
         orderType: 0,
         filter: {
             program: "TETAP",
@@ -45,9 +45,9 @@ export const load = async ({parent,params}) => {
     const supporterApproverResponse: CommonResponseDTO =
         await LookupServices.getEmployeeList(suppAppResponse);
 
-    const supporterApproverLookup: DropdownDTO[] = LookupServices.setSelectOptionSupporterAndApproverBothAreName(
-        supporterApproverResponse,
-    );
+        const supporterApproverLookup: DropdownDTO[] = LookupServices.setSelectOptionSupporterAndApproverBothAreName(
+            supporterApproverResponse,
+        );
     let isNewApplication: boolean = true;
 
 
