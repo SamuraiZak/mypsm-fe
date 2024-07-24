@@ -47,12 +47,24 @@ export const ServiceAllowanceEndorsementSchema = z.object({
     identityDocumentNumber: z.string().nullish(),
     name: z.string().nullish(),
     status: z.boolean().nullish(),
-    remark: z.string(),
+    remark: z.string().nullish(),
     date: z.string(),
     isDraft: z.boolean(),
 });
 export type ServiceAllowanceEndorsementType = z.infer<
     typeof ServiceAllowanceEndorsementSchema
+>;
+
+export const ServiceAllowanceSecretaryConfirmationSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    total: z.number().nullish(),
+    referenceNumber: z.string().nullish(),
+    date: z.string().nullish(),
+    isDraft: z.boolean(),
+});
+export type ServiceAllowanceSecretaryConfirmationType = z.infer<
+    typeof ServiceAllowanceSecretaryConfirmationSchema
 >;
 
 // ===============================================================
@@ -193,4 +205,100 @@ export const ServiceAllowanceWinterClothingDetailSchema = z.object({
 });
 export type ServiceAllowanceWinterClothingDetailType = z.infer<
     typeof ServiceAllowanceWinterClothingDetailSchema
+>;
+
+// 6. funeral
+export const ServiceAllowanceFuneralDetailSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    employeeNumber: z.string(),
+    name: z.string(),
+    identityDocumentNumber: z.string(),
+    deathDate: z.string(),
+    deathTime: z.string(),
+    nextOfKinName: z.string(),
+    nextOfKinAddress: z.string(),
+    relationshipId: z.number(),
+    isDraft: z.boolean(),
+    documents: z.array(DocumentSchema),
+});
+
+export type ServiceAllowanceFuneralDetailType = z.infer<
+    typeof ServiceAllowanceFuneralDetailSchema
+>;
+
+// 7. Insurance
+export const ServiceAllowanceInsuranceDetailSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    regionCode: z.string(),
+    insuranceType: z.string(),
+    startDate: z.string(),
+    endDate: z.string(),
+    reason: z.string(),
+    isDraft: z.boolean(),
+    documents: z.array(DocumentSchema),
+});
+export type ServiceAllowanceInsuranceDetailType = z.infer<
+    typeof ServiceAllowanceInsuranceDetailSchema
+>;
+
+// 8. welfare fund
+export const ServiceAllowanceWelfareFundDetailSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    welfareTypeCode: z.string(),
+    isDraft: z.boolean(),
+    documents: z.array(DocumentSchema),
+});
+export type ServiceAllowanceWelfareFundDetailType = z.infer<
+    typeof ServiceAllowanceWelfareFundDetailSchema
+>;
+
+// 9. state visit
+export const FamilyDetailSchema = z.object({
+    name: z.string(),
+    age: z.number(),
+    relationshipCode: z.string(),
+});
+export type FamilyDetailType = z.infer<typeof FamilyDetailSchema>;
+
+export const ServiceAllowanceStateVisitDetailSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    applyCode: z.string(),
+    stateCode: z.string(),
+    isDraft: z.boolean(),
+    familyDetail: z.array(FamilyDetailSchema),
+    documents: z.array(DocumentSchema),
+});
+export type ServiceAllowanceStateVisitDetailType = z.infer<
+    typeof ServiceAllowanceStateVisitDetailSchema
+>;
+
+// 10. cargo shipping
+export const ServiceAllowanceCargoShippingDetailSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    startDate: z.string(),
+    endDate: z.string(),
+    startPoint: z.string(),
+    endPoint: z.string(),
+    distance: z.number(),
+    reason: z.string(),
+    isDraft: z.boolean(),
+    documents: z.array(DocumentSchema),
+});
+export type ServiceAllowanceCargoShippingDetailType = z.infer<
+    typeof ServiceAllowanceCargoShippingDetailSchema
+>;
+
+export const ServiceAllowanceCargoShippingInvoiceSchema = z.object({
+    allowanceId: z.number(),
+    allowanceTypeCode: z.string(),
+    isDraft: z.boolean(),
+    documents: z.array(DocumentSchema),
+});
+export type ServiceAllowanceCargoShippingInvoiceType = z.infer<
+    typeof ServiceAllowanceCargoShippingInvoiceSchema
 >;

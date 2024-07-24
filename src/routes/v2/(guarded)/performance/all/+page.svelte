@@ -115,13 +115,13 @@
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                <div class="h h-fit w-full">
+                <div class="h-full w-full flex flex-col justify-start items-start">
                     <DataTable
                         title="Senarai Kakitangan"
                         bind:tableData={employeeListTable}
                         bind:passData={selectedData}
                     >
-                        <FilterWrapper slot="filter">
+                        <!-- <FilterWrapper slot="filter">
                             <FilterTextField
                                 label="Nama Pengguna"
                                 bind:inputValue={employeeListTable.param.filter
@@ -132,7 +132,7 @@
                                 bind:inputValue={employeeListTable.param.filter
                                     .identityDocumentNumber}
                             ></FilterTextField>
-                        </FilterWrapper>
+                        </FilterWrapper> -->
                     </DataTable>
                 </div>
             </StepperContentBody>

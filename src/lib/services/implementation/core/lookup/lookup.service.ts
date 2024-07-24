@@ -1198,7 +1198,7 @@ export class LookupServices {
 
     static async getWelfareTypeEnums() {
         try {
-            let url: Input = 'lookup/welfare_type';
+            const url: Input = 'lookup/welfare_type';
 
             const response: Response = await http.get(url).json();
 
@@ -1216,7 +1216,43 @@ export class LookupServices {
 
     static async getAreaEnums() {
         try {
-            let url: Input = 'lookup/areas';
+            const url: Input = 'lookup/areas';
+
+            const response: Response = await http.get(url).json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    static async getApplyForEnums() {
+        try {
+            const url: Input = 'lookup/apply_for';
+
+            const response: Response = await http.get(url).json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    
+    static async getMalaysiaStateEnums() {
+        try {
+            const url: Input = 'lookup/state_in_malaysia';
 
             const response: Response = await http.get(url).json();
 
@@ -1326,5 +1362,4 @@ export class LookupServices {
         const lookupItems: LookupDTO[] = param.data?.dataList as LookupDTO[];
         return LookupHelper.toDropdownValueIsCodeAndDesc(lookupItems);
     };
-
 }

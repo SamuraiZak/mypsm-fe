@@ -61,7 +61,7 @@
             {id}
             step="0.01"
             class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
-                ? 'b bg-gray-100 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
+                ? 'b bg-gray-100 bg-opacity-60 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
                 : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
     {:else if type == 'password'}
@@ -74,7 +74,7 @@
                 name={id}
                 {id}
                 class="autofill:hide-default-inner-shadow block {disabled
-                    ? 'b bg-gray-100 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
+                    ? 'b bg-gray-100 bg-opacity-60 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
                     : 'bg-ios-backgroundColors-systemBackground-light'} h-8 w-full rounded border border-ios-labelColors-separator-light p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
             />
         {:else}
@@ -86,7 +86,7 @@
                 name={id}
                 {id}
                 class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
-                    ? 'b bg-gray-100 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
+                    ? 'b bg-gray-100 bg-opacity-60 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
                     : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light"
             />
         {/if}
@@ -99,7 +99,7 @@
             name={id}
             {id}
             class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
-                ? 'b bg-gray-100 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
+                ? 'b bg-gray-100 bg-opacity-60 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
                 : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
     {:else if type == 'textarea'}
@@ -110,7 +110,7 @@
             name={id}
             {id}
             class="autofill:hide-default-inner-shadow block min-h-10 w-full rounded border border-ios-labelColors-separator-light {disabled
-                ? 'b bg-gray-100 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
+                ? 'b bg-gray-100 bg-opacity-60 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
                 : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         ></textarea>
     {:else if type == 'date'}
@@ -122,7 +122,7 @@
             name={id}
             {id}
             class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {disabled
-                ? 'b bg-gray-100 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
+                ? 'b bg-gray-100 bg-opacity-60 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
                 : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
     {:else}
@@ -134,7 +134,7 @@
             name={id}
             {id}
             class="autofill:hide-default-inner-shadow block h-8 w-full rounded border border-ios-labelColors-separator-light {errors ? '' : ''} {disabled
-                ? 'b bg-gray-100 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
+                ? 'b bg-gray-100 bg-opacity-60 text-ios-labelColors-secondaryLabel-light cursor-not-allowed'
                 : 'bg-ios-backgroundColors-systemBackground-light'} p-2 text-base [appearance:textfield] focus:border-ios-activeColors-activeBlue-light focus:ring-1 focus:ring-ios-activeColors-activeBlue-light [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
     {/if}

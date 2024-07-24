@@ -1,3 +1,4 @@
+import { invalidateAll } from '$app/navigation';
 import { AllowanceTypeConstant } from '$lib/constants/core/allowance-type.constant';
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant.js';
 import { RoleConstant } from '$lib/constants/core/role.constant.js';
@@ -17,20 +18,34 @@ import type {
 import { LookupHelper } from '$lib/helpers/core/lookup.helper';
 import {
     ServiceAllowanceAssignDirectorSchema,
+    ServiceAllowanceCargoShippingDetailSchema,
+    ServiceAllowanceCargoShippingInvoiceSchema,
     ServiceAllowanceCeremonyClothingDetailSchema,
     ServiceAllowanceEndorsementSchema,
     ServiceAllowanceEndorserDetailSchema,
+    ServiceAllowanceFuneralDetailSchema,
     ServiceAllowanceHouseMovingDetailSchema,
+    ServiceAllowanceInsuranceDetailSchema,
     ServiceAllowanceOtherAllowanceDetailSchema,
     ServiceAllowancePassportPaymentDetailSchema,
+    ServiceAllowanceSecretaryConfirmationSchema,
+    ServiceAllowanceStateVisitDetailSchema,
+    ServiceAllowanceWelfareFundDetailSchema,
     ServiceAllowanceWinterClothingDetailSchema,
     type ServiceAllowanceAssignDirectorType,
+    type ServiceAllowanceCargoShippingDetailType,
+    type ServiceAllowanceCargoShippingInvoiceType,
     type ServiceAllowanceCeremonyClothingDetailType,
     type ServiceAllowanceEndorsementType,
     type ServiceAllowanceEndorserDetailType,
+    type ServiceAllowanceFuneralDetailType,
     type ServiceAllowanceHouseMovingDetailType,
+    type ServiceAllowanceInsuranceDetailType,
     type ServiceAllowanceOtherAllowanceDetailType,
     type ServiceAllowancePassportPaymentDetailType,
+    type ServiceAllowanceSecretaryConfirmationType,
+    type ServiceAllowanceStateVisitDetailType,
+    type ServiceAllowanceWelfareFundDetailType,
     type ServiceAllowanceWinterClothingDetailType,
 } from '$lib/schemas/mypsm/service-allowance/service-allowance.schema.js';
 import { EmployeeExtendedServices } from '$lib/services/implementation/core/employee/employee.service.js';
@@ -40,7 +55,6 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export async function load({ params, parent }) {
-
     const { layoutData } = await parent();
 
     // get the current application Id
@@ -75,13 +89,14 @@ export async function load({ params, parent }) {
         applicationDetail: {
             isDraft: true,
         },
-        assignDirector: undefined,
-        directorSupport: undefined,
-        verification: undefined,
-        supporterApprover: undefined,
-        support: undefined,
-        approval: undefined,
-        confirmation: undefined,
+        assignDirector: null,
+        directorSupport: null,
+        verification: null,
+        supporterApprover: null,
+        support: null,
+        approval: null,
+        confirmation: null,
+        secretaryVerification: undefined,
         status: 'Draf',
     };
 
@@ -119,13 +134,53 @@ export async function load({ params, parent }) {
     houseMovingDetailsForm.data.allowanceTypeCode =
         AllowanceTypeConstant.houseMoving.code;
 
-    // 1.5 other allowance
+    // 1.5 winter clothing
     const winterClothingDetailsForm = await superValidate(
         zod(ServiceAllowanceWinterClothingDetailSchema),
     );
 
     winterClothingDetailsForm.data.allowanceTypeCode =
         AllowanceTypeConstant.winterClothing.code;
+
+    // 1.6 funeral
+    const funeralDetailsForm = await superValidate(
+        zod(ServiceAllowanceFuneralDetailSchema),
+    );
+
+    funeralDetailsForm.data.allowanceTypeCode =
+        AllowanceTypeConstant.funeralArrangement.code;
+
+    // 1.7 funeral
+    const insuranceDetailsForm = await superValidate(
+        zod(ServiceAllowanceInsuranceDetailSchema),
+    );
+
+    insuranceDetailsForm.data.allowanceTypeCode =
+        AllowanceTypeConstant.insurancePayment.code;
+
+    // 1.8 welfare fund
+    const welfareFundForm = await superValidate(
+        zod(ServiceAllowanceWelfareFundDetailSchema),
+    );
+
+    welfareFundForm.data.allowanceTypeCode =
+        AllowanceTypeConstant.welfareFund.code;
+
+    // 1.9 welfare fund
+    const stateVisitForm = await superValidate(
+        zod(ServiceAllowanceStateVisitDetailSchema),
+    );
+
+    stateVisitForm.data.allowanceTypeCode =
+        AllowanceTypeConstant.stateVisit.code;
+
+    // 1.10 welfare fund
+    const cargoShippingForm = await superValidate(
+        zod(ServiceAllowanceCargoShippingDetailSchema),
+    );
+
+    cargoShippingForm.data.allowanceTypeCode =
+        AllowanceTypeConstant.cargoShipping.code;
 
     // 2. assign director form
     const assignDirectorForm = await superValidate(
@@ -171,7 +226,12 @@ export async function load({ params, parent }) {
 
     // 8. secretary confirmation form
     const secretaryConfirmationForm = await superValidate(
-        zod(ServiceAllowanceEndorsementSchema),
+        zod(ServiceAllowanceSecretaryConfirmationSchema),
+    );
+    
+    // 9. upload invoice form
+    const cargoShippingInvoiceForm = await superValidate(
+        zod(ServiceAllowanceCargoShippingInvoiceSchema),
     );
 
     // get the current allowance application details if the id received is != 0
@@ -195,6 +255,16 @@ export async function load({ params, parent }) {
         houseMovingDetailsForm.data.isDraft = true;
 
         winterClothingDetailsForm.data.isDraft = true;
+
+        funeralDetailsForm.data.isDraft = true;
+
+        insuranceDetailsForm.data.isDraft = true;
+
+        welfareFundForm.data.isDraft = true;
+
+        stateVisitForm.data.isDraft = true;
+
+        cargoShippingForm.data.isDraft = true;
     } else {
         // get employee details
         const employeeDetailsRequest: ServiceAllowanceEmployeeDetailRequestDTO =
@@ -255,6 +325,31 @@ export async function load({ params, parent }) {
                         currentApplicationDetails.applicationDetail as ServiceAllowanceWinterClothingDetailType;
                     break;
 
+                case AllowanceTypeConstant.funeralArrangement.code:
+                    funeralDetailsForm.data =
+                        currentApplicationDetails.applicationDetail as ServiceAllowanceFuneralDetailType;
+                    break;
+
+                case AllowanceTypeConstant.insurancePayment.code:
+                    insuranceDetailsForm.data =
+                        currentApplicationDetails.applicationDetail as ServiceAllowanceInsuranceDetailType;
+                    break;
+
+                case AllowanceTypeConstant.welfareFund.code:
+                    welfareFundForm.data =
+                        currentApplicationDetails.applicationDetail as ServiceAllowanceWelfareFundDetailType;
+                    break;
+
+                case AllowanceTypeConstant.stateVisit.code:
+                    stateVisitForm.data =
+                        currentApplicationDetails.applicationDetail as ServiceAllowanceStateVisitDetailType;
+                    break;
+
+                case AllowanceTypeConstant.cargoShipping.code:
+                    cargoShippingForm.data =
+                        currentApplicationDetails.applicationDetail as ServiceAllowanceCargoShippingDetailType;
+                    break;
+
                 default:
                     break;
             }
@@ -263,8 +358,8 @@ export async function load({ params, parent }) {
 
             // assign director form
             if (
-                currentApplicationDetails.assignDirector != null ||
-                currentApplicationDetails.assignDirector != undefined
+                currentApplicationDetails.assignDirector !== undefined &&
+                currentApplicationDetails.assignDirector !== null
             ) {
                 assignDirectorForm.data =
                     currentApplicationDetails.assignDirector as ServiceAllowanceAssignDirectorType;
@@ -273,12 +368,13 @@ export async function load({ params, parent }) {
                 assignDirectorForm.data.allowanceTypeCode =
                     currentAllowanceTypeCode;
                 assignDirectorForm.data.type = 'pengarah negeri';
+                assignDirectorForm.data.isDraft = true;
             }
 
             // director support form
             if (
-                currentApplicationDetails.directorSupport != null ||
-                currentApplicationDetails.directorSupport != undefined
+                currentApplicationDetails.directorSupport != undefined ||
+                currentApplicationDetails.directorSupport != null
             ) {
                 directorSupportForm.data =
                     currentApplicationDetails.directorSupport as ServiceAllowanceEndorsementType;
@@ -287,12 +383,13 @@ export async function load({ params, parent }) {
                 directorSupportForm.data.allowanceTypeCode =
                     currentAllowanceTypeCode;
                 directorSupportForm.data.date = Date.now().toString();
+                directorSupportForm.data.isDraft = true;
             }
 
             // secretary verification form
             if (
-                currentApplicationDetails.verification != null ||
-                currentApplicationDetails.verification != undefined
+                currentApplicationDetails.verification != undefined ||
+                currentApplicationDetails.verification != null
             ) {
                 secretaryVerificationForm.data =
                     currentApplicationDetails.verification as ServiceAllowanceEndorsementType;
@@ -301,12 +398,13 @@ export async function load({ params, parent }) {
                 secretaryVerificationForm.data.allowanceTypeCode =
                     currentAllowanceTypeCode;
                 secretaryVerificationForm.data.date = Date.now().toString();
+                secretaryVerificationForm.data.isDraft = true;
             }
 
             // endorser detail form
             if (
-                currentApplicationDetails.supporterApprover != null ||
-                currentApplicationDetails.supporterApprover != undefined
+                currentApplicationDetails.supporterApprover != undefined ||
+                currentApplicationDetails.supporterApprover != null
             ) {
                 endorserDetailForm.data =
                     currentApplicationDetails.supporterApprover as ServiceAllowanceEndorserDetailType;
@@ -314,12 +412,14 @@ export async function load({ params, parent }) {
                 endorserDetailForm.data.allowanceId = currentAllowanceId;
                 endorserDetailForm.data.allowanceTypeCode =
                     currentAllowanceTypeCode;
+                endorserDetailForm.data.isDraft = true;
+                endorserDetailForm.data.isDraft = true;
             }
 
             // supporter feedback form
             if (
-                currentApplicationDetails.support != null ||
-                currentApplicationDetails.support != undefined
+                currentApplicationDetails.support != undefined ||
+                currentApplicationDetails.support != null
             ) {
                 supporterFeedbackForm.data =
                     currentApplicationDetails.support as ServiceAllowanceEndorsementType;
@@ -328,12 +428,13 @@ export async function load({ params, parent }) {
                 supporterFeedbackForm.data.allowanceTypeCode =
                     currentAllowanceTypeCode;
                 supporterFeedbackForm.data.date = Date.now().toString();
+                supporterFeedbackForm.data.isDraft = true;
             }
 
             // approver feedback form
             if (
-                currentApplicationDetails.approval != null ||
-                currentApplicationDetails.approval != undefined
+                currentApplicationDetails.approval != undefined ||
+                currentApplicationDetails.approval != null
             ) {
                 approverFeedbackForm.data =
                     currentApplicationDetails.approval as ServiceAllowanceEndorsementType;
@@ -342,20 +443,36 @@ export async function load({ params, parent }) {
                 approverFeedbackForm.data.allowanceTypeCode =
                     currentAllowanceTypeCode;
                 approverFeedbackForm.data.date = Date.now().toString();
+                approverFeedbackForm.data.isDraft = true;
             }
 
             // secretary confirmation form
             if (
-                currentApplicationDetails.confirmation != null ||
-                currentApplicationDetails.confirmation != undefined
+                currentApplicationDetails.confirmation != undefined ||
+                currentApplicationDetails.confirmation != null
             ) {
                 secretaryConfirmationForm.data =
-                    currentApplicationDetails.confirmation as ServiceAllowanceEndorsementType;
+                    currentApplicationDetails.confirmation;
             } else {
                 secretaryConfirmationForm.data.allowanceId = currentAllowanceId;
                 secretaryConfirmationForm.data.allowanceTypeCode =
                     currentAllowanceTypeCode;
                 secretaryConfirmationForm.data.date = Date.now().toString();
+                secretaryConfirmationForm.data.isDraft = true;
+            }
+            
+            // Upload invoice
+            if (
+                currentApplicationDetails.uploadInvoice != undefined ||
+                currentApplicationDetails.uploadInvoice != null
+            ) {
+                cargoShippingInvoiceForm.data =
+                    currentApplicationDetails.uploadInvoice;
+            } else {
+                cargoShippingInvoiceForm.data.allowanceId = currentAllowanceId;
+                cargoShippingInvoiceForm.data.allowanceTypeCode =
+                    currentAllowanceTypeCode;
+                cargoShippingInvoiceForm.data.isDraft = true;
             }
         }
     }
@@ -379,6 +496,129 @@ export async function load({ params, parent }) {
     // 3. director dropdown
     const directorDrodpwon: DropdownDTO[] = await _getDirectorDropdown();
 
+    // 4. relationship dropdown
+    const relationshipDropdown: DropdownDTO[] =
+        await _getRelationshipDropdown();
+
+    // 5. supporter dropdown
+    const supporterDropdown: DropdownDTO[] = await _getSectionChiefDropdown();
+
+    // 6. approver dropdown
+    const approverDropdown: DropdownDTO[] = await _getPKPDropdown();
+
+    // 7. area dropdown
+    const areaDropdown: DropdownDTO[] = [
+        {
+            name: 'Kawasan 1',
+            value: 'AR01',
+        },
+        {
+            name: 'Kawasan 2',
+            value: 'AR02',
+        },
+        {
+            name: 'Kawasan 3',
+            value: 'AR03',
+        },
+    ];
+
+    // 8. insurance type dropdown
+    const insuranceTypeDropdown: DropdownDTO[] = [
+        {
+            name: 'Satu Perjalanan',
+            value: 'Satu Perjalanan',
+        },
+        {
+            name: 'Tahunan',
+            value: 'Tahunan',
+        },
+        {
+            name: 'Berkelompok',
+            value: 'Berkelompok',
+        },
+    ];
+
+    // 9. insurance type dropdown
+    const stateVisitReasonDropdown: DropdownDTO[] =
+        await _getApplyForDropdown();
+
+    // 10. approver dropdown
+    const stateDropdown: DropdownDTO[] = await _getStateDropdown();
+    // const stateDropdown: DropdownDTO[] = [
+    //     {
+    //         name: 'Johor',
+    //         value: 'Johor',
+    //     },
+    //     {
+    //         name: 'Kedah',
+    //         value: 'Kedah',
+    //     },
+    //     {
+    //         name: 'Kelantan',
+    //         value: 'Kelantan',
+    //     },
+    //     {
+    //         name: 'Melaka',
+    //         value: 'Melaka',
+    //     },
+    //     {
+    //         name: 'Negeri Sembilan',
+    //         value: 'Negeri Sembilan',
+    //     },
+    //     {
+    //         name: 'Pahang',
+    //         value: 'Pahang',
+    //     },
+    //     {
+    //         name: 'Perak',
+    //         value: 'Perak',
+    //     },
+    //     {
+    //         name: 'Perlis',
+    //         value: 'Perlis',
+    //     },
+    //     {
+    //         name: 'Pulau Pinang',
+    //         value: 'Pulau Pinang',
+    //     },
+    //     {
+    //         name: 'Sabah',
+    //         value: 'Sabah',
+    //     },
+    //     {
+    //         name: 'Sarawak',
+    //         value: 'Sarawak',
+    //     },
+    //     {
+    //         name: 'Selangor',
+    //         value: 'Selangor',
+    //     },
+    //     {
+    //         name: 'Terengganu',
+    //         value: 'Terengganu',
+    //     },
+    //     {
+    //         name: 'Wilayah Perskutuan Kuala Lumpur',
+    //         value: 'Wilayah Perskutuan Kuala Lumpur',
+    //     },
+    //     {
+    //         name: 'Wilayah Persekutuan Labuan',
+    //         value: 'Wilayah Persekutuan Labuan',
+    //     },
+    //     {
+    //         name: 'Wilayah Persekutuan Putrajaya',
+    //         value: 'Wilayah Persekutuan Putrajaya',
+    //     },
+    // ];
+
+    // 11 relationship dropdown code
+    const relationshipCodeDropdown: DropdownDTO[] =
+        await _getRelationshipCodeDropdown();
+
+    // 12 welfare type dropdown code
+    const welfareTypeCodeDropdown: DropdownDTO[] =
+        await _getWelfareTypeDropdown();
+
     return {
         props: {
             layoutData,
@@ -394,6 +634,11 @@ export async function load({ params, parent }) {
             otherAllowanceDetailsForm,
             houseMovingDetailsForm,
             winterClothingDetailsForm,
+            funeralDetailsForm,
+            insuranceDetailsForm,
+            welfareFundForm,
+            stateVisitForm,
+            cargoShippingForm,
 
             // processes forms
             assignDirectorForm,
@@ -403,11 +648,21 @@ export async function load({ params, parent }) {
             supporterFeedbackForm,
             approverFeedbackForm,
             secretaryConfirmationForm,
+            cargoShippingInvoiceForm,
         },
         lookup: {
             allowanceDropdown,
             allowanceEndorsementOption,
             directorDrodpwon,
+            relationshipDropdown,
+            supporterDropdown,
+            approverDropdown,
+            areaDropdown,
+            insuranceTypeDropdown,
+            stateVisitReasonDropdown,
+            stateDropdown,
+            relationshipCodeDropdown,
+            welfareTypeCodeDropdown,
         },
     };
 }
@@ -484,6 +739,7 @@ export async function _otherAllowanceSubmit(
                 await ServiceAllowanceServices.addOtherAllowance(formData);
 
             if (response.status == 'success') {
+                await invalidateAll();
                 return response;
             } else {
                 return CommonResponseConstant.httpError;
@@ -549,6 +805,145 @@ export async function _winterClothingSubmit(
         return CommonResponseConstant.httpError;
     }
 }
+
+// 6. winter clothing
+export async function _funeralSubmit(
+    formData: ServiceAllowanceFuneralDetailType,
+) {
+    try {
+        const form = await superValidate(
+            formData,
+            zod(ServiceAllowanceFuneralDetailSchema),
+        );
+
+        if (form.valid) {
+            const response =
+                await ServiceAllowanceServices.addFuneral(formData);
+
+            if (response.status == 'success') {
+                return response;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } catch (error) {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// 7. insurance
+export async function _insuranceSubmit(
+    formData: ServiceAllowanceInsuranceDetailType,
+) {
+    try {
+        const form = await superValidate(
+            formData,
+            zod(ServiceAllowanceFuneralDetailSchema),
+        );
+
+        if (form.valid) {
+            const response =
+                await ServiceAllowanceServices.addInsurance(formData);
+
+            if (response.status == 'success') {
+                return response;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } catch (error) {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// 8. welfare fund
+export async function _welfareFundSubmit(
+    formData: ServiceAllowanceWelfareFundDetailType,
+) {
+    try {
+        const form = await superValidate(
+            formData,
+            zod(ServiceAllowanceFuneralDetailSchema),
+        );
+
+        if (form.valid) {
+            const response =
+                await ServiceAllowanceServices.addWelfareFund(formData);
+
+            if (response.status == 'success') {
+                return response;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } catch (error) {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// 9. state visit
+export async function _stateVisitSubmit(
+    formData: ServiceAllowanceStateVisitDetailType,
+) {
+    try {
+        const form = await superValidate(
+            formData,
+            zod(ServiceAllowanceFuneralDetailSchema),
+        );
+
+        if (form.valid) {
+            const response =
+                await ServiceAllowanceServices.addStateVisit(formData);
+
+            if (response.status == 'success') {
+                return response;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } catch (error) {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// 10. cargo shipping
+export async function _cargoShippingSubmit(
+    formData: ServiceAllowanceCargoShippingDetailType,
+) {
+    try {
+        const form = await superValidate(
+            formData,
+            zod(ServiceAllowanceFuneralDetailSchema),
+        );
+
+        if (form.valid) {
+            const response =
+                await ServiceAllowanceServices.addCargoShipping(formData);
+
+            if (response.status == 'success') {
+                return response;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } catch (error) {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// =========================================================================
+// PROCESSES
+// =========================================================================
 
 // submit assign director form
 export async function _assignDirectorSubmit(
@@ -695,17 +1090,39 @@ export async function _approverFeedbackSubmit(
 
 // submit secretary confirmation
 export async function _secretaryConfirmationSubmit(
-    formData: ServiceAllowanceEndorsementType,
+    formData: ServiceAllowanceSecretaryConfirmationType,
 ) {
     try {
         const form = await superValidate(
             formData,
-            zod(ServiceAllowanceEndorsementSchema),
+            zod(ServiceAllowanceSecretaryConfirmationSchema),
         );
 
-        const response = await ServiceAllowanceServices.addSecretaryVerification(
-            form.data,
+        const response =
+            await ServiceAllowanceServices.addSecretaryConfirmation(form.data);
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } catch (error) {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// submit cargo shipping invoice
+export async function _cargoShippingInvoiceSubmit(
+    formData: ServiceAllowanceCargoShippingInvoiceType,
+) {
+    try {
+        const form = await superValidate(
+            formData,
+            zod(ServiceAllowanceCargoShippingInvoiceSchema),
         );
+
+        const response =
+            await ServiceAllowanceServices.addCargoShippingInvoice(form.data);
 
         if (response.status == 'success') {
             return response;
@@ -765,4 +1182,157 @@ export async function _getDirectorDropdown() {
     directorOption = LookupHelper.employeeToDropdown(directorList);
 
     return directorOption;
+}
+
+export async function _getSectionChiefDropdown() {
+    let sectionChiefOption: DropdownDTO[] = [];
+
+    const filter = {
+        program: 'SEMUA',
+        employeeNumber: null,
+        name: null,
+        identityCard: null,
+        grade: null,
+        role: RoleConstant.ketuaSeksyen.code,
+    };
+
+    const request: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: 'name',
+        orderType: 1,
+        filter: filter,
+    };
+
+    const sectionChiefListResponse: CommonResponseDTO =
+        await LookupServices.getEndorserDropdown(request);
+
+    const sectionChiefList: EmployeeLookupItemDTO[] = sectionChiefListResponse
+        .data?.dataList as EmployeeLookupItemDTO[];
+
+    sectionChiefOption = LookupHelper.employeeToDropdown(sectionChiefList);
+
+    return sectionChiefOption;
+}
+
+export async function _getPKPDropdown() {
+    let pkpOption: DropdownDTO[] = [];
+
+    const filter = {
+        program: 'SEMUA',
+        employeeNumber: null,
+        name: null,
+        identityCard: null,
+        grade: null,
+        role: RoleConstant.pengarahKhidmatPengurusan.code,
+    };
+
+    const request: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: 'name',
+        orderType: 1,
+        filter: filter,
+    };
+
+    const pkpListResponse: CommonResponseDTO =
+        await LookupServices.getEndorserDropdown(request);
+
+    const pkpList: EmployeeLookupItemDTO[] = pkpListResponse.data
+        ?.dataList as EmployeeLookupItemDTO[];
+
+    pkpOption = LookupHelper.employeeToDropdown(pkpList);
+
+    return pkpOption;
+}
+
+export async function _getRelationshipDropdown() {
+    let relationshipLookup: DropdownDTO[] = [];
+    const relationshipLookupResponse: CommonResponseDTO =
+        await LookupServices.getRelationshipEnums();
+
+    if (relationshipLookupResponse.status == 'success') {
+        relationshipLookup = LookupServices.setSelectOptions(
+            relationshipLookupResponse,
+        );
+    }
+
+    return relationshipLookup;
+}
+
+export async function _getRelationshipCodeDropdown() {
+    let relationshipLookup: DropdownDTO[] = [];
+    const relationshipLookupResponse: CommonResponseDTO =
+        await LookupServices.getRelationshipEnums();
+
+    if (relationshipLookupResponse.status == 'success') {
+        relationshipLookup = LookupServices.setSelectOptionsInString(
+            relationshipLookupResponse,
+        );
+    }
+
+    return relationshipLookup;
+}
+
+export async function _getAreaDropdown() {
+    let areaLookup: DropdownDTO[] = [];
+    const areaLookupResponse: CommonResponseDTO =
+        await LookupServices.getAreaEnums();
+
+    if (areaLookupResponse.status == 'success') {
+        areaLookup = LookupServices.setSelectOptionCode(areaLookupResponse);
+    }
+
+    return areaLookup;
+}
+
+export async function _getStateDropdown() {
+    let stateLookup: DropdownDTO[] = [];
+    const stateLookupResponse: CommonResponseDTO =
+        await LookupServices.getStateEnums();
+
+    if (stateLookupResponse.status == 'success') {
+        stateLookup = LookupServices.setSelectOptionsInString(stateLookupResponse);
+    }
+
+    return stateLookup;
+}
+
+export async function _getWelfareTypeDropdown() {
+    let stateLookup: DropdownDTO[] = [];
+    const stateLookupResponse: CommonResponseDTO =
+        await LookupServices.getWelfareTypeEnums();
+
+    if (stateLookupResponse.status == 'success') {
+        stateLookup =
+            LookupServices.setSelectOptionsInString(stateLookupResponse);
+    }
+
+    return stateLookup;
+}
+
+export async function _getApplyForDropdown() {
+    let stateLookup: DropdownDTO[] = [];
+    const stateLookupResponse: CommonResponseDTO =
+        await LookupServices.getApplyForEnums();
+
+    if (stateLookupResponse.status == 'success') {
+        stateLookup =
+            LookupServices.setSelectOptionsInString(stateLookupResponse);
+    }
+
+    return stateLookup;
+}
+
+export async function _getMalaysiaStateDropdown() {
+    let stateLookup: DropdownDTO[] = [];
+    const stateLookupResponse: CommonResponseDTO =
+        await LookupServices.getMalaysiaStateEnums();
+
+    if (stateLookupResponse.status == 'success') {
+        stateLookup =
+            LookupServices.setSelectOptionsInString(stateLookupResponse);
+    }
+
+    return stateLookup;
 }

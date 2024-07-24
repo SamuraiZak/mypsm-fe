@@ -13,7 +13,7 @@
     };
 </script>
 
-<a class="w-full h-fit" href={notification.moduleURL}>
+<a class="w-full h-fit" href={notification.moduleURL} data-sveltekit-preload-data="false">
     <div
         class="flex h-fit w-full cursor-pointer flex-row items-start gap-3 p-4 hover:scale-105 hover:bg-blue-100"
     >
