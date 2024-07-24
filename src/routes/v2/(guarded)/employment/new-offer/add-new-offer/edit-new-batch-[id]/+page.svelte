@@ -10,7 +10,6 @@
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import DataTable from '$lib/components/table/DataTable.svelte';
-    import type { ConfirmationListResponseDTO } from '$lib/dto/mypsm/employment/confirmation/confirmation_request_response.dto';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import { superForm } from 'sveltekit-superforms';
     import { Modal } from 'flowbite-svelte';
@@ -20,7 +19,7 @@
     import { zod } from 'sveltekit-superforms/adapters';
 
     export let data: PageData;
-    let openModal: boolean = false;
+    let openModal: boolean = true;
 
     // Table list - New Offer Meeting
     let newOfferMeetingBatchListTable: TableSettingDTO = {
@@ -33,7 +32,7 @@
         },
         data:
             (data.responses.employeesListResponse.data
-                ?.dataList as ConfirmationListResponseDTO[]) ?? [],
+                ?.dataList as CommonEmployeeDTO[]) ?? [],
         selectedData: [],
         exportData: [],
         hiddenColumn: ['employeeId'],
@@ -60,6 +59,8 @@
             add: false,
         },
     };
+    newOfferMeetingBatchListTable.selectedData = data.selectionOptions
+        .selectedEmployees as CommonEmployeeDTO[];
 
     // Superforms
     const { form, errors, enhance } = superForm(
@@ -104,23 +105,15 @@
         data:
             (newOfferMeetingBatchListTable.selectedData as CommonEmployeeDTO[]) ??
             [],
-        selectedData:
-            (
-                newOfferMeetingBatchListTable.selectedData as CommonEmployeeDTO[]
-            ).filter((staffs) => {
-                data.selectionOptions.selectedEmployees.some((empStaffs) => {
-                    return (
-                        empStaffs ===
-                        (staffs.employeeNumber as unknown as number)
-                    );
-                });
-            }) ?? [],
+        selectedData: [],
         exportData: [],
         hiddenColumn: [
+            'id',
             'employeeId',
             'program',
             'scheme',
             'grade',
+            'educationLevel',
             'position',
             'placement',
         ],
@@ -140,6 +133,12 @@
             header: false,
         },
     };
+
+    $: {
+        includedEmployeesListTable.data =
+            (newOfferMeetingBatchListTable.selectedData as CommonEmployeeDTO[]) ??
+            [];
+    }
 </script>
 
 <!-- content header starts here -->
@@ -232,7 +231,8 @@
                 keputusan meyuarat di jadual hadapan
             </p>
             <p class="text-sm">
-                Bilangan Kakitangan Dipilih: {$form.employees.length}
+                Bilangan Kakitangan Dipilih: {newOfferMeetingBatchListTable
+                    .selectedData.length}
             </p>
             <DataTable title="" bind:tableData={includedEmployeesListTable}
             ></DataTable>
@@ -255,7 +255,7 @@
             </span>
             <div class="flex flex-row gap-x-4">
                 <TextIconButton
-                    label={$form.isDraft ? 'Simpan' : 'Tambah'}
+                    label={$form.isDraft ? 'Simpan' : 'Hantar'}
                     type="primary"
                     form="newOfferMeetingFormId"
                 />
@@ -263,7 +263,7 @@
                     label="Batal"
                     type="neutral"
                     onClick={() => {
-                        goto('../new-offer');
+                        openModal = false;
                     }}
                 />
             </div>

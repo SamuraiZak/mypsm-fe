@@ -64,7 +64,8 @@ export const _createFundApplicationRequestSchema =
 // ==================================================
 export const _fundApplicationPersonalInfoResponseSchema = z
     .object({
-        employeeNo: z.string(),
+        employeeId: z.number().readonly(),
+        employeeNo: z.string().readonly(),
         name: shortTextSchema,
         identityDocumentNumber: shortTextSchema,
         identityCardColor: codeSchema,

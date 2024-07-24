@@ -45,7 +45,7 @@
         _addSentencingMeeting,
     } from './+page';
     import { zod } from 'sveltekit-superforms/adapters';
-    import { _addSuspensionDetailForm } from '../tambah-prosiding/[employeeId]/+page';
+    import { _addSuspensionDetailForm } from '../add-proceeding/[employeeId]/+page';
     export let data: PageData;
 
     let hasAppeal: boolean = false;

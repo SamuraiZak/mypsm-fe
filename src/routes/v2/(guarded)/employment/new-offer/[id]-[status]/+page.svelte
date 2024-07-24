@@ -53,6 +53,7 @@
     import { _meetingResultSchema } from '$lib/schemas/mypsm/employment/new-offer/schema';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import { RetirementBenefitDropdownConstant } from '$lib/constants/dropdown/retirement-benefit.constant';
+    import { kgtMonthValueIsStringLookup } from '$lib/constants/core/dropdown.constant';
     export let data: PageData;
 
     let allNewOfferSupporterStatusAndRemarksNotNull = false;
@@ -129,13 +130,24 @@
             newOfferSupporterResultIsDraft.set(false);
         }
 
-        data.view.newOfferDetailView.supporter.results.forEach(
-            (data, index) => {
-                if (data.status === null || data.remarks === null) {
-                    allNewOfferSupporterStatusAndRemarksNotNull = false;
-                }
-            },
+        newOfferSupporterIsApproved.set(
+            data.view.newOfferDetailView.supporter.employees.every(
+                (employee) => employee.status,
+            ),
         );
+
+        newOfferApproverIsApproved.set(
+            data.view.newOfferDetailView.approver.employees.every(
+                (employee) => employee.status,
+            ),
+        );
+        // data.view.newOfferDetailView.supporter.results.forEach(
+        //     (data, index) => {
+        //         if (data.status === null || data.remarks === null) {
+        //             allNewOfferSupporterStatusAndRemarksNotNull = false;
+        //         }
+        //     },
+        // );
 
         if (allNewOfferSupporterStatusAndRemarksNotNull) {
             isReadOnlyNewOfferSupporterResult.set(true);
@@ -153,11 +165,11 @@
             newOfferApproverResultIsDraft.set(false);
         }
 
-        data.view.newOfferDetailView.approver.results.forEach((data, index) => {
-            if (data.status === null || data.remarks === null) {
-                allNewOfferApproverStatusAndRemarksNotNull = false;
-            }
-        });
+        // data.view.newOfferDetailView.approver.results.forEach((data, index) => {
+        //     if (data.status === null || data.remarks === null) {
+        //         allNewOfferApproverStatusAndRemarksNotNull = false;
+        //     }
+        // });
 
         if (allNewOfferApproverStatusAndRemarksNotNull) {
             isReadOnlyNewOfferApprovalResult.set(true);
@@ -272,13 +284,25 @@
     } = superForm(data.forms.newOfferSupporterResultForm, {
         SPA: true,
         dataType: 'json',
-        invalidateAll: true,
+        invalidateAll: false,
         resetForm: false,
         multipleSubmits: 'allow',
         validationMethod: 'oninput',
         validators: zod(_approverSchema),
         taintedMessage: false,
         onSubmit() {
+            $newOfferSupporterResultForm.employees =
+                $newOfferSupporterResultForm.employees.filter((val, index) => {
+                    if (!$newOfferMeetingDetailForm.employees[index].status) {
+                        return (
+                            val.employeeNumber !==
+                            $newOfferMeetingDetailForm.employees[index]
+                                .employeeNumber
+                        );
+                    }
+                    return true; // Keep the element if the condition is not met
+                });
+
             _newOfferSupporterResultForm(
                 Number(data.params.id),
                 $newOfferSupporterResultForm,
@@ -300,6 +324,18 @@
         validators: zod(_approverSchema),
         taintedMessage: false,
         onSubmit() {
+            $newOfferApproverResultForm.employees =
+                $newOfferApproverResultForm.employees.filter((val, index) => {
+                    if (!$newOfferMeetingDetailForm.employees[index].status) {
+                        return (
+                            val.employeeNumber !==
+                            $newOfferMeetingDetailForm.employees[index]
+                                .employeeNumber
+                        );
+                    }
+                    return true; // Keep the element if the condition is not met
+                });
+
             _newOfferApproverResultForm(
                 Number(data.params.id),
                 $newOfferApproverResultForm,
@@ -319,7 +355,7 @@
         data: $form.employees ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['id'],
+        hiddenColumn: ['id', 'eligibleLeaveCount', 'grade'],
         dictionary: [],
         url: '',
         id: 'includedEmployeesListTable',
@@ -709,7 +745,7 @@
                                 .employees[index].employeeNumber})</b
                         >
                         <CustomTextField
-                            disabled={$isReadOnlyNewOfferMeetingResult ||
+                            disabled={$isReadOnlyNewOfferMeetingResult &&
                                 !$newOfferMeetingResultIsDraft}
                             id="employees[index].remarks"
                             label="Catatan"
@@ -720,7 +756,7 @@
                             ].remarks}
                         ></CustomTextField>
                         <CustomRadioBoolean
-                            disabled={$isReadOnlyNewOfferMeetingResult ||
+                            disabled={$isReadOnlyNewOfferMeetingResult &&
                                 !$newOfferMeetingResultIsDraft}
                             id="employees[index].status"
                             label="Keputusan Mesyuarat"
@@ -804,7 +840,7 @@
                                         <StepperFailStatement />
                                     {:else}
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="gradeId"
                                             label="Gred"
@@ -814,7 +850,7 @@
                                                 .employees[index].gradeId}
                                         ></CustomSelectField>
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="maxGradeId"
                                             label="Gred Maksimum"
@@ -823,8 +859,8 @@
                                             bind:val={$newOfferServiceDetailForm
                                                 .employees[index].maxGradeId}
                                         ></CustomSelectField>
-                                        <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                        <!-- <CustomSelectField
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="positionId"
                                             label="Jawatan"
@@ -833,9 +869,9 @@
                                                 .positionLookup}
                                             bind:val={$newOfferServiceDetailForm
                                                 .employees[index].positionId}
-                                        ></CustomSelectField>
+                                        ></CustomSelectField> -->
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="placementId"
                                             label="Penempatan"
@@ -856,7 +892,7 @@
                                                 .employees[index].serviceTypeId}
                                         ></CustomSelectField>
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="serviceGroupId"
                                             label="Kumpulan Perkhidmatan"
@@ -868,8 +904,8 @@
                                                 .serviceGroupId}
                                         ></CustomSelectField>
 
-                                        <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                        <!-- <CustomSelectField
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="employmentStatusId"
                                             label="Sektor Perkhidmatan"
@@ -879,10 +915,10 @@
                                             bind:val={$newOfferServiceDetailForm
                                                 .employees[index]
                                                 .employmentStatusId}
-                                        ></CustomSelectField>
+                                        ></CustomSelectField> -->
 
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="unitId"
                                             label="Bahagian"
@@ -892,8 +928,8 @@
                                                 .employees[index].unitId}
                                         ></CustomSelectField>
 
-                                        <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                        <!-- <CustomTextField
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             type="number"
                                             id="eligibleLeaveCount"
@@ -902,11 +938,11 @@
                                             bind:val={$newOfferServiceDetailForm
                                                 .employees[index]
                                                 .eligibleLeaveCount}
-                                        ></CustomTextField>
+                                        ></CustomTextField> -->
 
                                         <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="effectiveDate"
                                             label={'Tarikh Kuatkuasa Lantikan Semasa'}
@@ -915,9 +951,9 @@
                                                 .employees[index].effectiveDate}
                                         ></CustomTextField>
 
-                                        <CustomTextField
+                                        <!--<CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="newRecruitEffectiveDate"
                                             label={'Tarikh Berkuatkuasa Lantikan Baru'}
@@ -929,7 +965,7 @@
 
                                         <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="firstEffectiveDate"
                                             label={'Tarikh Berkuatkuasa Lantikan Pertama'}
@@ -937,11 +973,11 @@
                                             bind:val={$newOfferServiceDetailForm
                                                 .employees[index]
                                                 .firstEffectiveDate}
-                                        ></CustomTextField>
+                                        ></CustomTextField> -->
 
                                         <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="civilServiceStartDate"
                                             label={'Mula Dilantik Perkhidmatan Kerajaan'}
@@ -953,7 +989,7 @@
 
                                         <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="serviceDate"
                                             label={'Mula Dilantik Perkhidmatan LKIM'}
@@ -962,9 +998,9 @@
                                                 .employees[index].serviceDate}
                                         ></CustomTextField>
 
-                                        <CustomTextField
+                                        <!-- <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="firstServiceDate"
                                             label={'Mula Dilantik Perkhidmatan Pertama'}
@@ -976,7 +1012,7 @@
 
                                         <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="confirmDate"
                                             label={'Mula Disahkan Perkhidmatan Semasa'}
@@ -988,7 +1024,7 @@
                                         <CustomTextField
                                             placeholder="-"
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="confirmServiceDate"
                                             label={'Disahkan Dalam Jawatan Semasa LKIM'}
@@ -1000,7 +1036,7 @@
                                         <CustomTextField
                                             placeholder="-"
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="firstEffectiveServiceDate"
                                             label={'Mula Berkuatkuasa Perkhidmatan Pertama'}
@@ -1012,7 +1048,7 @@
                                         <CustomTextField
                                             placeholder="-"
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="firstConfirmServiceDate"
                                             label={'Disahkan Dalam Jawatan Pertama LKIM'}
@@ -1023,7 +1059,7 @@
 
                                         <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="retirementDate"
                                             label={'Tarikh Bersara'}
@@ -1031,10 +1067,10 @@
                                             bind:val={$newOfferServiceDetailForm
                                                 .employees[index]
                                                 .retirementDate}
-                                        ></CustomTextField>
+                                        ></CustomTextField> -->
 
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="bankName"
                                             label={'Name Bank'}
@@ -1045,7 +1081,7 @@
                                         ></CustomSelectField>
 
                                         <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="bankAccount"
                                             type="number"
@@ -1056,7 +1092,7 @@
                                         ></CustomTextField>
 
                                         <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="retirementBenefit"
                                             label={'Kemudahan Persaraan'}
@@ -1067,7 +1103,7 @@
                                         ></CustomSelectField>
 
                                         <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="epfNumber"
                                             type="number"
@@ -1078,7 +1114,7 @@
                                         ></CustomTextField>
 
                                         <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="incomeNumber"
                                             type="number"
@@ -1089,7 +1125,7 @@
                                         ></CustomTextField>
 
                                         <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="pensionNumber"
                                             type="text"
@@ -1100,7 +1136,7 @@
                                         ></CustomTextField>
 
                                         <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess ||
+                                            disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="socsoNumber"
                                             type="number"
@@ -1122,21 +1158,19 @@
                                         <div class="grid grid-cols-2 gap-10">
                                             <div class="space-y-2.5">
                                                 <CustomSelectField
-                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                    disabled={$isReadOnlyNewOfferProcess &&
                                                         !$newOfferProcessIsDraft}
                                                     id="revisionMonth"
-                                                    label={'Bulan Berkuatkuasa'}
+                                                    label={'Bulan Berkuatkuasa (Bulan KGT)'}
                                                     placeholder="-"
-                                                    options={data.lookups
-                                                        .sentencingMonthLookup}
+                                                    options={kgtMonthValueIsStringLookup}
                                                     bind:val={$newOfferServiceDetailForm
                                                         .employees[index]
                                                         .revisionMonth}
                                                 ></CustomSelectField>
 
                                                 <CustomTextField
-                                                    disabled={$isReadOnlyNewOfferProcess ||
-                                                        !$newOfferProcessIsDraft}
+                                                    disabled={true}
                                                     id="kgt"
                                                     type="number"
                                                     label={'KGT (RM)'}
@@ -1146,7 +1180,7 @@
                                                 ></CustomTextField>
 
                                                 <CustomTextField
-                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                    disabled={$isReadOnlyNewOfferProcess &&
                                                         !$newOfferProcessIsDraft}
                                                     id="maximumSalary"
                                                     type="number"
@@ -1158,9 +1192,10 @@
                                                 ></CustomTextField>
 
                                                 <CustomTextField
-                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                    disabled={$isReadOnlyNewOfferProcess &&
                                                         !$newOfferProcessIsDraft}
                                                     id="baseSalary"
+                                                    type="number"
                                                     label={'Gaji Pokok (RM)'}
                                                     placeholder="-"
                                                     bind:val={$newOfferServiceDetailForm
@@ -1170,36 +1205,40 @@
                                             </div>
                                             <div class="space-y-2.5">
                                                 <CustomTextField
-                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                    disabled={$isReadOnlyNewOfferProcess &&
                                                         !$newOfferProcessIsDraft}
                                                     id="ITKA"
+                                                    type="number"
                                                     label={'ITKA (RM)'}
                                                     placeholder="-"
                                                     bind:val={$newOfferServiceDetailForm
                                                         .employees[index].itka}
                                                 ></CustomTextField>
                                                 <CustomTextField
-                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                    disabled={$isReadOnlyNewOfferProcess &&
                                                         !$newOfferProcessIsDraft}
                                                     id="ITP"
+                                                    type="number"
                                                     label={'ITP (RM)'}
                                                     placeholder="-"
                                                     bind:val={$newOfferServiceDetailForm
                                                         .employees[index].itp}
                                                 ></CustomTextField>
                                                 <CustomTextField
-                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                    disabled={$isReadOnlyNewOfferProcess &&
                                                         !$newOfferProcessIsDraft}
                                                     id="EPW"
+                                                    type="number"
                                                     label={'EPW (RM)'}
                                                     placeholder="-"
                                                     bind:val={$newOfferServiceDetailForm
                                                         .employees[index].epw}
                                                 ></CustomTextField>
                                                 <CustomTextField
-                                                    disabled={$isReadOnlyNewOfferProcess ||
+                                                    disabled={$isReadOnlyNewOfferProcess &&
                                                         !$newOfferProcessIsDraft}
                                                     id="COLA"
+                                                    type="number"
                                                     label={'COLA (RM)'}
                                                     placeholder="-"
                                                     bind:val={$newOfferServiceDetailForm
@@ -1217,7 +1256,7 @@
         </StepperContent>
         {#if $isReadOnlyNewOfferProcess && !$newOfferProcessIsDraft}
             <StepperContent>
-                <StepperContentHeader title="Maklumat Penyokong Dan Pelulus">
+                <StepperContentHeader title="Tetapan Penyokong Dan Pelulus">
                     {#if (!$isReadOnlyNewOfferSetApprovers || $newOfferSetApproversIsDraft) && data.roles.isEmploymentSecretaryRole}
                         <TextIconButton
                             label="Simpan"
@@ -1245,7 +1284,7 @@
                         class="flex w-full flex-col items-center gap-2"
                     >
                         <CustomSelectField
-                            disabled={$isReadOnlyNewOfferSetApprovers ||
+                            disabled={$isReadOnlyNewOfferSetApprovers &&
                                 !$newOfferSetApproversIsDraft}
                             errors={$newOfferSetSupporterApproverDetailFormErrors.supporterId}
                             id="supporterId"
@@ -1255,7 +1294,7 @@
                             bind:val={$newOfferSetSupporterApproverDetailForm.supporterId}
                         ></CustomSelectField>
                         <CustomSelectField
-                            disabled={$isReadOnlyNewOfferSetApprovers ||
+                            disabled={$isReadOnlyNewOfferSetApprovers &&
                                 !$newOfferSetApproversIsDraft}
                             errors={$newOfferSetSupporterApproverDetailFormErrors.approverId}
                             id="approverId"
@@ -1273,216 +1312,351 @@
                         title="Keputusan Pengesahan Dalam Perhidmatan Daripada Peranan - Peranan Bertanggungjawab"
                     >
                         {#if (!data.view.newOfferDetailView.supporter.isReadonly || $newOfferSupporterResultIsDraft) && data.roles.isSupporterRole}
-                            <TextIconButton
-                                type="neutral"
-                                label="Simpan"
-                                form="newOfferSupporterResultForm"
-                                onClick={() => {
-                                    $newOfferSupporterResultForm.isDraft = true;
-                                }}
-                            ></TextIconButton>
-                            <TextIconButton
-                                type="primary"
-                                label="Hantar"
-                                form="newOfferSupporterResultForm"
-                                onClick={() => {
-                                    $newOfferSupporterResultForm.isDraft = false;
-                                }}
-                            ></TextIconButton>
+                            {#if data.roles.layoutData.accountDetails.identityDocumentNumber === data.view.newOfferDetailView.supporter.identityDocumentNumber}
+                                <TextIconButton
+                                    type="neutral"
+                                    label="Simpan"
+                                    form="newOfferSupporterResultForm"
+                                    onClick={() => {
+                                        $newOfferSupporterResultForm.isDraft = true;
+                                    }}
+                                ></TextIconButton>
+                                <TextIconButton
+                                    type="primary"
+                                    label="Hantar"
+                                    form="newOfferSupporterResultForm"
+                                    onClick={() => {
+                                        $newOfferSupporterResultForm.isDraft = false;
+                                    }}
+                                ></TextIconButton>
+                            {/if}
                         {:else if (!data.view.newOfferDetailView.approver.isReadonly || $newOfferApproverResultIsDraft) && data.roles.isApproverRole}
-                            <TextIconButton
-                                type="neutral"
-                                label="Simpan"
-                                form="newOfferApproverResultForm"
-                                onClick={() => {
-                                    $newOfferApproverResultForm.isDraft = true;
-                                }}
-                            ></TextIconButton>
-                            <TextIconButton
-                                type="primary"
-                                label="Hantar"
-                                form="newOfferApproverResultForm"
-                                onClick={() => {
-                                    $newOfferApproverResultForm.isDraft = false;
-                                }}
-                            ></TextIconButton>
+                            {#if data.roles.layoutData.accountDetails.identityDocumentNumber === data.view.newOfferDetailView.approver.identityDocumentNumber}
+                                <TextIconButton
+                                    type="neutral"
+                                    label="Simpan"
+                                    form="newOfferApproverResultForm"
+                                    onClick={() => {
+                                        $newOfferApproverResultForm.isDraft = true;
+                                    }}
+                                ></TextIconButton>
+                                <TextIconButton
+                                    type="primary"
+                                    label="Hantar"
+                                    form="newOfferApproverResultForm"
+                                    onClick={() => {
+                                        $newOfferApproverResultForm.isDraft = false;
+                                    }}
+                                ></TextIconButton>
+                            {/if}
                         {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
                         <div class="flex w-full flex-col gap-2.5">
                             {#if (!data.view.newOfferDetailView.supporter.isReadonly || $newOfferSupporterResultIsDraft) && data.roles.isSupporterRole}
-                                <form
-                                    id="newOfferSupporterResultForm"
-                                    method="POST"
-                                    use:newOfferSupporterResultFormEnhance
-                                    class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                                >
-                                    <div class="mb-5">
-                                        <b class="text-sm text-system-primary"
-                                            >Penyokong</b
-                                        >
-                                    </div>
-                                    {#each $newOfferSupporterResultForm.results as _, i}
-                                        <CustomTextField
-                                            disabled={data.view
-                                                .newOfferDetailView.supporter
-                                                .isReadonly ||
-                                                !$newOfferSupporterResultIsDraft}
-                                            id="applicantId"
-                                            label="Nombor Kakitangan"
-                                            bind:val={$newOfferSupporterResultForm
-                                                .results[i].employeeNumber}
-                                        ></CustomTextField>
+                                {#if data.roles.layoutData.accountDetails.identityDocumentNumber === data.view.newOfferDetailView.supporter.identityDocumentNumber}
+                                    <form
+                                        id="newOfferSupporterResultForm"
+                                        method="POST"
+                                        use:newOfferSupporterResultFormEnhance
+                                        class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                                    >
+                                        <div class="mb-5">
+                                            <b
+                                                class="text-sm text-system-primary"
+                                                >Bahagian Penyokong</b
+                                            >
+                                        </div>
+                                        <Accordion>
+                                            {#each $newOfferSupporterResultForm.employees as _, i}
+                                                <AccordionItem
+                                                    activeClass="outline-none bg-blue-100 text-blue-600 dark:text-white"
+                                                    inactiveClasses="text-gray-500 hover:bg-blue-100"
+                                                    open={i == 0}
+                                                >
+                                                    <span
+                                                        slot="header"
+                                                        class="flex items-center gap-2 text-base"
+                                                    >
+                                                        <svg
+                                                            width="11"
+                                                            height="10"
+                                                            viewBox="0 0 11 10"
+                                                            fill="none"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                        >
+                                                            <path
+                                                                d="M10.2656 6.03906L6.51562 9.78906C6.375 9.92969 6.1875 10 6 10C5.78906 10 5.60156 9.92969 5.46094 9.78906C5.15625 9.50781 5.15625 9.01562 5.46094 8.73438L7.92188 6.25H0.75C0.328125 6.25 0 5.92188 0 5.5C0 5.10156 0.328125 4.75 0.75 4.75H7.92188L5.46094 2.28906C5.15625 2.00781 5.15625 1.51562 5.46094 1.23438C5.74219 0.929688 6.23438 0.929688 6.51562 1.23438L10.2656 4.98438C10.5703 5.26562 10.5703 5.75781 10.2656 6.03906Z"
+                                                                fill="currentColor"
+                                                            />
+                                                        </svg>
+                                                        <span
+                                                            class="font-semibold"
+                                                        >
+                                                            {!$newOfferMeetingDetailForm
+                                                                .employees[i]
+                                                                .status
+                                                                ? '[TIDAK LULUS]'
+                                                                : ''}
+                                                            {$newOfferServiceDetailForm
+                                                                .employees[i]
+                                                                .employeeName} ({$newOfferServiceDetailForm
+                                                                .employees[i]
+                                                                .employeeNumber})</span
+                                                        >
+                                                    </span>
+                                                    {#if !$newOfferMeetingDetailForm.employees[i].status}
+                                                        <StepperFailStatement />
+                                                    {:else}
+                                                        <CustomTextField
+                                                            disabled={true}
+                                                            id="applicantId"
+                                                            label="Nombor Kakitangan"
+                                                            bind:val={$newOfferSupporterResultForm
+                                                                .employees[i]
+                                                                .employeeNumber}
+                                                        ></CustomTextField>
 
-                                        <CustomTextField
-                                            disabled={data.view
-                                                .newOfferDetailView.supporter
-                                                .isReadonly ||
-                                                !$newOfferSupporterResultIsDraft}
-                                            id="applicantName"
-                                            label="Nama Kakitangan"
-                                            bind:val={$newOfferSupporterResultForm
-                                                .results[i].employeeName}
-                                        ></CustomTextField>
+                                                        <CustomTextField
+                                                            disabled={true}
+                                                            id="applicantName"
+                                                            label="Nama Kakitangan"
+                                                            bind:val={$newOfferSupporterResultForm
+                                                                .employees[i]
+                                                                .employeeName}
+                                                        ></CustomTextField>
 
-                                        <CustomTextField
-                                            disabled={data.view
-                                                .newOfferDetailView.supporter
-                                                .isReadonly ||
-                                                !$newOfferSupporterResultIsDraft}
-                                            id="supporterRemark"
-                                            label="Tindakan/Ulasan"
-                                            bind:val={$newOfferSupporterResultForm
-                                                .results[i].remarks}
-                                        ></CustomTextField>
+                                                        <CustomTextField
+                                                            disabled={data.view
+                                                                .newOfferDetailView
+                                                                .supporter
+                                                                .isReadonly &&
+                                                                !$newOfferSupporterResultIsDraft}
+                                                            id="supporterRemark"
+                                                            label="Tindakan/Ulasan"
+                                                            bind:val={$newOfferSupporterResultForm
+                                                                .employees[i]
+                                                                .remarks}
+                                                        ></CustomTextField>
 
-                                        <CustomRadioBoolean
-                                            disabled={data.view
-                                                .newOfferDetailView.supporter
-                                                .isReadonly ||
-                                                !$newOfferSupporterResultIsDraft}
-                                            id="supporterIsApproved"
-                                            options={supportOptions}
-                                            label={'Keputusan'}
-                                            bind:val={$newOfferSupporterResultForm
-                                                .results[i].status}
-                                        ></CustomRadioBoolean>
-                                    {/each}
-                                </form>
+                                                        <CustomRadioBoolean
+                                                            disabled={data.view
+                                                                .newOfferDetailView
+                                                                .supporter
+                                                                .isReadonly &&
+                                                                !$newOfferSupporterResultIsDraft}
+                                                            id="supporterIsApproved"
+                                                            options={supportOptions}
+                                                            label={'Keputusan'}
+                                                            bind:val={$newOfferSupporterResultForm
+                                                                .employees[i]
+                                                                .status}
+                                                        ></CustomRadioBoolean>
+                                                    {/if}
+                                                </AccordionItem>
+                                            {/each}
+                                        </Accordion>
+                                    </form>
+                                {/if}
                             {:else if (!data.view.newOfferDetailView.approver.isReadonly || $newOfferApproverResultIsDraft) && data.roles.isApproverRole}
-                                <form
-                                    id="newOfferApproverResultForm"
-                                    method="POST"
-                                    use:newOfferApproverResultFormEnhance
-                                    class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                                >
-                                    <div class="mb-5">
-                                        <b class="text-sm text-system-primary"
-                                            >Pelulus</b
-                                        >
-                                    </div>
-                                    {#each $newOfferApproverResultForm.results as _, i}
-                                        <CustomTextField
-                                            disabled={data.view
-                                                .newOfferDetailView.approver
-                                                .isReadonly ||
-                                                !$newOfferApproverResultIsDraft}
-                                            id="applicantId"
-                                            label="Nombor Kakitangan"
-                                            bind:val={$newOfferApproverResultForm
-                                                .results[i].employeeNumber}
-                                        ></CustomTextField>
+                                {#if data.roles.layoutData.accountDetails.identityDocumentNumber === data.view.newOfferDetailView.approver.identityDocumentNumber}
+                                    <form
+                                        id="newOfferApproverResultForm"
+                                        method="POST"
+                                        use:newOfferApproverResultFormEnhance
+                                        class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                                    >
+                                        <div class="mb-5">
+                                            <b
+                                                class="text-sm text-system-primary"
+                                                >Bahagian Pelulus</b
+                                            >
+                                        </div>
+                                        <Accordion>
+                                            {#each $newOfferApproverResultForm.employees as _, i}
+                                                <AccordionItem
+                                                    activeClass="outline-none bg-blue-100 text-blue-600 dark:text-white"
+                                                    inactiveClasses="text-gray-500 hover:bg-blue-100"
+                                                    open={i == 0}
+                                                >
+                                                    <span
+                                                        slot="header"
+                                                        class="flex items-center gap-2 text-base"
+                                                    >
+                                                        <svg
+                                                            width="11"
+                                                            height="10"
+                                                            viewBox="0 0 11 10"
+                                                            fill="none"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                        >
+                                                            <path
+                                                                d="M10.2656 6.03906L6.51562 9.78906C6.375 9.92969 6.1875 10 6 10C5.78906 10 5.60156 9.92969 5.46094 9.78906C5.15625 9.50781 5.15625 9.01562 5.46094 8.73438L7.92188 6.25H0.75C0.328125 6.25 0 5.92188 0 5.5C0 5.10156 0.328125 4.75 0.75 4.75H7.92188L5.46094 2.28906C5.15625 2.00781 5.15625 1.51562 5.46094 1.23438C5.74219 0.929688 6.23438 0.929688 6.51562 1.23438L10.2656 4.98438C10.5703 5.26562 10.5703 5.75781 10.2656 6.03906Z"
+                                                                fill="currentColor"
+                                                            />
+                                                        </svg>
+                                                        <span
+                                                            class="font-semibold"
+                                                        >
+                                                            {!$newOfferMeetingDetailForm
+                                                                .employees[i]
+                                                                .status
+                                                                ? '[TIDAK LULUS]'
+                                                                : ''}
+                                                            {$newOfferServiceDetailForm
+                                                                .employees[i]
+                                                                .employeeName} ({$newOfferServiceDetailForm
+                                                                .employees[i]
+                                                                .employeeNumber})</span
+                                                        >
+                                                    </span>
+                                                    {#if !$newOfferMeetingDetailForm.employees[i].status}
+                                                        <StepperFailStatement />
+                                                    {:else}
+                                                        <CustomTextField
+                                                            disabled={true}
+                                                            id="applicantId"
+                                                            label="Nombor Kakitangan"
+                                                            bind:val={$newOfferApproverResultForm
+                                                                .employees[i]
+                                                                .employeeNumber}
+                                                        ></CustomTextField>
 
-                                        <CustomTextField
-                                            disabled={data.view
-                                                .newOfferDetailView.approver
-                                                .isReadonly ||
-                                                !$newOfferApproverResultIsDraft}
-                                            id="applicantName"
-                                            label="Nama Kakitangan"
-                                            bind:val={$newOfferApproverResultForm
-                                                .results[i].employeeName}
-                                        ></CustomTextField>
+                                                        <CustomTextField
+                                                            disabled={true}
+                                                            id="applicantName"
+                                                            label="Nama Kakitangan"
+                                                            bind:val={$newOfferApproverResultForm
+                                                                .employees[i]
+                                                                .employeeName}
+                                                        ></CustomTextField>
 
-                                        <CustomTextField
-                                            disabled={data.view
-                                                .newOfferDetailView.approver
-                                                .isReadonly ||
-                                                !$newOfferApproverResultIsDraft}
-                                            id="approverRemark"
-                                            label="Tindakan/Ulasan"
-                                            bind:val={$newOfferApproverResultForm
-                                                .results[i].remarks}
-                                        ></CustomTextField>
+                                                        <CustomTextField
+                                                            disabled={data.view
+                                                                .newOfferDetailView
+                                                                .approver
+                                                                .isReadonly &&
+                                                                !$newOfferApproverResultIsDraft}
+                                                            id="approverRemark"
+                                                            label="Tindakan/Ulasan"
+                                                            bind:val={$newOfferApproverResultForm
+                                                                .employees[i]
+                                                                .remarks}
+                                                        ></CustomTextField>
 
-                                        <CustomRadioBoolean
-                                            disabled={data.view
-                                                .newOfferDetailView.approver
-                                                .isReadonly ||
-                                                !$newOfferApproverResultIsDraft}
-                                            id="approverIsApproved"
-                                            options={approveOptions}
-                                            label={'Keputusan'}
-                                            bind:val={$newOfferApproverResultForm
-                                                .results[i].status}
-                                        ></CustomRadioBoolean>
-                                    {/each}
-                                </form>
+                                                        <CustomRadioBoolean
+                                                            disabled={data.view
+                                                                .newOfferDetailView
+                                                                .approver
+                                                                .isReadonly &&
+                                                                !$newOfferApproverResultIsDraft}
+                                                            id="approverIsApproved"
+                                                            options={approveOptions}
+                                                            label={'Keputusan'}
+                                                            bind:val={$newOfferApproverResultForm
+                                                                .employees[i]
+                                                                .status}
+                                                        ></CustomRadioBoolean>
+                                                    {/if}
+                                                </AccordionItem>
+                                            {/each}
+                                        </Accordion>
+                                    </form>
+                                {/if}
                             {/if}
 
                             <div
                                 class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
                             >
                                 <div class="mb-5">
+                                    <b class="text-base text-black"
+                                        >Keputusan peranan (-peranan) berkaitan</b
+                                    >
+                                </div>
+                                <div class="mb-5">
                                     <b class="text-sm text-system-primary"
                                         >1. Penyokong</b
                                     >
                                 </div>
-                                {#if $isReadOnlyNewOfferSupporterResult}
-                                    {#each $newOfferSupporterResultForm.results as _, i}
-                                        <CustomTextField
-                                            disabled
-                                            id="applicantId"
-                                            label="Nombor Kakitangan"
-                                            bind:val={$newOfferSupporterResultForm
-                                                .results[i].employeeNumber}
-                                        ></CustomTextField>
+                                {#if data.view.newOfferDetailView.supporter.isReadonly && !$newOfferSupporterResultIsDraft}
+                                    <Accordion>
+                                        {#each $newOfferSupporterResultForm.employees as _, i}
+                                            <AccordionItem
+                                                activeClass="outline-none bg-blue-100 text-blue-600 dark:text-white"
+                                                inactiveClasses="text-gray-500 hover:bg-blue-100"
+                                                open={i == 0}
+                                            >
+                                                <span
+                                                    slot="header"
+                                                    class="flex items-center gap-2 text-base"
+                                                >
+                                                    <svg
+                                                        width="11"
+                                                        height="10"
+                                                        viewBox="0 0 11 10"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path
+                                                            d="M10.2656 6.03906L6.51562 9.78906C6.375 9.92969 6.1875 10 6 10C5.78906 10 5.60156 9.92969 5.46094 9.78906C5.15625 9.50781 5.15625 9.01562 5.46094 8.73438L7.92188 6.25H0.75C0.328125 6.25 0 5.92188 0 5.5C0 5.10156 0.328125 4.75 0.75 4.75H7.92188L5.46094 2.28906C5.15625 2.00781 5.15625 1.51562 5.46094 1.23438C5.74219 0.929688 6.23438 0.929688 6.51562 1.23438L10.2656 4.98438C10.5703 5.26562 10.5703 5.75781 10.2656 6.03906Z"
+                                                            fill="currentColor"
+                                                        />
+                                                    </svg>
+                                                    <span class="font-semibold">
+                                                        {!$newOfferMeetingDetailForm
+                                                            .employees[i].status
+                                                            ? '[TIDAK LULUS]'
+                                                            : ''}
+                                                        {$newOfferServiceDetailForm
+                                                            .employees[i]
+                                                            .employeeName} ({$newOfferServiceDetailForm
+                                                            .employees[i]
+                                                            .employeeNumber})</span
+                                                    >
+                                                </span>
+                                                {#if !$newOfferMeetingDetailForm.employees[i].status}
+                                                    <StepperFailStatement />
+                                                {:else}
+                                                    <CustomTextField
+                                                        disabled={true}
+                                                        id="applicantId"
+                                                        label="Nombor Kakitangan"
+                                                        bind:val={$newOfferSupporterResultForm
+                                                            .employees[i]
+                                                            .employeeNumber}
+                                                    ></CustomTextField>
 
-                                        <CustomTextField
-                                            disabled
-                                            id="applicantName"
-                                            label="Nama Kakitangan"
-                                            bind:val={$newOfferSupporterResultForm
-                                                .results[i].employeeName}
-                                        ></CustomTextField>
+                                                    <CustomTextField
+                                                        disabled={true}
+                                                        id="applicantName"
+                                                        label="Nama Kakitangan"
+                                                        bind:val={$newOfferSupporterResultForm
+                                                            .employees[i]
+                                                            .employeeName}
+                                                    ></CustomTextField>
 
-                                        <CustomTextField
-                                            disabled
-                                            id="supporterRemark"
-                                            label="Tindakan/Ulasan"
-                                            bind:val={$newOfferSupporterResultForm
-                                                .results[i].remarks}
-                                        ></CustomTextField>
+                                                    <CustomTextField
+                                                        disabled={true}
+                                                        id="supporterRemark"
+                                                        label="Tindakan/Ulasan"
+                                                        bind:val={$newOfferSupporterResultForm
+                                                            .employees[i]
+                                                            .remarks}
+                                                    ></CustomTextField>
 
-                                        <CustomSelectField
-                                            disabled
-                                            id="supporterStatus"
-                                            options={supportOptions}
-                                            label={'Keputusan'}
-                                            bind:val={$newOfferSupporterResultForm
-                                                .results[i].status}
-                                        ></CustomSelectField>
-                                        <CustomTextField
-                                            disabled
-                                            isRequired={false}
-                                            id="approvalDate"
-                                            label="Tarikh Kelulusan"
-                                            type="date"
-                                            placeholder="-"
-                                            bind:val={$newOfferSupporterResultForm
-                                                .results[i].approvalDate}
-                                        ></CustomTextField>
-                                    {/each}
+                                                    <CustomRadioBoolean
+                                                        disabled={true}
+                                                        id="supporterIsApproved"
+                                                        options={supportOptions}
+                                                        label={'Keputusan'}
+                                                        bind:val={$newOfferSupporterResultForm
+                                                            .employees[i]
+                                                            .status}
+                                                    ></CustomRadioBoolean>
+                                                {/if}
+                                            </AccordionItem>
+                                        {/each}
+                                    </Accordion>
                                 {:else}
                                     <StepperOtherRolesResult />
                                 {/if}
@@ -1492,51 +1666,85 @@
                                         >2. Pelulus</b
                                     >
                                 </div>
-                                {#if $isReadOnlyNewOfferApprovalResult}
-                                    {#each $newOfferApproverResultForm.results as _, i}
-                                        <CustomTextField
-                                            disabled
-                                            id="applicantId"
-                                            label="Nombor Kakitangan"
-                                            bind:val={$newOfferApproverResultForm
-                                                .results[i].employeeNumber}
-                                        ></CustomTextField>
+                                {#if data.view.newOfferDetailView.approver.isReadonly && !$newOfferApproverResultIsDraft}
+                                    <Accordion>
+                                        {#each $newOfferApproverResultForm.employees as _, i}
+                                            <AccordionItem
+                                                activeClass="outline-none bg-blue-100 text-blue-600 dark:text-white"
+                                                inactiveClasses="text-gray-500 hover:bg-blue-100"
+                                                open={i == 0}
+                                            >
+                                                <span
+                                                    slot="header"
+                                                    class="flex items-center gap-2 text-base"
+                                                >
+                                                    <svg
+                                                        width="11"
+                                                        height="10"
+                                                        viewBox="0 0 11 10"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path
+                                                            d="M10.2656 6.03906L6.51562 9.78906C6.375 9.92969 6.1875 10 6 10C5.78906 10 5.60156 9.92969 5.46094 9.78906C5.15625 9.50781 5.15625 9.01562 5.46094 8.73438L7.92188 6.25H0.75C0.328125 6.25 0 5.92188 0 5.5C0 5.10156 0.328125 4.75 0.75 4.75H7.92188L5.46094 2.28906C5.15625 2.00781 5.15625 1.51562 5.46094 1.23438C5.74219 0.929688 6.23438 0.929688 6.51562 1.23438L10.2656 4.98438C10.5703 5.26562 10.5703 5.75781 10.2656 6.03906Z"
+                                                            fill="currentColor"
+                                                        />
+                                                    </svg>
+                                                    <span class="font-semibold">
+                                                        {!$newOfferMeetingDetailForm
+                                                            .employees[i].status
+                                                            ? '[TIDAK LULUS]'
+                                                            : ''}
+                                                        {$newOfferServiceDetailForm
+                                                            .employees[i]
+                                                            .employeeName} ({$newOfferServiceDetailForm
+                                                            .employees[i]
+                                                            .employeeNumber})</span
+                                                    >
+                                                </span>
+                                                {#if !$newOfferMeetingDetailForm.employees[i].status}
+                                                    <StepperFailStatement />
+                                                {:else}
+                                                    <CustomTextField
+                                                        disabled={true}
+                                                        id="applicantId"
+                                                        label="Nombor Kakitangan"
+                                                        bind:val={$newOfferApproverResultForm
+                                                            .employees[i]
+                                                            .employeeNumber}
+                                                    ></CustomTextField>
 
-                                        <CustomTextField
-                                            disabled
-                                            id="applicantName"
-                                            label="Nama Kakitangan"
-                                            bind:val={$newOfferApproverResultForm
-                                                .results[i].employeeName}
-                                        ></CustomTextField>
+                                                    <CustomTextField
+                                                        disabled={true}
+                                                        id="applicantName"
+                                                        label="Nama Kakitangan"
+                                                        bind:val={$newOfferApproverResultForm
+                                                            .employees[i]
+                                                            .employeeName}
+                                                    ></CustomTextField>
 
-                                        <CustomTextField
-                                            disabled
-                                            id="approverRemark"
-                                            label="Tindakan/Ulasan"
-                                            bind:val={$newOfferApproverResultForm
-                                                .results[i].remarks}
-                                        ></CustomTextField>
+                                                    <CustomTextField
+                                                        disabled={true}
+                                                        id="approverRemark"
+                                                        label="Tindakan/Ulasan"
+                                                        bind:val={$newOfferApproverResultForm
+                                                            .employees[i]
+                                                            .remarks}
+                                                    ></CustomTextField>
 
-                                        <CustomSelectField
-                                            disabled
-                                            id="approverStatus"
-                                            options={approveOptions}
-                                            label={'Keputusan'}
-                                            bind:val={$newOfferApproverResultForm
-                                                .results[i].status}
-                                        ></CustomSelectField>
-                                        <CustomTextField
-                                            disabled
-                                            isRequired={false}
-                                            id="approvalDate"
-                                            label="Tarikh Kelulusan"
-                                            type="date"
-                                            placeholder="-"
-                                            bind:val={$newOfferApproverResultForm
-                                                .results[i].approvalDate}
-                                        ></CustomTextField>
-                                    {/each}
+                                                    <CustomRadioBoolean
+                                                        disabled={true}
+                                                        id="approverIsApproved"
+                                                        options={approveOptions}
+                                                        label={'Keputusan'}
+                                                        bind:val={$newOfferApproverResultForm
+                                                            .employees[i]
+                                                            .status}
+                                                    ></CustomRadioBoolean>
+                                                {/if}
+                                            </AccordionItem>
+                                        {/each}
+                                    </Accordion>
                                 {:else}
                                     <StepperOtherRolesResult />
                                 {/if}

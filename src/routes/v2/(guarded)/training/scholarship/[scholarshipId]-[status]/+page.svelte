@@ -4,11 +4,9 @@
     import {
         integrityOptions,
         supportOptions,
-        confirmOptions,
     } from '$lib/constants/core/radio-option-constants';
-    import { Badge, Checkbox } from 'flowbite-svelte';
+    import { Checkbox } from 'flowbite-svelte';
     import {
-        approveOptions,
         certifyOptions,
     } from '$lib/constants/core/radio-option-constants';
     import { writable } from 'svelte/store';
@@ -26,11 +24,13 @@
     import FileInputField from '$lib/components/inputs/file-input-field/FileInputField.svelte';
     import FileInputFieldChildren from '$lib/components/inputs/file-input-field/FileInputFieldChildren.svelte';
     import { goto } from '$app/navigation';
+    import { onMount } from 'svelte';
     import {
         _addCourseSecretaryApprovalForm,
         _addIntegritySecretaryApprovalForm,
         _addStateUnitSecretaryApprovalForm,
         _createFundApplicationForm,
+        _getAverage,
         _submitDocumentForm,
         _submitSecretarySetApproverForm,
     } from './+layout';
@@ -43,13 +43,15 @@
         _fundApplicationUploadDocSchema,
         _setApproversSchema,
     } from '$lib/schemas/mypsm/course/fund-application-schema';
-    import { CourseFundApplicationServices } from '$lib/services/implementation/mypsm/latihan/fundApplication.service';
     import type { LayoutData } from './$types';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import SvgMinusCircle from '$lib/assets/svg/SvgMinusCircle.svelte';
     import StatusPill from '$lib/components/status-pills/StatusPill.svelte';
+    import CustomTable from '$lib/components/table/CustomTable.svelte';
+    import type { TableDTO } from '$lib/dto/core/table/table.dto';
     export let data: LayoutData;
 
+    let tableLNPT: TableDTO = data.tableLNPT;
     let isReadonlyStateUnitDirectorApprovalResult = writable<boolean>(false);
     let isReadonlyIntegritySecretaryApprovalResult = writable<boolean>(false);
     let isReadonlyCourseSecretaryApprovalResult = writable<boolean>(false);
@@ -371,6 +373,33 @@
             return index !== i;
         });
     };
+
+    tableLNPT.param.filter.years = new Date().getFullYear();
+    tableLNPT.param.filter.duration = 3;
+    async function _generateAverage() {
+        const currentEmployeeId: number = Number(data.forms.fundApplicationPersonalInfoForm.data.employeeId);
+
+        let employeeIds: number[] = [currentEmployeeId];
+
+        tableLNPT.param.filter.employeeIds = employeeIds;
+
+        _getAverage(tableLNPT.param).then((value) => {
+            tableLNPT.data =
+                value.props.lnptAverageResponse.data?.dataList ?? [];
+            tableLNPT.meta = value.props.lnptAverageResponse.data?.meta ?? {
+                pageSize: 5,
+                pageNum: 1,
+                totalData: 1,
+                totalPage: 1,
+            };
+            tableLNPT.param.pageSize = tableLNPT.meta.pageSize ?? 5;
+            tableLNPT.param.pageNum = tableLNPT.meta.pageNum ?? 1;
+        });
+    }
+
+    onMount(() => {
+        _generateAverage();
+    })
 </script>
 
 <ContentHeader title="Maklumat Pembiayaan Pelajaran">
@@ -923,6 +952,21 @@
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
+        <StepperContentHeader title="Maklumat LNPT" />
+        <StepperContentBody>
+            <div class="h-fit max-h-full w-full pb-5">
+                <CustomTable
+                    tableId="lnptAverage"
+                    title="Purata LNPT Dari Tahun {tableLNPT.param.filter
+                        .years} Sepanjang Tempoh {tableLNPT.param.filter
+                        .duration} Tahun"
+                    bind:tableData={tableLNPT}
+                    onUpdate={_generateAverage}
+                ></CustomTable>
+            </div>
+        </StepperContentBody>
+    </StepperContent>
+    <StepperContent>
         <StepperContentHeader title="Maklumat Pembelajaran Diikuti">
             {#if $fundApplicationIsDraft && data.role.isStaffRole}
                 <TextIconButton
@@ -1443,6 +1487,7 @@
                         title="Keputusan daripada Peranan - Peranan Lain"
                     >
                         {#if !$fundApplicationIsFail && (!$isReadonlyStateUnitDirectorApprovalResult || $stateUnitDirectorApprovalResultIsDraft) && (data.role.isStateDirectorRole || data.role.isUnitDirectorRole)}
+                        <!-- {#if data.role.layoutData.accountDetails.identityDocumentNumber === data.forms.fundApplicationStateUnitDirectorApprovalForm.identityDocumentNumber} -->
                             <TextIconButton
                                 type="neutral"
                                 label="Simpan"
@@ -1459,6 +1504,7 @@
                                     $stateUnitDirectorApprovalInfoForm.isDraft = false;
                                 }}
                             />
+                            <!-- {/if} -->
                         {:else if !$fundApplicationIsFail && (($isReadonlyStateUnitDirectorApprovalResult && !$isReadonlyIntegritySecretaryApprovalResult) || $integritySecretaryApprovalResultIsDraft) && data.role.isIntegritySecretaryRole && !$stateUnitDirectorApprovalResultIsDraft}
                             <TextIconButton
                                 type="neutral"

@@ -1,4 +1,5 @@
 export interface CommonEmployeeDTO {
+    id: number;
     employeeId: number;
     employeeNumber: string | null;
     name: string | null;
