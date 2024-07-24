@@ -1487,6 +1487,7 @@
                         title="Keputusan daripada Peranan - Peranan Lain"
                     >
                         {#if !$fundApplicationIsFail && (!$isReadonlyStateUnitDirectorApprovalResult || $stateUnitDirectorApprovalResultIsDraft) && (data.role.isStateDirectorRole || data.role.isUnitDirectorRole)}
+                        <!-- {#if data.role.layoutData.accountDetails.identityDocumentNumber === data.forms.fundApplicationStateUnitDirectorApprovalForm.identityDocumentNumber} -->
                             <TextIconButton
                                 type="neutral"
                                 label="Simpan"
@@ -1503,6 +1504,7 @@
                                     $stateUnitDirectorApprovalInfoForm.isDraft = false;
                                 }}
                             />
+                            <!-- {/if} -->
                         {:else if !$fundApplicationIsFail && (($isReadonlyStateUnitDirectorApprovalResult && !$isReadonlyIntegritySecretaryApprovalResult) || $integritySecretaryApprovalResultIsDraft) && data.role.isIntegritySecretaryRole && !$stateUnitDirectorApprovalResultIsDraft}
                             <TextIconButton
                                 type="neutral"

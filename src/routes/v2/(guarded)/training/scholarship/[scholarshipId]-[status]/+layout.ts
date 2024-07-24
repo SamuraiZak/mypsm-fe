@@ -446,6 +446,7 @@ export async function load({ params, parent }) {
             programLookup,
         },
         role: {
+            layoutData,
             isStaffRole,
             isCourseSecretaryRole,
             isIntegritySecretaryRole,
