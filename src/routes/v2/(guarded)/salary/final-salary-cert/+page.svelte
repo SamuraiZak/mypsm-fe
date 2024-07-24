@@ -33,7 +33,7 @@
         data: data.finalPayslipList,
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['id'],
+        hiddenColumn: ['id', 'identityDocumentNumber'],
         dictionary: [
             {
                 english: 'icNumber',
@@ -42,6 +42,14 @@
             {
                 english: 'allowances',
                 malay: 'Elaun',
+            },
+            {
+                english: 'baseSalary',
+                malay: 'Gaji Pokok (RM)',
+            },
+            {
+                english: 'name',
+                malay: 'Nama Kakitangan',
             },
         ],
         url: 'salary/final_payslip/list',
@@ -55,6 +63,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
 

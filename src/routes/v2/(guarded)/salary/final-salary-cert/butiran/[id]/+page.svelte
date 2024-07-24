@@ -435,14 +435,14 @@
                             disabled
                             val={data.form.employeeSalaryDetail.grade}
                         />
-                        <CustomSelectField
+                        <!-- <CustomSelectField
                             id="serviceTypeId"
                             label="Lantikan"
                             isRequired={false}
                             options={data.props.lookup.serviceTypeLookup}
                             disabled
                             val={data.form.employeeServiceDetail.serviceTypeId}
-                        />
+                        /> -->
                         <CustomTextField
                             id="annualSalary"
                             label="Gaji atau Pencen Setahun (RM)"
@@ -481,7 +481,7 @@
                         bind:total={totalDeduction}
                     />
                     <div
-                        class="w-2/6 rounded-md border p-2 text-base font-medium text-ios-labelColors-secondaryLabel-light"
+                        class="hidden w-2/6 rounded-md border p-2 text-base font-medium text-ios-labelColors-secondaryLabel-light"
                     >
                         <span
                             >Jumlah Keseluruhan (RM): {overallTotal.toFixed(
@@ -519,6 +519,17 @@
                                 >Sijil Gaji Akhir - {data.form
                                     .employeeSalaryDetail.name}</a
                             >
+                        {:else if !submittedSalaryDetail}
+                        <div class="w-full">
+                            <Alert color="blue">
+                                <p>
+                                    <span class="font-medium"
+                                        >Maklumat:
+                                    </span>
+                                    Menunggu maklumat gaji dan potongan kakitangan dikemaskini.
+                                </p>
+                            </Alert>
+                        </div>     
                         {:else}
                             <div class="w-full">
                                 <Alert color="blue">
@@ -526,7 +537,7 @@
                                         <span class="font-medium"
                                             >Arahan:
                                         </span>
-                                        Klik butang yang disediakan untuk menjana
+                                        Klik pada butang yang disediakan untuk menjana
                                         Sijil Gaji Akhir Kakitangan.
                                     </p>
                                 </Alert>
