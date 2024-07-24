@@ -246,7 +246,7 @@
     <div class="w-full">
         <CustomSelectField
             id="actingPosition"
-            label="Jawatan"
+            label="Gred dan Jawatan"
             options={data.positionLookup}
             bind:val={selectedGrade}
         />

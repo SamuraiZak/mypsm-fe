@@ -250,12 +250,8 @@
         data: data.interviewInfo,
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['actingId'],
+        hiddenColumn: ['actingId','selectionResult'],
         dictionary: [
-            {
-                english: 'selectionResult',
-                malay: 'Keputusan Pemilihan',
-            },
             {
                 english: 'programme',
                 malay: 'Program',
@@ -319,7 +315,7 @@
         option: {
             checkbox: false,
             detail: false,
-            edit: !allMarked ? true : false,
+            edit: true,
             select: false,
             filter: false,
         },
@@ -331,9 +327,9 @@
     };
 
     //control stepper keputusan temuduga
-    $: interviewResultTable.data = interviewResultTable.data;
+    // $: interviewResultTable.data = interviewResultTable.data;
     $: allMarked = data.interviewResult.every((item) => item.marks !== null);
-    $: interviewResultTable.option.edit = !allMarked;
+    // $: interviewResultTable.option.edit = !allMarked;
 
     let promotionMeetingResultTable: TableSettingDTO = {
         param: data.chosenEmployeeParam,
@@ -826,6 +822,7 @@
             ).then((res) => {
                 if (res?.response.status == 'success') {
                     updatedPromotionMeetingResult = true;
+                    placementTable.data = data.placementDetail;
                 }
             });
         },
@@ -3788,7 +3785,6 @@
                         id="marks"
                         isRequired={false}
                         type="number"
-                        disabled={allMarked}
                         placeholder=""
                         bind:val={$updateMeetingResultForm.marks}
                         errors={$updateMeetingResultError.marks}
