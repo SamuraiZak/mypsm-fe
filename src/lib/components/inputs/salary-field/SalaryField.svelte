@@ -65,7 +65,7 @@
 </script>
 
 <div
-    class="flex h-full max-h-full w-full flex-col gap-5 rounded-md border py-3"
+    class="flex h-full max-h-full w-full flex-col gap-5 rounded-md border pb-1 pt-5 {disabled ? "px-5" : "px-0"}"
 >
     <span
         class="pl-3 text-sm font-semibold text-ios-activeColors-activeBlue-dark"
@@ -120,7 +120,7 @@
                 {#each rowData as val, i}
                     <!-- Check if value is empty, remove the row from displaying -->
                     <tr class="h-10">
-                        <td class="h-full px-2.5 text-right">
+                        <td class="h-full px-2.5 {disabled ? "text-center" : "text-right"}">
                             <span
                                 class="relative text-center align-middle text-sm font-normal text-ios-labelColors-secondaryLabel-light"
                                 >{i + 1}
