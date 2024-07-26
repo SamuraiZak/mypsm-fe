@@ -127,6 +127,7 @@ export const _proceedingAccusationSchema = z.object({
 export const _proceedingChargeMeetingRequestSchema = z
     .object({
         employeeId: z.number(),
+        isDraft: z.boolean().nullable(),
         meetingDate: dateStringSchema,
         meetingName: shortTextSchema,
         meetingCount: numberSchema,
@@ -394,6 +395,7 @@ export const _proceedingSuspensionCriminalCancelSchema = z.object({
 export const _proceedingSuspensionSchema = z
     .object({
         employeeId: z.number().readonly(),
+        isDraft: z.boolean().nullable(),
         meetingDate: dateStringSchema.nullable(),
         meetingName: shortTextSchema,
         meetingCount: numberSchema,
