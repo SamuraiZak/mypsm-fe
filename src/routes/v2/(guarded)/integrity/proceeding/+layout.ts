@@ -98,25 +98,3 @@ export const load = async ({parent}) => {
         },
     };
 };
-
-export const _updateChargeTable = async (param: CommonListRequestDTO) => {
-    const response: CommonResponseDTO =
-        await IntegrityProceedingServices.getProceedingChargeRecordList(param);
-
-    return {
-        param,
-        response,
-    };
-};
-
-export const _updateSuspensionTable = async (param: CommonListRequestDTO) => {
-    const response: CommonResponseDTO =
-        await IntegrityProceedingServices.getProceedingSuspensionRecordList(
-            param,
-        );
-
-    return {
-        param,
-        response,
-    };
-};
