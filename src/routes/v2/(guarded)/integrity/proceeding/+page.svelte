@@ -4,7 +4,6 @@
     import { goto } from '$app/navigation';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import FilterSelectField from '$lib/components/table/filter/FilterSelectField.svelte';
-    import { _updateChargeTable, _updateSuspensionTable } from './+layout';
     import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
     import CustomTab from '$lib/components/tab/CustomTab.svelte';
     import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
@@ -142,7 +141,7 @@
                         bind:tableData={chargeListTable}
                         bind:passData={rowData}
                         detailActions={() => {
-                            const route = `./proceeding/${rowData.integrityId}-${rowData.employeeId}-${rowData.isAppeal}`;
+                            const route = `./proceeding/${rowData.integrityId}-${rowData.employeeId}-${rowData.isAppeal}-${rowData.status}`;
 
                             goto(route);
                         }}
@@ -180,7 +179,7 @@
                         bind:tableData={suspendListTable}
                         bind:passData={rowData}
                         detailActions={() => {
-                            const route = `./proceeding/suspend-${rowData.integrityId}-${rowData.employeeId}`;
+                            const route = `./proceeding/suspend-${rowData.integrityId}-${rowData.employeeId}-${rowData.status}`;
 
                             goto(route);
                         }}
@@ -229,7 +228,7 @@
                             bind:tableData={chargeListTable}
                             bind:passData={rowData}
                             detailActions={() => {
-                                const route = `./proceeding/${rowData.integrityId}-${rowData.employeeId}-${rowData.isAppeal}`;
+                                const route = `./proceeding/${rowData.integrityId}-${rowData.employeeId}-${rowData.isAppeal}-${rowData.status}`;
 
                                 goto(route);
                             }}
@@ -277,7 +276,7 @@
                                 bind:tableData={suspendListTable}
                                 bind:passData={rowData}
                                 detailActions={() => {
-                                    const route = `./proceeding/suspend-${rowData.integrityId}-${rowData.employeeId}`;
+                                    const route = `./proceeding/suspend-${rowData.integrityId}-${rowData.employeeId}-${rowData.status}`;
 
                                     goto(route);
                                 }}

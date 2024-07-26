@@ -88,7 +88,7 @@
                 bind:tableData={chargeListTable}
                 bind:passData={rowData}
                 detailActions={() => {
-                    const route = `../integrity/proceeding/${rowData.integrityId}-${rowData.employeeId}-${rowData.isAppeal}`;
+                    const route = `../integrity/proceeding/${rowData.integrityId}-${rowData.employeeId}-${rowData.isAppeal}-${rowData.status}`;
 
                     goto(route);
                 }}
