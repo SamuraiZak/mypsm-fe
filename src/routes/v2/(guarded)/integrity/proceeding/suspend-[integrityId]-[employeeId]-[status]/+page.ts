@@ -105,6 +105,13 @@ export async function load({ params }) {
         LookupServices.setSelectOptionsBothAreCode(gradeLookupResponse);
 
     // ===========================================================================
+    const proceedingAppealLookupResponse: CommonResponseDTO =
+        await LookupServices.getProceedingAppealsEnums();
+
+    const proceedingAppealLookup: DropdownDTO[] =
+        LookupServices.setSelectOptionsBothAreCode(proceedingAppealLookupResponse);
+
+    // ===========================================================================
 
     const generalLookup: DropdownDTO[] = [
         {
