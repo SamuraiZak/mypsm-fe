@@ -1,4 +1,5 @@
 <script lang="ts">
+    import SvgXMark from './../../../../../../../lib/assets/svg/SvgXMark.svelte';
     import DocumentInput from '$lib/components/document-input/DocumentInput.svelte';
     import SuratPertukaran from '$lib/components/letter/SuratPertukaran.svelte';
     import SingleChoiceInput from '$lib/components/inputs/single-choice-input/SingleChoiceInput.svelte';
@@ -6,14 +7,13 @@
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
-
+    import type { PageData } from './$types';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
     import { goto } from '$app/navigation';
     import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
-    import type { PageData } from './$types';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
     import {
         approveAltOptions,
@@ -23,10 +23,237 @@
     } from '$lib/constants/core/radio-option-constants';
     import CustomBanner from '$lib/components/banner/CustomBanner.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
+    import { superForm } from 'sveltekit-superforms';
+    import { zodClient } from 'sveltekit-superforms/adapters';
+    import {
+        TransferApplicationAcceptanceLetterDetailSchema,
+        TransferApplicationAssignDirectorSchema,
+        TransferApplicationAssignPostponeApproverSchema,
+        TransferApplicationConfirmationSchema,
+        TransferApplicationDirectorSupportSchema,
+        TransferApplicationEmployeeDetailSchema,
+        TransferApplicationEndorsementSchema,
+        TransferApplicationEndorserDetailSchema,
+        TransferApplicationMeetingResultSchema,
+        TransferApplicationPostponeDetailSchema,
+        TransferApplicationPostponeLetterDetailSchema,
+        TransferApplicationServiceDetailSchema,
+        TransferApplicationTransferDetailSchema,
+        TransferApplicationTransferDocumentSchema,
+        type EthicalIssueType,
+        type TransferApplicationAcceptanceLetterDetailType,
+    } from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
 
     export let data: PageData;
 
     let selectedValue: string = 'Disokong tanpa pengganti';
+
+    // employee detail
+    const {
+        form: employeeDetailForm,
+        errors: employeeDetailErrors,
+        enhance: employeeDetailEnhance,
+    } = superForm(data.forms.employeeDetailForm, {
+        id: 'employeeDetailForm',
+        SPA: true,
+        validators: zodClient(TransferApplicationEmployeeDetailSchema),
+        onSubmit(input) {},
+    });
+
+    // service detail
+    const {
+        form: serviceDetailForm,
+        errors: serviceDetailErrors,
+        enhance: serviceDetailEnhance,
+    } = superForm(data.forms.serviceDetailForm, {
+        id: 'serviceDetailForm',
+        SPA: true,
+        validators: zodClient(TransferApplicationServiceDetailSchema),
+        onSubmit(input) {},
+    });
+
+    // transfer detail
+    const {
+        form: transferDetailForm,
+        errors: transferDetailErrors,
+        enhance: transferDetailEnhance,
+    } = superForm(data.forms.transferDetailForm, {
+        id: 'transferDetailForm',
+        SPA: true,
+        validators: zodClient(TransferApplicationTransferDetailSchema),
+        onSubmit(input) {},
+    });
+
+    // applicationConfirmation
+    const {
+        form: applicationConfirmationForm,
+        errors: applicationConfirmationErrors,
+        enhance: applicationConfirmationEnhance,
+    } = superForm(data.forms.applicationConfirmationForm, {
+        id: 'applicationConfirmationForm',
+        SPA: true,
+        validators: zodClient(TransferApplicationConfirmationSchema),
+        onSubmit(input) {},
+    });
+
+    // assignDirector
+    const {
+        form: assignDirectorForm,
+        errors: assignDirectorErrors,
+        enhance: assignDirectorEnhance,
+    } = superForm(data.forms.assignDirectorForm, {
+        id: 'assignDirectorForm',
+        SPA: true,
+        validators: zodClient(TransferApplicationAssignDirectorSchema),
+        onSubmit(input) {},
+    });
+
+    // directorSupport
+    const {
+        form: directorSupportForm,
+        errors: directorSupportErrors,
+        enhance: directorSupportEnhance,
+    } = superForm(data.forms.directorSupportForm, {
+        id: 'directorSupportForm',
+        SPA: true,
+        validators: zodClient(TransferApplicationDirectorSupportSchema),
+        onSubmit(input) {},
+    });
+
+    // meetingResult
+    const {
+        form: meetingResultForm,
+        errors: meetingResultErrors,
+        enhance: meetingResultEnhance,
+    } = superForm(data.forms.meetingResultForm, {
+        id: 'meetingResultForm',
+        SPA: true,
+        validators: zodClient(TransferApplicationMeetingResultSchema),
+        onSubmit(input) {},
+    });
+
+    // acceptanceLetterDetail
+    const {
+        form: acceptanceLetterDetailForm,
+        errors: acceptanceLetterDetailErrors,
+        enhance: acceptanceLetterDetailEnhance,
+    } = superForm(data.forms.acceptanceLetterDetailForm, {
+        id: 'acceptanceLetterDetailForm',
+        SPA: true,
+        validators: zodClient(TransferApplicationAcceptanceLetterDetailSchema),
+        onSubmit(input) {},
+    });
+
+    // postponeDetail
+    const {
+        form: postponeDetailForm,
+        errors: postponeDetailErrors,
+        enhance: postponeDetailEnhance,
+    } = superForm(data.forms.postponeDetailForm, {
+        id: 'postponeDetailForm',
+        SPA: true,
+        validators: zodClient(TransferApplicationPostponeDetailSchema),
+        onSubmit(input) {},
+    });
+
+    // assignPostponeApprover
+    const {
+        form: assignPostponeApproverForm,
+        errors: assignPostponeApproverErrors,
+        enhance: assignPostponeApproverEnhance,
+    } = superForm(data.forms.assignPostponeApproverForm, {
+        id: 'assignPostponeApproverForm',
+        SPA: true,
+        validators: zodClient(TransferApplicationAssignPostponeApproverSchema),
+        onSubmit(input) {},
+    });
+
+    // postponeApproval
+    const {
+        form: postponeApprovalForm,
+        errors: postponeApprovalErrors,
+        enhance: postponeApprovalEnhance,
+    } = superForm(data.forms.postponeApprovalForm, {
+        id: 'postponeApprovalForm',
+        SPA: true,
+        validators: zodClient(TransferApplicationEndorsementSchema),
+        onSubmit(input) {},
+    });
+
+    // postponeLetterDetail
+    const {
+        form: postponeLetterDetailForm,
+        errors: postponeLetterDetailErrors,
+        enhance: postponeLetterDetailEnhance,
+    } = superForm(data.forms.postponeLetterDetailForm, {
+        id: 'postponeLetterDetailForm',
+        SPA: true,
+        validators: zodClient(TransferApplicationPostponeLetterDetailSchema),
+        onSubmit(input) {},
+    });
+
+    // transferDocument
+    const {
+        form: transferDocumentForm,
+        errors: transferDocumentErrors,
+        enhance: transferDocumentEnhance,
+    } = superForm(data.forms.transferDocumentForm, {
+        id: 'transferDocumentForm',
+        SPA: true,
+        validators: zodClient(TransferApplicationTransferDocumentSchema),
+        onSubmit(input) {},
+    });
+
+    // endorserDetail
+    const {
+        form: endorserDetailForm,
+        errors: endorserDetailErrors,
+        enhance: endorserDetailEnhance,
+    } = superForm(data.forms.endorserDetailForm, {
+        id: 'endorserDetailForm',
+        SPA: true,
+        validators: zodClient(TransferApplicationEndorserDetailSchema),
+        onSubmit(input) {},
+    });
+
+    // supporterFeedback
+    const {
+        form: supporterFeedbackForm,
+        errors: supporterFeedbackErrors,
+        enhance: supporterFeedbackEnhance,
+    } = superForm(data.forms.supporterFeedbackForm, {
+        id: 'supporterFeedbackForm',
+        SPA: true,
+        validators: zodClient(TransferApplicationEndorsementSchema),
+        onSubmit(input) {},
+    });
+
+    // approverFeedback
+    const {
+        form: approverFeedbackForm,
+        errors: approverFeedbackErrors,
+        enhance: approverFeedbackEnhance,
+    } = superForm(data.forms.approverFeedbackForm, {
+        id: 'approverFeedbackForm',
+        SPA: true,
+        validators: zodClient(TransferApplicationEndorsementSchema),
+        onSubmit(input) {},
+    });
+
+    function addEthicalIssuesDetail() {
+        const newEthicalReport: EthicalIssueType = {
+            punishment: '',
+            date: '',
+        };
+        $directorSupportForm.ethicalIssues.push(newEthicalReport);
+
+        $directorSupportForm = $directorSupportForm;
+    }
+
+    function removeEthicalIssuesDetail(index: number) {
+        $directorSupportForm.ethicalIssues.splice(index, 1);
+        $directorSupportForm = $directorSupportForm;
+    }
 </script>
 
 <section class="flex w-full flex-col items-center justify-center">
@@ -46,9 +273,9 @@
 <section
     class="flex h-full w-full flex-col items-start justify-start overflow-y-hidden"
 >
-    <Stepper activeIndex={0}>
+    <Stepper activeIndex={10}>
         <!-- ======================================================================= -->
-        <!-- DETAILS -->
+        <!-- PERSONAL DETAILS -->
         <!-- ======================================================================= -->
         <StepperContent>
             <StepperContentHeader title="Butiran Peribadi">
@@ -67,7 +294,9 @@
                             class="flex w-full flex-col items-start justify-start gap-2"
                         >
                             <form
-                                action=""
+                                id="employeeDetailForm"
+                                method="POST"
+                                use:employeeDetailEnhance
                                 class="flex w-full flex-col items-start justify-start gap-1"
                             >
                                 <CustomTextField
@@ -75,49 +304,56 @@
                                     id="name"
                                     label="Nama Pemohon"
                                     type="text"
-                                    val=""
+                                    bind:val={$employeeDetailForm.name}
+                                    bind:errors={$employeeDetailErrors.name}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
                                     id="identityDocumentNumber"
                                     label="No. Kad Pengenalan"
                                     type="text"
-                                    val=""
+                                    bind:val={$employeeDetailForm.identityDocumentNumber}
+                                    bind:errors={$employeeDetailErrors.identityDocumentNumber}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
                                     id="employeeNumber"
                                     label="No. Pekerja"
                                     type="text"
-                                    val=""
+                                    bind:val={$employeeDetailForm.employeeNumber}
+                                    bind:errors={$employeeDetailErrors.employeeNumber}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
                                     id="phone"
                                     label="No. Telefon Bimbit"
                                     type="text"
-                                    val=""
+                                    bind:val={$employeeDetailForm.phone}
+                                    bind:errors={$employeeDetailErrors.phone}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
                                     id="maritalStatus"
                                     label="Status"
                                     type="text"
-                                    val=""
+                                    bind:val={$employeeDetailForm.maritalStatus}
+                                    bind:errors={$employeeDetailErrors.maritalStatus}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
                                     id="childCount"
                                     label="Bilangan Anak"
                                     type="text"
-                                    val=""
+                                    bind:val={$employeeDetailForm.childCount}
+                                    bind:errors={$employeeDetailErrors.childCount}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
                                     id="childInSchoolCount"
                                     label="Bilangan Anak Bersekolah"
                                     type="text"
-                                    val=""
+                                    bind:val={$employeeDetailForm.childInSchoolCount}
+                                    bind:errors={$employeeDetailErrors.childInSchoolCount}
                                 ></CustomTextField>
                             </form>
                         </div>
@@ -127,7 +363,7 @@
             </StepperContentBody>
         </StepperContent>
         <!-- ======================================================================= -->
-        <!-- DETAILS -->
+        <!-- SERVICE DETAILS -->
         <!-- ======================================================================= -->
         <StepperContent>
             <StepperContentHeader title="Maklumat Perkhidmatan">
@@ -146,7 +382,9 @@
                             class="flex w-full flex-col items-start justify-start gap-2"
                         >
                             <form
-                                action=""
+                                id="serviceDetailForm"
+                                method="POST"
+                                use:serviceDetailEnhance
                                 class="flex w-full flex-col items-start justify-start gap-1"
                             >
                                 <CustomTextField
@@ -154,49 +392,56 @@
                                     id="position"
                                     label="Nama Jawatan"
                                     type="text"
-                                    val=""
+                                    bind:val={$serviceDetailForm.position}
+                                    bind:errors={$serviceDetailErrors.position}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
                                     id="grade"
                                     label="Gred"
                                     type="text"
-                                    val=""
+                                    bind:val={$serviceDetailForm.grade}
+                                    bind:errors={$serviceDetailErrors.grade}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
                                     id="hiringDate"
                                     label="Tarikh Lantikan"
                                     type="text"
-                                    val=""
+                                    bind:val={$serviceDetailForm.hiringDate}
+                                    bind:errors={$serviceDetailErrors.hiringDate}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
                                     id="officeName"
                                     label="Nama Jabatan"
                                     type="text"
-                                    val=""
+                                    bind:val={$serviceDetailForm.officeName}
+                                    bind:errors={$serviceDetailErrors.officeName}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
                                     id="officeAddress"
                                     label="Alamat Jabatan"
                                     type="text"
-                                    val=""
+                                    bind:val={$serviceDetailForm.officeAddress}
+                                    bind:errors={$serviceDetailErrors.officeAddress}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
                                     id="department"
                                     label="Bahagian/ Unit"
                                     type="text"
-                                    val=""
+                                    bind:val={$serviceDetailForm.department}
+                                    bind:errors={$serviceDetailErrors.department}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
                                     id="servicePeriod"
                                     label="Tempoh Perkhidmatan Di Penempatan Sekarang"
                                     type="text"
-                                    val=""
+                                    bind:val={$serviceDetailForm.servicePeriod}
+                                    bind:errors={$serviceDetailErrors.servicePeriod}
                                 ></CustomTextField>
                             </form>
                         </div>
@@ -266,30 +511,36 @@
                             class="flex w-full flex-col items-start justify-start gap-2"
                         >
                             <form
-                                action=""
+                                id="transferDetailForm"
+                                method="POST"
+                                use:transferDetailEnhance
                                 class="flex w-full flex-col items-start justify-start gap-1"
                             >
                                 <SingleChoiceInput
                                     id="category"
                                     label="Jenis Pertukaran"
                                     choices={data.lookup.transferCategoryOption}
-                                    bind:val={selectedValue}
+                                    bind:val={$transferDetailForm.category}
+                                    bind:errors={$transferDetailErrors.category}
                                 ></SingleChoiceInput>
                                 <CustomTextField
                                     id="appliedLocation"
                                     label="Penempatan Bertukar"
-                                    val=""
+                                    bind:val={$transferDetailForm.appliedLocation}
+                                    bind:errors={$transferDetailErrors.appliedLocation}
                                 ></CustomTextField>
                                 <SingleChoiceInput
                                     id="reason"
                                     label="Alasan Pertukaran"
                                     choices={data.lookup.transferReasonOption}
-                                    bind:val={selectedValue}
+                                    bind:val={$transferDetailForm.reason}
+                                    bind:errors={$transferDetailErrors.reason}
                                 ></SingleChoiceInput>
                                 <CustomTextField
                                     id="remark"
                                     label="Sila Berikan Penjelasan Sekiranya Anda Memilih Lain-lain Sebagai Alasan Pertukaran"
-                                    val=""
+                                    bind:val={$transferDetailForm.remark}
+                                    bind:errors={$transferDetailErrors.remark}
                                 ></CustomTextField>
 
                                 <p class="text-base font-medium text-slate-700">
@@ -302,19 +553,22 @@
                                     id="workPlaceDistance"
                                     type="number"
                                     label="Jarak Tempat Kerja (KM)"
-                                    val=""
+                                    bind:val={$transferDetailForm.remark}
+                                    bind:errors={$transferDetailErrors.remark}
                                 ></CustomTextField>
                                 <CustomTextField
                                     id="employerName"
                                     type="text"
                                     label="Nama Majikan"
-                                    val=""
+                                    bind:val={$transferDetailForm.employerName}
+                                    bind:errors={$transferDetailErrors.employerName}
                                 ></CustomTextField>
                                 <CustomTextField
                                     id="startDate"
                                     type="date"
                                     label="Tarikh Mula Berkhidmat Di Penempatan Sekarang"
-                                    val=""
+                                    bind:val={$transferDetailForm.startDate}
+                                    bind:errors={$transferDetailErrors.startDate}
                                 ></CustomTextField>
                             </form>
                         </div>
@@ -343,7 +597,9 @@
                         ></CustomBanner>
 
                         <form
-                            action=""
+                            id="applicationConfirmationForm"
+                            method="POST"
+                            use:applicationConfirmationEnhance
                             class="flex w-full flex-col items-start justify-start gap-4 p-2"
                         >
                             <div
@@ -355,7 +611,7 @@
                                     <input
                                         id="status"
                                         type="checkbox"
-                                        value={false}
+                                        bind:value={$applicationConfirmationForm.status}
                                         class="rounded focus:outline-none focus:ring-0"
                                     />
                                 </div>
@@ -384,10 +640,12 @@
                                 </p>
                             </div>
                             <CustomTextField
+                                disabled
                                 id="date"
                                 type="date"
                                 label="Tarikh Perakuan"
-                                val=""
+                                bind:val={$applicationConfirmationForm.date}
+                                bind:errors={$applicationConfirmationErrors.date}
                             ></CustomTextField>
                         </form>
                     </div>
@@ -410,26 +668,24 @@
                         class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
                     >
                         <form
-                            action=""
+                            id="assignDirectorForm"
+                            method="POST"
+                            use:assignDirectorEnhance
                             class="flex w-full flex-col items-center justify-start gap-2"
                         >
                             <CustomSelectField
                                 id="identityDocumentNumber"
                                 label={'Sila pilih Pengarah Bahagian/Negeri untuk memberi sokongan bagi permohonan ini'}
-                                val=""
+                                bind:val={$assignDirectorForm.identityDocumentNumber}
+                                bind:errors={$assignDirectorErrors.identityDocumentNumber}
                                 options={data.lookup.directorDrodpwon}
                             ></CustomSelectField>
                             <CustomTextField
                                 disabled
-                                id="employeeName"
+                                id="directorName"
                                 label={'Nama Pengarah'}
-                                val=""
-                            ></CustomTextField>
-                            <CustomTextField
-                                disabled
-                                id="identityDocumentNumber"
-                                label={'No Kad Pengenalan'}
-                                val=""
+                                bind:val={$assignDirectorForm.directorName}
+                                bind:errors={$assignDirectorErrors.directorName}
                             ></CustomTextField>
                         </form>
                     </div>
@@ -456,7 +712,9 @@
                             class="flex w-full flex-col items-start justify-start gap-2"
                         >
                             <form
-                                action=""
+                                id="directorSupportForm"
+                                method="POST"
+                                use:directorSupportEnhance
                                 class="flex w-full flex-col items-start justify-start gap-1"
                             >
                                 <p class="text-base font-medium text-slate-700">
@@ -466,39 +724,127 @@
                                     berikut:
                                 </p>
                                 <SingleChoiceInput
-                                    id="reason"
+                                    id="feedback"
                                     label="Maklum Balas Pengarah"
                                     choices={data.lookup.directorFeedbackOption}
-                                    bind:val={selectedValue}
+                                    bind:val={$directorSupportForm.feedback}
+                                    bind:errors={$directorSupportErrors.feedback}
                                 ></SingleChoiceInput>
 
                                 <CustomTextField
                                     id="remark"
                                     label="Ulasan"
                                     type="textarea"
-                                    val=""
+                                    bind:val={$directorSupportForm.remark}
+                                    bind:errors={$directorSupportErrors.remark}
                                 ></CustomTextField>
 
-                                <CustomTextField
-                                    disabled
-                                    id="date"
-                                    label="Tarikh"
-                                    type="date"
-                                    val=""
-                                ></CustomTextField>
+                                <div
+                                    class="flex w-full flex-col items-start justify-start gap-2 py-2 pb-4"
+                                >
+                                    <div
+                                        class="flex w-full flex-row items-center justify-between"
+                                    >
+                                        <p
+                                            class=" w-full text-start text-base font-medium text-slate-700"
+                                        >
+                                            Senarai Laporan Tatatertib
+                                        </p>
+                                    </div>
+                                    {#each $directorSupportForm.ethicalIssues as item, index}
+                                        <div
+                                            class="flex w-full flex-col items-start justify-start rounded-md border border-slate-200 bg-slate-100 p-4"
+                                        >
+                                            <div
+                                                class="flex w-full flex-row items-center justify-between py-2"
+                                            >
+                                                <p
+                                                    class="text-base font-semibold text-slate-700"
+                                                >
+                                                    Laporan Tatatertib {index +
+                                                        1}
+                                                </p>
+                                                <button
+                                                    type="button"
+                                                    on:click={() => {
+                                                        removeEthicalIssuesDetail(
+                                                            index,
+                                                        );
+                                                    }}
+                                                >
+                                                    <span>
+                                                        <SvgXMark></SvgXMark>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div
+                                                class="flex w-full flex-col items-start justify-start gap-0"
+                                            >
+                                                <CustomTextField
+                                                    type="text"
+                                                    id="ethical-punishment-{index}"
+                                                    label={'Hukuman'}
+                                                    errors={$directorSupportErrors.ethicalIssues
+                                                        ? $directorSupportErrors
+                                                              .ethicalIssues[
+                                                              index
+                                                          ]?.punishment
+                                                        : undefined}
+                                                    bind:val={item.punishment}
+                                                ></CustomTextField>
+                                                <CustomTextField
+                                                    type="date"
+                                                    id="ethical-date-{index}"
+                                                    label={'Tarikh Laporan'}
+                                                    errors={$directorSupportErrors.ethicalIssues
+                                                        ? $directorSupportErrors
+                                                              .ethicalIssues[
+                                                              index
+                                                          ]?.date
+                                                        : undefined}
+                                                    bind:val={item.date}
+                                                ></CustomTextField>
+                                            </div>
+                                        </div>
+                                    {/each}
+                                    <button
+                                        class="h-8 min-h-8 w-full rounded border border-slate-400 bg-slate-100"
+                                        type="button"
+                                        on:click={() => {
+                                            addEthicalIssuesDetail();
+                                        }}
+                                    >
+                                        <p
+                                            class="text-base font-medium text-slate-700"
+                                        >
+                                            + Tambah
+                                        </p>
+                                    </button>
+                                </div>
+
                                 <CustomTextField
                                     disabled
                                     id="name"
                                     label="Nama Pengarah"
                                     type="text"
-                                    val=""
+                                    bind:val={$directorSupportForm.name}
+                                    bind:errors={$directorSupportErrors.name}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
                                     id="identityDocumentNumber"
                                     label="No. Kad Pengenalan"
                                     type="text"
-                                    val=""
+                                    bind:val={$directorSupportForm.identityDocumentNumber}
+                                    bind:errors={$directorSupportErrors.identityDocumentNumber}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    disabled
+                                    id="date"
+                                    label="Tarikh"
+                                    type="date"
+                                    bind:val={$directorSupportForm.date}
+                                    bind:errors={$directorSupportErrors.date}
                                 ></CustomTextField>
                             </form>
                         </div>
@@ -530,33 +876,39 @@
                                 text="Sila masukkan butiran dan keputusan mesyuarat di ruangan yang tersedia di bawah."
                             ></CustomBanner>
                             <form
-                                action=""
+                                id="meetingResultForm"
+                                method="POST"
+                                use:meetingResultEnhance
                                 class="flex w-full flex-col items-start justify-start gap-1"
                             >
                                 <CustomTextField
                                     id="meetingName"
                                     label="Nama Mesyuarat"
                                     type="text"
-                                    val=""
+                                    bind:val={$meetingResultForm.meetingName}
+                                    bind:errors={$meetingResultErrors.meetingName}
                                 ></CustomTextField>
                                 <CustomTextField
                                     id="meetingDate"
                                     label="Tarikh Mesyuarat"
                                     type="date"
-                                    val=""
+                                    bind:val={$meetingResultForm.meetingDate}
+                                    bind:errors={$meetingResultErrors.meetingDate}
                                 ></CustomTextField>
                                 <CustomRadioBoolean
                                     disabled={false}
                                     id="status"
                                     label="Keputusan Mesyuarat Permohonan Ini Adalah:"
-                                    val={null}
+                                    bind:val={$meetingResultForm.status}
+                                    bind:errors={$meetingResultErrors.status}
                                     options={approveOptions}
                                 ></CustomRadioBoolean>
                                 <CustomTextField
                                     id="remark"
                                     label="Ulasan"
                                     type="textarea"
-                                    val=""
+                                    bind:val={$meetingResultForm.remark}
+                                    bind:errors={$meetingResultErrors.remark}
                                 ></CustomTextField>
                             </form>
                         </div>
@@ -611,31 +963,36 @@
                             class="flex w-full flex-col items-start justify-start gap-2"
                         >
                             <form
-                                action=""
+                                id="postponeDetailForm"
+                                method="POST"
+                                use:postponeDetailEnhance
                                 class="flex w-full flex-col items-start justify-start gap-1"
                             >
                                 <CustomRadioBoolean
                                     disabled={false}
                                     id="status"
                                     label="Adakah Anda Ingin Memohon Penangguhan Tarikh Pertukaran"
-                                    val={null}
                                     options={commonOptions}
+                                    bind:val={$postponeDetailForm.status}
+                                    bind:errors={$postponeDetailErrors.status}
                                 ></CustomRadioBoolean>
                                 <CustomTextField
                                     id="remark"
                                     label="Ulasan"
                                     type="textarea"
-                                    val=""
+                                    bind:val={$postponeDetailForm.remark}
+                                    bind:errors={$postponeDetailErrors.remark}
                                 ></CustomTextField>
                                 <DocumentInput
-                                    documents={[]}
+                                    bind:documents={$postponeDetailForm.documents}
                                     label="Sila Muat Naik Surat Permohonan Penangguhan"
                                 ></DocumentInput>
                                 <CustomTextField
                                     id="date"
                                     label="Tarikh Permohonan Dihantar"
                                     type="date"
-                                    val=""
+                                    bind:val={$postponeDetailForm.date}
+                                    bind:errors={$postponeDetailErrors.date}
                                 ></CustomTextField>
                             </form>
                         </div>
@@ -666,26 +1023,31 @@
                             class="flex w-full flex-col items-start justify-start gap-2"
                         >
                             <form
-                                action=""
+                                id="assignPostponeApproverForm"
+                                method="POST"
+                                use:assignPostponeApproverEnhance
                                 class="flex w-full flex-col items-center justify-start gap-2"
                             >
                                 <CustomSelectField
                                     id="identityDocumentNumber"
                                     label={'Sila pilih penyokong untuk memberi sokongan bagi permohonan penangguhan pertukaran ini'}
-                                    val=""
+                                    bind:val={$assignPostponeApproverForm.identityDocumentNumber}
+                                    bind:errors={$assignPostponeApproverErrors.identityDocumentNumber}
                                     options={data.lookup.directorDrodpwon}
                                 ></CustomSelectField>
                                 <CustomTextField
                                     disabled
-                                    id="employeeName"
+                                    id="directorName"
                                     label={'Nama Penyokong'}
-                                    val=""
+                                    bind:val={$assignPostponeApproverForm.directorName}
+                                    bind:errors={$assignPostponeApproverErrors.directorName}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
                                     id="identityDocumentNumber"
                                     label={'No Kad Pengenalan'}
-                                    val=""
+                                    bind:val={$assignPostponeApproverForm.identityDocumentNumber}
+                                    bind:errors={$assignPostponeApproverErrors.identityDocumentNumber}
                                 ></CustomTextField>
                             </form>
                         </div>
@@ -714,27 +1076,39 @@
                             class="flex w-full flex-col items-start justify-start gap-2"
                         >
                             <form
-                                action=""
+                                id="postponeApprovalForm"
+                                method="POST"
+                                use:postponeApprovalEnhance
                                 class="flex w-full flex-col items-start justify-start gap-1"
                             >
                                 <CustomRadioBoolean
                                     disabled={false}
                                     id="status"
                                     label="Permohonan Penangguhan Pertukaran Pegawai Di Atas Adalah:"
-                                    val={null}
+                                    bind:val={$postponeApprovalForm.status}
+                                    bind:errors={$postponeApprovalErrors.status}
                                     options={supportAltOptions}
                                 ></CustomRadioBoolean>
                                 <CustomTextField
                                     id="remark"
                                     label="Ulasan"
                                     type="textarea"
-                                    val=""
+                                    bind:val={$postponeApprovalForm.remark}
+                                    bind:errors={$postponeApprovalErrors.remark}
+                                ></CustomTextField>
+                                <CustomTextField
+                                    id="name"
+                                    label="Nama Penyokong"
+                                    type="text"
+                                    bind:val={$postponeApprovalForm.name}
+                                    bind:errors={$postponeApprovalErrors.name}
                                 ></CustomTextField>
                                 <CustomTextField
                                     id="date"
                                     label="Tarikh Maklum Balas Dihantar"
                                     type="date"
-                                    val=""
+                                    bind:val={$postponeApprovalForm.identityDocumentNumber}
+                                    bind:errors={$postponeApprovalErrors.identityDocumentNumber}
                                 ></CustomTextField>
                             </form>
                         </div>
@@ -763,7 +1137,9 @@
                             class="flex w-full flex-col items-start justify-start gap-2"
                         >
                             <form
-                                action=""
+                                id="postponeLetterDetailForm"
+                                method="POST"
+                                use:postponeLetterDetailEnhance
                                 class="flex w-full flex-col items-center justify-start gap-2"
                             ></form>
                         </div>
@@ -792,19 +1168,15 @@
                             class="flex w-full flex-col items-start justify-start gap-2"
                         >
                             <form
-                                action=""
+                                id="transferDocumentForm"
+                                method="POST"
+                                use:transferDocumentEnhance
                                 class="flex w-full flex-col items-start justify-start gap-1"
                             >
                                 <DocumentInput
-                                    documents={[]}
+                                    bind:documents={$transferDocumentForm.documents}
                                     label="Sila Muat Naik Salinan Borang-borang yang Telah Diisi"
                                 ></DocumentInput>
-                                <CustomTextField
-                                    id="date"
-                                    label="Tarikh Dokumen Dihantar"
-                                    type="date"
-                                    val=""
-                                ></CustomTextField>
                             </form>
                         </div>
                         <!-- form wrapper ends here -->
@@ -832,44 +1204,52 @@
                             class="flex w-full flex-col items-start justify-start gap-2"
                         >
                             <form
-                                action=""
+                                id="endorserDetailForm"
+                                method="POST"
+                                use:endorserDetailEnhance
                                 class="flex w-full flex-col items-center justify-start gap-2"
                             >
                                 <CustomSelectField
-                                    id="identityDocumentNumber"
+                                    id="supporterIdentityDocumentNumber"
                                     label={'Sila Pilih Penyokong Untuk Menyokong Pertukaran Ini'}
-                                    val=""
+                                    bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
+                                    bind:errors={$endorserDetailErrors.supporterIdentityDocumentNumber}
                                     options={data.lookup.directorDrodpwon}
                                 ></CustomSelectField>
                                 <CustomSelectField
                                     id="identityDocumentNumber"
                                     label={'Sila Pilih Pelulus Untuk Meluluskan Pertukaran Ini'}
-                                    val=""
+                                    bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
+                                    bind:errors={$endorserDetailErrors.approverIdentityDocumentNumber}
                                     options={data.lookup.directorDrodpwon}
                                 ></CustomSelectField>
                                 <CustomTextField
                                     disabled
-                                    id="employeeName"
+                                    id="supporterName"
                                     label={'Nama Penyokong'}
-                                    val=""
+                                    bind:val={$endorserDetailForm.supporterName}
+                                    bind:errors={$endorserDetailErrors.supporterName}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
                                     id="identityDocumentNumber"
                                     label={'No Kad Pengenalan Penyokong'}
-                                    val=""
+                                    bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
+                                    bind:errors={$endorserDetailErrors.supporterIdentityDocumentNumber}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
-                                    id="employeeName"
-                                    label={'Nama Pelulus'}
-                                    val=""
+                                    id="approverName"
+                                    label={'Nama Penyokong'}
+                                    bind:val={$endorserDetailForm.approverName}
+                                    bind:errors={$endorserDetailErrors.approverName}
                                 ></CustomTextField>
                                 <CustomTextField
                                     disabled
-                                    id="identityDocumentNumber"
+                                    id="approverIdentityDocumentNumber"
                                     label={'No Kad Pengenalan Pelulus'}
-                                    val=""
+                                    bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
+                                    bind:errors={$endorserDetailErrors.approverIdentityDocumentNumber}
                                 ></CustomTextField>
                             </form>
                         </div>
@@ -898,7 +1278,9 @@
                             class="flex w-full flex-col items-start justify-start gap-2"
                         >
                             <form
-                                action=""
+                                id="supporterFeedbackForm"
+                                method="POST"
+                                use:supporterFeedbackEnhance
                                 class="flex w-full flex-col items-start justify-start gap-1"
                             >
                                 <CustomRadioBoolean

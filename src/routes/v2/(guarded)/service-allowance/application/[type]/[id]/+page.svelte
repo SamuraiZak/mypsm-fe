@@ -1891,14 +1891,12 @@
         {#if data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaElaunElaunPerkhidmatan.code}
             <StepperContent>
                 <StepperContentHeader title="Lantikan Penyokong dan Pelulus">
-
-                        <TextIconButton
-                            type="primary"
-                            label="Hantar"
-                            form="endorserDetailForm"
-                            icon="check"
-                        ></TextIconButton>
-
+                    <TextIconButton
+                        type="primary"
+                        label="Hantar"
+                        form="endorserDetailForm"
+                        icon="check"
+                    ></TextIconButton>
                 </StepperContentHeader>
                 <StepperContentBody>
                     <div
@@ -1973,14 +1971,14 @@
         <StepperContent>
             <StepperContentHeader title="Ulasan & Syor Ketua Seksyen">
                 <!-- TESTED -->
-
+                {#if data.layoutData.accountDetails.identityDocumentNumber == currentApplicationDetails.support?.identityDocumentNumber}
                     <TextIconButton
                         type="primary"
                         label="Hantar"
                         form="supporterFeedbackForm"
                         icon="check"
                     ></TextIconButton>
-
+                {/if}
             </StepperContentHeader>
             <StepperContentBody>
                 <div
@@ -1996,7 +1994,7 @@
                             class="flex w-full flex-col items-center justify-start gap-2"
                         >
                             <CustomRadioBoolean
-disabled={false}
+                                disabled={false}
                                 id="status"
                                 label="Permohonan tuntutan pegawai di atas adalah"
                                 bind:val={$supporterFeedbackForm.status}
@@ -2004,7 +2002,7 @@ disabled={false}
                                 options={supportAltOptions}
                             ></CustomRadioBoolean>
                             <CustomTextField
-disabled={false}
+                                disabled={false}
                                 type="textarea"
                                 id="reason"
                                 label={'Jika tidak disokong, sila nyatakan sebab'}
