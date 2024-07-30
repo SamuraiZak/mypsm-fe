@@ -57,6 +57,7 @@
         approveOptions,
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
+    import type { EmployeePTBOffer } from '$lib/dto/mypsm/employment/ptb-dan-kwap/ptb-common-list.dto';
 
     export let data: PageData;
 
@@ -91,11 +92,10 @@
         },
     };
 
-    // import { _editpensionDetailSubmit } from './+page';
+     let employeeRowData = {} as EmployeePTBOffer;
 
-    // let currentRoleCode = localStorage.getItem(
-    //     LocalStorageKeyConstant.currentRoleCode,
-    // );
+     let approverApproved: boolean = true;
+   
     // urusetia
     let urusetia = UserRoleConstant.urusSetiaPerjawatan.code;
     // kakitangan
@@ -697,7 +697,7 @@
                         ></div>
                         <!-- || data.rolesRelatedResponse.data?.details.supporterName !== null  -->
                         <CustomSelectField
-                            disabled={data.currentRoleCode !== urusetia }
+                            disabled={data.currentRoleCode !== urusetia && data.assignrolesRelatedDetail !== null}
                             id="staffSupporter"
                             label="Nama Penyokong"
                             options={data.supporterApproverLookup}
@@ -705,7 +705,7 @@
                         />
 
                         <CustomSelectField
-                            disabled={data.currentRoleCode !== urusetia  }
+                            disabled={data.currentRoleCode !== urusetia && data.assignrolesRelatedDetail !== null }
                             id="staffApprover"
                             label="Nama Pelulus"
                             options={data.supporterApproverLookup}
@@ -823,6 +823,7 @@
             </StepperContent>
         {/if}
 
+        {#if data.pensionDetail !== null && data.assignedRoles !== false }
         
             <StepperContent>
                 <StepperContentHeader
@@ -896,8 +897,9 @@
                     </form>
                 </StepperContentBody>
             </StepperContent>
+            {/if}
       
-
+            {#if data.pensionDetail !== null && data.currentRoleCode == kakitangan }
         
             <StepperContent>
                 <StepperContentHeader
@@ -965,7 +967,7 @@
                     </form>
                 </StepperContentBody>
             </StepperContent>
-        
+        {/if}
     </Stepper>
 </section>
 <Toaster></Toaster>

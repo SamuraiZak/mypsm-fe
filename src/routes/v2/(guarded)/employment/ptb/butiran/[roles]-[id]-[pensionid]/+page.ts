@@ -21,6 +21,11 @@ export const load = async ({parent,params}) => {
 
     const currentRoleCode: string = layoutData.accountDetails.currentRoleCode
 
+    let assignedRoles: boolean = false;
+
+    if(params.roles !== 'kakitangan'){
+        assignedRoles = true;
+    }
 
     // ==========================================================
     // =================== Lookup ================================
@@ -333,6 +338,7 @@ export const load = async ({parent,params}) => {
         pensionId,
         pensionDetailResponse,
         currentRoleCode,
+        assignedRoles,
         
     }
 
