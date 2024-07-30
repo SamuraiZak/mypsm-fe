@@ -622,9 +622,20 @@
                 title="Maklumat Keputusan Mesyuarat Prosiding Pertuduhan"
             >
                 <TextIconButton
-                    type="primary"
+                    type="neutral"
                     form="chargesMeetingForm"
                     label="Simpan"
+                    onClick={() => {
+                        $chargesMeetingForm.isDraft = true;
+                    }}
+                ></TextIconButton>
+                <TextIconButton
+                    type="primary"
+                    form="chargesMeetingForm"
+                    label="Hantar"
+                    onClick={() => {
+                        $chargesMeetingForm.isDraft = false;
+                    }}
                 ></TextIconButton>
             </StepperContentHeader>
             <StepperContentBody>
@@ -717,9 +728,20 @@
                 title="Maklumat Keputusan Mesyuarat Prosiding Tahan Kerja"
             >
                 <TextIconButton
-                    type="primary"
+                    type="neutral"
                     form="suspensionMeetingForm"
                     label="Simpan"
+                    onClick={() => {
+                        $suspensionMeetingForm.isDraft = true;
+                    }}
+                ></TextIconButton>
+                <TextIconButton
+                    type="primary"
+                    form="suspensionMeetingForm"
+                    label="Hantar"
+                    onClick={() => {
+                        $suspensionMeetingForm.isDraft = false;
+                    }}
                 ></TextIconButton>
             </StepperContentHeader>
             <StepperContentBody>
