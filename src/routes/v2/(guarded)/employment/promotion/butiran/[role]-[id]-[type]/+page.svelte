@@ -643,7 +643,7 @@
                             $placementForm.newGrade =
                                 currentEmployeeDetail.newGrade;
                         }
-                        if ($placementForm.newGrade == null) {
+                        if ($placementForm.promotionDate == null) {
                             placementMeetingExist = false;
                         } else {
                             placementMeetingExist = true;
@@ -1220,7 +1220,7 @@
                             {/if}
                         {/if}
                     </StepperContentHeader>
-                    <StepperContentBody>
+                    <StepperContentBody paddingClass="p-none">
                         {#if !stepperControl[2]}
                             <div
                                 class="flex w-full flex-col justify-center gap-2.5 p-3 pb-10"
