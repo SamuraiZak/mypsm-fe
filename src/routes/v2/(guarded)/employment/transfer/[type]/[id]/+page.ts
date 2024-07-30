@@ -26,6 +26,7 @@ import {
     TransferApplicationTransferDocumentSchema,
     type TransferApplicationAcceptanceLetterDetailType,
     type TransferApplicationAssignDirectorType,
+    type TransferApplicationAssignPostponeApproverType,
     type TransferApplicationConfirmationType,
     type TransferApplicationMeetingResultType,
     type TransferApplicationPostponeDetailType,
@@ -452,25 +453,25 @@ export async function _postponeDetailSubmit(
 }
 
 // assignPostponeApprover
-export async function _assignPostponeApproverSubmit(
-    params: TransferApplicationassignPostponeApproverType,
-) {
-    const form = await superValidate(
-        params,
-        zod(TransferApplicationassignPostponeApproverSchema),
-    );
+// export async function _assignPostponeApproverSubmit(
+//     params: TransferApplicationAssignPostponeApproverType,
+// ) {
+//     const form = await superValidate(
+//         params,
+//         zod(TransferApplicationAssignPostponeApproverSchema),
+//     );
 
-    if (form.valid) {
-        const response = await TransferServices.addassignPostponeApprover(
-            form.data,
-        );
+//     if (form.valid) {
+//         const response = await TransferServices.addAssignPostponeApprover(
+//             form.data,
+//         );
 
-        if (response.status == 'success') {
-            return response;
-        } else {
-            return CommonResponseConstant.httpError;
-        }
-    } else {
-        return CommonResponseConstant.httpError;
-    }
-}
+//         if (response.status == 'success') {
+//             return response;
+//         } else {
+//             return CommonResponseConstant.httpError;
+//         }
+//     } else {
+//         return CommonResponseConstant.httpError;
+//     }
+// }
