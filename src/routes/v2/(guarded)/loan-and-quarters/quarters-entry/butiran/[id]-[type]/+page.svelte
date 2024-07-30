@@ -1129,7 +1129,7 @@
                                                     <Helper
                                                         id="moreThan25Km"
                                                         class="ps-9"
-                                                        >Potongan ITP 75%%</Helper
+                                                        >Potongan ITP 75%</Helper
                                                     >
                                                 </li>
 
