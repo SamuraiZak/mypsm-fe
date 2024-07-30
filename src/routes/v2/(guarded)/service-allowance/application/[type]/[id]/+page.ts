@@ -228,7 +228,7 @@ export async function load({ params, parent }) {
     const secretaryConfirmationForm = await superValidate(
         zod(ServiceAllowanceSecretaryConfirmationSchema),
     );
-    
+
     // 9. upload invoice form
     const cargoShippingInvoiceForm = await superValidate(
         zod(ServiceAllowanceCargoShippingInvoiceSchema),
@@ -460,7 +460,7 @@ export async function load({ params, parent }) {
                 secretaryConfirmationForm.data.date = Date.now().toString();
                 secretaryConfirmationForm.data.isDraft = true;
             }
-            
+
             // Upload invoice
             if (
                 currentApplicationDetails.uploadInvoice != undefined ||
@@ -544,72 +544,6 @@ export async function load({ params, parent }) {
 
     // 10. approver dropdown
     const stateDropdown: DropdownDTO[] = await _getStateDropdown();
-    // const stateDropdown: DropdownDTO[] = [
-    //     {
-    //         name: 'Johor',
-    //         value: 'Johor',
-    //     },
-    //     {
-    //         name: 'Kedah',
-    //         value: 'Kedah',
-    //     },
-    //     {
-    //         name: 'Kelantan',
-    //         value: 'Kelantan',
-    //     },
-    //     {
-    //         name: 'Melaka',
-    //         value: 'Melaka',
-    //     },
-    //     {
-    //         name: 'Negeri Sembilan',
-    //         value: 'Negeri Sembilan',
-    //     },
-    //     {
-    //         name: 'Pahang',
-    //         value: 'Pahang',
-    //     },
-    //     {
-    //         name: 'Perak',
-    //         value: 'Perak',
-    //     },
-    //     {
-    //         name: 'Perlis',
-    //         value: 'Perlis',
-    //     },
-    //     {
-    //         name: 'Pulau Pinang',
-    //         value: 'Pulau Pinang',
-    //     },
-    //     {
-    //         name: 'Sabah',
-    //         value: 'Sabah',
-    //     },
-    //     {
-    //         name: 'Sarawak',
-    //         value: 'Sarawak',
-    //     },
-    //     {
-    //         name: 'Selangor',
-    //         value: 'Selangor',
-    //     },
-    //     {
-    //         name: 'Terengganu',
-    //         value: 'Terengganu',
-    //     },
-    //     {
-    //         name: 'Wilayah Perskutuan Kuala Lumpur',
-    //         value: 'Wilayah Perskutuan Kuala Lumpur',
-    //     },
-    //     {
-    //         name: 'Wilayah Persekutuan Labuan',
-    //         value: 'Wilayah Persekutuan Labuan',
-    //     },
-    //     {
-    //         name: 'Wilayah Persekutuan Putrajaya',
-    //         value: 'Wilayah Persekutuan Putrajaya',
-    //     },
-    // ];
 
     // 11 relationship dropdown code
     const relationshipCodeDropdown: DropdownDTO[] =
@@ -1121,8 +1055,9 @@ export async function _cargoShippingInvoiceSubmit(
             zod(ServiceAllowanceCargoShippingInvoiceSchema),
         );
 
-        const response =
-            await ServiceAllowanceServices.addCargoShippingInvoice(form.data);
+        const response = await ServiceAllowanceServices.addCargoShippingInvoice(
+            form.data,
+        );
 
         if (response.status == 'success') {
             return response;
@@ -1292,7 +1227,8 @@ export async function _getStateDropdown() {
         await LookupServices.getStateEnums();
 
     if (stateLookupResponse.status == 'success') {
-        stateLookup = LookupServices.setSelectOptionsInString(stateLookupResponse);
+        stateLookup =
+            LookupServices.setSelectOptionsInString(stateLookupResponse);
     }
 
     return stateLookup;

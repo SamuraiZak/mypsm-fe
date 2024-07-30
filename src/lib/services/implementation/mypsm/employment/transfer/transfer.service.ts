@@ -1,58 +1,31 @@
-import { invalidateAll } from '$app/navigation';
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import {
-    CommonListRequestConvert,
-    type CommonListRequestDTO,
-} from '$lib/dto/core/common/common-list-request.dto';
-import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto';
+    CommonResponseConvert,
+    type CommonResponseDTO,
+} from '$lib/dto/core/common/common-response.dto';
+import { toasterCommon } from '$lib/helpers/core/french-toast.helper';
 import type {
-    TransferApplicationDetailRequestDTO,
-    TransferCommonDetailDTO,
-} from '$lib/dto/mypsm/employment/transfer/transfer.dto';
-import { getPromiseToast } from '$lib/helpers/core/toast.helper';
-import type {
-    TransferCommonDetail,
-    TransferCommonEndorsement,
-    TransferCommonEndorserDetail,
-    TransferCommonMeeting,
-    TransferCommonPostponeApplication,
-    TransferCommonPostponeResult,
-    TransferSelfDetail,
-    TransferSelfEndorsement,
-    TransferSelfReason,
+    TransferApplicationAcceptanceLetterDetailType,
+    TransferApplicationAssignDirectorType,
+    TransferApplicationConfirmationType,
+    TransferApplicationDirectorSupportType,
+    TransferApplicationEndorsementType,
+    TransferApplicationEndorserDetailType,
+    TransferApplicationMeetingResultType,
+    TransferApplicationPostponeDetailType,
+    TransferApplicationPostponeLetterDetailType,
+    TransferApplicationTransferDetailType,
+    TransferApplicationTransferDocumentType,
 } from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 
-export class TransferApplicationServices {
-    // get history list
-    static async getCommonHistory(param: CommonListRequestDTO) {
+export class TransferServices {
+    // get the application list submitted
+    static async getApplicationList(param: CommonListRequestDTO) {
         try {
-            let url: Input = 'employment/forced_transfer/list';
-
-            const response: Response = await http
-                .post(url, {
-                    body: CommonListRequestConvert.toJson(param),
-                })
-                .json();
-
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    static async getCommonApplicationDetail(
-        param: TransferApplicationDetailRequestDTO,
-    ) {
-        try {
-            let url: Input = 'employment/forced_transfer/get';
+            const url: Input = 'employment/self_transfer/list';
 
             const response: Response = await http
                 .post(url, {
@@ -60,7 +33,8 @@ export class TransferApplicationServices {
                 })
                 .json();
 
-            const result = CommonResponseConvert.fromResponse(response);
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
                 return result;
@@ -72,23 +46,17 @@ export class TransferApplicationServices {
         }
     }
 
-    // add common transfer application
-    static async addCommonDetail(param: TransferCommonDetail) {
+    // get current employee detail
+    static async getCurrentEmployeeDetail() {
         try {
-            let url: Input = 'employment/forced_transfer/add';
+            const url: Input = 'employment/self_transfer/get_personal_detail';
 
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
+            const response: Response = await http.get(url).json();
 
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -98,23 +66,17 @@ export class TransferApplicationServices {
         }
     }
 
-    // add common transfer meeting result
-    static async addCommonMeeting(param: TransferCommonMeeting) {
+    // get current employee service detail
+    static async getCurrentEmployeeServiceDetail() {
         try {
-            let url: Input = 'employment/forced_transfer/add_meeting';
+            const url: Input = 'employment/self_transfer/get_service_detail';
 
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
+            const response: Response = await http.get(url).json();
 
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -124,12 +86,13 @@ export class TransferApplicationServices {
         }
     }
 
-    // add common transfer postponement application
-    static async addCommonPostponeApplication(
-        param: TransferCommonPostponeApplication,
+    // add transfer details
+    static async addTransferDetail(
+        param: TransferApplicationTransferDetailType,
     ) {
         try {
-            let url: Input = 'employment/forced_transfer/add_postpone';
+            const url: Input =
+                'employment/self_transfer/application_details/add';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -137,218 +100,10 @@ export class TransferApplicationServices {
                 })
                 .json();
 
-            const response = await getPromiseToast(promiseResponse);
+            const response = await toasterCommon(promiseResponse);
 
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                await invalidateAll();
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // add common transfer postpone result
-    static async addCommonPostponeResult(param: TransferCommonPostponeResult) {
-        try {
-            let url: Input = 'employment/forced_transfer/add_postpone_result';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                await invalidateAll();
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // add common transfer postpone result
-    static async addCommonPostponeApproval(param: TransferCommonEndorsement) {
-        try {
-            let url: Input = 'employment/forced_transfer/add_postpone_approval';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                await invalidateAll();
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // add common transfer postpone result
-    static async addCommonEndorserDetail(param: TransferCommonEndorserDetail) {
-        try {
-            let url: Input = 'employment/forced_transfer/add_endorser';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                await invalidateAll();
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // add common transfer supporter feedback
-    static async addCommonSupporterFeedback(param: TransferCommonEndorsement) {
-        try {
-            let url: Input =
-                'employment/forced_transfer/add_supporter_approval';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                await invalidateAll();
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // add common transfer supporter feedback
-    static async addCommonApproverFeedback(param: TransferCommonEndorsement) {
-        try {
-            let url: Input = 'employment/forced_transfer/add_approver_approval';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                await invalidateAll();
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    static async uploadCommonTransferDocument(param: string) {
-        try {
-            let url: Input = 'employment/forced_transfer/upload_document';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: param,
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                await invalidateAll();
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    static async uploadCommonPostponeDocument(param: string) {
-        try {
-            let url: Input =
-                'employment/forced_transfer/upload_postpone_document';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: param,
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                await invalidateAll();
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // =====================================================
-    // SELF TRANSFER
-    // =====================================================
-    // get history list
-    static async getSelfTransferHistory(param: CommonListRequestDTO) {
-        try {
-            let url: Input = 'employment/self_transfer/list';
-
-            const response: Response = await http
-                .post(url, {
-                    body: CommonListRequestConvert.toJson(param),
-                })
-                .json();
-
-            const result = CommonResponseConvert.fromResponse(response);
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
                 return result;
@@ -360,35 +115,13 @@ export class TransferApplicationServices {
         }
     }
 
-    // get self transfer application detail
-    static async getSelfTransferApplicationDetail(
-        param: TransferApplicationDetailRequestDTO,
+    // add confirmation
+    static async addApplicationConfirmation(
+        param: TransferApplicationConfirmationType,
     ) {
         try {
-            let url: Input = 'employment/self_transfer/get';
-
-            const response: Response = await http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // add self transfer detail
-    static async addSelfTransferDetail(param: TransferSelfDetail) {
-        try {
-            let url: Input = 'employment/self_transfer/add';
+            const url: Input =
+                'employment/self_transfer/application_confirmation/add';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -396,12 +129,12 @@ export class TransferApplicationServices {
                 })
                 .json();
 
-            const response = await getPromiseToast(promiseResponse);
+            const response = await toasterCommon(promiseResponse);
 
-            const result = CommonResponseConvert.fromResponse(response);
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -411,90 +144,12 @@ export class TransferApplicationServices {
         }
     }
 
-    // add self transfer reason
-    static async addSelfTransferReason(param: TransferSelfReason) {
-        try {
-            let url: Input = 'employment/self_transfer/add_reason';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                await invalidateAll();
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // add self transfer confirmation
-    static async addSelfTransferConfirmation(param: TransferSelfEndorsement) {
-        try {
-            let url: Input = 'employment/self_transfer/add_confirmation';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                await invalidateAll();
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // add common transfer document
-    static async addSelfTransferDocument(param: string) {
-        try {
-            let url: Input = 'employment/self_transfer/add_document';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: param,
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
-            if (result.status == 'success') {
-                await invalidateAll();
-                return result;
-            } else {
-                return CommonResponseConstant.httpError;
-            }
-        } catch (error) {
-            return CommonResponseConstant.httpError;
-        }
-    }
-
-    // add self transfer first director approval
-    static async addSelfTransferFirstDirectorApproval(
-        param: TransferCommonEndorsement,
+    // add assign director
+    static async addAssignDirector(
+        param: TransferApplicationAssignDirectorType,
     ) {
         try {
-            let url: Input = 'employment/self_transfer/add_first_director';
+            const url: Input = 'employment/self_transfer/assign_director/add';
 
             const promiseResponse: Promise<Response> = http
                 .post(url, {
@@ -502,12 +157,12 @@ export class TransferApplicationServices {
                 })
                 .json();
 
-            const response = await getPromiseToast(promiseResponse);
+            const response = await toasterCommon(promiseResponse);
 
-            const result = CommonResponseConvert.fromResponse(response);
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -517,250 +172,264 @@ export class TransferApplicationServices {
         }
     }
 
-    // add self transfer second director approval
-    static async addSelfTransferSecondDirectorApproval(
-        param: TransferCommonEndorsement,
-    ) {
+    static async addDirectorSupport(param: TransferApplicationDirectorSupportType) {
         try {
-            let url: Input = 'employment/self_transfer/add_second_director';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
+            const url: Input = 'employment/self_transfer/director_support/add';
+    
+            const promiseResponse: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+    
+            const response = await toasterCommon(promiseResponse);
+    
+            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
+    
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
             }
+    
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
 
-    // add self transfer meeting
-    static async addSelfTransferMeeting(param: TransferCommonMeeting) {
+    // add meeting result
+    static async addMeetingResult(param: TransferApplicationMeetingResultType) {
         try {
-            let url: Input = 'employment/self_transfer/add_meeting';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
+            const url: Input = 'employment/self_transfer/meeting_result/add';
+    
+            const promiseResponse: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+    
+            const response = await toasterCommon(promiseResponse);
+    
+            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
+    
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
             }
+    
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
 
-    // add common transfer postponement application
-    static async addSelfTransferPostponeApplication(
-        param: TransferCommonPostponeApplication,
-    ) {
+    // add acceptance letter details
+    static async addAcceptanceLetterDetail(param: TransferApplicationAcceptanceLetterDetailType) {
         try {
-            let url: Input = 'employment/self_transfer/add_postpone';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
+            const url: Input = 'employment/self_transfer/accept_letter_details/add';
+    
+            const promiseResponse: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+    
+            const response = await toasterCommon(promiseResponse);
+    
+            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
+    
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
             }
+    
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
 
-    // add self transfer postpone document
-    static async uploadSelfTransferPostponeDocument(param: string) {
+    // add postpone detail
+    static async addPostponeDetail(param: TransferApplicationPostponeDetailType) {
         try {
-            let url: Input =
-                'employment/self_transfer/upload_postpone_document';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: param,
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
+            const url: Input = 'employment/self_transfer/postpone_application_details/add';
+    
+            const promiseResponse: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+    
+            const response = await toasterCommon(promiseResponse);
+    
+            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
+    
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
             }
+    
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
 
-    // add self transfer postpone result
-    static async addSelfTransferPostponeResult(
-        param: TransferCommonPostponeResult,
-    ) {
+    // add assign postpone approver
+    static async addAssignPostponeApprover(param: TransferApplicationEndorsementType) {
         try {
-            let url: Input = 'employment/self_transfer/add_postpone_result';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
+            const url: Input = 'employment/self_transfer/assign_postpone_approver/add';
+    
+            const promiseResponse: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+    
+            const response = await toasterCommon(promiseResponse);
+    
+            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
+    
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
             }
+    
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
 
-    // add self transfer postpone result
-    static async addSelfTransferPostponeApproval(
-        param: TransferCommonEndorsement,
-    ) {
+    // add postpone approval
+    static async addPostponeApproval(param: TransferApplicationEndorsementType) {
         try {
-            let url: Input = 'employment/self_transfer/add_postpone_approval';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
+            const url: Input = 'employment/self_transfer/postpone_approval/add';
+    
+            const promiseResponse: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+    
+            const response = await toasterCommon(promiseResponse);
+    
+            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
+    
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
             }
+    
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
 
-    // add self transfer endorser detail
-    static async addSelfTransferEndorserDetail(
-        param: TransferCommonEndorserDetail,
-    ) {
+    // add postpone letter detail
+    static async addPostponeLetterDetail(param: TransferApplicationPostponeLetterDetailType) {
         try {
-            let url: Input = 'employment/self_transfer/add_endorser';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
+            const url: Input = 'employment/self_transfer/postpone_letter_details/add';
+    
+            const promiseResponse: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+    
+            const response = await toasterCommon(promiseResponse);
+    
+            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
+    
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
             }
+    
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
 
-    // add common transfer supporter feedback
-    static async addSelfTransferSupporterFeedback(
-        param: TransferCommonEndorsement,
-    ) {
+    // add transfer document
+    static async addTransferDocument(param: TransferApplicationTransferDocumentType) {
         try {
-            let url: Input = 'employment/self_transfer/add_supporter_approval';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
+            const url: Input = 'employment/self_transfer/transfer_documents/add';
+    
+            const promiseResponse: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+    
+            const response = await toasterCommon(promiseResponse);
+    
+            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
+    
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
             }
+    
         } catch (error) {
             return CommonResponseConstant.httpError;
         }
     }
 
-    // add common transfer supporter feedback
-    static async addSelfTransferApproverFeedback(
-        param: TransferCommonEndorsement,
-    ) {
+    // add endorser detail
+    static async addEndorserDetail(param: TransferApplicationEndorserDetailType) {
         try {
-            let url: Input = 'employment/self_transfer/add_approver_approval';
-
-            const promiseResponse: Promise<Response> = http
-                .post(url, {
-                    body: JSON.stringify(param),
-                })
-                .json();
-
-            const response = await getPromiseToast(promiseResponse);
-
-            const result = CommonResponseConvert.fromResponse(response);
-
+            const url: Input = 'employment/self_transfer/endorser_details/add';
+    
+            const promiseResponse: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+    
+            const response = await toasterCommon(promiseResponse);
+    
+            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
+    
             if (result.status == 'success') {
-                await invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
             }
+    
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // supporter feedback
+    static async addSupporterFeedback(param: TransferApplicationEndorsementType) {
+        try {
+            const url: Input = 'employment/self_transfer/supporter_feedback/add';
+    
+            const promiseResponse: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+    
+            const response = await toasterCommon(promiseResponse);
+    
+            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
+    
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+    
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // approver feedback
+    static async addApproverFeedback(param: TransferApplicationEndorsementType) {
+        try {
+            const url: Input = 'employment/self_transfer/approver_feedback/add';
+    
+            const promiseResponse: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+    
+            const response = await toasterCommon(promiseResponse);
+    
+            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
+    
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+    
         } catch (error) {
             return CommonResponseConstant.httpError;
         }

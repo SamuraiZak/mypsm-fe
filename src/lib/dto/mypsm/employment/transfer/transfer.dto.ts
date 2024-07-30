@@ -1,162 +1,83 @@
-// =========================================================
-//  SHARED
+import type { DocumentDTO } from '$lib/dto/core/document/document.dto';
 
-import type { TransferSelfEndorsement } from "$lib/schemas/mypsm/employment/transfer/transfer.schema";
-
-// =========================================================
-export interface TransferDocumentDTO {
-    name: string;
-    base64: string;
+// list filter
+export interface TransferApplicationListFilterDTO {
+    employeeName: string | null;
+    identityDocumentNumber: string | null;
+    employeeNumber: string | null;
+    status: string | null;
+    transferType: string | null;
 }
 
-export interface TransferDocumentAddDTO {
-    id: number;
-    documents: TransferDocumentDTO[];
-}
-
-// =========================================================
-//  COMMON
-// =========================================================
-export interface TransferCommonEndorsementDTO {
-    id: number;
-    status: boolean;
+// list item
+export interface TransferApplicationListItemDTO {
+    applicationId: number;
+    transferType: string;
+    category: string;
+    employeeNumber: string;
+    employeeName: string;
+    identityDocumentNumber: string;
+    applicationDate: string | null;
+    status: string;
     remark: string;
 }
 
-export interface TransferCommonEndorserDetailDTO {
-    id: number;
-    approverIC: string;
-    supporterIC: string;
-}
-
-export interface TransferCommonHistoryFilterDTO {
-    directorName: string | null;
-    employeeName: string | null;
-    identityDocumentNumber: string | null;
-    status: string | null;
-    result: string | null;
-    applicationType: string | null;
-}
-
-export interface TransferCommonHistoryDTO {
-    id: number;
-    employeeNumber: string;
-    employeeName: string;
-    identityDocumentNumber: string;
-    applicationDate: string;
-    status: string;
-    result: string;
-    applicationType: string;
-}
-
-export interface TransferApplicationDetailRequestDTO {
-    id: number;
-}
-
-export interface TransferCommonApplicationDetailDTO {
-    status: string | null;
-    applicationDetail: TransferCommonDetailDTO | null;
-    meeting: TransferCommonMeetingDTO | null;
-    postponeDetail: TransferCommonPostponeApplicationDTO | null;
-    postponeDocument: TransferDocumentAddDTO | null;
-    postponeResult: TransferCommonPostponeResultDTO | null;
-    postponeApproval: TransferCommonEndorsementDTO | null;
-    transferDocument: TransferDocumentAddDTO | null;
-    endorserDetails: TransferCommonEndorserDetailDTO | null;
-    supporterFeedback: TransferCommonEndorsementDTO | null;
-    approverFeedback: TransferCommonEndorsementDTO | null;
-}
-
-export interface TransferCommonDetailDTO {
-    id?: number;
-    applicationType: string;
-    employeeIC: string;
-    newPlacementId: number;
-    transferDate: string;
-    reason: string;
-}
-
-export interface TransferCommonMeetingDTO {
-    id: number;
+// employee personal detail
+export interface TransferApplicationPersonalDetailDTO {
     name: string;
-    date: string;
-    result: boolean;
-    placementId: number;
-    programmeId: number;
-    effectiveDate: string;
-    referenceNo: string;
-    referenceDate: string;
-    directorIC: string;
-}
-
-export interface TransferCommonPostponeApplicationDTO {
-    id: number;
-    isPostpone: boolean;
-    postponeDate: string;
-    reason: string;
-}
-
-export interface TransferCommonPostponeResultDTO {
-    id: number;
-    finalEffectiveDate: string;
-    approverIC: string;
-}
-
-// =========================================================
-//  SELF
-// =========================================================
-export interface TransferSelfHistoryDTO {
-    id: number;
-    employeeNumber: string;
-    employeeName: string;
     identityDocumentNumber: string;
+    employeeNumber: string;
+    phone: string;
+    maritalStatus: string;
+    childCount: number;
+    childInSchoolCount: number;
+}
+
+// employee service detail
+export interface TransferApplicationServiceDetailDTO {
+    position: string;
+    grade: string;
+    hiringDate: string;
+    officeName: string;
+    officeAddress: string;
+    department: string;
+    servicePeriod: number;
+}
+
+// transfer details
+export interface TransferApplicationTransferDetailDTO {
+    applicationId: number | null;
+    category: string;
     transferType: string;
-    applicationDate: null;
-    status: null;
-    result: string;
+    employeeId: number | null;
+    appliedLocation: string | null;
+    reason: string | null;
+    remark: string | null;
+    workPlaceDistance: number | null;
+    employerName: string | null;
+    startDate: string | null;
+    isDraft: boolean;
+    documents: DocumentDTO[];
 }
 
-export interface TransferSelfHistoryFilterDTO {
-    employeeName: string | null;
-    identityDocumentNumber: string | null;
-}
-
-export interface TransferSelfDetailDTO {
-    id: number;
-    transferType: string;
-    firstChoiceId: number;
-    secondChoiceId: number;
-}
-
-export interface TransferSelfReasonDTO {
-    id: number;
-    reasonId: number;
-    explanation: string;
-    company?: string;
-    distance?: number;
-    date?: string;
-}
-
-export interface TransferSelfReasonPartnerDetailDTO {
-    distance: number;
-    company: string;
+// confirmation
+export interface TransferApplicationConfirmationDetail {
+    applicationId: number;
+    status: boolean;
     date: string;
 }
 
-export interface TransferSelfApplicationDetailDTO {
-    status: string | null;
-    applicationDetail: TransferSelfDetailDTO | null;
-    reason: TransferSelfReasonDTO | null;
-    confirmation: TransferSelfEndorsement | null;
-    transferDocument: TransferDocumentAddDTO | null;
-    firstDirector: TransferCommonEndorsementDTO | null;
-    secondDirector: TransferCommonEndorsementDTO | null;
-    meetingDetail: TransferCommonMeetingDTO | null;
-    postponeDetail: TransferCommonPostponeApplicationDTO | null;
-    postponeDocument: TransferDocumentAddDTO | null;
-    postponeResult: TransferCommonPostponeResultDTO | null;
-    postponeApproval: TransferCommonEndorsementDTO | null;
-    endorserDetail: TransferCommonEndorserDetailDTO | null;
-    supporterFeedback: TransferCommonEndorsementDTO | null;
-    approverFeedback: TransferCommonEndorsementDTO | null;
+// assign director
+export interface TransferApplicationAssignDirectorDTO {
+    applicationId?: number;
+    directorName?: string;
+    identityDocumentNumber: string;
+    isDraft: boolean;
+}
+
+export interface TransferApplicationMeetingResultDTO {
+    meetingDate: string;
+    meetingName: string;
+    status: boolean;
+    remark: string;
 }

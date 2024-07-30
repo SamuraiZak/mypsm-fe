@@ -1,101 +1,196 @@
 import * as z from 'zod';
 
-export const TransferCommonDetailSchema = z.object({
-    applicationType: z.string(),
-    employeeIC: z.string(),
-    newPlacementId: z.number(),
-    transferDate: z.string(),
-    reason: z.string(),
-});
-export type TransferCommonDetail = z.infer<typeof TransferCommonDetailSchema>;
-
-export const TransferCommonMeetingSchema = z.object({
-    id: z.number(),
+// employeen detail
+export const TransferApplicationEmployeeDetailSchema = z.object({
     name: z.string(),
-    date: z.string(),
-    result: z.boolean(),
-    placementId: z.number(),
-    programmeId: z.number(),
-    effectiveDate: z.string(),
-    referenceNo: z.string(),
-    referenceDate: z.string(),
-    directorIC: z.string(),
+    identityDocumentNumber: z.string(),
+    employeeNumber: z.string(),
+    phone: z.string(),
+    maritalStatus: z.string(),
+    childCount: z.number(),
+    childInSchoolCount: z.number(),
 });
-export type TransferCommonMeeting = z.infer<typeof TransferCommonMeetingSchema>;
-
-export const TransferCommonPostponeApplicationSchema = z.object({
-    id: z.number(),
-    isPostpone: z.boolean(),
-    postponeDate: z.string(),
-    reason: z.string(),
-});
-export type TransferCommonPostponeApplication = z.infer<
-    typeof TransferCommonPostponeApplicationSchema
+export type TransferApplicationEmployeeDetailType = z.infer<
+    typeof TransferApplicationEmployeeDetailSchema
 >;
 
-export const TransferCommonPostponeResultSchema = z.object({
-    id: z.number(),
-    finalEffectiveDate: z.string(),
-    approverIC: z.string(),
+// service detail
+export const TransferApplicationServiceDetailSchema = z.object({
+    position: z.string(),
+    grade: z.string(),
+    hiringDate: z.string(),
+    officeName: z.string(),
+    officeAddress: z.string(),
+    department: z.string(),
+    servicePeriod: z.number(),
 });
-export type TransferCommonPostponeResult = z.infer<
-    typeof TransferCommonPostponeResultSchema
+export type TransferApplicationServiceDetailType = z.infer<
+    typeof TransferApplicationServiceDetailSchema
 >;
 
-export const TransferCommonEndorsementSchema = z.object({
-    id: z.number(),
-    status: z.boolean(),
-    remark: z.string(),
+// document
+export const DocumentSchema = z.object({
+    name: z.string(),
+    base64: z.string(),
 });
-export type TransferCommonEndorsement = z.infer<
-    typeof TransferCommonEndorsementSchema
->;
+export type DocumentType = z.infer<typeof DocumentSchema>;
 
-export const TransferCommonEndorserDetailSchema = z.object({
-    id: z.number(),
-    approverIC: z.string(),
-    supporterIC: z.string(),
-});
-export type TransferCommonEndorserDetail = z.infer<
-    typeof TransferCommonEndorserDetailSchema
->;
-
-// ================================================
-// SELF
-// ================================================
-// application detail
-export const TransferSelfDetailSchema = z.object({
+// transfer detail
+export const TransferApplicationTransferDetailSchema = z.object({
+    applicationId: z.number().nullish(),
+    category: z.string(),
     transferType: z.string(),
-    firstChoiceId: z.number(),
-    secondChoiceId: z.number(),
+    employeeId: z.number().nullish(),
+    appliedLocation: z.string(),
+    reason: z.string(),
+    remark: z.string().nullish(),
+    workPlaceDistance: z.number().nullish(),
+    employerName: z.string().nullish(),
+    startDate: z.string().nullish(),
+    isDraft: z.boolean(),
+    documents: z.array(DocumentSchema).nullish(),
 });
-export type TransferSelfDetail = z.infer<typeof TransferSelfDetailSchema>;
-
-// optional detail
-export const TransferSelfReasonPartnerDetailSchema = z.object({
-    distance: z.number(),
-    company: z.string(),
-    date: z.string(),
-});
-export type TransferSelfReasonPartnerDetail = z.infer<
-    typeof TransferSelfReasonPartnerDetailSchema
+export type TransferApplicationTransferDetailType = z.infer<
+    typeof TransferApplicationTransferDetailSchema
 >;
 
-export const TransferSelfReasonSchema = z.object({
-    id: z.number(),
-    reasonId: z.number(),
-    explanation: z.string(),
-    distance: z.number().nullish(),
-    company: z.string().nullish(),
+// confirmation
+export const TransferApplicationConfirmationSchema = z.object({
+    applicationId: z.number().nullish(),
+    status: z.boolean(),
     date: z.string().nullish(),
 });
-export type TransferSelfReason = z.infer<typeof TransferSelfReasonSchema>;
+export type TransferApplicationConfirmationType = z.infer<
+    typeof TransferApplicationConfirmationSchema
+>;
 
-export const TransferSelfEndorsementSchema = z.object({
-    id: z.number(),
-    confirmation: z.boolean(),
-    applicationDate: z.string().nullish(),
+// assign director
+export const TransferApplicationAssignDirectorSchema = z.object({
+    applicationId: z.number().nullish(),
+    directorName: z.string().nullish(),
+    identityDocumentNumber: z.string(),
+    isDraft: z.boolean().nullish(),
 });
-export type TransferSelfEndorsement = z.infer<
-    typeof TransferSelfEndorsementSchema
+export type TransferApplicationAssignDirectorType = z.infer<
+    typeof TransferApplicationAssignDirectorSchema
+>;
+
+// director support
+export const EthicalIssueSchema = z.object({
+    punishment: z.string(),
+    date: z.string(),
+});
+export type EthicalIssueType = z.infer<typeof EthicalIssueSchema>;
+
+export const TransferApplicationDirectorSupportSchema = z.object({
+    applicationId: z.number(),
+    feedback: z.string(),
+    remark: z.string(),
+    ethicalIssues: z.array(EthicalIssueSchema),
+    name: z.string().nullish(),
+    identityDocumentNumber: z.string(),
+    date: z.string(),
+    isDraft: z.boolean(),
+});
+export type TransferApplicationDirectorSupportType = z.infer<
+    typeof TransferApplicationDirectorSupportSchema
+>;
+
+// meeting result schema
+export const TransferApplicationMeetingResultSchema = z.object({
+    meetingDate: z.string(),
+    meetingName: z.string(),
+    status: z.boolean().nullish(),
+    remark: z.string().nullish(),
+});
+export type TransferApplicationMeetingResultType = z.infer<
+    typeof TransferApplicationMeetingResultSchema
+>;
+
+// acceptance letter detail
+export const TransferApplicationAcceptanceLetterDetailSchema = z.object({
+    referenceNumber: z.string(),
+    referenceDate: z.string(),
+    subject: z.string(),
+    fromLocation: z.string(),
+    toLocation: z.string(),
+    additionalNotes: z.string(),
+    transferDate: z.string(),
+    newLocationAddress: z.string(),
+});
+export type TransferApplicationAcceptanceLetterDetailType = z.infer<
+    typeof TransferApplicationAcceptanceLetterDetailSchema
+>;
+
+// posptoneDetails
+export const TransferApplicationPostponeDetailSchema = z.object({
+    status: z.boolean(),
+    remark: z.string(),
+    documents: z.array(DocumentSchema),
+    date: z.string().nullish(),
+});
+export type TransferApplicationPostponeDetailType = z.infer<
+    typeof TransferApplicationPostponeDetailSchema
+>;
+
+// assign postpone approver
+export const TransferApplicationAssignPostponeApproverSchema = z.object({
+    directorName: z.string().nullish(),
+    identityDocumentNumber: z.string(),
+});
+export type TransferApplicationAssignPostponeApproverType = z.infer<
+    typeof TransferApplicationAssignPostponeApproverSchema
+>;
+
+// postpone letter detail
+export const TransferApplicationPostponeLetterDetailSchema = z.object({
+    referenceNumber: z.string(),
+    referenceDate: z.string(),
+    subject: z.string(),
+    fromLocation: z.string(),
+    toLocation: z.string(),
+    additionalNotes: z.string(),
+    transferDate: z.string(),
+    newLocationAddress: z.string(),
+    isDraft: z.boolean(),
+});
+export type TransferApplicationPostponeLetterDetailType = z.infer<
+    typeof TransferApplicationPostponeLetterDetailSchema
+>;
+
+// transfer document
+export const TransferApplicationTransferDocumentSchema = z.object({
+    documents: z.array(DocumentSchema),
+    applicationId: z.number().nullish(),
+    isDraft: z.boolean(),
+});
+export type TransferApplicationTransferDocumentType = z.infer<
+    typeof TransferApplicationTransferDocumentSchema
+>;
+
+// endorser detail
+export const TransferApplicationEndorserDetailSchema = z.object({
+    applicationId: z.number().nullish(),
+    supporterName: z.string().nullish(),
+    supporterIdentityDocumentNumber: z.string(),
+    approverName: z.string().nullish(),
+    approverIdentityDocumentNumber: z.string(),
+    isDraft: z.boolean(),
+});
+export type TransferApplicationEndorserDetailType = z.infer<
+    typeof TransferApplicationEndorserDetailSchema
+>;
+
+// endorsement
+export const TransferApplicationEndorsementSchema = z.object({
+    applicationId: z.number().nullish(),
+    status: z.boolean().nullish(),
+    remark: z.string().nullish(),
+    name: z.string().nullish(),
+    identityDocumentNumber: z.string().nullish(),
+    date: z.string().nullish(),
+    isDraft: z.boolean(),
+});
+export type TransferApplicationEndorsementType = z.infer<
+    typeof TransferApplicationEndorsementSchema
 >;
