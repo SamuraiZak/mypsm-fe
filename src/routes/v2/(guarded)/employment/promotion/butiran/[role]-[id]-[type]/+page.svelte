@@ -200,8 +200,7 @@
                         if (res?.response?.status == 'success') {
                             tempGroupId = res.response.data?.details.groupId;
                             confirmModal = false;
-                            await goto(
-                                '/v2/employment/promotion');
+                            await goto('/v2/employment/promotion');
                         }
                     },
                 );
@@ -259,8 +258,10 @@
             excel: true,
         },
     };
-    
-    $: controlIntegrity = data.certificationList.every((item) => item.integrityCertification !== "Sedang diproses");
+
+    $: controlIntegrity = data.certificationList.every(
+        (item) => item.integrityCertification !== 'Sedang diproses',
+    );
     $: certificationTable.option.checkbox = !controlIntegrity;
 
     let promotionmeetingTable: TableSettingDTO = {
@@ -679,16 +680,18 @@
                         $supporterApproval = res.suppResponse.data?.details;
                         $approverApproval = res.appResponse.data?.details;
                         if (
-                            $supporterApproval.remark == "" &&
+                            $supporterApproval.remark == '' &&
                             data.currentRoleCode ==
                                 UserRoleConstant.kakitangan.code
                         ) {
                             supporterApproved = false;
                             approverApproved = true;
-                        } else if (supporterApproved && ($approverApproval.remark == "" &&
+                        } else if (
+                            supporterApproved &&
+                            $approverApproval.remark == '' &&
                             data.currentRoleCode ==
-                                UserRoleConstant.kakitangan.code))
-                       {
+                                UserRoleConstant.kakitangan.code
+                        ) {
                             approverApproved = false;
                         }
                     })
@@ -818,10 +821,10 @@
                                             <span class="font-medium"
                                                 >Arahan:
                                             </span>
-                                            Sila tekan butang tambah di sebelah
-                                            kiri jadual untuk masukkan kakitangan
-                                            ke dalam senarai calon kenaikan pangkat.
-                                            Klik butang
+                                            Sila tekan butang tambah di sebelah kiri
+                                            jadual untuk masukkan kakitangan ke dalam
+                                            senarai calon kenaikan pangkat. Klik
+                                            butang
                                             <span class="font-medium"
                                                 >Hantar</span
                                             > setelah selesai.
@@ -830,7 +833,10 @@
                                     <div class="flex w-full">
                                         <div class="h-fit w-full">
                                             <DataTable
-                                                title="Senarai Nama Kakitangan Yang Memangku"
+                                                title="{data.promotionType ===
+                                                'TBK 1 dan 2'
+                                                    ? 'Senarai Nama Kakitangan Yang Telah Berkhidmat 13 Tahun Ke-Atas'
+                                                    : 'Senarai Nama Kakitangan Yang Memangku'} "
                                                 bind:tableData={employeeListTable}
                                             >
                                                 <FilterWrapper slot="filter">
@@ -843,8 +849,7 @@
                                                     <FilterTextField
                                                         label="Nama Kakitangan"
                                                         bind:inputValue={employeeListTable
-                                                            .param.filter
-                                                            .name}
+                                                            .param.filter.name}
                                                     />
                                                     <FilterTextField
                                                         label="No. Kad Pengenalan"
@@ -910,7 +915,7 @@
                                 class="flex w-full flex-col justify-start gap-2.5 p-3"
                             >
                                 <div class="flex w-full flex-col gap-2.5 pb-10">
-                                    {#if (data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code && data.currentRoleCode !== UserRoleConstant.kakitangan.code)}
+                                    {#if data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code && data.currentRoleCode !== UserRoleConstant.kakitangan.code}
                                         <Alert color="blue">
                                             <p>
                                                 <span class="font-medium"
@@ -963,6 +968,7 @@
                                     >
                                         <CustomTextField
                                             label="Ulasan/Tindakan"
+                                            isRequired={false}
                                             id="remark"
                                             disabled={directorApproved}
                                             placeholder="Menunggu perakuan daripada Pengarah Bahagian/Negeri..."
@@ -1110,6 +1116,7 @@
                                             />
                                             <CustomTextField
                                                 label="Tarikh Kembali Ke Gred Asal"
+                                                isRequired={false}
                                                 id="gradeRevertDate"
                                                 type="date"
                                                 disabled={promotionMeetingExist}
@@ -1124,6 +1131,22 @@
                                                     .placementLookup}
                                                 bind:val={$certificationForm.newPlacement}
                                                 errors={$certificationError.newPlacement}
+                                            />
+                                            <CustomTextField
+                                                label="Gaji Semasa"
+                                                id="currentSalary"
+                                                type="number"
+                                                disabled={promotionMeetingExist}
+                                                bind:val={$certificationForm.currentSalary}
+                                                errors={$certificationError.currentSalary}
+                                            />
+                                            <CustomTextField
+                                                label="Gaji Baharu"
+                                                id="newSalary"
+                                                type="number"
+                                                disabled={promotionMeetingExist}
+                                                bind:val={$certificationForm.newSalary}
+                                                errors={$certificationError.newSalary}
                                             />
                                         {/if}
                                     {:else}
@@ -1190,6 +1213,20 @@
                                                 options={data.lookup
                                                     .placementLookup}
                                                 val={certificationResult?.newPlacement}
+                                            />
+                                            <CustomTextField
+                                                label="Gaji Semasa"
+                                                id="currentSalary"
+                                                disabled
+                                                type="number"
+                                                val={certificationResult?.currentSalary}
+                                            />
+                                            <CustomTextField
+                                                label="Gaji Baharu"
+                                                id="newSalary"
+                                                disabled
+                                                type="number"
+                                                val={certificationResult?.newSalary}
                                             />
                                         {/if}
                                     {/if}
@@ -1504,6 +1541,7 @@
                                     {#if $employeePromotion.status}
                                         <CustomTextField
                                             label="Ulasan"
+                                            isRequired={false}
                                             id="remark"
                                             type="textarea"
                                             disabled={employeePromotionExist}
@@ -1611,6 +1649,7 @@
                                     />
                                     <CustomTextField
                                         label="Tindakan/Ulasan"
+                                        isRequired={false}
                                         id="remark"
                                         disabled={supporterApproved}
                                         placeholder="Menunggu keputusan..."
@@ -1645,6 +1684,7 @@
                                     />
                                     <CustomTextField
                                         label="Tindakan/Ulasan"
+                                        isRequired={false}
                                         id="remark"
                                         disabled={approverApproved}
                                         placeholder="Menunggu keputusan..."
