@@ -1,4 +1,4 @@
-import { booleanSchema, shortTextSchema } from '$lib/schemas/common/schema-type';
+import { booleanSchema, numberSchema, shortTextSchema } from '$lib/schemas/common/schema-type';
 import { z } from 'zod';
 const stringToMinDate = z.string({ required_error: 'Medan ini tidak boleh kosong.', invalid_type_error: 'Medan ini tidak boleh kosong.' }).refine((val) => {
     const convertedStringToDate = new Date(val);
@@ -22,7 +22,7 @@ export const _promotionCommonApproval = z.object({
     id: z.number(),
     promotionType: shortTextSchema,
     status: booleanSchema,
-    remark: shortTextSchema,
+    remark: z.string().nullable(),
 })
 
 export const _promotionIntegrityApproval = z.object({
@@ -42,6 +42,8 @@ export const _editPromotionCertification = z.object({
     actingEndDate: z.string().default(""),
     gradeRevertDate: z.string().default(""),
     newPlacement: z.string().default(""),
+    currentSalary: numberSchema,
+    newSalary: numberSchema,
 })
 
 export const _editPromotionPlacement = z.object({
@@ -60,5 +62,5 @@ export const _editEmployeePromotion = z.object({
     supporterName: shortTextSchema.nullable(),
     approverName: shortTextSchema.nullable(),
     status: booleanSchema,
-    remark: shortTextSchema,
+    remark: z.string().nullable(),
 })
