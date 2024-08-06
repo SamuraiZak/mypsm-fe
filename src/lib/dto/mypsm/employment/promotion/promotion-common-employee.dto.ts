@@ -9,6 +9,9 @@ export interface PromotionCommonEmployee {
     position:         string;
     currentPlacement: string;
     assetDeclaration: string;
+    integritySecretaryStatus: string;
+    directorStatus: string;
+    remark: string;
 }
 
 // Converts JSON strings to/from your types
@@ -107,5 +110,7 @@ export interface PromotionCertificationResult {
     actingEndDate:    string | null;
     gradeRevertDate:  string | null;
     newPlacement:     string | null;
+    currentSalary:     number | null;
+    newSalary:     number | null;
 }
 
