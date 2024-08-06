@@ -49,7 +49,7 @@ export interface PromotionEmployeeEdit {
     supporterName: string | null;
     approverName:  string | null;
     status:  boolean;
-    remark:        string;
+    remark:        string | null;
 }
 
 // Converts JSON strings to/from your types
@@ -67,7 +67,7 @@ export interface PromotionCommonApproval {
     id:                  number;
     promotionType:       string;
     status:              boolean;
-    remark:              string;
+    remark:              string | null;
 }
 
 export interface PromotionIntegrityApproval {
