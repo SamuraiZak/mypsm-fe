@@ -23,7 +23,7 @@ export const _promotionCommonApproval = z.object({
     promotionType: shortTextSchema,
     status: booleanSchema,
     remark: z.string().nullable(),
-    mark: z.string().nullable(),
+    mark: z.number().nullable(),
 })
 
 export const _promotionIntegrityApproval = z.object({

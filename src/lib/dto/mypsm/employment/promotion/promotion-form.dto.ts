@@ -68,7 +68,7 @@ export interface PromotionCommonApproval {
     promotionType:       string;
     status:              boolean;
     remark:              string | null;
-    mark:              string | null;
+    mark:              number | null;
 }
 
 export interface PromotionIntegrityApproval {
