@@ -135,6 +135,18 @@ export const getGeneralToast = async (promise: Promise<Response>) => {
 };
 
 // =======================================================
+// generat error toast of file too large
+// =======================================================
+export const getFileToLargeToast = async () => {
+    toast.error(
+        'Saiz fail yang dimuat naik terlalu besar.',
+        {
+            style: 'background: #333; color: #fff;',npm
+        },
+    );
+};
+
+// =======================================================
 // forgot password
 // =======================================================
 export const getPasswordResetSuccessToast = async () => {

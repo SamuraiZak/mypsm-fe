@@ -21,7 +21,7 @@ import type { NewHireAddCandidateDTO } from '$lib/dto/mypsm/employment/new-hire/
 import type { CandidateNewHireApproverResultDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-get-approver-result.dto';
 import type { NewHireSecretaryServiceUpdateRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-secretary-service-update.dto';
 import type { NewHireSetApproversDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-set-approvers.dto';
-import { getPromiseToast } from '$lib/helpers/core/toast.helper';
+import { getFileToLargeToast, getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 
@@ -676,6 +676,10 @@ export class EmploymentServices {
                 await invalidateAll();
                 return result;
             } else {
+                if (result.message == 'request entity too large') {
+                    getFileToLargeToast();
+                    console.log('error large')
+                };
                 return CommonResponseConstant.httpError;
             }
         } catch (error) {
