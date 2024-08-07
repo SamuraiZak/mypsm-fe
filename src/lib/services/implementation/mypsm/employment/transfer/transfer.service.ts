@@ -8,6 +8,7 @@ import { toasterCommon } from '$lib/helpers/core/french-toast.helper';
 import type {
     TransferApplicationAcceptanceLetterDetailType,
     TransferApplicationAssignDirectorType,
+    TransferApplicationAssignPostponeApproverType,
     TransferApplicationConfirmationType,
     TransferApplicationDirectorSupportType,
     TransferApplicationEndorsementType,
@@ -268,7 +269,7 @@ export class TransferServices {
     }
 
     // add assign postpone approver
-    static async addAssignPostponeApprover(param: TransferApplicationEndorsementType) {
+    static async addAssignPostponeApprover(param: TransferApplicationAssignPostponeApproverType) {
         try {
             const url: Input = 'employment/self_transfer/assign_postpone_approver/add';
     
