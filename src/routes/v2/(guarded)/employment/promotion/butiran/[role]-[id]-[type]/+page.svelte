@@ -982,6 +982,18 @@
                                             options={confirmOptions}
                                             bind:val={$directorForm.status}
                                         />
+                                        {#if data.promotionType === 'TBK 1 dan 2'}
+                                            <CustomTextField
+                                                label="Markah"
+                                                isRequired={false}
+                                                id="marks"
+                                                type="number"
+                                                disabled={directorApproved}
+                                                placeholder="Markah"
+                                                bind:val={$directorForm.mark}
+                                                errors={$directorError.mark}
+                                            />
+                                        {/if}
                                     </form>
                                 {/if}
                             </div>
