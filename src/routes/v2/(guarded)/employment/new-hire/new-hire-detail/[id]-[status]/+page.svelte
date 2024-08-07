@@ -550,7 +550,11 @@
         taintedMessage: false,
         validators: zod(_uploadDocumentsSchema),
         onSubmit() {
-            _submitDocumentForm($documentForm.isDraft, $documentForm.document);
+            _submitDocumentForm(
+                $documentForm.isDraft,
+                $documentForm.document,
+                data.newHireFullDetailView.document,
+            );
         },
     });
 
@@ -2592,7 +2596,7 @@
         </StepperContentBody>
     </StepperContent>
     <StepperContent>
-        <StepperContentHeader title="Dokumen - Dokumen Sokongan yang Berkaitan">
+        <StepperContentHeader title="Dokumen Sokongan yang Berkaitan">
             {#if (!$isReadonlyDocumentFormStepper || $documentFormStepperIsDraft) && data.roles.isCandidateRole}
                 <TextIconButton
                     type="neutral"
@@ -2645,7 +2649,7 @@
                         use:documentFormEnhance
                         enctype="multipart/form-data"
                     >
-                        {#if $documentFormErrors.document}
+                        {#if $documentFormErrors.document && data.newHireFullDetailView.document.attachment === null && data.newHireFullDetailView.document.attachment === ''}
                             <span
                                 class="font-sans text-sm italic text-system-danger"
                                 >Sila muat naik dokumen barkaitan dan pastikan
@@ -2794,13 +2798,13 @@
                         <div
                             class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
                         >
-                            <ContentHeader
-                                title="Dokumen - Dokumen Sokongan yang Berkaitan"
-                            ></ContentHeader>
+                            <!-- <ContentHeader
+                                title="Dokumen Sokongan yang Berkaitan"
+                            ></ContentHeader> -->
                             <p
                                 class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
                             >
-                                Fail-fail yang dimuat naik:
+                                Fail yang dimuat naik:
                             </p>
 
                             <div
@@ -2827,13 +2831,10 @@
                     <div
                         class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
                     >
-                        <ContentHeader
-                            title="Dokumen - Dokumen Sokongan yang Berkaitan"
-                        ></ContentHeader>
                         <p
                             class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
                         >
-                            Fail-fail yang dimuat naik:
+                            Fail yang dimuat naik:
                         </p>
 
                         <div
@@ -3007,6 +3008,7 @@
 
                         <CustomTextField
                             placeholder="-"
+                            isRequired={false}
                             disabled={$isReadonlyServiceFormStepper &&
                                 !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.epfNumber}
@@ -3017,6 +3019,7 @@
 
                         <CustomTextField
                             placeholder="-"
+                            isRequired={false}
                             disabled={$isReadonlyServiceFormStepper &&
                                 !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.socsoNumber}
@@ -3026,6 +3029,7 @@
                         ></CustomTextField>
                         <CustomTextField
                             placeholder="-"
+                            isRequired={false}
                             disabled={$isReadonlyServiceFormStepper &&
                                 !$serviceFormStepperIsDraft}
                             errors={$serviceInfoErrors.incomeNumber}
@@ -3159,9 +3163,9 @@
 
                         <CustomTextField
                             placeholder="-"
+                            isRequired={false}
                             disabled={$isReadonlyServiceFormStepper &&
                                 !$serviceFormStepperIsDraft}
-                            isRequired={false}
                             errors={$serviceInfoErrors.pensionNumber}
                             id="pensionNumber"
                             label={'Nombor Pencen'}
@@ -3201,7 +3205,8 @@
                                     id="revisionMonthId"
                                     label="Bulan Berkuatkuasa (Bulan KGT)"
                                     bind:val={$serviceInfoForm.revisionMonthId}
-                                    options={kgtMonthStringLookup}
+                                    options={data.selectionOptions
+                                        .salaryMovementMonth}
                                 ></CustomSelectField>
 
                                 <CustomTextField
@@ -3216,9 +3221,8 @@
                                 ></CustomTextField>
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled={$isReadonlyServiceFormStepper &&
-                                        !$serviceFormStepperIsDraft}
-                                    errors={$serviceInfoErrors.maximumSalary}
+                                    disabled
+                                    isRequired={false}
                                     id="maximumSalary"
                                     type="number"
                                     label={'Tangga Gaji (RM)'}
@@ -3346,15 +3350,17 @@
                                 label={'Keputusan'}
                                 bind:val={$secretaryApprovalInfoForm.status}
                             ></CustomRadioBoolean>
-                            <CustomTextField
-                                disabled
-                                isRequired={false}
-                                id="approvalDate"
-                                label="Tarikh Kelulusan"
-                                type="date"
-                                placeholder="-"
-                                val={$secretaryApprovalInfoForm.approvalDate}
-                            ></CustomTextField>
+                            {#if $secretaryApprovalInfoForm.approvalDate !== ''}
+                                <CustomTextField
+                                    disabled
+                                    isRequired={false}
+                                    id="approvalDate"
+                                    label="Tarikh Kelulusan"
+                                    type="date"
+                                    placeholder="-"
+                                    val={$secretaryApprovalInfoForm.approvalDate}
+                                ></CustomTextField>
+                            {/if}
                         </form>
                     {/if}
                 </StepperContentBody>

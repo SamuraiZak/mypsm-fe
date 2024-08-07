@@ -31,6 +31,7 @@ import type {
     NextOfKin,
 } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-next-of-kin-details.dto.js';
 import type { CandidatePersonalRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-candidate-personal-details.dto.js';
+import type { NewHireDocumentsDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-documents.dto';
 import type { NewHireFullDetailResponseDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-full-detail-response.dto';
 import type { CandidateNewHireApproverResultDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-get-approver-result.dto';
 import type { NewHireSecretaryServiceUpdateRequestDTO } from '$lib/dto/mypsm/employment/new-hire/new-hire-secretary-service-update.dto.js';
@@ -475,6 +476,26 @@ export async function load({ params, parent }) {
 
     // ===========================================================================
 
+    const monthReq: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 20,
+        orderBy: "",
+        orderType: 0,
+        filter: {
+            code: null,
+            description: null,
+            isQuarter: true
+        }
+    }
+    
+    const salaryMonthResponse: CommonResponseDTO =
+        await LookupServices.getSalaryMovementMonth(monthReq);
+
+    const salaryMovementMonth: DropdownDTO[] =
+        LookupServices.setSelectOptions(salaryMonthResponse)
+
+    // ===========================================================================
+
     const generalLookup: DropdownDTO[] = [
         {
             value: true,
@@ -545,6 +566,7 @@ export async function load({ params, parent }) {
             unitLookup,
             serviceTypeLookup,
             retirementBenefitLookup,
+            salaryMovementMonth,
         },
     };
 }
@@ -770,7 +792,8 @@ export const _submitSecretarySetApproverForm = async (
     return { response };
 };
 
-export const _submitDocumentForm = async (isDraft: boolean, files: File[]) => {
+export const _submitDocumentForm = async (isDraft: boolean, files: File[], existingFile: NewHireDocumentsDTO) => {
+    const existingFileBase64 = existingFile.attachment.split('base64,')[1]
     const documentData = new FormData();
 
     // check file size validation
@@ -779,15 +802,16 @@ export const _submitDocumentForm = async (isDraft: boolean, files: File[]) => {
     });
 
     const form = await superValidate(documentData, zod(_uploadDocumentsSchema));
-
-    if (!form.valid) {
+    
+    if (!form.valid && existingFile.attachment === null) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
     }
-
-    // turns file into base 64 format
-    const base64String = await _fileToBase64String(files[0]);
-
+    
+    // turns file into base 64 format and check is no existing file
+    const base64String = existingFile.attachment !== null && files.length < 1 ? existingFileBase64: await _fileToBase64String(files[0]);
+    const fileName = existingFile.attachment !== null && files.length < 1 ? existingFile.attachmentName :files[0].name;
+    
     const requestBody: {
         isDraft: boolean;
         document?: DocumentBase64RequestDTO | undefined;
@@ -795,10 +819,9 @@ export const _submitDocumentForm = async (isDraft: boolean, files: File[]) => {
         isDraft: isDraft,
         document: {
             base64: base64String,
-            name: files[0].name,
+            name: fileName,
         },
     };
-
     const response: CommonResponseDTO =
         await EmploymentServices.createCurrentCandidateDocuments(requestBody);
 
