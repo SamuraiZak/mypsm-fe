@@ -455,10 +455,10 @@
         multipleSubmits: 'prevent',
         validationMethod: 'auto',
         validators: zod(_setApproversSchema),
-        onSubmit(formData) {
+        onSubmit() {
             _submitSecretarySetApproverForm(
                 Number(data.params.id),
-                formData.formData,
+                $secretarySetApproverForm,
             );
         },
     });
