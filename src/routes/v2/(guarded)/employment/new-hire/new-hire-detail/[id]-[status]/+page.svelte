@@ -776,40 +776,26 @@
     $form.birthDate = nricToBirthdate($form.identityDocumentNumber);
 
     const triggerSubmitAcademicTempData = async (isDraft: boolean) => {
-        const response = await _submitAcademicInfoForm(
-            isDraft,
-            tempAcademicRecord,
-        );
-        if (response.status === 'success') if (isDraft) tempAcademicRecord = [];
+        await _submitAcademicInfoForm(isDraft, tempAcademicRecord);
+        tempAcademicRecord = [];
     };
 
     const triggerSubmitExperienceTempData = async (isDraft: boolean) => {
-        const response = await _submitExperienceInfoForm(
-            isDraft,
-            tempExperienceRecord,
-        );
-        if (response.status === 'success')
-            if (isDraft) tempExperienceRecord = [];
+        await _submitExperienceInfoForm(isDraft, tempExperienceRecord);
+        tempExperienceRecord = [];
     };
 
     const triggerSubmitActivityTempData = async (isDraft: boolean) => {
-        const response = await _submitActivityInfoForm(
-            isDraft,
-            tempActivityRecord,
-        );
-        if (response.status === 'success') if (isDraft) tempActivityRecord = [];
+        await _submitActivityInfoForm(isDraft, tempActivityRecord);
+        tempActivityRecord = [];
     };
     const triggerSubmitFamilyTempData = async (isDraft: boolean) => {
-        const response = await _submitFamilyInfoForm(isDraft, tempFamilyRecord);
-        if (response.status === 'success') if (isDraft) tempFamilyRecord = [];
+        await _submitFamilyInfoForm(isDraft, tempFamilyRecord);
+        tempFamilyRecord = [];
     };
     const triggerSubmitDependencyTempData = async (isDraft: boolean) => {
-        const response = await _submitDependencyInfoForm(
-            isDraft,
-            tempNonFamilyRecord,
-        );
-        if (response.status === 'success')
-            if (isDraft) tempNonFamilyRecord = [];
+        await _submitDependencyInfoForm(isDraft, tempNonFamilyRecord);
+        tempNonFamilyRecord = [];
     };
     const triggerSubmitNextOfKinTempData = async (isDraft: boolean) => {
         const tempData = tempNextOfKinFromFamily.map((tempData) => ({
@@ -839,12 +825,8 @@
             ...tempNextOfKinRecord,
             ...tempData,
         ] as NextOfKin[];
-        const response = await _submitNextOfKinInfoForm(
-            isDraft,
-            tempNextOfKinRecord,
-        );
-        if ((response.status = 'success'))
-            if (isDraft) tempNextOfKinRecord = [];
+        await _submitNextOfKinInfoForm(isDraft, tempNextOfKinRecord);
+        tempNextOfKinRecord = [];
     };
 
     const handleOnInput = (e: Event) => {
@@ -1268,7 +1250,8 @@
                     label="Tidak Berkaitan"
                     onClick={() => {
                         triggerSubmitAcademicTempData(false);
-                        activeIndex++}}
+                        activeIndex++;
+                    }}
                 />
                 <TextIconButton
                     type="neutral"
@@ -1445,7 +1428,10 @@
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
-                    onClick={() => {triggerSubmitExperienceTempData(false);activeIndex++;}}
+                    onClick={() => {
+                        triggerSubmitExperienceTempData(false);
+                        activeIndex++;
+                    }}
                 />
                 <TextIconButton
                     type="neutral"
@@ -1591,7 +1577,10 @@
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
-                    onClick={() => {triggerSubmitActivityTempData(false); activeIndex++;}}
+                    onClick={() => {
+                        triggerSubmitActivityTempData(false);
+                        activeIndex++;
+                    }}
                 />
                 <TextIconButton
                     type="neutral"
@@ -1704,7 +1693,10 @@
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
-                    onClick={() => {triggerSubmitFamilyTempData(false);activeIndex++;}}
+                    onClick={() => {
+                        triggerSubmitFamilyTempData(false);
+                        activeIndex++;
+                    }}
                 />
                 <TextIconButton
                     type="neutral"
@@ -1998,7 +1990,10 @@
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
-                    onClick={() => {triggerSubmitDependencyTempData(false);activeIndex++;}}
+                    onClick={() => {
+                        triggerSubmitDependencyTempData(false);
+                        activeIndex++;
+                    }}
                 />
                 <TextIconButton
                     type="neutral"
@@ -2314,7 +2309,10 @@
                 <TextIconButton
                     type="neutral"
                     label="Tidak Berkaitan"
-                    onClick={() => {triggerSubmitNextOfKinTempData(false);activeIndex++;}}
+                    onClick={() => {
+                        triggerSubmitNextOfKinTempData(false);
+                        activeIndex++;
+                    }}
                 />
                 <TextIconButton
                     type="neutral"
@@ -2866,7 +2864,7 @@
             </div></StepperContentBody
         >
     </StepperContent>
-    {#if ($isReadonlyDocumentFormStepper && !$documentFormStepperIsDraft) || data.roles.isSupporterRole || data.roles.isApproverRole}
+    {#if $isReadonlyDocumentFormStepper && !$documentFormStepperIsDraft && data.newHireFullDetailView.document.attachment !== null}
         <StepperContent>
             <StepperContentHeader title="Kemaskini Lantikan Baharu">
                 {#if (!$isReadonlyServiceFormStepper || $serviceFormStepperIsDraft) && data.roles.isEmploymentSecretaryRole}
