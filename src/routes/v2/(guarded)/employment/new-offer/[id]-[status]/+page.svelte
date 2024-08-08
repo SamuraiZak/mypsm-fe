@@ -1669,7 +1669,7 @@
                                         >2. Pelulus</b
                                     >
                                 </div>
-                                {#if data.view.newOfferDetailView.approver.isReadonly && !$newOfferApproverResultIsDraft}
+                                {#if data.view.newOfferDetailView.approver.isReadonly && !$newOfferApproverResultIsDraft && data.view.newOfferDetailView.approver.isDraft !== null}
                                     <Accordion>
                                         {#each $newOfferApproverResultForm.employees as _, i}
                                             <AccordionItem
