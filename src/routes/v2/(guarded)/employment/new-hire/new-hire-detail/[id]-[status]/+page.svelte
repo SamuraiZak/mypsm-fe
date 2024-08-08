@@ -937,6 +937,7 @@
 
                 <CustomTextField
                     placeholder="-"
+                    isRequired={false}
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
                     id="alternativeName"
