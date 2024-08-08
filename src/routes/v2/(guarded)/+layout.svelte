@@ -83,8 +83,15 @@
 
                 <!-- info -->
                 <div
-                    class="mr-1 flex w-fit flex-row items-center justify-center bg-transparent"
+                    class="mr-1 flex w-fit flex-col items-center justify-center bg-transparent"
                 >
+                <p
+                    class="w-fit text-base font-medium leading-tight text-slate-700"
+                >
+                    {TextAppearanceHelper.toProper(
+                        data.props.accountDetails.name,
+                    )}
+                </p>
                     <p
                         class="w-fit text-base font-medium leading-tight text-slate-700"
                     >
