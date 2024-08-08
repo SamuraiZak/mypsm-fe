@@ -1106,13 +1106,21 @@
                             bind:val={$serviceInfoForm.employeeNumber}
                         ></CustomTextField>
 
-                            <CustomSelectField
+                            <!-- <CustomSelectField
                                 disabled
                                 id="positionId"
                                 label={'Gred dan Jawatan'}
                                 options={data.selectionOptions.positionLookup}
                                 bind:val={$serviceInfoForm.positionId}
-                            ></CustomSelectField>
+                            ></CustomSelectField> -->
+
+                            <CustomSelectField
+                            disabled
+                            id="positionId"
+                            label={'Gred dan Jawatan'}
+                            options={data.selectionOptions.positionLookup}
+                            bind:val={$serviceInfoForm.positionId}
+                        ></CustomSelectField>
 
                             <CustomSelectField
                                 disabled
@@ -1139,14 +1147,14 @@
                                 bind:val={$serviceInfoForm.effectiveDate}
                             ></CustomTextField>
 
-                            <CustomSelectField
+                            <CustomTextField
                                 disabled
                                 id="retirementBenefit"
                                 label="Faedah Persaraan"
-                                options={data.selectionOptions
-                                    .retirementBenefitLookup}
                                 bind:val={$serviceInfoForm.retirementBenefit}
                             />
+                            <!-- options={data.selectionOptions
+                                    .retirementBenefitLookup} -->
 
                             <CustomTextField
                                 disabled={isReadonlyServiceFormStepper}
@@ -1217,7 +1225,7 @@
                                 type="date"
                                 bind:val={$serviceInfoForm.confirmServiceDate}
                             ></CustomTextField>
-                            <CustomTextField
+                            <!-- <CustomTextField
                                 disabled
                                 id="newRecruitEffectiveDate"
                                 label={'Mula Dilantik Perkhidmatan LKIM'}
@@ -1228,7 +1236,7 @@
                                 id="firstServiceDate"
                                 label={'Mula Dilantik Perkhidmatan Sekarang'}
                                 bind:val={$serviceInfoForm.firstServiceDate}
-                            ></CustomTextField>
+                            ></CustomTextField> -->
                             <CustomTextField
                                 disabled
                                 id="firstEffectiveDate"
