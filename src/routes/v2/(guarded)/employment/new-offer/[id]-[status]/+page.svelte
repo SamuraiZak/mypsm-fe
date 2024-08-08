@@ -1106,7 +1106,8 @@
                                             disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="epfNumber"
-                                            type="number"
+                                            isRequired={false}
+                                            type="text"
                                             label={'Nombor EPF'}
                                             placeholder="-"
                                             bind:val={$newOfferServiceDetailForm
@@ -1117,7 +1118,8 @@
                                             disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="incomeNumber"
-                                            type="number"
+                                            isRequired={false}
+                                            type="text"
                                             label={'Nombor Pendapatan'}
                                             placeholder="-"
                                             bind:val={$newOfferServiceDetailForm
@@ -1128,6 +1130,7 @@
                                             disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="pensionNumber"
+                                            isRequired={false}
                                             type="text"
                                             label={'Nombor Pencen'}
                                             placeholder="-"
@@ -1139,7 +1142,8 @@
                                             disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="socsoNumber"
-                                            type="number"
+                                            isRequired={false}
+                                            type="text"
                                             label={'Nombor SOCSO'}
                                             placeholder="-"
                                             bind:val={$newOfferServiceDetailForm
@@ -1180,8 +1184,7 @@
                                                 ></CustomTextField>
 
                                                 <CustomTextField
-                                                    disabled={$isReadOnlyNewOfferProcess &&
-                                                        !$newOfferProcessIsDraft}
+                                                    disabled={true}
                                                     id="maximumSalary"
                                                     type="number"
                                                     label={'Tangga Gaji (RM)'}
@@ -1570,7 +1573,7 @@
                             >
                                 <div class="mb-5">
                                     <b class="text-base text-black"
-                                        >Keputusan peranan (-peranan) berkaitan</b
+                                        >Rekod Keputusan peranan (-peranan) berkaitan</b
                                     >
                                 </div>
                                 <div class="mb-5">
