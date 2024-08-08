@@ -3546,6 +3546,11 @@
                                 class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
                             >
                                 <div class="mb-5">
+                                    <b class="text-sm text-black"
+                                        >Rekod Keputusan</b
+                                    >
+                                </div>
+                                <div class="mb-5">
                                     <b class="text-sm text-system-primary"
                                         >1. Penyokong</b
                                     >
