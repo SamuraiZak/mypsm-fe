@@ -793,7 +793,7 @@ export const _submitSecretarySetApproverForm = async (
 };
 
 export const _submitDocumentForm = async (isDraft: boolean, files: File[], existingFile: NewHireDocumentsDTO) => {
-    const existingFileBase64 = existingFile.attachment.split('base64,')[1]
+    const existingFileBase64 = existingFile.attachment !== null ? existingFile.attachment.split('base64,')[1] : '';
     const documentData = new FormData();
 
     // check file size validation
