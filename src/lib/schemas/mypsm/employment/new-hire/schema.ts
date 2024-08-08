@@ -347,7 +347,7 @@ export const _serviceDetailSchema = z.object({
         { message: 'Tarikh bersara tidak boleh kurang dari tahun semasa.' },
     ),
     revisionMonthId: numberIdSchema,
-    maximumSalary: z.number().nullable(),
+    maximumSalary: numberSchema,
     baseSalary: numberSchema,
     itka: numberSchema,
     itp: numberSchema,
