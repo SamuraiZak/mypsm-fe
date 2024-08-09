@@ -78,20 +78,20 @@
                 <div
                     class="flex h-7 w-7 flex-col items-center justify-center rounded-full bg-blue-500"
                 >
-                    <p class="text-md font-light text-white">B</p>
+                    <p class="text-md font-light text-white">{Array.from(data.props.accountDetails.name)[0]}</p>
                 </div>
 
                 <!-- info -->
                 <div
-                    class="mr-1 flex w-fit flex-col items-center justify-center bg-transparent"
+                    class="mr-1 flex w-fit flex-col items-start justify-center bg-transparent"
                 >
-                <p
-                    class="w-fit text-base font-medium leading-tight text-slate-700"
-                >
-                    {TextAppearanceHelper.toProper(
-                        data.props.accountDetails.name,
-                    )}
-                </p>
+                    <p
+                        class="w-fit text-base font-medium leading-tight text-slate-700"
+                    >
+                        {TextAppearanceHelper.toProper(
+                            data.props.accountDetails.name,
+                        )}
+                    </p>
                     <p
                         class="w-fit text-base font-medium leading-tight text-slate-700"
                     >
