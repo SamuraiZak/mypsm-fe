@@ -80,6 +80,7 @@
         approveOptions,
         certifyOptions,
         supportOptions,
+        verifyOptions,
     } from '$lib/constants/core/radio-option-constants';
     import { getErrorToast } from '$lib/helpers/core/toast.helper.js';
     import { error } from '@sveltejs/kit';
@@ -3239,7 +3240,7 @@
                                     !$secretaryApprovalResultIsDraft}
                                 errors={$secretaryApprovalInfoErrors.status}
                                 id="status"
-                                options={certifyOptions}
+                                options={verifyOptions}
                                 label={'Keputusan'}
                                 bind:val={$secretaryApprovalInfoForm.status}
                             ></CustomRadioBoolean>
