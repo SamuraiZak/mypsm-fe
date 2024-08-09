@@ -1158,6 +1158,80 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
+                    errors={$errors.retirementBenefit}
+                    id="retirementBenefit"
+                    label="Faedah Persaraan"
+                    bind:val={$form.retirementBenefit}
+                    options={RetirementBenefitDropdownConstant.list}
+                ></CustomSelectField>
+
+                <CustomTextField
+                    placeholder="-"
+                    isRequired={false}
+                    disabled={$isReadonlyPersonalFormStepper &&
+                        !$personalFormStepperIsDraft}
+                    errors={$errors.epfNumber}
+                    id="epfNumber"
+                    label={'No. KWSP'}
+                    bind:val={$form.epfNumber}
+                ></CustomTextField>
+
+                <CustomTextField
+                    placeholder="-"
+                    isRequired={false}
+                    disabled={$isReadonlyPersonalFormStepper &&
+                        !$personalFormStepperIsDraft}
+                    errors={$errors.socsoNumber}
+                    id="socsoNumber"
+                    label={'No. SOCSO'}
+                    bind:val={$form.socsoNumber}
+                ></CustomTextField>
+                <CustomTextField
+                    placeholder="-"
+                    isRequired={false}
+                    disabled={$isReadonlyPersonalFormStepper &&
+                        !$personalFormStepperIsDraft}
+                    errors={$errors.incomeNumber}
+                    id="incomeNumber"
+                    label={'No. Cukai'}
+                    bind:val={$form.incomeNumber}
+                ></CustomTextField>
+
+                <CustomTextField
+                    placeholder="-"
+                    isRequired={false}
+                    disabled={$isReadonlyPersonalFormStepper &&
+                        !$personalFormStepperIsDraft}
+                    errors={$errors.pensionNumber}
+                    id="pensionNumber"
+                    label={'Nombor Pencen'}
+                    bind:val={$form.pensionNumber}
+                ></CustomTextField>
+
+                <CustomSelectField
+                    placeholder="-"
+                    disabled={$isReadonlyPersonalFormStepper &&
+                        !$personalFormStepperIsDraft}
+                    errors={$errors.bankName}
+                    id="bankName"
+                    label={'Nama Bank'}
+                    options={data.selectionOptions.bankLookup}
+                    bind:val={$form.bankName}
+                ></CustomSelectField>
+
+                <CustomTextField
+                    placeholder="-"
+                    disabled={$isReadonlyPersonalFormStepper &&
+                        !$personalFormStepperIsDraft}
+                    errors={$errors.bankAccount}
+                    id="bankAccount"
+                    label={'No. Akaun'}
+                    bind:val={$form.bankAccount}
+                ></CustomTextField>
+
+                <CustomSelectField
+                    disabled={$isReadonlyPersonalFormStepper &&
+                        !$personalFormStepperIsDraft}
                     errors={$errors.assetDeclarationStatusId}
                     id="assetDeclarationStatusId"
                     label="Status Pengisytiharan Harta"
@@ -2912,33 +2986,6 @@
                             bind:val={$serviceInfoForm.maxGradeId}
                             options={data.selectionOptions.gradeLookup}
                         ></CustomSelectField>
-                        <!-- <CustomSelectField
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.programmeId}
-                            id="programmeId"
-                            label="Program"
-                            bind:val={$serviceInfoForm.programmeId}
-                            options={data.selectionOptions.programLookup}
-                        ></CustomSelectField> -->
-                        <!-- <CustomSelectField
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.schemeId}
-                            id="schemeId"
-                            label="Skim"
-                            bind:val={$serviceInfoForm.schemeId}
-                            options={data.selectionOptions.schemeLookup}
-                        ></CustomSelectField> -->
-                        <!-- <CustomSelectField
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.positionId}
-                            id="positionId"
-                            label="Jawatan"
-                            bind:val={$serviceInfoForm.positionId}
-                            options={data.selectionOptions.positionLookup}
-                        ></CustomSelectField> -->
                         <CustomSelectField
                             disabled={$isReadonlyServiceFormStepper &&
                                 !$serviceFormStepperIsDraft}
@@ -2976,16 +3023,6 @@
                             bind:val={$serviceInfoForm.unitId}
                             options={data.selectionOptions.unitLookup}
                         ></CustomSelectField>
-                        <!--
-                        <CustomSelectField
-                            disabled
-                            errors={$serviceInfoErrors.employmentStatusId}
-                            id="employmentStatusId"
-                            label="Status Perkhidmatan"
-                            bind:val={$serviceInfoForm.employmentStatusId}
-                            options={data.selectionOptions.serviceTypeLookup}
-                        ></CustomSelectField> -->
-
                         <CustomTextField
                             placeholder="-"
                             type="date"
@@ -2997,79 +3034,6 @@
                             bind:val={$serviceInfoForm.effectiveDate}
                         ></CustomTextField>
 
-                        <CustomSelectField
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.retirementBenefit}
-                            id="retirementBenefit"
-                            label="Faedah Persaraan"
-                            bind:val={$serviceInfoForm.retirementBenefit}
-                            options={RetirementBenefitDropdownConstant.list}
-                        ></CustomSelectField>
-
-                        <CustomTextField
-                            placeholder="-"
-                            isRequired={false}
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.epfNumber}
-                            id="epfNumber"
-                            label={'No. KWSP'}
-                            bind:val={$serviceInfoForm.epfNumber}
-                        ></CustomTextField>
-
-                        <CustomTextField
-                            placeholder="-"
-                            isRequired={false}
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.socsoNumber}
-                            id="socsoNumber"
-                            label={'No. SOCSO'}
-                            bind:val={$serviceInfoForm.socsoNumber}
-                        ></CustomTextField>
-                        <CustomTextField
-                            placeholder="-"
-                            isRequired={false}
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.incomeNumber}
-                            id="incomeNumber"
-                            label={'No. Cukai'}
-                            bind:val={$serviceInfoForm.incomeNumber}
-                        ></CustomTextField>
-
-                        <CustomSelectField
-                            placeholder="-"
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.bankName}
-                            id="bankName"
-                            label={'Nama Bank'}
-                            options={data.selectionOptions.bankLookup}
-                            bind:val={$serviceInfoForm.bankName}
-                        ></CustomSelectField>
-
-                        <CustomTextField
-                            placeholder="-"
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.bankAccount}
-                            id="bankAccount"
-                            label={'No. Akaun'}
-                            bind:val={$serviceInfoForm.bankAccount}
-                        ></CustomTextField>
-                        <!--
-                        <CustomTextField
-                            placeholder="-"
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.eligibleLeaveCount}
-                            id="eligibleLeaveCount"
-                            label={'Kelayakan Cuti'}
-                            bind:val={$serviceInfoForm.eligibleLeaveCount}
-                        ></CustomTextField> -->
-
                         <CustomTextField
                             placeholder="-"
                             type="date"
@@ -3080,16 +3044,6 @@
                             label={'Mula Dilantik Perkhidmatan Kerajaan'}
                             bind:val={$serviceInfoForm.civilServiceStartDate}
                         ></CustomTextField>
-                        <!-- <CustomTextField
-                            placeholder="-"
-                            type="date"
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.firstServiceDate}
-                            id="firstServiceDate"
-                            label={'Mula Dilantik Perkhidmatan LKIM'}
-                            bind:val={$serviceInfoForm.firstServiceDate}
-                        ></CustomTextField> -->
                         <CustomTextField
                             placeholder="-"
                             type="date"
@@ -3100,57 +3054,6 @@
                             label={'Mula Dilantik Perkhidmatan Sekarang'}
                             bind:val={$serviceInfoForm.serviceDate}
                         ></CustomTextField>
-                        <!-- <CustomTextField
-                            placeholder="-"
-                            type="date"
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.confirmServiceDate}
-                            id="confirmServiceDate"
-                            label={'Tarikh Disahkan Perkhidmatan Sekarang'}
-                            bind:val={$serviceInfoForm.confirmServiceDate}
-                        ></CustomTextField> -->
-                        <!-- <CustomTextField
-                            placeholder="-"
-                            type="date"
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.firstEffectiveServiceDate}
-                            id="firstEffectiveServiceDate"
-                            label={'Mula Berkuatkuasa Perkhidmatan Pertama'}
-                            bind:val={$serviceInfoForm.firstEffectiveServiceDate}
-                        ></CustomTextField> -->
-                        <!-- <CustomTextField
-                            placeholder="-"
-                            type="date"
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.firstConfirmServiceDate}
-                            id="firstConfirmServiceDate"
-                            label={'Disahkan Dalam Jawatan Pertama LKIM'}
-                            bind:val={$serviceInfoForm.firstConfirmServiceDate}
-                        ></CustomTextField> -->
-                        <!-- <CustomTextField
-                            placeholder="-"
-                            type="date"
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.confirmDate}
-                            id="confirmDate"
-                            label={'Disahkan Dalam Jawatan Semasa LKIM'}
-                            bind:val={$serviceInfoForm.confirmDate}
-                        ></CustomTextField> -->
-
-                        <!-- <CustomTextField
-                            placeholder="-"
-                            type="date"
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.firstEffectiveDate}
-                            id="firstEffectiveDate"
-                            label={'Tarikh Berkuatkuasa Lantikan Pertama'}
-                            bind:val={$serviceInfoForm.firstEffectiveDate}
-                        ></CustomTextField> -->
                         <CustomTextField
                             placeholder="-"
                             type="date"
@@ -3160,17 +3063,6 @@
                             id="newRecruitEffectiveDate"
                             label={'Tarikh Lantikan Baharu'}
                             bind:val={$serviceInfoForm.newRecruitEffectiveDate}
-                        ></CustomTextField>
-
-                        <CustomTextField
-                            placeholder="-"
-                            isRequired={false}
-                            disabled={$isReadonlyServiceFormStepper &&
-                                !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.pensionNumber}
-                            id="pensionNumber"
-                            label={'Nombor Pencen'}
-                            bind:val={$serviceInfoForm.pensionNumber}
                         ></CustomTextField>
 
                         <CustomTextField
@@ -3548,7 +3440,8 @@
                             >
                                 <div class="mb-5">
                                     <b class="text-sm text-black"
-                                        >Rekod Keputusan peranan (-peranan) berkaitan</b
+                                        >Rekod Keputusan peranan (-peranan)
+                                        berkaitan</b
                                     >
                                 </div>
                                 <div class="mb-5">
@@ -3789,6 +3682,7 @@
 
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addExperienceModalErrors.positionCode}
             id="positionCode"
             label={'Kod Jawatan'}
