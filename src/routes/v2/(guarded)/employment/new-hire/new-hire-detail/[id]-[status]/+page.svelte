@@ -3568,13 +3568,13 @@
             bind:val={$addAcademicInfoModal.educationLevelId}
         ></CustomSelectField>
 
-        <CustomSelectField
+        <CustomTextField
+            placeholder="-"
             errors={$addAcademicInfoErrors.institutionId}
             id="institutionId"
             label={'Institusi'}
-            options={data.selectionOptions.institutionLookup}
             bind:val={$addAcademicInfoModal.institutionId}
-        ></CustomSelectField>
+        ></CustomTextField>
 
         <CustomSelectField
             errors={$addAcademicInfoErrors.majorId}
