@@ -1382,6 +1382,28 @@
                                 <CustomSelectField
                                     disabled
                                     isRequired={false}
+                                    id="educationLevelId"
+                                    options={data.selectionOptions
+                                        .educationLookup}
+                                    label={'Taraf Pendidikan'}
+                                    bind:val={$academicInfoForm.academics[i]
+                                        .educationLevelId}
+                                ></CustomSelectField>
+
+                                <CustomSelectField
+                                    disabled
+                                    isRequired={false}
+                                    id="institutionId"
+                                    options={data.selectionOptions
+                                        .institutionLookup}
+                                    label={'Institusi'}
+                                    bind:val={$academicInfoForm.academics[i]
+                                        .institutionId}
+                                ></CustomSelectField>
+
+                                <CustomSelectField
+                                    disabled
+                                    isRequired={false}
                                     id="majorId"
                                     label={'Jurusan'}
                                     options={data.selectionOptions
@@ -1410,28 +1432,6 @@
                                     label={'Negara'}
                                     bind:val={$academicInfoForm.academics[i]
                                         .countryId}
-                                ></CustomSelectField>
-
-                                <CustomSelectField
-                                    disabled
-                                    isRequired={false}
-                                    id="institutionId"
-                                    options={data.selectionOptions
-                                        .institutionLookup}
-                                    label={'Institusi'}
-                                    bind:val={$academicInfoForm.academics[i]
-                                        .institutionId}
-                                ></CustomSelectField>
-
-                                <CustomSelectField
-                                    disabled
-                                    isRequired={false}
-                                    id="educationLevelId"
-                                    options={data.selectionOptions
-                                        .educationLookup}
-                                    label={'Taraf Pendidikan'}
-                                    bind:val={$academicInfoForm.academics[i]
-                                        .educationLevelId}
                                 ></CustomSelectField>
 
                                 <CustomSelectField
@@ -3560,6 +3560,22 @@
         class="flex h-fit w-full flex-col gap-y-2"
     >
         <CustomSelectField
+            errors={$addAcademicInfoErrors.educationLevelId}
+            id="educationLevelId"
+            label={'Taraf Pembelajaran'}
+            options={data.selectionOptions.educationLookup}
+            bind:val={$addAcademicInfoModal.educationLevelId}
+        ></CustomSelectField>
+
+        <CustomSelectField
+            errors={$addAcademicInfoErrors.institutionId}
+            id="institutionId"
+            label={'Institusi'}
+            options={data.selectionOptions.institutionLookup}
+            bind:val={$addAcademicInfoModal.institutionId}
+        ></CustomSelectField>
+
+        <CustomSelectField
             errors={$addAcademicInfoErrors.majorId}
             id="majorId"
             label={'Jenis Jurusan'}
@@ -3581,22 +3597,6 @@
             label={'Negara'}
             options={data.selectionOptions.countryLookup}
             bind:val={$addAcademicInfoModal.countryId}
-        ></CustomSelectField>
-
-        <CustomSelectField
-            errors={$addAcademicInfoErrors.institutionId}
-            id="institutionId"
-            label={'Institusi'}
-            options={data.selectionOptions.institutionLookup}
-            bind:val={$addAcademicInfoModal.institutionId}
-        ></CustomSelectField>
-
-        <CustomSelectField
-            errors={$addAcademicInfoErrors.educationLevelId}
-            id="educationLevelId"
-            label={'Taraf Pembelajaran'}
-            options={data.selectionOptions.educationLookup}
-            bind:val={$addAcademicInfoModal.educationLevelId}
         ></CustomSelectField>
 
         <CustomSelectField
@@ -3631,6 +3631,7 @@
         ></CustomTextField>
         <CustomTextField
             placeholder="-"
+            isRequired={false}
             errors={$addAcademicInfoErrors.field}
             id="field"
             label={'Catatan'}

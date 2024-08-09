@@ -172,7 +172,7 @@ export const _academicInfoSchema = z
         name: codeSchema,
         completionDate: dateStringSchema,
         finalGrade: codeSchema,
-        field: shortTextSchema,
+        field: z.string().nullish(),
     })
     .partial({
         id: true,
