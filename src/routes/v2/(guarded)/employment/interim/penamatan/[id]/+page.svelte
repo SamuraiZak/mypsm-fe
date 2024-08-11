@@ -336,7 +336,14 @@
                 title="Pengesahan Semakan Maklumat Tanggung Kerja"
             >
                 {#if !submitSecretary && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
-                    <TextIconButton
+                <TextIconButton
+                type="neutral"
+                label="Simpan"
+                icon="save"
+                form="secretaryApprovalForm"
+                onClick={() => $secretaryApprovalForm.isDraft = true}
+            />    
+                <TextIconButton
                         label="Hantar"
                         icon="check"
                         form="secretaryApprovalForm"
@@ -562,7 +569,14 @@
         <StepperContent>
             <StepperContentHeader title="Penyokong dan Pelulus">
                 {#if !submitSuppApp && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
-                    <TextIconButton
+                <TextIconButton
+                type="neutral"
+                label="Simpan"
+                icon="save"
+                        form="suppAppForm"
+                        onClick={() => $suppAppForm.isDraft = true}
+                    />    
+                <TextIconButton
                         label="Hantar"
                         icon="check"
                         form="suppAppForm"
@@ -602,7 +616,14 @@
         <StepperContent>
             <StepperContentHeader title="Keputusan Penyokong dan Pelulus">
                 {#if !submitSupporter && data.currentRoleCode == UserRoleConstant.timbalanKetuaSeksyen.code}
-                    <TextIconButton
+                <TextIconButton
+                type="neutral"
+                label="Simpan"
+                icon="save"
+                        form="supporterApprovalForm"
+                        onClick={() => $supporterApprovalForm.isDraft = true}
+                    />    
+                <TextIconButton
                         label="Hantar"
                         icon="check"
                         form="supporterApprovalForm"
@@ -610,7 +631,14 @@
                     />
                 {/if}
                 {#if !submitApprover && data.currentRoleCode == UserRoleConstant.ketuaSeksyen.code}
-                    <TextIconButton
+                <TextIconButton
+                type="neutral"
+                label="Simpan"
+                icon="save"
+                form="approverApprovalForm"
+                onClick={() => $approverApprovalForm.isDraft = true}
+            />    
+                <TextIconButton
                         label="Hantar"
                         icon="check"
                         form="approverApprovalForm"

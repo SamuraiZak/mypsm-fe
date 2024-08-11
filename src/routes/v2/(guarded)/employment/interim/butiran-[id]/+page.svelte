@@ -548,7 +548,14 @@
             <StepperContent>
                 <StepperContentHeader title="Pelangkauan Dari Segi Kekananan">
                     {#if !submitSkip && data.currentRoleCode == UserRoleConstant.kakitangan.code}
-                        <TextIconButton
+                    <TextIconButton
+                    type="neutral"
+                        label="Simpan"
+                        icon="save"
+                    form="skippingForm"
+                    onClick={() => ($skippingForm.isDraft = true)}
+                />    
+                    <TextIconButton
                             label="Hantar"
                             icon="check"
                             form="skippingForm"
@@ -592,11 +599,18 @@
                         title="Sokongan dari Pengarah Bahagian/Negeri"
                     >
                         {#if !submitDirector && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
-                            <TextIconButton
+                            
+                        <TextIconButton
+                        type="neutral"
+                        label="Simpan"
+                        icon="save"
+                        form="directorForm"
+                        onClick={() => ($directorForm.isDraft = true)}
+                    /><TextIconButton
                                 label="Hantar"
                                 icon="check"
                                 form="directorForm"
-                                onClick={() => ($directorForm.isDraft = true)}
+                                onClick={() => ($directorForm.isDraft = false)}
                             />
                         {/if}
                     </StepperContentHeader>
@@ -711,6 +725,7 @@
                                     icon="check"
                                     form="checklistForm"
                                 />
+                               
                             {/if}
                         </StepperContentHeader>
                         <StepperContentBody>
@@ -1207,6 +1222,14 @@
                             title="Kelulusan Permohonan Tanggung Kerja"
                         >
                             {#if !submitApprover && data.currentRoleCode == UserRoleConstant.pengarahKhidmatPengurusan.code}
+                            <TextIconButton
+                            type="neutral"
+                            label="Simpan"
+                            icon="save"
+                                form="approverForm"
+                                onClick={() =>
+                                    ($approverForm.isDraft = true)}
+                            />
                                 <TextIconButton
                                     label="Hantar"
                                     icon="check"
