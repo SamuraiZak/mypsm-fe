@@ -273,7 +273,7 @@
 <section
     class="flex h-full w-full flex-col items-start justify-start overflow-y-hidden"
 >
-    <Stepper activeIndex={10}>
+    <Stepper>
         <!-- ======================================================================= -->
         <!-- PERSONAL DETAILS -->
         <!-- ======================================================================= -->
@@ -443,6 +443,7 @@
                                     bind:val={$serviceDetailForm.servicePeriod}
                                     bind:errors={$serviceDetailErrors.servicePeriod}
                                 ></CustomTextField>
+                                
                             </form>
                         </div>
                         <!-- form wrapper ends here -->
@@ -570,6 +571,10 @@
                                     bind:val={$transferDetailForm.startDate}
                                     bind:errors={$transferDetailErrors.startDate}
                                 ></CustomTextField>
+                                <DocumentInput
+                                    bind:documents={$transferDetailForm.documents}
+                                    label="Sila Muat Naik Dokumen-dokumen Sokongan"
+                                ></DocumentInput>
                             </form>
                         </div>
                         <!-- form wrapper ends here -->

@@ -48,7 +48,7 @@ export const TransferApplicationTransferDetailSchema = z.object({
     employerName: z.string().nullish(),
     startDate: z.string().nullish(),
     isDraft: z.boolean(),
-    documents: z.array(DocumentSchema).nullish(),
+    documents: z.array(DocumentSchema),
 });
 export type TransferApplicationTransferDetailType = z.infer<
     typeof TransferApplicationTransferDetailSchema

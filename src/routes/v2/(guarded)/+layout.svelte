@@ -74,16 +74,11 @@
                 id="accountTile"
                 class="flex w-fit flex-row items-center justify-center gap-1 rounded-full bg-gray-100 p-1 hover:scale-105 hover:bg-gray-200"
             >
-                <!-- avatar -->
-                <div
-                    class="flex h-7 w-7 flex-col items-center justify-center rounded-full bg-blue-500"
-                >
-                    <p class="text-md font-light text-white">{Array.from(data.props.accountDetails.name)[0]}</p>
-                </div>
+                
 
                 <!-- info -->
                 <div
-                    class="mr-1 flex w-fit flex-col items-start justify-center bg-transparent"
+                    class=" flex w-fit flex-col items-end justify-center bg-transparent pr-1 pl-4"
                 >
                     <p
                         class="w-fit text-base font-medium leading-tight text-slate-700"
@@ -100,7 +95,14 @@
                         )}
                     </p>
                 </div>
+
+                <!-- avatar -->
                 <div
+                    class="flex h-7 w-7 flex-col items-center justify-center rounded-full bg-blue-500"
+                >
+                    <p class="text-md font-light text-white">{Array.from(data.props.accountDetails.name)[0]}</p>
+                </div>
+                <!-- <div
                     class="mr-1 flex w-fit flex-row items-center justify-center bg-transparent"
                 >
                     <span
@@ -108,7 +110,7 @@
                     >
                         <SvgChevronDown size="12"></SvgChevronDown>
                     </span>
-                </div>
+                </div> -->
             </button>
 
             <!-- account dropdown -->
