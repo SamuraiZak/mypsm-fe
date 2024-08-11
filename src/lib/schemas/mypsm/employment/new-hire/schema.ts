@@ -87,7 +87,6 @@ export const _personalInfoResponseSchema = z.object({
     epfNumber: z.string().nullish(),
     socsoNumber: z.string().nullish(),
     incomeNumber: z.string().nullish(),
-    pensionNumber: z.string().nullish(),
     bankName: shortTextSchema,
     bankAccount: shortTextSchema,
     isExPoliceOrSoldier: booleanSchema,
@@ -329,6 +328,7 @@ export const _serviceDetailSchema = z.object({
     civilServiceStartDate: dateStringSchema,
     newRecruitEffectiveDate: dateStringSchema,
     serviceDate: dateStringSchema,
+    pensionNumber: z.string().nullish(),
     kgt: numberSchema,
     retirementAge: numberSchema,
     retirementDate: dateStringSchema.refine(

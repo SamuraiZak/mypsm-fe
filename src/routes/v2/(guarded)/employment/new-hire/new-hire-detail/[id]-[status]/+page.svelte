@@ -1198,17 +1198,6 @@
                     bind:val={$form.incomeNumber}
                 ></CustomTextField>
 
-                <CustomTextField
-                    placeholder="-"
-                    isRequired={false}
-                    disabled={$isReadonlyPersonalFormStepper &&
-                        !$personalFormStepperIsDraft}
-                    errors={$errors.pensionNumber}
-                    id="pensionNumber"
-                    label={'Nombor Pencen'}
-                    bind:val={$form.pensionNumber}
-                ></CustomTextField>
-
                 <CustomSelectField
                     placeholder="-"
                     disabled={$isReadonlyPersonalFormStepper &&
@@ -3085,6 +3074,17 @@
                             id="retirementDate"
                             label={'Tarikh Bersara'}
                             bind:val={$serviceInfoForm.retirementDate}
+                        ></CustomTextField>
+
+                        <CustomTextField
+                            placeholder="-"
+                            isRequired={false}
+                            disabled={$isReadonlyServiceFormStepper &&
+                                !$serviceFormStepperIsDraft}
+                            errors={$serviceInfoErrors.pensionNumber}
+                            id="pensionNumber"
+                            label={'Nombor Pencen'}
+                            bind:val={$serviceInfoForm.pensionNumber}
                         ></CustomTextField>
 
                         <p class={stepperFormTitleClass}>
