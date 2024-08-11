@@ -1965,17 +1965,6 @@
                                 ></CustomSelectField>
 
                                 <CustomSelectField
-                                    id="addMaritalId"
-                                    label={'Status Perkahwinan'}
-                                    options={data.selectionOptions
-                                        .maritalLookup}
-                                    disabled
-                                    isRequired={false}
-                                    bind:val={$familyInfoForm.dependencies[i]
-                                        .maritalId}
-                                ></CustomSelectField>
-
-                                <CustomSelectField
                                     id="addGenderId"
                                     label={'Jantina'}
                                     options={data.selectionOptions.genderLookup}
@@ -2017,6 +2006,17 @@
                                     bind:val={$familyInfoForm.dependencies[i]
                                         .phoneNumber}
                                 ></CustomTextField>
+
+                                <CustomSelectField
+                                    isRequired={false}
+                                    disabled
+                                    id="maritalId"
+                                    label={'Status Perkahwinan'}
+                                    options={data.selectionOptions
+                                        .maritalLookup}
+                                    bind:val={$familyInfoForm.dependencies[i]
+                                        .maritalId}
+                                ></CustomSelectField>
 
                                 {#if key.includes('marriageDate')}
                                     <CustomTextField
@@ -2276,18 +2276,6 @@
                                 ></CustomSelectField>
 
                                 <CustomSelectField
-                                    id="addMaritalId"
-                                    label={'Status Perkahwinan'}
-                                    options={data.selectionOptions
-                                        .maritalLookup}
-                                    disabled
-                                    isRequired={false}
-                                    bind:val={$dependencyInfoForm.dependencies[
-                                        i
-                                    ].maritalId}
-                                ></CustomSelectField>
-
-                                <CustomSelectField
                                     id="addGenderId"
                                     label={'Jantina'}
                                     options={data.selectionOptions.genderLookup}
@@ -2333,6 +2321,18 @@
                                         i
                                     ].phoneNumber}
                                 ></CustomTextField>
+
+                                <CustomSelectField
+                                    id="addMaritalId"
+                                    label={'Status Perkahwinan'}
+                                    options={data.selectionOptions
+                                        .maritalLookup}
+                                    disabled
+                                    isRequired={false}
+                                    bind:val={$dependencyInfoForm.dependencies[
+                                        i
+                                    ].maritalId}
+                                ></CustomSelectField>
 
                                 {#if key.includes('marriageDate')}
                                     <CustomTextField
@@ -2577,17 +2577,6 @@
                                 ></CustomSelectField>
 
                                 <CustomSelectField
-                                    id="addMaritalId"
-                                    label={'Status Perkahwinan'}
-                                    options={data.selectionOptions
-                                        .maritalLookup}
-                                    disabled
-                                    isRequired={false}
-                                    bind:val={$nextOfKinInfoForm.dependencies[i]
-                                        .maritalId}
-                                ></CustomSelectField>
-
-                                <CustomSelectField
                                     id="addGenderId"
                                     label={'Jantina'}
                                     options={data.selectionOptions.genderLookup}
@@ -2629,6 +2618,17 @@
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .phoneNumber}
                                 ></CustomTextField>
+                                
+                                <CustomSelectField
+                                    id="addMaritalId"
+                                    label={'Status Perkahwinan'}
+                                    options={data.selectionOptions
+                                        .maritalLookup}
+                                    disabled
+                                    isRequired={false}
+                                    bind:val={$nextOfKinInfoForm.dependencies[i]
+                                        .maritalId}
+                                ></CustomSelectField>
 
                                 {#if key.includes('marriageDate')}
                                     <CustomTextField
@@ -3947,6 +3947,7 @@
         {#if $addFamilyModal.maritalId === 3}
             <CustomTextField
                 placeholder="-"
+                isRequired={false}
                 type="date"
                 errors={$addFamilyErrors.marriageDate}
                 id="marriageDate"
@@ -4144,6 +4145,7 @@
         {#if $addNonFamilyModal.maritalId === 3}
             <CustomTextField
                 placeholder="-"
+                isRequired={false}
                 type="date"
                 errors={$addNonFamilyErrors.marriageDate}
                 id="marriageDate"
@@ -4337,6 +4339,7 @@
         {#if $addNextOfKinModal.maritalId === 3}
             <CustomTextField
                 placeholder="-"
+                isRequired={false}
                 type="date"
                 errors={$addNextOfKinErrors.marriageDate}
                 id="marriageDate"

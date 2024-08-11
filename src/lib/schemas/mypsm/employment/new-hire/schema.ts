@@ -262,24 +262,24 @@ export const _relationsSchema = z
         workAddress: z.string().nullish(),
         workPostcode: z.string().nullish(),
         phoneNumber: shortTextSchema,
-        marriageDate: dateStringSchema.nullable(),
+        marriageDate: dateStringSchema.nullish(),
         inSchool: booleanSchema,
     })
     .partial({
         marriageDate: true,
         alternativeName: true,
-    })
-    .superRefine(({ maritalId, marriageDate }, ctx) => {
-        if (maritalId === 3) {
-            if (marriageDate === null) {
-                ctx.addIssue({
-                    code: 'custom',
-                    message: 'Tarikh tidak boleh kosong.',
-                    path: ['marriageDate'],
-                });
-            }
-        }
     });
+    // .superRefine(({ maritalId, marriageDate }, ctx) => {
+    //     if (maritalId === 3) {
+    //         if (marriageDate === null) {
+    //             ctx.addIssue({
+    //                 code: 'custom',
+    //                 message: 'Tarikh tidak boleh kosong.',
+    //                 path: ['marriageDate'],
+    //             });
+    //         }
+    //     }
+    // });
 
 // export const _familyListResponseSchema = z.object({
 //     dependencies: z.array(_relationsSchema),
