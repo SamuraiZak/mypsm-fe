@@ -166,7 +166,7 @@ export const _academicInfoSchema = z
         }),
         minorId: numberIdSchema,
         countryId: numberIdSchema,
-        institutionId: numberIdSchema,
+        institutionId: shortTextSchema,
         educationLevelId: numberIdSchema,
         sponsorshipId: numberIdSchema,
         name: codeSchema,
