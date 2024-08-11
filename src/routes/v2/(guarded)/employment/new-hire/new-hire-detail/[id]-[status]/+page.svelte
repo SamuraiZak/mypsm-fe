@@ -3184,7 +3184,7 @@
         {#if $isReadonlyServiceFormStepper && !$serviceFormStepperIsDraft}
             <StepperContent>
                 <StepperContentHeader
-                    title="Keputusan Lantikan Baharu (Urus Setia Perjawatan)"
+                    title="Semakan Butiran Oleh Urus Setia Perjawatan"
                 >
                     {#if (!$isReadonlySecretaryApprovalResult || $secretaryApprovalResultIsDraft) && data.roles.isEmploymentSecretaryRole}
                         <TextIconButton
@@ -3217,7 +3217,7 @@
                         >
                             <div class="mb-5">
                                 <b class="text-sm text-system-primary"
-                                    >Keputusan Urus Setia Perjawatan</b
+                                    >Keputusan Semakan Urus Setia Perjawatan</b
                                 >
                             </div>
 
@@ -3249,7 +3249,7 @@
                                     disabled
                                     isRequired={false}
                                     id="approvalDate"
-                                    label="Tarikh Kelulusan"
+                                    label="Tarikh Semakan"
                                     type="date"
                                     placeholder="-"
                                     val={$secretaryApprovalInfoForm.approvalDate}
