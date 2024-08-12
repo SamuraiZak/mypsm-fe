@@ -1116,10 +1116,10 @@
 
                             <CustomSelectField
                             disabled
-                            id="positionId"
+                            id="gradeId"
                             label={'Gred dan Jawatan'}
                             options={data.selectionOptions.positionLookup}
-                            bind:val={$serviceInfoForm.positionId}
+                            bind:val={$serviceInfoForm.gradeId}
                         ></CustomSelectField>
 
                             <CustomSelectField
