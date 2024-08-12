@@ -145,38 +145,7 @@ export const _confirmationMeetingResultSchema = z
 
 export const _updateConfirmationMeetingResultSchema =
     _confirmationMeetingResultSchema;
-
-// export const _confirmationProbationContinuationSchema = z
-//     .object({
-//         confirmationId: z.number(),
-//         isContractContinued: booleanSchema,
-//         effectiveDate: dateStringSchema,
-//         contractMonths: numberSchem0,
-//         isReadonly: z.boolean().readonly(),
-//         isDraft: z.boolean(),
-//     })
-//     .superRefine(
-//         ({ isContractContinued, effectiveDate, contractMonths }, ctx) => {
-//             if (isContractContinued) {
-//                 if (effectiveDate === '' || effectiveDate === 'undefined') {
-//                     ctx.addIssue({
-//                         code: 'custom',
-//                         message: 'Tarikh tidak boleh kosong.',
-//                         path: ['effectiveDate'],
-//                     });
-//                 }
-
-//                 if (contractMonths === null || contractMonths < 1) {
-//                     ctx.addIssue({
-//                         code: 'custom',
-//                         message: 'Bulan percubaan tidak boleh kosong.',
-//                         path: ['contractMonths'],
-//                     });
-//                 }
-//             }
-//         },
-//     );
-
+    
 export const _confirmationExamsChecklistSchema = z.object({
     confirmationId: z.number(),
     checker: shortTextSchema,
@@ -187,17 +156,23 @@ export const _confirmationExamsChecklistSchema = z.object({
     confirmationExamFiveStatus: booleanSchema,
 });
 
+export const _documentsSchema = z.object({
+    attachment: z.string().readonly(),
+    attachmentName: z.string().readonly(),
+    isReadonly: z.boolean().readonly(),
+});
+
 export const _confirmationFullDetailSchema = z.object({
     dataType: z.string().readonly(),
     personalDetail: _confirmationPersonalDetailSchema,
     service: _confirmationServiceSchema,
     examination: _confirmationExamsChecklistSchema,
     diciplinary: _confirmationDiciplinarySchema,
-    // probationContinuation: _confirmationProbationContinuationSchema,
     approver: _setApproversSchema,
     secretary: _confirmationApprovalSchema,
     division: _confirmationApprovalSchema,
     integrity: _confirmationApprovalSchema,
     audit: _confirmationApprovalSchema,
     meeting: _confirmationMeetingResultSchema,
+    document: _documentsSchema,
 });
