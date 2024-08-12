@@ -6,9 +6,7 @@
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
     import { Checkbox } from 'flowbite-svelte';
-    import {
-        certifyOptions,
-    } from '$lib/constants/core/radio-option-constants';
+    import { certifyOptions } from '$lib/constants/core/radio-option-constants';
     import { writable } from 'svelte/store';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
@@ -377,7 +375,9 @@
     tableLNPT.param.filter.years = new Date().getFullYear();
     tableLNPT.param.filter.duration = 3;
     async function _generateAverage() {
-        const currentEmployeeId: number = Number(data.forms.fundApplicationPersonalInfoForm.data.employeeId);
+        const currentEmployeeId: number = Number(
+            data.forms.fundApplicationPersonalInfoForm.data.employeeId,
+        );
 
         let employeeIds: number[] = [currentEmployeeId];
 
@@ -399,7 +399,7 @@
 
     onMount(() => {
         _generateAverage();
-    })
+    });
 </script>
 
 <ContentHeader title="Maklumat Pembiayaan Pelajaran">
@@ -1487,24 +1487,24 @@
                         title="Keputusan daripada Peranan - Peranan Lain"
                     >
                         {#if !$fundApplicationIsFail && (!$isReadonlyStateUnitDirectorApprovalResult || $stateUnitDirectorApprovalResultIsDraft) && (data.role.isStateDirectorRole || data.role.isUnitDirectorRole)}
-                        <!-- {#if data.role.layoutData.accountDetails.identityDocumentNumber === data.forms.fundApplicationStateUnitDirectorApprovalForm.identityDocumentNumber} -->
-                            <TextIconButton
-                                type="neutral"
-                                label="Simpan"
-                                form="stateUnitDirectorApprovalForm"
-                                onClick={() => {
-                                    $stateUnitDirectorApprovalInfoForm.isDraft = true;
-                                }}
-                            />
-                            <TextIconButton
-                                type="primary"
-                                label="Hantar"
-                                form="stateUnitDirectorApprovalForm"
-                                onClick={() => {
-                                    $stateUnitDirectorApprovalInfoForm.isDraft = false;
-                                }}
-                            />
-                            <!-- {/if} -->
+                            {#if data.role.layoutData.accountDetails.identityDocumentNumber === $stateUnitDirectorApprovalInfoForm.identityDocumentNumber}
+                                <TextIconButton
+                                    type="neutral"
+                                    label="Simpan"
+                                    form="stateUnitDirectorApprovalForm"
+                                    onClick={() => {
+                                        $stateUnitDirectorApprovalInfoForm.isDraft = true;
+                                    }}
+                                />
+                                <TextIconButton
+                                    type="primary"
+                                    label="Hantar"
+                                    form="stateUnitDirectorApprovalForm"
+                                    onClick={() => {
+                                        $stateUnitDirectorApprovalInfoForm.isDraft = false;
+                                    }}
+                                />
+                            {/if}
                         {:else if !$fundApplicationIsFail && (($isReadonlyStateUnitDirectorApprovalResult && !$isReadonlyIntegritySecretaryApprovalResult) || $integritySecretaryApprovalResultIsDraft) && data.role.isIntegritySecretaryRole && !$stateUnitDirectorApprovalResultIsDraft}
                             <TextIconButton
                                 type="neutral"
@@ -1544,33 +1544,36 @@
                     <StepperContentBody>
                         <div class="flex w-full flex-col gap-2.5">
                             {#if !$fundApplicationIsFail && (!$isReadonlyStateUnitDirectorApprovalResult || $stateUnitDirectorApprovalResultIsDraft) && (data.role.isStateDirectorRole || data.role.isUnitDirectorRole)}
-                                <form
-                                    id="stateUnitDirectorApprovalForm"
-                                    method="POST"
-                                    use:stateUnitDirectorApprovalInfoEnhance
-                                    class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                                >
-                                    <div class="mb-5">
-                                        <b class="text-sm text-system-primary"
-                                            >Pengarah Negeri/Bahagian</b
-                                        >
-                                    </div>
-                                    <CustomTextField
-                                        disabled={!$stateUnitDirectorApprovalResultIsDraft}
-                                        errors={$stateUnitDirectorApprovalInfoErrors.remark}
-                                        id="approverRemark"
-                                        label="Tindakan/Ulasan"
-                                        bind:val={$stateUnitDirectorApprovalInfoForm.remark}
-                                    ></CustomTextField>
-                                    <CustomRadioBoolean
-                                        disabled={!$stateUnitDirectorApprovalResultIsDraft}
-                                        errors={$stateUnitDirectorApprovalInfoErrors.status}
-                                        id="approverIsApproved"
-                                        options={supportOptions}
-                                        label={'Keputusan'}
-                                        bind:val={$stateUnitDirectorApprovalInfoForm.status}
-                                    ></CustomRadioBoolean>
-                                </form>
+                                {#if data.role.layoutData.accountDetails.identityDocumentNumber === $stateUnitDirectorApprovalInfoForm.identityDocumentNumber}
+                                    <form
+                                        id="stateUnitDirectorApprovalForm"
+                                        method="POST"
+                                        use:stateUnitDirectorApprovalInfoEnhance
+                                        class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
+                                    >
+                                        <div class="mb-5">
+                                            <b
+                                                class="text-sm text-system-primary"
+                                                >Pengarah Negeri/Bahagian</b
+                                            >
+                                        </div>
+                                        <CustomTextField
+                                            disabled={!$stateUnitDirectorApprovalResultIsDraft}
+                                            errors={$stateUnitDirectorApprovalInfoErrors.remark}
+                                            id="approverRemark"
+                                            label="Tindakan/Ulasan"
+                                            bind:val={$stateUnitDirectorApprovalInfoForm.remark}
+                                        ></CustomTextField>
+                                        <CustomRadioBoolean
+                                            disabled={!$stateUnitDirectorApprovalResultIsDraft}
+                                            errors={$stateUnitDirectorApprovalInfoErrors.status}
+                                            id="approverIsApproved"
+                                            options={supportOptions}
+                                            label={'Keputusan'}
+                                            bind:val={$stateUnitDirectorApprovalInfoForm.status}
+                                        ></CustomRadioBoolean>
+                                    </form>
+                                {/if}
                             {:else if !$fundApplicationIsFail && (($isReadonlyStateUnitDirectorApprovalResult && !$isReadonlyIntegritySecretaryApprovalResult) || $integritySecretaryApprovalResultIsDraft) && data.role.isIntegritySecretaryRole && !$stateUnitDirectorApprovalResultIsDraft}
                                 <form
                                     id="integritySecretaryApprovalForm"

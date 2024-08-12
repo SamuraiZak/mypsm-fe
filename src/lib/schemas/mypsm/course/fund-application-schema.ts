@@ -154,6 +154,7 @@ export const _setApproversSchema = z.object({
 // ==================================================
 export const _fundApplicationApprovalSchema = z.object({
     id: numberIdSchema,
+    identityDocumentNumber: z.string().readonly(),
     remark: shortTextSchema,
     status: booleanSchema,
     isDraft: z.boolean(),

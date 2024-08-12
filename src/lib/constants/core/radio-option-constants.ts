@@ -1,5 +1,16 @@
 import type { RadioDTO } from '$lib/dto/core/radio/radio.dto';
 
+export const verifyOptions: RadioDTO[] = [
+    {
+        value: true,
+        name: 'LENGKAP',
+    },
+    {
+        value: false,
+        name: 'TIDAK LENGKAP',
+    },
+];
+
 export const certifyOptions: RadioDTO[] = [
     {
         value: true,

@@ -42,6 +42,7 @@
     import {
         _confirmationApprovalSchema,
         _confirmationMeetingResultSchema,
+        _setApproversSchema,
     } from '$lib/schemas/mypsm/employment/confirmation-in-service/schema';
     import {
         _addConfirmationAuditDirector,
@@ -49,6 +50,7 @@
         _addConfirmationIntegrityDirector,
         _addConfirmationMeetingResult,
         _addConfirmationStateDirector,
+        _addSecretarySetApproverForm,
     } from './+page';
     import { _addInterimApprovalSchema } from '$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas';
     import StatusPill from '$lib/components/status-pills/StatusPill.svelte';
@@ -64,6 +66,7 @@
     let isTypeConfirmationExceedsThreeYears = writable<boolean>(false);
     let submitChecklist: boolean = false;
     let employmentSecretaryDetailIsDraft = writable<boolean>(false);
+    let confirmationSetApproverIsDraft = writable<boolean>(false);
     let isReadOnlyEmploymentSecretaryConfirmationInServiceApproval =
         writable<boolean>(false);
     let divisionDirectorDetailIsDraft = writable<boolean>(false);
@@ -101,6 +104,12 @@
             employmentSecretaryDetailIsDraft.set(true);
         } else {
             employmentSecretaryDetailIsDraft.set(false);
+        }
+
+        if (data.view.confirmationInServiceView.approver.isDraft === true) {
+            confirmationSetApproverIsDraft.set(true);
+        } else {
+            confirmationSetApproverIsDraft.set(false);
         }
 
         if (
@@ -268,30 +277,26 @@
         },
     });
 
-    // const {
-    //     form: contractContinuationDetailForm,
-    //     errors: contractContinuationDetailFormErrors,
-    //     enhance: contractContinuationDetailFormEnhance,
-    // } = superForm(data.forms.contractContinuationInfoForm, {
-    //     SPA: true,
-    //     dataType: 'json',
-    //     invalidateAll: false,
-    //     resetForm: false,
-    //     multipleSubmits: 'allow',
-    //     validationMethod: 'oninput',
-    //     validators: zod(_confirmationProbationContinuationSchema),
-    //     taintedMessage: false,
-    //     onChange() {
-    //         isContractContinuation =
-    //             $contractContinuationDetailForm.isContractContinued;
-    //     },
-    //     onSubmit() {
-    //         _addConfirmationContractContinuation(
-    //             Number(data.params.id),
-    //             $contractContinuationDetailForm,
-    //         );
-    //     },
-    // });
+    const {
+        form: secretarySetApproverForm,
+        errors: secretarySetApproverErrors,
+        enhance: secretarySetApproverEnhance,
+    } = superForm(data.forms.secretarySetApproverForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        taintedMessage: false,
+        resetForm: false,
+        multipleSubmits: 'prevent',
+        validationMethod: 'oninput',
+        validators: zod(_setApproversSchema),
+        onSubmit() {
+            _addSecretarySetApproverForm(
+                Number(data.params.applicationId),
+                $secretarySetApproverForm,
+            );
+        },
+    });
 
     const {
         form: divisionDirectorDetaiForm,
@@ -376,34 +381,6 @@
             );
         },
     });
-
-    // // Table list
-    // let examsListTable: TableSettingDTO = {
-    //     param: data.param,
-    //     meta: {
-    //         pageSize: 1,
-    //         pageNum: 1,
-    //         totalData: 1,
-    //         totalPage: 1,
-    //     },
-    //     data: $examsDetaiForm.examinations ?? [],
-    //     selectedData: [],
-    //     exportData: [],
-    //     hiddenColumn: ['id', 'document'],
-    //     dictionary: [],
-    //     url: '',
-    //     id: 'examsListTable',
-    //     option: {
-    //         checkbox: false,
-    //         detail: false,
-    //         edit: false,
-    //         select: false,
-    //         filter: false,
-    //     },
-    //     controls: {
-    //         add: false,
-    //     },
-    // };
 
     let diciplinaryListTable: TableSettingDTO = {
         param: data.param,
@@ -1021,79 +998,54 @@
             </div>
         </StepperContentBody>
     </StepperContent>
-    <!-- {#if $isTypeConfirmationExceedsThreeYears}
+    {#if !$isTypeConfirmationExceedsThreeYears || isExceedsThreeYearsAndIsDraft}
         <StepperContent>
-            <StepperContentHeader title="Lanjutan Percubaan Perkhidmatan">
-                {#if (!data.view.confirmationInServiceView.probationContinuation.isReadonly || $confirmationProbationContinuedIsDraft) && data.roles.isEmploymentSecretaryRole}
+            <StepperContentHeader
+                title="Tetapan Pengarah Bahagian/Negeri Untuk Perakuan"
+            >
+                {#if (!data.view.confirmationInServiceView.approver.isReadonly || $confirmationSetApproverIsDraft) && data.roles.isEmploymentSecretaryRole}
                     <TextIconButton
                         type="neutral"
                         label="Simpan"
-                        form="contractContinuationDetailForm"
+                        form="confirmationAssignApproverForm"
                         onClick={() => {
-                            $contractContinuationDetailForm.isDraft = true;
+                            $secretarySetApproverForm.isDraft = true;
                         }}
-                    ></TextIconButton>
+                    />
                     <TextIconButton
                         type="primary"
                         label="Hantar"
-                        form="contractContinuationDetailForm"
+                        form="confirmationAssignApproverForm"
                         onClick={() => {
-                            $contractContinuationDetailForm.isDraft = false;
+                            $secretarySetApproverForm.isDraft = false;
                         }}
-                    ></TextIconButton>
+                    />
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
-                {#if data.roles.isStaffRole}
+                {#if (!data.view.confirmationInServiceView.approver.isReadonly || $confirmationSetApproverIsDraft) && !data.roles.isEmploymentSecretaryRole}
                     <StepperOtherRolesResult />
                 {:else}
-                    <div class="flex w-full flex-col gap-2.5">
-                        <form
-                            id="contractContinuationDetailForm"
-                            method="POST"
-                            use:contractContinuationDetailFormEnhance
-                            class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                        >
-                            <CustomSelectField
-                                disabled={$contractContinuationDetailForm.isReadonly &&
-                                    !$confirmationProbationContinuedIsDraft}
-                                isRequired={false}
-                                id="gradeId"
-                                label="Keputusan"
-                                placeholder="-"
-                                options={commonOptions}
-                                bind:val={$contractContinuationDetailForm.isContractContinued}
-                            ></CustomSelectField>
-
-                            {#if $contractContinuationDetailForm.isContractContinued}
-                                <CustomTextField
-                                    type="date"
-                                    errors={$contractContinuationDetailFormErrors.effectiveDate}
-                                    disabled={$contractContinuationDetailForm.isReadonly &&
-                                        !$confirmationProbationContinuedIsDraft}
-                                    id="effectiveDate"
-                                    label={'Tarikh Mula Lanjutan'}
-                                    placeholder="-"
-                                    bind:val={$contractContinuationDetailForm.effectiveDate}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    type="number"
-                                    errors={$contractContinuationDetailFormErrors.contractMonths}
-                                    disabled={$contractContinuationDetailForm.isReadonly &&
-                                        !$confirmationProbationContinuedIsDraft}
-                                    id="effectiveDate"
-                                    label={'Tempoh Lanjutan (Bulan)'}
-                                    placeholder="-"
-                                    bind:val={$contractContinuationDetailForm.contractMonths}
-                                ></CustomTextField>
-                            {/if}
-                        </form>
-                    </div>
+                    <form
+                        id="confirmationAssignApproverForm"
+                        method="POST"
+                        use:secretarySetApproverEnhance
+                        class="flex w-full flex-col gap-2"
+                    >
+                        <CustomSelectField
+                            disabled={data.view.confirmationInServiceView
+                                .approver.isReadonly &&
+                                !$confirmationSetApproverIsDraft}
+                            errors={$secretarySetApproverErrors.supporterId}
+                            id="supporterId"
+                            label="Nama Pengarah Bahagian/Negeri"
+                            options={data.lookups.employeeLookup}
+                            bind:val={$secretarySetApproverForm.supporterId}
+                        />
+                    </form>
                 {/if}
             </StepperContentBody>
         </StepperContent>
-    {/if} -->
-    {#if !$isTypeConfirmationExceedsThreeYears || isExceedsThreeYearsAndIsDraft}
         <StepperContent>
             <StepperContentHeader
                 title="Keputusan Pengesahan Dalam Perhidmatan Daripada Peranan - Peranan Bertanggungjawab"
@@ -1302,6 +1254,11 @@
 
                     <div class="h-fit space-y-2.5 rounded-[3px] border p-2.5">
                         <div class="mb-5">
+                            <b class="text-sm text-black"
+                                >Rekod Keputusan peranan (-peranan) berkaitan</b
+                            >
+                        </div>
+                        <div class="mb-5">
                             <b class="text-sm text-system-primary"
                                 >1. Urus Setia Perjawatan</b
                             >
@@ -1440,7 +1397,7 @@
                 </div>
             </StepperContentBody>
         </StepperContent>
-        {#if ($auditDirectorDetailIsDraft && $integrityDirectorDetailIsDraft) || (($isReadOnlyAuditDirectorConfirmationInServiceApproval && $confirmationAuditDirectorIsApproved) || ($isTypeConfirmationExceedsThreeYears && $confirmationEmploymentSecretaryIsApproved))}
+        {#if ($auditDirectorDetailIsDraft && $integrityDirectorDetailIsDraft) || ($isReadOnlyAuditDirectorConfirmationInServiceApproval && $confirmationAuditDirectorIsApproved) || ($isTypeConfirmationExceedsThreeYears && $confirmationEmploymentSecretaryIsApproved)}
             <StepperContent>
                 <StepperContentHeader title="Keputusan Mesyuarat">
                     {#if (!data.view.confirmationInServiceView.meeting.isReadonly || $confirmationMeetingDetailIsDraft) && data.roles.isEmploymentSecretaryRole}
@@ -1522,7 +1479,6 @@
                                 ></CustomTextField>
                             {/if}
                             {#if $isTypeConfirmationExceedsThreeYears}
-
                                 {#if !$confirmationMeetingDetailForm.meetingResult}
                                     <CustomSelectField
                                         disabled={$isReadOnlyConfirmationInServiceMeetingResult &&
@@ -1535,7 +1491,6 @@
                                         bind:val={$confirmationMeetingDetailForm.isContractContinued}
                                     ></CustomSelectField>
 
-                                
                                     {#if $confirmationMeetingDetailForm.isContractContinued}
                                         <CustomTextField
                                             type="date"

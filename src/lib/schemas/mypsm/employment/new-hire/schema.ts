@@ -83,6 +83,12 @@ export const _personalInfoResponseSchema = z.object({
         message: 'Sila Tetapkan Pilihan',
     }),
     mailPostcode: shortTextSchema,
+    retirementBenefit: codeSchema,
+    epfNumber: z.string().nullish(),
+    socsoNumber: z.string().nullish(),
+    incomeNumber: z.string().nullish(),
+    bankName: shortTextSchema,
+    bankAccount: shortTextSchema,
     isExPoliceOrSoldier: booleanSchema,
     isInternalRelationship: booleanSchema,
     employeeNumber: z.string().nullable(),
@@ -159,13 +165,13 @@ export const _academicInfoSchema = z
         }),
         minorId: numberIdSchema,
         countryId: numberIdSchema,
-        institutionId: numberIdSchema,
+        institutionId: shortTextSchema,
         educationLevelId: numberIdSchema,
         sponsorshipId: numberIdSchema,
         name: codeSchema,
         completionDate: dateStringSchema,
         finalGrade: codeSchema,
-        field: shortTextSchema,
+        field: z.string().nullish(),
     })
     .partial({
         id: true,
@@ -190,7 +196,7 @@ export const _experienceInfoSchema = z.object({
     company: shortTextSchema,
     address: z.string().nullish(),
     position: shortTextSchema,
-    positionCode: codeSchema,
+    positionCode: z.string().nullish(),
     startDate: dateStringSchema,
     endDate: dateStringSchema,
     salary: numberSchema,
@@ -256,24 +262,24 @@ export const _relationsSchema = z
         workAddress: z.string().nullish(),
         workPostcode: z.string().nullish(),
         phoneNumber: shortTextSchema,
-        marriageDate: dateStringSchema.nullable(),
+        marriageDate: dateStringSchema.nullish(),
         inSchool: booleanSchema,
     })
     .partial({
         marriageDate: true,
         alternativeName: true,
-    })
-    .superRefine(({ maritalId, marriageDate }, ctx) => {
-        if (maritalId === 3) {
-            if (marriageDate === null) {
-                ctx.addIssue({
-                    code: 'custom',
-                    message: 'Tarikh tidak boleh kosong.',
-                    path: ['marriageDate'],
-                });
-            }
-        }
     });
+    // .superRefine(({ maritalId, marriageDate }, ctx) => {
+    //     if (maritalId === 3) {
+    //         if (marriageDate === null) {
+    //             ctx.addIssue({
+    //                 code: 'custom',
+    //                 message: 'Tarikh tidak boleh kosong.',
+    //                 path: ['marriageDate'],
+    //             });
+    //         }
+    //     }
+    // });
 
 // export const _familyListResponseSchema = z.object({
 //     dependencies: z.array(_relationsSchema),
@@ -314,31 +320,14 @@ export const _serviceDetailSchema = z.object({
     applicationId: z.number().readonly(),
     gradeId: numberIdSchema,
     maxGradeId: numberIdSchema,
-    // positionId: numberIdSchema,
     placementId: numberIdSchema,
-    // schemeId: numberIdSchema,
     serviceTypeId: numberIdSchema,
     serviceGroupId: numberIdSchema,
     unitId: numberIdSchema,
-    // programmeId: numberIdSchema,
-    // employmentStatusId: numberIdSchema,
     effectiveDate: dateStringSchema,
-    retirementBenefit: codeSchema,
-    epfNumber: z.string().nullish(),
-    socsoNumber: z.string().nullish(),
-    incomeNumber: z.string().nullish(),
-    bankName: shortTextSchema,
-    bankAccount: shortTextSchema,
-    // eligibleLeaveCount: numberSchema,
     civilServiceStartDate: dateStringSchema,
     newRecruitEffectiveDate: dateStringSchema,
     serviceDate: dateStringSchema,
-    // firstServiceDate: dateStringSchema,
-    // firstConfirmServiceDate: dateStringSchema,
-    // firstEffectiveDate: dateStringSchema,
-    // firstEffectiveServiceDate: dateStringSchema,
-    // confirmServiceDate: dateStringSchema,
-    // confirmDate: dateStringSchema,
     pensionNumber: z.string().nullish(),
     kgt: numberSchema,
     retirementAge: numberSchema,

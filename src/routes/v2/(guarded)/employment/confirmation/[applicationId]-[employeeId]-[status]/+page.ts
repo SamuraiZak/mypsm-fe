@@ -1,9 +1,13 @@
+import type { CommonFilterDTO } from '$lib/dto/core/common/common-filter.dto';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type {
     ConfirmationApprovalDTO,
     ConfirmationFullDetailResponseDTO,
     ConfirmationMeetingResultRequestDTO,
+    ConfirmationSetApproverDTO,
 } from '$lib/dto/mypsm/employment/confirmation/confirmation_request_response.dto.js';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
@@ -13,10 +17,12 @@ import {
     _confirmationMeetingResultSchema,
     _confirmationPersonalDetailSchema,
     _confirmationServiceSchema,
+    _setApproversSchema,
     _updateConfirmationMeetingResultSchema,
 } from '$lib/schemas/mypsm/employment/confirmation-in-service/schema.js';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { ConfirmationServices } from '$lib/services/implementation/mypsm/employment/confirmation-in-service/confirmation.service.js';
+import { EmployeeServices } from '$lib/services/implementation/mypsm/shared/employee.service';
 import { error } from '@sveltejs/kit';
 import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms/client';
@@ -69,6 +75,13 @@ export async function load({ params, parent }) {
         zod(_confirmationApprovalSchema),
         { errors: false },
     );
+
+    const secretarySetApproverForm = await superValidate(
+        confirmationInServiceView.approver,
+        zod(_setApproversSchema),
+        { errors: false },
+    );
+
     const divisionDirectorInfoForm = await superValidate(
         confirmationInServiceView.division,
         zod(_confirmationApprovalSchema),
@@ -321,6 +334,38 @@ export async function load({ params, parent }) {
     ];
 
     // ===========================================================================
+    // filter
+    const filter: CommonFilterDTO = {
+        program: 'SEMUA',
+        identityDocumentNumber: null,
+        employeeNumber: null,
+        name: null,
+        position: null,
+        status: null,
+        grade: null,
+        scheme: null,
+    };
+
+    // request body
+    const param: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 10000,
+        orderBy: 'name',
+        orderType: 0,
+        filter: filter,
+    };
+
+    // fetch apc history
+    const response: CommonResponseDTO =
+        await EmployeeServices.getEmployeeList(param);
+
+    //convert to id number
+    const employeeLookup: DropdownDTO[] = (
+        response.data?.dataList as CommonEmployeeDTO[]
+    ).map((data) => ({
+        value: Number(data.employeeId),
+        name: String(data.name),
+    }));
 
     return {
         params,
@@ -333,6 +378,7 @@ export async function load({ params, parent }) {
             examsInfoForm,
             diciplinaryInfoForm,
             employmentSecretaryInfoForm,
+            secretarySetApproverForm,
             divisionDirectorInfoForm,
             integrityDirectorApprovalForm,
             auditDirectorInfoForm,
@@ -362,6 +408,7 @@ export async function load({ params, parent }) {
             titleLookup,
             assetDeclarationLookup,
             placementLookup,
+            employeeLookup,
             serviceGroupLookup,
             unitLookup,
             serviceTypeLookup,
@@ -394,29 +441,27 @@ export const _addConfirmationEmploymentSecretary = async (
     return { response };
 };
 
-// export const _addConfirmationContractContinuation = async (
-//     id: number,
-//     formData: object,
-// ) => {
-//     const form = await superValidate(
-//         formData,
-//         zod(_confirmationProbationContinuationSchema),
-//     );
-//     form.data.confirmationId = id;
 
-//     console.log(form.data);
-//     if (!form.valid) {
-//         getErrorToast();
-//         error(400, { message: 'Validation Not Passed!' });
-//     }
+export const _addSecretarySetApproverForm = async (
+    id: number,
+    formData: object,
+) => {
+    const form = await superValidate(formData, zod(_setApproversSchema));
+    form.data.id = id;
 
-    // const response: CommonResponseDTO =
-    //     await ConfirmationServices.createConfirmationContractContinuationResult(
-    //         form.data as ConfirmationContractContinuationDTO,
-    //     );
+    console.log(form);
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
 
-    // return { response };
-// };
+    const response: CommonResponseDTO =
+        await ConfirmationServices.createConfirmationApprover(
+            form.data as ConfirmationSetApproverDTO,
+        );
+
+    return { response };
+};
 
 export const _addConfirmationStateDirector = async (
     id: number,
