@@ -19,9 +19,9 @@
 
 <Sidebar
     {activeUrl}
-    class="h-full max-h-full w-full max-w-full overflow-y-auto border-none bg-ios-basic-white"
+    class="h-full max-h-full w-full max-w-full overflow-y-auto border-none bg-[#FBFBFD]"
 >
-    <SidebarWrapper class="m-0 rounded-none border-none bg-ios-basic-white p-0">
+    <SidebarWrapper class="m-0 rounded-none border-none bg-[#FBFBFD] p-0">
         <SidebarGroup ulClass="space-y-0">
             {#each menu as item}
                 {#if item.child == undefined || item.child.length == 0}
