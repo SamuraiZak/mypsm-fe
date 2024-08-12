@@ -8,6 +8,7 @@ import { CommonResponseConvert } from '$lib/dto/core/common/common-response.dto'
 import type {
     ConfirmationApprovalDTO,
     ConfirmationMeetingResultRequestDTO,
+    ConfirmationSetApproverDTO,
 } from '$lib/dto/mypsm/employment/confirmation/confirmation_request_response.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
@@ -147,6 +148,37 @@ export class ConfirmationServices {
     ) {
         try {
             const url: Input = 'employment/confirmation/secretary/add';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // set approver
+    static async createConfirmationApprover(
+        param: ConfirmationSetApproverDTO,
+    ) {
+        try {
+            const url: Input = 'employment/confirmation/set_approver/add';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
