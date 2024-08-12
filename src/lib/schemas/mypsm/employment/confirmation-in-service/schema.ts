@@ -5,6 +5,7 @@
 import {
     booleanSchema,
     codeSchema,
+    numberIdSchema,
     shortTextSchema,
 } from '$lib/schemas/common/schema-type';
 import { z } from 'zod';
@@ -135,6 +136,13 @@ export const _confirmationMeetingResultSchema = z
         },
     );
 
+    export const _setApproversSchema = z.object({
+        id: z.number().readonly(),
+        supporterId: numberIdSchema,
+        isReadonly: z.boolean().readonly(),
+        isDraft: z.boolean(),
+    });
+
 export const _updateConfirmationMeetingResultSchema =
     _confirmationMeetingResultSchema;
 
@@ -186,6 +194,7 @@ export const _confirmationFullDetailSchema = z.object({
     examination: _confirmationExamsChecklistSchema,
     diciplinary: _confirmationDiciplinarySchema,
     // probationContinuation: _confirmationProbationContinuationSchema,
+    approver: _setApproversSchema,
     secretary: _confirmationApprovalSchema,
     division: _confirmationApprovalSchema,
     integrity: _confirmationApprovalSchema,
