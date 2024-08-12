@@ -1533,11 +1533,13 @@
                                 class="flex w-full flex-row items-center justify-between"
                             >
                                 <a
-                                    href="blank"
+                                    href={data.view.confirmationInServiceView
+                                        .document.attachment}
                                     download="Surat Pengesahan Dalam Perkhidmatan {$form.name.toUpperCase()} ({$form.identityDocumentNumber})"
                                     class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
                                     >Surat Pengesahan Dalam Perkhidmatan {$form.name.toUpperCase()}
-                                    ({$form.identityDocumentNumber})
+                                    ({data.view.confirmationInServiceView
+                                        .document.attachmentName})
                                     <SvgArrowDownTray />
                                 </a>
                             </div>
