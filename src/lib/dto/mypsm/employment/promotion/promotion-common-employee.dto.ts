@@ -62,6 +62,8 @@ export interface PromotionPlacementDetail {
     secondMinimumSalary:   number;
     secondMaximumSalary:   number;
     secondSalaryRaise:     number;
+    currentSalary:      string;
+    newSalary:          string;
     currentPlacement:      string;
     newPlacement:          string;
 }

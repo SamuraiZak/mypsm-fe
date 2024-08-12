@@ -1402,6 +1402,20 @@
                                                     : ''}
                                             />
                                             <CustomTextField
+                                                label="Gaji Sekarang"
+                                                disabled
+                                                isRequired={false}
+                                                id="currentSalary"
+                                                val={currentEmployeeDetail?.currentSalary}
+                                            />
+                                            <CustomTextField
+                                                label="Gaji Baru"
+                                                disabled
+                                                isRequired={false}
+                                                id="newSalary"
+                                                val={currentEmployeeDetail?.newSalary}
+                                            />
+                                            <CustomTextField
                                                 label="Penempatan Sekarang"
                                                 disabled
                                                 isRequired={false}
