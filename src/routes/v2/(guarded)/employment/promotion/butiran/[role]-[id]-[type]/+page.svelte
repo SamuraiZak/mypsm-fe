@@ -1824,6 +1824,20 @@
                                     ?.secondSalaryRaise}
                             />
                             <CustomTextField
+                                label="Gaji Sekarang"
+                                disabled
+                                isRequired={false}
+                                id="currentSalary"
+                                val={data.employeePOV?.employeePromotionInfo?.currentSalary}
+                            />
+                            <CustomTextField
+                                label="Gaji Baru"
+                                disabled
+                                isRequired={false}
+                                id="newSalary"
+                                val={data.employeePOV?.employeePromotionInfo?.newSalary}
+                            />
+                            <CustomTextField
                                 label="Penempatan Sekarang"
                                 disabled
                                 isRequired={false}
