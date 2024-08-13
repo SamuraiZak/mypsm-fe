@@ -1,3 +1,7 @@
+import type { DocumentBase64RequestDTO } from "$lib/dto/core/common/base-64-document-request.dto";
+import type { _documentsSchema, _uploadDocumentsSchema } from "$lib/schemas/mypsm/employment/promotion/promotion-schemas";
+import type { z } from "zod";
+
 export interface PromotionCommonEmployee {
     employeeId:       number;
     employeeNo:       string;
@@ -48,6 +52,7 @@ export interface PromotionPlacement {
     gradeNo:          string;
     positionNo:       string;
     currentPlacement: string;
+    status:           string;
 }
 
 export interface PromotionPlacementDetail {
@@ -68,6 +73,16 @@ export interface PromotionPlacementDetail {
     newPlacement:          string;
 }
 
+export type StaffDocumentDTO = z.infer<typeof _documentsSchema>
+
+export type StaffUploadDocumentDTO = 
+{
+    id: number;
+    promotionType: string;
+    document: DocumentBase64RequestDTO[];
+    isDraft: boolean;
+}
+
 export interface PromotionSalaryAdjustment {
     effectiveDate: string | null;
     currentSalary: number | null;
@@ -80,6 +95,8 @@ export interface PromotionSalaryAdjustmentDetail {
     currentSalary: number | null;
     newSalary:     string | null;
     remarks:       string | null;
+    attachmentSalaryTable: string | null;
+    attachmentOfferLetter: string | null;
 }
 
 export interface PromotionDetail {
