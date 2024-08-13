@@ -982,9 +982,22 @@
                             />
                             {#if !directorApproved}
                                 <TextIconButton
+                                    type="neutral"
+                                    label="Simpan"
+                                    icon="check"
+                                    form="directorForm"
+                                    onClick={() => {
+                                        $directorForm.isDraft = true;
+                                    }}
+                                />
+                                <TextIconButton
+                                    type="primary"
                                     label="Hantar"
                                     icon="check"
                                     form="directorForm"
+                                    onClick={() => {
+                                        $directorForm.isDraft = false;
+                                    }}
                                 />
                             {/if}
                         {/if}
@@ -1095,10 +1108,22 @@
                             />
                             {#if !promotionMeetingExist && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
+                                    type="neutral"
+                                    label="Simpan"
+                                    icon="check"
+                                    form="certificationForm"
+                                    onClick={() => {
+                                        $certificationForm.isDraft = true;
+                                    }}
+                                />
+                                <TextIconButton
                                     type="primary"
                                     label="Hantar"
                                     icon="check"
                                     form="certificationForm"
+                                    onClick={() => {
+                                        $certificationForm.isDraft = false;
+                                    }}
                                 />
                             {/if}
                         {/if}
@@ -1342,10 +1367,22 @@
                             />
                             {#if !placementMeetingExist && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
+                                    type="neutral"
+                                    label="Simpan"
+                                    icon="check"
+                                    form="placementForm"
+                                    onClick={() => {
+                                        $placementForm.isDraft = true;
+                                    }}
+                                />
+                                <TextIconButton
                                     type="primary"
                                     label="Hantar"
                                     icon="check"
                                     form="placementForm"
+                                    onClick={() => {
+                                        $placementForm.isDraft = false;
+                                    }}
                                 />
                             {/if}
                         {/if}
@@ -1618,10 +1655,22 @@
                             />
                             {#if !employeePromotionExist && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                 <TextIconButton
+                                    type="neutral"
+                                    label="Simpan"
+                                    icon="check"
+                                    form="employeePromotion"
+                                    onClick={() => {
+                                        $employeePromotion.isDraft = true;
+                                    }}
+                                />
+                                <TextIconButton
                                     type="primary"
                                     label="Hantar"
                                     icon="check"
                                     form="employeePromotion"
+                                    onClick={() => {
+                                        $employeePromotion.isDraft = false;
+                                    }}
                                 />
                             {/if}
                         {/if}
@@ -1725,12 +1774,34 @@
                             />
                             {#if (data.currentRoleCode !== UserRoleConstant.urusSetiaPerjawatan.code && !supporterApproved) || !approverApproved}
                                 <TextIconButton
+                                    type="neutral"
+                                    label="Simpan"
+                                    icon="check"
+                                    form={!supporterApproved
+                                        ? 'supporterApproval'
+                                        : 'approverApproval'}
+                                    onClick={() => {
+                                        if (!supporterApproved) {
+                                            $supporterApproval.isDraft = true;
+                                        } else {
+                                            $approverApproval.isDraft = true;
+                                        }
+                                    }}
+                                />
+                                <TextIconButton
                                     type="primary"
                                     label="Hantar"
                                     icon="check"
                                     form={!supporterApproved
                                         ? 'supporterApproval'
                                         : 'approverApproval'}
+                                    onClick={() => {
+                                        if (!supporterApproved) {
+                                            $supporterApproval.isDraft = false;
+                                        } else {
+                                            $approverApproval.isDraft = false;
+                                        }
+                                    }}
                                 />
                             {/if}
                         {/if}
@@ -1870,6 +1941,30 @@
                 <StepperContentBody>
                     {#if !$confirmationStaffDocumentIsReadonly || $confirmationStaffDocumentIsDraft}
                         <div class="flex w-full flex-col gap-2">
+                            <p class="text-sm">
+                                Sila muat turun, isi dengan lengkap dokumen yang
+                                berkaitan, kemudian muat naik dokumen pada
+                                ruangan yang disediakan.
+                            </p>
+
+                            <ul
+                                class="cursor-pointer space-y-1 text-sm italic text-system-primary underline"
+                            >
+                                {#each $staffUploadedDocumentsForm.template as _, i}
+                                    <li>
+                                        <a
+                                            href={$staffUploadedDocumentsForm
+                                                .template[i].document}
+                                            download={$staffUploadedDocumentsForm
+                                                .template[i].name}
+                                            class="cursor-pointer underline"
+                                            >{$staffUploadedDocumentsForm
+                                                .template[i].name}</a
+                                        >
+                                    </li>
+                                {/each}
+                            </ul>
+
                             <p class="text-sm">
                                 Sila muat turun, isi dengan lengkap dokumen
                                 berikut, kemudian muat naik dokumen pada ruangan
