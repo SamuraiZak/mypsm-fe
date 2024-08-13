@@ -7,7 +7,7 @@ export interface PromotionCertification {
     meetingDate:      string;
     confirmedDate:    string;
     actingEndDate:    string;
-    gradeRevertDate:  string;
+    gradeRevertDate?:  string | null;
     newPlacement:     string;
 }
 
@@ -49,7 +49,7 @@ export interface PromotionEmployeeEdit {
     supporterName: string | null;
     approverName:  string | null;
     status:  boolean;
-    remark:        string | null;
+    remark?:        string | null;
 }
 
 // Converts JSON strings to/from your types
