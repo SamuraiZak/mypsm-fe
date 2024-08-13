@@ -24,6 +24,7 @@ export const _promotionCommonApproval = z.object({
     status: booleanSchema,
     remark: z.string().nullable(),
     mark: z.number().nullable(),
+    isDraft: z.boolean(),
 })
 
 export const _promotionIntegrityApproval = z.object({
@@ -45,6 +46,7 @@ export const _editPromotionCertification = z.object({
     newPlacement: z.string().default(""),
     currentSalary: numberSchema,
     newSalary: numberSchema,
+    isDraft: z.boolean(),
 })
 
 export const _editPromotionPlacement = z.object({
@@ -54,6 +56,7 @@ export const _editPromotionPlacement = z.object({
     salaryMovementMonth: shortTextSchema,
     newGrade: z.string({invalid_type_error: "Medan ini tidak boleh kosong."}),
     newPlacement: z.string({invalid_type_error: "Medan ini tidak boleh kosong."}),
+    isDraft: z.boolean(),
 })
 
 export const _documentsSchema = z.object({
@@ -82,4 +85,5 @@ export const _editEmployeePromotion = z.object({
     approverName: shortTextSchema.nullable(),
     status: booleanSchema,
     remark: z.string().nullish(),
+    isDraft: z.boolean(),
 })
