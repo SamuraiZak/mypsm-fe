@@ -46,6 +46,7 @@
         PromotionSalaryAdjustmentDetail,
     } from '$lib/dto/mypsm/employment/promotion/promotion-common-employee.dto';
     import { superForm } from 'sveltekit-superforms/client';
+    import StatusPill from '$lib/components/status-pills/StatusPill.svelte';
     import { zod } from 'sveltekit-superforms/adapters';
     import {
         _addNewPromotion,
@@ -848,6 +849,8 @@
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
+    <StatusPill status={data.params.status} slot="status" />
+
     <ContentHeader title="Kenaikan Pangkat">
         <TextIconButton
             icon="cancel"

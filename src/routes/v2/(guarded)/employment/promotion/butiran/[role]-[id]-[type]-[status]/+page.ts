@@ -148,6 +148,7 @@ export const load = async ({ params, parent }) => {
 
     return {
         param,
+        params,
         employeeIdRequest,
         promotionType,
         isNewPromotion,
