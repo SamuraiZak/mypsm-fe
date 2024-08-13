@@ -19,17 +19,17 @@
         {
             value: 'Gred 1-54',
             name: 'Gred 1-54',
-            href: '/v2/employment/promotion/butiran/1-baru-1-54-baru',
+            href: '/v2/employment/promotion/butiran/1-baru-baharu-1-54',
         },
         {
             value: 'TBK 1 dan 2 - Kumpulan Sokongan',
             name: 'TBK 1 dan 2 - Kumpulan Sokongan',
-            href: '/v2/employment/promotion/butiran/1-baru-TBK 1 dan 2-baru',
+            href: '/v2/employment/promotion/butiran/1-baru-baharu-TBK 1 dan 2',
         },
         {
             value: 'Gred Utama',
             name: 'Gred Utama',
-            href: '/v2/employment/promotion/butiran/1-baru-Utama-baru',
+            href: '/v2/employment/promotion/butiran/1-baru-baharu-Utama',
         },
     ];
 
@@ -188,9 +188,9 @@
                                     '/v2/employment/promotion/butiran/1-' +
                                         rowData.groupId +
                                         '-' +
-                                        '1-54' +
+                                        rowData.status +
                                         '-' +
-                                        rowData.status,
+                                        '1-54',
                                 );
                             }}
                         ></DataTable>
@@ -215,9 +215,9 @@
                                     '/v2/employment/promotion/butiran/1-' +
                                         rowData.groupId +
                                         '-' +
-                                        'TBK 1 dan 2' +
+                                        rowData.status +
                                         '-' +
-                                        rowData.status,
+                                        'TBK 1 dan 2',
                                 );
                             }}
                         ></DataTable>
@@ -242,9 +242,9 @@
                                         '/v2/employment/promotion/butiran/1-' +
                                             rowData.groupId +
                                             '-' +
-                                            'Utama' +
+                                            rowData.status +
                                             '-' +
-                                            rowData.status,
+                                            'Utama',
                                     );
                                 }}
                             ></DataTable>
@@ -277,18 +277,18 @@
                                     '/v2/employment/promotion/butiran/1-' +
                                         rowData.groupId +
                                         '-' +
-                                        tempPromotionType +
+                                        rowData.status +
                                         '-' +
-                                        rowData.status,
+                                        tempPromotionType,
                                 );
                             } else {
                                 goto(
                                     '/v2/employment/promotion/butiran/2-' +
                                         rowData.promotionId +
                                         '-' +
-                                        tempPromotionType +
+                                        rowData.status +
                                         '-' +
-                                        rowData.status,
+                                        tempPromotionType,
                                 );
                             }
                         }}
