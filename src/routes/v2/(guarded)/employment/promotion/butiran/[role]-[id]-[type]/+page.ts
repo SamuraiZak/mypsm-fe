@@ -1,15 +1,21 @@
 import { LocalStorageKeyConstant } from '$lib/constants/core/local-storage-key.constant';
 import { UserRoleConstant } from '$lib/constants/core/user-role.constant';
+import type { DocumentBase64RequestDTO } from '$lib/dto/core/common/base-64-document-request.dto';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+import type { CourseFundApplicationDocumentsResponseDTO } from '$lib/dto/mypsm/course/fund-application/course-fund-application-document.dto';
+import type { CourseFundReimbursementUploadDocumentsBase64RequestDTO } from '$lib/dto/mypsm/course/fund-reimbursement/course-fund-reimbursement-document.dto';
 import type { AddNewPromotion } from '$lib/dto/mypsm/employment/promotion/add-promotion.dto';
-import type { PromotionCertificationEmployee, PromotionCommonEmployee, PromotionDetail, PromotionPlacement, PromotionPlacementDetail, PromotionSalaryAdjustment } from '$lib/dto/mypsm/employment/promotion/promotion-common-employee.dto';
+import type { PromotionCertificationEmployee, PromotionCommonEmployee, PromotionDetail, PromotionPlacement, PromotionPlacementDetail, PromotionSalaryAdjustment, StaffDocumentDTO, StaffUploadDocumentDTO } from '$lib/dto/mypsm/employment/promotion/promotion-common-employee.dto';
 import type { PromotionCertificationGet, PromotionGroupID } from '$lib/dto/mypsm/employment/promotion/promotion-common-groupid.dto';
 import type { PromotionCertification, PromotionCommonApproval, PromotionEmployeeEdit, PromotionIntegrityApproval, PromotionPlacementEdit } from '$lib/dto/mypsm/employment/promotion/promotion-form.dto';
-import { _addNewPromotion, _editEmployeePromotion, _editPromotionCertification, _editPromotionPlacement, _promotionCommonApproval, _promotionIntegrityApproval } from '$lib/schemas/mypsm/employment/promotion/promotion-schemas';
+import { _fileToBase64String } from '$lib/helpers/core/fileToBase64String.helper';
+import { getErrorToast } from '$lib/helpers/core/toast.helper';
+import { _addNewPromotion, _documentsSchema, _editEmployeePromotion, _editPromotionCertification, _editPromotionPlacement, _promotionCommonApproval, _promotionIntegrityApproval, _uploadDocumentsSchema } from '$lib/schemas/mypsm/employment/promotion/promotion-schemas';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { EmploymentPromotionServices } from '$lib/services/implementation/mypsm/perjawatan/employment-promotion.service';
+import { error } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
@@ -52,6 +58,7 @@ export const load = async ({ params, parent }) => {
     let finalResult: PromotionDetail[] = [];
 
     let employeePromotionInfo = {} as PromotionPlacementDetail;
+    let employeeDocumentInfo = {} as StaffDocumentDTO;
 
     const param: CommonListRequestDTO = {
         pageNum: 1,
@@ -77,6 +84,10 @@ export const load = async ({ params, parent }) => {
         filter: currentId,
     };
 
+    const promotionStaffUploadDocumentForm = await superValidate(
+        zod(_uploadDocumentsSchema),
+        { errors: false },
+    );
     const addnewPromotionForm = await superValidate(zod(_addNewPromotion));
     const directorForm = await superValidate(zod(_promotionCommonApproval))
     const integrityForm = await superValidate(zod(_promotionIntegrityApproval))
@@ -114,6 +125,11 @@ export const load = async ({ params, parent }) => {
             await EmploymentPromotionServices.getPlacementDetail(employeeIdRequest);
         employeePromotionInfo =
             employeePromotionInfoResponse.data?.details as PromotionPlacementDetail;
+
+        const employeeDocumentInfoResponse: CommonResponseDTO =
+            await EmploymentPromotionServices.getDocumentDetail(employeeIdRequest);
+        employeeDocumentInfo =
+        employeeDocumentInfoResponse.data?.details as StaffDocumentDTO;
         // employeeSalaryAdjustmentRes =
         //     await EmploymentPromotionServices.getSalaryAdjustmentTable(req);
         // employeeSalaryAdjustment =
@@ -124,11 +140,15 @@ export const load = async ({ params, parent }) => {
             employeeListResponse.data?.dataList as PromotionCommonEmployee[];
     }
 
-
-
+    const staffDocumentForm = await superValidate(
+        employeeDocumentInfo,
+        zod(_documentsSchema),
+        { errors: false },
+    );
 
     return {
         param,
+        employeeIdRequest,
         promotionType,
         isNewPromotion,
         currentId,
@@ -136,6 +156,9 @@ export const load = async ({ params, parent }) => {
         employeeListResponse,
         employeeList,
         addnewPromotionForm,
+        promotionStaffUploadDocumentForm,
+        employeeDocumentInfo,
+        staffDocumentForm,
         commonParam,
         certificationListResponse,
         certificationList,
@@ -161,6 +184,77 @@ export const load = async ({ params, parent }) => {
         }
     };
 
+};
+
+export const _submitDocumentForm = async (
+    idData: PromotionCertificationGet,
+    isDraft: boolean,
+    files: File[],
+    uploadedfiles: {
+        name: string;
+        document: string;
+    }[],
+) => {
+    if (files.length < 1 && uploadedfiles.length < 1) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const documentData = new FormData();
+
+    // check file size validation
+    files.forEach((file) => {
+        documentData.append('documents', file, file.name);
+    });
+
+    // validation only on the newly uploaded files
+    if (files.length > 0) {
+        const form = await superValidate(
+            documentData,
+            zod(_uploadDocumentsSchema),
+        );
+
+        if (!form.valid || idData.id === undefined) {
+            getErrorToast();
+            error(400, { message: 'Validation Not Passed!' });
+        }
+    }
+
+    // turns file into base 64 format
+    const requestBody: StaffUploadDocumentDTO =
+        {
+            id: idData.id,
+            promotionType: idData.promotionType, 
+            document: [],
+            isDraft: isDraft,
+        };
+
+    // Adding existing files to the request body
+    for (let i = 0; i < uploadedfiles.length; i++) {
+        const content = uploadedfiles[i].document.split('base64,')[1];
+        const documentObject: DocumentBase64RequestDTO = {
+            base64: content,
+            name: uploadedfiles[i].name,
+        };
+        requestBody.document?.push(documentObject);
+    }
+
+    // Adding new files
+    for (let i = 0; i < files.length; i++) {
+        const base64String = await _fileToBase64String(files[i]);
+        const documentObject: DocumentBase64RequestDTO = {
+            base64: base64String,
+            name: files[i].name,
+        };
+        requestBody.document?.push(documentObject);
+    }
+
+    const response: CommonResponseDTO =
+        await EmploymentPromotionServices.addDocumentPromotion(
+            requestBody,
+        );
+
+    return { response };
 };
 
 export const _submitAddNewPromotion = async (formData: AddNewPromotion) => {

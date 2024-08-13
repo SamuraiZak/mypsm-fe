@@ -20,6 +20,7 @@
         _submitApproverApproval,
         _submitCertification,
         _submitDirectorForm,
+        _submitDocumentForm,
         _submitEmployeePromotion,
         _submitIntegrityForm,
         _submitPlacement,
@@ -48,11 +49,13 @@
     import { zod } from 'sveltekit-superforms/adapters';
     import {
         _addNewPromotion,
+        _documentsSchema,
         _editEmployeePromotion,
         _editPromotionCertification,
         _editPromotionPlacement,
         _promotionCommonApproval,
         _promotionIntegrityApproval,
+        _uploadDocumentsSchema,
     } from '$lib/schemas/mypsm/employment/promotion/promotion-schemas';
     import { Toaster } from 'svelte-french-toast';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
@@ -66,6 +69,11 @@
     import type { PromotionCertificationGet } from '$lib/dto/mypsm/employment/promotion/promotion-common-groupid.dto';
     import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
     import Alert from 'flowbite-svelte/Alert.svelte';
+    import SvgArrowDownTray from '$lib/assets/svg/SvgArrowDownTray.svelte';
+    import FileInputField from '$lib/components/inputs/file-input-field/FileInputField.svelte';
+    import FileInputFieldChildren from '$lib/components/inputs/file-input-field/FileInputFieldChildren.svelte';
+    import SvgMinusCircle from '$lib/assets/svg/SvgMinusCircle.svelte';
+    import { writable } from 'svelte/store';
 
     //stepper control
     let stepperControl: boolean[] = [false, false, false, false, false];
@@ -79,6 +87,9 @@
     let supporterApproved: boolean = true;
     let approverApproved: boolean = true;
     let confirmModal: boolean = false;
+
+    let confirmationStaffDocumentIsReadonly = writable<boolean>(false);
+    let confirmationStaffDocumentIsDraft = writable<boolean>(false);
 
     let employeeListTable: TableSettingDTO = {
         param: data.param,
@@ -166,6 +177,12 @@
         },
     };
 
+    $: data.employeeDocumentInfo.isReadonly === true
+        ? confirmationStaffDocumentIsReadonly.set(true)
+        : confirmationStaffDocumentIsReadonly.set(false);
+    $: data.employeeDocumentInfo.isDraft === true
+        ? confirmationStaffDocumentIsDraft.set(true)
+        : confirmationStaffDocumentIsDraft.set(false);
     $: selectedEmployeeList.data = employeeListTable.selectedData ?? [];
     $: selectedEmployeeList.meta.totalData =
         employeeListTable.selectedData.length;
@@ -767,6 +784,66 @@
     $: {
         salaryAdjustTable.data = salaryAdjustment;
     }
+
+    const { form: staffUploadedDocumentsForm } = superForm(
+        data.staffDocumentForm,
+        {
+            SPA: true,
+            dataType: 'json',
+            invalidateAll: true,
+            resetForm: false,
+            multipleSubmits: 'allow',
+            validationMethod: 'oninput',
+            validators: false,
+        },
+    );
+
+    const {
+        form: promotionStaffUploadDocumentForm,
+        errors: promotionStaffUploadDocumentError,
+        enhance: promotionStaffUploadDocumentEnhance,
+    } = superForm(data.promotionStaffUploadDocumentForm, {
+        SPA: true,
+        resetForm: false,
+        invalidateAll: true,
+        id: 'documentUploadForm',
+        validators: zod(_uploadDocumentsSchema),
+        onSubmit() {
+            _submitDocumentForm(
+                data.employeeIdRequest,
+                $promotionStaffUploadDocumentForm.isDraft,
+                $promotionStaffUploadDocumentForm.document,
+                $staffUploadedDocumentsForm.attachment,
+            );
+        },
+        taintedMessage: 'Permohonon anda belum selesai.',
+    });
+
+    const handleOnInput = (e: Event) => {
+        const additionalFiles: File[] = Array.from(
+            (e.currentTarget as HTMLInputElement)?.files ?? [],
+        );
+
+        additionalFiles.forEach((file) => {
+            $promotionStaffUploadDocumentForm.document = [
+                ...$promotionStaffUploadDocumentForm.document,
+                file,
+            ];
+        });
+    };
+
+    const handleDelete = (i: number) => {
+        $promotionStaffUploadDocumentForm.document =
+            $promotionStaffUploadDocumentForm.document.filter((_, index) => {
+                return index !== i;
+            });
+    };
+    const handleDeleteUploadedFile = (i: number) => {
+        $staffUploadedDocumentsForm.attachment =
+            $staffUploadedDocumentsForm.attachment.filter((_, index) => {
+                return index !== i;
+            });
+    };
 </script>
 
 <!-- content header starts here -->
@@ -993,6 +1070,7 @@
                                                 bind:val={$directorForm.mark}
                                                 errors={$directorError.mark}
                                             />
+                                            <!-- Upload document section -->
                                         {/if}
                                     </form>
                                 {/if}
@@ -1434,7 +1512,7 @@
                                         </form>
                                     </div>
                                 </CustomTabContent>
-                                <!-- <CustomTabContent
+                                <CustomTabContent
                                     title="Jadual Pelarasan Gaji Kakitangan"
                                 >
                                     <div
@@ -1482,9 +1560,43 @@
                                                     bind:tableData={salaryAdjustTable}
                                                 ></DataTable>
                                             </div>
+                                            {#if salaryAdjustmentDetail?.attachmentSalaryTable !== null}
+                                                <div
+                                                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                                                >
+                                                    <p class="text-sm">
+                                                        Sila muat turun jadual
+                                                        gaji dan surat tawaran
+                                                        di bawah ini.
+                                                    </p>
+                                                    <div
+                                                        class="flex w-full flex-row items-center justify-between"
+                                                    >
+                                                        1. <a
+                                                            href={salaryAdjustmentDetail?.attachmentSalaryTable}
+                                                            download="Jadual Gaji"
+                                                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                                            >Jadual Gaji
+                                                            <SvgArrowDownTray />
+                                                        </a>
+                                                    </div>
+                                                    <div
+                                                        class="flex w-full flex-row items-center justify-between"
+                                                    >
+                                                        2.
+                                                        <a
+                                                            href={salaryAdjustmentDetail?.attachmentOfferLetter}
+                                                            download="Surat Tawaran"
+                                                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                                            >Surat Tawaran
+                                                            <SvgArrowDownTray />
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            {/if}
                                         </div>
                                     </div>
-                                </CustomTabContent> -->
+                                </CustomTabContent>
                             </CustomTab>
                         {/if}
                     </StepperContentBody>
@@ -1732,6 +1844,246 @@
             {/if}
         {:else}
             <StepperContent>
+                <StepperContentHeader title="Borang Perakuan Pendidikan">
+                    {#if !$confirmationStaffDocumentIsReadonly || $confirmationStaffDocumentIsDraft}
+                        <TextIconButton
+                            type="neutral"
+                            label="Simpan"
+                            form="documentUploadForm"
+                            onClick={() => {
+                                $promotionStaffUploadDocumentForm.isDraft = true;
+                            }}
+                        />
+                        <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="documentUploadForm"
+                            onClick={() => {
+                                $promotionStaffUploadDocumentForm.isDraft = false;
+                            }}
+                        />
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
+                    {#if !$confirmationStaffDocumentIsReadonly || $confirmationStaffDocumentIsDraft}
+                        <div class="flex w-full flex-col gap-2">
+                            <p class="text-sm">
+                                Sila muat turun, isi dengan lengkap dokumen
+                                berikut, kemudian muat naik dokumen pada ruangan
+                                yang disediakan.
+                            </p>
+
+                            <ol
+                                class="list-inside list-decimal space-y-1 text-sm"
+                            >
+                                <li>Borang Perakuan Pendidikan</li>
+                                <li>Borang Lapor Diri</li>
+                                <li>Lain-lain dokumen yang berkaitan</li>
+                            </ol>
+                            <form
+                                class="flex w-full flex-col justify-start gap-2.5 pb-10"
+                                method="POST"
+                                id="documentUploadForm"
+                                enctype="multipart/form-data"
+                                use:promotionStaffUploadDocumentEnhance
+                            >
+                                {#if $promotionStaffUploadDocumentError.document && $staffUploadedDocumentsForm.attachment.length < 1}
+                                    <span
+                                        class="font-sans text-sm italic text-system-danger"
+                                        >Sila muat naik dokumen barkaitan dan
+                                        pastikan tidak melebihi 10MB.</span
+                                    >
+                                {/if}
+                                <ContentHeader
+                                    title="Sila pastikan dokumen berkenaan dimuat naik"
+                                    borderClass="border-none"
+                                >
+                                    <div
+                                        hidden={$promotionStaffUploadDocumentForm
+                                            .document.length < 1 &&
+                                            $staffUploadedDocumentsForm
+                                                .attachment.length < 1}
+                                    >
+                                        <FileInputField
+                                            id="documents"
+                                            handleOnInput={(e) =>
+                                                handleOnInput(e)}
+                                        ></FileInputField>
+                                    </div>
+                                </ContentHeader>
+                                <div
+                                    class="flex h-fit w-full flex-col items-center justify-center gap-2.5 rounded-lg border border-bdr-primary p-2.5"
+                                >
+                                    <div class="flex flex-wrap gap-3">
+                                        {#each $promotionStaffUploadDocumentForm.document as _, i}
+                                            <FileInputFieldChildren
+                                                childrenType="grid"
+                                                handleDelete={() =>
+                                                    handleDelete(i)}
+                                                document={$promotionStaffUploadDocumentForm
+                                                    .document[i]}
+                                            />
+                                        {/each}
+
+                                        {#each $staffUploadedDocumentsForm.attachment as doc, i}
+                                            <div class="flex flex-row">
+                                                <div
+                                                    class="0 flex h-fit w-fit flex-col items-center justify-center gap-2.5 rounded-md bg-bgr-secondary p-2.5 text-sm hover:bg-bgr-tertiary"
+                                                >
+                                                    <svg
+                                                        fill="#ffffff"
+                                                        class="mr-2 h-16 w-16 text-system-primary"
+                                                        viewBox="0 0 24 24"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        ><g
+                                                            id="SVGRepo_bgCarrier"
+                                                            stroke-width="0"
+                                                        ></g><g
+                                                            id="SVGRepo_tracerCarrier"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                        ></g><g
+                                                            id="SVGRepo_iconCarrier"
+                                                        >
+                                                            <path
+                                                                d="M4 4C4 3.44772 4.44772 3 5 3H14H14.5858C14.851 3 15.1054 3.10536 15.2929 3.29289L19.7071 7.70711C19.8946 7.89464 20 8.149 20 8.41421V20C20 20.5523 19.5523 21 19 21H5C4.44772 21 4 20.5523 4 20V4Z"
+                                                                stroke="currentColor"
+                                                                stroke-width="2"
+                                                                stroke-linecap="round"
+                                                            ></path>
+                                                            <path
+                                                                d="M20 8H15V3"
+                                                                stroke="currentColor"
+                                                                stroke-width="2"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                            ></path>
+                                                            <path
+                                                                d="M11.5 13H11V17H11.5C12.6046 17 13.5 16.1046 13.5 15C13.5 13.8954 12.6046 13 11.5 13Z"
+                                                                stroke="currentColor"
+                                                                stroke-width="1.5"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                            ></path>
+                                                            <path
+                                                                d="M15.5 17V13L17.5 13"
+                                                                stroke="currentColor"
+                                                                stroke-width="1.5"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                            ></path>
+                                                            <path
+                                                                d="M16 15H17"
+                                                                stroke="currentColor"
+                                                                stroke-width="1.5"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                            ></path>
+                                                            <path
+                                                                d="M7 17L7 15.5M7 15.5L7 13L7.75 13C8.44036 13 9 13.5596 9 14.25V14.25C9 14.9404 8.44036 15.5 7.75 15.5H7Z"
+                                                                stroke="currentColor"
+                                                                stroke-width="1.5"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                            ></path>
+                                                        </g></svg
+                                                    >
+                                                    {#if doc.name.length < 15}
+                                                        {doc.name}
+                                                    {:else}
+                                                        {doc.name.substring(
+                                                            0,
+                                                            15,
+                                                        ) + '...'}
+                                                    {/if}
+                                                </div>
+                                                <div
+                                                    class=" flex h-fit w-fit flex-col items-center justify-center rounded-xl bg-bgr-primary"
+                                                >
+                                                    <button
+                                                        type="button"
+                                                        on:click={() =>
+                                                            handleDeleteUploadedFile(
+                                                                i,
+                                                            )}
+                                                        class="text-system-danger"
+                                                        ><SvgMinusCircle
+                                                            size="22"
+
+                                                        ></SvgMinusCircle></button
+                                                    >
+                                                </div>
+                                            </div>
+                                        {/each}
+                                    </div>
+                                    {#if $promotionStaffUploadDocumentForm.document.length < 1 && $staffUploadedDocumentsForm.attachment.length < 1}
+                                        <div
+                                            class="flex flex-col items-center justify-center gap-2.5 text-sm text-txt-tertiary"
+                                        >
+                                            <span
+                                                >Pilih fail dari peranti anda.</span
+                                            >
+                                            <svg
+                                                width={40}
+                                                height={40}
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="1.5"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                                />
+                                            </svg>
+                                            <FileInputField
+                                                id="documents"
+                                                handleOnInput={(e) =>
+                                                    handleOnInput(e)}
+                                            ></FileInputField>
+                                        </div>
+                                    {/if}
+                                </div>
+                            </form>
+                        </div>
+                    {:else}
+                        <div class="flex w-full flex-col gap-2">
+                            <div
+                                class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                            >
+                                <p
+                                    class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
+                                >
+                                    Fail-fail yang dimuat naik:
+                                </p>
+                                {#each $staffUploadedDocumentsForm.attachment as _, i}
+                                    <div
+                                        class="flex w-full flex-row items-center justify-between"
+                                    >
+                                        <label
+                                            for=""
+                                            class="block w-[20px] min-w-[20px] text-[11px] font-medium"
+                                            >{i + 1}.</label
+                                        >
+                                        <a
+                                            href={$staffUploadedDocumentsForm
+                                                .attachment[i].document}
+                                            download={$staffUploadedDocumentsForm
+                                                .attachment[i].name}
+                                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                            >{$staffUploadedDocumentsForm
+                                                .attachment[i].name}</a
+                                        >
+                                    </div>
+                                {/each}
+                            </div>
+                        </div>
+                    {/if}
+                </StepperContentBody>
+            </StepperContent>
+            <StepperContent>
                 <StepperContentHeader title="Butiran Kenaikan Pangkat"
                 ></StepperContentHeader>
                 <StepperContentBody>
@@ -1828,14 +2180,16 @@
                                 disabled
                                 isRequired={false}
                                 id="currentSalary"
-                                val={data.employeePOV?.employeePromotionInfo?.currentSalary}
+                                val={data.employeePOV?.employeePromotionInfo
+                                    ?.currentSalary}
                             />
                             <CustomTextField
                                 label="Gaji Baru"
                                 disabled
                                 isRequired={false}
                                 id="newSalary"
-                                val={data.employeePOV?.employeePromotionInfo?.newSalary}
+                                val={data.employeePOV?.employeePromotionInfo
+                                    ?.newSalary}
                             />
                             <CustomTextField
                                 label="Penempatan Sekarang"
