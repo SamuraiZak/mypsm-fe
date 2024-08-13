@@ -849,9 +849,11 @@
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <StatusPill status={data.params.status} slot="status" />
-
     <ContentHeader title="Kenaikan Pangkat">
+        <!-- {#if data.params.status === 'baharu'} -->
+        <StatusPill status={data.params.status} slot="status" />
+        <!-- {/if} -->
+
         <TextIconButton
             icon="cancel"
             type="neutral"
