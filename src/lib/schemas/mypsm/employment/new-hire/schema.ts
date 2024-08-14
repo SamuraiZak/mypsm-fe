@@ -45,9 +45,7 @@ export const _personalInfoResponseSchema = z.object({
     identityDocumentNumber: shortTextSchema,
     identityDocumentColor: codeSchema,
     email: shortTextSchema.email({ message: 'Emel tidak lengkap.' }),
-    assetDeclarationStatusId: numberIdSchema.refine((val) => val > 0, {
-        message: 'Sila Tetapkan Pilihan',
-    }),
+    assetDeclarationStatusId: z.number().nullish(),
     propertyDeclarationDate: dateStringSchema.nullable(),
     birthDate: z.coerce.string({
         required_error: 'Pastikan tarikh adalah betul.',
@@ -83,7 +81,7 @@ export const _personalInfoResponseSchema = z.object({
         message: 'Sila Tetapkan Pilihan',
     }),
     mailPostcode: shortTextSchema,
-    retirementBenefit: codeSchema,
+    // retirementBenefit: codeSchema,
     epfNumber: z.string().nullish(),
     socsoNumber: z.string().nullish(),
     incomeNumber: z.string().nullish(),
@@ -165,7 +163,7 @@ export const _academicInfoSchema = z
         }),
         minorId: numberIdSchema,
         countryId: numberIdSchema,
-        institutionId: shortTextSchema,
+        institution: shortTextSchema,
         educationLevelId: numberIdSchema,
         sponsorshipId: numberIdSchema,
         name: codeSchema,
@@ -269,17 +267,17 @@ export const _relationsSchema = z
         marriageDate: true,
         alternativeName: true,
     });
-    // .superRefine(({ maritalId, marriageDate }, ctx) => {
-    //     if (maritalId === 3) {
-    //         if (marriageDate === null) {
-    //             ctx.addIssue({
-    //                 code: 'custom',
-    //                 message: 'Tarikh tidak boleh kosong.',
-    //                 path: ['marriageDate'],
-    //             });
-    //         }
-    //     }
-    // });
+// .superRefine(({ maritalId, marriageDate }, ctx) => {
+//     if (maritalId === 3) {
+//         if (marriageDate === null) {
+//             ctx.addIssue({
+//                 code: 'custom',
+//                 message: 'Tarikh tidak boleh kosong.',
+//                 path: ['marriageDate'],
+//             });
+//         }
+//     }
+// });
 
 // export const _familyListResponseSchema = z.object({
 //     dependencies: z.array(_relationsSchema),
@@ -336,12 +334,12 @@ export const _serviceDetailSchema = z.object({
         { message: 'Tarikh bersara tidak boleh kurang dari tahun semasa.' },
     ),
     revisionMonthId: numberIdSchema,
-    maximumSalary: numberSchema,
-    baseSalary: numberSchema,
-    itka: numberSchema,
-    itp: numberSchema,
-    epw: numberSchema,
-    cola: numberSchema,
+    maximumSalary: numberSchema.default(0),
+    baseSalary: numberSchema.default(0),
+    itka: numberSchema.default(0),
+    itp: numberSchema.default(0),
+    epw: numberSchema.default(0),
+    cola: numberSchema.default(0),
     isReadonly: z.boolean().readonly(),
     isDraft: z.boolean(),
 });

@@ -571,7 +571,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'allow',
-        validationMethod: 'auto',
+        validationMethod: 'oninput',
         validators: zod(_academicInfoSchema),
         async onSubmit(formData) {
             const result = await superValidate(
@@ -603,7 +603,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'allow',
-        validationMethod: 'auto',
+        validationMethod: 'oninput',
         validators: zod(_experienceInfoSchema),
         async onSubmit(formData) {
             for (const pair of formData.formData.entries()) {
@@ -640,7 +640,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'allow',
-        validationMethod: 'auto',
+        validationMethod: 'oninput',
         validators: zod(_activityInfoSchema),
         async onSubmit(formData) {
             const result = await superValidate(
@@ -674,7 +674,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'allow',
-        validationMethod: 'auto',
+        validationMethod: 'oninput',
         validators: zod(_relationsSchema),
         onChange() {
             // family info
@@ -711,7 +711,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'allow',
-        validationMethod: 'auto',
+        validationMethod: 'oninput',
         validators: zod(_relationsSchema),
         onChange() {
             // non family info
@@ -748,7 +748,7 @@
         taintedMessage: false,
         resetForm: true,
         multipleSubmits: 'allow',
-        validationMethod: 'auto',
+        validationMethod: 'oninput',
         validators: zod(_relationsSchema),
         onChange() {
             // next kin info
@@ -1156,7 +1156,7 @@
                     bind:val={$form.mailPostcode}
                 />
 
-                <CustomSelectField
+                <!-- <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
                     errors={$errors.retirementBenefit}
@@ -1164,7 +1164,28 @@
                     label="Faedah Persaraan"
                     bind:val={$form.retirementBenefit}
                     options={RetirementBenefitDropdownConstant.list}
+                ></CustomSelectField> -->
+
+                <CustomSelectField
+                    placeholder="-"
+                    disabled={$isReadonlyPersonalFormStepper &&
+                        !$personalFormStepperIsDraft}
+                    errors={$errors.bankName}
+                    id="bankName"
+                    label={'Nama Bank'}
+                    options={data.selectionOptions.bankLookup}
+                    bind:val={$form.bankName}
                 ></CustomSelectField>
+
+                <CustomTextField
+                    placeholder="-"
+                    disabled={$isReadonlyPersonalFormStepper &&
+                        !$personalFormStepperIsDraft}
+                    errors={$errors.bankAccount}
+                    id="bankAccount"
+                    label={'No. Akaun'}
+                    bind:val={$form.bankAccount}
+                ></CustomTextField>
 
                 <CustomTextField
                     placeholder="-"
@@ -1199,30 +1220,10 @@
                 ></CustomTextField>
 
                 <CustomSelectField
-                    placeholder="-"
-                    disabled={$isReadonlyPersonalFormStepper &&
-                        !$personalFormStepperIsDraft}
-                    errors={$errors.bankName}
-                    id="bankName"
-                    label={'Nama Bank'}
-                    options={data.selectionOptions.bankLookup}
-                    bind:val={$form.bankName}
-                ></CustomSelectField>
-
-                <CustomTextField
-                    placeholder="-"
-                    disabled={$isReadonlyPersonalFormStepper &&
-                        !$personalFormStepperIsDraft}
-                    errors={$errors.bankAccount}
-                    id="bankAccount"
-                    label={'No. Akaun'}
-                    bind:val={$form.bankAccount}
-                ></CustomTextField>
-
-                <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
                     errors={$errors.assetDeclarationStatusId}
+                    isRequired={false}
                     id="assetDeclarationStatusId"
                     label="Status Pengisytiharan Harta"
                     bind:val={$form.assetDeclarationStatusId}
@@ -1380,16 +1381,14 @@
                                         .educationLevelId}
                                 ></CustomSelectField>
 
-                                <CustomSelectField
+                                <CustomTextField
                                     disabled
                                     isRequired={false}
-                                    id="institutionId"
-                                    options={data.selectionOptions
-                                        .institutionLookup}
+                                    id="institution"
                                     label={'Institusi'}
                                     bind:val={$academicInfoForm.academics[i]
-                                        .institutionId}
-                                ></CustomSelectField>
+                                        .institution}
+                                ></CustomTextField>
 
                                 <CustomSelectField
                                     disabled
@@ -1656,7 +1655,7 @@
                 />
                 <TextIconButton
                     type="primary"
-                    label="Simpan"
+                    label="Hantar"
                     onClick={() => triggerSubmitActivityTempData(false)}
                 />
             {/if}</StepperContentHeader
@@ -2388,7 +2387,7 @@
                 />
                 <TextIconButton
                     type="primary"
-                    label="Simpan"
+                    label="Hantar"
                     onClick={() => triggerSubmitNextOfKinTempData(false)}
                 />
             {/if}
@@ -2618,7 +2617,7 @@
                                     bind:val={$nextOfKinInfoForm.dependencies[i]
                                         .phoneNumber}
                                 ></CustomTextField>
-                                
+
                                 <CustomSelectField
                                     id="addMaritalId"
                                     label={'Status Perkahwinan'}
@@ -3117,6 +3116,7 @@
                                     placeholder="-"
                                     disabled
                                     isRequired={false}
+                                    errors={$serviceInfoErrors.maximumSalary}
                                     id="maximumSalary"
                                     type="number"
                                     label={'Tangga Gaji (RM)'}
@@ -3125,8 +3125,8 @@
 
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled={$isReadonlyServiceFormStepper &&
-                                        !$serviceFormStepperIsDraft}
+                                    disabled
+                                    isRequired={false}
                                     errors={$serviceInfoErrors.baseSalary}
                                     id="baseSalary"
                                     label={'Gaji Pokok (RM)'}
@@ -3137,6 +3137,7 @@
                             <div class="space-y-2.5">
                                 <CustomTextField
                                     placeholder="-"
+                                    isRequired={false}
                                     disabled={$isReadonlyServiceFormStepper &&
                                         !$serviceFormStepperIsDraft}
                                     errors={$serviceInfoErrors.itka}
@@ -3147,6 +3148,7 @@
                                 ></CustomTextField>
                                 <CustomTextField
                                     placeholder="-"
+                                    isRequired={false}
                                     disabled={$isReadonlyServiceFormStepper &&
                                         !$serviceFormStepperIsDraft}
                                     errors={$serviceInfoErrors.itp}
@@ -3157,6 +3159,7 @@
                                 ></CustomTextField>
                                 <CustomTextField
                                     placeholder="-"
+                                    isRequired={false}
                                     disabled={$isReadonlyServiceFormStepper &&
                                         !$serviceFormStepperIsDraft}
                                     errors={$serviceInfoErrors.epw}
@@ -3167,6 +3170,7 @@
                                 ></CustomTextField>
                                 <CustomTextField
                                     placeholder="-"
+                                    isRequired={false}
                                     disabled={$isReadonlyServiceFormStepper &&
                                         !$serviceFormStepperIsDraft}
                                     errors={$serviceInfoErrors.cola}
@@ -3441,7 +3445,7 @@
                             >
                                 <div class="mb-5">
                                     <b class="text-sm text-black"
-                                        >Rekod Keputusan peranan (-peranan)
+                                        >Rekod Keputusan peranan-peranan
                                         berkaitan</b
                                     >
                                 </div>
@@ -3563,17 +3567,17 @@
         <CustomSelectField
             errors={$addAcademicInfoErrors.educationLevelId}
             id="educationLevelId"
-            label={'Taraf Pembelajaran'}
+            label={'Taraf Pendidikan'}
             options={data.selectionOptions.educationLookup}
             bind:val={$addAcademicInfoModal.educationLevelId}
         ></CustomSelectField>
 
         <CustomTextField
             placeholder="-"
-            errors={$addAcademicInfoErrors.institutionId}
-            id="institutionId"
+            errors={$addAcademicInfoErrors.institution}
+            id="institution"
             label={'Institusi'}
-            bind:val={$addAcademicInfoModal.institutionId}
+            bind:val={$addAcademicInfoModal.institution}
         ></CustomTextField>
 
         <CustomSelectField
@@ -3790,7 +3794,7 @@
         <CustomTextField
             placeholder="-"
             errors={$addFamilyErrors.name}
-            id="name"
+            id="nameSuamiIsteri"
             label={'Nama'}
             type="text"
             bind:val={$addFamilyModal.name}
@@ -3986,7 +3990,7 @@
         <CustomTextField
             placeholder="-"
             errors={$addNonFamilyErrors.name}
-            id="name"
+            id="nameSelainSuamiIsteri"
             label={'Nama'}
             type="text"
             bind:val={$addNonFamilyModal.name}

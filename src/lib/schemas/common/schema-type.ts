@@ -9,8 +9,8 @@ export const shortTextSchema = z
         required_error: 'Medan ini tidak boleh kosong.',
         invalid_type_error: 'Medan ini tidak boleh kosong.',
     })
-    .min(4, {
-        message: 'Medan ini hendaklah lebih daripada 4 karakter.',
+    .min(3, {
+        message: 'Medan ini hendaklah lebih daripada 3 karakter.',
     })
     .max(124, {
         message: 'Medan ini tidak boleh melebihi 124 karakter.',
