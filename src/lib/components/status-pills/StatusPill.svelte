@@ -2,12 +2,12 @@
     import { TextAppearanceHelper } from '$lib/helpers/core/text-appearance.helper';
 
     export let status: string =
-        'baru' || 'Draf' || 'sedang diproses' || 'selesai' || 'gagal';
+        'baharu' || 'Draf' || 'sedang diproses' || 'selesai' || 'gagal';
 </script>
 
 <div
     class="flex h-6 min-h-6 flex-row items-center justify-center rounded-full {status.toLowerCase() ==
-    'baru'
+    'baharu'
         ? 'bg-blue-200 text-blue-700'
         : status.toLowerCase() == 'draf'
           ? 'bg-gray-200 text-gray-700'

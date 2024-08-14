@@ -54,6 +54,9 @@ export const _includedEmployeeEmployeeSchema = z.object({
     identityDocumentNumber: z.string(),
     grade: z.string(),
     position: z.string(),
+    currentGrade: z.string(),
+    currentPosition: z.string(),
+    currentPlacement: z.string(),
     educationLevel: z.string(),
     eligibleLeaveCount: z.number(),
 });
@@ -87,41 +90,24 @@ export const _includedEmployeeDetailEmployeeSchema = z.object({
 export const _processEmployeeSchema = z.object({
     employeeNumber: z.string().readonly(),
     employeeName: z.string().readonly(),
+    currentGradeId: numberIdSchema,
     gradeId: numberIdSchema,
     maxGradeId: numberIdSchema,
-    // positionId: numberIdSchema,
     placementId: numberIdSchema,
     serviceTypeId: numberIdSchema.default(2),
     serviceGroupId: numberIdSchema,
     unitId: numberIdSchema,
-    // employmentStatusId: numberIdSchema,
     effectiveDate: dateStringSchema, //
-    retirementBenefit: codeSchema,
-    epfNumber: z.string().nullish(),
-    socsoNumber: z.string().nullish(),
-    incomeNumber: z.string().nullish(),
-    pensionNumber: z.string().nullish(),
-    bankName: numberIdSchema,
-    bankAccount: numberToStringSchema,
-    // eligibleLeaveCount: numberSchema,
-    civilServiceStartDate: dateStringSchema, //
-    // newRecruitEffectiveDate: dateStringSchema,
-    serviceDate: dateStringSchema, //
-    // firstServiceDate: dateStringSchema,
-    // firstConfirmServiceDate: dateStringSchema,
-    // firstEffectiveDate: dateStringSchema,
-    // firstEffectiveServiceDate: dateStringSchema,
-    // confirmServiceDate: dateStringSchema,
-    // confirmDate: dateStringSchema,
-    kgt: numberSchema,
-    // retirementDate: dateStringSchema,
+    civilServiceStartDate: z.string().nullish(), //
+    serviceDate: z.string().nullish(), //
     revisionMonth: codeSchema,
-    maximumSalary: numberSchema,
-    baseSalary: numberSchema,
-    itka: numberSchema,
-    itp: numberSchema,
-    epw: numberSchema,
-    cola: numberSchema,
+    kgt: z.number().nullish(),
+    maximumSalary: z.number().nullish(),
+    baseSalary: z.number().nullish(),
+    itka: z.number().nullish(),
+    itp: z.number().nullish(),
+    epw: z.number().nullish(),
+    cola: z.number().nullish(),
 });
 
 export const _createProcessSchema = z.object({

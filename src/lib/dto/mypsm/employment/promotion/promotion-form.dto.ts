@@ -1,14 +1,16 @@
 export interface PromotionCertification {
-    id:               number;
-    promotionType:    string;
+    id: number;
+    promotionType: string;
     meetingNameCount: string;
-    meetingResult:    boolean;
-    meetingRemark:    string;
-    meetingDate:      string;
-    confirmedDate:    string;
-    actingEndDate:    string;
-    gradeRevertDate:  string;
-    newPlacement:     string;
+    meetingResult: boolean;
+    meetingRemark: string;
+    meetingDate: string;
+    confirmedDate: string;
+    actingEndDate: string;
+    gradeRevertDate?: string | null;
+    newPlacement: string;
+    isReadonly: boolean;
+    isDraft: boolean;
 }
 
 // Converts JSON strings to/from your types
@@ -23,12 +25,14 @@ export class PromotionCertificationConvert {
 }
 
 export interface PromotionPlacementEdit {
-    id:                  number;
-    promotionType:       string;
-    promotionDate:       string;
+    id: number;
+    promotionType: string;
+    promotionDate: string;
     salaryMovementMonth: string;
-    newGrade:            string;
-    newPlacement:        string;
+    newGrade: string;
+    newPlacement: string;
+    isReadonly: boolean;
+    isDraft: boolean;
 }
 
 // Converts JSON strings to/from your types
@@ -43,13 +47,15 @@ export class PromotionPlacementEditConvert {
 }
 
 export interface PromotionEmployeeEdit {
-    id:            number;
+    id: number;
     promotionType: string;
     confirmedDate: string;
     supporterName: string | null;
-    approverName:  string | null;
-    status:  boolean;
-    remark:        string | null;
+    approverName: string | null;
+    status: boolean;
+    remark?: string | null;
+    isReadonly: boolean;
+    isDraft: boolean;
 }
 
 // Converts JSON strings to/from your types
@@ -64,17 +70,19 @@ export class PromotionEmployeeEditConvert {
 }
 
 export interface PromotionCommonApproval {
-    id:                  number;
-    promotionType:       string;
-    status:              boolean;
-    remark:              string | null;
-    mark:              number | null;
+    id: number;
+    promotionType: string;
+    status: boolean;
+    remark: string | null;
+    mark: number | null;
+    isReadonly: boolean;
+    isDraft: boolean;
 }
 
 export interface PromotionIntegrityApproval {
-    id:                  number[];
-    promotionType:       string;
-    status:              boolean;
+    id: number[];
+    promotionType: string;
+    status: boolean;
 }
 
 // Converts JSON strings to/from your types

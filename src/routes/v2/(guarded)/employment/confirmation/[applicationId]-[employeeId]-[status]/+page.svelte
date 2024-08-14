@@ -36,6 +36,8 @@
         approveOptions,
         certifyOptions,
         commonOptions,
+        confirmationContractContinuationOptions,
+        confirmationMeetingOptions,
         confirmOptions,
     } from '$lib/constants/core/radio-option-constants';
     import { zod } from 'sveltekit-superforms/adapters';
@@ -1464,7 +1466,9 @@
                                 errors={$confirmationMeetingDetailFormErrors.meetingResult}
                                 id="meetingResult"
                                 label="Keputusan Mesyuarat"
-                                options={approveOptions}
+                                options={$isTypeConfirmationExceedsThreeYears
+                                    ? confirmationMeetingOptions
+                                    : approveOptions}
                                 bind:val={$confirmationMeetingDetailForm.meetingResult}
                             ></CustomRadioBoolean>
                             {#if $isReadOnlyConfirmationInServiceMeetingResult && !$confirmationMeetingDetailIsDraft}
@@ -1472,7 +1476,7 @@
                                     disabled={true}
                                     errors={$confirmationMeetingDetailFormErrors.confirmedPositionDate}
                                     id="confirmedPositionDate"
-                                    label="Tarikh Pengesahan"
+                                    label="Tarikh Keputusan"
                                     placeholder="-"
                                     type="date"
                                     bind:val={$confirmationMeetingDetailForm.confirmedPositionDate}
@@ -1485,9 +1489,9 @@
                                             !$confirmationMeetingDetailIsDraft}
                                         isRequired={false}
                                         id="gradeId"
-                                        label="Keputusan"
+                                        label="Catatan"
                                         placeholder="-"
-                                        options={commonOptions}
+                                        options={confirmationContractContinuationOptions}
                                         bind:val={$confirmationMeetingDetailForm.isContractContinued}
                                     ></CustomSelectField>
 
@@ -1533,11 +1537,13 @@
                                 class="flex w-full flex-row items-center justify-between"
                             >
                                 <a
-                                    href="blank"
+                                    href={data.view.confirmationInServiceView
+                                        .document.attachment}
                                     download="Surat Pengesahan Dalam Perkhidmatan {$form.name.toUpperCase()} ({$form.identityDocumentNumber})"
                                     class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
                                     >Surat Pengesahan Dalam Perkhidmatan {$form.name.toUpperCase()}
-                                    ({$form.identityDocumentNumber})
+                                    ({data.view.confirmationInServiceView
+                                        .document.attachmentName})
                                     <SvgArrowDownTray />
                                 </a>
                             </div>

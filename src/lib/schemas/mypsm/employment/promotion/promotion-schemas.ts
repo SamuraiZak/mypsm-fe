@@ -24,6 +24,8 @@ export const _promotionCommonApproval = z.object({
     status: booleanSchema,
     remark: z.string().nullable(),
     mark: z.number().nullable(),
+    isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean(),
 })
 
 export const _promotionIntegrityApproval = z.object({
@@ -41,10 +43,12 @@ export const _editPromotionCertification = z.object({
     meetingDate: shortTextSchema,
     confirmedDate: z.string().default(""),
     actingEndDate: z.string().default(""),
-    gradeRevertDate: z.string().default(""),
+    gradeRevertDate: z.string().nullish(),
     newPlacement: z.string().default(""),
     currentSalary: numberSchema,
     newSalary: numberSchema,
+    isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean(),
 })
 
 export const _editPromotionPlacement = z.object({
@@ -54,7 +58,28 @@ export const _editPromotionPlacement = z.object({
     salaryMovementMonth: shortTextSchema,
     newGrade: z.string({invalid_type_error: "Medan ini tidak boleh kosong."}),
     newPlacement: z.string({invalid_type_error: "Medan ini tidak boleh kosong."}),
+    isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean(),
 })
+
+export const _documentsSchema = z.object({
+    template: z.array(z.object({ name: z.string(), document: z.string() })),
+    attachment: z.array(z.object({ name: z.string(), document: z.string() })),
+    isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean(),
+});
+
+export const _uploadDocumentsSchema = z.object({
+    id: z.number(),
+    promotionType: shortTextSchema,
+    isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean(),
+    document: z
+        .instanceof(File, { message: 'Sila muat naik dokumen berkenaan.' })
+        .refine((f) => f.size < 10_000_000, 'Maximum 10 MB saiz muat naik.')
+        .array()
+        .min(1, { message: 'Dokumen berkenaan hendaklah dimuat naik.' }),
+});
 
 export const _editEmployeePromotion = z.object({
     id: z.number(),
@@ -63,5 +88,7 @@ export const _editEmployeePromotion = z.object({
     supporterName: shortTextSchema.nullable(),
     approverName: shortTextSchema.nullable(),
     status: booleanSchema,
-    remark: z.string().nullable(),
+    remark: z.string().nullish(),
+    isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean(),
 })

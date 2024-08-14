@@ -8,6 +8,7 @@ import { CommonResponseConvert } from "$lib/dto/core/common/common-response.dto"
 import { AddNewPromotionConvert, type AddNewPromotion } from "$lib/dto/mypsm/employment/promotion/add-promotion.dto";
 import { PromotionCertificationConvert, PromotionCommonApprovalConvert, PromotionEmployeeEditConvert, PromotionIntegrityApprovalConvert, PromotionPlacementEditConvert, type PromotionCertification, type PromotionCommonApproval, type PromotionEmployeeEdit, type PromotionIntegrityApproval, type PromotionPlacementEdit } from "$lib/dto/mypsm/employment/promotion/promotion-form.dto";
 import { PromotionCertificationGetConvert, type PromotionCertificationGet } from "$lib/dto/mypsm/employment/promotion/promotion-common-groupid.dto";
+import type { StaffUploadDocumentDTO } from "$lib/dto/mypsm/employment/promotion/promotion-common-employee.dto";
 
 
 export class EmploymentPromotionServices {
@@ -253,6 +254,58 @@ export class EmploymentPromotionServices {
                 const result = CommonResponseConvert.fromResponse(reponse);
 
                 if(result.status == 'success') {
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get document detail
+    static async getDocumentDetail(param: PromotionCertificationGet) {
+        try{
+            const url: Input = 'employment/promotion/staff_document/get';
+
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: PromotionCertificationGetConvert.toJson(param),
+                })
+                .json();
+
+                const reponse: Response = await promiseRes;
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    return result;
+                } else {
+                    return CommonResponseConstant.httpError;
+                }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    
+    //edit placement
+    static async addDocumentPromotion(param: StaffUploadDocumentDTO) {
+        try{
+            const url: Input = 'employment/promotion/staff_document/add';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+                const reponse: Response = await getGeneralToast(promiseRes);
+
+                const result = CommonResponseConvert.fromResponse(reponse);
+
+                if(result.status == 'success') {
+                    await invalidateAll();
                     return result;
                 } else {
                     return CommonResponseConstant.httpError;
