@@ -800,11 +800,11 @@
                                 classActive={$newOfferMeetingDetailForm
                                     .employees[index].status
                                     ? 'bg-blue-100 text-blue-600'
-                                    : 'bg-red-600 text-white'}
+                                    : 'bg-red-100 text-red-600'}
                                 classInactive={$newOfferMeetingDetailForm
                                     .employees[index].status
                                     ? 'bg-blue-100 text-blue-600'
-                                    : 'bg-red-600 text-white'}
+                                    : 'bg-red-100 text-red-600'}
                                 open={index == 0}
                             >
                                 <span
@@ -841,7 +841,7 @@
                                         class="h-3 w-3 {$newOfferMeetingDetailForm
                                             .employees[index].status
                                             ? 'text-blue-600'
-                                            : 'text-white'}"
+                                            : 'text-red-600'}"
                                         aria-hidden="true"
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"
@@ -861,7 +861,7 @@
                                         class="h-3 w-3 {$newOfferMeetingDetailForm
                                             .employees[index].status
                                             ? 'text-blue-600'
-                                            : 'text-white'}"
+                                            : 'text-red-600'}"
                                         aria-hidden="true"
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"
@@ -1223,11 +1223,11 @@
                                                     classActive={$newOfferMeetingDetailForm
                                                         .employees[i].status
                                                         ? 'bg-blue-100 text-blue-600'
-                                                        : 'bg-red-600 text-white'}
+                                                        : 'bg-red-100 text-red-600'}
                                                     classInactive={$newOfferMeetingDetailForm
                                                         .employees[i].status
                                                         ? 'bg-blue-100 text-blue-600'
-                                                        : 'bg-red-600 text-white'}
+                                                        : 'bg-red-100 text-red-600'}
                                                     open={i == 0}
                                                 >
                                                     <span
@@ -1267,7 +1267,7 @@
                                                                 .employees[i]
                                                                 .status
                                                                 ? 'text-blue-600'
-                                                                : 'text-white'}"
+                                                                : 'text-red-600'}"
                                                             aria-hidden="true"
                                                             xmlns="http://www.w3.org/2000/svg"
                                                             fill="none"
@@ -1288,7 +1288,7 @@
                                                                 .employees[i]
                                                                 .status
                                                                 ? 'text-blue-600'
-                                                                : 'text-white'}"
+                                                                : 'text-red-600'}"
                                                             aria-hidden="true"
                                                             xmlns="http://www.w3.org/2000/svg"
                                                             fill="none"
@@ -1376,11 +1376,11 @@
                                                     classActive={$newOfferMeetingDetailForm
                                                         .employees[i].status
                                                         ? 'bg-blue-100 text-blue-600'
-                                                        : 'bg-red-600 text-white'}
+                                                        : 'bg-red-100 text-red-600'}
                                                     classInactive={$newOfferMeetingDetailForm
                                                         .employees[i].status
                                                         ? 'bg-blue-100 text-blue-600'
-                                                        : 'bg-red-600 text-white'}
+                                                        : 'bg-red-100 text-red-600'}
                                                     open={i == 0}
                                                 >
                                                     <span
@@ -1420,7 +1420,7 @@
                                                                 .employees[i]
                                                                 .status
                                                                 ? 'text-blue-600'
-                                                                : 'text-white'}"
+                                                                : 'text-red-600'}"
                                                             aria-hidden="true"
                                                             xmlns="http://www.w3.org/2000/svg"
                                                             fill="none"
@@ -1441,7 +1441,7 @@
                                                                 .employees[i]
                                                                 .status
                                                                 ? 'text-blue-600'
-                                                                : 'text-white'}"
+                                                                : 'text-red-600'}"
                                                             aria-hidden="true"
                                                             xmlns="http://www.w3.org/2000/svg"
                                                             fill="none"
@@ -1532,11 +1532,11 @@
                                                 classActive={$newOfferMeetingDetailForm
                                                     .employees[i].status
                                                     ? 'bg-blue-100 text-blue-600'
-                                                    : 'bg-red-600 text-white'}
+                                                    : 'bg-red-100 text-red-600'}
                                                 classInactive={$newOfferMeetingDetailForm
                                                     .employees[i].status
                                                     ? 'bg-blue-100 text-blue-600'
-                                                    : 'bg-red-600 text-white'}
+                                                    : 'bg-red-100 text-red-600'}
                                                 open={i == 0}
                                             >
                                                 <span
@@ -1572,7 +1572,7 @@
                                                         class="h-3 w-3 {$newOfferMeetingDetailForm
                                                             .employees[i].status
                                                             ? 'text-blue-600'
-                                                            : 'text-white'}"
+                                                            : 'text-red-600'}"
                                                         aria-hidden="true"
                                                         xmlns="http://www.w3.org/2000/svg"
                                                         fill="none"
@@ -1592,7 +1592,7 @@
                                                         class="h-3 w-3 {$newOfferMeetingDetailForm
                                                             .employees[i].status
                                                             ? 'text-blue-600'
-                                                            : 'text-white'}"
+                                                            : 'text-red-600'}"
                                                         aria-hidden="true"
                                                         xmlns="http://www.w3.org/2000/svg"
                                                         fill="none"
@@ -1666,11 +1666,11 @@
                                                 classActive={$newOfferMeetingDetailForm
                                                     .employees[i].status
                                                     ? 'bg-blue-100 text-blue-600'
-                                                    : 'bg-red-600 text-white'}
+                                                    : 'bg-red-100 text-red-600'}
                                                 classInactive={$newOfferMeetingDetailForm
                                                     .employees[i].status
                                                     ? 'bg-blue-100 text-blue-600'
-                                                    : 'bg-red-600 text-white'}
+                                                    : 'bg-red-100 text-red-600'}
                                                 open={i == 0}
                                             >
                                                 <span
