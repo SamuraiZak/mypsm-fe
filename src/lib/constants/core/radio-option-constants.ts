@@ -1,5 +1,27 @@
 import type { RadioDTO } from '$lib/dto/core/radio/radio.dto';
 
+export const confirmationMeetingOptions: RadioDTO[] = [
+    {
+        value: true,
+        name: 'Disahkan Pengesahan Dalam Perkhidmatan',
+    },
+    {
+        value: false,
+        name: 'Tidak Disahkan Pengesahan Dalam Perkhidmatan',
+    },
+];
+
+export const confirmationContractContinuationOptions: RadioDTO[] = [
+    {
+        value: true,
+        name: 'Dilanjutkan Tempoh Percubaan',
+    },
+    {
+        value: false,
+        name: 'Penamatan Perkhidmatan dalam Tempoh Percubaan',
+    },
+];
+
 export const verifyOptions: RadioDTO[] = [
     {
         value: true,
