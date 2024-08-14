@@ -21,7 +21,7 @@
     <p
         class="text-base {active
             ? `font-medium text-ios-systemColors-systemBlue-light`
-            : ` font-normal text-ios-basic-inactiveGray`}"
+            : `font-normal text-slate-500`}"
     >
         {label}
     </p>
