@@ -355,7 +355,7 @@
         data: $form.employees ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: ['id', 'eligibleLeaveCount', 'grade'],
+        hiddenColumn: ['employeeId', 'eligibleLeaveCount', 'grade'],
         dictionary: [],
         url: '',
         id: 'includedEmployeesListTable',
@@ -797,8 +797,14 @@
                     <Accordion>
                         {#each $newOfferServiceDetailForm.employees as _, index}
                             <AccordionItem
-                                activeClass="outline-none bg-blue-100 text-blue-600 dark:text-white"
-                                inactiveClasses="text-gray-500 hover:bg-blue-100"
+                                classActive={$newOfferMeetingDetailForm
+                                    .employees[index].status
+                                    ? 'bg-blue-100 text-blue-600'
+                                    : 'bg-red-600 text-white'}
+                                classInactive={$newOfferMeetingDetailForm
+                                    .employees[index].status
+                                    ? 'bg-blue-100 text-blue-600'
+                                    : 'bg-red-600 text-white'}
                                 open={index == 0}
                             >
                                 <span
@@ -830,6 +836,46 @@
                                             .employeeNumber})</span
                                     >
                                 </span>
+                                <div slot="arrowup">
+                                    <svg
+                                        class="h-3 w-3 {$newOfferMeetingDetailForm
+                                            .employees[index].status
+                                            ? 'text-blue-600'
+                                            : 'text-white'}"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 10 6"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M9 5 5 1 1 5"
+                                        />
+                                    </svg>
+                                </div>
+                                <div slot="arrowdown">
+                                    <svg
+                                        class="h-3 w-3 {$newOfferMeetingDetailForm
+                                            .employees[index].status
+                                            ? 'text-blue-600'
+                                            : 'text-white'}"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 10 6"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="m1 1 4 4 4-4"
+                                        />
+                                    </svg>
+                                </div>
                                 <form
                                     id="newOfferServiceDetailForm"
                                     method="POST"
@@ -840,10 +886,21 @@
                                         <StepperFailStatement />
                                     {:else}
                                         <CustomSelectField
+                                            disabled
+                                            isRequired={false}
+                                            id="gradeId"
+                                            label="Gred Asal"
+                                            placeholder="-"
+                                            options={data.lookups.gradeLookup}
+                                            bind:val={$newOfferServiceDetailForm
+                                                .employees[index]
+                                                .currentGradeId}
+                                        ></CustomSelectField>
+                                        <CustomSelectField
                                             disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="gradeId"
-                                            label="Gred"
+                                            label="Gred Baru"
                                             placeholder="-"
                                             options={data.lookups.gradeLookup}
                                             bind:val={$newOfferServiceDetailForm
@@ -859,17 +916,6 @@
                                             bind:val={$newOfferServiceDetailForm
                                                 .employees[index].maxGradeId}
                                         ></CustomSelectField>
-                                        <!-- <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="positionId"
-                                            label="Jawatan"
-                                            placeholder="-"
-                                            options={data.lookups
-                                                .positionLookup}
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index].positionId}
-                                        ></CustomSelectField> -->
                                         <CustomSelectField
                                             disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
@@ -904,19 +950,6 @@
                                                 .serviceGroupId}
                                         ></CustomSelectField>
 
-                                        <!-- <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="employmentStatusId"
-                                            label="Sektor Perkhidmatan"
-                                            placeholder="-"
-                                            options={data.lookups
-                                                .employmentStatusLookup}
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index]
-                                                .employmentStatusId}
-                                        ></CustomSelectField> -->
-
                                         <CustomSelectField
                                             disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
@@ -927,18 +960,6 @@
                                             bind:val={$newOfferServiceDetailForm
                                                 .employees[index].unitId}
                                         ></CustomSelectField>
-
-                                        <!-- <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            type="number"
-                                            id="eligibleLeaveCount"
-                                            label={'Kelayakan Cuti'}
-                                            placeholder="-"
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index]
-                                                .eligibleLeaveCount}
-                                        ></CustomTextField> -->
 
                                         <CustomTextField
                                             type="date"
@@ -951,34 +972,10 @@
                                                 .employees[index].effectiveDate}
                                         ></CustomTextField>
 
-                                        <!--<CustomTextField
-                                            type="date"
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="newRecruitEffectiveDate"
-                                            label={'Tarikh Berkuatkuasa Lantikan Baru'}
-                                            placeholder="-"
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index]
-                                                .newRecruitEffectiveDate}
-                                        ></CustomTextField>
-
                                         <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="firstEffectiveDate"
-                                            label={'Tarikh Berkuatkuasa Lantikan Pertama'}
-                                            placeholder="-"
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index]
-                                                .firstEffectiveDate}
-                                        ></CustomTextField> -->
-
-                                        <CustomTextField
-                                            type="date"
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
+                                            disabled
+                                            isRequired={false}
                                             id="civilServiceStartDate"
                                             label={'Mula Dilantik Perkhidmatan Kerajaan'}
                                             placeholder="-"
@@ -989,165 +986,13 @@
 
                                         <CustomTextField
                                             type="date"
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
+                                            disabled
+                                            isRequired={false}
                                             id="serviceDate"
                                             label={'Mula Dilantik Perkhidmatan LKIM'}
                                             placeholder="-"
                                             bind:val={$newOfferServiceDetailForm
                                                 .employees[index].serviceDate}
-                                        ></CustomTextField>
-
-                                        <!-- <CustomTextField
-                                            type="date"
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="firstServiceDate"
-                                            label={'Mula Dilantik Perkhidmatan Pertama'}
-                                            placeholder="-"
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index]
-                                                .firstServiceDate}
-                                        ></CustomTextField>
-
-                                        <CustomTextField
-                                            type="date"
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="confirmDate"
-                                            label={'Mula Disahkan Perkhidmatan Semasa'}
-                                            placeholder="-"
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index].confirmDate}
-                                        ></CustomTextField>
-
-                                        <CustomTextField
-                                            placeholder="-"
-                                            type="date"
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="confirmServiceDate"
-                                            label={'Disahkan Dalam Jawatan Semasa LKIM'}
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index]
-                                                .confirmServiceDate}
-                                        ></CustomTextField>
-
-                                        <CustomTextField
-                                            placeholder="-"
-                                            type="date"
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="firstEffectiveServiceDate"
-                                            label={'Mula Berkuatkuasa Perkhidmatan Pertama'}
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index]
-                                                .firstEffectiveServiceDate}
-                                        ></CustomTextField>
-
-                                        <CustomTextField
-                                            placeholder="-"
-                                            type="date"
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="firstConfirmServiceDate"
-                                            label={'Disahkan Dalam Jawatan Pertama LKIM'}
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index]
-                                                .firstConfirmServiceDate}
-                                        ></CustomTextField>
-
-                                        <CustomTextField
-                                            type="date"
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="retirementDate"
-                                            label={'Tarikh Bersara'}
-                                            placeholder="-"
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index]
-                                                .retirementDate}
-                                        ></CustomTextField> -->
-
-                                        <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="bankName"
-                                            label={'Name Bank'}
-                                            placeholder="-"
-                                            options={data.lookups.bankLookup}
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index].bankName}
-                                        ></CustomSelectField>
-
-                                        <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="bankAccount"
-                                            type="number"
-                                            label={'Akaun Bank'}
-                                            placeholder="-"
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index].bankAccount}
-                                        ></CustomTextField>
-
-                                        <CustomSelectField
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="retirementBenefit"
-                                            label={'Kemudahan Persaraan'}
-                                            options={RetirementBenefitDropdownConstant.list}
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index]
-                                                .retirementBenefit}
-                                        ></CustomSelectField>
-
-                                        <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="epfNumber"
-                                            isRequired={false}
-                                            type="text"
-                                            label={'Nombor EPF'}
-                                            placeholder="-"
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index].epfNumber}
-                                        ></CustomTextField>
-
-                                        <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="incomeNumber"
-                                            isRequired={false}
-                                            type="text"
-                                            label={'Nombor Pendapatan'}
-                                            placeholder="-"
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index].incomeNumber}
-                                        ></CustomTextField>
-
-                                        <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="pensionNumber"
-                                            isRequired={false}
-                                            type="text"
-                                            label={'Nombor Pencen'}
-                                            placeholder="-"
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index].pensionNumber}
-                                        ></CustomTextField>
-
-                                        <CustomTextField
-                                            disabled={$isReadOnlyNewOfferProcess &&
-                                                !$newOfferProcessIsDraft}
-                                            id="socsoNumber"
-                                            isRequired={false}
-                                            type="text"
-                                            label={'Nombor SOCSO'}
-                                            placeholder="-"
-                                            bind:val={$newOfferServiceDetailForm
-                                                .employees[index].socsoNumber}
                                         ></CustomTextField>
 
                                         <ContentHeader
@@ -1162,8 +1007,8 @@
                                         <div class="grid grid-cols-2 gap-10">
                                             <div class="space-y-2.5">
                                                 <CustomSelectField
-                                                    disabled={$isReadOnlyNewOfferProcess &&
-                                                        !$newOfferProcessIsDraft}
+                                                    disabled={true}
+                                                    isRequired={false}
                                                     id="revisionMonth"
                                                     label={'Bulan Berkuatkuasa (Bulan KGT)'}
                                                     placeholder="-"
@@ -1175,6 +1020,7 @@
 
                                                 <CustomTextField
                                                     disabled={true}
+                                                    isRequired={false}
                                                     id="kgt"
                                                     type="number"
                                                     label={'KGT (RM)'}
@@ -1185,6 +1031,7 @@
 
                                                 <CustomTextField
                                                     disabled={true}
+                                                    isRequired={false}
                                                     id="maximumSalary"
                                                     type="number"
                                                     label={'Tangga Gaji (RM)'}
@@ -1195,8 +1042,8 @@
                                                 ></CustomTextField>
 
                                                 <CustomTextField
-                                                    disabled={$isReadOnlyNewOfferProcess &&
-                                                        !$newOfferProcessIsDraft}
+                                                    disabled={true}
+                                                    isRequired={false}
                                                     id="baseSalary"
                                                     type="number"
                                                     label={'Gaji Pokok (RM)'}
@@ -1373,8 +1220,14 @@
                                         <Accordion>
                                             {#each $newOfferSupporterResultForm.employees as _, i}
                                                 <AccordionItem
-                                                    activeClass="outline-none bg-blue-100 text-blue-600 dark:text-white"
-                                                    inactiveClasses="text-gray-500 hover:bg-blue-100"
+                                                    classActive={$newOfferMeetingDetailForm
+                                                        .employees[i].status
+                                                        ? 'bg-blue-100 text-blue-600'
+                                                        : 'bg-red-600 text-white'}
+                                                    classInactive={$newOfferMeetingDetailForm
+                                                        .employees[i].status
+                                                        ? 'bg-blue-100 text-blue-600'
+                                                        : 'bg-red-600 text-white'}
                                                     open={i == 0}
                                                 >
                                                     <span
@@ -1408,6 +1261,48 @@
                                                                 .employeeNumber})</span
                                                         >
                                                     </span>
+                                                    <div slot="arrowup">
+                                                        <svg
+                                                            class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                                .employees[i]
+                                                                .status
+                                                                ? 'text-blue-600'
+                                                                : 'text-white'}"
+                                                            aria-hidden="true"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            fill="none"
+                                                            viewBox="0 0 10 6"
+                                                        >
+                                                            <path
+                                                                stroke="currentColor"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M9 5 5 1 1 5"
+                                                            />
+                                                        </svg>
+                                                    </div>
+                                                    <div slot="arrowdown">
+                                                        <svg
+                                                            class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                                .employees[i]
+                                                                .status
+                                                                ? 'text-blue-600'
+                                                                : 'text-white'}"
+                                                            aria-hidden="true"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            fill="none"
+                                                            viewBox="0 0 10 6"
+                                                        >
+                                                            <path
+                                                                stroke="currentColor"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="m1 1 4 4 4-4"
+                                                            />
+                                                        </svg>
+                                                    </div>
                                                     {#if !$newOfferMeetingDetailForm.employees[i].status}
                                                         <StepperFailStatement />
                                                     {:else}
@@ -1478,8 +1373,14 @@
                                         <Accordion>
                                             {#each $newOfferApproverResultForm.employees as _, i}
                                                 <AccordionItem
-                                                    activeClass="outline-none bg-blue-100 text-blue-600 dark:text-white"
-                                                    inactiveClasses="text-gray-500 hover:bg-blue-100"
+                                                    classActive={$newOfferMeetingDetailForm
+                                                        .employees[i].status
+                                                        ? 'bg-blue-100 text-blue-600'
+                                                        : 'bg-red-600 text-white'}
+                                                    classInactive={$newOfferMeetingDetailForm
+                                                        .employees[i].status
+                                                        ? 'bg-blue-100 text-blue-600'
+                                                        : 'bg-red-600 text-white'}
                                                     open={i == 0}
                                                 >
                                                     <span
@@ -1513,6 +1414,48 @@
                                                                 .employeeNumber})</span
                                                         >
                                                     </span>
+                                                    <div slot="arrowup">
+                                                        <svg
+                                                            class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                                .employees[i]
+                                                                .status
+                                                                ? 'text-blue-600'
+                                                                : 'text-white'}"
+                                                            aria-hidden="true"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            fill="none"
+                                                            viewBox="0 0 10 6"
+                                                        >
+                                                            <path
+                                                                stroke="currentColor"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M9 5 5 1 1 5"
+                                                            />
+                                                        </svg>
+                                                    </div>
+                                                    <div slot="arrowdown">
+                                                        <svg
+                                                            class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                                .employees[i]
+                                                                .status
+                                                                ? 'text-blue-600'
+                                                                : 'text-white'}"
+                                                            aria-hidden="true"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            fill="none"
+                                                            viewBox="0 0 10 6"
+                                                        >
+                                                            <path
+                                                                stroke="currentColor"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="m1 1 4 4 4-4"
+                                                            />
+                                                        </svg>
+                                                    </div>
                                                     {#if !$newOfferMeetingDetailForm.employees[i].status}
                                                         <StepperFailStatement />
                                                     {:else}
@@ -1573,7 +1516,8 @@
                             >
                                 <div class="mb-5">
                                     <b class="text-base text-black"
-                                        >Rekod Keputusan peranan (-peranan) berkaitan</b
+                                        >Rekod Keputusan peranan (-peranan)
+                                        berkaitan</b
                                     >
                                 </div>
                                 <div class="mb-5">
@@ -1585,8 +1529,14 @@
                                     <Accordion>
                                         {#each $newOfferSupporterResultForm.employees as _, i}
                                             <AccordionItem
-                                                activeClass="outline-none bg-blue-100 text-blue-600 dark:text-white"
-                                                inactiveClasses="text-gray-500 hover:bg-blue-100"
+                                                classActive={$newOfferMeetingDetailForm
+                                                    .employees[i].status
+                                                    ? 'bg-blue-100 text-blue-600'
+                                                    : 'bg-red-600 text-white'}
+                                                classInactive={$newOfferMeetingDetailForm
+                                                    .employees[i].status
+                                                    ? 'bg-blue-100 text-blue-600'
+                                                    : 'bg-red-600 text-white'}
                                                 open={i == 0}
                                             >
                                                 <span
@@ -1617,6 +1567,46 @@
                                                             .employeeNumber})</span
                                                     >
                                                 </span>
+                                                <div slot="arrowup">
+                                                    <svg
+                                                        class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                            .employees[i].status
+                                                            ? 'text-blue-600'
+                                                            : 'text-white'}"
+                                                        aria-hidden="true"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 10 6"
+                                                    >
+                                                        <path
+                                                            stroke="currentColor"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M9 5 5 1 1 5"
+                                                        />
+                                                    </svg>
+                                                </div>
+                                                <div slot="arrowdown">
+                                                    <svg
+                                                        class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                            .employees[i].status
+                                                            ? 'text-blue-600'
+                                                            : 'text-white'}"
+                                                        aria-hidden="true"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 10 6"
+                                                    >
+                                                        <path
+                                                            stroke="currentColor"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="m1 1 4 4 4-4"
+                                                        />
+                                                    </svg>
+                                                </div>
                                                 {#if !$newOfferMeetingDetailForm.employees[i].status}
                                                     <StepperFailStatement />
                                                 {:else}
@@ -1673,8 +1663,14 @@
                                     <Accordion>
                                         {#each $newOfferApproverResultForm.employees as _, i}
                                             <AccordionItem
-                                                activeClass="outline-none bg-blue-100 text-blue-600 dark:text-white"
-                                                inactiveClasses="text-gray-500 hover:bg-blue-100"
+                                                classActive={$newOfferMeetingDetailForm
+                                                    .employees[i].status
+                                                    ? 'bg-blue-100 text-blue-600'
+                                                    : 'bg-red-600 text-white'}
+                                                classInactive={$newOfferMeetingDetailForm
+                                                    .employees[i].status
+                                                    ? 'bg-blue-100 text-blue-600'
+                                                    : 'bg-red-600 text-white'}
                                                 open={i == 0}
                                             >
                                                 <span
