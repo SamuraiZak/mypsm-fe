@@ -196,7 +196,7 @@
                         setTimeout(
                             () =>
                                 goto(
-                                    '/v2/employment/ptb/butiran/' +
+                                    '/v2/employment/ptb/butiran/1-' +
                                         data.currentApplicationId +
                                         '-' +
                                         tempPensionId,
@@ -338,6 +338,7 @@
                 >
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         type="text"
                         id="employeeNo"
                         label="No. Pekerja"
@@ -346,6 +347,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         type="text"
                         id="name"
                         label="Nama Penuh"
@@ -355,6 +357,7 @@
                     <CustomTextField
                         disabled
                         type="text"
+                        isRequired={false}
                         id="otherName"
                         label="Nama Lain"
                         errors={$personalInfoError.otherName}
@@ -362,6 +365,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         type="text"
                         id="identityCard"
                         label="No. K/P"
@@ -370,6 +374,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="identityCardColor"
                         label="Warna K/P"
                         errors={$personalInfoError.identityCardColor}
@@ -377,6 +382,7 @@
                     />
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         type="text"
                         id="dateOfBirth"
                         label="Tarikh Lahir"
@@ -386,6 +392,7 @@
 
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="placeOfBirth"
                         label="Tempat Lahir"
                         errors={$personalInfoError.placeOfBirth}
@@ -393,6 +400,7 @@
                     />
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="nationality"
                         label="Warganegara"
                         errors={$personalInfoError.nationality}
@@ -400,6 +408,7 @@
                     />
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="race-"
                         label="Bangsa"
                         errors={$personalInfoError.race}
@@ -407,6 +416,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="religion"
                         label="Agama"
                         errors={$personalInfoError.religion}
@@ -414,6 +424,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="gender"
                         label="Jantina"
                         errors={$personalInfoError.gender}
@@ -421,6 +432,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         type="text"
                         id="status"
                         label="Status"
@@ -429,6 +441,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="homeAddress"
                         label="Alamat Rumah"
                         errors={$personalInfoError.homeAddress}
@@ -436,6 +449,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="homeNo"
                         label="Telefon Rumah"
                         errors={$personalInfoError.homeNo}
@@ -443,6 +457,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="mobileNo"
                         label="Telefon Sendiri"
                         errors={$personalInfoError.mobileNo}
@@ -450,6 +465,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="housing"
                         label="Perumahan"
                         errors={$personalInfoError.housing}
@@ -457,6 +473,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="houseLoan"
                         label="Pinjaman Rumah"
                         errors={$personalInfoError.houseLoan}
@@ -464,6 +481,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="isExPoliceOrSoldier"
                         label="Bekas Polis/Tentera"
                         errors={$personalInfoError.isExPolice}
@@ -491,6 +509,7 @@
 
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="EPFNumber"
                         label={'No. KWSP'}
                         type="text"
@@ -499,6 +518,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="SOCSONumber"
                         label={'No. SOCSO'}
                         type="text"
@@ -507,6 +527,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="incomeNumber"
                         label={'No. Cukai (LHDN)'}
                         type="text"
@@ -515,6 +536,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="bankName"
                         label={'Bank'}
                         type="text"
@@ -523,6 +545,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="bankAccount"
                         label={'No. Akaun'}
                         type="text"
@@ -531,6 +554,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="program"
                         label={'Program'}
                         type="text"
@@ -539,6 +563,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="leaveEntitlement"
                         label={'Kelayakan Cuti'}
                         type="text"
@@ -547,6 +572,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="hireByGovermentDate"
                         label={'Mula Dilantik Perkhidmatan Kerajaan'}
                         type="text"
@@ -555,6 +581,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="hireByLKIMDate"
                         label={'Mula Dilantik Perkhidmatan LKIM'}
                         type="text"
@@ -563,6 +590,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="currentServiceStartDate"
                         label={'Mula Dilantik Perkhidmatan Sekarang'}
                         type="text"
@@ -571,6 +599,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="firstServiceConfirmedDate"
                         label={'Disahkan Dalam Jawatan Pertama LKIM'}
                         type="text"
@@ -579,6 +608,7 @@
                     ></CustomTextField>
                     <CustomTextField
                         disabled
+                        isRequired={false}
                         id="currentServiceConfirmedDate"
                         label={'Disahkan Dalam Jawatan Semasa LKIM'}
                         type="text"
@@ -823,7 +853,7 @@
             </StepperContent>
         {/if}
 
-        {#if data.pensionDetail !== null && data.assignedRoles !== false }
+        {#if data.pensionDetail !== null && data.assignedRoles == true }
         
             <StepperContent>
                 <StepperContentHeader
@@ -871,7 +901,7 @@
                             bind:val={$supporterInfoForm.supporterName}
                         ></CustomTextField> -->
                             <CustomRadioBoolean
-                            disabled={false}                                
+                            disabled={data.supportDetail == null}                                
                                 id="status"
                                 label="Status"
                                 errors={$supporterInfoError.status}
@@ -879,7 +909,7 @@
                                 bind:val={$supporterInfoForm.status}
                             ></CustomRadioBoolean>
                             <CustomTextField
-                                
+                            disabled={data.supportDetail == null}       
                                 id="remark"
                                 label="Tindakan/Ulasan"
                                 errors={$supporterInfoError.remark}
@@ -899,7 +929,7 @@
             </StepperContent>
             {/if}
       
-            {#if data.pensionDetail !== null && data.currentRoleCode == kakitangan }
+            {#if data.pensionDetail !== null && data.assignedRoles == true }
         
             <StepperContent>
                 <StepperContentHeader
@@ -942,7 +972,7 @@
                             bind:val={$approverInfoForm.approverName}
                         ></CustomTextField> -->
                             <CustomRadioBoolean
-                            disabled={false}
+                            disabled={ data.approveDetail == null}
                                 id="status"
                                 label="Status"
                                 errors={$approverInfoError.status}
@@ -950,7 +980,7 @@
                                 bind:val={$approverInfoForm.status}
                             ></CustomRadioBoolean>
                             <CustomTextField
-                            
+                            disabled={ data.approveDetail !== null}
                                 id="remark"
                                 label="Tindakan/Ulasan"
                                 errors={$approverInfoError.remark}

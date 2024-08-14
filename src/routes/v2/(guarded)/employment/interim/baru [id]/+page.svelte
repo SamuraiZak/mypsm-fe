@@ -46,7 +46,8 @@
                     res.response.data?.details.interimId;
                 goto(
                     '/v2/employment/interim/butiran-' +
-                        afterSuccessApply.interimId,
+                        afterSuccessApply.interimId + '-' +
+'baharu'
                 );
             }
         }

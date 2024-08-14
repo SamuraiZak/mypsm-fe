@@ -28,6 +28,7 @@
     import { Toaster } from 'svelte-french-toast';
     import Alert from 'flowbite-svelte/Alert.svelte';
     import XCard from '$lib/components/card/XCard.svelte';
+    import StatusPill from '$lib/components/status-pills/StatusPill.svelte';
 
     export let data: PageData;
     let submitSecretary: boolean = false;
@@ -181,6 +182,7 @@
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader title="Tanggung Kerja">
+        <StatusPill status={data.params.status} slot="status" />
         <TextIconButton
             icon="cancel"
             type="neutral"

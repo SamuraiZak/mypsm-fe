@@ -310,7 +310,7 @@
                             bind:passData={rowData}
                             detailActions={() => {
                                 goto(
-                                    '/v2/employment/ptb/butiran/' +
+                                    '/v2/employment/ptb/butiran/1-' +
                                         rowData.employeeId +
                                         '-baru',
                                 );

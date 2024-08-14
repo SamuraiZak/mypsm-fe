@@ -35,6 +35,7 @@
         supportOptions,
     } from '$lib/constants/core/radio-option-constants';
     import FileGreyField from '$lib/components/inputs/file-upload/FileGreyField.svelte';
+    import StatusPill from '$lib/components/status-pills/StatusPill.svelte';
 
     export let data: PageData;
 
@@ -206,6 +207,7 @@
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader title="Tanggung Kerja">
+        <StatusPill status={data.params.status} slot="status" />
         <TextIconButton
             icon="cancel"
             type="neutral"
