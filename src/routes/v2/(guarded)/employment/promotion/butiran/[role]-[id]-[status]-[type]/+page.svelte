@@ -178,15 +178,17 @@
         },
     };
 
-    $: data.employeeDocumentInfo.isReadonly === true
-        ? confirmationStaffDocumentIsReadonly.set(true)
-        : confirmationStaffDocumentIsReadonly.set(false);
-    $: data.employeeDocumentInfo.isDraft === true
-        ? confirmationStaffDocumentIsDraft.set(true)
-        : confirmationStaffDocumentIsDraft.set(false);
-    $: selectedEmployeeList.data = employeeListTable.selectedData ?? [];
-    $: selectedEmployeeList.meta.totalData =
-        employeeListTable.selectedData.length;
+    $: {
+        data.employeeDocumentInfo.isReadonly === true
+            ? confirmationStaffDocumentIsReadonly.set(true)
+            : confirmationStaffDocumentIsReadonly.set(false);
+        data.employeeDocumentInfo.isDraft === true
+            ? confirmationStaffDocumentIsDraft.set(true)
+            : confirmationStaffDocumentIsDraft.set(false);
+        selectedEmployeeList.data = employeeListTable.selectedData ?? [];
+        selectedEmployeeList.meta.totalData =
+            employeeListTable.selectedData.length;
+    }
 
     const {
         form: addnewPromotionForm,
