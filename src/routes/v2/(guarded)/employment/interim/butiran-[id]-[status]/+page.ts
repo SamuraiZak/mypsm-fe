@@ -75,6 +75,7 @@ export const load = async ({ params, parent }) => {
         failToLoad = true;
     }
     return {
+        params,
         currentRoleCode,
         interimId,
         lookup,

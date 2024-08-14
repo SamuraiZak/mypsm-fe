@@ -126,12 +126,13 @@
                                 if (rowData.status == 'Draf') {
                                     goto(
                                         '/v2/employment/interim/baru ' +
-                                            rowData.id,
+                                            rowData.id ,
                                     );
                                 } else {
                                     goto(
                                         '/v2/employment/interim/butiran-' +
-                                            rowData.id,
+                                            rowData.id + '-'+
+                                            rowData.status,
                                     );
                                 }
                             }}
@@ -172,7 +173,8 @@
                             detailActions={() => {
                                 goto(
                                     '/v2/employment/interim/penamatan/' +
-                                        rowData.id,
+                                        rowData.id + '-'+
+                                            rowData.status,
                                 );
                             }}
                         >
@@ -211,7 +213,8 @@
                     bind:tableData={employeeApplicationTable}
                     bind:passData={rowData}
                     detailActions={() => {
-                        goto('/v2/employment/interim/butiran-' + rowData.id);
+                        goto('/v2/employment/interim/butiran-' + rowData.id + '-'+
+                                            rowData.status,);
                     }}
                 >
                     <FilterWrapper slot="filter">

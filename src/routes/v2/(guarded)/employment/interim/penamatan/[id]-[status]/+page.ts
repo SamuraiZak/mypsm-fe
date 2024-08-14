@@ -58,6 +58,7 @@ export const load = async ({ params,parent }) => {
     }
 
     return {
+        params,
         currentRoleCode,
         interimId,
         lookup,
