@@ -1007,8 +1007,8 @@
                                         <div class="grid grid-cols-2 gap-10">
                                             <div class="space-y-2.5">
                                                 <CustomSelectField
-                                                    disabled={true}
-                                                    isRequired={false}
+                                                    disabled={$isReadOnlyNewOfferProcess &&
+                                                        !$newOfferProcessIsDraft}
                                                     id="revisionMonth"
                                                     label={'Bulan Berkuatkuasa (Bulan KGT)'}
                                                     placeholder="-"
@@ -1058,6 +1058,7 @@
                                                     disabled={$isReadOnlyNewOfferProcess &&
                                                         !$newOfferProcessIsDraft}
                                                     id="ITKA"
+                                                    isRequired={false}
                                                     type="number"
                                                     label={'ITKA (RM)'}
                                                     placeholder="-"
@@ -1068,6 +1069,7 @@
                                                     disabled={$isReadOnlyNewOfferProcess &&
                                                         !$newOfferProcessIsDraft}
                                                     id="ITP"
+                                                    isRequired={false}
                                                     type="number"
                                                     label={'ITP (RM)'}
                                                     placeholder="-"
@@ -1078,6 +1080,7 @@
                                                     disabled={$isReadOnlyNewOfferProcess &&
                                                         !$newOfferProcessIsDraft}
                                                     id="EPW"
+                                                    isRequired={false}
                                                     type="number"
                                                     label={'EPW (RM)'}
                                                     placeholder="-"
@@ -1088,6 +1091,7 @@
                                                     disabled={$isReadOnlyNewOfferProcess &&
                                                         !$newOfferProcessIsDraft}
                                                     id="COLA"
+                                                    isRequired={false}
                                                     type="number"
                                                     label={'COLA (RM)'}
                                                     placeholder="-"

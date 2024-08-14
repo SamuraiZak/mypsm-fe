@@ -100,14 +100,14 @@ export const _processEmployeeSchema = z.object({
     effectiveDate: dateStringSchema, //
     civilServiceStartDate: z.string().nullish(), //
     serviceDate: z.string().nullish(), //
+    revisionMonth: codeSchema,
     kgt: z.number().nullish(),
-    revisionMonth: z.string().nullish(),
     maximumSalary: z.number().nullish(),
     baseSalary: z.number().nullish(),
-    itka: numberSchema,
-    itp: numberSchema,
-    epw: numberSchema,
-    cola: numberSchema,
+    itka: z.number().nullish(),
+    itp: z.number().nullish(),
+    epw: z.number().nullish(),
+    cola: z.number().nullish(),
 });
 
 export const _createProcessSchema = z.object({
