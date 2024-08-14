@@ -80,6 +80,7 @@ export type StaffUploadDocumentDTO =
     id: number;
     promotionType: string;
     document: DocumentBase64RequestDTO[];
+    isReadonly: boolean;
     isDraft: boolean;
 }
 
