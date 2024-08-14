@@ -10,6 +10,7 @@
         ActingCommonList,
         EmployeeActingOffer,
     } from '$lib/dto/mypsm/employment/acting/acting-common-list.dto';
+    import TextIconButton from '$lib/components/button/TextIconButton.svelte';
 
     export let data: PageData;
 
@@ -40,9 +41,7 @@
             filter: false,
         },
         controls: {
-            add:
-                data.layoutData.accountDetails.currentRoleCode ==
-                RoleConstant.urusSetiaPerjawatan.code,
+            add: false,
         },
     };
 
@@ -70,9 +69,7 @@
             filter: false,
         },
         controls: {
-            add:
-                data.layoutData.accountDetails.currentRoleCode ==
-                RoleConstant.urusSetiaPerjawatan.code,
+            add: false,
         },
     };
 
@@ -100,9 +97,7 @@
             filter: false,
         },
         controls: {
-            add:
-                data.layoutData.accountDetails.currentRoleCode ==
-                RoleConstant.urusSetiaPerjawatan.code,
+            add: false,
         },
     };
 
@@ -139,6 +134,19 @@
         <!-- leading -->
         <div class="flex w-full flex-col items-start justify-center">
             <p class="text-xl font-semibold text-black">Urusan Pemangkuan</p>
+            <p class="text-md font-medium text-black">
+                Carian Rekod Proses Pemangkuan
+            </p>
+        </div>
+        <div class="flex flex-row items-center justify-end gap-2">
+            <TextIconButton
+                icon="add"
+                label="Tambah"
+                type="primary"
+                onClick={() => {
+                    goto('/v2/employment/acting/add')
+                }}
+            />
         </div>
     </div>
 </section>
