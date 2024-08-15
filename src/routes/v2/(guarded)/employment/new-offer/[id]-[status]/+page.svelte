@@ -1908,11 +1908,11 @@
                                                     />
                                                 </svg>
                                                 <span class="font-semibold">
-                                                    {$newOfferMeetingDetailForm
+                                                    {!$newOfferMeetingDetailForm
                                                         .employees[i].status ||
-                                                    $newOfferSupporterResultForm
+                                                    !$newOfferSupporterResultForm
                                                         .employees[i].status ||
-                                                    $newOfferApproverResultForm
+                                                    !$newOfferApproverResultForm
                                                         .employees[i].status
                                                         ? '[DITOLAK]'
                                                         : ''}
@@ -2006,10 +2006,7 @@
                                                     ></CustomTextField>
 
                                                     <CustomTextField
-                                                        disabled={data.view
-                                                            .newOfferDetailView
-                                                            .document
-                                                            .isReadonly &&
+                                                        disabled={$newOfferLetterDetailForm.isReadonly &&
                                                             !$newOfferLetterDetailIsDraft}
                                                         id="refNumber"
                                                         label="No. Rujukan Surat"
@@ -2020,10 +2017,7 @@
 
                                                     <CustomTextField
                                                         type="date"
-                                                        disabled={data.view
-                                                            .newOfferDetailView
-                                                            .document
-                                                            .isReadonly &&
+                                                        disabled={$newOfferLetterDetailForm.isReadonly &&
                                                             !$newOfferLetterDetailIsDraft}
                                                         id="letterDate"
                                                         label={'Tarikh Surat'}
@@ -2033,10 +2027,7 @@
                                                     ></CustomTextField>
 
                                                     <CustomTextField
-                                                        disabled={data.view
-                                                            .newOfferDetailView
-                                                            .document
-                                                            .isReadonly &&
+                                                        disabled={$newOfferLetterDetailForm.isReadonly &&
                                                             !$newOfferLetterDetailIsDraft}
                                                         id="slogan"
                                                         label="Slogan Surat"
