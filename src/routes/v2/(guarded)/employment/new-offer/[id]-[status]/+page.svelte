@@ -2056,32 +2056,27 @@
                                                         berkaitan:
                                                     </p>
 
-                                                    {#each $newOfferLetterDetailForm.employees as _, i}
-                                                        <div
-                                                            class="flex w-full flex-row items-center justify-between"
+                                                    <div
+                                                        class="flex w-full flex-row items-center justify-between"
+                                                    >
+                                                        <label
+                                                            for=""
+                                                            class="block w-[20px] min-w-[20px] text-[11px] font-medium"
+                                                            >1.</label
                                                         >
-                                                            <label
-                                                                for=""
-                                                                class="block w-[20px] min-w-[20px] text-[11px] font-medium"
-                                                                >{i + 1}.</label
-                                                            >
-                                                            <a
-                                                                href={$newOfferLetterDetailForm
-                                                                    .employees[
-                                                                    i
-                                                                ].file.base64}
-                                                                download={$newOfferLetterDetailForm
-                                                                    .employees[
-                                                                    i
-                                                                ].file.name}
-                                                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                                                >{$newOfferLetterDetailForm
-                                                                    .employees[
-                                                                    i
-                                                                ].file.name}</a
-                                                            >
-                                                        </div>
-                                                    {/each}
+                                                        <a
+                                                            href={$newOfferLetterDetailForm
+                                                                .employees[i]
+                                                                .file.base64}
+                                                            download={$newOfferLetterDetailForm
+                                                                .employees[i]
+                                                                .file.name}
+                                                            class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                                            >{$newOfferLetterDetailForm
+                                                                .employees[i]
+                                                                .file.name}</a
+                                                        >
+                                                    </div>
                                                 </div>
                                             {/if}
                                         </AccordionItem>
