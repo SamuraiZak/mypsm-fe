@@ -7,6 +7,7 @@ import type {
     ApproverRequestDTO,
     MeetingResultDTO,
     NewOfferFullDetailDTO,
+    NewOfferLetterDetailRequestDTO,
     NewOfferProcessRequestDTO,
     SetSupporterApproverRequestDTO,
 } from '$lib/dto/mypsm/employment/new-offer/new-offer-request-response.dto.js';
@@ -20,6 +21,8 @@ import {
     _approverSchema,
     _includedEmployeeDetailSchema,
     _includedEmployeeSchema,
+    _letterDetailRequestSchema,
+    _letterDetailSchema,
     _meetingResultSchema,
     _processSchema,
     _setApproverResultSchema,
@@ -133,6 +136,11 @@ export async function load({ params }) {
     const newOfferApprovalResultForm = await superValidate(
         newOfferDetailView.approver,
         zod(_approverSchema),
+        { errors: false },
+    );
+    const newOfferLetterDetailForm = await superValidate(
+        newOfferDetailView.document,
+        zod(_letterDetailSchema),
         { errors: false },
     );
 
@@ -417,6 +425,7 @@ export async function load({ params }) {
             newOfferSetSupporterApproverDetailForm,
             newOfferSupporterResultForm,
             newOfferApprovalResultForm,
+            newOfferLetterDetailForm,
         },
         lookups: {
             generalLookup,
@@ -556,6 +565,27 @@ export const _newOfferApproverResultForm = async (
     const response: CommonResponseDTO =
         await NewOfferServices.createNewOfferApproverResult(
             form.data as ApproverRequestDTO,
+        );
+
+    return { response };
+};
+
+export const _newOfferLetterDetailForm = async (
+    id: number,
+    formData: object,
+) => {
+    const form = await superValidate(formData, zod(_letterDetailRequestSchema));
+    form.data.applicationId = id;
+
+    console.log(form);
+    if (!form.valid) {
+        getErrorToast();
+        error(400, { message: 'Validation Not Passed!' });
+    }
+
+    const response: CommonResponseDTO =
+        await NewOfferServices.editNewOfferLetterDetail(
+            form.data as NewOfferLetterDetailRequestDTO,
         );
 
     return { response };
