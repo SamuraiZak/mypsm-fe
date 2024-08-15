@@ -2,9 +2,8 @@ import {
     codeSchema,
     dateStringSchema,
     numberIdSchema,
-    numberSchema,
-    numberToStringSchema,
     requiredDateStringSchema,
+    shortTextSchema,
 } from '$lib/schemas/common/schema-type';
 import * as z from 'zod';
 
@@ -167,6 +166,23 @@ export const _updateProcessSchema = z.object({
     isDraft: z.boolean(),
 });
 
+const _documentList = z.object({
+    employeeName: z.string().readonly(),
+    employeeNumber: z.string().readonly(),
+    refNumber: codeSchema,
+    date: requiredDateStringSchema,
+    slogan: shortTextSchema,
+    file: z.object({ name: z.string(), base64: z.string() }).readonly(),
+})
+
+export const _letterDetailSchema = z.object({
+    employees: z.array(_documentList),
+    isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean(),
+});
+
+export const _letterDetailRequestSchema = _letterDetailSchema.omit({ isReadonly: true }).extend({ applicationId: z.number().readonly(), });
+
 export const _newOfferFullDetailSchemaSchema = z.object({
     includedEmployee: _includedEmployeeSchema,
     includedEmployeeDetail: _includedEmployeeDetailSchema,
@@ -175,4 +191,5 @@ export const _newOfferFullDetailSchemaSchema = z.object({
     setSupporterApprover: _supporterApproverSchema,
     supporter: _approverSchema,
     approver: _approverSchema,
+    document: _letterDetailSchema,
 });
