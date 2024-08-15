@@ -145,7 +145,6 @@
 
         if (allNewOfferSupporterStatusAndRemarksNotNull) {
             isReadOnlyNewOfferSupporterResult.set(true);
-
         } else {
             isReadOnlyNewOfferSupporterResult.set(false);
         }
@@ -162,10 +161,8 @@
             newOfferLetterDetailIsDraft.set(false);
         }
 
-
         if (allNewOfferApproverStatusAndRemarksNotNull) {
             isReadOnlyNewOfferApprovalResult.set(true);
-
         } else {
             isReadOnlyNewOfferApprovalResult.set(false);
         }
@@ -1852,7 +1849,7 @@
                 {#if data.view.newOfferDetailView.supporter.isReadonly && !$newOfferSupporterResultIsDraft && data.view.newOfferDetailView.approver.isReadonly && !$newOfferApproverResultIsDraft}
                     <StepperContent>
                         <StepperContentHeader title="Tetapan Butiran Surat">
-                            {#if (!data.view.newOfferDetailView.document.isReadonly || $newOfferLetterDetailIsDraft) && data.roles.isEmploymentSecretaryRole}
+                            {#if (!$newOfferLetterDetailForm.isReadonly || $newOfferLetterDetailIsDraft) && data.roles.isEmploymentSecretaryRole}
                                 <TextIconButton
                                     label="Simpan"
                                     type="neutral"
@@ -1872,130 +1869,124 @@
                             {/if}
                         </StepperContentHeader>
                         <StepperContentBody>
-                            <div
-                                class="flex w-full flex-col items-center gap-2"
-                            >
-                                <form
-                                    id="newOfferLetterDetailForm"
-                                    method="POST"
-                                    use:newOfferLetterDetailFormEnhance
-                                    class="h-fit space-y-2.5 rounded-[3px] border p-2.5"
-                                >
-                                    <div class="mb-5">
-                                        <b class="text-sm text-system-primary"
-                                            >Butiran surat (-surat) berkaitan</b
+                            <div class="flex w-full flex-col gap-2">
+                                <Accordion>
+                                    {#each $newOfferLetterDetailForm.employees as _, i}
+                                        <AccordionItem
+                                            classActive={$newOfferMeetingDetailForm
+                                                .employees[i].status &&
+                                            $newOfferSupporterResultForm
+                                                .employees[i].status &&
+                                            $newOfferApproverResultForm
+                                                .employees[i].status
+                                                ? 'bg-blue-100 text-blue-600'
+                                                : 'bg-red-100 text-red-600'}
+                                            classInactive={$newOfferMeetingDetailForm
+                                                .employees[i].status &&
+                                            $newOfferSupporterResultForm
+                                                .employees[i].status &&
+                                            $newOfferApproverResultForm
+                                                .employees[i].status
+                                                ? 'bg-blue-100 text-blue-600'
+                                                : 'bg-red-100 text-red-600'}
+                                            open={i == 0}
                                         >
-                                    </div>
-                                    <Accordion>
-                                        {#each $newOfferLetterDetailForm.employees as _, i}
-                                            <AccordionItem
-                                                classActive={$newOfferMeetingDetailForm
-                                                    .employees[i].status &&
-                                                $newOfferSupporterResultForm
-                                                    .employees[i].status &&
-                                                $newOfferApproverResultForm
-                                                    .employees[i].status
-                                                    ? 'bg-blue-100 text-blue-600'
-                                                    : 'bg-red-100 text-red-600'}
-                                                classInactive={$newOfferMeetingDetailForm
-                                                    .employees[i].status &&
-                                                $newOfferSupporterResultForm
-                                                    .employees[i].status &&
-                                                $newOfferApproverResultForm
-                                                    .employees[i].status
-                                                    ? 'bg-blue-100 text-blue-600'
-                                                    : 'bg-red-100 text-red-600'}
-                                                open={i == 0}
+                                            <span
+                                                slot="header"
+                                                class="flex items-center gap-2 text-base"
                                             >
-                                                <span
-                                                    slot="header"
-                                                    class="flex items-center gap-2 text-base"
+                                                <svg
+                                                    width="11"
+                                                    height="10"
+                                                    viewBox="0 0 11 10"
+                                                    fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg"
                                                 >
-                                                    <svg
-                                                        width="11"
-                                                        height="10"
-                                                        viewBox="0 0 11 10"
-                                                        fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                    >
-                                                        <path
-                                                            d="M10.2656 6.03906L6.51562 9.78906C6.375 9.92969 6.1875 10 6 10C5.78906 10 5.60156 9.92969 5.46094 9.78906C5.15625 9.50781 5.15625 9.01562 5.46094 8.73438L7.92188 6.25H0.75C0.328125 6.25 0 5.92188 0 5.5C0 5.10156 0.328125 4.75 0.75 4.75H7.92188L5.46094 2.28906C5.15625 2.00781 5.15625 1.51562 5.46094 1.23438C5.74219 0.929688 6.23438 0.929688 6.51562 1.23438L10.2656 4.98438C10.5703 5.26562 10.5703 5.75781 10.2656 6.03906Z"
-                                                            fill="currentColor"
-                                                        />
-                                                    </svg>
-                                                    <span class="font-semibold">
-                                                        {$newOfferMeetingDetailForm
-                                                            .employees[i]
-                                                            .status ||
-                                                        $newOfferSupporterResultForm
-                                                            .employees[i]
-                                                            .status ||
-                                                        $newOfferApproverResultForm
-                                                            .employees[i].status
-                                                            ? '[DITOLAK]'
-                                                            : ''}
-                                                        {$newOfferServiceDetailForm
-                                                            .employees[i]
-                                                            .employeeName} ({$newOfferServiceDetailForm
-                                                            .employees[i]
-                                                            .employeeNumber})</span
-                                                    >
-                                                </span>
-                                                <div slot="arrowup">
-                                                    <svg
-                                                        class="h-3 w-3 {$newOfferMeetingDetailForm
-                                                            .employees[i]
-                                                            .status &&
-                                                        $newOfferSupporterResultForm
-                                                            .employees[i]
-                                                            .status &&
-                                                        $newOfferApproverResultForm
-                                                            .employees[i].status
-                                                            ? 'text-blue-600'
-                                                            : 'text-red-600'}"
-                                                        aria-hidden="true"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none"
-                                                        viewBox="0 0 10 6"
-                                                    >
-                                                        <path
-                                                            stroke="currentColor"
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M9 5 5 1 1 5"
-                                                        />
-                                                    </svg>
-                                                </div>
-                                                <div slot="arrowdown">
-                                                    <svg
-                                                        class="h-3 w-3 {$newOfferMeetingDetailForm
-                                                            .employees[i]
-                                                            .status &&
-                                                        $newOfferSupporterResultForm
-                                                            .employees[i]
-                                                            .status &&
-                                                        $newOfferApproverResultForm
-                                                            .employees[i].status
-                                                            ? 'text-blue-600'
-                                                            : 'text-red-600'}"
-                                                        aria-hidden="true"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none"
-                                                        viewBox="0 0 10 6"
-                                                    >
-                                                        <path
-                                                            stroke="currentColor"
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="m1 1 4 4 4-4"
-                                                        />
-                                                    </svg>
-                                                </div>
-                                                {#if !$newOfferMeetingDetailForm.employees[i].status || !$newOfferSupporterResultForm.employees[i].status || !$newOfferApproverResultForm.employees[i].status}
-                                                    <StepperFailStatement />
-                                                {:else if $newOfferMeetingDetailForm.employees[i].status && $newOfferSupporterResultForm.employees[i].status && $newOfferApproverResultForm.employees[i].status && !$newOfferLetterDetailForm.isReadonly && $newOfferLetterDetailIsDraft}
+                                                    <path
+                                                        d="M10.2656 6.03906L6.51562 9.78906C6.375 9.92969 6.1875 10 6 10C5.78906 10 5.60156 9.92969 5.46094 9.78906C5.15625 9.50781 5.15625 9.01562 5.46094 8.73438L7.92188 6.25H0.75C0.328125 6.25 0 5.92188 0 5.5C0 5.10156 0.328125 4.75 0.75 4.75H7.92188L5.46094 2.28906C5.15625 2.00781 5.15625 1.51562 5.46094 1.23438C5.74219 0.929688 6.23438 0.929688 6.51562 1.23438L10.2656 4.98438C10.5703 5.26562 10.5703 5.75781 10.2656 6.03906Z"
+                                                        fill="currentColor"
+                                                    />
+                                                </svg>
+                                                <span class="font-semibold">
+                                                    {$newOfferMeetingDetailForm
+                                                        .employees[i].status ||
+                                                    $newOfferSupporterResultForm
+                                                        .employees[i].status ||
+                                                    $newOfferApproverResultForm
+                                                        .employees[i].status
+                                                        ? '[DITOLAK]'
+                                                        : ''}
+                                                    {$newOfferServiceDetailForm
+                                                        .employees[i]
+                                                        .employeeName} ({$newOfferServiceDetailForm
+                                                        .employees[i]
+                                                        .employeeNumber})</span
+                                                >
+                                            </span>
+                                            <div slot="arrowup">
+                                                <svg
+                                                    class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                        .employees[i].status &&
+                                                    $newOfferSupporterResultForm
+                                                        .employees[i].status &&
+                                                    $newOfferApproverResultForm
+                                                        .employees[i].status
+                                                        ? 'text-blue-600'
+                                                        : 'text-red-600'}"
+                                                    aria-hidden="true"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 10 6"
+                                                >
+                                                    <path
+                                                        stroke="currentColor"
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 5 5 1 1 5"
+                                                    />
+                                                </svg>
+                                            </div>
+                                            <div slot="arrowdown">
+                                                <svg
+                                                    class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                        .employees[i].status &&
+                                                    $newOfferSupporterResultForm
+                                                        .employees[i].status &&
+                                                    $newOfferApproverResultForm
+                                                        .employees[i].status
+                                                        ? 'text-blue-600'
+                                                        : 'text-red-600'}"
+                                                    aria-hidden="true"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 10 6"
+                                                >
+                                                    <path
+                                                        stroke="currentColor"
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="m1 1 4 4 4-4"
+                                                    />
+                                                </svg>
+                                            </div>
+                                            {#if !$newOfferMeetingDetailForm.employees[i].status || !$newOfferSupporterResultForm.employees[i].status || !$newOfferApproverResultForm.employees[i].status}
+                                                <StepperFailStatement />
+                                            {:else if $newOfferMeetingDetailForm.employees[i].status && $newOfferSupporterResultForm.employees[i].status && $newOfferApproverResultForm.employees[i].status && !$newOfferLetterDetailForm.isReadonly && $newOfferLetterDetailIsDraft}
+                                                <form
+                                                    id="newOfferLetterDetailForm"
+                                                    method="POST"
+                                                    use:newOfferLetterDetailFormEnhance
+                                                    class="flex w-full flex-col gap-2.5"
+                                                >
+                                                    <div class="mb-5">
+                                                        <b
+                                                            class="text-sm text-system-primary"
+                                                            >Butiran surat
+                                                            (-surat) berkaitan</b
+                                                        >
+                                                    </div>
                                                     <CustomTextField
                                                         disabled={true}
                                                         id="applicantId"
@@ -2053,52 +2044,49 @@
                                                             .employees[i]
                                                             .slogan}
                                                     ></CustomTextField>
-                                                {:else if $newOfferMeetingDetailForm.employees[i].status && $newOfferSupporterResultForm.employees[i].status && $newOfferApproverResultForm.employees[i].status && $newOfferLetterDetailForm.isReadonly && !$newOfferLetterDetailIsDraft}
-                                                    <div
-                                                        class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                                                </form>
+                                            {:else if $newOfferMeetingDetailForm.employees[i].status && $newOfferSupporterResultForm.employees[i].status && $newOfferApproverResultForm.employees[i].status && $newOfferLetterDetailForm.isReadonly && !$newOfferLetterDetailIsDraft}
+                                                <div
+                                                    class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
+                                                >
+                                                    <p
+                                                        class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
                                                     >
-                                                        <p
-                                                            class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
-                                                        >
-                                                            Dokumen (-dokumen)
-                                                            berkaitan:
-                                                        </p>
+                                                        Dokumen (-dokumen)
+                                                        berkaitan:
+                                                    </p>
 
-                                                        {#each $newOfferLetterDetailForm.employees as _, i}
-                                                            <div
-                                                                class="flex w-full flex-row items-center justify-between"
+                                                    {#each $newOfferLetterDetailForm.employees as _, i}
+                                                        <div
+                                                            class="flex w-full flex-row items-center justify-between"
+                                                        >
+                                                            <label
+                                                                for=""
+                                                                class="block w-[20px] min-w-[20px] text-[11px] font-medium"
+                                                                >{i + 1}.</label
                                                             >
-                                                                <label
-                                                                    for=""
-                                                                    class="block w-[20px] min-w-[20px] text-[11px] font-medium"
-                                                                    >{i +
-                                                                        1}.</label
-                                                                >
-                                                                <a
-                                                                    href={$newOfferLetterDetailForm
-                                                                        .employees[
-                                                                        i
-                                                                    ].file
-                                                                        .base64}
-                                                                    download={$newOfferLetterDetailForm
-                                                                        .employees[
-                                                                        i
-                                                                    ].file.name}
-                                                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                                                    >{$newOfferLetterDetailForm
-                                                                        .employees[
-                                                                        i
-                                                                    ].file
-                                                                        .name}</a
-                                                                >
-                                                            </div>
-                                                        {/each}
-                                                    </div>
-                                                {/if}
-                                            </AccordionItem>
-                                        {/each}
-                                    </Accordion>
-                                </form>
+                                                            <a
+                                                                href={$newOfferLetterDetailForm
+                                                                    .employees[
+                                                                    i
+                                                                ].file.base64}
+                                                                download={$newOfferLetterDetailForm
+                                                                    .employees[
+                                                                    i
+                                                                ].file.name}
+                                                                class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                                                >{$newOfferLetterDetailForm
+                                                                    .employees[
+                                                                    i
+                                                                ].file.name}</a
+                                                            >
+                                                        </div>
+                                                    {/each}
+                                                </div>
+                                            {/if}
+                                        </AccordionItem>
+                                    {/each}
+                                </Accordion>
                             </div>
                         </StepperContentBody>
                     </StepperContent>
