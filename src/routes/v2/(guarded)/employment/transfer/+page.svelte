@@ -1,304 +1,176 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
-    import { RoleConstant } from '$lib/constants/core/role.constant';
-    import FilterTextField from '$lib/components/table/filter/FilterTextField.svelte';
-    import FilterWrapper from '$lib/components/table/filter/FilterWrapper.svelte';
-    import DataTable from '$lib/components/table/DataTable.svelte';
-    import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
-    import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
-    import CustomTab from '$lib/components/tab/CustomTab.svelte';
-    import CustomTabContent from '$lib/components/tab/CustomTabContent.svelte';
-    import type { PageData } from './$types';
+    import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto.ts';
+    import type { ModuleDTO } from '$lib/dto/core/system/system.dto';
+    import { TextAppearanceHelper } from '$lib/helpers/core/text-appearance.helper';
 
-    export let data: PageData;
+    let menu: ModuleDTO[] = [
+        {
+            moduleName: 'Pertukaran Atas Permohonan Sendiri',
+            url: '',
+            child: [
+                {
+                    moduleName: 'Tambah Permohonan Baharu',
+                    url: '',
+                    child: [],
+                },
+                {
+                    moduleName: 'Lihat Senarai Permohonan',
+                    url: '/v2/employment/transfer/self/list',
+                    child: [],
+                },
+            ],
+        },
+        {
+            moduleName: 'Arahan / Cadangan Pertukaran',
+            url: '',
+            child: [
+                {
+                    moduleName: 'Tambah Arahan / Cadangan Pertukaran Baharu',
+                    url: '',
+                    child: [],
+                },
+                {
+                    moduleName: 'Lihat Senarai Permohonan',
+                    url: '',
+                    child: [],
+                },
+            ],
+        },
+        {
+            moduleName: 'Sejarah Pertukaran',
+            url: '',
+            child: [
+                {
+                    moduleName: 'Lihat Senarai Sejarah Pertukaran',
+                    url: '',
+                    child: [],
+                },
+            ],
+        },
+        {
+            moduleName: 'Perkara-perkara Yang Memerlukan Tindakan Anda',
 
-    let selectedData: any;
-
-    // table setting for self application
-    let selfApplicationListTable: TableSettingDTO = {
-        param: data.props.selfApplication.request,
-        meta: data.props.selfApplication.response.data?.meta ?? {
-            pageSize: 1,
-            pageNum: 1,
-            totalData: 1,
-            totalPage: 1,
+            url: '',
+            child: [
+                {
+                    moduleName: 'Senarai',
+                    url: '',
+                    child: [],
+                },
+            ],
         },
-        data: data.props.selfApplication.response.data?.dataList ?? [],
-        selectedData: [],
-        exportData: [],
-        hiddenColumn: [],
-        dictionary: [
-            {
-                english: 'identityCardNumber',
-                malay: 'No. Kad Pengenalan',
-            },
-            {
-                english: 'status',
-                malay: 'Status Permohonan',
-            },
-        ],
-        url: 'employment/self_transfer/list',
-        id: 'selfApplicationListTable',
-        option: {
-            checkbox: false,
-            detail: true,
-            edit: false,
-            select: false,
-            filter: true,
-        },
-        controls: {
-            add:
-                data.props.layoutData.accountDetails.currentRoleCode ==
-                RoleConstant.kakitangan.code,
-        },
-    };
-
-    // table setting for director application
-    let directorApplicationListTable: TableSettingDTO = {
-        param: data.props.directorApplication.request,
-        meta: data.props.directorApplication.response.data?.meta ?? {
-            pageSize: 1,
-            pageNum: 1,
-            totalData: 1,
-            totalPage: 1,
-        },
-        data: data.props.directorApplication.response.data?.dataList ?? [],
-        selectedData: [],
-        exportData: [],
-        hiddenColumn: [],
-        dictionary: [
-            {
-                english: 'identityCardNumber',
-                malay: 'No. Kad Pengenalan',
-            },
-            {
-                english: 'status',
-                malay: 'Status Permohonan',
-            },
-        ],
-        url: 'employment/self_transfer/list',
-        id: 'directorApplicationListTable',
-        option: {
-            checkbox: false,
-            detail: true,
-            edit: false,
-            select: false,
-            filter: true,
-        },
-        controls: {
-            add:
-                data.props.layoutData.accountDetails.currentRoleCode ==
-                    RoleConstant.pengarahBahagian.code ||
-                data.props.layoutData.accountDetails.currentRoleCode ==
-                    RoleConstant.pengarahNegeri.code,
-        },
-    };
-
-    // table setting for management application
-    let managementApplicationListTable: TableSettingDTO = {
-        param: data.props.managementApplication.request,
-        meta: data.props.managementApplication.response.data?.meta ?? {
-            pageSize: 1,
-            pageNum: 1,
-            totalData: 1,
-            totalPage: 1,
-        },
-        data: data.props.managementApplication.response.data?.dataList ?? [],
-        selectedData: [],
-        exportData: [],
-        hiddenColumn: [],
-        dictionary: [
-            {
-                english: 'identityCardNumber',
-                malay: 'No. Kad Pengenalan',
-            },
-            {
-                english: 'status',
-                malay: 'Status Permohonan',
-            },
-        ],
-        url: 'employment/self_transfer/list',
-        id: 'managementApplicationListTable',
-        option: {
-            checkbox: false,
-            detail: true,
-            edit: false,
-            select: false,
-            filter: true,
-        },
-        controls: {
-            add:
-                data.props.layoutData.accountDetails.currentRoleCode ==
-                RoleConstant.urusSetiaPerjawatan.code,
-        },
-    };
-
-    function addApplication(params: string) {
-        let url: string = '';
-
-        switch (params) {
-            case 'self':
-                url = '/v2/employment/transfer/self/0';
-                break;
-            case 'director':
-                url = '/v2/employment/transfer/director/0';
-                break;
-            case 'management':
-                url = '/v2/employment/transfer/management/0';
-                break;
-            default:
-                break;
-        }
-
-        goto(url);
-    }
-    
-    function viewDetails() {
-        let url: string = '/v2/employment/transfer/';
-
-        goto(url);
-    }
+    ];
 </script>
 
-<section class="flex w-full flex-col items-center justify-center">
-    <ContentHeader title="Pertukaran"></ContentHeader>
+<section
+    class="flex h-2/3 w-full flex-col items-start justify-center bg-cover bg-center object-scale-down"
+    style="background-image: linear-gradient(
+    to bottom, transparent, #555555), url('/src/lib/assets/images/forms.jpg');"
+>
+    <div
+        class="flex h-full w-full flex-col items-start justify-center bg-black bg-opacity-50 p-10"
+    >
+        <div
+            class="flex h-fit w-full flex-col items-start justify-center gap-2"
+        >
+            <p class="text-2xl font-semibold leading-tight text-white">
+                Modul Pertukaran
+            </p>
+            <p class="text-lg font-medium leading-tight text-white">
+                Menu Utama
+            </p>
+        </div>
+    </div>
 </section>
 
 <section
-    class="flex h-full w-full flex-col items-start justify-start overflow-y-hidden"
+    class="flex h-full w-full flex-col items-start justify-start overflow-y-hidden p-10"
 >
-    <CustomTab>
-        <CustomTabContent title="Pertukaran Atas Permohonan Sendiri">
-            <div
-                class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-4"
-            >
-                <DataTable
-                    title="Senarai Permohonan Pertukaran: Permohonan Sendiri"
-                    bind:tableData={selfApplicationListTable}
-                    bind:passData={selectedData}
-                    detailActions={() => {
-                        // showDetails();
-                    }}
-                    addActions={() => {
-                        addApplication('self');
-                    }}
+    <div class="h-full w-full overflow-y-auto overflow-x-hidden px-5">
+        <div
+            class="grid w-full grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        >
+            {#each menu as module}
+                <a
+                    data-sveltekit-preload-data="false"
+                    href={module.url}
+                    class="cur cursor-default"
                 >
-                    <FilterWrapper slot="filter">
-                        <FilterTextField
-                            inputId="selfEmployeeNumber"
-                            label="Nombor Pekerja"
-                            bind:inputValue={selfApplicationListTable.param
-                                .filter.employeeNumber}
-                        ></FilterTextField>
-                        <FilterTextField
-                            inputId="selfName"
-                            label="Nama Kakitangan"
-                            bind:inputValue={selfApplicationListTable.param
-                                .filter.name}
-                        ></FilterTextField>
-                        <FilterTextField
-                            inputId="selfIdentityDocumentNumber"
-                            label="No. Kad Pengenalan"
-                            bind:inputValue={selfApplicationListTable.param
-                                .filter.identityDocumentNumber}
-                        ></FilterTextField>
-                        <FilterTextField
-                            inputId="selfStatus"
-                            label="Status"
-                            bind:inputValue={selfApplicationListTable.param
-                                .filter.status}
-                        ></FilterTextField>
-                    </FilterWrapper>
-                </DataTable>
-            </div>
-        </CustomTabContent>
-        <CustomTabContent title="Pertukaran Atas Arahan Pengarah">
-            <div
-                class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-4"
-            >
-                <DataTable
-                    title="Senarai Permohonan Pertukaran: Arahan Pengarah"
-                    bind:tableData={directorApplicationListTable}
-                    bind:passData={selectedData}
-                    detailActions={() => {
-                        // showDetails();
-                    }}
-                    addActions={() => {
-                        addApplication('director');
-                    }}
-                >
-                    <FilterWrapper slot="filter">
-                        <FilterTextField
-                            inputId="directorEmployeeNumber"
-                            label="Nombor Pekerja"
-                            bind:inputValue={directorApplicationListTable.param
-                                .filter.employeeNumber}
-                        ></FilterTextField>
-                        <FilterTextField
-                            inputId="directorName"
-                            label="Nama Kakitangan"
-                            bind:inputValue={directorApplicationListTable.param
-                                .filter.name}
-                        ></FilterTextField>
-                        <FilterTextField
-                            inputId="directorIdentityDocumentNumber"
-                            label="No. Kad Pengenalan"
-                            bind:inputValue={directorApplicationListTable.param
-                                .filter.identityDocumentNumber}
-                        ></FilterTextField>
-                        <FilterTextField
-                            inputId="directorStatus"
-                            label="Status"
-                            bind:inputValue={directorApplicationListTable.param
-                                .filter.status}
-                        ></FilterTextField>
-                    </FilterWrapper>
-                </DataTable>
-            </div>
-        </CustomTabContent>
-        <CustomTabContent title="Pertukaran Secara Pentadbiran">
-            <div
-                class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-4"
-            >
-                <DataTable
-                    title="Senarai Permohonan Pertukaran: Secara Pentadbiran"
-                    bind:tableData={managementApplicationListTable}
-                    bind:passData={selectedData}
-                    detailActions={() => {
-                        // showDetails();
-                    }}
-                    addActions={() => {
-                        addApplication('management');
-                    }}
-                >
-                    <FilterWrapper slot="filter">
-                        <FilterTextField
-                            inputId="managementEmployeeNumber"
-                            label="Nombor Pekerja"
-                            bind:inputValue={managementApplicationListTable
-                                .param.filter.employeeNumber}
-                        ></FilterTextField>
-                        <FilterTextField
-                            inputId="managementName"
-                            label="Nama Kakitangan"
-                            bind:inputValue={managementApplicationListTable
-                                .param.filter.name}
-                        ></FilterTextField>
-                        <FilterTextField
-                            inputId="managementIdentityDocumentNumber"
-                            label="No. Kad Pengenalan"
-                            bind:inputValue={managementApplicationListTable
-                                .param.filter.identityDocumentNumber}
-                        ></FilterTextField>
-                        <FilterTextField
-                            inputId="managementStatus"
-                            label="Status"
-                            bind:inputValue={managementApplicationListTable
-                                .param.filter.status}
-                        ></FilterTextField>
-                    </FilterWrapper>
-                </DataTable>
-            </div>
-        </CustomTabContent>
-    </CustomTab>
+                    <div
+                        class="flex h-full min-w-20 transform flex-col items-start justify-start gap-2 overflow-hidden rounded-md border bg-white p-4 transition-transform"
+                    >
+                        <div
+                            class="flex w-full flex-col items-start justify-start gap-2"
+                        >
+                            <div
+                                class="flex flex-col items-center justify-center rounded"
+                            >
+                                <!-- Diamond icon -->
+                                <span class="text text-slate-500">
+                                    <svg
+                                        width="40"
+                                        height="40"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        ><g
+                                            id="SVGRepo_bgCarrier"
+                                            stroke-width="0"
+                                        ></g><g
+                                            id="SVGRepo_tracerCarrier"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        ></g><g id="SVGRepo_iconCarrier">
+                                            <path
+                                                fill-rule="evenodd"
+                                                clip-rule="evenodd"
+                                                d="M3.46447 3.46447C2 4.92893 2 7.28595 2 12C2 16.714 2 19.0711 3.46447 20.5355C4.92893 22 7.28595 22 12 22C16.714 22 19.0711 22 20.5355 20.5355C22 19.0711 22 16.714 22 12C22 7.28595 22 4.92893 20.5355 3.46447C19.0711 2 16.714 2 12 2C7.28595 2 4.92893 2 3.46447 3.46447ZM12.3975 14.0385L14.859 16.4999C15.1138 16.7548 15.2413 16.8822 15.3834 16.9411C15.573 17.0196 15.7859 17.0196 15.9755 16.9411C16.1176 16.8822 16.2451 16.7548 16.4999 16.4999C16.7548 16.2451 16.8822 16.1176 16.9411 15.9755C17.0196 15.7859 17.0196 15.573 16.9411 15.3834C16.8822 15.2413 16.7548 15.1138 16.4999 14.859L14.0385 12.3975L14.7902 11.6459C15.5597 10.8764 15.9444 10.4916 15.8536 10.0781C15.7628 9.66451 15.2522 9.47641 14.231 9.10019L10.8253 7.84544C8.78816 7.09492 7.7696 6.71966 7.24463 7.24463C6.71966 7.7696 7.09492 8.78816 7.84544 10.8253L9.10019 14.231C9.47641 15.2522 9.66452 15.7628 10.0781 15.8536C10.4916 15.9444 10.8764 15.5597 11.6459 14.7902L12.3975 14.0385Z"
+                                                fill="currentColor"
+                                            ></path>
+                                        </g></svg
+                                    >
+                                </span>
+                            </div>
+                            <div
+                                class="flex w-full flex-row items-center justify-start"
+                            >
+                                <p
+                                    class="w-fit text-wrap text-md font-medium text-slate-700"
+                                >
+                                    {TextAppearanceHelper.toProper(
+                                        module.moduleName ?? '',
+                                    )}
+                                </p>
+                            </div>
+                            <div class="h-px w-full bg-gray-200"></div>
+                            <div
+                                class="w-full flex-col items-start justify-start"
+                            >
+                                <div
+                                    class="flex w-full flex-col items-start justify-center px-5"
+                                >
+                                    <ul
+                                        class="d list-outside list-disc text-slate-500"
+                                    >
+                                        {#each module.child as child}
+                                            <li class="hover:scale-105">
+                                                <a
+                                                    href={child.url}
+                                                    class="text-md font-normal text-slate-500 hover:text-slate-700"
+                                                >
+                                                    {TextAppearanceHelper.toProper(
+                                                        child.moduleName ?? '',
+                                                    )}
+                                                </a>
+                                            </li>
+                                        {/each}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {/each}
+        </div>
+    </div>
 </section>
