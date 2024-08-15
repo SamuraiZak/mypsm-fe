@@ -827,7 +827,7 @@
                                         {!$newOfferMeetingDetailForm.employees[
                                             index
                                         ].status
-                                            ? '[TIDAK LULUS]'
+                                            ? '[DITOLAK]'
                                             : ''}
                                         {$newOfferServiceDetailForm.employees[
                                             index
@@ -1255,8 +1255,11 @@
                                                         >
                                                             {!$newOfferMeetingDetailForm
                                                                 .employees[i]
+                                                                .status ||
+                                                            !$newOfferSupporterResultForm
+                                                                .employees[i]
                                                                 .status
-                                                                ? '[TIDAK LULUS]'
+                                                                ? '[DITOLAK]'
                                                                 : ''}
                                                             {$newOfferServiceDetailForm
                                                                 .employees[i]
@@ -1268,6 +1271,9 @@
                                                     <div slot="arrowup">
                                                         <svg
                                                             class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                                .employees[i]
+                                                                .status &&
+                                                            $newOfferSupporterResultForm
                                                                 .employees[i]
                                                                 .status
                                                                 ? 'text-blue-600'
@@ -1289,6 +1295,9 @@
                                                     <div slot="arrowdown">
                                                         <svg
                                                             class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                                .employees[i]
+                                                                .status &&
+                                                            $newOfferSupporterResultForm
                                                                 .employees[i]
                                                                 .status
                                                                 ? 'text-blue-600'
@@ -1408,8 +1417,11 @@
                                                         >
                                                             {!$newOfferMeetingDetailForm
                                                                 .employees[i]
+                                                                .status ||
+                                                            !$newOfferApproverResultForm
+                                                                .employees[i]
                                                                 .status
-                                                                ? '[TIDAK LULUS]'
+                                                                ? '[DITOLAK]'
                                                                 : ''}
                                                             {$newOfferServiceDetailForm
                                                                 .employees[i]
@@ -1421,6 +1433,9 @@
                                                     <div slot="arrowup">
                                                         <svg
                                                             class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                                .employees[i]
+                                                                .status &&
+                                                            $newOfferApproverResultForm
                                                                 .employees[i]
                                                                 .status
                                                                 ? 'text-blue-600'
@@ -1442,6 +1457,9 @@
                                                     <div slot="arrowdown">
                                                         <svg
                                                             class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                                .employees[i]
+                                                                .status &&
+                                                            $newOfferApproverResultForm
                                                                 .employees[i]
                                                                 .status
                                                                 ? 'text-blue-600'
@@ -1534,10 +1552,14 @@
                                         {#each $newOfferSupporterResultForm.employees as _, i}
                                             <AccordionItem
                                                 classActive={$newOfferMeetingDetailForm
+                                                    .employees[i].status &&
+                                                $newOfferSupporterResultForm
                                                     .employees[i].status
                                                     ? 'bg-blue-100 text-blue-600'
                                                     : 'bg-red-100 text-red-600'}
                                                 classInactive={$newOfferMeetingDetailForm
+                                                    .employees[i].status &&
+                                                $newOfferSupporterResultForm
                                                     .employees[i].status
                                                     ? 'bg-blue-100 text-blue-600'
                                                     : 'bg-red-100 text-red-600'}
@@ -1561,8 +1583,11 @@
                                                     </svg>
                                                     <span class="font-semibold">
                                                         {!$newOfferMeetingDetailForm
+                                                            .employees[i]
+                                                            .status ||
+                                                        !$newOfferSupporterResultForm
                                                             .employees[i].status
-                                                            ? '[TIDAK LULUS]'
+                                                            ? '[DITOLAK]'
                                                             : ''}
                                                         {$newOfferServiceDetailForm
                                                             .employees[i]
@@ -1574,6 +1599,9 @@
                                                 <div slot="arrowup">
                                                     <svg
                                                         class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                            .employees[i]
+                                                            .status &&
+                                                        $newOfferSupporterResultForm
                                                             .employees[i].status
                                                             ? 'text-blue-600'
                                                             : 'text-red-600'}"
@@ -1594,6 +1622,9 @@
                                                 <div slot="arrowdown">
                                                     <svg
                                                         class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                            .employees[i]
+                                                            .status &&
+                                                        $newOfferSupporterResultForm
                                                             .employees[i].status
                                                             ? 'text-blue-600'
                                                             : 'text-red-600'}"
@@ -1663,15 +1694,19 @@
                                         >2. Pelulus</b
                                     >
                                 </div>
-                                {#if data.view.newOfferDetailView.approver.isReadonly && !$newOfferApproverResultIsDraft && data.view.newOfferDetailView.approver.isDraft !== null}
+                                {#if data.view.newOfferDetailView.approver.isReadonly && !$newOfferApproverResultIsDraft && data.view.newOfferDetailView.supporter.isReadonly}
                                     <Accordion>
                                         {#each $newOfferApproverResultForm.employees as _, i}
                                             <AccordionItem
                                                 classActive={$newOfferMeetingDetailForm
+                                                    .employees[i].status &&
+                                                $newOfferApproverResultForm
                                                     .employees[i].status
                                                     ? 'bg-blue-100 text-blue-600'
                                                     : 'bg-red-100 text-red-600'}
                                                 classInactive={$newOfferMeetingDetailForm
+                                                    .employees[i].status &&
+                                                $newOfferApproverResultForm
                                                     .employees[i].status
                                                     ? 'bg-blue-100 text-blue-600'
                                                     : 'bg-red-100 text-red-600'}
@@ -1695,8 +1730,11 @@
                                                     </svg>
                                                     <span class="font-semibold">
                                                         {!$newOfferMeetingDetailForm
+                                                            .employees[i]
+                                                            .status ||
+                                                        !$newOfferApproverResultForm
                                                             .employees[i].status
-                                                            ? '[TIDAK LULUS]'
+                                                            ? '[DITOLAK]'
                                                             : ''}
                                                         {$newOfferServiceDetailForm
                                                             .employees[i]
@@ -1705,6 +1743,52 @@
                                                             .employeeNumber})</span
                                                     >
                                                 </span>
+                                                <div slot="arrowup">
+                                                    <svg
+                                                        class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                            .employees[i]
+                                                            .status &&
+                                                        $newOfferApproverResultForm
+                                                            .employees[i].status
+                                                            ? 'text-blue-600'
+                                                            : 'text-red-600'}"
+                                                        aria-hidden="true"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 10 6"
+                                                    >
+                                                        <path
+                                                            stroke="currentColor"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M9 5 5 1 1 5"
+                                                        />
+                                                    </svg>
+                                                </div>
+                                                <div slot="arrowdown">
+                                                    <svg
+                                                        class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                            .employees[i]
+                                                            .status &&
+                                                        $newOfferApproverResultForm
+                                                            .employees[i].status
+                                                            ? 'text-blue-600'
+                                                            : 'text-red-600'}"
+                                                        aria-hidden="true"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 10 6"
+                                                    >
+                                                        <path
+                                                            stroke="currentColor"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="m1 1 4 4 4-4"
+                                                        />
+                                                    </svg>
+                                                </div>
                                                 {#if !$newOfferMeetingDetailForm.employees[i].status}
                                                     <StepperFailStatement />
                                                 {:else}
