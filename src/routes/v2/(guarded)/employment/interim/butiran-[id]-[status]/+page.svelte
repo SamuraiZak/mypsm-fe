@@ -608,7 +608,8 @@
                         icon="save"
                         form="directorForm"
                         onClick={() => ($directorForm.isDraft = true)}
-                    /><TextIconButton
+                    />
+                    <TextIconButton
                                 label="Hantar"
                                 icon="check"
                                 form="directorForm"
