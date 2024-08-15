@@ -46,9 +46,7 @@
             filter: true,
         },
         controls: {
-            add:
-                data.props.layoutData.accountDetails.currentRoleCode ==
-                RoleConstant.kakitangan.code,
+            add: false,
         },
     };
 
@@ -62,20 +60,47 @@
 </script>
 
 <section class="flex w-full flex-col items-center justify-center">
-    <ContentHeader title="Senarai Pertukaran Atas Permohonan Sendiri">
-        <TextIconButton
-            icon="previous"
-            type="draft"
-            label="Pemangkuan Baru"
-        />
-    </ContentHeader>
+    <div class="flex h-20 w-full flex-row items-center justify-between px-10">
+        <!-- leading -->
+        <div class="flex w-full flex-col items-start justify-center gap-0">
+            <p
+                class="w-full text-wrap text-lg font-medium leading-tight text-slate-700"
+            >
+                Senarai Permohonan
+            </p>
+            <p
+                class="w-full text-wrap text-base font-normal leading-tight text-slate-500"
+            >
+                Pertukaran Atas Permohonan Sendiri
+            </p>
+        </div>
+        <!-- trailing -->
+        <div class="flex w-fit flex-row items-center justify-end gap-1">
+            <TextIconButton
+                icon="previous"
+                label="Kembali"
+                type="draft"
+                onClick={() => {
+                    goto('/v2/employment/transfer');
+                }}
+            ></TextIconButton>
+            <TextIconButton
+                icon="add"
+                label="Permohonan Baharu"
+                type="primary"
+                onClick={() => {
+                    goto('/v2/employment/transfer/self/new');
+                }}
+            ></TextIconButton>
+        </div>
+    </div>
 </section>
 
 <section
     class="flex h-full w-full flex-col items-start justify-start overflow-y-hidden"
 >
     <div
-        class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-4"
+        class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto px-10"
     >
         <DataTable
             title=""
@@ -85,7 +110,7 @@
                 // showDetails();
             }}
             addActions={() => {
-                addApplication();
+                // addApplication();
             }}
         >
             <FilterWrapper slot="filter">

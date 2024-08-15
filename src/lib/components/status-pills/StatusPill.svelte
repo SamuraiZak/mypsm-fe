@@ -15,7 +15,7 @@
             ? 'bg-slate-200 text-slate-700'
             : status.toLowerCase() == 'selesai'
               ? 'bg-lime-200 text-lime-700'
-              : 'bg-red-200 text-red-700'} px-2"
+              : 'bg-red-200 text-red-700'} px-4"
 >
-    <p class="text-md font-medium">{TextAppearanceHelper.toProper(status)}</p>
+    <p class="text-md font-medium leading-tight">{TextAppearanceHelper.toProper(status)}</p>
 </div>
