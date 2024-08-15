@@ -31,7 +31,7 @@
     {form}
     {disabled}
     on:click={onClick}
-    class="flex h-7 max-h-7 min-h-7 flex-row items-center justify-center {label !==
+    class="flex h-7 max-h-7 min-h-7 min-w-fit flex-row items-center justify-center {label !==
     ''
         ? 'gap-1'
         : 'gap-0'} rounded px-2 {type === 'primary'
@@ -39,7 +39,7 @@
         : type === 'danger'
           ? 'bg-ios-systemColors-systemRed-light hover:bg-ios-systemColors-systemRed-dark'
           : type === 'draft'
-            ? 'bg-slate-200 hover:bg-slate-300 border border-slate-400'
+            ? 'bg-slate-200 hover:bg-slate-100 border border-slate-300'
             : 'border bg-bgr-primary hover:bg-bgr-secondary'}"
 >
     <!-- icon -->
@@ -87,14 +87,14 @@
     </div>
 
     <!-- label -->
-    <div class="flex h-full flex-row items-center justify-center">
+    <div class="flex h-full flex-row items-center justify-center min-w-fit">
         <p
-            class="text-base font-medium leading-loose {type === 'primary'
+            class="text-base font-medium leading-loose min-w-fit text-nowrap {type === 'primary'
                 ? ' text-ios-basic-white'
                 : type === 'danger'
                   ? ' text-ios-basic-white'
                   : type === 'draft'
-                    ? 'text-slate-700'
+                    ? 'text-slate-600'
                     : ' text-ios-labelColors-secondaryLabel-light'}"
         >
             {label}

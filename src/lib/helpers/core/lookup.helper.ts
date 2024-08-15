@@ -5,14 +5,22 @@
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { EmployeeLookupItemDTO } from '$lib/dto/core/employee/employee.dto';
 import type { LookupClinic, LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
+import type { UserRoleDTO } from '$lib/dto/core/user-role/user-role.dto';
 import { TextAppearanceHelper } from './text-appearance.helper';
 
 export class LookupHelper {
-
     static toDropdown(lookupList: LookupDTO[]) {
         const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
             value: lookup.code,
             name: lookup.description,
+        }));
+
+        return dropdownList;
+    }
+    static roleToDropdown(lookupList: UserRoleDTO[]) {
+        const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
+            value: lookup.code,
+            name: TextAppearanceHelper.toProper(lookup.description),
         }));
 
         return dropdownList;
@@ -54,7 +62,7 @@ export class LookupHelper {
     static toDropdownGradeId(lookupList: LookupDTO[]) {
         const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
             value: Number(lookup.id),
-            name: lookup.code+ " - "+lookup.description,
+            name: lookup.code + ' - ' + lookup.description,
         }));
 
         return dropdownList;
@@ -81,7 +89,7 @@ export class LookupHelper {
     static toDropdownCodeAndDesc(lookupList: LookupDTO[]) {
         const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
             value: Number(lookup.id),
-            name: lookup.code+ " - "+lookup.description,
+            name: lookup.code + ' - ' + lookup.description,
         }));
 
         return dropdownList;
@@ -165,11 +173,10 @@ export class LookupHelper {
 
     static toDropdownValueIsCodeAndDesc(lookupList: LookupDTO[]) {
         const dropdownList: DropdownDTO[] = lookupList.map((lookup) => ({
-            value: lookup.code+ " - "+lookup.description,
-            name: lookup.code+ " - "+lookup.description,
+            value: lookup.code + ' - ' + lookup.description,
+            name: lookup.code + ' - ' + lookup.description,
         }));
 
         return dropdownList;
     }
-
 }
