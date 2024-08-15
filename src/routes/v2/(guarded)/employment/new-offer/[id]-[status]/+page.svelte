@@ -42,7 +42,6 @@
         _sentenceSchema,
     } from '$lib/schemas/mypsm/integrity/proceeding-scheme';
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
-    import { certifyOptions } from '$lib/constants/core/radio-option-constants';
     import { zod } from 'sveltekit-superforms/adapters';
     import {
         _newOfferApproverResultForm,
@@ -54,7 +53,6 @@
     } from './+page';
     import { _meetingResultSchema } from '$lib/schemas/mypsm/employment/new-offer/schema';
     import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
-    import { RetirementBenefitDropdownConstant } from '$lib/constants/dropdown/retirement-benefit.constant';
     import { kgtMonthValueIsStringLookup } from '$lib/constants/core/dropdown.constant';
     export let data: PageData;
 
@@ -144,20 +142,10 @@
                 (employee) => employee.status,
             ),
         );
-        // data.view.newOfferDetailView.supporter.results.forEach(
-        //     (data, index) => {
-        //         if (data.status === null || data.remarks === null) {
-        //             allNewOfferSupporterStatusAndRemarksNotNull = false;
-        //         }
-        //     },
-        // );
 
         if (allNewOfferSupporterStatusAndRemarksNotNull) {
             isReadOnlyNewOfferSupporterResult.set(true);
 
-            // data.view.newOfferDetailView.supporter.status
-            //     ? newOfferSupporterIsApproved.set(true)
-            //     : newOfferSupporterIsApproved.set(false);
         } else {
             isReadOnlyNewOfferSupporterResult.set(false);
         }
@@ -174,18 +162,10 @@
             newOfferLetterDetailIsDraft.set(false);
         }
 
-        // data.view.newOfferDetailView.approver.results.forEach((data, index) => {
-        //     if (data.status === null || data.remarks === null) {
-        //         allNewOfferApproverStatusAndRemarksNotNull = false;
-        //     }
-        // });
 
         if (allNewOfferApproverStatusAndRemarksNotNull) {
             isReadOnlyNewOfferApprovalResult.set(true);
 
-            // data.view.newOfferDetailView.approver.status
-            //     ? newOfferApproverIsApproved.set(true)
-            //     : newOfferApproverIsApproved.set(false);
         } else {
             isReadOnlyNewOfferApprovalResult.set(false);
         }
