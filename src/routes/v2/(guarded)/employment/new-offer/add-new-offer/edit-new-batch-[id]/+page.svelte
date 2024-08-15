@@ -213,7 +213,7 @@
 
 <Toaster />
 
-<Modal bind:open={openModal} size="xs" autoclose={false} class="w-fit">
+<Modal bind:open={openModal} size="xl" autoclose={false}>
     <div class="text-center">
         <form
             id="newOfferMeetingFormId"
