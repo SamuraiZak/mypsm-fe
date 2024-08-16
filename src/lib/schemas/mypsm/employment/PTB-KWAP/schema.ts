@@ -111,6 +111,7 @@ export const _PTBPensionInfoSchema = z.object({
     referenceDate: stringToMinDate,
     pensionNumber: shortTextSchema.optional(),
     KWAPEmailDate: stringToMinDate,
+    isDraft: booleanSchema,
 
 });
 //======================================================
@@ -123,6 +124,7 @@ export const _assignRolesRelatedSchema = z.object({
         id: numberSchema,
         supporterName: z.string(),
         approverName:  z.string(),
+        isDraft: booleanSchema,
     
 })
 
@@ -150,7 +152,7 @@ export const _supporterInfoSchema = z.object({
     id: numberSchema,
     status: booleanSchema,
     remark: shortTextSchema,
-    
+    isDraft: booleanSchema,
 });
 
 //======================================================
@@ -162,4 +164,5 @@ export const _approveInfoSchema = z.object({
     id: numberSchema,
     status: booleanSchema,
     remark: shortTextSchema,
+    isDraft: booleanSchema,
 });

@@ -63,6 +63,7 @@ export interface PensionDetailDTO {
     referenceDate: string;
     pensionNumber: string;
     KWAPEmailDate: string;
+    isDraft: boolean;
 }
 
 export interface SupportDetailDTO {
@@ -70,6 +71,7 @@ export interface SupportDetailDTO {
     id: number;
     status: boolean;
     remark: string;
+    isDraft: boolean;
  
 }
 
@@ -77,6 +79,7 @@ export interface ApproveDetailDTO {
     id: number;
     status: boolean;
     remark: string;
+    isDraft: boolean;
 }
 
 // roles Related
@@ -84,6 +87,7 @@ export interface AssignRolesRelatedDTO{
     id:            number;
     supporterName: string;
     approverName:  string;
+    isDraft: boolean;
 }
 export interface RolesRelatedDTO {
     supporterName:   string;

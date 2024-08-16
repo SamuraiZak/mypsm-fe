@@ -20,6 +20,7 @@
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
+    import StatusPill from '$lib/components/status-pills/StatusPill.svelte';
 
     import {
         getErrorToast,
@@ -199,7 +200,7 @@
                                     '/v2/employment/ptb/butiran/1-' +
                                         data.currentApplicationId +
                                         '-' +
-                                        tempPensionId,
+                                        tempPensionId + '-' + 'baharu'
                                 ),
                             1000,
                         );
@@ -295,7 +296,9 @@
 
 <section class="flex w-full flex-col items-start justify-start">
     <ContentHeader title="Maklumat Permohonan Pemberian Taraf Berpencen"
-        ><TextIconButton
+        >
+        <StatusPill status={data.params.status} slot="status" />
+        <TextIconButton
             type="close"
             label="Kembali"
             onClick={() => {
@@ -633,6 +636,13 @@
                         icon="check"
                         form="PTBPensionDetail"
                     ></TextIconButton>
+                    <TextIconButton
+                    type="neutral"
+                    label="Simpan"
+                    icon="save"
+                    form="PTBPensionInfoForm"
+                    onClick={() => $PTBPensionInfoForm.isDraft = true}
+                />
                 {/if}
             </StepperContentHeader>
             <StepperContentBody>
@@ -699,7 +709,19 @@
                     title="Masukkan Maklumat Peranan - Peranan Berkaitan"
                 >
                 {#if data.currentRoleCode == urusetia}
-                    
+                <!-- <TextIconButton
+                type="neutral"
+                label="Simpan"
+                icon="save"
+                form="assignRolesRelatedInfoForm"
+                onClick={() => $assignRolesRelatedInfoForm.isDraft = true}
+            />
+            <TextIconButton
+                            label="Hantar"
+                            icon="check"
+                            form="assignRolesRelatedInfoForm"
+                            onClick={() => ($assignRolesRelatedInfoForm.isDraft = false)}
+                        /> -->
                     
                     <TextIconButton
                     type="primary"
@@ -853,27 +875,33 @@
             </StepperContent>
         {/if}
 
-        {#if data.pensionDetail !== null && data.assignedRoles == true }
+        {#if data.pensionDetail !== null && data.assignedRoles == kakitangan }
         
             <StepperContent>
                 <StepperContentHeader
                     title="Sila Tetapkan Keputusan Anda - Penyokong"
                 >
               
-                    <TextIconButton
-                        type="primary"
-                        label="Simpan"
-                        form="supporterDetail"
-                    >
-                        <SvgCheck></SvgCheck>
-                    </TextIconButton>
-                    <TextIconButton
+                <TextIconButton
+                type="neutral"
+                    label="Simpan"
+                    icon="save"
+                form="supporterInfoForm"
+                onClick={() => ($supporterInfoForm.isDraft = true)}
+            />    
+            <TextIconButton
+            label="Hantar"
+            icon="check"
+            form="supporterInfoForm"
+            onClick={() => ($supporterInfoForm.isDraft = false)}
+        />
+                     <!-- <TextIconButton
                     type="primary"
                     label="Hantar"
                     form="supporterDetail"
                 >
                     <SvgCheck></SvgCheck>
-                </TextIconButton>
+                </TextIconButton> -->
                   
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -929,20 +957,33 @@
             </StepperContent>
             {/if}
       
-            {#if data.pensionDetail !== null && data.assignedRoles == true }
+            {#if data.pensionDetail !== null && data.assignedRoles == kakitangan }
         
             <StepperContent>
                 <StepperContentHeader
                     title="Sila Tetapkan Keputusan Anda - Pelulus "
                 >
+                <TextIconButton
+                type="neutral"
+                    label="Simpan"
+                    icon="save"
+                form="approverInfoForm"
+                onClick={() => ($approverInfoForm.isDraft = true)}
+            />   
+            <TextIconButton
+                            label="Hantar"
+                            icon="check"
+                            form="approverInfoForm"
+                            onClick={() => ($approverInfoForm.isDraft = false)}
+                        /> 
                 
                    
-                    <TextIconButton
+                    <!-- <TextIconButton
                         label="Hantar"
                         type="primary"
                         icon="check"
                         form="approverDetail"
-                    ></TextIconButton>
+                    ></TextIconButton> -->
                    
                 </StepperContentHeader>
                 <StepperContentBody>

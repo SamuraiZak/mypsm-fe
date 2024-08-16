@@ -36,9 +36,7 @@
     let submitSupporter: boolean = false;
     let submitApprover: boolean = false;
 
-    if (data.secretaryDetail?.employeeId !== '') {
-        submitSecretary = true;
-    }
+    
     const {
         form: secretaryApprovalForm,
         errors: secretaryApprovalError,
@@ -55,7 +53,9 @@
             $secretaryApprovalForm.interimId = data.interimId.interimId;
             const res = await _submitSecretaryApproval($secretaryApprovalForm);
             if (res?.response.status == 'success') {
-                submitSecretary = true;
+                if($secretaryApprovalForm.isDraft == true){
+                    submitSecretary = true;
+                }
             }
         },
     });
@@ -127,6 +127,11 @@
             });
         },
     });
+    if (data.secretaryDetail?.employeeId !== '' || ($secretaryApprovalForm.isDraft !== true && $secretaryApprovalForm.isDraft !== undefined)) {
+        console.log($secretaryApprovalForm.isDraft)
+        submitSecretary = true;
+    }
+
     if ($approverApprovalForm?.remark !== '' && $approverApprovalForm?.remark !== null) {
         submitApprover = true;
     }
