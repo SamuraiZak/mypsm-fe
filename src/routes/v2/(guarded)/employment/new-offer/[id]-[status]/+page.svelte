@@ -343,6 +343,17 @@
         validators: zod(_letterDetailSchema),
         taintedMessage: false,
         onSubmit() {
+            $newOfferLetterDetailForm.employees =
+                $newOfferLetterDetailForm.employees.filter((val, index) => {
+                    if (!$newOfferMeetingDetailForm.employees[index].status) {
+                        return (
+                            val.employeeNumber !==
+                            $newOfferLetterDetailForm.employees[index]
+                                .employeeNumber
+                        );
+                    }
+                    return true; // Keep the element if the condition is not met
+                });
             _newOfferLetterDetailForm(
                 Number(data.params.id),
                 $newOfferLetterDetailForm,
