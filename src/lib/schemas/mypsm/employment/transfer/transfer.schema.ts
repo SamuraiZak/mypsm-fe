@@ -38,11 +38,11 @@ export type DocumentType = z.infer<typeof DocumentSchema>;
 // transfer detail
 export const TransferApplicationTransferDetailSchema = z.object({
     applicationId: z.number().nullish(),
-    category: z.string(),
+    category: z.array(z.string()),
     transferType: z.string(),
     employeeId: z.number().nullish(),
     appliedLocation: z.string(),
-    reason: z.string(),
+    reason: z.array(z.string()),
     remark: z.string().nullish(),
     workPlaceDistance: z.number().nullish(),
     employerName: z.string().nullish(),
@@ -68,6 +68,7 @@ export type TransferApplicationConfirmationType = z.infer<
 export const TransferApplicationAssignDirectorSchema = z.object({
     applicationId: z.number().nullish(),
     directorName: z.string().nullish(),
+    roleCode: z.string().nullish(),
     identityDocumentNumber: z.string(),
     isDraft: z.boolean().nullish(),
 });
@@ -83,7 +84,7 @@ export const EthicalIssueSchema = z.object({
 export type EthicalIssueType = z.infer<typeof EthicalIssueSchema>;
 
 export const TransferApplicationDirectorSupportSchema = z.object({
-    applicationId: z.number(),
+    applicationId: z.number().nullish(),
     feedback: z.string(),
     remark: z.string(),
     ethicalIssues: z.array(EthicalIssueSchema),
@@ -98,6 +99,7 @@ export type TransferApplicationDirectorSupportType = z.infer<
 
 // meeting result schema
 export const TransferApplicationMeetingResultSchema = z.object({
+    applicationId: z.number().nullish(),
     meetingDate: z.string(),
     meetingName: z.string(),
     status: z.boolean().nullish(),
@@ -109,6 +111,7 @@ export type TransferApplicationMeetingResultType = z.infer<
 
 // acceptance letter detail
 export const TransferApplicationAcceptanceLetterDetailSchema = z.object({
+    applicationId: z.number().nullish(),
     referenceNumber: z.string(),
     referenceDate: z.string(),
     subject: z.string(),
@@ -124,6 +127,7 @@ export type TransferApplicationAcceptanceLetterDetailType = z.infer<
 
 // posptoneDetails
 export const TransferApplicationPostponeDetailSchema = z.object({
+    applicationId: z.number().nullish(),
     status: z.boolean(),
     remark: z.string(),
     documents: z.array(DocumentSchema),
@@ -135,7 +139,9 @@ export type TransferApplicationPostponeDetailType = z.infer<
 
 // assign postpone approver
 export const TransferApplicationAssignPostponeApproverSchema = z.object({
+    applicationId: z.number().nullish(),
     directorName: z.string().nullish(),
+    roleCode: z.string().nullish(),
     identityDocumentNumber: z.string(),
 });
 export type TransferApplicationAssignPostponeApproverType = z.infer<
@@ -144,6 +150,7 @@ export type TransferApplicationAssignPostponeApproverType = z.infer<
 
 // postpone letter detail
 export const TransferApplicationPostponeLetterDetailSchema = z.object({
+    applicationId: z.number().nullish(),
     referenceNumber: z.string(),
     referenceDate: z.string(),
     subject: z.string(),
@@ -172,8 +179,10 @@ export type TransferApplicationTransferDocumentType = z.infer<
 export const TransferApplicationEndorserDetailSchema = z.object({
     applicationId: z.number().nullish(),
     supporterName: z.string().nullish(),
+    supporterRoleCode: z.string().nullish(),
     supporterIdentityDocumentNumber: z.string(),
     approverName: z.string().nullish(),
+    approverRoleCode: z.string().nullish(),
     approverIdentityDocumentNumber: z.string(),
     isDraft: z.boolean(),
 });

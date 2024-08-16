@@ -1,4 +1,5 @@
 import type { DocumentDTO } from '$lib/dto/core/document/document.dto';
+import type { TransferApplicationEmployeeDetailType, TransferApplicationServiceDetailType, TransferApplicationTransferDetailType } from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
 
 // list filter
 export interface TransferApplicationListFilterDTO {
@@ -80,4 +81,12 @@ export interface TransferApplicationMeetingResultDTO {
     meetingName: string;
     status: boolean;
     remark: string;
+}
+
+export interface TransferApplicationDetailsDTO{
+    applicationId: number;
+    employeeDetails: TransferApplicationEmployeeDetailType;
+    serviceDetails: TransferApplicationServiceDetailType;
+    transferDetails: TransferApplicationTransferDetailType;
+    
 }

@@ -43,6 +43,15 @@
         type EthicalIssueType,
         type TransferApplicationAcceptanceLetterDetailType,
     } from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
+    import { _applicationConfirmationSubmit, _applicationDetailSubmit } from './+page';
+    import MultiChoiceInput from '$lib/components/inputs/multiple-choice-input/MultiChoiceInput.svelte';
+    import { RoleConstant } from '$lib/constants/core/role.constant';
+    import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+    import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
+    import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+    import type { EmployeeLookupItemDTO } from '$lib/dto/core/employee/employee.dto';
+    import { LookupHelper } from '$lib/helpers/core/lookup.helper';
+    import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 
     export let data: PageData;
 
@@ -80,8 +89,13 @@
     } = superForm(data.forms.transferDetailForm, {
         id: 'transferDetailForm',
         SPA: true,
+        resetForm: true,
         validators: zodClient(TransferApplicationTransferDetailSchema),
-        onSubmit(input) {},
+        onSubmit(input) {
+            $transferDetailForm.applicationId = null;
+            $transferDetailForm.transferType = 'Permohonan Sendiri';
+            _applicationDetailSubmit($transferDetailForm);
+        },
     });
 
     // applicationConfirmation
@@ -93,7 +107,9 @@
         id: 'applicationConfirmationForm',
         SPA: true,
         validators: zodClient(TransferApplicationConfirmationSchema),
-        onSubmit(input) {},
+        onSubmit(input) {
+            _applicationConfirmationSubmit($applicationConfirmationForm)
+        },
     });
 
     // assignDirector
@@ -254,6 +270,64 @@
         $directorSupportForm.ethicalIssues.splice(index, 1);
         $directorSupportForm = $directorSupportForm;
     }
+
+    async function filterDirectorDropdown(roleCode: string) {
+        let directorOption: DropdownDTO[] = [];
+
+        const filter = {
+            program: 'SEMUA',
+            employeeNumber: null,
+            name: null,
+            identityCard: null,
+            grade: null,
+            role: roleCode,
+        };
+
+        const request: CommonListRequestDTO = {
+            pageNum: 1,
+            pageSize: 5,
+            orderBy: 'name',
+            orderType: 1,
+            filter: filter,
+        };
+
+        const directorListResponse: CommonResponseDTO =
+            await LookupServices.getEndorserDropdown(request);
+
+        const directorList: EmployeeLookupItemDTO[] = directorListResponse.data
+            ?.dataList as EmployeeLookupItemDTO[];
+
+        directorOption = LookupHelper.employeeToDropdown(directorList);
+
+        data.lookup.directorDrodpwon = directorOption;
+    }
+
+    async function filterEndorserDropdown(roleCode: string) {
+        const filter = {
+            program: 'SEMUA',
+            employeeNumber: null,
+            name: null,
+            identityCard: null,
+            grade: null,
+            role: roleCode,
+        };
+
+        const request: CommonListRequestDTO = {
+            pageNum: 1,
+            pageSize: 5,
+            orderBy: 'name',
+            orderType: 1,
+            filter: filter,
+        };
+
+        const response: CommonResponseDTO =
+            await LookupServices.getEndorserDropdown(request);
+
+        const list: EmployeeLookupItemDTO[] = response.data
+            ?.dataList as EmployeeLookupItemDTO[];
+
+        return LookupHelper.employeeToDropdown(list);
+    }
 </script>
 
 <section class="flex w-full flex-col items-center justify-center">
@@ -297,7 +371,7 @@
                                 id="employeeDetailForm"
                                 method="POST"
                                 use:employeeDetailEnhance
-                                class="flex w-full flex-col items-start justify-start gap-1"
+                                class="flex w-full flex-col items-start justify-start gap-1 p-5"
                             >
                                 <CustomTextField
                                     disabled
@@ -385,7 +459,7 @@
                                 id="serviceDetailForm"
                                 method="POST"
                                 use:serviceDetailEnhance
-                                class="flex w-full flex-col items-start justify-start gap-1"
+                                class="flex w-full flex-col items-start justify-start gap-1 p-5"
                             >
                                 <CustomTextField
                                     disabled
@@ -455,7 +529,11 @@
         <!-- ======================================================================= -->
         <StepperContent>
             <StepperContentHeader title="Butiran Permohonan">
-                <TextIconButton label="Simpan" type="draft" icon="save"
+                <TextIconButton
+                    label="Simpan"
+                    type="draft"
+                    icon="save"
+                    form="transferDetailForm"
                 ></TextIconButton>
             </StepperContentHeader>
             <StepperContentBody>
@@ -514,28 +592,34 @@
                                 id="transferDetailForm"
                                 method="POST"
                                 use:transferDetailEnhance
-                                class="flex w-full flex-col items-start justify-start gap-1"
+                                class="flex w-full flex-col items-start justify-start gap-1 px-5"
                             >
-                                <SingleChoiceInput
+                                <!-- <SingleChoiceInput
                                     id="category"
                                     label="Jenis Pertukaran"
                                     choices={data.lookup.transferCategoryOption}
                                     bind:val={$transferDetailForm.category}
                                     bind:errors={$transferDetailErrors.category}
-                                ></SingleChoiceInput>
-                                <CustomTextField
+                                ></SingleChoiceInput> -->
+                                <MultiChoiceInput
+                                    id="category"
+                                    label="Jenis Pertukaran"
+                                    choices={data.lookup.transferCategoryOption}
+                                    bind:val={$transferDetailForm.category}
+                                ></MultiChoiceInput>
+                                <CustomSelectField
                                     id="appliedLocation"
-                                    label="Penempatan Bertukar"
+                                    label={'Pilihan Penempatan'}
                                     bind:val={$transferDetailForm.appliedLocation}
                                     bind:errors={$transferDetailErrors.appliedLocation}
-                                ></CustomTextField>
-                                <SingleChoiceInput
+                                    options={data.lookup.placementDropdown}
+                                ></CustomSelectField>
+                                <MultiChoiceInput
                                     id="reason"
                                     label="Alasan Pertukaran"
                                     choices={data.lookup.transferReasonOption}
                                     bind:val={$transferDetailForm.reason}
-                                    bind:errors={$transferDetailErrors.reason}
-                                ></SingleChoiceInput>
+                                ></MultiChoiceInput>
                                 <CustomTextField
                                     id="remark"
                                     label="Sila Berikan Penjelasan Sekiranya Anda Memilih Lain-lain Sebagai Alasan Pertukaran"
@@ -551,15 +635,15 @@
 
                                 <CustomTextField
                                     id="workPlaceDistance"
+                                    label="Jarak Tempat Kerja (KM) Pasangan Dari Penempatan Anda Sekarang"
                                     type="number"
-                                    label="Jarak Tempat Kerja (KM)"
-                                    bind:val={$transferDetailForm.remark}
-                                    bind:errors={$transferDetailErrors.remark}
+                                    bind:val={$transferDetailForm.workPlaceDistance}
+                                    bind:errors={$transferDetailErrors.workPlaceDistance}
                                 ></CustomTextField>
                                 <CustomTextField
                                     id="employerName"
                                     type="text"
-                                    label="Nama Majikan"
+                                    label="Nama Majikan Pasangan"
                                     bind:val={$transferDetailForm.employerName}
                                     bind:errors={$transferDetailErrors.employerName}
                                 ></CustomTextField>
@@ -587,7 +671,11 @@
         <!-- ======================================================================= -->
         <StepperContent>
             <StepperContentHeader title="Perakuan Pemohon">
-                <TextIconButton label="Hantar" type="primary" icon="check"
+                <TextIconButton
+                    label="Hantar"
+                    type="primary"
+                    icon="check"
+                    form="applicationConfirmationForm"
                 ></TextIconButton>
             </StepperContentHeader>
             <StepperContentBody>
@@ -605,7 +693,7 @@
                             id="applicationConfirmationForm"
                             method="POST"
                             use:applicationConfirmationEnhance
-                            class="flex w-full flex-col items-start justify-start gap-4 p-2"
+                            class="flex w-full flex-col items-start justify-start gap-4 p-5"
                         >
                             <div
                                 class="flex w-full flex-row items-start justify-start gap-2"
@@ -676,14 +764,19 @@
                             id="assignDirectorForm"
                             method="POST"
                             use:assignDirectorEnhance
-                            class="flex w-full flex-col items-center justify-start gap-2"
+                            class="flex w-full flex-col items-center justify-start gap-2 p-5"
                         >
                             <CustomSelectField
-                                id="identityDocumentNumber"
+                                id="roleCode"
                                 label={'Sila pilih peranan peraku permohonan ini'}
-                                bind:val={$assignDirectorForm.identityDocumentNumber}
-                                bind:errors={$assignDirectorErrors.identityDocumentNumber}
+                                bind:val={$assignDirectorForm.roleCode}
+                                bind:errors={$assignDirectorErrors.roleCode}
                                 options={data.lookup.roleDropdown}
+                                onValueChange={() => {
+                                    filterDirectorDropdown(
+                                        $assignDirectorForm.roleCode ?? '',
+                                    );
+                                }}
                             ></CustomSelectField>
                             <CustomSelectField
                                 id="identityDocumentNumber"
@@ -727,7 +820,7 @@
                                 id="directorSupportForm"
                                 method="POST"
                                 use:directorSupportEnhance
-                                class="flex w-full flex-col items-start justify-start gap-1"
+                                class="flex w-full flex-col items-start justify-start gap-1 p-5"
                             >
                                 <p class="text-base font-medium text-slate-700">
                                     Saya mengesahkan bahawa maklumat yang
@@ -891,7 +984,7 @@
                                 id="meetingResultForm"
                                 method="POST"
                                 use:meetingResultEnhance
-                                class="flex w-full flex-col items-start justify-start gap-1"
+                                class="flex w-full flex-col items-start justify-start gap-1 p-5"
                             >
                                 <CustomTextField
                                     id="meetingName"
@@ -978,7 +1071,7 @@
                                 id="postponeDetailForm"
                                 method="POST"
                                 use:postponeDetailEnhance
-                                class="flex w-full flex-col items-start justify-start gap-1"
+                                class="flex w-full flex-col items-start justify-start gap-1 p-5"
                             >
                                 <CustomRadioBoolean
                                     disabled={false}
@@ -1038,14 +1131,29 @@
                                 id="assignPostponeApproverForm"
                                 method="POST"
                                 use:assignPostponeApproverEnhance
-                                class="flex w-full flex-col items-center justify-start gap-2"
+                                class="flex w-full flex-col items-center justify-start gap-2 p-5"
                             >
+                                <CustomSelectField
+                                    id="roleCode"
+                                    label={'Sila pilih peranan yang layak menyokong permohonan penangguhan ini'}
+                                    bind:val={$assignPostponeApproverForm.roleCode}
+                                    bind:errors={$assignPostponeApproverErrors.roleCode}
+                                    options={data.lookup.roleDropdown}
+                                    onValueChange={async () => {
+                                        data.lookup.postponeApproverDropdown =
+                                            await filterEndorserDropdown(
+                                                $assignPostponeApproverForm.roleCode ??
+                                                    '',
+                                            );
+                                    }}
+                                ></CustomSelectField>
                                 <CustomSelectField
                                     id="identityDocumentNumber"
                                     label={'Sila pilih penyokong untuk memberi sokongan bagi permohonan penangguhan pertukaran ini'}
                                     bind:val={$assignPostponeApproverForm.identityDocumentNumber}
                                     bind:errors={$assignPostponeApproverErrors.identityDocumentNumber}
-                                    options={data.lookup.directorDrodpwon}
+                                    options={data.lookup
+                                        .postponeApproverDropdown}
                                 ></CustomSelectField>
                                 <CustomTextField
                                     disabled
@@ -1091,7 +1199,7 @@
                                 id="postponeApprovalForm"
                                 method="POST"
                                 use:postponeApprovalEnhance
-                                class="flex w-full flex-col items-start justify-start gap-1"
+                                class="flex w-full flex-col items-start justify-start gap-1 p-5"
                             >
                                 <CustomRadioBoolean
                                     disabled={false}
@@ -1152,7 +1260,7 @@
                                 id="postponeLetterDetailForm"
                                 method="POST"
                                 use:postponeLetterDetailEnhance
-                                class="flex w-full flex-col items-center justify-start gap-2"
+                                class="flex w-full flex-col items-center justify-start gap-2 p-5"
                             ></form>
                         </div>
                         <!-- form wrapper ends here -->
@@ -1183,7 +1291,7 @@
                                 id="transferDocumentForm"
                                 method="POST"
                                 use:transferDocumentEnhance
-                                class="flex w-full flex-col items-start justify-start gap-1"
+                                class="flex w-full flex-col items-start justify-start gap-1 p-5"
                             >
                                 <DocumentInput
                                     bind:documents={$transferDocumentForm.documents}
@@ -1219,21 +1327,52 @@
                                 id="endorserDetailForm"
                                 method="POST"
                                 use:endorserDetailEnhance
-                                class="flex w-full flex-col items-center justify-start gap-2"
+                                class="flex w-full flex-col items-center justify-start gap-2 p-5"
                             >
+                                <!-- supporter -->
                                 <CustomSelectField
-                                    id="supporterIdentityDocumentNumber"
-                                    label={'Sila Pilih Penyokong Untuk Menyokong Pertukaran Ini'}
-                                    bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
-                                    bind:errors={$endorserDetailErrors.supporterIdentityDocumentNumber}
-                                    options={data.lookup.directorDrodpwon}
+                                    id="roleCode"
+                                    label={'Sila pilih peranan yang layak menyokong pertukaran ini'}
+                                    bind:val={$endorserDetailForm.supporterRoleCode}
+                                    bind:errors={$endorserDetailErrors.supporterRoleCode}
+                                    options={data.lookup.roleDropdown}
+                                    onValueChange={async () => {
+                                        data.lookup.supporterDropdown =
+                                            await filterEndorserDropdown(
+                                                $endorserDetailForm.supporterRoleCode ??
+                                                    '',
+                                            );
+                                    }}
                                 ></CustomSelectField>
                                 <CustomSelectField
                                     id="identityDocumentNumber"
-                                    label={'Sila Pilih Pelulus Untuk Meluluskan Pertukaran Ini'}
+                                    label={'Sila pilih nama penyokong untuk memberi sokongan bagi pertukaran ini'}
+                                    bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
+                                    bind:errors={$endorserDetailErrors.supporterIdentityDocumentNumber}
+                                    options={data.lookup.supporterDropdown}
+                                ></CustomSelectField>
+
+                                <!-- approver -->
+                                <CustomSelectField
+                                    id="roleCode"
+                                    label={'Sila pilih peranan yang layak meluluskan pertukaran ini'}
+                                    bind:val={$endorserDetailForm.approverRoleCode}
+                                    bind:errors={$endorserDetailErrors.approverRoleCode}
+                                    options={data.lookup.roleDropdown}
+                                    onValueChange={async () => {
+                                        data.lookup.approverDropdown =
+                                            await filterEndorserDropdown(
+                                                $endorserDetailForm.approverRoleCode ??
+                                                    '',
+                                            );
+                                    }}
+                                ></CustomSelectField>
+                                <CustomSelectField
+                                    id="identityDocumentNumber"
+                                    label={'Sila pilih nama pelulus untuk memberi kelulusan bagi pertukaran ini'}
                                     bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
                                     bind:errors={$endorserDetailErrors.approverIdentityDocumentNumber}
-                                    options={data.lookup.directorDrodpwon}
+                                    options={data.lookup.approverDropdown}
                                 ></CustomSelectField>
                                 <CustomTextField
                                     disabled
@@ -1293,7 +1432,7 @@
                                 id="supporterFeedbackForm"
                                 method="POST"
                                 use:supporterFeedbackEnhance
-                                class="flex w-full flex-col items-start justify-start gap-1"
+                                class="flex w-full flex-col items-start justify-start gap-1 p-5"
                             >
                                 <CustomRadioBoolean
                                     disabled={false}
@@ -1342,7 +1481,7 @@
                         >
                             <form
                                 action=""
-                                class="flex w-full flex-col items-start justify-start gap-1"
+                                class="flex w-full flex-col items-start justify-start gap-1 p-5"
                             >
                                 <CustomRadioBoolean
                                     disabled={false}
