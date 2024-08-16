@@ -1,5 +1,20 @@
 import type { DocumentDTO } from '$lib/dto/core/document/document.dto';
-import type { TransferApplicationEmployeeDetailType, TransferApplicationServiceDetailType, TransferApplicationTransferDetailType } from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
+import type {
+    TransferApplicationAcceptanceLetterDetailType,
+    TransferApplicationAssignDirectorType,
+    TransferApplicationAssignPostponeApproverType,
+    TransferApplicationConfirmationType,
+    TransferApplicationDirectorSupportType,
+    TransferApplicationEmployeeDetailType,
+    TransferApplicationEndorsementType,
+    TransferApplicationEndorserDetailType,
+    TransferApplicationMeetingResultType,
+    TransferApplicationPostponeDetailType,
+    TransferApplicationPostponeLetterDetailType,
+    TransferApplicationServiceDetailType,
+    TransferApplicationTransferDetailType,
+    TransferApplicationTransferDocumentType,
+} from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
 
 // list filter
 export interface TransferApplicationListFilterDTO {
@@ -83,10 +98,26 @@ export interface TransferApplicationMeetingResultDTO {
     remark: string;
 }
 
-export interface TransferApplicationDetailsDTO{
+export interface TransferApplicationDetailsDTO {
     applicationId: number;
     employeeDetails: TransferApplicationEmployeeDetailType;
     serviceDetails: TransferApplicationServiceDetailType;
     transferDetails: TransferApplicationTransferDetailType;
-    
+    confirmation: TransferApplicationConfirmationType;
+    assignDirector: TransferApplicationAssignDirectorType;
+    directorSupport: TransferApplicationDirectorSupportType;
+    meetingResult: TransferApplicationMeetingResultType;
+    acceptanceLetterDetails: TransferApplicationAcceptanceLetterDetailType;
+    postponeDetails: TransferApplicationPostponeDetailType;
+    assignPostponeApprover: TransferApplicationAssignPostponeApproverType;
+    postponeApproval: TransferApplicationEndorsementType;
+    postponeLetterDetails: TransferApplicationPostponeLetterDetailType;
+    transferDocuments: TransferApplicationTransferDocumentType;
+    assignEndorser: TransferApplicationEndorserDetailType;
+    support: TransferApplicationEndorsementType;
+    approval: TransferApplicationEndorsementType;
+}
+
+export interface TransferApplicationDetailsRequestDTO {
+    applicationId: number;
 }

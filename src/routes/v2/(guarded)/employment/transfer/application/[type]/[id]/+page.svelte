@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { TransferApplicationTransferDetailType } from '$lib/schemas/mypsm/employment/transfer/transfer.schema.ts';
     import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
     import DocumentInput from '$lib/components/document-input/DocumentInput.svelte';
     import SuratPertukaran from '$lib/components/letter/SuratPertukaran.svelte';
@@ -43,7 +44,10 @@
         type EthicalIssueType,
         type TransferApplicationAcceptanceLetterDetailType,
     } from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
-    import { _applicationConfirmationSubmit, _applicationDetailSubmit } from './+page';
+    import {
+        _applicationConfirmationSubmit,
+        _applicationDetailSubmit,
+    } from './+page';
     import MultiChoiceInput from '$lib/components/inputs/multiple-choice-input/MultiChoiceInput.svelte';
     import { RoleConstant } from '$lib/constants/core/role.constant';
     import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
@@ -87,6 +91,7 @@
         errors: transferDetailErrors,
         enhance: transferDetailEnhance,
     } = superForm(data.forms.transferDetailForm, {
+        dataType: 'json',
         id: 'transferDetailForm',
         SPA: true,
         resetForm: true,
@@ -94,7 +99,20 @@
         onSubmit(input) {
             $transferDetailForm.applicationId = null;
             $transferDetailForm.transferType = 'Permohonan Sendiri';
-            _applicationDetailSubmit($transferDetailForm);
+            _applicationDetailSubmit($transferDetailForm).then((value) => {
+                const response = value as CommonResponseDTO;
+
+                if (response.status == 'success') {
+                    let tempTransferDetails: TransferApplicationTransferDetailType =
+                        response.data
+                            ?.details as TransferApplicationTransferDetailType;
+
+                    goto(
+                        '/v2/employment/transfer/application/self/' +
+                            tempTransferDetails.applicationId,
+                    );
+                }
+            });
         },
     });
 
@@ -108,7 +126,7 @@
         SPA: true,
         validators: zodClient(TransferApplicationConfirmationSchema),
         onSubmit(input) {
-            _applicationConfirmationSubmit($applicationConfirmationForm)
+            _applicationConfirmationSubmit($applicationConfirmationForm);
         },
     });
 
@@ -594,18 +612,13 @@
                                 use:transferDetailEnhance
                                 class="flex w-full flex-col items-start justify-start gap-1 px-5"
                             >
-                                <!-- <SingleChoiceInput
-                                    id="category"
-                                    label="Jenis Pertukaran"
-                                    choices={data.lookup.transferCategoryOption}
-                                    bind:val={$transferDetailForm.category}
-                                    bind:errors={$transferDetailErrors.category}
-                                ></SingleChoiceInput> -->
                                 <MultiChoiceInput
                                     id="category"
                                     label="Jenis Pertukaran"
                                     choices={data.lookup.transferCategoryOption}
                                     bind:val={$transferDetailForm.category}
+                                    disabled={$transferDetailForm.isDraft ==
+                                        false}
                                 ></MultiChoiceInput>
                                 <CustomSelectField
                                     id="appliedLocation"
@@ -613,18 +626,24 @@
                                     bind:val={$transferDetailForm.appliedLocation}
                                     bind:errors={$transferDetailErrors.appliedLocation}
                                     options={data.lookup.placementDropdown}
+                                    disabled={$transferDetailForm.isDraft ==
+                                        false}
                                 ></CustomSelectField>
                                 <MultiChoiceInput
                                     id="reason"
                                     label="Alasan Pertukaran"
                                     choices={data.lookup.transferReasonOption}
                                     bind:val={$transferDetailForm.reason}
+                                    disabled={$transferDetailForm.isDraft ==
+                                        false}
                                 ></MultiChoiceInput>
                                 <CustomTextField
                                     id="remark"
                                     label="Sila Berikan Penjelasan Sekiranya Anda Memilih Lain-lain Sebagai Alasan Pertukaran"
                                     bind:val={$transferDetailForm.remark}
                                     bind:errors={$transferDetailErrors.remark}
+                                    disabled={$transferDetailForm.isDraft ==
+                                        false}
                                 ></CustomTextField>
 
                                 <p class="text-base font-medium text-slate-700">
@@ -639,6 +658,8 @@
                                     type="number"
                                     bind:val={$transferDetailForm.workPlaceDistance}
                                     bind:errors={$transferDetailErrors.workPlaceDistance}
+                                    disabled={$transferDetailForm.isDraft ==
+                                        false}
                                 ></CustomTextField>
                                 <CustomTextField
                                     id="employerName"
@@ -646,6 +667,8 @@
                                     label="Nama Majikan Pasangan"
                                     bind:val={$transferDetailForm.employerName}
                                     bind:errors={$transferDetailErrors.employerName}
+                                    disabled={$transferDetailForm.isDraft ==
+                                        false}
                                 ></CustomTextField>
                                 <CustomTextField
                                     id="startDate"
@@ -654,10 +677,14 @@
                                     isRequired={false}
                                     bind:val={$transferDetailForm.startDate}
                                     bind:errors={$transferDetailErrors.startDate}
+                                    disabled={$transferDetailForm.isDraft ==
+                                        false}
                                 ></CustomTextField>
                                 <DocumentInput
                                     bind:documents={$transferDetailForm.documents}
                                     label="Sila Muat Naik Dokumen-dokumen Sokongan"
+                                    disabled={$transferDetailForm.isDraft ==
+                                        false}
                                 ></DocumentInput>
                             </form>
                         </div>

@@ -7,6 +7,8 @@ import type { EmployeeLookupItemDTO } from '$lib/dto/core/employee/employee.dto'
 import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto.js';
 import type { UserRoleDTO } from '$lib/dto/core/user-role/user-role.dto.js';
 import type {
+    TransferApplicationDetailsDTO,
+    TransferApplicationDetailsRequestDTO,
     TransferApplicationPersonalDetailDTO,
     TransferApplicationServiceDetailDTO,
 } from '$lib/dto/mypsm/employment/transfer/transfer.dto';
@@ -30,8 +32,10 @@ import {
     type TransferApplicationAssignDirectorType,
     type TransferApplicationAssignPostponeApproverType,
     type TransferApplicationConfirmationType,
+    type TransferApplicationEmployeeDetailType,
     type TransferApplicationMeetingResultType,
     type TransferApplicationPostponeDetailType,
+    type TransferApplicationServiceDetailType,
     type TransferApplicationTransferDetailType,
 } from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
@@ -142,9 +146,31 @@ export async function load({ params, parent }) {
 
             // service detail
             serviceDetailForm.data = await _getCurrentEmployeeServiceDetails();
+
+            transferDetailForm.data.isDraft = true;
         }
-    }else{
-        let tempApplicationDetails:
+    } else {
+        const tempApplicationDetailRequest: TransferApplicationDetailsRequestDTO =
+            {
+                applicationId: currentApplicationId,
+            };
+        const tempApplicationDetailsResponse: CommonResponseDTO =
+            await TransferServices.getApplicationDetails(
+                tempApplicationDetailRequest,
+            );
+
+        if (tempApplicationDetailsResponse.status == 'success') {
+            const tempApplicationDetails: TransferApplicationDetailsDTO =
+                tempApplicationDetailsResponse.data
+                    ?.details as TransferApplicationDetailsDTO;
+
+            employeeDetailForm.data = tempApplicationDetails.employeeDetails as TransferApplicationEmployeeDetailType;
+
+            serviceDetailForm.data = tempApplicationDetails.serviceDetails as TransferApplicationServiceDetailType;
+            
+            transferDetailForm.data =
+                tempApplicationDetails.transferDetails as TransferApplicationTransferDetailType;
+        }
     }
 
     // ==========================================================

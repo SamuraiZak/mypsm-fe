@@ -1,9 +1,11 @@
+import { invalidateAll } from '$app/navigation';
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import {
     CommonResponseConvert,
     type CommonResponseDTO,
 } from '$lib/dto/core/common/common-response.dto';
+import type { TransferApplicationDetailsRequestDTO } from '$lib/dto/mypsm/employment/transfer/transfer.dto';
 import { toasterCommon } from '$lib/helpers/core/french-toast.helper';
 import type {
     TransferApplicationAcceptanceLetterDetailType,
@@ -416,6 +418,30 @@ export class TransferServices {
     static async addApproverFeedback(param: TransferApplicationEndorsementType) {
         try {
             const url: Input = 'employment/self_transfer/approver_feedback/add';
+    
+            const promiseResponse: Promise<Response> = http.post(url, {
+                body: JSON.stringify(param),
+            }).json();
+    
+            const response = await toasterCommon(promiseResponse);
+    
+            const result: CommonResponseDTO = CommonResponseConvert.fromResponse(response);
+    
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+    
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    
+    // approver feedback
+    static async getApplicationDetails(param: TransferApplicationDetailsRequestDTO) {
+        try {
+            const url: Input = 'employment/self_transfer/get';
     
             const promiseResponse: Promise<Response> = http.post(url, {
                 body: JSON.stringify(param),
