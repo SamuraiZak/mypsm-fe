@@ -4,6 +4,7 @@ import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-requ
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { EmployeeLookupItemDTO } from '$lib/dto/core/employee/employee.dto';
+import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto.js';
 import type { UserRoleDTO } from '$lib/dto/core/user-role/user-role.dto.js';
 import type {
     TransferApplicationPersonalDetailDTO,
@@ -142,6 +143,8 @@ export async function load({ params, parent }) {
             // service detail
             serviceDetailForm.data = await _getCurrentEmployeeServiceDetails();
         }
+    }else{
+        let tempApplicationDetails:
     }
 
     // ==========================================================
@@ -205,6 +208,12 @@ export async function load({ params, parent }) {
 
     const roleDropdown: DropdownDTO[] = await _getRoleDropdown();
 
+    const placementDropdown: DropdownDTO[] = await _getPlacementDropdown();
+
+    const postponeApproverDropdown: DropdownDTO[] = [];
+    const supporterDropdown: DropdownDTO[] = [];
+    const approverDropdown: DropdownDTO[] = [];
+
     return {
         props: {
             currentApplicationId,
@@ -234,6 +243,10 @@ export async function load({ params, parent }) {
             directorFeedbackOption,
             directorDrodpwon,
             roleDropdown,
+            postponeApproverDropdown,
+            supporterDropdown,
+            approverDropdown,
+            placementDropdown,
         },
     };
 }
@@ -279,6 +292,20 @@ export async function _getRoleDropdown() {
         ?.dataList as UserRoleDTO[];
 
     roleOption = LookupHelper.roleToDropdown(roleList);
+
+    return roleOption;
+}
+
+export async function _getPlacementDropdown() {
+    let roleOption: DropdownDTO[] = [];
+
+    const roleListResponse: CommonResponseDTO =
+        await LookupServices.getPlacementEnums();
+
+    const roleList: LookupDTO[] = roleListResponse.data
+        ?.dataList as LookupDTO[];
+
+    roleOption = LookupHelper.toDropdownDescription(roleList);
 
     return roleOption;
 }
