@@ -875,14 +875,14 @@
             </StepperContent>
         {/if}
 
-        {#if data.pensionDetail !== null && data.assignedRoles == kakitangan }
+        {#if data.pensionDetail !== null && data.assignedRoles == data.assignedRoles }
         
             <StepperContent>
                 <StepperContentHeader
                     title="Sila Tetapkan Keputusan Anda - Penyokong"
                 >
               
-                <TextIconButton
+                <!-- <TextIconButton
                 type="neutral"
                     label="Simpan"
                     icon="save"
@@ -894,14 +894,14 @@
             icon="check"
             form="supporterInfoForm"
             onClick={() => ($supporterInfoForm.isDraft = false)}
-        />
-                     <!-- <TextIconButton
+        /> -->
+                     <TextIconButton
                     type="primary"
                     label="Hantar"
                     form="supporterDetail"
                 >
                     <SvgCheck></SvgCheck>
-                </TextIconButton> -->
+                </TextIconButton>
                   
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -957,7 +957,7 @@
             </StepperContent>
             {/if}
       
-            {#if data.pensionDetail !== null && data.assignedRoles == kakitangan }
+            {#if data.pensionDetail !== null && data.assignedRoles == data.assignedRole }
         
             <StepperContent>
                 <StepperContentHeader
