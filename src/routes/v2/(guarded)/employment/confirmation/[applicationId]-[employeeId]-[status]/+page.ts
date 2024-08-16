@@ -8,6 +8,7 @@ import type {
     ConfirmationFullDetailResponseDTO,
     ConfirmationMeetingResultRequestDTO,
     ConfirmationSetApproverDTO,
+    GenerateLetterFormDTO,
 } from '$lib/dto/mypsm/employment/confirmation/confirmation_request_response.dto.js';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
@@ -17,6 +18,7 @@ import {
     _confirmationMeetingResultSchema,
     _confirmationPersonalDetailSchema,
     _confirmationServiceSchema,
+    _documentsSchema,
     _setApproversSchema,
     _updateConfirmationMeetingResultSchema,
 } from '$lib/schemas/mypsm/employment/confirmation-in-service/schema.js';
@@ -31,7 +33,7 @@ import { superValidate } from 'sveltekit-superforms/client';
 //=============== Load Function ====================
 //==================================================
 export async function load({ params, parent }) {
-    const idRequestBody: {applicationId: number, employeeId: number } = {
+    const idRequestBody: { applicationId: number, employeeId: number } = {
         applicationId: Number(params.applicationId),
         employeeId: Number(params.employeeId),
     };
@@ -81,7 +83,6 @@ export async function load({ params, parent }) {
         zod(_setApproversSchema),
         { errors: false },
     );
-
     const divisionDirectorInfoForm = await superValidate(
         confirmationInServiceView.division,
         zod(_confirmationApprovalSchema),
@@ -106,6 +107,8 @@ export async function load({ params, parent }) {
     const checklistForm = await superValidate(
         zod(_confirmationExamsChecklistSchema),
     );
+
+    const generateLetterForm = await superValidate(confirmationInServiceView.document, zod(_documentsSchema), {errors: false});
     // ==========================================================================
     // Get Lookup Functions
     // ==========================================================================
@@ -384,6 +387,7 @@ export async function load({ params, parent }) {
             auditDirectorInfoForm,
             confirmationMeetingForm,
             checklistForm,
+            generateLetterForm,
         },
         lookups: {
             examTableColumn,
@@ -540,7 +544,7 @@ export const _addConfirmationMeetingResult = async (
         formData,
         zod(_updateConfirmationMeetingResultSchema),
     );
-    
+
     form.data.id = id;
 
     console.log(form)
@@ -555,4 +559,26 @@ export const _addConfirmationMeetingResult = async (
         );
 
     return { response };
+};
+
+export const _submitGenerateLetterForm = async (
+    id: number,
+    formData: object,
+) => {
+    const form = await superValidate(
+        formData,
+        zod(_documentsSchema),
+    );
+
+    form.data.id = id;
+    console.log(form)
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await ConfirmationServices.createGenerateLetterForm(
+                form.data as GenerateLetterFormDTO,
+            );
+
+        return { response };
+    }
+
 };
