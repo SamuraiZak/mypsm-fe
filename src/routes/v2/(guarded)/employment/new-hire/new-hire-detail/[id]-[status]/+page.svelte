@@ -3075,7 +3075,7 @@
                             bind:val={$serviceInfoForm.retirementDate}
                         ></CustomTextField>
 
-                        <CustomTextField
+                        <!-- <CustomTextField
                             placeholder="-"
                             isRequired={false}
                             disabled={$isReadonlyServiceFormStepper &&
@@ -3084,11 +3084,10 @@
                             id="pensionNumber"
                             label={'Nombor Pencen'}
                             bind:val={$serviceInfoForm.pensionNumber}
-                        ></CustomTextField>
+                        ></CustomTextField> -->
 
                         <p class={stepperFormTitleClass}>
                             Maklumat Gaji dan Elaun - Elaun
-                        </p>
                         <div class="grid grid-cols-2 gap-10">
                             <div class="space-y-2.5">
                                 <CustomSelectField
@@ -3125,7 +3124,6 @@
 
                                 <CustomTextField
                                     placeholder="-"
-                                    disabled
                                     isRequired={false}
                                     errors={$serviceInfoErrors.baseSalary}
                                     id="baseSalary"
