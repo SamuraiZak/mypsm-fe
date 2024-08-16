@@ -1545,7 +1545,7 @@
                             >
                                 <div class="mb-5">
                                     <b class="text-base text-black"
-                                        >Rekod Keputusan peranan (-peranan)
+                                        >Rekod Keputusan peranan -peranan
                                         berkaitan</b
                                     >
                                 </div>
@@ -1973,7 +1973,7 @@
                                             </div>
                                             {#if !$newOfferMeetingDetailForm.employees[i].status || !$newOfferSupporterResultForm.employees[i].status || !$newOfferApproverResultForm.employees[i].status}
                                                 <StepperFailStatement />
-                                            {:else if $newOfferMeetingDetailForm.employees[i].status && $newOfferSupporterResultForm.employees[i].status && $newOfferApproverResultForm.employees[i].status && !$newOfferLetterDetailForm.isReadonly && $newOfferLetterDetailIsDraft}
+                                            {:else if $newOfferMeetingDetailForm.employees[i].status && $newOfferSupporterResultForm.employees[i].status && $newOfferApproverResultForm.employees[i].status && !$newOfferLetterDetailForm.isReadonly}
                                                 <form
                                                     id="newOfferLetterDetailForm"
                                                     method="POST"
@@ -1984,7 +1984,7 @@
                                                         <b
                                                             class="text-sm text-system-primary"
                                                             >Butiran surat
-                                                            (-surat) berkaitan</b
+                                                            -surat berkaitan</b
                                                         >
                                                     </div>
                                                     <CustomTextField
@@ -2043,7 +2043,7 @@
                                                     <p
                                                         class="mt-2 h-fit w-full bg-bgr-primary text-sm font-medium text-system-primary"
                                                     >
-                                                        Dokumen (-dokumen)
+                                                        Dokumen -dokumen
                                                         berkaitan:
                                                     </p>
 

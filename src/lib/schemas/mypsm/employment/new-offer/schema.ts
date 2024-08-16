@@ -172,8 +172,10 @@ const _documentList = z.object({
     refNumber: codeSchema,
     date: requiredDateStringSchema,
     slogan: shortTextSchema,
-    file: z.object({ name: z.string(), base64: z.string() }).readonly(),
-})
+    file: z
+        .object({ name: z.string().nullish(), base64: z.string().nullish() })
+        .readonly(),
+});
 
 export const _letterDetailSchema = z.object({
     employees: z.array(_documentList),
@@ -181,7 +183,9 @@ export const _letterDetailSchema = z.object({
     isDraft: z.boolean(),
 });
 
-export const _letterDetailRequestSchema = _letterDetailSchema.omit({ isReadonly: true }).extend({ applicationId: z.number().readonly(), });
+export const _letterDetailRequestSchema = _letterDetailSchema
+    .omit({ isReadonly: true })
+    .extend({ applicationId: z.number().readonly() });
 
 export const _newOfferFullDetailSchemaSchema = z.object({
     includedEmployee: _includedEmployeeSchema,
