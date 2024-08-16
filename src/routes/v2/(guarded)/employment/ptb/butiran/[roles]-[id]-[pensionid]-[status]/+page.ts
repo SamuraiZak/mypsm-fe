@@ -339,6 +339,7 @@ export const load = async ({parent,params}) => {
         pensionDetailResponse,
         currentRoleCode,
         assignedRoles,
+        params,
         
     }
 

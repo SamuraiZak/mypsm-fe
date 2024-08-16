@@ -262,7 +262,8 @@
                                 `/v2/employment/ptb/butiran/1-` +
                                     rowData.employeeId +
                                     '-' +
-                                    rowData.id,
+                                    rowData.id + '-'+
+                                            rowData.status,
                             );
                         }}
                     >
@@ -312,7 +313,8 @@
                                 goto(
                                     '/v2/employment/ptb/butiran/1-' +
                                         rowData.employeeId +
-                                        '-baru',
+                                        '-baru'+ '-'+
+                                            'baharu',
                                 );
                             }}
                         >
@@ -344,54 +346,6 @@
             </CustomTabContent>
         </CustomTab>
     {/if}
-    <!-- {#if data.currentRoleCode === kakitangan}
-        
-        <CustomTabContent title="Senarai Kakitangan">
-            <div
-                class="flex max-h-full w-full flex-col items-start justify-start"
-            >
-                <div class="h-fit w-full p-3">
-                    <DataTable
-                        title="Senarai Kakitangan"
-                        bind:tableData={PTBListAssignTable}
-                        bind:passData={rowData}
-                        detailActions={() => {
-                         goto(
-                            `/v2/employment/ptb/butiran/` +
-                                rowData.employeeId +
-                                '-' +
-                                rowData.id,
-                        );
-                        }}
-                            
-                    >
-                    <FilterWrapper slot="filter">
-                        <FilterTextField
-                            label="Nama"
-                            bind:inputValue={addActingTable.param
-                                .filter.name}
-                        ></FilterTextField>
-                        <FilterTextField
-                            label="No. Pekerja"
-                            bind:inputValue={addActingTable.param
-                                .filter.employeeNumber}
-                        ></FilterTextField>
-                        <FilterTextField
-                            label="No. Kad Pengenalan"
-                            bind:inputValue={addActingTable.param
-                                .filter.identityDocumentNumber}
-                        ></FilterTextField>
-                        <FilterTextField
-                            label="Jawatan"
-                            bind:inputValue={addActingTable.param
-                                .filter.position}
-                        ></FilterTextField>
-                    </FilterWrapper>
-                </DataTable>
-                </div>
-            </div>
-        </CustomTabContent>
-        {/if} -->
 
     {#if data.currentRoleCode === kakitangan}
         <CustomTabContent title="Senarai Kakitangan Baharu diberi PTB dan KWAP">
@@ -408,7 +362,8 @@
                                 '/v2/employment/ptb/butiran/kakitangan-' +
                                     employeeRowData.employeeId +
                                     '-' +
-                                    employeeRowData.id,
+                                    employeeRowData.id +'-'+
+                                    employeeRowData.status,
                             );
                         }
 
@@ -416,7 +371,8 @@
                             `/v2/employment/ptb/butiran/1-` +
                                 employeeRowData.employeeId +
                                 '-' +
-                                employeeRowData.id,
+                                employeeRowData.id +'-'+
+                                employeeRowData.status,
                         );
                     }}
                     bind:tableData={PTBtableEmployee}
