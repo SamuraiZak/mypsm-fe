@@ -9,6 +9,7 @@ import type {
     ConfirmationApprovalDTO,
     ConfirmationMeetingResultRequestDTO,
     ConfirmationSetApproverDTO,
+    GenerateLetterFormDTO,
 } from '$lib/dto/mypsm/employment/confirmation/confirmation_request_response.dto';
 import { getPromiseToast } from '$lib/helpers/core/toast.helper';
 import http from '$lib/services/implementation/service-provider.service';
@@ -163,7 +164,7 @@ export class ConfirmationServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                await invalidateAll();
+                invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -225,7 +226,7 @@ export class ConfirmationServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                await invalidateAll();
+                invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;
@@ -318,7 +319,38 @@ export class ConfirmationServices {
             const result = CommonResponseConvert.fromResponse(response);
 
             if (result.status == 'success') {
-                await invalidateAll();
+                invalidateAll();
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // generate letter form
+    static async createGenerateLetterForm(
+        param: GenerateLetterFormDTO,
+    ) {
+        try {
+            const url: Input = 'employment/confirmation/document/add';
+
+            // get the promise response
+            const promiseRes: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            // await toast for resolved or rejected state
+            const response: Response = await getPromiseToast(promiseRes);
+
+            // parse the json response to object
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                invalidateAll();
                 return result;
             } else {
                 return CommonResponseConstant.httpError;

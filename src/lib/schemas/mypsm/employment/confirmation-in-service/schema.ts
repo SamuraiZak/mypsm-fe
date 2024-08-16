@@ -157,9 +157,18 @@ export const _confirmationExamsChecklistSchema = z.object({
 });
 
 export const _documentsSchema = z.object({
-    attachment: z.string().readonly(),
-    attachmentName: z.string().readonly(),
+    id: z.number().readonly(),
+    employeeNumber: z.string(),
+    employeeName: z.string(),
+    refNumber: shortTextSchema,
+    date: z.string(),
+    slogan: shortTextSchema,
+    file: z.object({
+        name: z.string().readonly(),
+        base64: z.string().readonly(),
+    }),
     isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean().readonly(),
 });
 
 export const _confirmationFullDetailSchema = z.object({

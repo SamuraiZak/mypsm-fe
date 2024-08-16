@@ -7,6 +7,7 @@ import type {
     _confirmationListSchema,
     _confirmationPersonalDetailSchema,
     _confirmationServiceSchema,
+    _documentsSchema,
     _setApproversSchema,
     _updateConfirmationMeetingResultSchema,
 } from '$lib/schemas/mypsm/employment/confirmation-in-service/schema';
@@ -48,4 +49,8 @@ export type ConfirmationMeetingResultRequestDTO = z.infer<
 
 export type ConfirmationContractContinuationDTO = z.infer<
     typeof _confirmationContractContinuationSchema
+>;
+
+export type GenerateLetterFormDTO = z.infer<
+    typeof _documentsSchema
 >;
