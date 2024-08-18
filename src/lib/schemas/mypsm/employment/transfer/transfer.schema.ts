@@ -58,7 +58,7 @@ export type TransferApplicationTransferDetailType = z.infer<
 export const TransferApplicationConfirmationSchema = z.object({
     applicationId: z.number().nullish(),
     status: z.boolean(),
-    date: z.string().nullish(),
+    date: z.string().nullish(), 
 });
 export type TransferApplicationConfirmationType = z.infer<
     typeof TransferApplicationConfirmationSchema

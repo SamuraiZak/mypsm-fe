@@ -102,8 +102,8 @@ export interface TransferApplicationDetailsDTO {
     applicationId: number | null;
     employeeDetails: TransferApplicationEmployeeDetailType | null;
     serviceDetails: TransferApplicationServiceDetailType | null;
-    transferDetails: TransferApplicationTransferDetailType | null;
-    confirmation: TransferApplicationConfirmationType | null;
+    transferDetails: TransferApplicationTransferDetailType;
+    confirmation: TransferApplicationConfirmationType;
     assignDirector: TransferApplicationAssignDirectorType | null;
     directorSupport: TransferApplicationDirectorSupportType | null;
     meetingResult: TransferApplicationMeetingResultType | null;

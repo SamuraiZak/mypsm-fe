@@ -9,7 +9,7 @@
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import type { PageData } from './$types';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
-    import { goto, invalidateAll } from '$app/navigation';
+    import { goto } from '$app/navigation';
     import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
@@ -130,13 +130,19 @@
         multipleSubmits: 'prevent',
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationConfirmationSchema),
-        async onSubmit() {
-            const response: CommonResponseDTO =
-                await _applicationConfirmationSubmit(
-                    $applicationConfirmationForm,
-                );
+        onSubmit() {
+            _applicationConfirmationSubmit(
+                $applicationConfirmationForm,
+            ).then((res) => {
+                if(res.status == 'success'){
+                    $applicationConfirmationForm = data.props.currentApplicationDetails.confirmation;
+                    $transferDetailForm = data.props.currentApplicationDetails.transferDetails;
+                }
+            })
         },
     });
+
+    
 </script>
 
 <section class="flex w-full flex-col items-center justify-center">
@@ -414,8 +420,7 @@
                                     label="Jenis Pertukaran"
                                     choices={data.lookup.transferCategoryOption}
                                     bind:val={$transferDetailForm.category}
-                                    disabled={$transferDetailForm.isDraft ==
-                                        false}
+                                    disabled={!$transferDetailForm.isDraft}
                                 ></MultiChoiceInput>
                                 <CustomSelectField
                                     id="appliedLocation"
@@ -423,16 +428,14 @@
                                     bind:val={$transferDetailForm.appliedLocation}
                                     bind:errors={$transferDetailErrors.appliedLocation}
                                     options={data.lookup.placementDropdown}
-                                    disabled={$transferDetailForm.isDraft ==
-                                        false}
+                                    disabled={!$transferDetailForm.isDraft}
                                 ></CustomSelectField>
                                 <MultiChoiceInput
                                     id="reason"
                                     label="Alasan Pertukaran"
                                     choices={data.lookup.transferReasonOption}
                                     bind:val={$transferDetailForm.reason}
-                                    disabled={$transferDetailForm.isDraft ==
-                                        false}
+                                    disabled={!$transferDetailForm.isDraft}
                                 ></MultiChoiceInput>
 
                                 {#if $transferDetailForm.reason.includes('Lain-lain (sila nyatakan)')}
@@ -441,8 +444,7 @@
                                         label="Sila Berikan Penjelasan Sekiranya Anda Memilih Lain-lain Sebagai Alasan Pertukaran"
                                         bind:val={$transferDetailForm.remark}
                                         bind:errors={$transferDetailErrors.remark}
-                                        disabled={$transferDetailForm.isDraft ==
-                                            false}
+                                        disabled={!$transferDetailForm.isDraft}
                                     ></CustomTextField>
                                 {/if}
 
@@ -461,8 +463,7 @@
                                         type="number"
                                         bind:val={$transferDetailForm.workPlaceDistance}
                                         bind:errors={$transferDetailErrors.workPlaceDistance}
-                                        disabled={$transferDetailForm.isDraft ==
-                                            false}
+                                        disabled={!$transferDetailForm.isDraft}
                                     ></CustomTextField>
                                     <CustomTextField
                                         id="employerName"
@@ -470,8 +471,7 @@
                                         label="Nama Majikan Pasangan"
                                         bind:val={$transferDetailForm.employerName}
                                         bind:errors={$transferDetailErrors.employerName}
-                                        disabled={$transferDetailForm.isDraft ==
-                                            false}
+                                        disabled={!$transferDetailForm.isDraft}
                                     ></CustomTextField>
                                     <CustomTextField
                                         id="startDate"
@@ -480,16 +480,14 @@
                                         isRequired={false}
                                         bind:val={$transferDetailForm.startDate}
                                         bind:errors={$transferDetailErrors.startDate}
-                                        disabled={$transferDetailForm.isDraft ==
-                                            false}
+                                        disabled={!$transferDetailForm.isDraft}
                                     ></CustomTextField>
                                 {/if}
 
                                 <DocumentInput
                                     bind:documents={$transferDetailForm.documents}
                                     label="Surat Permohonan Pertukaran"
-                                    disabled={$transferDetailForm.isDraft ==
-                                        false}
+                                    disabled={!$transferDetailForm.isDraft}
                                 ></DocumentInput>
                             </form>
                         </div>
@@ -520,7 +518,6 @@
                         <CustomBanner
                             text="Sila buat perakuan anda di bawah dan klik butang Hantar untuk menghantar permohonan ini ke Urus Setia Perjawatan dan diproses."
                         ></CustomBanner>
-                        <p>{$applicationConfirmationForm.date}</p>
                         <form
                             id="applicationConfirmationForm"
                             method="POST"

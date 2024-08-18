@@ -78,25 +78,7 @@ export async function load({ params, parent }) {
     );
 
     // this is where i fetch the data starts
-    let currentApplicationDetails: TransferApplicationDetailsDTO = {
-        applicationId: null,
-        employeeDetails: null,
-        serviceDetails: null,
-        transferDetails: null,
-        confirmation: null,
-        assignDirector: null,
-        directorSupport: null,
-        meetingResult: null,
-        acceptanceLetterDetails: null,
-        postponeDetails: null,
-        assignPostponeApprover: null,
-        postponeApproval: null,
-        postponeLetterDetails: null,
-        transferDocuments: null,
-        assignEndorser: null,
-        support: null,
-        approval: null,
-    };
+    let currentApplicationDetails = {} as TransferApplicationDetailsDTO;
 
     // create a request body to fetch the data
     const tempApplicationDetailRequest: TransferApplicationDetailsRequestDTO = {
@@ -109,6 +91,7 @@ export async function load({ params, parent }) {
             tempApplicationDetailRequest,
         );
 
+    
     // checks if the response is successful by checking the "status" value in the response body
     if (tempApplicationDetailsResponse.status == 'success') {
         // set the applicationDetails value
@@ -128,18 +111,17 @@ export async function load({ params, parent }) {
             currentApplicationDetails.transferDetails as TransferApplicationTransferDetailType;
 
         // assign value applicationConfirmationForm
-        if (currentApplicationDetails.confirmation !== null) {
+        if (currentApplicationDetails.confirmation) {
             // assign the updated data for "confirmation" form
             applicationConfirmationForm.data =
                 currentApplicationDetails.confirmation;
 
-            console.log(applicationConfirmationForm.data);
         } else {
             applicationConfirmationForm.data.applicationId =
                 currentApplicationId;
         }
     }
-
+    console.log(currentApplicationDetails)
     // ==========================================================
     // Lookup
     // ==========================================================
@@ -206,7 +188,7 @@ export async function load({ params, parent }) {
     const postponeApproverDropdown: DropdownDTO[] = [];
     const supporterDropdown: DropdownDTO[] = [];
     const approverDropdown: DropdownDTO[] = [];
-
+    
     return {
         props: {
             currentApplicationId,
