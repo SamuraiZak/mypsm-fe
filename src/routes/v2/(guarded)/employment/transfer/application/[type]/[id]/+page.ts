@@ -47,6 +47,8 @@ import { zod } from 'sveltekit-superforms/adapters';
 export async function load({ params, parent }) {
     const { layoutData } = await parent();
 
+    console.log('loading');
+
     // get application id from pass parameters
     const currentApplicationId: number = parseInt(params.id);
 
@@ -91,7 +93,6 @@ export async function load({ params, parent }) {
             tempApplicationDetailRequest,
         );
 
-    
     // checks if the response is successful by checking the "status" value in the response body
     if (tempApplicationDetailsResponse.status == 'success') {
         // set the applicationDetails value
@@ -115,13 +116,12 @@ export async function load({ params, parent }) {
             // assign the updated data for "confirmation" form
             applicationConfirmationForm.data =
                 currentApplicationDetails.confirmation;
-
         } else {
             applicationConfirmationForm.data.applicationId =
                 currentApplicationId;
         }
     }
-    console.log(currentApplicationDetails)
+
     // ==========================================================
     // Lookup
     // ==========================================================
@@ -188,7 +188,10 @@ export async function load({ params, parent }) {
     const postponeApproverDropdown: DropdownDTO[] = [];
     const supporterDropdown: DropdownDTO[] = [];
     const approverDropdown: DropdownDTO[] = [];
-    
+
+    console.log('before return ');
+    console.log(applicationConfirmationForm.data);
+
     return {
         props: {
             currentApplicationId,
@@ -351,6 +354,7 @@ export const _applicationConfirmationSubmit = async (
     if (form.valid) {
         const response: CommonResponseDTO =
             await TransferServices.addApplicationConfirmation(form.data);
+        console.log('submitted');
         return response;
     } else {
         return CommonResponseConstant.httpError;

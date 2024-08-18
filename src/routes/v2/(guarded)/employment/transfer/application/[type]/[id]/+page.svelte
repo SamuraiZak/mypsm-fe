@@ -9,7 +9,7 @@
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import type { PageData } from './$types';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
-    import { goto } from '$app/navigation';
+    import { goto, invalidateAll } from '$app/navigation';
     import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
@@ -130,19 +130,13 @@
         multipleSubmits: 'prevent',
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationConfirmationSchema),
-        onSubmit() {
-            _applicationConfirmationSubmit(
-                $applicationConfirmationForm,
-            ).then((res) => {
-                if(res.status == 'success'){
-                    $applicationConfirmationForm = data.props.currentApplicationDetails.confirmation;
-                    $transferDetailForm = data.props.currentApplicationDetails.transferDetails;
-                }
-            })
+        async onSubmit() {
+            const response: CommonResponseDTO =
+                await _applicationConfirmationSubmit(
+                    $applicationConfirmationForm,
+                );
         },
     });
-
-    
 </script>
 
 <section class="flex w-full flex-col items-center justify-center">
