@@ -47,96 +47,147 @@ import { zod } from 'sveltekit-superforms/adapters';
 export async function load({ params, parent }) {
     const { layoutData } = await parent();
 
-    // get application id from pass parameters
+    // application id
     const currentApplicationId: number = parseInt(params.id);
 
-    // get application type from pass parameter
+    console.log(Date.now());
+    console.log(currentApplicationId);
+
+    // application type
     const currentApplicationType: string = params.type;
 
     // ==========================================================
     // FORMS
     // ==========================================================
 
-    // create employee detail form
+    // employee detail form
     const employeeDetailForm = await superValidate(
         zod(TransferApplicationEmployeeDetailSchema),
     );
 
-    // create service detail form
+    // service detail form
     const serviceDetailForm = await superValidate(
         zod(TransferApplicationServiceDetailSchema),
     );
 
-    // create transfer detail form
+    // transfer detail form
     const transferDetailForm = await superValidate(
         zod(TransferApplicationTransferDetailSchema),
     );
 
-    // create confirmation form
+    // confirmation form
     const applicationConfirmationForm = await superValidate(
         zod(TransferApplicationConfirmationSchema),
     );
 
-    // this is where i fetch the data starts
-    let currentApplicationDetails: TransferApplicationDetailsDTO = {
-        applicationId: null,
-        employeeDetails: null,
-        serviceDetails: null,
-        transferDetails: null,
-        confirmation: null,
-        assignDirector: null,
-        directorSupport: null,
-        meetingResult: null,
-        acceptanceLetterDetails: null,
-        postponeDetails: null,
-        assignPostponeApprover: null,
-        postponeApproval: null,
-        postponeLetterDetails: null,
-        transferDocuments: null,
-        assignEndorser: null,
-        support: null,
-        approval: null,
-    };
+    // assign director form
+    const assignDirectorForm = await superValidate(
+        zod(TransferApplicationAssignDirectorSchema),
+    );
 
-    // create a request body to fetch the data
-    const tempApplicationDetailRequest: TransferApplicationDetailsRequestDTO = {
-        applicationId: currentApplicationId,
-    };
+    // directorSupportForm
+    const directorSupportForm = await superValidate(
+        zod(TransferApplicationDirectorSupportSchema),
+    );
 
-    // send a request to fetch the data
-    const tempApplicationDetailsResponse: CommonResponseDTO =
-        await TransferServices.getApplicationDetails(
-            tempApplicationDetailRequest,
-        );
+    // meeting result form
+    const meetingResultForm = await superValidate(
+        zod(TransferApplicationMeetingResultSchema),
+    );
 
-    // checks if the response is successful by checking the "status" value in the response body
-    if (tempApplicationDetailsResponse.status == 'success') {
-        // set the applicationDetails value
-        currentApplicationDetails = tempApplicationDetailsResponse.data
-            ?.details as TransferApplicationDetailsDTO;
+    // acceptanceLetterDetailForm
+    const acceptanceLetterDetailForm = await superValidate(
+        zod(TransferApplicationAcceptanceLetterDetailSchema),
+    );
 
-        // assign value employeedetailForm
-        employeeDetailForm.data =
-            currentApplicationDetails.employeeDetails as TransferApplicationEmployeeDetailType;
+    // postponeDetailForm
+    const postponeDetailForm = await superValidate(
+        zod(TransferApplicationPostponeDetailSchema),
+    );
 
-        // assign value serviceDetailsForm
-        serviceDetailForm.data =
-            currentApplicationDetails.serviceDetails as TransferApplicationServiceDetailType;
+    // AssignPostponeApproverForm
+    const assignPostponeApproverForm = await superValidate(
+        zod(TransferApplicationAssignPostponeApproverSchema),
+    );
 
-        // assign value transferDetailForm
-        transferDetailForm.data =
-            currentApplicationDetails.transferDetails as TransferApplicationTransferDetailType;
+    // postponeApprovalForm
+    const postponeApprovalForm = await superValidate(
+        zod(TransferApplicationEndorsementSchema),
+    );
 
-        // assign value applicationConfirmationForm
-        if (currentApplicationDetails.confirmation !== null) {
-            // assign the updated data for "confirmation" form
-            applicationConfirmationForm.data =
-                currentApplicationDetails.confirmation;
+    // postponeLetterDetail
+    const postponeLetterDetailForm = await superValidate(
+        zod(TransferApplicationPostponeLetterDetailSchema),
+    );
 
-            console.log(applicationConfirmationForm.data);
-        } else {
-            applicationConfirmationForm.data.applicationId =
-                currentApplicationId;
+    // transferDocument
+    const transferDocumentForm = await superValidate(
+        zod(TransferApplicationTransferDocumentSchema),
+    );
+
+    // endorser detail form
+    const endorserDetailForm = await superValidate(
+        zod(TransferApplicationEndorserDetailSchema),
+    );
+
+    //  Supporter feedback form
+    const supporterFeedbackForm = await superValidate(
+        zod(TransferApplicationEndorsementSchema),
+    );
+
+    //  approver feedback form
+    const approverFeedbackForm = await superValidate(
+        zod(TransferApplicationEndorsementSchema),
+    );
+
+    // ==========================================================
+    // DEFAULT VALUES
+    // ==========================================================
+    if (currentApplicationId == 0) {
+        if (currentApplicationType == 'self') {
+            // employee detail
+            employeeDetailForm.data = await _getCurrentEmployeeDetails();
+
+            // service detail
+            serviceDetailForm.data = await _getCurrentEmployeeServiceDetails();
+
+            transferDetailForm.data.isDraft = true;
+        }
+    } else {
+        const tempApplicationDetailRequest: TransferApplicationDetailsRequestDTO =
+            {
+                applicationId: currentApplicationId,
+            };
+        const tempApplicationDetailsResponse: CommonResponseDTO =
+            await TransferServices.getApplicationDetails(
+                tempApplicationDetailRequest,
+            );
+
+        if (tempApplicationDetailsResponse.status == 'success') {
+            const tempApplicationDetails: TransferApplicationDetailsDTO =
+                tempApplicationDetailsResponse.data
+                    ?.details as TransferApplicationDetailsDTO;
+
+            // assign value employeedetailForm
+            employeeDetailForm.data =
+                tempApplicationDetails.employeeDetails as TransferApplicationEmployeeDetailType;
+
+            // assign value serviceDetailsForm
+            serviceDetailForm.data =
+                tempApplicationDetails.serviceDetails as TransferApplicationServiceDetailType;
+
+            // assign value transferDetailForm
+            transferDetailForm.data =
+                tempApplicationDetails.transferDetails as TransferApplicationTransferDetailType;
+
+            // assign value applicationConfirmationForm
+            if (tempApplicationDetails.confirmation !== null) {
+                applicationConfirmationForm.data =
+                    tempApplicationDetails.confirmation as TransferApplicationConfirmationType;
+            } else {
+                applicationConfirmationForm.data.applicationId =
+                    currentApplicationId;
+            }
         }
     }
 
@@ -211,13 +262,24 @@ export async function load({ params, parent }) {
         props: {
             currentApplicationId,
             layoutData,
-            currentApplicationDetails,
         },
         forms: {
             employeeDetailForm,
             serviceDetailForm,
             transferDetailForm,
             applicationConfirmationForm,
+            assignDirectorForm,
+            directorSupportForm,
+            meetingResultForm,
+            acceptanceLetterDetailForm,
+            postponeDetailForm,
+            assignPostponeApproverForm,
+            postponeApprovalForm,
+            postponeLetterDetailForm,
+            transferDocumentForm,
+            endorserDetailForm,
+            supporterFeedbackForm,
+            approverFeedbackForm,
         },
         lookup: {
             transferCategoryOption,
@@ -351,26 +413,153 @@ export async function _applicationDetailSubmit(
     if (form.valid) {
         const response = await TransferServices.addTransferDetail(form.data);
 
-        return response;
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
     } else {
         return CommonResponseConstant.httpError;
     }
 }
 
 // add confirmation
-export const _applicationConfirmationSubmit = async (
+export async function _applicationConfirmationSubmit(
     params: TransferApplicationConfirmationType,
-) => {
+) {
     const form = await superValidate(
         params,
         zod(TransferApplicationConfirmationSchema),
     );
 
     if (form.valid) {
-        const response: CommonResponseDTO =
-            await TransferServices.addApplicationConfirmation(form.data);
-        return response;
+        const response = await TransferServices.addApplicationConfirmation(
+            form.data,
+        );
+
+        if (response.status == 'success') {
+            await invalidateAll();
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
     } else {
         return CommonResponseConstant.httpError;
     }
-};
+}
+
+// assign director
+export async function _assignDirectorSubmit(
+    params: TransferApplicationAssignDirectorType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationAssignDirectorSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addAssignDirector(form.data);
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// meetingResult
+export async function _meetingResultSubmit(
+    params: TransferApplicationMeetingResultType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationMeetingResultSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addMeetingResult(form.data);
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// acceptanceLetterDetail
+export async function _acceptanceLetterDetailSubmit(
+    params: TransferApplicationAcceptanceLetterDetailType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationAcceptanceLetterDetailSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addAcceptanceLetterDetail(
+            form.data,
+        );
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// postponeDetail
+export async function _postponeDetailSubmit(
+    params: TransferApplicationPostponeDetailType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationPostponeDetailSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addPostponeDetail(form.data);
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// assignPostponeApprover
+export async function _assignPostponeApproverSubmit(
+    params: TransferApplicationAssignPostponeApproverType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationAssignPostponeApproverSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addAssignPostponeApprover(
+            form.data,
+        );
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+//

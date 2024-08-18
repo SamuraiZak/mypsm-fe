@@ -47,97 +47,37 @@ import { zod } from 'sveltekit-superforms/adapters';
 export async function load({ params, parent }) {
     const { layoutData } = await parent();
 
-    // get application id from pass parameters
-    const currentApplicationId: number = parseInt(params.id);
-
-    // get application type from pass parameter
+    // application type
     const currentApplicationType: string = params.type;
 
     // ==========================================================
     // FORMS
     // ==========================================================
 
-    // create employee detail form
+    // employee detail form
     const employeeDetailForm = await superValidate(
         zod(TransferApplicationEmployeeDetailSchema),
     );
 
-    // create service detail form
+    // service detail form
     const serviceDetailForm = await superValidate(
         zod(TransferApplicationServiceDetailSchema),
     );
 
-    // create transfer detail form
+    // transfer detail form
     const transferDetailForm = await superValidate(
         zod(TransferApplicationTransferDetailSchema),
     );
 
-    // create confirmation form
-    const applicationConfirmationForm = await superValidate(
-        zod(TransferApplicationConfirmationSchema),
-    );
+    if (currentApplicationType == 'self') {
+        // get employee detail
+        employeeDetailForm.data = await _getCurrentEmployeeDetails();
 
-    // this is where i fetch the data starts
-    let currentApplicationDetails: TransferApplicationDetailsDTO = {
-        applicationId: null,
-        employeeDetails: null,
-        serviceDetails: null,
-        transferDetails: null,
-        confirmation: null,
-        assignDirector: null,
-        directorSupport: null,
-        meetingResult: null,
-        acceptanceLetterDetails: null,
-        postponeDetails: null,
-        assignPostponeApprover: null,
-        postponeApproval: null,
-        postponeLetterDetails: null,
-        transferDocuments: null,
-        assignEndorser: null,
-        support: null,
-        approval: null,
-    };
+        // get service detail
+        serviceDetailForm.data = await _getCurrentEmployeeServiceDetails();
 
-    // create a request body to fetch the data
-    const tempApplicationDetailRequest: TransferApplicationDetailsRequestDTO = {
-        applicationId: currentApplicationId,
-    };
-
-    // send a request to fetch the data
-    const tempApplicationDetailsResponse: CommonResponseDTO =
-        await TransferServices.getApplicationDetails(
-            tempApplicationDetailRequest,
-        );
-
-    // checks if the response is successful by checking the "status" value in the response body
-    if (tempApplicationDetailsResponse.status == 'success') {
-        // set the applicationDetails value
-        currentApplicationDetails = tempApplicationDetailsResponse.data
-            ?.details as TransferApplicationDetailsDTO;
-
-        // assign value employeedetailForm
-        employeeDetailForm.data =
-            currentApplicationDetails.employeeDetails as TransferApplicationEmployeeDetailType;
-
-        // assign value serviceDetailsForm
-        serviceDetailForm.data =
-            currentApplicationDetails.serviceDetails as TransferApplicationServiceDetailType;
-
-        // assign value transferDetailForm
-        transferDetailForm.data =
-            currentApplicationDetails.transferDetails as TransferApplicationTransferDetailType;
-
-        // assign value applicationConfirmationForm
-        if (currentApplicationDetails.confirmation !== null) {
-            // assign the updated data for "confirmation" form
-            applicationConfirmationForm.data =
-                currentApplicationDetails.confirmation;
-
-            console.log(applicationConfirmationForm.data);
-        } else {
-            applicationConfirmationForm.data.applicationId =
-                currentApplicationId;
-        }
+        // set default isDraft
+        transferDetailForm.data.isDraft = true;
     }
 
     // ==========================================================
@@ -196,11 +136,6 @@ export async function load({ params, parent }) {
         },
     ];
 
-    // 3. director dropdown
-    const directorDrodpwon: DropdownDTO[] = await _getDirectorDropdown();
-
-    const roleDropdown: DropdownDTO[] = await _getRoleDropdown();
-
     const placementDropdown: DropdownDTO[] = await _getPlacementDropdown();
 
     const postponeApproverDropdown: DropdownDTO[] = [];
@@ -209,73 +144,23 @@ export async function load({ params, parent }) {
 
     return {
         props: {
-            currentApplicationId,
             layoutData,
-            currentApplicationDetails,
         },
         forms: {
             employeeDetailForm,
             serviceDetailForm,
             transferDetailForm,
-            applicationConfirmationForm,
         },
         lookup: {
             transferCategoryOption,
             transferReasonOption,
             directorFeedbackOption,
-            directorDrodpwon,
-            roleDropdown,
             postponeApproverDropdown,
             supporterDropdown,
             approverDropdown,
             placementDropdown,
         },
     };
-}
-
-export async function _getDirectorDropdown() {
-    let directorOption: DropdownDTO[] = [];
-
-    const filter = {
-        program: 'SEMUA',
-        employeeNumber: null,
-        name: null,
-        identityCard: null,
-        grade: null,
-        role: RoleConstant.pengarahNegeri.code,
-    };
-
-    const request: CommonListRequestDTO = {
-        pageNum: 1,
-        pageSize: 5,
-        orderBy: 'name',
-        orderType: 1,
-        filter: filter,
-    };
-
-    const directorListResponse: CommonResponseDTO =
-        await LookupServices.getEndorserDropdown(request);
-
-    const directorList: EmployeeLookupItemDTO[] = directorListResponse.data
-        ?.dataList as EmployeeLookupItemDTO[];
-
-    directorOption = LookupHelper.employeeToDropdown(directorList);
-
-    return directorOption;
-}
-
-export async function _getRoleDropdown() {
-    let roleOption: DropdownDTO[] = [];
-
-    const roleListResponse: CommonResponseDTO =
-        await LookupServices.getRoleEnums();
-
-    const roleList: UserRoleDTO[] = roleListResponse.data
-        ?.dataList as UserRoleDTO[];
-
-    roleOption = LookupHelper.roleToDropdown(roleList);
-
-    return roleOption;
 }
 
 export async function _getPlacementDropdown() {
@@ -356,21 +241,3 @@ export async function _applicationDetailSubmit(
         return CommonResponseConstant.httpError;
     }
 }
-
-// add confirmation
-export const _applicationConfirmationSubmit = async (
-    params: TransferApplicationConfirmationType,
-) => {
-    const form = await superValidate(
-        params,
-        zod(TransferApplicationConfirmationSchema),
-    );
-
-    if (form.valid) {
-        const response: CommonResponseDTO =
-            await TransferServices.addApplicationConfirmation(form.data);
-        return response;
-    } else {
-        return CommonResponseConstant.httpError;
-    }
-};

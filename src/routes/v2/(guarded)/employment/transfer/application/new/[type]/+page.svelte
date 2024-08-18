@@ -9,7 +9,7 @@
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import type { PageData } from './$types';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
-    import { goto, invalidateAll } from '$app/navigation';
+    import { goto } from '$app/navigation';
     import SvgChevronLeft from '$lib/assets/svg/SvgChevronLeft.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
@@ -42,11 +42,9 @@
         TransferApplicationTransferDocumentSchema,
         type EthicalIssueType,
         type TransferApplicationAcceptanceLetterDetailType,
-        type TransferApplicationConfirmationType,
         type TransferApplicationTransferDetailType,
     } from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
     import {
-        _applicationConfirmationSubmit,
         _applicationDetailSubmit,
     } from './+page';
     import MultiChoiceInput from '$lib/components/inputs/multiple-choice-input/MultiChoiceInput.svelte';
@@ -59,6 +57,8 @@
     import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 
     export let data: PageData;
+
+    let selectedValue: string = 'Disokong tanpa pengganti';
 
     // employee detail
     const {
@@ -94,7 +94,6 @@
         id: 'transferDetailForm',
         SPA: true,
         resetForm: false,
-        invalidateAll: true,
         validators: zodClient(TransferApplicationTransferDetailSchema),
         onSubmit(input) {
             $transferDetailForm.applicationId = null;
@@ -115,34 +114,11 @@
             });
         },
     });
-
-    // applicationConfirmation
-    const {
-        form: applicationConfirmationForm,
-        errors: applicationConfirmationErrors,
-        enhance: applicationConfirmationEnhance,
-    } = superForm(data.forms.applicationConfirmationForm, {
-        SPA: true,
-        dataType: 'json',
-        invalidateAll: true,
-        taintedMessage: false,
-        resetForm: false,
-        multipleSubmits: 'prevent',
-        validationMethod: 'auto',
-        validators: zodClient(TransferApplicationConfirmationSchema),
-        async onSubmit() {
-            const response: CommonResponseDTO =
-                await _applicationConfirmationSubmit(
-                    $applicationConfirmationForm,
-                );
-        },
-    });
 </script>
 
 <section class="flex w-full flex-col items-center justify-center">
     <ContentHeader
-        title="Permohonan Pertukaran - Permohonan Sendiri {data.props
-            .currentApplicationId}"
+        title="Permohonan Pertukaran - Permohonan Sendiri"
     >
         <TextIconButton
             type="draft"
@@ -400,9 +376,6 @@
                         <div
                             class="flex w-full flex-col items-start justify-start gap-2"
                         >
-                            <p>
-                                {$transferDetailForm.isDraft}
-                            </p>
                             <form
                                 id="transferDetailForm"
                                 method="POST"
@@ -494,85 +467,6 @@
                             </form>
                         </div>
                         <!-- form wrapper ends here -->
-                    </div>
-                </div>
-            </StepperContentBody>
-        </StepperContent>
-        <!-- ======================================================================= -->
-        <!-- EMPLOYEE CONFIRMATION -->
-        <!-- ======================================================================= -->
-        <StepperContent>
-            <StepperContentHeader title="Perakuan Pemohon">
-                <TextIconButton
-                    label="Hantar"
-                    type="primary"
-                    icon="check"
-                    form="applicationConfirmationForm"
-                ></TextIconButton>
-            </StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
-                >
-                    <div
-                        class="flex w-full flex-col items-start justify-start gap-4 xl:w-1/2"
-                    >
-                        <CustomBanner
-                            text="Sila buat perakuan anda di bawah dan klik butang Hantar untuk menghantar permohonan ini ke Urus Setia Perjawatan dan diproses."
-                        ></CustomBanner>
-                        <p>{$applicationConfirmationForm.date}</p>
-                        <form
-                            id="applicationConfirmationForm"
-                            method="POST"
-                            use:applicationConfirmationEnhance
-                            class="flex w-full flex-col items-start justify-start gap-4 p-5"
-                        >
-                            <div
-                                class="flex w-full flex-row items-start justify-start gap-2"
-                            >
-                                <div
-                                    class="flex h-6 w-fit flex-col items-center justify-center"
-                                >
-                                    <input
-                                        id="status"
-                                        type="checkbox"
-                                        bind:checked={$applicationConfirmationForm.status}
-                                        class="rounded focus:outline-none focus:ring-0"
-                                    />
-                                </div>
-                                <p
-                                    class="text-justify text-base font-normal leading-loose tracking-wide text-slate-700"
-                                >
-                                    Saya sesungguhnya mengakui bahawa semua
-                                    keterangan di atas adalah benar. Lembaga
-                                    Kemajuan Ikan Malaysia (LKIM) berhak
-                                    membatalkan permohonan saya jika didapati
-                                    ada maklumat yang tidak benar. Saya faham
-                                    bahawa pertukaran ini hanyalah ke Ibu
-                                    Pejabat/Negeri/Wilayah yang saya nyatakan di
-                                    atas sahaja. Saya juga faham bahawa
-                                    penempatan saya ke mana-mana tempat di dalam
-                                    Ibu Pejabat/Negeri/Wilayah itu adalah
-                                    terpulang kepada pertimbangan dan sokongan
-                                    Pengarah Bahagian/Negeri berkenaan. Saya
-                                    juga mengambil maklum bahawa sekiranya saya
-                                    membatalkan pertukaran yang telah diluluskan
-                                    oleh Jawatankuasa Penyelarasan Penempatan
-                                    Pegawai dan Kakitangan LKIM, saya tidak
-                                    layak beri sebarang pertimbangan pertukaran
-                                    ke tempat yang sama dalam tempoh satu (1)
-                                    tahun dari tarikh pembatalan dilakukan.
-                                </p>
-                            </div>
-                            <CustomTextField
-                                disabled
-                                id="date"
-                                type="date"
-                                label="Tarikh Perakuan"
-                                bind:val={$applicationConfirmationForm.date}
-                                bind:errors={$applicationConfirmationErrors.date}
-                            ></CustomTextField>
-                        </form>
                     </div>
                 </div>
             </StepperContentBody>

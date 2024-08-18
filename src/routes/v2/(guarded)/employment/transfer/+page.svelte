@@ -10,7 +10,7 @@
             child: [
                 {
                     moduleName: 'Tambah Permohonan Baharu',
-                    url: '/v2/employment/transfer/application/self/0',
+                    url: '/v2/employment/transfer/application/new/self',
                     child: [],
                 },
                 {
