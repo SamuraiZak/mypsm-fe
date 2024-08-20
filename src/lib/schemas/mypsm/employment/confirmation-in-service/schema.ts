@@ -31,7 +31,7 @@ export const _confirmationApprovalSchema = z.object({
     id: z.number().readonly(),
     remark: shortTextSchema,
     status: booleanSchema,
-    approvalDate: z.boolean().readonly(),
+    approvalDate: z.string().readonly(),
     isReadonly: z.boolean().readonly(),
     isDraft: z.boolean(),
 });
@@ -139,6 +139,7 @@ export const _confirmationMeetingResultSchema = z
 
     export const _setApproversSchema = z.object({
         id: z.number().readonly(),
+        roleCode: z.string().nullish(),
         supporterId: numberIdSchema,
         isReadonly: z.boolean().readonly(),
         isDraft: z.boolean(),
