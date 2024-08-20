@@ -47,6 +47,8 @@
         },
         controls: {
             add: false,
+            pdf: true,
+            excel: true,
         },
     };
 
@@ -55,7 +57,10 @@
     }
 
     function viewDetails() {
-        goto('/v2/employment/transfer/application/self/' + selectedData.applicationId);
+        goto(
+            '/v2/employment/transfer/application/self/' +
+                selectedData.applicationId,
+        );
     }
 </script>
 
