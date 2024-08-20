@@ -71,8 +71,11 @@
     import type { EmployeeLookupItemDTO } from '$lib/dto/core/employee/employee.dto';
     import { LookupHelper } from '$lib/helpers/core/lookup.helper';
     import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
+    import type { DocumentDTO } from '$lib/dto/core/document/document.dto';
 
     export let data: PageData;
+
+    let backupDocuments: DocumentDTO[] = [];
 
     // employee detail
     const {
@@ -1691,24 +1694,53 @@
                                                 .currentRoleCode !==
                                                 RoleConstant.kakitangan.code}
                                     ></CustomTextField>
-                                    <DocumentInput
-                                        id="postponeDetailForm.documents"
-                                        dispatchName="postponeDetails"
-                                        bind:documents={$postponeDetailForm.documents}
-                                        label="Surat Permohonan Penangguhan Pertukaran"
-                                        disabled={data.props
-                                            .currentApplicationDetails
-                                            .postponeDetails !== null ||
-                                            data.props.layoutData.accountDetails
-                                                .identityDocumentNumber !==
-                                                data.props
+                                    {#if data.props.currentApplicationDetails.postponeDetails !== null}
+                                        {#if data.props.currentApplicationDetails.postponeDetails.documents == undefined || data.props.currentApplicationDetails.postponeDetails.documents == null}
+                                            <DocumentInput
+                                                id="postponeDetailForm.documents"
+                                                dispatchName="postponeDetails"
+                                                bind:documents={backupDocuments}
+                                                label="Surat Permohonan Penangguhan Pertukaran"
+                                                disabled={data.props
                                                     .currentApplicationDetails
-                                                    .employeeDetails
-                                                    ?.identityDocumentNumber ||
-                                            data.props.layoutData.accountDetails
-                                                .currentRoleCode !==
-                                                RoleConstant.kakitangan.code}
-                                    ></DocumentInput>
+                                                    .postponeDetails !== null ||
+                                                    data.props.layoutData
+                                                        .accountDetails
+                                                        .identityDocumentNumber !==
+                                                        data.props
+                                                            .currentApplicationDetails
+                                                            .employeeDetails
+                                                            ?.identityDocumentNumber ||
+                                                    data.props.layoutData
+                                                        .accountDetails
+                                                        .currentRoleCode !==
+                                                        RoleConstant.kakitangan
+                                                            .code}
+                                            ></DocumentInput>
+                                        {/if}
+                                    {:else}
+                                        <DocumentInput
+                                            id="postponeDetailForm.documents"
+                                            dispatchName="postponeDetails"
+                                            bind:documents={$postponeDetailForm.documents}
+                                            label="Surat Permohonan Penangguhan Pertukaran"
+                                            disabled={data.props
+                                                .currentApplicationDetails
+                                                .postponeDetails !== null ||
+                                                data.props.layoutData
+                                                    .accountDetails
+                                                    .identityDocumentNumber !==
+                                                    data.props
+                                                        .currentApplicationDetails
+                                                        .employeeDetails
+                                                        ?.identityDocumentNumber ||
+                                                data.props.layoutData
+                                                    .accountDetails
+                                                    .currentRoleCode !==
+                                                    RoleConstant.kakitangan
+                                                        .code}
+                                        ></DocumentInput>
+                                    {/if}
                                     <CustomTextField
                                         disabled
                                         id="date"
