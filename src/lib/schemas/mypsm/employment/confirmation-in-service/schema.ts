@@ -15,7 +15,8 @@ import { z } from 'zod';
 //==========================================================
 
 export const _confirmationListSchema = z.object({
-    id: z.number().readonly(),
+    applicationId: z.number().readonly(),
+    employeeId: z.number().readonly(),
     employeeNo: z.string().readonly(),
     employeeName: z.string().readonly(),
     identityDocumentNumber: z.string().readonly(),
