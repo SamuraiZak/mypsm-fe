@@ -108,7 +108,7 @@
                 <p
                     class="w-full text-center text-md font-medium text-slate-600 group-hover:scale-105"
                 >
-                    Sila Muat Naik Dokumen Anda Di Sini
+                    Muat Naik Dokumen
                 </p>
                 <p
                     class="w-full text-center text-base font-medium text-blue-600 group-hover:scale-105"

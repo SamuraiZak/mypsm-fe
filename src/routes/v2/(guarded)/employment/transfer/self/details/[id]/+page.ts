@@ -57,9 +57,6 @@ export async function load({ params, parent }) {
     // get application id from pass parameters
     const currentApplicationId: number = parseInt(params.id);
 
-    // get application type from pass parameter
-    const currentApplicationType: string = params.type;
-
     // ==========================================================
     // FORMS
     // ==========================================================
@@ -253,9 +250,6 @@ export async function load({ params, parent }) {
     const postponeApproverDropdown: DropdownDTO[] = [];
     const supporterDropdown: DropdownDTO[] = [];
     const approverDropdown: DropdownDTO[] = [];
-
-    console.log('before return ');
-    console.log(applicationConfirmationForm.data);
 
     return {
         props: {

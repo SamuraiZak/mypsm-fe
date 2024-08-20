@@ -99,23 +99,23 @@ export interface TransferApplicationMeetingResultDTO {
 }
 
 export interface TransferApplicationDetailsDTO {
-    applicationId: number;
-    employeeDetails: TransferApplicationEmployeeDetailType;
-    serviceDetails: TransferApplicationServiceDetailType;
+    applicationId: number | null;
+    employeeDetails: TransferApplicationEmployeeDetailType | null;
+    serviceDetails: TransferApplicationServiceDetailType | null;
     transferDetails: TransferApplicationTransferDetailType;
     confirmation: TransferApplicationConfirmationType;
-    assignDirector: TransferApplicationAssignDirectorType;
-    directorSupport: TransferApplicationDirectorSupportType;
-    meetingResult: TransferApplicationMeetingResultType;
-    acceptanceLetterDetails: TransferApplicationAcceptanceLetterDetailType;
-    postponeDetails: TransferApplicationPostponeDetailType;
-    assignPostponeApprover: TransferApplicationAssignPostponeApproverType;
-    postponeApproval: TransferApplicationEndorsementType;
-    postponeLetterDetails: TransferApplicationPostponeLetterDetailType;
-    transferDocuments: TransferApplicationTransferDocumentType;
-    assignEndorser: TransferApplicationEndorserDetailType;
-    support: TransferApplicationEndorsementType;
-    approval: TransferApplicationEndorsementType;
+    assignDirector: TransferApplicationAssignDirectorType | null;
+    directorSupport: TransferApplicationDirectorSupportType | null;
+    meetingResult: TransferApplicationMeetingResultType | null;
+    acceptanceLetterDetails: TransferApplicationAcceptanceLetterDetailType | null;
+    postponeDetails: TransferApplicationPostponeDetailType | null;
+    assignPostponeApprover: TransferApplicationAssignPostponeApproverType | null;
+    postponeApproval: TransferApplicationEndorsementType | null;
+    postponeLetterDetails: TransferApplicationPostponeLetterDetailType | null;
+    transferDocuments: TransferApplicationTransferDocumentType | null;
+    assignEndorser: TransferApplicationEndorserDetailType | null;
+    support: TransferApplicationEndorsementType | null;
+    approval: TransferApplicationEndorsementType | null;
 }
 
 export interface TransferApplicationDetailsRequestDTO {

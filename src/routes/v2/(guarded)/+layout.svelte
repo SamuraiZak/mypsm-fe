@@ -20,23 +20,23 @@
 
     // Function to call on URL change
     const handleNavigation = async () => {
-        const currentPage = get(page);
-        console.log('Navigated to:', currentPage.url.pathname);
+        // const currentPage = get(page);
+        // console.log('Navigated to:', currentPage.url.pathname);
         // Call your load function or any other function here
         // You can fetch data or do other actions here
     };
 
     // Subscribe to $page store to detect URL changes
-    unsubscribe = page.subscribe(() => {
-        handleNavigation();
-    });
+    // unsubscribe = page.subscribe(() => {
+    //     handleNavigation();
+    // });
 
-    onDestroy(() => {
-        // Clean up the subscription when the component is destroyed
-        if (unsubscribe) {
-            unsubscribe();
-        }
-    });
+    // onDestroy(() => {
+    //     // Clean up the subscription when the component is destroyed
+    //     if (unsubscribe) {
+    //         unsubscribe();
+    //     }
+    // });
 
     function switchRole(roleCode: string) {
         const params: SwitchRoleDTO = {

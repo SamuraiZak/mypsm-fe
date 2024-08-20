@@ -1,5 +1,6 @@
 <script lang="ts">
     import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
+    import SvgInfoSolid from '$lib/assets/svg/SvgInfoSolid.svelte';
     import DocumentInput from '$lib/components/document-input/DocumentInput.svelte';
     import SuratPertukaran from '$lib/components/letter/SuratPertukaran.svelte';
     import SingleChoiceInput from '$lib/components/inputs/single-choice-input/SingleChoiceInput.svelte';
@@ -294,20 +295,18 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationPostponeDetailSchema),
         onSubmit(input) {
-            _postponeDetailSubmit($postponeDetailForm).then(
-                (response) => {
-                    if (response.status == 'success') {
-                        if (
+            _postponeDetailSubmit($postponeDetailForm).then((response) => {
+                if (response.status == 'success') {
+                    if (
+                        data.props.currentApplicationDetails.postponeDetails !==
+                        null
+                    ) {
+                        $postponeDetailForm =
                             data.props.currentApplicationDetails
-                                .postponeDetails !== null
-                        ) {
-                            $postponeDetailForm =
-                                data.props.currentApplicationDetails
-                                    .postponeDetails;
-                        }
+                                .postponeDetails;
                     }
-                },
-            );
+                }
+            });
         },
     });
 
@@ -360,20 +359,18 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationEndorsementSchema),
         onSubmit(input) {
-            _postponeApprovalSubmit($postponeApprovalForm).then(
-                (response) => {
-                    if (response.status == 'success') {
-                        if (
+            _postponeApprovalSubmit($postponeApprovalForm).then((response) => {
+                if (response.status == 'success') {
+                    if (
+                        data.props.currentApplicationDetails
+                            .postponeApproval !== null
+                    ) {
+                        $postponeApprovalForm =
                             data.props.currentApplicationDetails
-                                .postponeApproval !== null
-                        ) {
-                            $postponeApprovalForm =
-                                data.props.currentApplicationDetails
-                                    .postponeApproval;
-                        }
+                                .postponeApproval;
                     }
-                },
-            );
+                }
+            });
         },
     });
 
@@ -426,20 +423,18 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationTransferDocumentSchema),
         onSubmit(input) {
-            _transferDocumentSubmit($transferDocumentForm).then(
-                (response) => {
-                    if (response.status == 'success') {
-                        if (
+            _transferDocumentSubmit($transferDocumentForm).then((response) => {
+                if (response.status == 'success') {
+                    if (
+                        data.props.currentApplicationDetails
+                            .transferDocuments !== null
+                    ) {
+                        $transferDocumentForm =
                             data.props.currentApplicationDetails
-                                .transferDocuments !== null
-                        ) {
-                            $transferDocumentForm =
-                                data.props.currentApplicationDetails
-                                    .transferDocuments;
-                        }
+                                .transferDocuments;
                     }
-                },
-            );
+                }
+            });
         },
     });
 
@@ -459,20 +454,17 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationEndorserDetailSchema),
         onSubmit(input) {
-            _endorserDetailSubmit($endorserDetailForm).then(
-                (response) => {
-                    if (response.status == 'success') {
-                        if (
-                            data.props.currentApplicationDetails
-                                .assignEndorser !== null
-                        ) {
-                            $endorserDetailForm =
-                                data.props.currentApplicationDetails
-                                    .assignEndorser;
-                        }
+            _endorserDetailSubmit($endorserDetailForm).then((response) => {
+                if (response.status == 'success') {
+                    if (
+                        data.props.currentApplicationDetails.assignEndorser !==
+                        null
+                    ) {
+                        $endorserDetailForm =
+                            data.props.currentApplicationDetails.assignEndorser;
                     }
-                },
-            );
+                }
+            });
         },
     });
 
@@ -496,12 +488,11 @@
                 (response) => {
                     if (response.status == 'success') {
                         if (
-                            data.props.currentApplicationDetails
-                                .support !== null
+                            data.props.currentApplicationDetails.support !==
+                            null
                         ) {
                             $supporterFeedbackForm =
-                                data.props.currentApplicationDetails
-                                    .support;
+                                data.props.currentApplicationDetails.support;
                         }
                     }
                 },
@@ -525,20 +516,16 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationEndorsementSchema),
         onSubmit(input) {
-            _approverFeedbackSubmit($approverFeedbackForm).then(
-                (response) => {
-                    if (response.status == 'success') {
-                        if (
-                            data.props.currentApplicationDetails
-                                .approval !== null
-                        ) {
-                            $approverFeedbackForm =
-                                data.props.currentApplicationDetails
-                                    .approval;
-                        }
+            _approverFeedbackSubmit($approverFeedbackForm).then((response) => {
+                if (response.status == 'success') {
+                    if (
+                        data.props.currentApplicationDetails.approval !== null
+                    ) {
+                        $approverFeedbackForm =
+                            data.props.currentApplicationDetails.approval;
                     }
-                },
-            );
+                }
+            });
         },
     });
 
@@ -559,15 +546,12 @@
 </script>
 
 <section class="flex w-full flex-col items-center justify-center">
-    <ContentHeader
-        title="Permohonan Pertukaran - Permohonan Sendiri {data.props
-            .currentApplicationId}"
-    >
+    <ContentHeader title="Permohonan Pertukaran - Permohonan Sendiri}">
         <TextIconButton
             type="draft"
             label="Kembali"
             onClick={() => {
-                goto('/v2/employment/transfer');
+                goto('/v2/employment/transfer/self/list');
             }}
         >
             <SvgChevronLeft></SvgChevronLeft>
@@ -578,7 +562,7 @@
 <section
     class="flex h-full w-full flex-col items-start justify-start overflow-y-hidden"
 >
-    <Stepper>
+    <Stepper activeIndex={4}>
         <!-- ======================================================================= -->
         <!-- PERSONAL DETAILS -->
         <!-- ======================================================================= -->
@@ -948,7 +932,12 @@
                                         type="checkbox"
                                         bind:checked={$applicationConfirmationForm.status}
                                         class="rounded focus:outline-none focus:ring-0 disabled:text-gray-400"
-                                        disabled={!$applicationConfirmationForm.isDraft}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .confirmation !== null &&
+                                            !data.props
+                                                .currentApplicationDetails
+                                                .confirmation.isDraft}
                                     />
                                 </div>
                                 <p
@@ -988,13 +977,235 @@
                 </div>
             </StepperContentBody>
         </StepperContent>
-        <!-- ======================================================================= -->
-        <!-- ASSIGN DIRECTOR -->
-        <!-- ======================================================================= -->
-        {#if data.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaPerjawatan.code}
+
+        {#if data.props.currentApplicationDetails.confirmation !== null}
+            <!-- ======================================================================= -->
+            <!-- ASSIGN DIRECTOR -->
+            <!-- ======================================================================= -->
+            {#if data.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaPerjawatan.code}
+                <StepperContent>
+                    <StepperContentHeader
+                        title="Lantikan Pengarah Bahagian/Negeri"
+                    >
+                        <TextIconButton label="Hantar" type="draft" icon="save"
+                        ></TextIconButton>
+                    </StepperContentHeader>
+                    <StepperContentBody>
+                        <div
+                            class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
+                        >
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
+                            >
+                                <form
+                                    id="assignDirectorForm"
+                                    method="POST"
+                                    use:assignDirectorEnhance
+                                    class="flex w-full flex-col items-center justify-start gap-2"
+                                >
+                                    <CustomSelectField
+                                        id="identityDocumentNumber"
+                                        label={'Sila pilih Pengarah Bahagian/Negeri untuk memberi sokongan bagi permohonan ini'}
+                                        bind:val={$assignDirectorForm.identityDocumentNumber}
+                                        bind:errors={$assignDirectorErrors.identityDocumentNumber}
+                                        options={data.lookup.directorDrodpwon}
+                                    ></CustomSelectField>
+                                    <CustomTextField
+                                        disabled
+                                        id="directorName"
+                                        label={'Nama Pengarah'}
+                                        bind:val={$assignDirectorForm.directorName}
+                                        bind:errors={$assignDirectorErrors.directorName}
+                                    ></CustomTextField>
+                                </form>
+                            </div>
+                        </div>
+                    </StepperContentBody>
+                </StepperContent>
+            {/if}
+
+            <!-- ======================================================================= -->
+            <!-- DIRECTOR SUPPORT -->
+            <!-- ======================================================================= -->
             <StepperContent>
-                <StepperContentHeader title="Lantikan Pengarah Bahagian/Negeri">
-                    <TextIconButton label="Hantar" type="draft" icon="save"
+                <StepperContentHeader title="Perakuan Pengarah Bahagian/Negeri">
+                    <TextIconButton label="Simpan" type="draft" icon="save"
+                    ></TextIconButton>
+                </StepperContentHeader>
+                <StepperContentBody>
+                    {#if data.props.currentApplicationDetails.assignDirector !== null}
+                        <div
+                            class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
+                        >
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
+                            >
+                                <!-- form wrapper starts here -->
+                                <div
+                                    class="flex w-full flex-col items-start justify-start gap-2"
+                                >
+                                    <form
+                                        id="directorSupportForm"
+                                        method="POST"
+                                        use:directorSupportEnhance
+                                        class="flex w-full flex-col items-start justify-start gap-1"
+                                    >
+                                        <p
+                                            class="text-base font-medium text-slate-700"
+                                        >
+                                            Saya mengesahkan bahawa maklumat
+                                            yang diberikan adalah benar. Oleh
+                                            itu saya memperakukan permohonan ini
+                                            seperti ulasan berikut:
+                                        </p>
+                                        <SingleChoiceInput
+                                            id="feedback"
+                                            label="Maklum Balas Pengarah"
+                                            choices={data.lookup
+                                                .directorFeedbackOption}
+                                            bind:val={$directorSupportForm.feedback}
+                                            bind:errors={$directorSupportErrors.feedback}
+                                        ></SingleChoiceInput>
+
+                                        <CustomTextField
+                                            id="remark"
+                                            label="Ulasan"
+                                            type="textarea"
+                                            bind:val={$directorSupportForm.remark}
+                                            bind:errors={$directorSupportErrors.remark}
+                                        ></CustomTextField>
+
+                                        <div
+                                            class="flex w-full flex-col items-start justify-start gap-2 py-2 pb-4"
+                                        >
+                                            <div
+                                                class="flex w-full flex-row items-center justify-between"
+                                            >
+                                                <p
+                                                    class=" w-full text-start text-base font-medium text-slate-700"
+                                                >
+                                                    Senarai Laporan Tatatertib
+                                                </p>
+                                            </div>
+                                            {#each $directorSupportForm.ethicalIssues as item, index}
+                                                <div
+                                                    class="flex w-full flex-col items-start justify-start rounded-md border border-slate-200 bg-slate-100 p-4"
+                                                >
+                                                    <div
+                                                        class="flex w-full flex-row items-center justify-between py-2"
+                                                    >
+                                                        <p
+                                                            class="text-base font-semibold text-slate-700"
+                                                        >
+                                                            Laporan Tatatertib {index +
+                                                                1}
+                                                        </p>
+                                                        <button
+                                                            type="button"
+                                                            on:click={() => {
+                                                                removeEthicalIssuesDetail(
+                                                                    index,
+                                                                );
+                                                            }}
+                                                        >
+                                                            <span>
+                                                                <SvgXMark
+                                                                ></SvgXMark>
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                    <div
+                                                        class="flex w-full flex-col items-start justify-start gap-0"
+                                                    >
+                                                        <CustomTextField
+                                                            type="text"
+                                                            id="ethical-punishment-{index}"
+                                                            label={'Hukuman'}
+                                                            errors={$directorSupportErrors.ethicalIssues
+                                                                ? $directorSupportErrors
+                                                                      .ethicalIssues[
+                                                                      index
+                                                                  ]?.punishment
+                                                                : undefined}
+                                                            bind:val={item.punishment}
+                                                        ></CustomTextField>
+                                                        <CustomTextField
+                                                            type="date"
+                                                            id="ethical-date-{index}"
+                                                            label={'Tarikh Laporan'}
+                                                            errors={$directorSupportErrors.ethicalIssues
+                                                                ? $directorSupportErrors
+                                                                      .ethicalIssues[
+                                                                      index
+                                                                  ]?.date
+                                                                : undefined}
+                                                            bind:val={item.date}
+                                                        ></CustomTextField>
+                                                    </div>
+                                                </div>
+                                            {/each}
+                                            <button
+                                                class="h-8 min-h-8 w-full rounded border border-slate-400 bg-slate-100"
+                                                type="button"
+                                                on:click={() => {
+                                                    addEthicalIssuesDetail();
+                                                }}
+                                            >
+                                                <p
+                                                    class="text-base font-medium text-slate-700"
+                                                >
+                                                    + Tambah
+                                                </p>
+                                            </button>
+                                        </div>
+
+                                        <CustomTextField
+                                            disabled
+                                            id="name"
+                                            label="Nama Pengarah"
+                                            type="text"
+                                            bind:val={$directorSupportForm.name}
+                                            bind:errors={$directorSupportErrors.name}
+                                        ></CustomTextField>
+                                        <CustomTextField
+                                            disabled
+                                            id="identityDocumentNumber"
+                                            label="No. Kad Pengenalan"
+                                            type="text"
+                                            bind:val={$directorSupportForm.identityDocumentNumber}
+                                            bind:errors={$directorSupportErrors.identityDocumentNumber}
+                                        ></CustomTextField>
+                                        <CustomTextField
+                                            disabled
+                                            id="date"
+                                            label="Tarikh"
+                                            type="date"
+                                            bind:val={$directorSupportForm.date}
+                                            bind:errors={$directorSupportErrors.date}
+                                        ></CustomTextField>
+                                    </form>
+                                </div>
+                                <!-- form wrapper ends here -->
+                            </div>
+                        </div>
+                    {:else}
+                        <div
+                            class="flex h-full w-full flex-col items-center justify-center rounded bg-slate-50 gap-2"
+                        >
+                        <span class="text-lg font-medium text-center text-slate-500">
+                            <SvgInfoSolid size="30"></SvgInfoSolid>
+                        </span>
+                            <p class="text-lg font-medium text-center text-slate-500 text-wrap">Menunggu maklumat Peraku Permohonan</p>
+                        </div>
+                    {/if}
+                </StepperContentBody>
+            </StepperContent>
+            <!-- ======================================================================= -->
+            <!-- MEETING RESULT -->
+            <!-- ======================================================================= -->
+            <StepperContent>
+                <StepperContentHeader title="Keputusan Mesyuarat">
+                    <TextIconButton label="Simpan" type="draft" icon="save"
                     ></TextIconButton>
                 </StepperContentHeader>
                 <StepperContentBody>
@@ -1004,697 +1215,498 @@
                         <div
                             class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
                         >
-                            <form
-                                id="assignDirectorForm"
-                                method="POST"
-                                use:assignDirectorEnhance
-                                class="flex w-full flex-col items-center justify-start gap-2"
+                            <!-- form wrapper starts here -->
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2"
                             >
-                                <CustomSelectField
-                                    id="identityDocumentNumber"
-                                    label={'Sila pilih Pengarah Bahagian/Negeri untuk memberi sokongan bagi permohonan ini'}
-                                    bind:val={$assignDirectorForm.identityDocumentNumber}
-                                    bind:errors={$assignDirectorErrors.identityDocumentNumber}
-                                    options={data.lookup.directorDrodpwon}
-                                ></CustomSelectField>
-                                <CustomTextField
-                                    disabled
-                                    id="directorName"
-                                    label={'Nama Pengarah'}
-                                    bind:val={$assignDirectorForm.directorName}
-                                    bind:errors={$assignDirectorErrors.directorName}
-                                ></CustomTextField>
-                            </form>
+                                <CustomBanner
+                                    text="Sila masukkan butiran dan keputusan mesyuarat di ruangan yang tersedia di bawah."
+                                ></CustomBanner>
+                                <form
+                                    id="meetingResultForm"
+                                    method="POST"
+                                    use:meetingResultEnhance
+                                    class="flex w-full flex-col items-start justify-start gap-1"
+                                >
+                                    <CustomTextField
+                                        id="meetingName"
+                                        label="Nama Mesyuarat"
+                                        type="text"
+                                        bind:val={$meetingResultForm.meetingName}
+                                        bind:errors={$meetingResultErrors.meetingName}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="meetingDate"
+                                        label="Tarikh Mesyuarat"
+                                        type="date"
+                                        bind:val={$meetingResultForm.meetingDate}
+                                        bind:errors={$meetingResultErrors.meetingDate}
+                                    ></CustomTextField>
+                                    <CustomRadioBoolean
+                                        disabled={false}
+                                        id="status"
+                                        label="Keputusan Mesyuarat Permohonan Ini Adalah:"
+                                        bind:val={$meetingResultForm.status}
+                                        bind:errors={$meetingResultErrors.status}
+                                        options={approveOptions}
+                                    ></CustomRadioBoolean>
+                                    <CustomTextField
+                                        id="remark"
+                                        label="Ulasan"
+                                        type="textarea"
+                                        bind:val={$meetingResultForm.remark}
+                                        bind:errors={$meetingResultErrors.remark}
+                                    ></CustomTextField>
+                                </form>
+                            </div>
+                            <!-- form wrapper ends here -->
+                        </div>
+                    </div>
+                </StepperContentBody>
+            </StepperContent>
+            <!-- ======================================================================= -->
+            <!-- ACCEPTANCE LETTER -->
+            <!-- ======================================================================= -->
+            <StepperContent>
+                <StepperContentHeader title="Butiran Surat Pertukaran">
+                    <TextIconButton label="Simpan" type="draft" icon="save"
+                    ></TextIconButton>
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <div
+                        class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
+                    >
+                        <div
+                            class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
+                        >
+                            <!-- form wrapper starts here -->
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2"
+                            >
+                                <SuratPertukaran></SuratPertukaran>
+                            </div>
+                            <!-- form wrapper ends here -->
+                        </div>
+                    </div>
+                </StepperContentBody>
+            </StepperContent>
+            <!-- ======================================================================= -->
+            <!-- POSTPONE -->
+            <!-- ======================================================================= -->
+            <StepperContent>
+                <StepperContentHeader title="Permohonan Penangguhan">
+                    <TextIconButton label="Hantar" type="primary" icon="check"
+                    ></TextIconButton>
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <div
+                        class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
+                    >
+                        <div
+                            class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
+                        >
+                            <!-- form wrapper starts here -->
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2"
+                            >
+                                <form
+                                    id="postponeDetailForm"
+                                    method="POST"
+                                    use:postponeDetailEnhance
+                                    class="flex w-full flex-col items-start justify-start gap-1"
+                                >
+                                    <CustomRadioBoolean
+                                        disabled={false}
+                                        id="status"
+                                        label="Adakah Anda Ingin Memohon Penangguhan Tarikh Pertukaran"
+                                        options={commonOptions}
+                                        bind:val={$postponeDetailForm.status}
+                                        bind:errors={$postponeDetailErrors.status}
+                                    ></CustomRadioBoolean>
+                                    <CustomTextField
+                                        id="remark"
+                                        label="Ulasan"
+                                        type="textarea"
+                                        bind:val={$postponeDetailForm.remark}
+                                        bind:errors={$postponeDetailErrors.remark}
+                                    ></CustomTextField>
+                                    <DocumentInput
+                                        bind:documents={$postponeDetailForm.documents}
+                                        label="Sila Muat Naik Surat Permohonan Penangguhan"
+                                    ></DocumentInput>
+                                    <CustomTextField
+                                        id="date"
+                                        label="Tarikh Permohonan Dihantar"
+                                        type="date"
+                                        bind:val={$postponeDetailForm.date}
+                                        bind:errors={$postponeDetailErrors.date}
+                                    ></CustomTextField>
+                                </form>
+                            </div>
+                            <!-- form wrapper ends here -->
+                        </div>
+                    </div>
+                </StepperContentBody>
+            </StepperContent>
+            <!-- ======================================================================= -->
+            <!-- ASSIGN POSTPONE APPROVER -->
+            <!-- ======================================================================= -->
+            <StepperContent>
+                <StepperContentHeader
+                    title="Lantikan Penyokong Permohonan Penangguhan"
+                >
+                    <TextIconButton label="Hantar" type="primary" icon="check"
+                    ></TextIconButton>
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <div
+                        class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
+                    >
+                        <div
+                            class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
+                        >
+                            <!-- form wrapper starts here -->
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2"
+                            >
+                                <form
+                                    id="assignPostponeApproverForm"
+                                    method="POST"
+                                    use:assignPostponeApproverEnhance
+                                    class="flex w-full flex-col items-center justify-start gap-2"
+                                >
+                                    <CustomSelectField
+                                        id="identityDocumentNumber"
+                                        label={'Sila pilih penyokong untuk memberi sokongan bagi permohonan penangguhan pertukaran ini'}
+                                        bind:val={$assignPostponeApproverForm.identityDocumentNumber}
+                                        bind:errors={$assignPostponeApproverErrors.identityDocumentNumber}
+                                        options={data.lookup.directorDrodpwon}
+                                    ></CustomSelectField>
+                                    <CustomTextField
+                                        disabled
+                                        id="directorName"
+                                        label={'Nama Penyokong'}
+                                        bind:val={$assignPostponeApproverForm.directorName}
+                                        bind:errors={$assignPostponeApproverErrors.directorName}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        disabled
+                                        id="identityDocumentNumber"
+                                        label={'No Kad Pengenalan'}
+                                        bind:val={$assignPostponeApproverForm.identityDocumentNumber}
+                                        bind:errors={$assignPostponeApproverErrors.identityDocumentNumber}
+                                    ></CustomTextField>
+                                </form>
+                            </div>
+                            <!-- form wrapper ends here -->
+                        </div>
+                    </div>
+                </StepperContentBody>
+            </StepperContent>
+            <!-- ======================================================================= -->
+            <!-- POSTPONE APPROVAL -->
+            <!-- ======================================================================= -->
+            <StepperContent>
+                <StepperContentHeader title="Sokongan Permohonan Penangguhan">
+                    <TextIconButton label="Hantar" type="primary" icon="check"
+                    ></TextIconButton>
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <div
+                        class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
+                    >
+                        <div
+                            class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
+                        >
+                            <!-- form wrapper starts here -->
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2"
+                            >
+                                <form
+                                    id="postponeApprovalForm"
+                                    method="POST"
+                                    use:postponeApprovalEnhance
+                                    class="flex w-full flex-col items-start justify-start gap-1"
+                                >
+                                    <CustomRadioBoolean
+                                        disabled={false}
+                                        id="status"
+                                        label="Permohonan Penangguhan Pertukaran Pegawai Di Atas Adalah:"
+                                        bind:val={$postponeApprovalForm.status}
+                                        bind:errors={$postponeApprovalErrors.status}
+                                        options={supportAltOptions}
+                                    ></CustomRadioBoolean>
+                                    <CustomTextField
+                                        id="remark"
+                                        label="Ulasan"
+                                        type="textarea"
+                                        bind:val={$postponeApprovalForm.remark}
+                                        bind:errors={$postponeApprovalErrors.remark}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="name"
+                                        label="Nama Penyokong"
+                                        type="text"
+                                        bind:val={$postponeApprovalForm.name}
+                                        bind:errors={$postponeApprovalErrors.name}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="date"
+                                        label="Tarikh Maklum Balas Dihantar"
+                                        type="date"
+                                        bind:val={$postponeApprovalForm.identityDocumentNumber}
+                                        bind:errors={$postponeApprovalErrors.identityDocumentNumber}
+                                    ></CustomTextField>
+                                </form>
+                            </div>
+                            <!-- form wrapper ends here -->
+                        </div>
+                    </div>
+                </StepperContentBody>
+            </StepperContent>
+            <!-- ======================================================================= -->
+            <!-- POSTPONE LETTER -->
+            <!-- ======================================================================= -->
+            <StepperContent>
+                <StepperContentHeader
+                    title="Butiran Surat Penangguhan Pertukaran"
+                >
+                    <TextIconButton label="Hantar" type="primary" icon="check"
+                    ></TextIconButton>
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <div
+                        class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
+                    >
+                        <div
+                            class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
+                        >
+                            <!-- form wrapper starts here -->
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2"
+                            >
+                                <form
+                                    id="postponeLetterDetailForm"
+                                    method="POST"
+                                    use:postponeLetterDetailEnhance
+                                    class="flex w-full flex-col items-center justify-start gap-2"
+                                ></form>
+                            </div>
+                            <!-- form wrapper ends here -->
+                        </div>
+                    </div>
+                </StepperContentBody>
+            </StepperContent>
+            <!-- ======================================================================= -->
+            <!-- TRANSFER ITINERARY -->
+            <!-- ======================================================================= -->
+            <StepperContent>
+                <StepperContentHeader title="Dokumen Keperluan Pertukaran">
+                    <TextIconButton label="Hantar" type="primary" icon="check"
+                    ></TextIconButton>
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <div
+                        class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
+                    >
+                        <div
+                            class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
+                        >
+                            <!-- form wrapper starts here -->
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2"
+                            >
+                                <form
+                                    id="transferDocumentForm"
+                                    method="POST"
+                                    use:transferDocumentEnhance
+                                    class="flex w-full flex-col items-start justify-start gap-1"
+                                >
+                                    <DocumentInput
+                                        bind:documents={$transferDocumentForm.documents}
+                                        label="Sila Muat Naik Salinan Borang-borang yang Telah Diisi"
+                                    ></DocumentInput>
+                                </form>
+                            </div>
+                            <!-- form wrapper ends here -->
+                        </div>
+                    </div>
+                </StepperContentBody>
+            </StepperContent>
+            <!-- ======================================================================= -->
+            <!-- ASSIGN SUPPORTER AND APPROVER -->
+            <!-- ======================================================================= -->
+            <StepperContent>
+                <StepperContentHeader title="Lantikan Penyokong dan Pelulus">
+                    <TextIconButton label="Hantar" type="primary" icon="check"
+                    ></TextIconButton>
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <div
+                        class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
+                    >
+                        <div
+                            class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
+                        >
+                            <!-- form wrapper starts here -->
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2"
+                            >
+                                <form
+                                    id="endorserDetailForm"
+                                    method="POST"
+                                    use:endorserDetailEnhance
+                                    class="flex w-full flex-col items-center justify-start gap-2"
+                                >
+                                    <CustomSelectField
+                                        id="supporterIdentityDocumentNumber"
+                                        label={'Sila Pilih Penyokong Untuk Menyokong Pertukaran Ini'}
+                                        bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
+                                        bind:errors={$endorserDetailErrors.supporterIdentityDocumentNumber}
+                                        options={data.lookup.directorDrodpwon}
+                                    ></CustomSelectField>
+                                    <CustomSelectField
+                                        id="identityDocumentNumber"
+                                        label={'Sila Pilih Pelulus Untuk Meluluskan Pertukaran Ini'}
+                                        bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
+                                        bind:errors={$endorserDetailErrors.approverIdentityDocumentNumber}
+                                        options={data.lookup.directorDrodpwon}
+                                    ></CustomSelectField>
+                                    <CustomTextField
+                                        disabled
+                                        id="supporterName"
+                                        label={'Nama Penyokong'}
+                                        bind:val={$endorserDetailForm.supporterName}
+                                        bind:errors={$endorserDetailErrors.supporterName}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        disabled
+                                        id="identityDocumentNumber"
+                                        label={'No Kad Pengenalan Penyokong'}
+                                        bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
+                                        bind:errors={$endorserDetailErrors.supporterIdentityDocumentNumber}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        disabled
+                                        id="approverName"
+                                        label={'Nama Penyokong'}
+                                        bind:val={$endorserDetailForm.approverName}
+                                        bind:errors={$endorserDetailErrors.approverName}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        disabled
+                                        id="approverIdentityDocumentNumber"
+                                        label={'No Kad Pengenalan Pelulus'}
+                                        bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
+                                        bind:errors={$endorserDetailErrors.approverIdentityDocumentNumber}
+                                    ></CustomTextField>
+                                </form>
+                            </div>
+                            <!-- form wrapper ends here -->
+                        </div>
+                    </div>
+                </StepperContentBody>
+            </StepperContent>
+            <!-- ======================================================================= -->
+            <!-- TRANSFER SUPPORT -->
+            <!-- ======================================================================= -->
+            <StepperContent>
+                <StepperContentHeader title="Maklum Balas Penyokong">
+                    <TextIconButton label="Hantar" type="primary" icon="check"
+                    ></TextIconButton>
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <div
+                        class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
+                    >
+                        <div
+                            class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
+                        >
+                            <!-- form wrapper starts here -->
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2"
+                            >
+                                <form
+                                    id="supporterFeedbackForm"
+                                    method="POST"
+                                    use:supporterFeedbackEnhance
+                                    class="flex w-full flex-col items-start justify-start gap-1"
+                                >
+                                    <CustomRadioBoolean
+                                        disabled={false}
+                                        id="status"
+                                        label="Pertukaran Pegawai Di Atas Adalah:"
+                                        val={null}
+                                        options={supportAltOptions}
+                                    ></CustomRadioBoolean>
+                                    <CustomTextField
+                                        id="remark"
+                                        label="Ulasan"
+                                        type="textarea"
+                                        val=""
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="date"
+                                        label="Tarikh Maklum Balas Dihantar"
+                                        type="date"
+                                        val=""
+                                    ></CustomTextField>
+                                </form>
+                            </div>
+                            <!-- form wrapper ends here -->
+                        </div>
+                    </div>
+                </StepperContentBody>
+            </StepperContent>
+            <!-- ======================================================================= -->
+            <!-- TRANSFER APPROVAL -->
+            <!-- ======================================================================= -->
+            <StepperContent>
+                <StepperContentHeader title="Maklum Balas Pelulus">
+                    <TextIconButton label="Hantar" type="primary" icon="check"
+                    ></TextIconButton>
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <div
+                        class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
+                    >
+                        <div
+                            class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
+                        >
+                            <!-- form wrapper starts here -->
+                            <div
+                                class="flex w-full flex-col items-start justify-start gap-2"
+                            >
+                                <form
+                                    action=""
+                                    class="flex w-full flex-col items-start justify-start gap-1"
+                                >
+                                    <CustomRadioBoolean
+                                        disabled={false}
+                                        id="status"
+                                        label="Pertukaran Pegawai Di Atas Adalah:"
+                                        val={null}
+                                        options={approveAltOptions}
+                                    ></CustomRadioBoolean>
+                                    <CustomTextField
+                                        id="remark"
+                                        label="Ulasan"
+                                        type="textarea"
+                                        val=""
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="date"
+                                        label="Tarikh Maklum Balas Dihantar"
+                                        type="date"
+                                        val=""
+                                    ></CustomTextField>
+                                </form>
+                            </div>
+                            <!-- form wrapper ends here -->
                         </div>
                     </div>
                 </StepperContentBody>
             </StepperContent>
         {/if}
-        <!-- ======================================================================= -->
-        <!-- DIRECTOR SUPPORT -->
-        <!-- ======================================================================= -->
-        <StepperContent>
-            <StepperContentHeader title="Perakuan Pengarah Bahagian/Negeri">
-                <TextIconButton label="Simpan" type="draft" icon="save"
-                ></TextIconButton>
-            </StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
-                >
-                    <div
-                        class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
-                    >
-                        <!-- form wrapper starts here -->
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2"
-                        >
-                            <form
-                                id="directorSupportForm"
-                                method="POST"
-                                use:directorSupportEnhance
-                                class="flex w-full flex-col items-start justify-start gap-1"
-                            >
-                                <p class="text-base font-medium text-slate-700">
-                                    Saya mengesahkan bahawa maklumat yang
-                                    diberikan adalah benar. Oleh itu saya
-                                    memperakukan permohonan ini seperti ulasan
-                                    berikut:
-                                </p>
-                                <SingleChoiceInput
-                                    id="feedback"
-                                    label="Maklum Balas Pengarah"
-                                    choices={data.lookup.directorFeedbackOption}
-                                    bind:val={$directorSupportForm.feedback}
-                                    bind:errors={$directorSupportErrors.feedback}
-                                ></SingleChoiceInput>
-
-                                <CustomTextField
-                                    id="remark"
-                                    label="Ulasan"
-                                    type="textarea"
-                                    bind:val={$directorSupportForm.remark}
-                                    bind:errors={$directorSupportErrors.remark}
-                                ></CustomTextField>
-
-                                <div
-                                    class="flex w-full flex-col items-start justify-start gap-2 py-2 pb-4"
-                                >
-                                    <div
-                                        class="flex w-full flex-row items-center justify-between"
-                                    >
-                                        <p
-                                            class=" w-full text-start text-base font-medium text-slate-700"
-                                        >
-                                            Senarai Laporan Tatatertib
-                                        </p>
-                                    </div>
-                                    {#each $directorSupportForm.ethicalIssues as item, index}
-                                        <div
-                                            class="flex w-full flex-col items-start justify-start rounded-md border border-slate-200 bg-slate-100 p-4"
-                                        >
-                                            <div
-                                                class="flex w-full flex-row items-center justify-between py-2"
-                                            >
-                                                <p
-                                                    class="text-base font-semibold text-slate-700"
-                                                >
-                                                    Laporan Tatatertib {index +
-                                                        1}
-                                                </p>
-                                                <button
-                                                    type="button"
-                                                    on:click={() => {
-                                                        removeEthicalIssuesDetail(
-                                                            index,
-                                                        );
-                                                    }}
-                                                >
-                                                    <span>
-                                                        <SvgXMark></SvgXMark>
-                                                    </span>
-                                                </button>
-                                            </div>
-                                            <div
-                                                class="flex w-full flex-col items-start justify-start gap-0"
-                                            >
-                                                <CustomTextField
-                                                    type="text"
-                                                    id="ethical-punishment-{index}"
-                                                    label={'Hukuman'}
-                                                    errors={$directorSupportErrors.ethicalIssues
-                                                        ? $directorSupportErrors
-                                                              .ethicalIssues[
-                                                              index
-                                                          ]?.punishment
-                                                        : undefined}
-                                                    bind:val={item.punishment}
-                                                ></CustomTextField>
-                                                <CustomTextField
-                                                    type="date"
-                                                    id="ethical-date-{index}"
-                                                    label={'Tarikh Laporan'}
-                                                    errors={$directorSupportErrors.ethicalIssues
-                                                        ? $directorSupportErrors
-                                                              .ethicalIssues[
-                                                              index
-                                                          ]?.date
-                                                        : undefined}
-                                                    bind:val={item.date}
-                                                ></CustomTextField>
-                                            </div>
-                                        </div>
-                                    {/each}
-                                    <button
-                                        class="h-8 min-h-8 w-full rounded border border-slate-400 bg-slate-100"
-                                        type="button"
-                                        on:click={() => {
-                                            addEthicalIssuesDetail();
-                                        }}
-                                    >
-                                        <p
-                                            class="text-base font-medium text-slate-700"
-                                        >
-                                            + Tambah
-                                        </p>
-                                    </button>
-                                </div>
-
-                                <CustomTextField
-                                    disabled
-                                    id="name"
-                                    label="Nama Pengarah"
-                                    type="text"
-                                    bind:val={$directorSupportForm.name}
-                                    bind:errors={$directorSupportErrors.name}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="identityDocumentNumber"
-                                    label="No. Kad Pengenalan"
-                                    type="text"
-                                    bind:val={$directorSupportForm.identityDocumentNumber}
-                                    bind:errors={$directorSupportErrors.identityDocumentNumber}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="date"
-                                    label="Tarikh"
-                                    type="date"
-                                    bind:val={$directorSupportForm.date}
-                                    bind:errors={$directorSupportErrors.date}
-                                ></CustomTextField>
-                            </form>
-                        </div>
-                        <!-- form wrapper ends here -->
-                    </div>
-                </div>
-            </StepperContentBody>
-        </StepperContent>
-        <!-- ======================================================================= -->
-        <!-- MEETING RESULT -->
-        <!-- ======================================================================= -->
-        <StepperContent>
-            <StepperContentHeader title="Keputusan Mesyuarat">
-                <TextIconButton label="Simpan" type="draft" icon="save"
-                ></TextIconButton>
-            </StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
-                >
-                    <div
-                        class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
-                    >
-                        <!-- form wrapper starts here -->
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2"
-                        >
-                            <CustomBanner
-                                text="Sila masukkan butiran dan keputusan mesyuarat di ruangan yang tersedia di bawah."
-                            ></CustomBanner>
-                            <form
-                                id="meetingResultForm"
-                                method="POST"
-                                use:meetingResultEnhance
-                                class="flex w-full flex-col items-start justify-start gap-1"
-                            >
-                                <CustomTextField
-                                    id="meetingName"
-                                    label="Nama Mesyuarat"
-                                    type="text"
-                                    bind:val={$meetingResultForm.meetingName}
-                                    bind:errors={$meetingResultErrors.meetingName}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    id="meetingDate"
-                                    label="Tarikh Mesyuarat"
-                                    type="date"
-                                    bind:val={$meetingResultForm.meetingDate}
-                                    bind:errors={$meetingResultErrors.meetingDate}
-                                ></CustomTextField>
-                                <CustomRadioBoolean
-                                    disabled={false}
-                                    id="status"
-                                    label="Keputusan Mesyuarat Permohonan Ini Adalah:"
-                                    bind:val={$meetingResultForm.status}
-                                    bind:errors={$meetingResultErrors.status}
-                                    options={approveOptions}
-                                ></CustomRadioBoolean>
-                                <CustomTextField
-                                    id="remark"
-                                    label="Ulasan"
-                                    type="textarea"
-                                    bind:val={$meetingResultForm.remark}
-                                    bind:errors={$meetingResultErrors.remark}
-                                ></CustomTextField>
-                            </form>
-                        </div>
-                        <!-- form wrapper ends here -->
-                    </div>
-                </div>
-            </StepperContentBody>
-        </StepperContent>
-        <!-- ======================================================================= -->
-        <!-- ACCEPTANCE LETTER -->
-        <!-- ======================================================================= -->
-        <StepperContent>
-            <StepperContentHeader title="Butiran Surat Pertukaran">
-                <TextIconButton label="Simpan" type="draft" icon="save"
-                ></TextIconButton>
-            </StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
-                >
-                    <div
-                        class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
-                    >
-                        <!-- form wrapper starts here -->
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2"
-                        >
-                            <SuratPertukaran></SuratPertukaran>
-                        </div>
-                        <!-- form wrapper ends here -->
-                    </div>
-                </div>
-            </StepperContentBody>
-        </StepperContent>
-        <!-- ======================================================================= -->
-        <!-- POSTPONE -->
-        <!-- ======================================================================= -->
-        <StepperContent>
-            <StepperContentHeader title="Permohonan Penangguhan">
-                <TextIconButton label="Hantar" type="primary" icon="check"
-                ></TextIconButton>
-            </StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
-                >
-                    <div
-                        class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
-                    >
-                        <!-- form wrapper starts here -->
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2"
-                        >
-                            <form
-                                id="postponeDetailForm"
-                                method="POST"
-                                use:postponeDetailEnhance
-                                class="flex w-full flex-col items-start justify-start gap-1"
-                            >
-                                <CustomRadioBoolean
-                                    disabled={false}
-                                    id="status"
-                                    label="Adakah Anda Ingin Memohon Penangguhan Tarikh Pertukaran"
-                                    options={commonOptions}
-                                    bind:val={$postponeDetailForm.status}
-                                    bind:errors={$postponeDetailErrors.status}
-                                ></CustomRadioBoolean>
-                                <CustomTextField
-                                    id="remark"
-                                    label="Ulasan"
-                                    type="textarea"
-                                    bind:val={$postponeDetailForm.remark}
-                                    bind:errors={$postponeDetailErrors.remark}
-                                ></CustomTextField>
-                                <DocumentInput
-                                    bind:documents={$postponeDetailForm.documents}
-                                    label="Sila Muat Naik Surat Permohonan Penangguhan"
-                                ></DocumentInput>
-                                <CustomTextField
-                                    id="date"
-                                    label="Tarikh Permohonan Dihantar"
-                                    type="date"
-                                    bind:val={$postponeDetailForm.date}
-                                    bind:errors={$postponeDetailErrors.date}
-                                ></CustomTextField>
-                            </form>
-                        </div>
-                        <!-- form wrapper ends here -->
-                    </div>
-                </div>
-            </StepperContentBody>
-        </StepperContent>
-        <!-- ======================================================================= -->
-        <!-- ASSIGN POSTPONE APPROVER -->
-        <!-- ======================================================================= -->
-        <StepperContent>
-            <StepperContentHeader
-                title="Lantikan Penyokong Permohonan Penangguhan"
-            >
-                <TextIconButton label="Hantar" type="primary" icon="check"
-                ></TextIconButton>
-            </StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
-                >
-                    <div
-                        class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
-                    >
-                        <!-- form wrapper starts here -->
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2"
-                        >
-                            <form
-                                id="assignPostponeApproverForm"
-                                method="POST"
-                                use:assignPostponeApproverEnhance
-                                class="flex w-full flex-col items-center justify-start gap-2"
-                            >
-                                <CustomSelectField
-                                    id="identityDocumentNumber"
-                                    label={'Sila pilih penyokong untuk memberi sokongan bagi permohonan penangguhan pertukaran ini'}
-                                    bind:val={$assignPostponeApproverForm.identityDocumentNumber}
-                                    bind:errors={$assignPostponeApproverErrors.identityDocumentNumber}
-                                    options={data.lookup.directorDrodpwon}
-                                ></CustomSelectField>
-                                <CustomTextField
-                                    disabled
-                                    id="directorName"
-                                    label={'Nama Penyokong'}
-                                    bind:val={$assignPostponeApproverForm.directorName}
-                                    bind:errors={$assignPostponeApproverErrors.directorName}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="identityDocumentNumber"
-                                    label={'No Kad Pengenalan'}
-                                    bind:val={$assignPostponeApproverForm.identityDocumentNumber}
-                                    bind:errors={$assignPostponeApproverErrors.identityDocumentNumber}
-                                ></CustomTextField>
-                            </form>
-                        </div>
-                        <!-- form wrapper ends here -->
-                    </div>
-                </div>
-            </StepperContentBody>
-        </StepperContent>
-        <!-- ======================================================================= -->
-        <!-- POSTPONE APPROVAL -->
-        <!-- ======================================================================= -->
-        <StepperContent>
-            <StepperContentHeader title="Sokongan Permohonan Penangguhan">
-                <TextIconButton label="Hantar" type="primary" icon="check"
-                ></TextIconButton>
-            </StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
-                >
-                    <div
-                        class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
-                    >
-                        <!-- form wrapper starts here -->
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2"
-                        >
-                            <form
-                                id="postponeApprovalForm"
-                                method="POST"
-                                use:postponeApprovalEnhance
-                                class="flex w-full flex-col items-start justify-start gap-1"
-                            >
-                                <CustomRadioBoolean
-                                    disabled={false}
-                                    id="status"
-                                    label="Permohonan Penangguhan Pertukaran Pegawai Di Atas Adalah:"
-                                    bind:val={$postponeApprovalForm.status}
-                                    bind:errors={$postponeApprovalErrors.status}
-                                    options={supportAltOptions}
-                                ></CustomRadioBoolean>
-                                <CustomTextField
-                                    id="remark"
-                                    label="Ulasan"
-                                    type="textarea"
-                                    bind:val={$postponeApprovalForm.remark}
-                                    bind:errors={$postponeApprovalErrors.remark}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    id="name"
-                                    label="Nama Penyokong"
-                                    type="text"
-                                    bind:val={$postponeApprovalForm.name}
-                                    bind:errors={$postponeApprovalErrors.name}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    id="date"
-                                    label="Tarikh Maklum Balas Dihantar"
-                                    type="date"
-                                    bind:val={$postponeApprovalForm.identityDocumentNumber}
-                                    bind:errors={$postponeApprovalErrors.identityDocumentNumber}
-                                ></CustomTextField>
-                            </form>
-                        </div>
-                        <!-- form wrapper ends here -->
-                    </div>
-                </div>
-            </StepperContentBody>
-        </StepperContent>
-        <!-- ======================================================================= -->
-        <!-- POSTPONE LETTER -->
-        <!-- ======================================================================= -->
-        <StepperContent>
-            <StepperContentHeader title="Butiran Surat Penangguhan Pertukaran">
-                <TextIconButton label="Hantar" type="primary" icon="check"
-                ></TextIconButton>
-            </StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
-                >
-                    <div
-                        class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
-                    >
-                        <!-- form wrapper starts here -->
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2"
-                        >
-                            <form
-                                id="postponeLetterDetailForm"
-                                method="POST"
-                                use:postponeLetterDetailEnhance
-                                class="flex w-full flex-col items-center justify-start gap-2"
-                            ></form>
-                        </div>
-                        <!-- form wrapper ends here -->
-                    </div>
-                </div>
-            </StepperContentBody>
-        </StepperContent>
-        <!-- ======================================================================= -->
-        <!-- TRANSFER ITINERARY -->
-        <!-- ======================================================================= -->
-        <StepperContent>
-            <StepperContentHeader title="Dokumen Keperluan Pertukaran">
-                <TextIconButton label="Hantar" type="primary" icon="check"
-                ></TextIconButton>
-            </StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
-                >
-                    <div
-                        class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
-                    >
-                        <!-- form wrapper starts here -->
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2"
-                        >
-                            <form
-                                id="transferDocumentForm"
-                                method="POST"
-                                use:transferDocumentEnhance
-                                class="flex w-full flex-col items-start justify-start gap-1"
-                            >
-                                <DocumentInput
-                                    bind:documents={$transferDocumentForm.documents}
-                                    label="Sila Muat Naik Salinan Borang-borang yang Telah Diisi"
-                                ></DocumentInput>
-                            </form>
-                        </div>
-                        <!-- form wrapper ends here -->
-                    </div>
-                </div>
-            </StepperContentBody>
-        </StepperContent>
-        <!-- ======================================================================= -->
-        <!-- ASSIGN SUPPORTER AND APPROVER -->
-        <!-- ======================================================================= -->
-        <StepperContent>
-            <StepperContentHeader title="Lantikan Penyokong dan Pelulus">
-                <TextIconButton label="Hantar" type="primary" icon="check"
-                ></TextIconButton>
-            </StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
-                >
-                    <div
-                        class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
-                    >
-                        <!-- form wrapper starts here -->
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2"
-                        >
-                            <form
-                                id="endorserDetailForm"
-                                method="POST"
-                                use:endorserDetailEnhance
-                                class="flex w-full flex-col items-center justify-start gap-2"
-                            >
-                                <CustomSelectField
-                                    id="supporterIdentityDocumentNumber"
-                                    label={'Sila Pilih Penyokong Untuk Menyokong Pertukaran Ini'}
-                                    bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
-                                    bind:errors={$endorserDetailErrors.supporterIdentityDocumentNumber}
-                                    options={data.lookup.directorDrodpwon}
-                                ></CustomSelectField>
-                                <CustomSelectField
-                                    id="identityDocumentNumber"
-                                    label={'Sila Pilih Pelulus Untuk Meluluskan Pertukaran Ini'}
-                                    bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
-                                    bind:errors={$endorserDetailErrors.approverIdentityDocumentNumber}
-                                    options={data.lookup.directorDrodpwon}
-                                ></CustomSelectField>
-                                <CustomTextField
-                                    disabled
-                                    id="supporterName"
-                                    label={'Nama Penyokong'}
-                                    bind:val={$endorserDetailForm.supporterName}
-                                    bind:errors={$endorserDetailErrors.supporterName}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="identityDocumentNumber"
-                                    label={'No Kad Pengenalan Penyokong'}
-                                    bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
-                                    bind:errors={$endorserDetailErrors.supporterIdentityDocumentNumber}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="approverName"
-                                    label={'Nama Penyokong'}
-                                    bind:val={$endorserDetailForm.approverName}
-                                    bind:errors={$endorserDetailErrors.approverName}
-                                ></CustomTextField>
-                                <CustomTextField
-                                    disabled
-                                    id="approverIdentityDocumentNumber"
-                                    label={'No Kad Pengenalan Pelulus'}
-                                    bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
-                                    bind:errors={$endorserDetailErrors.approverIdentityDocumentNumber}
-                                ></CustomTextField>
-                            </form>
-                        </div>
-                        <!-- form wrapper ends here -->
-                    </div>
-                </div>
-            </StepperContentBody>
-        </StepperContent>
-        <!-- ======================================================================= -->
-        <!-- TRANSFER SUPPORT -->
-        <!-- ======================================================================= -->
-        <StepperContent>
-            <StepperContentHeader title="Maklum Balas Penyokong">
-                <TextIconButton label="Hantar" type="primary" icon="check"
-                ></TextIconButton>
-            </StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
-                >
-                    <div
-                        class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
-                    >
-                        <!-- form wrapper starts here -->
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2"
-                        >
-                            <form
-                                id="supporterFeedbackForm"
-                                method="POST"
-                                use:supporterFeedbackEnhance
-                                class="flex w-full flex-col items-start justify-start gap-1"
-                            >
-                                <CustomRadioBoolean
-                                    disabled={false}
-                                    id="status"
-                                    label="Pertukaran Pegawai Di Atas Adalah:"
-                                    val={null}
-                                    options={supportAltOptions}
-                                ></CustomRadioBoolean>
-                                <CustomTextField
-                                    id="remark"
-                                    label="Ulasan"
-                                    type="textarea"
-                                    val=""
-                                ></CustomTextField>
-                                <CustomTextField
-                                    id="date"
-                                    label="Tarikh Maklum Balas Dihantar"
-                                    type="date"
-                                    val=""
-                                ></CustomTextField>
-                            </form>
-                        </div>
-                        <!-- form wrapper ends here -->
-                    </div>
-                </div>
-            </StepperContentBody>
-        </StepperContent>
-        <!-- ======================================================================= -->
-        <!-- TRANSFER APPROVAL -->
-        <!-- ======================================================================= -->
-        <StepperContent>
-            <StepperContentHeader title="Maklum Balas Pelulus">
-                <TextIconButton label="Hantar" type="primary" icon="check"
-                ></TextIconButton>
-            </StepperContentHeader>
-            <StepperContentBody>
-                <div
-                    class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
-                >
-                    <div
-                        class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
-                    >
-                        <!-- form wrapper starts here -->
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-2"
-                        >
-                            <form
-                                action=""
-                                class="flex w-full flex-col items-start justify-start gap-1"
-                            >
-                                <CustomRadioBoolean
-                                    disabled={false}
-                                    id="status"
-                                    label="Pertukaran Pegawai Di Atas Adalah:"
-                                    val={null}
-                                    options={approveAltOptions}
-                                ></CustomRadioBoolean>
-                                <CustomTextField
-                                    id="remark"
-                                    label="Ulasan"
-                                    type="textarea"
-                                    val=""
-                                ></CustomTextField>
-                                <CustomTextField
-                                    id="date"
-                                    label="Tarikh Maklum Balas Dihantar"
-                                    type="date"
-                                    val=""
-                                ></CustomTextField>
-                            </form>
-                        </div>
-                        <!-- form wrapper ends here -->
-                    </div>
-                </div>
-            </StepperContentBody>
-        </StepperContent>
     </Stepper>
 </section>

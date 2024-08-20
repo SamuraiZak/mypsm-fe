@@ -1,47 +1,99 @@
 <script lang="ts">
+    import { RoleConstant } from '$lib/constants/core/role.constant';
     import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto.ts';
     import type { ModuleDTO } from '$lib/dto/core/system/system.dto';
     import { TextAppearanceHelper } from '$lib/helpers/core/text-appearance.helper';
+    import type { PageData } from './$types';
+
+    export let data: PageData;
 
     let menu: ModuleDTO[] = [
         {
             moduleName: 'Pertukaran Atas Permohonan Sendiri',
             url: '',
-            child: [
-                {
-                    moduleName: 'Tambah Permohonan Baharu',
-                    url: '/v2/employment/transfer/application/self/0',
-                    child: [],
-                },
-                {
-                    moduleName: 'Lihat Senarai Permohonan',
-                    url: '/v2/employment/transfer/self/list',
-                    child: [],
-                },
-            ],
+            child:
+                data.props.layoutData.accountDetails.currentRole ==
+                RoleConstant.kakitangan.code
+                    ? [
+                          {
+                              moduleName: 'Tambah Permohonan Baharu',
+                              url: '/v2/employment/transfer/self/new',
+                              child: [],
+                          },
+                          {
+                              moduleName: 'Lihat Senarai',
+                              url: '/v2/employment/transfer/self/list',
+                              child: [],
+                          },
+                      ]
+                    : [
+                          {
+                              moduleName: 'Lihat Senarai',
+                              url: '/v2/employment/transfer/self/list',
+                              child: [],
+                          },
+                      ],
         },
         {
-            moduleName: 'Arahan / Cadangan Pertukaran',
+            moduleName: 'Pertukaran Atas Arahan Pengarah',
             url: '',
-            child: [
-                {
-                    moduleName: 'Tambah Arahan / Cadangan Pertukaran Baharu',
-                    url: '',
-                    child: [],
-                },
-                {
-                    moduleName: 'Lihat Senarai Permohonan',
-                    url: '',
-                    child: [],
-                },
-            ],
+            child:
+                data.props.layoutData.accountDetails.currentRoleCode ==
+                    RoleConstant.pengarahBahagian.code ||
+                data.props.layoutData.accountDetails.currentRoleCode ==
+                    RoleConstant.pengarahNegeri.code
+                    ? [
+                          {
+                              moduleName: 'Tambah',
+                              url: '',
+                              child: [],
+                          },
+                          {
+                              moduleName: 'Lihat Senarai',
+                              url: '',
+                              child: [],
+                          },
+                      ]
+                    : [
+                          {
+                              moduleName: 'Lihat Senarai',
+                              url: '',
+                              child: [],
+                          },
+                      ],
+        },
+        {
+            moduleName: 'Pertukaran Atas Arahan Pihak Pengurusan',
+            url: '',
+            child:
+                data.props.layoutData.accountDetails.currentRoleCode ==
+                RoleConstant.urusSetiaPerjawatan.code
+                    ? [
+                          {
+                              moduleName: 'Tambah',
+                              url: '',
+                              child: [],
+                          },
+                          {
+                              moduleName: 'Lihat Senarai',
+                              url: '',
+                              child: [],
+                          },
+                      ]
+                    : [
+                          {
+                              moduleName: 'Lihat Senarai',
+                              url: '',
+                              child: [],
+                          },
+                      ],
         },
         {
             moduleName: 'Sejarah Pertukaran',
             url: '',
             child: [
                 {
-                    moduleName: 'Lihat Senarai Sejarah Pertukaran',
+                    moduleName: 'Lihat Senarai',
                     url: '',
                     child: [],
                 },
@@ -53,7 +105,7 @@
             url: '',
             child: [
                 {
-                    moduleName: 'Senarai',
+                    moduleName: 'Lihat Senarai',
                     url: '',
                     child: [],
                 },

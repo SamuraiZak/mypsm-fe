@@ -31,7 +31,7 @@
     {form}
     {disabled}
     on:click={onClick}
-    class="flex h-7 max-h-7 min-h-7 min-w-fit flex-row items-center justify-center {label !==
+    class="flex h-8 max-h-8 min-h-8 min-w-fit flex-row items-center justify-center {label !==
     ''
         ? 'gap-1'
         : 'gap-0'} rounded px-2 {type === 'primary'

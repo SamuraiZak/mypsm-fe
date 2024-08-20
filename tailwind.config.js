@@ -13,7 +13,8 @@ export default {
             md: '14px',
             lg: '16px',
             xl: '20px',
-            '2xl': '28px'
+            '2xl': '28px',
+            '3xl': '40px'
         },
         extend: {
             fontFamily:{
