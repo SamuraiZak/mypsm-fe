@@ -254,6 +254,14 @@ export async function load({ params, parent }) {
             postponeLetterDetailForm.data.applicationId = currentApplicationId;
         }
 
+        // assign value postponeLetterDetail
+        if (currentApplicationDetails.transferDocuments !== null) {
+            transferDocumentForm.data =
+                currentApplicationDetails.transferDocuments;
+        } else {
+            transferDocumentForm.data.applicationId = currentApplicationId;
+        }
+
         // assign value assignEndorser
         if (currentApplicationDetails.assignEndorser !== null) {
             endorserDetailForm.data = currentApplicationDetails.assignEndorser;
