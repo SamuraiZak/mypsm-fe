@@ -1853,7 +1853,7 @@
                                         bind:val={$postponeApprovalForm.status}
                                         bind:errors={$postponeApprovalErrors.status}
                                         options={supportAltOptions}
-                                        disabled={data.props
+                                        disabled={!data.props
                                             .currentApplicationDetails
                                             .postponeApproval?.isDraft ||
                                             data.props.layoutData.accountDetails
@@ -1870,7 +1870,7 @@
                                         isRequired={false}
                                         bind:val={$postponeApprovalForm.remark}
                                         bind:errors={$postponeApprovalErrors.remark}
-                                        disabled={data.props
+                                        disabled={!data.props
                                             .currentApplicationDetails
                                             .postponeApproval?.isDraft ||
                                             data.props.layoutData.accountDetails
