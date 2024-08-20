@@ -11,6 +11,8 @@ import type { InterimApplicationResponse } from "$lib/dto/mypsm/employment/tangg
 import { InterimCommonApprovalConvert, type InterimCommonApproval } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-common-approval.dto";
 import { TerminationSuppAppConvert, type TerminationSuppApp } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-termination.dto";
 import { commonIdRequestDTOConvert, type commonIdRequestDTO } from "$lib/dto/core/common/id-request.dto";
+import { InterimDateApllicationConvert, type InterimDateApllication } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-date-application-response.dto";
+import { InterimReferenceNumberConvert, type InterimReferenceNumber } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-reference-number.dto";
 
 
 export class EmploymentInterimServices {
@@ -441,6 +443,55 @@ export class EmploymentInterimServices {
             const promiseRes: Promise<Response> = http
                 .put(url, {
                     body: InterimCommonApprovalConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getGeneralToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // interim date 
+    static async editInterimDate (param: InterimDateApllication) {
+        try {
+            let url: Input = 'employment/interim/termination/edit_interim_date';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: InterimDateApllicationConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getGeneralToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+    // reference number
+    static async editReferenceNumber (param: InterimReferenceNumber) {
+        try {
+            let url: Input = 'employment/interim/termination/post_approval';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: InterimReferenceNumberConvert.toJson(param),
                 })
                 .json();
 

@@ -3,9 +3,11 @@ import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-requ
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
 import type { InterimCommonApproval } from '$lib/dto/mypsm/employment/tanggung-kerja/interim-common-approval.dto';
+import type { InterimDateApllication } from '$lib/dto/mypsm/employment/tanggung-kerja/interim-date-application-response.dto';
 import type { EmployeeInterimApplicationDetailRequestDTO } from '$lib/dto/mypsm/employment/tanggung-kerja/interim-employee-application-detail-request.dto';
+import type { InterimReferenceNumber } from '$lib/dto/mypsm/employment/tanggung-kerja/interim-reference-number.dto';
 import type { InterimTermination, TerminationApproval, TerminationSuppApp, TerminationVerify } from '$lib/dto/mypsm/employment/tanggung-kerja/interim-termination.dto';
-import { _terminationCommonApproval, _terminationSuppApp } from '$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas';
+import { _interimDate, _referenceNumber, _terminationCommonApproval, _terminationSuppApp } from '$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { EmploymentInterimServices } from '$lib/services/implementation/mypsm/perjawatan/employment-interim.service';
 import { superValidate } from 'sveltekit-superforms';
@@ -32,6 +34,8 @@ export const load = async ({ params,parent }) => {
     const suppAppForm = await superValidate(zod(_terminationSuppApp));
     const supporterApprovalForm = await superValidate(zod(_terminationCommonApproval));
     const approverApprovalForm = await superValidate(zod(_terminationCommonApproval));
+    const interimDateForm = await superValidate(zod(_interimDate))
+    const interimReferenceNumberForm = await superValidate(zod(_referenceNumber))
 
     const terminationDetaiLResponse: CommonResponseDTO =
         await EmploymentInterimServices.getTerminationDetail(interimId)
@@ -68,6 +72,8 @@ export const load = async ({ params,parent }) => {
         suppAppForm,
         supporterApprovalForm,
         approverApprovalForm,
+        interimDateForm,
+        interimReferenceNumberForm,
     }
 }
 
@@ -111,6 +117,29 @@ export const _submitApproverApproval = async (formData: InterimCommonApproval) =
         return { response }
     }
 }
+
+export const _submitInterimDate = async (formData: InterimDateApllication) => {
+    const form = await superValidate(formData, zod(_interimDate))
+
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await EmploymentInterimServices.editInterimDate(form.data as InterimDateApllication)
+
+        return { response }
+    }
+}
+export const _submitReferenceNumber = async (formData: InterimReferenceNumber) => {
+    const form = await superValidate(formData, zod(_referenceNumber))
+
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await EmploymentInterimServices.editReferenceNumber(form.data as InterimReferenceNumber)
+
+        return { response }
+    }
+}
+
+
 
 
 

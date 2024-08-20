@@ -1,6 +1,9 @@
 import {
     booleanSchema,
+    codeSchema,
+    dateSchema,
     numberSchema,
+    requiredDateStringSchema,
     shortTextSchema,
 } from '$lib/schemas/common/schema-type';
 import { z } from 'zod';
@@ -48,26 +51,26 @@ export const _addDirectorSchema = z.object({
     type: shortTextSchema,
 })
 
-export const _checklistSchema = z.object ({
-    interimId:                 z.number(),
-    preparer:                  shortTextSchema,
-    checker:                   shortTextSchema,
-    applicationLetterStatus:   booleanSchema,
-    certifiedFormStatus:       booleanSchema,
+export const _checklistSchema = z.object({
+    interimId: z.number(),
+    preparer: shortTextSchema,
+    checker: shortTextSchema,
+    applicationLetterStatus: booleanSchema,
+    certifiedFormStatus: booleanSchema,
     organisationalChartStatus: booleanSchema,
-    jobDescriptionStatus:      booleanSchema,
-    orderLetterStatus:         booleanSchema,
-    leaveStatementStatus:      booleanSchema,
-    documentListStatus:        booleanSchema,
-    justificationStatus:       booleanSchema,
-    applicationLetterCheck:    booleanSchema,
-    certifiedFormCheck:        booleanSchema,
-    organisationalChartCheck:  booleanSchema,
-    jobDescriptionCheck:       booleanSchema,
-    orderLetterCheck:          booleanSchema,
-    leaveStatementCheck:       booleanSchema,
-    documentListCheck:         booleanSchema,
-    justificationCheck:        booleanSchema,
+    jobDescriptionStatus: booleanSchema,
+    orderLetterStatus: booleanSchema,
+    leaveStatementStatus: booleanSchema,
+    documentListStatus: booleanSchema,
+    justificationStatus: booleanSchema,
+    applicationLetterCheck: booleanSchema,
+    certifiedFormCheck: booleanSchema,
+    organisationalChartCheck: booleanSchema,
+    jobDescriptionCheck: booleanSchema,
+    orderLetterCheck: booleanSchema,
+    leaveStatementCheck: booleanSchema,
+    documentListCheck: booleanSchema,
+    justificationCheck: booleanSchema,
 })
 
 export const _terminationCommonApproval = z.object({
@@ -82,5 +85,21 @@ export const _terminationSuppApp = z.object({
     interimId: z.number(),
     supporter: shortTextSchema.default(""),
     approver: shortTextSchema.default(""),
+    isDraft: booleanSchema,
+})
+
+export const _interimDate = z.object({
+    interimId: z.number(),
+    startDate: z.string(),
+    endDate: z.string(),
+    isDraft: booleanSchema,
+})
+
+export const _referenceNumber = z.object({
+    interimId: z.number().readonly(),
+    referenceNumber: z.string(),
+    status: booleanSchema,
+    slogan: z.string(),
+    date: z.string(),
     isDraft: booleanSchema,
 })

@@ -9,10 +9,12 @@
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
-    import { _terminationCommonApproval, _terminationSuppApp } from '$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas';
+    import { _interimDate, _referenceNumber, _terminationCommonApproval, _terminationSuppApp } from '$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas';
     import type { PageData } from './$types';
     import {
         _submitApproverApproval,
+        _submitInterimDate,
+        _submitReferenceNumber,
         _submitSecretaryApproval,
         _submitSuppAppForm,
         _submitSupporterApproval,
@@ -35,8 +37,55 @@
     let submitSuppApp: boolean = false;
     let submitSupporter: boolean = false;
     let submitApprover: boolean = false;
+    let submitInterimDate: boolean = false;
+    let submitReferenceNumber: boolean = false;
 
-    
+    const {
+        form: InterimDateForm,
+        errors: InterimDateError,
+        enhance: InterimDateEnhance,
+    } = superForm(data.interimDateForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        taintedMessage: false,
+        resetForm: false,
+        id: 'InterimDateForm',
+        validators: zod(_interimDate),
+        async onSubmit() {
+            $secretaryApprovalForm.interimId = data.interimId.interimId;
+            const res = await _submitInterimDate($InterimDateForm);
+            if (res?.response.status == 'success') {
+                if($InterimDateForm.isDraft == true){
+                    submitInterimDate = true;
+                }
+            }
+        },
+    });
+
+    const {
+        form: referenceNumberForm,
+        errors: referenceNumberError,
+        enhance: referenceNumberEnhance,
+    } = superForm(data.interimReferenceNumberForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        taintedMessage: false,
+        resetForm: false,
+        id: 'referenceNumberForm',
+        validators: zod(_referenceNumber),
+        async onSubmit() {
+            $referenceNumberForm.interimId = data.interimId.interimId;
+            const res = await _submitReferenceNumber($referenceNumberForm);
+            if (res?.response.status == 'success') {
+                if($referenceNumberForm.isDraft == true){
+                    submitReferenceNumber = true;
+                }
+            }
+        },
+    });
+
     const {
         form: secretaryApprovalForm,
         errors: secretaryApprovalError,
@@ -463,31 +512,50 @@
                             <div
                                 class="flex w-full flex-row items-center justify-between gap-5"
                             >
+                            <!-- new form -->
+                            <form
+                        class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
+                        method="POST"
+                        id="suppAppForm"
+                        use:InterimDateEnhance
+                    >
+
                                 <CustomTextField
                                     label="Tarikh Kuatkuasa Tanggung Kerja"
                                     id="startEffectiveDate"
                                     disabled={editInterimDate}
                                     isRequired={false}
                                     type="date"
-                                    val={data.terminationDetail?.calculation
-                                        ?.personalDetail?.startEffectiveDate}
-                                />
+                                    bind:val={$InterimDateForm.startDate}
+                                    errors={$InterimDateError.startDate}
+                                />  
+                                <!-- val={data.terminationDetail?.calculation
+                                    ?.personalDetail?.startEffectiveDate} -->
                                 <CustomTextField
                                     label="Hingga"
                                     id="endEffectiveDate"
                                     disabled={editInterimDate}
                                     isRequired={false}
                                     type="date"
-                                    val={data.terminationDetail?.calculation
-                                        ?.personalDetail?.endEffectiveDate}
+                                    bind:val={$InterimDateForm.endDate}
+                                    errors={$InterimDateError.endDate}
                                 />
+                                <!-- val={data.terminationDetail?.calculation
+                                    ?.personalDetail?.endEffectiveDate} -->
                                 {#if !editInterimDate}
+                                    <TextIconButton
+                                        label=""
+                                        icon="check"
+                                        onClick={() => ($InterimDateForm.isDraft = true)}
+                                    />
+                                {/if}
+                                <!-- {#if editInterimDate= true}
                                     <TextIconButton
                                         label=""
                                         icon="check"
                                         onClick={() => (editInterimDate = true)}
                                     />
-                                {/if}
+                                {/if} -->
                                 {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                                     <TextIconButton
                                         label=""
@@ -757,6 +825,62 @@
                     </form>
                 </div>
             </StepperContentBody>
+        </StepperContent>
+        <StepperContent>
+            <StepperContentHeader title= "Tetapan Butiran Surat">
+                {#if !submitReferenceNumber && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                <TextIconButton
+                type="neutral"
+                label="Simpan"
+                icon="save"
+                        form="referenceNumberForm"
+                        onClick={() => $referenceNumberForm.isDraft = true}
+                    />    
+                <TextIconButton
+                        label="Hantar"
+                        icon="check"
+                        form="referenceNumberForm"
+                        onClick={() => $referenceNumberForm.isDraft = false}
+                    />
+{/if}
+            </StepperContentHeader>
+            <div
+                    class="flex w-full flex-col items-start justify-start pb-10"
+                >
+                <form
+                class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
+                method="POST"
+                use:referenceNumberEnhance
+                id="referenceNumberForm"
+            >
+            <CustomTextField
+            id="referenceNumber"
+            label="Nombor Rujukan"
+            bind:val={$referenceNumberForm.referenceNumber}
+            errors={$referenceNumberError.referenceNumber}
+            />
+            <CustomRadioBoolean
+            disabled={false}
+            id="status"
+            label="Status"
+            bind:val={$referenceNumberForm.status}
+            errors={$referenceNumberError.status}
+            />
+            <CustomTextField
+            id="slogan"
+            label="Slogan"
+            bind:val={$referenceNumberForm.slogan}
+            errors={$referenceNumberError.slogan}
+            />
+            <CustomTextField
+            id="date"
+            type="date"
+            label="Tarikh"
+            bind:val={$referenceNumberForm.date}
+            errors={$referenceNumberError.date}
+            />
+
+
         </StepperContent>
     </Stepper>
 </section>
