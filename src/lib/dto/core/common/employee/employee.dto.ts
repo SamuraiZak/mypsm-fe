@@ -9,6 +9,9 @@ export interface CommonEmployeeDTO {
     grade: string | null;
     position?: string | null;
     placement?: string;
+    currentGrade?: string | null,
+    currentPosition?: string | null,
+    currentPlacement?: string | null,
 }
 
 // Converts JSON strings to/from your types
