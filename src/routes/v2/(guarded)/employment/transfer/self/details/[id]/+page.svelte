@@ -2113,7 +2113,7 @@
                                     <DocumentInput
                                         id="transfer.documents"
                                         dispatchName="transferDocumentFormDocs"
-                                        bind:documents={$postponeDetailForm.documents}
+                                        bind:documents={$transferDocumentForm.documents}
                                         label="Dokumen-dokumen Keperluan Pertukaran"
                                         disabled={data.props
                                             .currentApplicationDetails
