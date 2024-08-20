@@ -1724,363 +1724,413 @@
                     </div>
                 </StepperContentBody>
             </StepperContent>
-            <!-- ======================================================================= -->
-            <!-- ASSIGN POSTPONE APPROVER -->
-            <!-- ======================================================================= -->
-            <StepperContent>
-                <StepperContentHeader
-                    title="Lantikan Pelulus Permohonan Penangguhan"
-                >
-                    {#if data.props.currentApplicationDetails.assignPostponeApprover == null && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaPerjawatan.code}
-                        <TextIconButton
-                            label="Hantar"
-                            type="primary"
-                            icon="check"
-                            form="assignPostponeApproverForm"
-                        ></TextIconButton>
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <div
-                        class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
-                    >
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
-                        >
-                            <form
-                                id="assignPostponeApproverForm"
-                                method="POST"
-                                use:assignPostponeApproverEnhance
-                                class="flex w-full flex-col items-center justify-start gap-2"
-                            >
-                                {#if data.props.currentApplicationDetails.assignPostponeApprover == null}
-                                    <CustomSelectField
-                                        id="roleCode"
-                                        label={'Sila pilih peranan yang layak menjadi Pelulus Permohonan Penangguhan'}
-                                        bind:val={$assignPostponeApproverForm.roleCode}
-                                        bind:errors={$assignPostponeApproverErrors.roleCode}
-                                        options={data.lookup.roleDropdown}
-                                        onValueChange={async () => {
-                                            data.lookup.postponeApproverDropdown =
-                                                await getEndorserDropdown(
-                                                    $assignPostponeApproverForm.roleCode ??
-                                                        '',
-                                                );
-                                        }}
-                                        disabled={data.props
-                                            .currentApplicationDetails
-                                            .assignPostponeApprover !== null ||
-                                            data.props.layoutData.accountDetails
-                                                .currentRoleCode !==
-                                                RoleConstant.urusSetiaPerjawatan
-                                                    .code}
-                                    ></CustomSelectField>
-                                    <CustomSelectField
-                                        id="identityDocumentNumber"
-                                        label={'Sila pilih nama Pelulus Permohonan Penangguhan untuk memberi sokongan bagi permohonan ini'}
-                                        bind:val={$assignPostponeApproverForm.identityDocumentNumber}
-                                        bind:errors={$assignPostponeApproverErrors.identityDocumentNumber}
-                                        options={data.lookup
-                                            .postponeApproverDropdown}
-                                        disabled={data.props
-                                            .currentApplicationDetails
-                                            .assignPostponeApprover !== null ||
-                                            data.props.layoutData.accountDetails
-                                                .currentRoleCode !==
-                                                RoleConstant.urusSetiaPerjawatan
-                                                    .code}
-                                    ></CustomSelectField>
-                                {:else}
-                                    <CustomSelectField
-                                        id="roleCode"
-                                        label={'Peranan Pelulus Permohonan Penangguhan'}
-                                        bind:val={$assignPostponeApproverForm.roleCode}
-                                        bind:errors={$assignPostponeApproverErrors.roleCode}
-                                        options={data.lookup.roleDropdown}
-                                        disabled
-                                    ></CustomSelectField>
-                                    <CustomTextField
-                                        disabled
-                                        id="directorName"
-                                        label={'Nama Pelulus Permohonan Penangguhan'}
-                                        bind:val={$assignPostponeApproverForm.directorName}
-                                        bind:errors={$assignPostponeApproverErrors.directorName}
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        disabled
-                                        id="identityDocumentNumber"
-                                        label={'No. Kad Pengenalan Pelulus Permohonan Penangguhan'}
-                                        bind:val={$assignPostponeApproverForm.identityDocumentNumber}
-                                        bind:errors={$assignPostponeApproverErrors.identityDocumentNumber}
-                                    ></CustomTextField>
-                                {/if}
-                            </form>
-                        </div>
-                    </div>
-                </StepperContentBody>
-            </StepperContent>
-            <!-- ======================================================================= -->
-            <!-- POSTPONE APPROVAL -->
-            <!-- ======================================================================= -->
-            <StepperContent>
-                <StepperContentHeader title="Sokongan Permohonan Penangguhan">
-                    {#if data.props.currentApplicationDetails.postponeApproval?.isDraft && data.props.layoutData.accountDetails.identityDocumentNumber == data.props.currentApplicationDetails.postponeApproval?.identityDocumentNumber}
-                        <TextIconButton
-                            label="Hantar"
-                            type="primary"
-                            icon="check"
-                            form="postponeApprovalForm"
-                        ></TextIconButton>
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <div
-                        class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
-                    >
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
-                        >
-                            <!-- form wrapper starts here -->
-                            <div
-                                class="flex w-full flex-col items-start justify-start gap-2"
-                            >
-                                <form
-                                    id="postponeApprovalForm"
-                                    method="POST"
-                                    use:postponeApprovalEnhance
-                                    class="flex w-full flex-col items-start justify-start gap-1"
-                                >
-                                    <CustomRadioBoolean
-                                        id="status"
-                                        label="Permohonan Penangguhan Pertukaran Pegawai Di Atas Adalah:"
-                                        bind:val={$postponeApprovalForm.status}
-                                        bind:errors={$postponeApprovalErrors.status}
-                                        options={supportAltOptions}
-                                        disabled={!data.props
-                                            .currentApplicationDetails
-                                            .postponeApproval?.isDraft ||
-                                            data.props.layoutData.accountDetails
-                                                .identityDocumentNumber !==
-                                                data.props
-                                                    .currentApplicationDetails
-                                                    .postponeApproval
-                                                    ?.identityDocumentNumber}
-                                    ></CustomRadioBoolean>
-                                    <CustomTextField
-                                        id="remark"
-                                        label="Ulasan"
-                                        type="textarea"
-                                        isRequired={false}
-                                        bind:val={$postponeApprovalForm.remark}
-                                        bind:errors={$postponeApprovalErrors.remark}
-                                        disabled={!data.props
-                                            .currentApplicationDetails
-                                            .postponeApproval?.isDraft ||
-                                            data.props.layoutData.accountDetails
-                                                .identityDocumentNumber !==
-                                                data.props
-                                                    .currentApplicationDetails
-                                                    .postponeApproval
-                                                    ?.identityDocumentNumber}
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="name"
-                                        label="Nama Penyokong"
-                                        type="text"
-                                        bind:val={$postponeApprovalForm.name}
-                                        bind:errors={$postponeApprovalErrors.name}
-                                        disabled
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="date"
-                                        label="Tarikh Maklum Balas Dihantar"
-                                        type="date"
-                                        bind:val={$postponeApprovalForm.identityDocumentNumber}
-                                        bind:errors={$postponeApprovalErrors.identityDocumentNumber}
-                                        disabled
-                                    ></CustomTextField>
-                                </form>
-                            </div>
-                            <!-- form wrapper ends here -->
-                        </div>
-                    </div>
-                </StepperContentBody>
-            </StepperContent>
-            <!-- ======================================================================= -->
-            <!-- POSTPONE LETTER -->
-            <!-- ======================================================================= -->
-            <StepperContent>
-                <StepperContentHeader title="Surat Penangguhan Pertukaran">
-                    {#if data.props.currentApplicationDetails.postponeLetterDetails == null && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaPerjawatan.code}
-                        <TextIconButton
-                            label="Hantar"
-                            type="primary"
-                            icon="check"
-                            form="postponeLetterDetailForm"
-                        ></TextIconButton>
-                    {/if}
-                </StepperContentHeader>
-                <StepperContentBody>
-                    <div
-                        class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
-                    >
-                        <div
-                            class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
-                        >
-                            <!-- form wrapper starts here -->
-                            <div
-                                class="flex w-full flex-col items-start justify-start gap-2"
-                            >
-                                <CustomBanner
-                                    text="Sila masukkan butiran dan isi-isi Surat Pertukaran seperti yang tertera di bawah"
-                                ></CustomBanner>
-                                <form
-                                    id="postponeLetterDetailForm"
-                                    method="POST"
-                                    use:postponeLetterDetailEnhance
-                                    class="flex w-full flex-col items-start justify-start gap-1"
-                                >
-                                    <CustomTextField
-                                        id="referenceNumber"
-                                        label="No. Rujukan Surat"
-                                        type="text"
-                                        bind:val={$postponeLetterDetailForm.referenceNumber}
-                                        bind:errors={$postponeLetterDetailErrors.referenceNumber}
-                                        disabled={data.props
-                                            .currentApplicationDetails
-                                            .postponeLetterDetails !== null ||
-                                            data.props.layoutData.accountDetails
-                                                .currentRoleCode !==
-                                                RoleConstant.urusSetiaPerjawatan
-                                                    .code}
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="referenceDate"
-                                        label="Tarikh Surat"
-                                        type="date"
-                                        bind:val={$postponeLetterDetailForm.referenceDate}
-                                        bind:errors={$postponeLetterDetailErrors.referenceDate}
-                                        disabled={data.props
-                                            .currentApplicationDetails
-                                            .postponeLetterDetails !== null ||
-                                            data.props.layoutData.accountDetails
-                                                .currentRoleCode !==
-                                                RoleConstant.urusSetiaPerjawatan
-                                                    .code}
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="subject"
-                                        label="Tajuk Surat"
-                                        type="text"
-                                        bind:val={$postponeLetterDetailForm.subject}
-                                        bind:errors={$postponeLetterDetailErrors.subject}
-                                        disabled={data.props
-                                            .currentApplicationDetails
-                                            .postponeLetterDetails !== null ||
-                                            data.props.layoutData.accountDetails
-                                                .currentRoleCode !==
-                                                RoleConstant.urusSetiaPerjawatan
-                                                    .code}
-                                    ></CustomTextField>
 
-                                    <CustomSelectField
-                                        id="fromLocation"
-                                        label={'Penempatan Asal'}
-                                        bind:val={$postponeLetterDetailForm.fromLocation}
-                                        bind:errors={$postponeLetterDetailErrors.fromLocation}
-                                        options={data.lookup.placementDropdown}
-                                        disabled={data.props
-                                            .currentApplicationDetails
-                                            .postponeLetterDetails !== null ||
-                                            data.props.layoutData.accountDetails
-                                                .currentRoleCode !==
-                                                RoleConstant.urusSetiaPerjawatan
-                                                    .code}
-                                    ></CustomSelectField>
-                                    <CustomSelectField
-                                        id="toLocation"
-                                        label={'Penempatan Baharu'}
-                                        bind:val={$postponeLetterDetailForm.toLocation}
-                                        bind:errors={$postponeLetterDetailErrors.toLocation}
-                                        options={data.lookup.placementDropdown}
-                                        disabled={data.props
-                                            .currentApplicationDetails
-                                            .postponeLetterDetails !== null ||
-                                            data.props.layoutData.accountDetails
-                                                .currentRoleCode !==
-                                                RoleConstant.urusSetiaPerjawatan
-                                                    .code}
-                                    ></CustomSelectField>
-                                    <CustomTextField
-                                        id="additionalNotes"
-                                        label="Nota Tambahan"
-                                        type="text"
-                                        bind:val={$postponeLetterDetailForm.additionalNotes}
-                                        bind:errors={$postponeLetterDetailErrors.additionalNotes}
-                                        disabled={data.props
-                                            .currentApplicationDetails
-                                            .postponeLetterDetails !== null ||
-                                            data.props.layoutData.accountDetails
-                                                .currentRoleCode !==
-                                                RoleConstant.urusSetiaPerjawatan
-                                                    .code}
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="transferDate"
-                                        label="Tarikh Pertukaran"
-                                        type="date"
-                                        bind:val={$postponeLetterDetailForm.transferDate}
-                                        bind:errors={$postponeLetterDetailErrors.transferDate}
-                                        disabled={data.props
-                                            .currentApplicationDetails
-                                            .postponeLetterDetails !== null ||
-                                            data.props.layoutData.accountDetails
-                                                .currentRoleCode !==
-                                                RoleConstant.urusSetiaPerjawatan
-                                                    .code}
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="newLocationAddress"
-                                        label="Alamat Penempatan Baharu"
-                                        type="text"
-                                        bind:val={$postponeLetterDetailForm.newLocationAddress}
-                                        bind:errors={$postponeLetterDetailErrors.newLocationAddress}
-                                        disabled={data.props
-                                            .currentApplicationDetails
-                                            .postponeLetterDetails !== null ||
-                                            data.props.layoutData.accountDetails
-                                                .currentRoleCode !==
-                                                RoleConstant.urusSetiaPerjawatan
-                                                    .code}
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="slogan"
-                                        label="Slogan Surat"
-                                        type="text"
-                                        bind:val={$postponeLetterDetailForm.slogan}
-                                        bind:errors={$postponeLetterDetailErrors.slogan}
-                                        disabled={data.props
-                                            .currentApplicationDetails
-                                            .postponeLetterDetails !== null ||
-                                            data.props.layoutData.accountDetails
-                                                .currentRoleCode !==
-                                                RoleConstant.urusSetiaPerjawatan
-                                                    .code}
-                                    ></CustomTextField>
-                                    {#if data.props.currentApplicationDetails.postponeLetterDetails !== null}
-                                        <DocumentInput
-                                            bind:documents={$postponeLetterDetailForm.documents}
-                                            label="Surat Penangguhan Pertukaran"
-                                            disabled
-                                        ></DocumentInput>
-                                    {/if}
-                                </form>
+            {#if data.props.currentApplicationDetails.postponeDetails !== null}
+                {#if data.props.currentApplicationDetails.postponeDetails.isPostpone}
+                    <!-- ======================================================================= -->
+                    <!-- ASSIGN POSTPONE APPROVER -->
+                    <!-- ======================================================================= -->
+                    <StepperContent>
+                        <StepperContentHeader
+                            title="Lantikan Pelulus Permohonan Penangguhan"
+                        >
+                            {#if data.props.currentApplicationDetails.assignPostponeApprover == null && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaPerjawatan.code}
+                                <TextIconButton
+                                    label="Hantar"
+                                    type="primary"
+                                    icon="check"
+                                    form="assignPostponeApproverForm"
+                                ></TextIconButton>
+                            {/if}
+                        </StepperContentHeader>
+                        <StepperContentBody>
+                            <div
+                                class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
+                            >
+                                <div
+                                    class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
+                                >
+                                    <form
+                                        id="assignPostponeApproverForm"
+                                        method="POST"
+                                        use:assignPostponeApproverEnhance
+                                        class="flex w-full flex-col items-center justify-start gap-2"
+                                    >
+                                        {#if data.props.currentApplicationDetails.assignPostponeApprover == null}
+                                            <CustomSelectField
+                                                id="roleCode"
+                                                label={'Sila pilih peranan yang layak menjadi Pelulus Permohonan Penangguhan'}
+                                                bind:val={$assignPostponeApproverForm.roleCode}
+                                                bind:errors={$assignPostponeApproverErrors.roleCode}
+                                                options={data.lookup
+                                                    .roleDropdown}
+                                                onValueChange={async () => {
+                                                    data.lookup.postponeApproverDropdown =
+                                                        await getEndorserDropdown(
+                                                            $assignPostponeApproverForm.roleCode ??
+                                                                '',
+                                                        );
+                                                }}
+                                                disabled={data.props
+                                                    .currentApplicationDetails
+                                                    .assignPostponeApprover !==
+                                                    null ||
+                                                    data.props.layoutData
+                                                        .accountDetails
+                                                        .currentRoleCode !==
+                                                        RoleConstant
+                                                            .urusSetiaPerjawatan
+                                                            .code}
+                                            ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="identityDocumentNumber"
+                                                label={'Sila pilih nama Pelulus Permohonan Penangguhan untuk memberi sokongan bagi permohonan ini'}
+                                                bind:val={$assignPostponeApproverForm.identityDocumentNumber}
+                                                bind:errors={$assignPostponeApproverErrors.identityDocumentNumber}
+                                                options={data.lookup
+                                                    .postponeApproverDropdown}
+                                                disabled={data.props
+                                                    .currentApplicationDetails
+                                                    .assignPostponeApprover !==
+                                                    null ||
+                                                    data.props.layoutData
+                                                        .accountDetails
+                                                        .currentRoleCode !==
+                                                        RoleConstant
+                                                            .urusSetiaPerjawatan
+                                                            .code}
+                                            ></CustomSelectField>
+                                        {:else}
+                                            <CustomSelectField
+                                                id="roleCode"
+                                                label={'Peranan Pelulus Permohonan Penangguhan'}
+                                                bind:val={$assignPostponeApproverForm.roleCode}
+                                                bind:errors={$assignPostponeApproverErrors.roleCode}
+                                                options={data.lookup
+                                                    .roleDropdown}
+                                                disabled
+                                            ></CustomSelectField>
+                                            <CustomTextField
+                                                disabled
+                                                id="directorName"
+                                                label={'Nama Pelulus Permohonan Penangguhan'}
+                                                bind:val={$assignPostponeApproverForm.directorName}
+                                                bind:errors={$assignPostponeApproverErrors.directorName}
+                                            ></CustomTextField>
+                                            <CustomTextField
+                                                disabled
+                                                id="identityDocumentNumber"
+                                                label={'No. Kad Pengenalan Pelulus Permohonan Penangguhan'}
+                                                bind:val={$assignPostponeApproverForm.identityDocumentNumber}
+                                                bind:errors={$assignPostponeApproverErrors.identityDocumentNumber}
+                                            ></CustomTextField>
+                                        {/if}
+                                    </form>
+                                </div>
                             </div>
-                            <!-- form wrapper ends here -->
-                        </div>
-                    </div>
-                </StepperContentBody>
-            </StepperContent>
+                        </StepperContentBody>
+                    </StepperContent>
+                    <!-- ======================================================================= -->
+                    <!-- POSTPONE APPROVAL -->
+                    <!-- ======================================================================= -->
+                    <StepperContent>
+                        <StepperContentHeader
+                            title="Sokongan Permohonan Penangguhan"
+                        >
+                            {#if data.props.currentApplicationDetails.postponeApproval?.isDraft && data.props.layoutData.accountDetails.identityDocumentNumber == data.props.currentApplicationDetails.postponeApproval?.identityDocumentNumber}
+                                <TextIconButton
+                                    label="Hantar"
+                                    type="primary"
+                                    icon="check"
+                                    form="postponeApprovalForm"
+                                ></TextIconButton>
+                            {/if}
+                        </StepperContentHeader>
+                        <StepperContentBody>
+                            <div
+                                class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
+                            >
+                                <div
+                                    class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
+                                >
+                                    <!-- form wrapper starts here -->
+                                    <div
+                                        class="flex w-full flex-col items-start justify-start gap-2"
+                                    >
+                                        <form
+                                            id="postponeApprovalForm"
+                                            method="POST"
+                                            use:postponeApprovalEnhance
+                                            class="flex w-full flex-col items-start justify-start gap-1"
+                                        >
+                                            <CustomRadioBoolean
+                                                id="status"
+                                                label="Permohonan Penangguhan Pertukaran Pegawai Di Atas Adalah:"
+                                                bind:val={$postponeApprovalForm.status}
+                                                bind:errors={$postponeApprovalErrors.status}
+                                                options={supportAltOptions}
+                                                disabled={!data.props
+                                                    .currentApplicationDetails
+                                                    .postponeApproval
+                                                    ?.isDraft ||
+                                                    data.props.layoutData
+                                                        .accountDetails
+                                                        .identityDocumentNumber !==
+                                                        data.props
+                                                            .currentApplicationDetails
+                                                            .postponeApproval
+                                                            ?.identityDocumentNumber}
+                                            ></CustomRadioBoolean>
+                                            <CustomTextField
+                                                id="remark"
+                                                label="Ulasan"
+                                                type="textarea"
+                                                isRequired={false}
+                                                bind:val={$postponeApprovalForm.remark}
+                                                bind:errors={$postponeApprovalErrors.remark}
+                                                disabled={!data.props
+                                                    .currentApplicationDetails
+                                                    .postponeApproval
+                                                    ?.isDraft ||
+                                                    data.props.layoutData
+                                                        .accountDetails
+                                                        .identityDocumentNumber !==
+                                                        data.props
+                                                            .currentApplicationDetails
+                                                            .postponeApproval
+                                                            ?.identityDocumentNumber}
+                                            ></CustomTextField>
+                                            <CustomTextField
+                                                id="name"
+                                                label="Nama Penyokong"
+                                                type="text"
+                                                bind:val={$postponeApprovalForm.name}
+                                                bind:errors={$postponeApprovalErrors.name}
+                                                disabled
+                                            ></CustomTextField>
+                                            <CustomTextField
+                                                id="date"
+                                                label="Tarikh Maklum Balas Dihantar"
+                                                type="date"
+                                                bind:val={$postponeApprovalForm.identityDocumentNumber}
+                                                bind:errors={$postponeApprovalErrors.identityDocumentNumber}
+                                                disabled
+                                            ></CustomTextField>
+                                        </form>
+                                    </div>
+                                    <!-- form wrapper ends here -->
+                                </div>
+                            </div>
+                        </StepperContentBody>
+                    </StepperContent>
+                    <!-- ======================================================================= -->
+                    <!-- POSTPONE LETTER -->
+                    <!-- ======================================================================= -->
+                    <StepperContent>
+                        <StepperContentHeader
+                            title="Surat Penangguhan Pertukaran"
+                        >
+                            {#if data.props.currentApplicationDetails.postponeLetterDetails == null && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaPerjawatan.code}
+                                <TextIconButton
+                                    label="Hantar"
+                                    type="primary"
+                                    icon="check"
+                                    form="postponeLetterDetailForm"
+                                ></TextIconButton>
+                            {/if}
+                        </StepperContentHeader>
+                        <StepperContentBody>
+                            <div
+                                class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
+                            >
+                                <div
+                                    class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
+                                >
+                                    <!-- form wrapper starts here -->
+                                    <div
+                                        class="flex w-full flex-col items-start justify-start gap-2"
+                                    >
+                                        <CustomBanner
+                                            text="Sila masukkan butiran dan isi-isi Surat Pertukaran seperti yang tertera di bawah"
+                                        ></CustomBanner>
+                                        <form
+                                            id="postponeLetterDetailForm"
+                                            method="POST"
+                                            use:postponeLetterDetailEnhance
+                                            class="flex w-full flex-col items-start justify-start gap-1"
+                                        >
+                                            <CustomTextField
+                                                id="referenceNumber"
+                                                label="No. Rujukan Surat"
+                                                type="text"
+                                                bind:val={$postponeLetterDetailForm.referenceNumber}
+                                                bind:errors={$postponeLetterDetailErrors.referenceNumber}
+                                                disabled={data.props
+                                                    .currentApplicationDetails
+                                                    .postponeLetterDetails !==
+                                                    null ||
+                                                    data.props.layoutData
+                                                        .accountDetails
+                                                        .currentRoleCode !==
+                                                        RoleConstant
+                                                            .urusSetiaPerjawatan
+                                                            .code}
+                                            ></CustomTextField>
+                                            <CustomTextField
+                                                id="referenceDate"
+                                                label="Tarikh Surat"
+                                                type="date"
+                                                bind:val={$postponeLetterDetailForm.referenceDate}
+                                                bind:errors={$postponeLetterDetailErrors.referenceDate}
+                                                disabled={data.props
+                                                    .currentApplicationDetails
+                                                    .postponeLetterDetails !==
+                                                    null ||
+                                                    data.props.layoutData
+                                                        .accountDetails
+                                                        .currentRoleCode !==
+                                                        RoleConstant
+                                                            .urusSetiaPerjawatan
+                                                            .code}
+                                            ></CustomTextField>
+                                            <CustomTextField
+                                                id="subject"
+                                                label="Tajuk Surat"
+                                                type="text"
+                                                bind:val={$postponeLetterDetailForm.subject}
+                                                bind:errors={$postponeLetterDetailErrors.subject}
+                                                disabled={data.props
+                                                    .currentApplicationDetails
+                                                    .postponeLetterDetails !==
+                                                    null ||
+                                                    data.props.layoutData
+                                                        .accountDetails
+                                                        .currentRoleCode !==
+                                                        RoleConstant
+                                                            .urusSetiaPerjawatan
+                                                            .code}
+                                            ></CustomTextField>
+
+                                            <CustomSelectField
+                                                id="fromLocation"
+                                                label={'Penempatan Asal'}
+                                                bind:val={$postponeLetterDetailForm.fromLocation}
+                                                bind:errors={$postponeLetterDetailErrors.fromLocation}
+                                                options={data.lookup
+                                                    .placementDropdown}
+                                                disabled={data.props
+                                                    .currentApplicationDetails
+                                                    .postponeLetterDetails !==
+                                                    null ||
+                                                    data.props.layoutData
+                                                        .accountDetails
+                                                        .currentRoleCode !==
+                                                        RoleConstant
+                                                            .urusSetiaPerjawatan
+                                                            .code}
+                                            ></CustomSelectField>
+                                            <CustomSelectField
+                                                id="toLocation"
+                                                label={'Penempatan Baharu'}
+                                                bind:val={$postponeLetterDetailForm.toLocation}
+                                                bind:errors={$postponeLetterDetailErrors.toLocation}
+                                                options={data.lookup
+                                                    .placementDropdown}
+                                                disabled={data.props
+                                                    .currentApplicationDetails
+                                                    .postponeLetterDetails !==
+                                                    null ||
+                                                    data.props.layoutData
+                                                        .accountDetails
+                                                        .currentRoleCode !==
+                                                        RoleConstant
+                                                            .urusSetiaPerjawatan
+                                                            .code}
+                                            ></CustomSelectField>
+                                            <CustomTextField
+                                                id="additionalNotes"
+                                                label="Nota Tambahan"
+                                                type="text"
+                                                bind:val={$postponeLetterDetailForm.additionalNotes}
+                                                bind:errors={$postponeLetterDetailErrors.additionalNotes}
+                                                disabled={data.props
+                                                    .currentApplicationDetails
+                                                    .postponeLetterDetails !==
+                                                    null ||
+                                                    data.props.layoutData
+                                                        .accountDetails
+                                                        .currentRoleCode !==
+                                                        RoleConstant
+                                                            .urusSetiaPerjawatan
+                                                            .code}
+                                            ></CustomTextField>
+                                            <CustomTextField
+                                                id="transferDate"
+                                                label="Tarikh Pertukaran"
+                                                type="date"
+                                                bind:val={$postponeLetterDetailForm.transferDate}
+                                                bind:errors={$postponeLetterDetailErrors.transferDate}
+                                                disabled={data.props
+                                                    .currentApplicationDetails
+                                                    .postponeLetterDetails !==
+                                                    null ||
+                                                    data.props.layoutData
+                                                        .accountDetails
+                                                        .currentRoleCode !==
+                                                        RoleConstant
+                                                            .urusSetiaPerjawatan
+                                                            .code}
+                                            ></CustomTextField>
+                                            <CustomTextField
+                                                id="newLocationAddress"
+                                                label="Alamat Penempatan Baharu"
+                                                type="text"
+                                                bind:val={$postponeLetterDetailForm.newLocationAddress}
+                                                bind:errors={$postponeLetterDetailErrors.newLocationAddress}
+                                                disabled={data.props
+                                                    .currentApplicationDetails
+                                                    .postponeLetterDetails !==
+                                                    null ||
+                                                    data.props.layoutData
+                                                        .accountDetails
+                                                        .currentRoleCode !==
+                                                        RoleConstant
+                                                            .urusSetiaPerjawatan
+                                                            .code}
+                                            ></CustomTextField>
+                                            <CustomTextField
+                                                id="slogan"
+                                                label="Slogan Surat"
+                                                type="text"
+                                                bind:val={$postponeLetterDetailForm.slogan}
+                                                bind:errors={$postponeLetterDetailErrors.slogan}
+                                                disabled={data.props
+                                                    .currentApplicationDetails
+                                                    .postponeLetterDetails !==
+                                                    null ||
+                                                    data.props.layoutData
+                                                        .accountDetails
+                                                        .currentRoleCode !==
+                                                        RoleConstant
+                                                            .urusSetiaPerjawatan
+                                                            .code}
+                                            ></CustomTextField>
+                                            {#if data.props.currentApplicationDetails.postponeLetterDetails !== null}
+                                                <DocumentInput
+                                                    bind:documents={$postponeLetterDetailForm.documents}
+                                                    label="Surat Penangguhan Pertukaran"
+                                                    disabled
+                                                ></DocumentInput>
+                                            {/if}
+                                        </form>
+                                    </div>
+                                    <!-- form wrapper ends here -->
+                                </div>
+                            </div>
+                        </StepperContentBody>
+                    </StepperContent>
+                {/if}
+            {/if}
             <!-- ======================================================================= -->
             <!-- TRANSFER ITINERARY -->
             <!-- ======================================================================= -->
