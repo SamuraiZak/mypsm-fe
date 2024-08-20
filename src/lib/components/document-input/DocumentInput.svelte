@@ -8,6 +8,8 @@
 
     const dispatch = createEventDispatcher();
 
+    export let dispatchName: string = 'dispatchName';
+
     export let label: string = 'Label';
     export let id: string = 'doumentInputId';
     export let disabled: boolean = false;
@@ -17,6 +19,7 @@
 
     // Handle the file input change event
     async function handleFileChange(event: Event) {
+        console.log('add');
         const input = event.target as HTMLInputElement;
         if (input.files) {
             const fileArray = Array.from(input.files);
@@ -27,20 +30,21 @@
                 }),
             );
             documents = [...documents, ...newDocuments];
-            dispatch('documentsChange', { documents });
+            dispatch(dispatchName, { documents });
         }
+        console.log(documents);
     }
 
     // Remove a specific file
     function removeFile(index: number) {
         documents = documents.filter((_, i) => i !== index);
-        dispatch('documentsChange', { documents });
+        dispatch(dispatchName, { documents });
     }
 
     // Remove all files
     function removeAllFiles() {
         documents = [];
-        dispatch('documentsChange', { documents });
+        dispatch(dispatchName, { documents });
     }
 
     // Convert file to base64 string
@@ -202,7 +206,7 @@
                                 </g>
                             </g></svg
                         >
-                        </a>
+                    </a>
                     {#if !disabled}
                         <button
                             type="button"
