@@ -123,136 +123,116 @@
         </div>
     {/if}
 
-    {#if documents !== undefined || documents !== null}
-        {#if documents.length > 0}
-            <div
-                class="flex h-8 min-h-8 w-full flex-row items-center justify-between"
-            >
-                <p class="text-start text-base font-medium text-slate-500">
-                    {#if disabled}
-                        Senarai dokumen yang telah dimuatnaik
-                    {:else}
-                        Senarai dokumen yang dipilih
-                    {/if}
-                </p>
-                {#if !disabled}
-                    <button
-                        type="button"
-                        class="text-base font-medium text-red-500 underline"
-                        on:click={removeAllFiles}
-                    >
-                        Buang Semua Dokumen
-                    </button>
+    {#if documents.length > 0}
+        <div
+            class="flex h-8 min-h-8 w-full flex-row items-center justify-between"
+        >
+            <p class="text-start text-base font-medium text-slate-500">
+                {#if disabled}
+                    Senarai dokumen yang telah dimuatnaik
+                {:else}
+                    Senarai dokumen yang dipilih
                 {/if}
-            </div>
-            <div class="flex w-full flex-col items-start justify-start gap-2">
-                {#each documents as document, index}
-                    <div
-                        class="flex h-fit min-h-8 w-full flex-row items-center justify-between gap-2 rounded-md border bg-white p-3 shadow shadow-slate-100
+            </p>
+            {#if !disabled}
+                <button
+                    type="button"
+                    class="text-base font-medium text-red-500 underline"
+                    on:click={removeAllFiles}
+                >
+                    Buang Semua Dokumen
+                </button>
+            {/if}
+        </div>
+        <div class="flex w-full flex-col items-start justify-start gap-2">
+            {#each documents as document, index}
+                <div
+                    class="flex h-fit min-h-8 w-full flex-row items-center justify-between gap-2 rounded-md border bg-white p-3 shadow shadow-slate-100
                      hover:shadow-md"
+                >
+                    <div
+                        class="flex h-8 w-8 flex-col items-center justify-center"
                     >
-                        <div
-                            class="flex h-8 w-8 flex-col items-center justify-center"
+                        <span>
+                            <SvgPdfColor size="30"></SvgPdfColor>
+                        </span>
+                    </div>
+                    <div
+                        class="flex w-full flex-row items-center justify-start"
+                    >
+                        <p
+                            class="text-start text-md font-medium text-slate-600"
                         >
-                            <span>
-                                <SvgPdfColor size="30"></SvgPdfColor>
-                            </span>
-                        </div>
-                        <div
-                            class="flex w-full flex-row items-center justify-start"
+                            {document.name}
+                        </p>
+                    </div>
+                    <a
+                        href={document.base64}
+                        class="text-red-500 hover:text-red-700"
+                        target="_blank"
+                    >
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 512 512"
+                            version="1.1"
+                            xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink"
+                            fill="#000000"
+                            ><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g
+                                id="SVGRepo_tracerCarrier"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            ></g><g id="SVGRepo_iconCarrier">
+                                <title>open-external</title>
+                                <g
+                                    id="Page-1"
+                                    stroke="none"
+                                    stroke-width="1"
+                                    fill="none"
+                                    fill-rule="evenodd"
+                                >
+                                    <g
+                                        id="icon"
+                                        fill="#000000"
+                                        transform="translate(85.333333, 64.000000)"
+                                    >
+                                        <path
+                                            d="M128,63.999444 L128,106.666444 L42.6666667,106.666667 L42.6666667,320 L256,320 L256,234.666444 L298.666,234.666444 L298.666667,362.666667 L4.26325641e-14,362.666667 L4.26325641e-14,64 L128,63.999444 Z M362.666667,1.42108547e-14 L362.666667,170.666667 L320,170.666667 L320,72.835 L143.084945,249.751611 L112.915055,219.581722 L289.83,42.666 L192,42.6666667 L192,1.42108547e-14 L362.666667,1.42108547e-14 Z"
+                                            id="Combined-Shape"
+                                        >
+                                        </path>
+                                    </g>
+                                </g>
+                            </g></svg
                         >
-                            <p
-                                class="text-start text-md font-medium text-slate-600"
-                            >
-                                {document.name}
-                            </p>
-                        </div>
-                        <a
-                            href={document.base64}
+                    </a>
+                    {#if !disabled}
+                        <button
+                            type="button"
                             class="text-red-500 hover:text-red-700"
-                            target="_blank"
+                            on:click={() => removeFile(index)}
                         >
                             <svg
                                 width="20"
                                 height="20"
-                                viewBox="0 0 512 512"
-                                version="1.1"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink"
-                                fill="#000000"
-                                ><g id="SVGRepo_bgCarrier" stroke-width="0"
-                                ></g><g
-                                    id="SVGRepo_tracerCarrier"
+                            >
+                                <path
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
-                                ></g><g id="SVGRepo_iconCarrier">
-                                    <title>open-external</title>
-                                    <g
-                                        id="Page-1"
-                                        stroke="none"
-                                        stroke-width="1"
-                                        fill="none"
-                                        fill-rule="evenodd"
-                                    >
-                                        <g
-                                            id="icon"
-                                            fill="#000000"
-                                            transform="translate(85.333333, 64.000000)"
-                                        >
-                                            <path
-                                                d="M128,63.999444 L128,106.666444 L42.6666667,106.666667 L42.6666667,320 L256,320 L256,234.666444 L298.666,234.666444 L298.666667,362.666667 L4.26325641e-14,362.666667 L4.26325641e-14,64 L128,63.999444 Z M362.666667,1.42108547e-14 L362.666667,170.666667 L320,170.666667 L320,72.835 L143.084945,249.751611 L112.915055,219.581722 L289.83,42.666 L192,42.6666667 L192,1.42108547e-14 L362.666667,1.42108547e-14 Z"
-                                                id="Combined-Shape"
-                                            >
-                                            </path>
-                                        </g>
-                                    </g>
-                                </g></svg
-                            >
-                        </a>
-                        {#if !disabled}
-                            <button
-                                type="button"
-                                class="text-red-500 hover:text-red-700"
-                                on:click={() => removeFile(index)}
-                            >
-                                <svg
-                                    width="20"
-                                    height="20"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M6 18L18 6M6 6L18 18"
-                                    ></path>
-                                </svg>
-                            </button>
-                        {/if}
-                    </div>
-                {/each}
-            </div>
-        {:else}
-            <div
-                class="flex h-8 min-h-8 w-full flex-row items-center justify-between rounded border bg-gray-50 px-2 hover:bg-gray-100"
-            >
-                <div class="flex h-8 w-8 flex-col items-center justify-center">
-                    <span class="text-gray-400">
-                        <SvgInfoSolid size="20"></SvgInfoSolid>
-                    </span>
+                                    stroke-width="2"
+                                    d="M6 18L18 6M6 6L18 18"
+                                ></path>
+                            </svg>
+                        </button>
+                    {/if}
                 </div>
-                <div class="flex w-full flex-row items-center justify-start">
-                    <p
-                        class="text-start text-base font-medium italic text-slate-600"
-                    >
-                        Tiada dokumen telah dimuat naik.
-                    </p>
-                </div>
-            </div>
-        {/if}
+            {/each}
+        </div>
     {:else}
         <div
             class="flex h-8 min-h-8 w-full flex-row items-center justify-between rounded border bg-gray-50 px-2 hover:bg-gray-100"
@@ -271,7 +251,6 @@
             </div>
         </div>
     {/if}
-
     <div class="flex h-fit min-h-5 w-full flex-row items-center justify-start">
         {#if errors && !disabled}
             <p
