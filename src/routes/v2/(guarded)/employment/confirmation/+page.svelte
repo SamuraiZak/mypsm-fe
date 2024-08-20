@@ -201,7 +201,7 @@
     class="flex h-full w-full flex-col items-center justify-start overflow-y-auto"
 >
     <CustomTab>
-        <CustomTabContent title="Pengesahan (Semua Kakitangan)">
+        <CustomTabContent title="Senarai Rekod Pengesahan (Semua Kakitangan)">
             <div
                 class="flex h-full w-full flex-col items-center justify-start gap-2.5 p-2.5"
             >
@@ -253,7 +253,7 @@
                     >
                         <div class="h h-fit w-full">
                             <DataTable
-                                title="Senarai Rekod Pengesahan Yang Melebihi Tempoh 3 Tahun"
+                                title="Senarai Pengesahan Yang Melebihi Tempoh 3 Tahun"
                                 bind:tableData={confirmationExceedsThreeYearsListTable}
                                 bind:passData={rowData}
                                 detailActions={() => {
@@ -302,7 +302,7 @@
                 >
                     <div class="h h-fit w-full">
                         <DataTable
-                            title="Senarai Rekod Pengesahan Lantikan ke Gred/Skim Baru (Rasionalisasi)"
+                            title="Senarai Pengesahan Lantikan ke Gred/Skim Baru (Rasionalisasi)"
                             bind:tableData={confirmationRationalisationListTable}
                             bind:passData={rowData}
                             detailActions={() => {
