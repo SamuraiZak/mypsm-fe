@@ -2291,7 +2291,7 @@
             <!-- ======================================================================= -->
             <StepperContent>
                 <StepperContentHeader title="Maklum Balas Penyokong">
-                    {#if !data.props.currentApplicationDetails.support?.isDraft && data.props.layoutData.accountDetails.identityDocumentNumber == data.props.currentApplicationDetails.support?.identityDocumentNumber}
+                    {#if data.props.currentApplicationDetails.support?.isDraft && data.props.layoutData.accountDetails.identityDocumentNumber == data.props.currentApplicationDetails.support?.identityDocumentNumber}
                         <TextIconButton
                             label="Hantar"
                             type="primary"
@@ -2378,7 +2378,7 @@
             <!-- ======================================================================= -->
             <StepperContent>
                 <StepperContentHeader title="Maklum Balas Pelulus">
-                    {#if !data.props.currentApplicationDetails.approval?.isDraft && data.props.layoutData.accountDetails.identityDocumentNumber == data.props.currentApplicationDetails.approval?.identityDocumentNumber}
+                    {#if data.props.currentApplicationDetails.approval?.isDraft && data.props.layoutData.accountDetails.identityDocumentNumber == data.props.currentApplicationDetails.approval?.identityDocumentNumber}
                         <TextIconButton
                             label="Hantar"
                             type="primary"
