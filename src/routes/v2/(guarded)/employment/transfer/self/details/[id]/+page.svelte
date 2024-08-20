@@ -1022,7 +1022,7 @@
 
             <StepperContent>
                 <StepperContentHeader title="Lantikan Peraku Permohonan">
-                    {#if assignDirectorForm == null && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaPerjawatan.code}
+                    {#if data.props.currentApplicationDetails.assignDirector == null && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaPerjawatan.code}
                         <TextIconButton
                             label="Hantar"
                             type="primary"
@@ -2179,8 +2179,7 @@
                                         label={'Sila pilih nama Penyokong untuk meluluskan pertukaran ini'}
                                         bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
                                         bind:errors={$endorserDetailErrors.supporterIdentityDocumentNumber}
-                                        options={data.lookup
-                                            .supporterDropdown}
+                                        options={data.lookup.supporterDropdown}
                                         disabled={data.props
                                             .currentApplicationDetails
                                             .assignEndorser !== null ||
@@ -2215,8 +2214,7 @@
                                         label={'Sila pilih nama Pelulus untuk meluluskan pertukaran ini'}
                                         bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
                                         bind:errors={$endorserDetailErrors.approverIdentityDocumentNumber}
-                                        options={data.lookup
-                                            .approverDropdown}
+                                        options={data.lookup.approverDropdown}
                                         disabled={data.props
                                             .currentApplicationDetails
                                             .assignEndorser !== null ||
@@ -2314,8 +2312,8 @@
                                         bind:errors={$supporterFeedbackErrors.status}
                                         options={supportAltOptions}
                                         disabled={!data.props
-                                            .currentApplicationDetails
-                                            .support?.isDraft ||
+                                            .currentApplicationDetails.support
+                                            ?.isDraft ||
                                             data.props.layoutData.accountDetails
                                                 .identityDocumentNumber !==
                                                 data.props
@@ -2331,8 +2329,8 @@
                                         bind:val={$supporterFeedbackForm.remark}
                                         bind:errors={$supporterFeedbackErrors.remark}
                                         disabled={!data.props
-                                            .currentApplicationDetails
-                                            .support?.isDraft ||
+                                            .currentApplicationDetails.support
+                                            ?.isDraft ||
                                             data.props.layoutData.accountDetails
                                                 .identityDocumentNumber !==
                                                 data.props
@@ -2401,8 +2399,8 @@
                                         bind:errors={$approverFeedbackErrors.status}
                                         options={approveAltOptions}
                                         disabled={!data.props
-                                            .currentApplicationDetails
-                                            .approval?.isDraft ||
+                                            .currentApplicationDetails.approval
+                                            ?.isDraft ||
                                             data.props.layoutData.accountDetails
                                                 .identityDocumentNumber !==
                                                 data.props
@@ -2418,8 +2416,8 @@
                                         bind:val={$approverFeedbackForm.remark}
                                         bind:errors={$approverFeedbackErrors.remark}
                                         disabled={!data.props
-                                            .currentApplicationDetails
-                                            .approval?.isDraft ||
+                                            .currentApplicationDetails.approval
+                                            ?.isDraft ||
                                             data.props.layoutData.accountDetails
                                                 .identityDocumentNumber !==
                                                 data.props
