@@ -179,7 +179,7 @@ export class ConfirmationServices {
         param: ConfirmationSetApproverDTO,
     ) {
         try {
-            const url: Input = 'employment/confirmation/set_approver/add';
+            const url: Input = 'employment/confirmation/set_director';
 
             // get the promise response
             const promiseRes: Promise<Response> = http
