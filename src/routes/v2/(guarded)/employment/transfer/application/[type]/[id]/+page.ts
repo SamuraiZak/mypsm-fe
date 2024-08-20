@@ -33,11 +33,16 @@ import {
     type TransferApplicationAssignDirectorType,
     type TransferApplicationAssignPostponeApproverType,
     type TransferApplicationConfirmationType,
+    type TransferApplicationDirectorSupportType,
     type TransferApplicationEmployeeDetailType,
+    type TransferApplicationEndorsementType,
+    type TransferApplicationEndorserDetailType,
     type TransferApplicationMeetingResultType,
     type TransferApplicationPostponeDetailType,
+    type TransferApplicationPostponeLetterDetailType,
     type TransferApplicationServiceDetailType,
     type TransferApplicationTransferDetailType,
+    type TransferApplicationTransferDocumentType,
 } from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { TransferServices } from '$lib/services/implementation/mypsm/employment/transfer/transfer.service.js';
@@ -77,6 +82,66 @@ export async function load({ params, parent }) {
     // create confirmation form
     const applicationConfirmationForm = await superValidate(
         zod(TransferApplicationConfirmationSchema),
+    );
+
+    // assign director form
+    const assignDirectorForm = await superValidate(
+        zod(TransferApplicationAssignDirectorSchema),
+    );
+
+    // directorSupportForm
+    const directorSupportForm = await superValidate(
+        zod(TransferApplicationDirectorSupportSchema),
+    );
+
+    // meeting result form
+    const meetingResultForm = await superValidate(
+        zod(TransferApplicationMeetingResultSchema),
+    );
+
+    // acceptanceLetterDetailForm
+    const acceptanceLetterDetailForm = await superValidate(
+        zod(TransferApplicationAcceptanceLetterDetailSchema),
+    );
+
+    // postponeDetailForm
+    const postponeDetailForm = await superValidate(
+        zod(TransferApplicationPostponeDetailSchema),
+    );
+
+    // AssignPostponeApproverForm
+    const assignPostponeApproverForm = await superValidate(
+        zod(TransferApplicationAssignPostponeApproverSchema),
+    );
+
+    // postponeApprovalForm
+    const postponeApprovalForm = await superValidate(
+        zod(TransferApplicationEndorsementSchema),
+    );
+
+    // postponeLetterDetail
+    const postponeLetterDetailForm = await superValidate(
+        zod(TransferApplicationPostponeLetterDetailSchema),
+    );
+
+    // transferDocument
+    const transferDocumentForm = await superValidate(
+        zod(TransferApplicationTransferDocumentSchema),
+    );
+
+    // endorser detail form
+    const endorserDetailForm = await superValidate(
+        zod(TransferApplicationEndorserDetailSchema),
+    );
+
+    //  Supporter feedback form
+    const supporterFeedbackForm = await superValidate(
+        zod(TransferApplicationEndorsementSchema),
+    );
+
+    //  approver feedback form
+    const approverFeedbackForm = await superValidate(
+        zod(TransferApplicationEndorsementSchema),
     );
 
     // this is where i fetch the data starts
@@ -203,6 +268,18 @@ export async function load({ params, parent }) {
             serviceDetailForm,
             transferDetailForm,
             applicationConfirmationForm,
+            assignDirectorForm,
+            directorSupportForm,
+            meetingResultForm,
+            acceptanceLetterDetailForm,
+            postponeDetailForm,
+            assignPostponeApproverForm,
+            postponeApprovalForm,
+            postponeLetterDetailForm,
+            transferDocumentForm,
+            endorserDetailForm,
+            supporterFeedbackForm,
+            approverFeedbackForm,
         },
         lookup: {
             transferCategoryOption,
@@ -360,3 +437,273 @@ export const _applicationConfirmationSubmit = async (
         return CommonResponseConstant.httpError;
     }
 };
+
+// assign director
+export async function _assignDirectorSubmit(
+    params: TransferApplicationAssignDirectorType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationAssignDirectorSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addAssignDirector(form.data);
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// directorSupport
+export async function _directorSupportSubmit(
+    params: TransferApplicationDirectorSupportType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationDirectorSupportSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addDirectorSupport(form.data);
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// meetingResult
+export async function _meetingResultSubmit(
+    params: TransferApplicationMeetingResultType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationMeetingResultSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addMeetingResult(form.data);
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// acceptanceLetterDetail
+export async function _acceptanceLetterDetailSubmit(
+    params: TransferApplicationAcceptanceLetterDetailType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationAcceptanceLetterDetailSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addAcceptanceLetterDetail(
+            form.data,
+        );
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// postponeDetail
+export async function _postponeDetailSubmit(
+    params: TransferApplicationPostponeDetailType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationPostponeDetailSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addPostponeDetail(form.data);
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// assignPostponeApprover
+export async function _assignPostponeApproverSubmit(
+    params: TransferApplicationAssignPostponeApproverType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationAssignPostponeApproverSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addAssignPostponeApprover(
+            form.data,
+        );
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// postponeApproval
+export async function _postponeApprovalSubmit(
+    params: TransferApplicationEndorsementType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addPostponeApproval(form.data);
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// postponeLetterDetail
+export async function _postponeLetterDetailSubmit(
+    params: TransferApplicationPostponeLetterDetailType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationPostponeLetterDetailSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addPostponeLetterDetail(
+            form.data,
+        );
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// transferDocument
+export async function _transferDocumentSubmit(
+    params: TransferApplicationTransferDocumentType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationTransferDocumentSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addTransferDocument(form.data);
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// endorserDetail
+export async function _endorserDetailSubmit(
+    params: TransferApplicationEndorserDetailType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationEndorserDetailSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addEndorserDetail(form.data);
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// supporterFeedback
+export async function _supporterFeedbackSubmit(
+    params: TransferApplicationEndorsementType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addSupporterFeedback(form.data);
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
+
+// approverFeedback
+export async function _approverFeedbackSubmit(
+    params: TransferApplicationEndorsementType,
+) {
+    const form = await superValidate(
+        params,
+        zod(TransferApplicationEndorsementSchema),
+    );
+
+    if (form.valid) {
+        const response = await TransferServices.addApproverFeedback(form.data);
+
+        if (response.status == 'success') {
+            return response;
+        } else {
+            return CommonResponseConstant.httpError;
+        }
+    } else {
+        return CommonResponseConstant.httpError;
+    }
+}
