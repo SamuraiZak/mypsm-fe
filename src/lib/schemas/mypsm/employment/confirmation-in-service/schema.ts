@@ -139,7 +139,7 @@ export const _confirmationMeetingResultSchema = z
 
     export const _setApproversSchema = z.object({
         id: z.number().readonly(),
-        roleCode: z.string().nullish(),
+        roleCode: z.string().nullish().default(null),
         supporterId: numberIdSchema,
         isReadonly: z.boolean().readonly(),
         isDraft: z.boolean(),
