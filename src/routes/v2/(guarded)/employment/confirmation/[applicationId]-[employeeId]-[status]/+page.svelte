@@ -89,6 +89,8 @@
 
     let isExceedsThreeYearsAndIsDraft: boolean = false;
 
+    let allowChangeApprover: boolean = true;
+
     $: {
         if (data.view.confirmationInServiceView.dataType === 'Lebih 3 tahun') {
             isTypeConfirmationExceedsThreeYears.set(true);
@@ -1073,22 +1075,24 @@
                                 options={data.lookups.employeeLookup}
                                 bind:errors={$secretarySetApproverErrors.roleCode}
                                 bind:val={$secretarySetApproverForm.roleCode}
+                                onValueChange={()=>{
+                                    data.view.confirmationInServiceView.approver.supporterId = null;
+                                }}
                             />
-                            {#if $secretarySetApproverForm.roleCode !== null}
-                                <CustomSelectField
-                                    disabled={data.view
-                                        .confirmationInServiceView.approver
-                                        ?.isReadonly &&
-                                        !$confirmationSetApproverIsDraft}
-                                    id="supporterId"
-                                    label="Sila Pilih Nama Penyokong Berkaitan"
-                                    options={data.lookups.directorDrodpwon}
-                                    bind:errors={$secretarySetApproverErrors.supporterId}
-                                    bind:val={$secretarySetApproverForm.supporterId}
-                                />
-                            {/if}
-                            {#if !$secretarySetApproverForm.isDraft}
-                                {#if $secretarySetApproverErrors.supporterName !== null || $secretarySetApproverErrors.supporterName !== undefined}
+                            {#if $secretarySetApproverForm.isDraft}
+                                {#if data.view.confirmationInServiceView.approver.supporterId == null}
+                                    <CustomSelectField
+                                        disabled={data.view
+                                            .confirmationInServiceView.approver
+                                            ?.isReadonly &&
+                                            !$confirmationSetApproverIsDraft}
+                                        id="supporterId"
+                                        label="Sila Pilih Nama Penyokong Berkaitan"
+                                        options={data.lookups.directorDrodpwon}
+                                        bind:errors={$secretarySetApproverErrors.supporterId}
+                                        bind:val={$secretarySetApproverForm.supporterId}
+                                    />
+                                {:else}
                                     <CustomTextField
                                         disabled={data.view
                                             .confirmationInServiceView.approver
@@ -1100,7 +1104,20 @@
                                         bind:val={$secretarySetApproverForm.supporterName}
                                     ></CustomTextField>
                                 {/if}
+                            {:else}
+                                <CustomTextField
+                                    disabled={data.view
+                                        .confirmationInServiceView.approver
+                                        ?.isReadonly &&
+                                        !$confirmationSetApproverIsDraft}
+                                    errors={$secretarySetApproverErrors.supporterName}
+                                    id="supporterName"
+                                    label="Nama Penyokong"
+                                    bind:val={$secretarySetApproverForm.supporterName}
+                                ></CustomTextField>
                             {/if}
+
+                            
                         </form>
                     {/if}
                 </StepperContentBody>
