@@ -1088,16 +1088,16 @@
                                 />
                             {/if}
                             {#if !$secretarySetApproverForm.isDraft}
-                                {#if $secretarySetApproverErrors.supportName !== null || $secretarySetApproverErrors.supportName !== undefined}
+                                {#if $secretarySetApproverErrors.supporterName !== null || $secretarySetApproverErrors.supporterName !== undefined}
                                     <CustomTextField
                                         disabled={data.view
                                             .confirmationInServiceView.approver
                                             ?.isReadonly &&
                                             !$confirmationSetApproverIsDraft}
-                                        errors={$secretarySetApproverErrors.supportName}
+                                        errors={$secretarySetApproverErrors.supporterName}
                                         id="supporterName"
                                         label="Nama Penyokong"
-                                        bind:val={$secretarySetApproverForm.supportName}
+                                        bind:val={$secretarySetApproverForm.supporterName}
                                     ></CustomTextField>
                                 {/if}
                             {/if}
