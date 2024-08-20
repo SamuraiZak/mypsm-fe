@@ -1181,7 +1181,7 @@
             {#if $isReadOnlyNewOfferSetApprovers && !$newOfferSetApproversIsDraft}
                 <StepperContent>
                     <StepperContentHeader
-                        title="Keputusan Pengesahan Dalam Perhidmatan Daripada Peranan - Peranan Bertanggungjawab"
+                        title="Keputusan Pengesahan Dalam Perkhidmatan Daripada Peranan - Peranan Bertanggungjawab"
                     >
                         {#if (!data.view.newOfferDetailView.supporter.isReadonly || $newOfferSupporterResultIsDraft) && data.roles.isSupporterRole}
                             {#if data.roles.layoutData.accountDetails.identityDocumentNumber === data.view.newOfferDetailView.supporter.identityDocumentNumber}
