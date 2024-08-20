@@ -53,6 +53,7 @@
         _addConfirmationMeetingResult,
         _addConfirmationStateDirector,
         _addSecretarySetApproverForm,
+        _getDirectorDropdown,
         _submitGenerateLetterForm,
     } from './+page';
     import { _addInterimApprovalSchema } from '$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas';
@@ -294,6 +295,13 @@
         multipleSubmits: 'prevent',
         validationMethod: 'oninput',
         validators: zod(_setApproversSchema),
+        async onChange() {
+            if ($secretarySetApproverForm.roleCode !== null) {
+                data.lookups.directorDrodpwon = await _getDirectorDropdown(
+                    $secretarySetApproverForm.roleCode as string,
+                );
+            }
+        },
         onSubmit() {
             _addSecretarySetApproverForm(
                 Number(data.params.applicationId),
@@ -1023,55 +1031,67 @@
     </StepperContent>
     {#if !$isTypeConfirmationExceedsThreeYears || isExceedsThreeYearsAndIsDraft}
         {#if !$isTypeConfirmationExceedsThreeYears}
-        <StepperContent>
-            <StepperContentHeader
-                title="Tetapan Pengarah Bahagian/Negeri Untuk Perakuan"
-            >
-                {#if (!data.view.confirmationInServiceView.approver?.isReadonly || $confirmationSetApproverIsDraft) && data.roles.isEmploymentSecretaryRole}
-                    <TextIconButton
-                        type="neutral"
-                        label="Simpan"
-                        form="confirmationAssignApproverForm"
-                        onClick={() => {
-                            $secretarySetApproverForm.isDraft = true;
-                        }}
-                    />
-                    <TextIconButton
-                        type="primary"
-                        label="Hantar"
-                        form="confirmationAssignApproverForm"
-                        onClick={() => {
-                            $secretarySetApproverForm.isDraft = false;
-                        }}
-                    />
-                {/if}
-            </StepperContentHeader>
-            <StepperContentBody>
-                {#if (!data.view.confirmationInServiceView.approver?.isReadonly || $confirmationSetApproverIsDraft) && !data.roles.isEmploymentSecretaryRole}
-                    <StepperOtherRolesResult />
-                {:else}
-                    <form
-                        id="confirmationAssignApproverForm"
-                        method="POST"
-                        use:secretarySetApproverEnhance
-                        class="flex w-full flex-col gap-2"
-                    >
-                        <CustomSelectField
-                            disabled={data.view.confirmationInServiceView
-                                .approver?.isReadonly &&
-                                !$confirmationSetApproverIsDraft}
-                            errors={$secretarySetApproverErrors.supporterId}
-                            id="supporterId"
-                            label="Nama Pengarah Bahagian/Negeri"
-                            options={data.lookups.employeeLookup}
-                            bind:val={$secretarySetApproverForm.supporterId}
+            <StepperContent>
+                <StepperContentHeader
+                    title="Tetapan Penyokong (Pengarah Bahagian/Negeri Untuk Perakuan)"
+                >
+                    {#if (!data.view.confirmationInServiceView.approver?.isReadonly || $confirmationSetApproverIsDraft) && data.roles.isEmploymentSecretaryRole}
+                        <TextIconButton
+                            type="neutral"
+                            label="Simpan"
+                            form="confirmationAssignApproverForm"
+                            onClick={() => {
+                                $secretarySetApproverForm.isDraft = true;
+                            }}
                         />
-                    </form>
-                {/if}
-            </StepperContentBody>
-        </StepperContent>
+                        <TextIconButton
+                            type="primary"
+                            label="Hantar"
+                            form="confirmationAssignApproverForm"
+                            onClick={() => {
+                                $secretarySetApproverForm.isDraft = false;
+                            }}
+                        />
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
+                    {#if (!data.view.confirmationInServiceView.approver?.isReadonly || $confirmationSetApproverIsDraft) && !data.roles.isEmploymentSecretaryRole}
+                        <StepperOtherRolesResult />
+                    {:else}
+                        <form
+                            id="confirmationAssignApproverForm"
+                            method="POST"
+                            use:secretarySetApproverEnhance
+                            class="flex w-full flex-col gap-2"
+                        >
+                            <CustomSelectField
+                                disabled={data.view.confirmationInServiceView
+                                    .approver?.isReadonly &&
+                                    !$confirmationSetApproverIsDraft}
+                                id="roleCode"
+                                label="Sila Pilih Jenis Peranan Untuk Penyokong"
+                                options={data.lookups.employeeLookup}
+                                bind:errors={$secretarySetApproverErrors.roleCode}
+                                bind:val={$secretarySetApproverForm.roleCode}
+                            />
+                            {#if $secretarySetApproverForm.roleCode !== null}
+                                <CustomSelectField
+                                    disabled={data.view
+                                        .confirmationInServiceView.approver
+                                        ?.isReadonly &&
+                                        !$confirmationSetApproverIsDraft}
+                                    id="supporterId"
+                                    label="Sila Pilih Nama Penyokong Berkaitan"
+                                    options={data.lookups.directorDrodpwon}
+                                    bind:errors={$secretarySetApproverErrors.supporterId}
+                                    bind:val={$secretarySetApproverForm.supporterId}
+                                />
+                            {/if}
+                        </form>
+                    {/if}
+                </StepperContentBody>
+            </StepperContent>
         {/if}
-
         <StepperContent>
             <StepperContentHeader
                 title="Keputusan Pengesahan Dalam Perhidmatan Daripada Peranan - Peranan Bertanggungjawab"
@@ -1551,62 +1571,64 @@
                 <StepperContent>
                     <StepperContentHeader title="Surat Pengesahan">
                         {#if !data.view.confirmationInServiceView.document?.file?.base64}
-                        <TextIconButton
-                            label="Jana Surat"
-                            form="generateLetterForm"
-                            icon="print"
-                        />
+                            <TextIconButton
+                                label="Jana Surat"
+                                form="generateLetterForm"
+                                icon="print"
+                            />
                         {/if}
                     </StepperContentHeader>
                     <StepperContentBody>
                         <div
                             class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
                         >
-                        {#if data.view.confirmationInServiceView.document?.file?.base64}
-                            <p class="text-sm">
-                                Sila muat turun surat pengesahan di bawah ini.
-                            </p>
-                            <div
-                                class="flex w-full flex-row items-center justify-between"
-                            >
-                                <a
-                                    href={data.view.confirmationInServiceView
-                                        .document?.file?.base64}
-                                    download="Surat Pengesahan Dalam Perkhidmatan {$form.name.toUpperCase()} ({$form.identityDocumentNumber})"
-                                    class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
-                                    >Surat Pengesahan Dalam Perkhidmatan {$form.name.toUpperCase()}
-                                    ({data.view.confirmationInServiceView
-                                        .document?.file?.name})
-                                    <SvgArrowDownTray />
-                                </a>
-                            </div>
-                        {:else}
-                        <form
-                            class="w-full flex flex-col gap-2.5"
-                            method="POST"
-                            id="generateLetterForm"
-                            use:generateLetterEnhance
-                        >
-                            <CustomTextField
-                                id="letterDate"
-                                label="Tarikh Surat"
-                                type="date"
-                                bind:val={$generateLetterForm.date}
-                            />
-                            <CustomTextField
-                                id="refNumber"
-                                label="No. Rujukan Surat"
-                                bind:val={$generateLetterForm.refNumber}
-                                errors={$generateLetterErrors.refNumber}
-                            />
-                            <CustomTextField
-                                id="slogan"
-                                label="Slogan Surat"
-                                bind:val={$generateLetterForm.slogan}
-                                errors={$generateLetterErrors.slogan}
-                            />
-                        </form>
-                        {/if}
+                            {#if data.view.confirmationInServiceView.document?.file?.base64}
+                                <p class="text-sm">
+                                    Sila muat turun surat pengesahan di bawah
+                                    ini.
+                                </p>
+                                <div
+                                    class="flex w-full flex-row items-center justify-between"
+                                >
+                                    <a
+                                        href={data.view
+                                            .confirmationInServiceView.document
+                                            ?.file?.base64}
+                                        download="Surat Pengesahan Dalam Perkhidmatan {$form.name.toUpperCase()} ({$form.identityDocumentNumber})"
+                                        class="flex h-8 w-full cursor-pointer items-center justify-between rounded-[3px] border border-system-primary bg-bgr-secondary px-2.5 text-base text-system-primary"
+                                        >Surat Pengesahan Dalam Perkhidmatan {$form.name.toUpperCase()}
+                                        ({data.view.confirmationInServiceView
+                                            .document?.file?.name})
+                                        <SvgArrowDownTray />
+                                    </a>
+                                </div>
+                            {:else}
+                                <form
+                                    class="flex w-full flex-col gap-2.5"
+                                    method="POST"
+                                    id="generateLetterForm"
+                                    use:generateLetterEnhance
+                                >
+                                    <CustomTextField
+                                        id="letterDate"
+                                        label="Tarikh Surat"
+                                        type="date"
+                                        bind:val={$generateLetterForm.date}
+                                    />
+                                    <CustomTextField
+                                        id="refNumber"
+                                        label="No. Rujukan Surat"
+                                        bind:val={$generateLetterForm.refNumber}
+                                        errors={$generateLetterErrors.refNumber}
+                                    />
+                                    <CustomTextField
+                                        id="slogan"
+                                        label="Slogan Surat"
+                                        bind:val={$generateLetterForm.slogan}
+                                        errors={$generateLetterErrors.slogan}
+                                    />
+                                </form>
+                            {/if}
                         </div>
                     </StepperContentBody>
                 </StepperContent>

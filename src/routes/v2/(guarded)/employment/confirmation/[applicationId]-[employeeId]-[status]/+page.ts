@@ -1,8 +1,11 @@
+import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonFilterDTO } from '$lib/dto/core/common/common-filter.dto';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { CommonEmployeeDTO } from '$lib/dto/core/common/employee/employee.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+import type { EmployeeLookupItemDTO } from '$lib/dto/core/employee/employee.dto';
+import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto';
 import type {
     ConfirmationApprovalDTO,
     ConfirmationFullDetailResponseDTO,
@@ -10,6 +13,7 @@ import type {
     ConfirmationSetApproverDTO,
     GenerateLetterFormDTO,
 } from '$lib/dto/mypsm/employment/confirmation/confirmation_request_response.dto.js';
+import { LookupHelper } from '$lib/helpers/core/lookup.helper';
 import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import {
     _confirmationApprovalSchema,
@@ -108,7 +112,7 @@ export async function load({ params, parent }) {
         zod(_confirmationExamsChecklistSchema),
     );
 
-    const generateLetterForm = await superValidate(confirmationInServiceView.document, zod(_documentsSchema), {errors: false});
+    const generateLetterForm = await superValidate(confirmationInServiceView.document, zod(_documentsSchema), { errors: false });
     // ==========================================================================
     // Get Lookup Functions
     // ==========================================================================
@@ -337,37 +341,20 @@ export async function load({ params, parent }) {
     ];
 
     // ===========================================================================
-    // filter
-    const filter: CommonFilterDTO = {
-        program: 'SEMUA',
-        identityDocumentNumber: null,
-        employeeNumber: null,
-        name: null,
-        position: null,
-        status: null,
-        grade: null,
-        scheme: null,
-    };
-
-    // request body
-    const param: CommonListRequestDTO = {
-        pageNum: 1,
-        pageSize: 10000,
-        orderBy: 'name',
-        orderType: 0,
-        filter: filter,
-    };
+    // 3. director dropdown
+    const directorDrodpwon: DropdownDTO[] = [];
+    // ===========================================================================
 
     // fetch apc history
     const response: CommonResponseDTO =
-        await EmployeeServices.getEmployeeList(param);
+        await EmployeeServices.getRoleList();
 
     //convert to id number
     const employeeLookup: DropdownDTO[] = (
-        response.data?.dataList as CommonEmployeeDTO[]
+        response.data?.dataList as LookupDTO[]
     ).map((data) => ({
-        value: Number(data.employeeId),
-        name: String(data.name),
+        value: String(data.code),
+        name: String(data.description),
     }));
 
     return {
@@ -392,6 +379,7 @@ export async function load({ params, parent }) {
         lookups: {
             examTableColumn,
             generalLookup,
+            directorDrodpwon,
             identityCardColorLookup,
             genderLookup,
             gradeLookup,
@@ -420,6 +408,37 @@ export async function load({ params, parent }) {
         },
         roles,
     };
+}
+
+export async function _getDirectorDropdown(roleCode: string): Promise<DropdownDTO[]> {
+    let directorOption: DropdownDTO[] = [];
+
+    const filter = {
+        program: 'SEMUA',
+        employeeNumber: null,
+        name: null,
+        identityCard: null,
+        grade: null,
+        role: roleCode,
+    };
+
+    const request: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 5,
+        orderBy: 'name',
+        orderType: 1,
+        filter: filter,
+    };
+
+    const directorListResponse: CommonResponseDTO =
+        await LookupServices.getEmployeeList(request);
+
+    const directorList: LookupDTO[] = directorListResponse.data
+        ?.dataList as LookupDTO[];
+        
+    directorOption = LookupHelper.toDropdownSuppporterAndApprover(directorList);
+
+    return directorOption;
 }
 
 export const _addConfirmationEmploymentSecretary = async (
