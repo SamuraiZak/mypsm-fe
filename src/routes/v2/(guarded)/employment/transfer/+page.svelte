@@ -50,14 +50,14 @@
                           },
                           {
                               moduleName: 'Lihat Senarai',
-                              url: '',
+                              url: '/v2/employment/transfer/director/list',
                               child: [],
                           },
                       ]
                     : [
                           {
                               moduleName: 'Lihat Senarai',
-                              url: '',
+                              url: '/v2/employment/transfer/director/list',
                               child: [],
                           },
                       ],
