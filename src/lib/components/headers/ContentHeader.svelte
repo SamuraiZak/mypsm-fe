@@ -8,7 +8,7 @@
 </script>
 
 <div
-    class="flex h-10 min-h-10 w-full flex-row items-center justify-between {borderClass !==
+    class="flex h-12 min-h-12 w-full flex-row items-center justify-between {borderClass !==
     ''
         ? borderClass
         : 'border-b'} 
