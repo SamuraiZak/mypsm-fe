@@ -1060,7 +1060,8 @@
                                                 ></CustomTextField>
 
                                                 <CustomTextField
-                                                    disabled={true}
+                                                    disabled={$isReadOnlyNewOfferProcess &&
+                                                        !$newOfferProcessIsDraft}
                                                     isRequired={false}
                                                     id="baseSalary"
                                                     type="number"
@@ -1274,9 +1275,18 @@
                                                             {!$newOfferMeetingDetailForm
                                                                 .employees[i]
                                                                 .status ||
-                                                            !$newOfferSupporterResultForm
+                                                            (!data.view
+                                                                .newOfferDetailView
+                                                                .supporter
                                                                 .employees[i]
-                                                                .status
+                                                                .status &&
+                                                                data.view
+                                                                    .newOfferDetailView
+                                                                    .supporter
+                                                                    .employees[
+                                                                    i
+                                                                ].status !==
+                                                                    undefined)
                                                                 ? '[DITOLAK]'
                                                                 : ''}
                                                             {$newOfferServiceDetailForm
@@ -1436,9 +1446,18 @@
                                                             {!$newOfferMeetingDetailForm
                                                                 .employees[i]
                                                                 .status ||
-                                                            !$newOfferApproverResultForm
+                                                            (!data.view
+                                                                .newOfferDetailView
+                                                                .approver
                                                                 .employees[i]
-                                                                .status
+                                                                .status &&
+                                                                data.view
+                                                                    .newOfferDetailView
+                                                                    .approver
+                                                                    .employees[
+                                                                    i
+                                                                ].status !==
+                                                                    undefined)
                                                                 ? '[DITOLAK]'
                                                                 : ''}
                                                             {$newOfferServiceDetailForm
@@ -1982,9 +2001,11 @@
                                                     />
                                                 </svg>
                                             </div>
-                                            {#if !$newOfferMeetingDetailForm.employees[i].status || !$newOfferSupporterResultForm.employees[i].status || !$newOfferApproverResultForm.employees[i].status}
+                                            {#if !data.view.newOfferDetailView.meetingResult.employees[i].status || !data.view.newOfferDetailView.supporter.employees[i].status || !data.view.newOfferDetailView.approver.employees[i].status}
                                                 <StepperFailStatement />
-                                            {:else if $newOfferMeetingDetailForm.employees[i].status && $newOfferSupporterResultForm.employees[i].status && $newOfferApproverResultForm.employees[i].status && !$newOfferLetterDetailForm.isReadonly}
+                                            {:else if data.view.newOfferDetailView.meetingResult.employees[i].status && data.view.newOfferDetailView.supporter.employees[i].status && data.view.newOfferDetailView.approver.employees[i].status && !data.view.newOfferDetailView.document.isReadonly && !data.roles.isEmploymentSecretaryRole}
+                                                <StepperOtherRolesResult />
+                                            {:else if data.view.newOfferDetailView.meetingResult.employees[i].status && data.view.newOfferDetailView.supporter.employees[i].status && data.view.newOfferDetailView.approver.employees[i].status && !data.view.newOfferDetailView.document.isReadonly && data.roles.isEmploymentSecretaryRole}
                                                 <form
                                                     id="newOfferLetterDetailForm"
                                                     method="POST"
@@ -2047,7 +2068,7 @@
                                                             .slogan}
                                                     ></CustomTextField>
                                                 </form>
-                                            {:else if $newOfferMeetingDetailForm.employees[i].status && $newOfferSupporterResultForm.employees[i].status && $newOfferApproverResultForm.employees[i].status && $newOfferLetterDetailForm.isReadonly && !$newOfferLetterDetailIsDraft}
+                                            {:else if data.view.newOfferDetailView.meetingResult.employees[i].status && data.view.newOfferDetailView.supporter.employees[i].status && data.view.newOfferDetailView.approver.employees[i].status && data.view.newOfferDetailView.document.isReadonly && !data.view.newOfferDetailView.document.isDraft}
                                                 <div
                                                     class="flex max-h-full w-full flex-col items-start justify-start gap-2.5 border-b border-bdr-primary pb-5"
                                                 >
