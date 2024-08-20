@@ -1087,6 +1087,20 @@
                                     bind:val={$secretarySetApproverForm.supporterId}
                                 />
                             {/if}
+                            {#if !$secretarySetApproverForm.isDraft}
+                                {#if $secretarySetApproverErrors.supportName !== null || $secretarySetApproverErrors.supportName !== undefined}
+                                    <CustomTextField
+                                        disabled={data.view
+                                            .confirmationInServiceView.approver
+                                            ?.isReadonly &&
+                                            !$confirmationSetApproverIsDraft}
+                                        errors={$secretarySetApproverErrors.supportName}
+                                        id="supporterName"
+                                        label="Nama Penyokong"
+                                        bind:val={$secretarySetApproverForm.supportName}
+                                    ></CustomTextField>
+                                {/if}
+                            {/if}
                         </form>
                     {/if}
                 </StepperContentBody>

@@ -109,17 +109,30 @@ export const _confirmationMeetingResultSchema = z
         isDraft: z.boolean(),
     })
     .superRefine(
-        ({ meetingDate, meetingResult, isContractContinued, effectiveDate, contractMonths }, ctx) => {
-            if(meetingResult) isContractContinued = false;
-            if(meetingDate === '') {
+        (
+            {
+                meetingDate,
+                meetingResult,
+                isContractContinued,
+                effectiveDate,
+                contractMonths,
+            },
+            ctx,
+        ) => {
+            if (meetingResult) isContractContinued = false;
+            if (meetingDate === '') {
                 ctx.addIssue({
                     code: 'custom',
                     message: 'Tarikh tidak boleh kosong.',
                     path: ['meetingDate'],
                 });
-            };
+            }
             if (isContractContinued) {
-                if (effectiveDate === '' || effectiveDate === 'undefined'|| effectiveDate === null) {
+                if (
+                    effectiveDate === '' ||
+                    effectiveDate === 'undefined' ||
+                    effectiveDate === null
+                ) {
                     ctx.addIssue({
                         code: 'custom',
                         message: 'Tarikh tidak boleh kosong.',
@@ -138,17 +151,18 @@ export const _confirmationMeetingResultSchema = z
         },
     );
 
-    export const _setApproversSchema = z.object({
-        id: z.number().readonly(),
-        roleCode: z.string().nullish().default(null),
-        supporterId: numberIdSchema,
-        isReadonly: z.boolean().readonly(),
-        isDraft: z.boolean(),
-    });
+export const _setApproversSchema = z.object({
+    id: z.number().readonly(),
+    roleCode: z.string().nullish().default(null),
+    supporterId: numberIdSchema,
+    supportName: z.string().nullish(),
+    isReadonly: z.boolean().readonly(),
+    isDraft: z.boolean(),
+});
 
 export const _updateConfirmationMeetingResultSchema =
     _confirmationMeetingResultSchema;
-    
+
 export const _confirmationExamsChecklistSchema = z.object({
     confirmationId: z.number(),
     checker: shortTextSchema,
