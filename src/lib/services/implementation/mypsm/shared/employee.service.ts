@@ -16,6 +16,27 @@ import http from '$lib/services/implementation/service-provider.service';
 import type { Input } from 'ky';
 
 export class EmployeeServices {
+    
+    static async getRoleList() {
+        try {
+            let url: Input = 'employee/role';
+
+            const response: Response = await http
+                .get(url)
+                .json();
+
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
     static async getEmployeeList(param: CommonListRequestDTO) {
         try {
             let url: Input = 'employee/list';
