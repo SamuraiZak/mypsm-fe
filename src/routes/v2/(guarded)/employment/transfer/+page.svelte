@@ -12,7 +12,7 @@
             moduleName: 'Pertukaran Atas Permohonan Sendiri',
             url: '',
             child:
-                data.props.layoutData.accountDetails.currentRole ==
+                data.props.layoutData.accountDetails.currentRoleCode ==
                 RoleConstant.kakitangan.code
                     ? [
                           {

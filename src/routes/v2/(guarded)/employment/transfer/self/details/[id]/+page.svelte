@@ -55,6 +55,7 @@
         _assignPostponeApproverSubmit,
         _directorSupportSubmit,
         _endorserDetailSubmit,
+        _getEndorserDropdown,
         _meetingResultSubmit,
         _postponeApprovalSubmit,
         _postponeDetailSubmit,
@@ -171,6 +172,9 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationAssignDirectorSchema),
         onSubmit(input) {
+            $assignDirectorForm.applicationId =
+                data.props.currentApplicationDetails.applicationId;
+            $assignDirectorForm.isDraft = false;
             _assignDirectorSubmit($assignDirectorForm).then((response) => {
                 if (response.status == 'success') {
                     if (
@@ -201,6 +205,9 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationDirectorSupportSchema),
         onSubmit(input) {
+            $directorSupportForm.applicationId =
+                data.props.currentApplicationDetails.applicationId;
+            $directorSupportForm.isDraft = false;
             _directorSupportSubmit($directorSupportForm).then((response) => {
                 if (response.status == 'success') {
                     if (
@@ -232,6 +239,9 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationMeetingResultSchema),
         onSubmit(input) {
+            $meetingResultForm.applicationId =
+                data.props.currentApplicationDetails.applicationId;
+            $meetingResultForm.isDraft = false;
             _meetingResultSubmit($meetingResultForm).then((response) => {
                 if (response.status == 'success') {
                     if (
@@ -262,6 +272,8 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationAcceptanceLetterDetailSchema),
         onSubmit(input) {
+            $acceptanceLetterDetailForm.applicationId =
+                data.props.currentApplicationDetails.applicationId;
             _acceptanceLetterDetailSubmit($acceptanceLetterDetailForm).then(
                 (response) => {
                     if (response.status == 'success') {
@@ -295,6 +307,9 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationPostponeDetailSchema),
         onSubmit(input) {
+            $postponeDetailForm.applicationId =
+                data.props.currentApplicationDetails.applicationId;
+            $postponeDetailForm.isDraft = false;
             _postponeDetailSubmit($postponeDetailForm).then((response) => {
                 if (response.status == 'success') {
                     if (
@@ -326,6 +341,9 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationAssignPostponeApproverSchema),
         onSubmit(input) {
+            $assignPostponeApproverForm.applicationId =
+                data.props.currentApplicationDetails.applicationId;
+            $assignPostponeApproverForm.isDraft = false;
             _assignPostponeApproverSubmit($assignPostponeApproverForm).then(
                 (response) => {
                     if (response.status == 'success') {
@@ -359,6 +377,8 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationEndorsementSchema),
         onSubmit(input) {
+            $postponeApprovalForm.applicationId =
+                data.props.currentApplicationDetails.applicationId;
             _postponeApprovalSubmit($postponeApprovalForm).then((response) => {
                 if (response.status == 'success') {
                     if (
@@ -390,6 +410,9 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationPostponeLetterDetailSchema),
         onSubmit(input) {
+            $postponeLetterDetailForm.applicationId =
+                data.props.currentApplicationDetails.applicationId;
+            $postponeLetterDetailForm.isDraft = false;
             _postponeLetterDetailSubmit($postponeLetterDetailForm).then(
                 (response) => {
                     if (response.status == 'success') {
@@ -423,6 +446,8 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationTransferDocumentSchema),
         onSubmit(input) {
+            $transferDocumentForm.applicationId =
+                data.props.currentApplicationDetails.applicationId;
             _transferDocumentSubmit($transferDocumentForm).then((response) => {
                 if (response.status == 'success') {
                     if (
@@ -454,6 +479,8 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationEndorserDetailSchema),
         onSubmit(input) {
+            $endorserDetailForm.applicationId =
+                data.props.currentApplicationDetails.applicationId;
             _endorserDetailSubmit($endorserDetailForm).then((response) => {
                 if (response.status == 'success') {
                     if (
@@ -484,6 +511,8 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationEndorsementSchema),
         onSubmit(input) {
+            $supporterFeedbackForm.applicationId =
+                data.props.currentApplicationDetails.applicationId;
             _supporterFeedbackSubmit($supporterFeedbackForm).then(
                 (response) => {
                     if (response.status == 'success') {
@@ -516,6 +545,8 @@
         validationMethod: 'auto',
         validators: zodClient(TransferApplicationEndorsementSchema),
         onSubmit(input) {
+            $approverFeedbackForm.applicationId =
+                data.props.currentApplicationDetails.applicationId;
             _approverFeedbackSubmit($approverFeedbackForm).then((response) => {
                 if (response.status == 'success') {
                     if (
@@ -543,6 +574,12 @@
         $directorSupportForm.ethicalIssues.splice(index, 1);
         $directorSupportForm = $directorSupportForm;
     }
+
+    async function getEndorserDropdown(roleCode: string) {
+        const list: DropdownDTO[] = await _getEndorserDropdown(roleCode);
+
+        return list;
+    }
 </script>
 
 <section class="flex w-full flex-col items-center justify-center">
@@ -562,7 +599,7 @@
 <section
     class="flex h-full w-full flex-col items-start justify-start overflow-y-hidden"
 >
-    <Stepper activeIndex={4}>
+    <Stepper activeIndex={11}>
         <!-- ======================================================================= -->
         <!-- PERSONAL DETAILS -->
         <!-- ======================================================================= -->
@@ -982,55 +1019,96 @@
             <!-- ======================================================================= -->
             <!-- ASSIGN DIRECTOR -->
             <!-- ======================================================================= -->
-            {#if data.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaPerjawatan.code}
-                <StepperContent>
-                    <StepperContentHeader
-                        title="Lantikan Pengarah Bahagian/Negeri"
-                    >
-                        <TextIconButton label="Hantar" type="draft" icon="save"
+
+            <StepperContent>
+                <StepperContentHeader title="Lantikan Peraku Permohonan">
+                    {#if assignDirectorForm == null && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaPerjawatan.code}
+                        <TextIconButton
+                            label="Hantar"
+                            type="primary"
+                            icon="check"
+                            form="assignDirectorForm"
                         ></TextIconButton>
-                    </StepperContentHeader>
-                    <StepperContentBody>
+                    {/if}
+                </StepperContentHeader>
+                <StepperContentBody>
+                    <div
+                        class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
+                    >
                         <div
-                            class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
+                            class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
                         >
-                            <div
-                                class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
+                            <form
+                                id="assignDirectorForm"
+                                method="POST"
+                                use:assignDirectorEnhance
+                                class="flex w-full flex-col items-center justify-start gap-2"
                             >
-                                <form
-                                    id="assignDirectorForm"
-                                    method="POST"
-                                    use:assignDirectorEnhance
-                                    class="flex w-full flex-col items-center justify-start gap-2"
-                                >
+                                {#if data.props.currentApplicationDetails.assignDirector == null}
+                                    <CustomSelectField
+                                        id="roleCode"
+                                        label={'Sila pilih peranan yang layak menjadi Peraku Permohonan'}
+                                        bind:val={$assignDirectorForm.roleCode}
+                                        bind:errors={$assignDirectorErrors.roleCode}
+                                        options={data.lookup.roleDropdown}
+                                        onValueChange={async () => {
+                                            data.lookup.directorDrodpwon =
+                                                await getEndorserDropdown(
+                                                    $assignDirectorForm.roleCode ??
+                                                        '',
+                                                );
+                                        }}
+                                    ></CustomSelectField>
                                     <CustomSelectField
                                         id="identityDocumentNumber"
-                                        label={'Sila pilih Pengarah Bahagian/Negeri untuk memberi sokongan bagi permohonan ini'}
+                                        label={'Sila pilih nama Peraku Permohonan untuk memberi sokongan bagi permohonan ini'}
                                         bind:val={$assignDirectorForm.identityDocumentNumber}
                                         bind:errors={$assignDirectorErrors.identityDocumentNumber}
                                         options={data.lookup.directorDrodpwon}
                                     ></CustomSelectField>
+                                {:else}
+                                    <CustomSelectField
+                                        id="roleCode"
+                                        label={'Peranan Peraku Permohonan'}
+                                        bind:val={$assignDirectorForm.roleCode}
+                                        bind:errors={$assignDirectorErrors.roleCode}
+                                        options={data.lookup.roleDropdown}
+                                        disabled
+                                    ></CustomSelectField>
                                     <CustomTextField
                                         disabled
                                         id="directorName"
-                                        label={'Nama Pengarah'}
+                                        label={'Nama Peraku Permohonan'}
                                         bind:val={$assignDirectorForm.directorName}
                                         bind:errors={$assignDirectorErrors.directorName}
                                     ></CustomTextField>
-                                </form>
-                            </div>
+                                    <CustomTextField
+                                        disabled
+                                        id="directorName"
+                                        label={'No. Kad Pengenalan Peraku Permohonan'}
+                                        bind:val={$assignDirectorForm.identityDocumentNumber}
+                                        bind:errors={$assignDirectorErrors.identityDocumentNumber}
+                                    ></CustomTextField>
+                                {/if}
+                            </form>
                         </div>
-                    </StepperContentBody>
-                </StepperContent>
-            {/if}
+                    </div>
+                </StepperContentBody>
+            </StepperContent>
 
             <!-- ======================================================================= -->
             <!-- DIRECTOR SUPPORT -->
             <!-- ======================================================================= -->
             <StepperContent>
-                <StepperContentHeader title="Perakuan Pengarah Bahagian/Negeri">
-                    <TextIconButton label="Simpan" type="draft" icon="save"
-                    ></TextIconButton>
+                <StepperContentHeader title="Maklum Balas Peraku Permohonan">
+                    {#if data.props.currentApplicationDetails.directorSupport?.isDraft && data.props.layoutData.accountDetails.identityDocumentNumber == data.props.currentApplicationDetails.assignDirector?.identityDocumentNumber}
+                        <TextIconButton
+                            label="Hantar"
+                            type="primary"
+                            icon="check"
+                            form="directorSupportForm"
+                        ></TextIconButton>
+                    {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
                     {#if data.props.currentApplicationDetails.assignDirector !== null}
@@ -1065,99 +1143,143 @@
                                                 .directorFeedbackOption}
                                             bind:val={$directorSupportForm.feedback}
                                             bind:errors={$directorSupportErrors.feedback}
+                                            disabled={!data.props
+                                                .currentApplicationDetails
+                                                .directorSupport?.isDraft ||
+                                                data.props.layoutData
+                                                    .accountDetails
+                                                    .identityDocumentNumber !==
+                                                    data.props
+                                                        .currentApplicationDetails
+                                                        .assignDirector
+                                                        ?.identityDocumentNumber}
                                         ></SingleChoiceInput>
 
                                         <CustomTextField
                                             id="remark"
                                             label="Ulasan"
                                             type="textarea"
+                                            isRequired={false}
                                             bind:val={$directorSupportForm.remark}
                                             bind:errors={$directorSupportErrors.remark}
+                                            disabled={!data.props
+                                                .currentApplicationDetails
+                                                .directorSupport?.isDraft ||
+                                                data.props.layoutData
+                                                    .accountDetails
+                                                    .identityDocumentNumber !==
+                                                    data.props
+                                                        .currentApplicationDetails
+                                                        .assignDirector
+                                                        ?.identityDocumentNumber}
                                         ></CustomTextField>
 
-                                        <div
-                                            class="flex w-full flex-col items-start justify-start gap-2 py-2 pb-4"
-                                        >
+                                        {#if $directorSupportForm.feedback == 'Ada tindakan tatatertib (sila berikan senarai laporan)'}
                                             <div
-                                                class="flex w-full flex-row items-center justify-between"
+                                                class="flex w-full flex-col items-start justify-start gap-2 py-2 pb-4"
                                             >
-                                                <p
-                                                    class=" w-full text-start text-base font-medium text-slate-700"
-                                                >
-                                                    Senarai Laporan Tatatertib
-                                                </p>
-                                            </div>
-                                            {#each $directorSupportForm.ethicalIssues as item, index}
                                                 <div
-                                                    class="flex w-full flex-col items-start justify-start rounded-md border border-slate-200 bg-slate-100 p-4"
+                                                    class="flex w-full flex-row items-center justify-between"
                                                 >
+                                                    <p
+                                                        class=" w-full text-start text-base font-medium text-slate-700"
+                                                    >
+                                                        Senarai Laporan
+                                                        Tatatertib
+                                                    </p>
+                                                </div>
+
+                                                {#each $directorSupportForm.ethicalIssues as item, index}
                                                     <div
-                                                        class="flex w-full flex-row items-center justify-between py-2"
+                                                        class="flex w-full flex-col items-start justify-start rounded-md border border-slate-200 bg-white p-4"
+                                                    >
+                                                        <div
+                                                            class="flex w-full flex-row items-center justify-between py-2"
+                                                        >
+                                                            <p
+                                                                class="text-base font-semibold text-slate-700"
+                                                            >
+                                                                Laporan
+                                                                Tatatertib {index +
+                                                                    1}
+                                                            </p>
+
+                                                            {#if data.props.currentApplicationDetails.directorSupport?.isDraft}
+                                                                <button
+                                                                    type="button"
+                                                                    on:click={() => {
+                                                                        removeEthicalIssuesDetail(
+                                                                            index,
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <span>
+                                                                        <SvgXMark
+
+                                                                        ></SvgXMark>
+                                                                    </span>
+                                                                </button>
+                                                            {/if}
+                                                        </div>
+                                                        <div
+                                                            class="flex w-full flex-col items-start justify-start gap-0"
+                                                        >
+                                                            <CustomTextField
+                                                                type="text"
+                                                                id="ethical-punishment-{index}"
+                                                                label={'Hukuman'}
+                                                                errors={$directorSupportErrors.ethicalIssues
+                                                                    ? $directorSupportErrors
+                                                                          .ethicalIssues[
+                                                                          index
+                                                                      ]
+                                                                          ?.punishment
+                                                                    : undefined}
+                                                                bind:val={item.punishment}
+                                                                disabled={!data
+                                                                    .props
+                                                                    .currentApplicationDetails
+                                                                    .directorSupport
+                                                                    ?.isDraft}
+                                                            ></CustomTextField>
+                                                            <CustomTextField
+                                                                type="date"
+                                                                id="ethical-date-{index}"
+                                                                label={'Tarikh Laporan'}
+                                                                errors={$directorSupportErrors.ethicalIssues
+                                                                    ? $directorSupportErrors
+                                                                          .ethicalIssues[
+                                                                          index
+                                                                      ]?.date
+                                                                    : undefined}
+                                                                bind:val={item.date}
+                                                                disabled={!data
+                                                                    .props
+                                                                    .currentApplicationDetails
+                                                                    .directorSupport
+                                                                    ?.isDraft}
+                                                            ></CustomTextField>
+                                                        </div>
+                                                    </div>
+                                                {/each}
+
+                                                {#if data.props.currentApplicationDetails.directorSupport?.isDraft}
+                                                    <button
+                                                        class="h-8 min-h-8 w-full rounded border border-slate-400 bg-slate-100"
+                                                        type="button"
+                                                        on:click={() => {
+                                                            addEthicalIssuesDetail();
+                                                        }}
                                                     >
                                                         <p
-                                                            class="text-base font-semibold text-slate-700"
+                                                            class="text-base font-medium text-slate-700"
                                                         >
-                                                            Laporan Tatatertib {index +
-                                                                1}
+                                                            + Tambah
                                                         </p>
-                                                        <button
-                                                            type="button"
-                                                            on:click={() => {
-                                                                removeEthicalIssuesDetail(
-                                                                    index,
-                                                                );
-                                                            }}
-                                                        >
-                                                            <span>
-                                                                <SvgXMark
-                                                                ></SvgXMark>
-                                                            </span>
-                                                        </button>
-                                                    </div>
-                                                    <div
-                                                        class="flex w-full flex-col items-start justify-start gap-0"
-                                                    >
-                                                        <CustomTextField
-                                                            type="text"
-                                                            id="ethical-punishment-{index}"
-                                                            label={'Hukuman'}
-                                                            errors={$directorSupportErrors.ethicalIssues
-                                                                ? $directorSupportErrors
-                                                                      .ethicalIssues[
-                                                                      index
-                                                                  ]?.punishment
-                                                                : undefined}
-                                                            bind:val={item.punishment}
-                                                        ></CustomTextField>
-                                                        <CustomTextField
-                                                            type="date"
-                                                            id="ethical-date-{index}"
-                                                            label={'Tarikh Laporan'}
-                                                            errors={$directorSupportErrors.ethicalIssues
-                                                                ? $directorSupportErrors
-                                                                      .ethicalIssues[
-                                                                      index
-                                                                  ]?.date
-                                                                : undefined}
-                                                            bind:val={item.date}
-                                                        ></CustomTextField>
-                                                    </div>
-                                                </div>
-                                            {/each}
-                                            <button
-                                                class="h-8 min-h-8 w-full rounded border border-slate-400 bg-slate-100"
-                                                type="button"
-                                                on:click={() => {
-                                                    addEthicalIssuesDetail();
-                                                }}
-                                            >
-                                                <p
-                                                    class="text-base font-medium text-slate-700"
-                                                >
-                                                    + Tambah
-                                                </p>
-                                            </button>
-                                        </div>
+                                                    </button>
+                                                {/if}
+                                            </div>
+                                        {/if}
 
                                         <CustomTextField
                                             disabled
@@ -1190,12 +1312,18 @@
                         </div>
                     {:else}
                         <div
-                            class="flex h-full w-full flex-col items-center justify-center rounded bg-slate-50 gap-2"
+                            class="flex h-full w-full flex-col items-center justify-center gap-2 rounded bg-slate-50"
                         >
-                        <span class="text-lg font-medium text-center text-slate-500">
-                            <SvgInfoSolid size="30"></SvgInfoSolid>
-                        </span>
-                            <p class="text-lg font-medium text-center text-slate-500 text-wrap">Menunggu maklumat Peraku Permohonan</p>
+                            <span
+                                class="text-center text-lg font-medium text-slate-500"
+                            >
+                                <SvgInfoSolid size="30"></SvgInfoSolid>
+                            </span>
+                            <p
+                                class="text-wrap text-center text-lg font-medium text-slate-500"
+                            >
+                                Menunggu maklumat Peraku Permohonan
+                            </p>
                         </div>
                     {/if}
                 </StepperContentBody>
@@ -1205,8 +1333,14 @@
             <!-- ======================================================================= -->
             <StepperContent>
                 <StepperContentHeader title="Keputusan Mesyuarat">
-                    <TextIconButton label="Simpan" type="draft" icon="save"
-                    ></TextIconButton>
+                    {#if data.props.currentApplicationDetails.meetingResult == null && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaPerjawatan.code}
+                        <TextIconButton
+                            label="Hantar"
+                            type="primary"
+                            icon="check"
+                            form="meetingResultForm"
+                        ></TextIconButton>
+                    {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
                     <div
@@ -1234,6 +1368,13 @@
                                         type="text"
                                         bind:val={$meetingResultForm.meetingName}
                                         bind:errors={$meetingResultErrors.meetingName}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .meetingResult !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
                                     ></CustomTextField>
                                     <CustomTextField
                                         id="meetingDate"
@@ -1241,21 +1382,42 @@
                                         type="date"
                                         bind:val={$meetingResultForm.meetingDate}
                                         bind:errors={$meetingResultErrors.meetingDate}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .meetingResult !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
                                     ></CustomTextField>
                                     <CustomRadioBoolean
-                                        disabled={false}
                                         id="status"
                                         label="Keputusan Mesyuarat Permohonan Ini Adalah:"
                                         bind:val={$meetingResultForm.status}
                                         bind:errors={$meetingResultErrors.status}
                                         options={approveOptions}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .meetingResult !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
                                     ></CustomRadioBoolean>
                                     <CustomTextField
                                         id="remark"
                                         label="Ulasan"
                                         type="textarea"
+                                        isRequired={false}
                                         bind:val={$meetingResultForm.remark}
                                         bind:errors={$meetingResultErrors.remark}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .meetingResult !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
                                     ></CustomTextField>
                                 </form>
                             </div>
@@ -1268,9 +1430,15 @@
             <!-- ACCEPTANCE LETTER -->
             <!-- ======================================================================= -->
             <StepperContent>
-                <StepperContentHeader title="Butiran Surat Pertukaran">
-                    <TextIconButton label="Simpan" type="draft" icon="save"
-                    ></TextIconButton>
+                <StepperContentHeader title="Surat Pertukaran">
+                    {#if data.props.currentApplicationDetails.acceptanceLetterDetails == null && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaPerjawatan.code}
+                        <TextIconButton
+                            label="Hantar"
+                            type="primary"
+                            icon="check"
+                            form="acceptanceLetterDetailForm"
+                        ></TextIconButton>
+                    {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
                     <div
@@ -1283,7 +1451,143 @@
                             <div
                                 class="flex w-full flex-col items-start justify-start gap-2"
                             >
-                                <SuratPertukaran></SuratPertukaran>
+                                <CustomBanner
+                                    text="Sila masukkan butiran dan isi-isi Surat Pertukaran seperti yang tertera di bawah"
+                                ></CustomBanner>
+                                <form
+                                    id="acceptanceLetterDetailForm"
+                                    method="POST"
+                                    use:acceptanceLetterDetailEnhance
+                                    class="flex w-full flex-col items-start justify-start gap-1"
+                                >
+                                    <CustomTextField
+                                        id="referenceNumber"
+                                        label="No. Rujukan Surat"
+                                        type="text"
+                                        bind:val={$acceptanceLetterDetailForm.referenceNumber}
+                                        bind:errors={$acceptanceLetterDetailErrors.referenceNumber}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .acceptanceLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="referenceDate"
+                                        label="Tarikh Surat"
+                                        type="date"
+                                        bind:val={$acceptanceLetterDetailForm.referenceDate}
+                                        bind:errors={$acceptanceLetterDetailErrors.referenceDate}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .acceptanceLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="subject"
+                                        label="Tajuk Surat"
+                                        type="text"
+                                        bind:val={$acceptanceLetterDetailForm.subject}
+                                        bind:errors={$acceptanceLetterDetailErrors.subject}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .acceptanceLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomTextField>
+
+                                    <CustomSelectField
+                                        id="fromLocation"
+                                        label={'Penempatan Asal'}
+                                        bind:val={$acceptanceLetterDetailForm.fromLocation}
+                                        bind:errors={$acceptanceLetterDetailErrors.fromLocation}
+                                        options={data.lookup.placementDropdown}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .acceptanceLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomSelectField>
+                                    <CustomSelectField
+                                        id="toLocation"
+                                        label={'Penempatan Baharu'}
+                                        bind:val={$acceptanceLetterDetailForm.toLocation}
+                                        bind:errors={$acceptanceLetterDetailErrors.toLocation}
+                                        options={data.lookup.placementDropdown}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .acceptanceLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomSelectField>
+                                    <CustomTextField
+                                        id="additionalNotes"
+                                        label="Nota Tambahan"
+                                        type="text"
+                                        bind:val={$acceptanceLetterDetailForm.additionalNotes}
+                                        bind:errors={$acceptanceLetterDetailErrors.additionalNotes}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .acceptanceLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="transferDate"
+                                        label="Tarikh Pertukaran"
+                                        type="date"
+                                        bind:val={$acceptanceLetterDetailForm.transferDate}
+                                        bind:errors={$acceptanceLetterDetailErrors.transferDate}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .acceptanceLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="newLocationAddress"
+                                        label="Alamat Penempatan Baharu"
+                                        type="text"
+                                        bind:val={$acceptanceLetterDetailForm.newLocationAddress}
+                                        bind:errors={$acceptanceLetterDetailErrors.newLocationAddress}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .acceptanceLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="slogan"
+                                        label="Slogan Surat"
+                                        type="text"
+                                        bind:val={$acceptanceLetterDetailForm.slogan}
+                                        bind:errors={$acceptanceLetterDetailErrors.slogan}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .acceptanceLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomTextField>
+                                </form>
                             </div>
                             <!-- form wrapper ends here -->
                         </div>
@@ -1295,8 +1599,14 @@
             <!-- ======================================================================= -->
             <StepperContent>
                 <StepperContentHeader title="Permohonan Penangguhan">
-                    <TextIconButton label="Hantar" type="primary" icon="check"
-                    ></TextIconButton>
+                    {#if data.props.currentApplicationDetails.postponeDetails == null && data.props.layoutData.accountDetails.identityDocumentNumber == data.props.currentApplicationDetails.employeeDetails?.identityDocumentNumber && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.kakitangan.code}
+                        <TextIconButton
+                            label="Hantar"
+                            type="primary"
+                            icon="check"
+                            form="postponeDetailForm"
+                        ></TextIconButton>
+                    {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
                     <div
@@ -1316,25 +1626,84 @@
                                     class="flex w-full flex-col items-start justify-start gap-1"
                                 >
                                     <CustomRadioBoolean
-                                        disabled={false}
-                                        id="status"
+                                        id="isPostpone"
                                         label="Adakah Anda Ingin Memohon Penangguhan Tarikh Pertukaran"
                                         options={commonOptions}
-                                        bind:val={$postponeDetailForm.status}
-                                        bind:errors={$postponeDetailErrors.status}
+                                        bind:val={$postponeDetailForm.isPostpone}
+                                        bind:errors={$postponeDetailErrors.isPostpone}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .postponeDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .identityDocumentNumber !==
+                                                data.props
+                                                    .currentApplicationDetails
+                                                    .employeeDetails
+                                                    ?.identityDocumentNumber ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.kakitangan.code}
                                     ></CustomRadioBoolean>
+                                    <CustomTextField
+                                        id="postponeDate"
+                                        label="Nyatakan Tarikh Pertukaran Mengikut Kesusuaian Anda"
+                                        type="date"
+                                        isRequired={false}
+                                        bind:val={$postponeDetailForm.postponeDate}
+                                        bind:errors={$postponeDetailErrors.postponeDate}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .postponeDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .identityDocumentNumber !==
+                                                data.props
+                                                    .currentApplicationDetails
+                                                    .employeeDetails
+                                                    ?.identityDocumentNumber ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.kakitangan.code}
+                                    ></CustomTextField>
                                     <CustomTextField
                                         id="remark"
                                         label="Ulasan"
                                         type="textarea"
+                                        isRequired={false}
                                         bind:val={$postponeDetailForm.remark}
                                         bind:errors={$postponeDetailErrors.remark}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .postponeDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .identityDocumentNumber !==
+                                                data.props
+                                                    .currentApplicationDetails
+                                                    .employeeDetails
+                                                    ?.identityDocumentNumber ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.kakitangan.code}
                                     ></CustomTextField>
                                     <DocumentInput
+                                        id="postponeDetailForm.documents"
+                                        dispatchName="postponeDetails"
                                         bind:documents={$postponeDetailForm.documents}
-                                        label="Sila Muat Naik Surat Permohonan Penangguhan"
+                                        label="Surat Permohonan Penangguhan Pertukaran"
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .postponeDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .identityDocumentNumber !==
+                                                data.props
+                                                    .currentApplicationDetails
+                                                    .employeeDetails
+                                                    ?.identityDocumentNumber ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.kakitangan.code}
                                     ></DocumentInput>
                                     <CustomTextField
+                                        disabled
                                         id="date"
                                         label="Tarikh Permohonan Dihantar"
                                         type="date"
@@ -1353,10 +1722,16 @@
             <!-- ======================================================================= -->
             <StepperContent>
                 <StepperContentHeader
-                    title="Lantikan Penyokong Permohonan Penangguhan"
+                    title="Lantikan Pelulus Permohonan Penangguhan"
                 >
-                    <TextIconButton label="Hantar" type="primary" icon="check"
-                    ></TextIconButton>
+                    {#if data.props.currentApplicationDetails.assignPostponeApprover == null && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaPerjawatan.code}
+                        <TextIconButton
+                            label="Hantar"
+                            type="primary"
+                            icon="check"
+                            form="assignPostponeApproverForm"
+                        ></TextIconButton>
+                    {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
                     <div
@@ -1365,40 +1740,74 @@
                         <div
                             class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
                         >
-                            <!-- form wrapper starts here -->
-                            <div
-                                class="flex w-full flex-col items-start justify-start gap-2"
+                            <form
+                                id="assignPostponeApproverForm"
+                                method="POST"
+                                use:assignPostponeApproverEnhance
+                                class="flex w-full flex-col items-center justify-start gap-2"
                             >
-                                <form
-                                    id="assignPostponeApproverForm"
-                                    method="POST"
-                                    use:assignPostponeApproverEnhance
-                                    class="flex w-full flex-col items-center justify-start gap-2"
-                                >
+                                {#if data.props.currentApplicationDetails.assignPostponeApprover == null}
+                                    <CustomSelectField
+                                        id="roleCode"
+                                        label={'Sila pilih peranan yang layak menjadi Pelulus Permohonan Penangguhan'}
+                                        bind:val={$assignPostponeApproverForm.roleCode}
+                                        bind:errors={$assignPostponeApproverErrors.roleCode}
+                                        options={data.lookup.roleDropdown}
+                                        onValueChange={async () => {
+                                            data.lookup.postponeApproverDropdown =
+                                                await getEndorserDropdown(
+                                                    $assignPostponeApproverForm.roleCode ??
+                                                        '',
+                                                );
+                                        }}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .assignPostponeApprover !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomSelectField>
                                     <CustomSelectField
                                         id="identityDocumentNumber"
-                                        label={'Sila pilih penyokong untuk memberi sokongan bagi permohonan penangguhan pertukaran ini'}
+                                        label={'Sila pilih nama Pelulus Permohonan Penangguhan untuk memberi sokongan bagi permohonan ini'}
                                         bind:val={$assignPostponeApproverForm.identityDocumentNumber}
                                         bind:errors={$assignPostponeApproverErrors.identityDocumentNumber}
-                                        options={data.lookup.directorDrodpwon}
+                                        options={data.lookup
+                                            .postponeApproverDropdown}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .assignPostponeApprover !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomSelectField>
+                                {:else}
+                                    <CustomSelectField
+                                        id="roleCode"
+                                        label={'Peranan Pelulus Permohonan Penangguhan'}
+                                        bind:val={$assignPostponeApproverForm.roleCode}
+                                        bind:errors={$assignPostponeApproverErrors.roleCode}
+                                        options={data.lookup.roleDropdown}
+                                        disabled
                                     ></CustomSelectField>
                                     <CustomTextField
                                         disabled
                                         id="directorName"
-                                        label={'Nama Penyokong'}
+                                        label={'Nama Pelulus Permohonan Penangguhan'}
                                         bind:val={$assignPostponeApproverForm.directorName}
                                         bind:errors={$assignPostponeApproverErrors.directorName}
                                     ></CustomTextField>
                                     <CustomTextField
                                         disabled
                                         id="identityDocumentNumber"
-                                        label={'No Kad Pengenalan'}
+                                        label={'No. Kad Pengenalan Pelulus Permohonan Penangguhan'}
                                         bind:val={$assignPostponeApproverForm.identityDocumentNumber}
                                         bind:errors={$assignPostponeApproverErrors.identityDocumentNumber}
                                     ></CustomTextField>
-                                </form>
-                            </div>
-                            <!-- form wrapper ends here -->
+                                {/if}
+                            </form>
                         </div>
                     </div>
                 </StepperContentBody>
@@ -1408,8 +1817,14 @@
             <!-- ======================================================================= -->
             <StepperContent>
                 <StepperContentHeader title="Sokongan Permohonan Penangguhan">
-                    <TextIconButton label="Hantar" type="primary" icon="check"
-                    ></TextIconButton>
+                    {#if !data.props.currentApplicationDetails.postponeApproval?.isDraft && data.props.layoutData.accountDetails.identityDocumentNumber == data.props.currentApplicationDetails.postponeApproval?.identityDocumentNumber}
+                        <TextIconButton
+                            label="Hantar"
+                            type="primary"
+                            icon="check"
+                            form="postponeApprovalForm"
+                        ></TextIconButton>
+                    {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
                     <div
@@ -1429,19 +1844,37 @@
                                     class="flex w-full flex-col items-start justify-start gap-1"
                                 >
                                     <CustomRadioBoolean
-                                        disabled={false}
                                         id="status"
                                         label="Permohonan Penangguhan Pertukaran Pegawai Di Atas Adalah:"
                                         bind:val={$postponeApprovalForm.status}
                                         bind:errors={$postponeApprovalErrors.status}
                                         options={supportAltOptions}
+                                        disabled={!data.props
+                                            .currentApplicationDetails
+                                            .postponeApproval?.isDraft ||
+                                            data.props.layoutData.accountDetails
+                                                .identityDocumentNumber !==
+                                                data.props
+                                                    .currentApplicationDetails
+                                                    .postponeApproval
+                                                    ?.identityDocumentNumber}
                                     ></CustomRadioBoolean>
                                     <CustomTextField
                                         id="remark"
                                         label="Ulasan"
                                         type="textarea"
+                                        isRequired={false}
                                         bind:val={$postponeApprovalForm.remark}
                                         bind:errors={$postponeApprovalErrors.remark}
+                                        disabled={!data.props
+                                            .currentApplicationDetails
+                                            .postponeApproval?.isDraft ||
+                                            data.props.layoutData.accountDetails
+                                                .identityDocumentNumber !==
+                                                data.props
+                                                    .currentApplicationDetails
+                                                    .postponeApproval
+                                                    ?.identityDocumentNumber}
                                     ></CustomTextField>
                                     <CustomTextField
                                         id="name"
@@ -1449,6 +1882,7 @@
                                         type="text"
                                         bind:val={$postponeApprovalForm.name}
                                         bind:errors={$postponeApprovalErrors.name}
+                                        disabled
                                     ></CustomTextField>
                                     <CustomTextField
                                         id="date"
@@ -1456,6 +1890,7 @@
                                         type="date"
                                         bind:val={$postponeApprovalForm.identityDocumentNumber}
                                         bind:errors={$postponeApprovalErrors.identityDocumentNumber}
+                                        disabled
                                     ></CustomTextField>
                                 </form>
                             </div>
@@ -1468,11 +1903,15 @@
             <!-- POSTPONE LETTER -->
             <!-- ======================================================================= -->
             <StepperContent>
-                <StepperContentHeader
-                    title="Butiran Surat Penangguhan Pertukaran"
-                >
-                    <TextIconButton label="Hantar" type="primary" icon="check"
-                    ></TextIconButton>
+                <StepperContentHeader title="Surat Penangguhan Pertukaran">
+                    {#if data.props.currentApplicationDetails.postponeLetterDetails == null && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaPerjawatan.code}
+                        <TextIconButton
+                            label="Hantar"
+                            type="primary"
+                            icon="check"
+                            form="postponeLetterDetailForm"
+                        ></TextIconButton>
+                    {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
                     <div
@@ -1485,12 +1924,143 @@
                             <div
                                 class="flex w-full flex-col items-start justify-start gap-2"
                             >
+                                <CustomBanner
+                                    text="Sila masukkan butiran dan isi-isi Surat Pertukaran seperti yang tertera di bawah"
+                                ></CustomBanner>
                                 <form
                                     id="postponeLetterDetailForm"
                                     method="POST"
                                     use:postponeLetterDetailEnhance
-                                    class="flex w-full flex-col items-center justify-start gap-2"
-                                ></form>
+                                    class="flex w-full flex-col items-start justify-start gap-1"
+                                >
+                                    <CustomTextField
+                                        id="referenceNumber"
+                                        label="No. Rujukan Surat"
+                                        type="text"
+                                        bind:val={$postponeLetterDetailForm.referenceNumber}
+                                        bind:errors={$postponeLetterDetailErrors.referenceNumber}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .postponeLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="referenceDate"
+                                        label="Tarikh Surat"
+                                        type="date"
+                                        bind:val={$postponeLetterDetailForm.referenceDate}
+                                        bind:errors={$postponeLetterDetailErrors.referenceDate}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .postponeLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="subject"
+                                        label="Tajuk Surat"
+                                        type="text"
+                                        bind:val={$postponeLetterDetailForm.subject}
+                                        bind:errors={$postponeLetterDetailErrors.subject}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .postponeLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomTextField>
+
+                                    <CustomSelectField
+                                        id="fromLocation"
+                                        label={'Penempatan Asal'}
+                                        bind:val={$postponeLetterDetailForm.fromLocation}
+                                        bind:errors={$postponeLetterDetailErrors.fromLocation}
+                                        options={data.lookup.placementDropdown}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .postponeLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomSelectField>
+                                    <CustomSelectField
+                                        id="toLocation"
+                                        label={'Penempatan Baharu'}
+                                        bind:val={$postponeLetterDetailForm.toLocation}
+                                        bind:errors={$postponeLetterDetailErrors.toLocation}
+                                        options={data.lookup.placementDropdown}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .postponeLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomSelectField>
+                                    <CustomTextField
+                                        id="additionalNotes"
+                                        label="Nota Tambahan"
+                                        type="text"
+                                        bind:val={$postponeLetterDetailForm.additionalNotes}
+                                        bind:errors={$postponeLetterDetailErrors.additionalNotes}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .postponeLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="transferDate"
+                                        label="Tarikh Pertukaran"
+                                        type="date"
+                                        bind:val={$postponeLetterDetailForm.transferDate}
+                                        bind:errors={$postponeLetterDetailErrors.transferDate}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .postponeLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="newLocationAddress"
+                                        label="Alamat Penempatan Baharu"
+                                        type="text"
+                                        bind:val={$postponeLetterDetailForm.newLocationAddress}
+                                        bind:errors={$postponeLetterDetailErrors.newLocationAddress}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .postponeLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="slogan"
+                                        label="Slogan Surat"
+                                        type="text"
+                                        bind:val={$postponeLetterDetailForm.slogan}
+                                        bind:errors={$postponeLetterDetailErrors.slogan}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .postponeLetterDetails !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomTextField>
+                                </form>
                             </div>
                             <!-- form wrapper ends here -->
                         </div>
@@ -1502,8 +2072,14 @@
             <!-- ======================================================================= -->
             <StepperContent>
                 <StepperContentHeader title="Dokumen Keperluan Pertukaran">
-                    <TextIconButton label="Hantar" type="primary" icon="check"
-                    ></TextIconButton>
+                    {#if data.props.currentApplicationDetails.transferDocuments == null && data.props.layoutData.accountDetails.identityDocumentNumber == data.props.currentApplicationDetails.employeeDetails?.identityDocumentNumber && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.kakitangan.code}
+                        <TextIconButton
+                            label="Hantar"
+                            type="primary"
+                            icon="check"
+                            form="transferDocumentForm"
+                        ></TextIconButton>
+                    {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
                     <div
@@ -1523,8 +2099,22 @@
                                     class="flex w-full flex-col items-start justify-start gap-1"
                                 >
                                     <DocumentInput
-                                        bind:documents={$transferDocumentForm.documents}
-                                        label="Sila Muat Naik Salinan Borang-borang yang Telah Diisi"
+                                        id="transfer.documents"
+                                        dispatchName="transferDocumentFormDocs"
+                                        bind:documents={$postponeDetailForm.documents}
+                                        label="Dokumen-dokumen Keperluan Pertukaran"
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .transferDocuments !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .identityDocumentNumber !==
+                                                data.props
+                                                    .currentApplicationDetails
+                                                    .employeeDetails
+                                                    ?.identityDocumentNumber ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.kakitangan.code}
                                     ></DocumentInput>
                                 </form>
                             </div>
@@ -1537,9 +2127,17 @@
             <!-- ASSIGN SUPPORTER AND APPROVER -->
             <!-- ======================================================================= -->
             <StepperContent>
-                <StepperContentHeader title="Lantikan Penyokong dan Pelulus">
-                    <TextIconButton label="Hantar" type="primary" icon="check"
-                    ></TextIconButton>
+                <StepperContentHeader
+                    title="Lantikan Penyokong dan Pelulus Pertukaran"
+                >
+                    {#if data.props.currentApplicationDetails.assignEndorser == null && data.props.layoutData.accountDetails.currentRoleCode == RoleConstant.urusSetiaPerjawatan.code}
+                        <TextIconButton
+                            label="Hantar"
+                            type="primary"
+                            icon="check"
+                            form="endorserDetailForm"
+                        ></TextIconButton>
+                    {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
                     <div
@@ -1548,61 +2146,132 @@
                         <div
                             class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
                         >
-                            <!-- form wrapper starts here -->
-                            <div
-                                class="flex w-full flex-col items-start justify-start gap-2"
+                            <form
+                                id="endorserDetailForm"
+                                method="POST"
+                                use:endorserDetailEnhance
+                                class="flex w-full flex-col items-center justify-start gap-2"
                             >
-                                <form
-                                    id="endorserDetailForm"
-                                    method="POST"
-                                    use:endorserDetailEnhance
-                                    class="flex w-full flex-col items-center justify-start gap-2"
-                                >
+                                {#if data.props.currentApplicationDetails.assignEndorser == null}
                                     <CustomSelectField
-                                        id="supporterIdentityDocumentNumber"
-                                        label={'Sila Pilih Penyokong Untuk Menyokong Pertukaran Ini'}
-                                        bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
-                                        bind:errors={$endorserDetailErrors.supporterIdentityDocumentNumber}
-                                        options={data.lookup.directorDrodpwon}
+                                        id="supporterRoleCode"
+                                        label={'Sila pilih peranan yang layak memberi sokongan bagi pertukaran ini'}
+                                        bind:val={$endorserDetailForm.supporterRoleCode}
+                                        bind:errors={$endorserDetailErrors.supporterRoleCode}
+                                        options={data.lookup.roleDropdown}
+                                        onValueChange={async () => {
+                                            data.lookup.supporterDropdown =
+                                                await getEndorserDropdown(
+                                                    $endorserDetailForm.supporterRoleCode ??
+                                                        '',
+                                                );
+                                        }}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .assignEndorser !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
                                     ></CustomSelectField>
                                     <CustomSelectField
-                                        id="identityDocumentNumber"
-                                        label={'Sila Pilih Pelulus Untuk Meluluskan Pertukaran Ini'}
+                                        id="supporterIdentityDocumentNumber"
+                                        label={'Sila pilih nama Penyokong untuk meluluskan pertukaran ini'}
+                                        bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
+                                        bind:errors={$endorserDetailErrors.supporterIdentityDocumentNumber}
+                                        options={data.lookup
+                                            .supporterDropdown}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .assignEndorser !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomSelectField>
+                                    <CustomSelectField
+                                        id="approverRoleCode"
+                                        label={'Sila pilih peranan yang layak memberi kelulusan bagi pertukaran ini'}
+                                        bind:val={$endorserDetailForm.approverRoleCode}
+                                        bind:errors={$endorserDetailErrors.approverRoleCode}
+                                        options={data.lookup.roleDropdown}
+                                        onValueChange={async () => {
+                                            data.lookup.approverDropdown =
+                                                await getEndorserDropdown(
+                                                    $endorserDetailForm.approverRoleCode ??
+                                                        '',
+                                                );
+                                        }}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .assignEndorser !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomSelectField>
+                                    <CustomSelectField
+                                        id="approverIdentityDocumentNumber"
+                                        label={'Sila pilih nama Pelulus untuk meluluskan pertukaran ini'}
                                         bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
                                         bind:errors={$endorserDetailErrors.approverIdentityDocumentNumber}
-                                        options={data.lookup.directorDrodpwon}
+                                        options={data.lookup
+                                            .approverDropdown}
+                                        disabled={data.props
+                                            .currentApplicationDetails
+                                            .assignEndorser !== null ||
+                                            data.props.layoutData.accountDetails
+                                                .currentRoleCode !==
+                                                RoleConstant.urusSetiaPerjawatan
+                                                    .code}
+                                    ></CustomSelectField>
+                                {:else}
+                                    <CustomSelectField
+                                        id="supporterRoleCode"
+                                        label={'Peranan Penyokong Permohonan Penangguhan'}
+                                        bind:val={$endorserDetailForm.supporterRoleCode}
+                                        bind:errors={$endorserDetailErrors.supporterRoleCode}
+                                        options={data.lookup.roleDropdown}
+                                        disabled
                                     ></CustomSelectField>
                                     <CustomTextField
                                         disabled
                                         id="supporterName"
-                                        label={'Nama Penyokong'}
+                                        label={'Nama Penyokong Permohonan Penangguhan'}
                                         bind:val={$endorserDetailForm.supporterName}
                                         bind:errors={$endorserDetailErrors.supporterName}
                                     ></CustomTextField>
                                     <CustomTextField
                                         disabled
-                                        id="identityDocumentNumber"
-                                        label={'No Kad Pengenalan Penyokong'}
+                                        id="supporterIdentityDocumentNumber"
+                                        label={'No. Kad Pengenalan Penyokong Permohonan Penangguhan'}
                                         bind:val={$endorserDetailForm.supporterIdentityDocumentNumber}
                                         bind:errors={$endorserDetailErrors.supporterIdentityDocumentNumber}
                                     ></CustomTextField>
+                                    <CustomSelectField
+                                        id="approverRoleCode"
+                                        label={'Peranan Penyokong Permohonan Penangguhan'}
+                                        bind:val={$endorserDetailForm.approverRoleCode}
+                                        bind:errors={$endorserDetailErrors.approverRoleCode}
+                                        options={data.lookup.roleDropdown}
+                                        disabled
+                                    ></CustomSelectField>
                                     <CustomTextField
                                         disabled
                                         id="approverName"
-                                        label={'Nama Penyokong'}
+                                        label={'Nama Penyokong Permohonan Penangguhan'}
                                         bind:val={$endorserDetailForm.approverName}
                                         bind:errors={$endorserDetailErrors.approverName}
                                     ></CustomTextField>
                                     <CustomTextField
                                         disabled
                                         id="approverIdentityDocumentNumber"
-                                        label={'No Kad Pengenalan Pelulus'}
+                                        label={'No. Kad Pengenalan Penyokong Permohonan Penangguhan'}
                                         bind:val={$endorserDetailForm.approverIdentityDocumentNumber}
                                         bind:errors={$endorserDetailErrors.approverIdentityDocumentNumber}
                                     ></CustomTextField>
-                                </form>
-                            </div>
-                            <!-- form wrapper ends here -->
+                                {/if}
+                            </form>
                         </div>
                     </div>
                 </StepperContentBody>
@@ -1612,8 +2281,14 @@
             <!-- ======================================================================= -->
             <StepperContent>
                 <StepperContentHeader title="Maklum Balas Penyokong">
-                    <TextIconButton label="Hantar" type="primary" icon="check"
-                    ></TextIconButton>
+                    {#if !data.props.currentApplicationDetails.support?.isDraft && data.props.layoutData.accountDetails.identityDocumentNumber == data.props.currentApplicationDetails.support?.identityDocumentNumber}
+                        <TextIconButton
+                            label="Hantar"
+                            type="primary"
+                            icon="check"
+                            form="supporterFeedbackForm"
+                        ></TextIconButton>
+                    {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
                     <div
@@ -1633,23 +2308,53 @@
                                     class="flex w-full flex-col items-start justify-start gap-1"
                                 >
                                     <CustomRadioBoolean
-                                        disabled={false}
                                         id="status"
-                                        label="Pertukaran Pegawai Di Atas Adalah:"
-                                        val={null}
+                                        label="Permohonan Penangguhan Pertukaran Pegawai Di Atas Adalah:"
+                                        bind:val={$supporterFeedbackForm.status}
+                                        bind:errors={$supporterFeedbackErrors.status}
                                         options={supportAltOptions}
+                                        disabled={!data.props
+                                            .currentApplicationDetails
+                                            .support?.isDraft ||
+                                            data.props.layoutData.accountDetails
+                                                .identityDocumentNumber !==
+                                                data.props
+                                                    .currentApplicationDetails
+                                                    .support
+                                                    ?.identityDocumentNumber}
                                     ></CustomRadioBoolean>
                                     <CustomTextField
                                         id="remark"
                                         label="Ulasan"
                                         type="textarea"
-                                        val=""
+                                        isRequired={false}
+                                        bind:val={$supporterFeedbackForm.remark}
+                                        bind:errors={$supporterFeedbackErrors.remark}
+                                        disabled={!data.props
+                                            .currentApplicationDetails
+                                            .support?.isDraft ||
+                                            data.props.layoutData.accountDetails
+                                                .identityDocumentNumber !==
+                                                data.props
+                                                    .currentApplicationDetails
+                                                    .support
+                                                    ?.identityDocumentNumber}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="name"
+                                        label="Nama Penyokong"
+                                        type="text"
+                                        bind:val={$supporterFeedbackForm.name}
+                                        bind:errors={$supporterFeedbackErrors.name}
+                                        disabled
                                     ></CustomTextField>
                                     <CustomTextField
                                         id="date"
                                         label="Tarikh Maklum Balas Dihantar"
                                         type="date"
-                                        val=""
+                                        bind:val={$supporterFeedbackForm.identityDocumentNumber}
+                                        bind:errors={$supporterFeedbackErrors.identityDocumentNumber}
+                                        disabled
                                     ></CustomTextField>
                                 </form>
                             </div>
@@ -1663,8 +2368,14 @@
             <!-- ======================================================================= -->
             <StepperContent>
                 <StepperContentHeader title="Maklum Balas Pelulus">
-                    <TextIconButton label="Hantar" type="primary" icon="check"
-                    ></TextIconButton>
+                    {#if !data.props.currentApplicationDetails.approval?.isDraft && data.props.layoutData.accountDetails.identityDocumentNumber == data.props.currentApplicationDetails.approval?.identityDocumentNumber}
+                        <TextIconButton
+                            label="Hantar"
+                            type="primary"
+                            icon="check"
+                            form="approverFeedbackForm"
+                        ></TextIconButton>
+                    {/if}
                 </StepperContentHeader>
                 <StepperContentBody>
                     <div
@@ -1678,27 +2389,59 @@
                                 class="flex w-full flex-col items-start justify-start gap-2"
                             >
                                 <form
-                                    action=""
+                                    id="approverFeedbackForm"
+                                    method="POST"
+                                    use:approverFeedbackEnhance
                                     class="flex w-full flex-col items-start justify-start gap-1"
                                 >
                                     <CustomRadioBoolean
-                                        disabled={false}
                                         id="status"
-                                        label="Pertukaran Pegawai Di Atas Adalah:"
-                                        val={null}
+                                        label="Permohonan Penangguhan Pertukaran Pegawai Di Atas Adalah:"
+                                        bind:val={$approverFeedbackForm.status}
+                                        bind:errors={$approverFeedbackErrors.status}
                                         options={approveAltOptions}
+                                        disabled={!data.props
+                                            .currentApplicationDetails
+                                            .approval?.isDraft ||
+                                            data.props.layoutData.accountDetails
+                                                .identityDocumentNumber !==
+                                                data.props
+                                                    .currentApplicationDetails
+                                                    .approv
+                                                    ?.identityDocumentNumber}
                                     ></CustomRadioBoolean>
                                     <CustomTextField
                                         id="remark"
                                         label="Ulasan"
                                         type="textarea"
-                                        val=""
+                                        isRequired={false}
+                                        bind:val={$approverFeedbackForm.remark}
+                                        bind:errors={$approverFeedbackErrors.remark}
+                                        disabled={!data.props
+                                            .currentApplicationDetails
+                                            .approval?.isDraft ||
+                                            data.props.layoutData.accountDetails
+                                                .identityDocumentNumber !==
+                                                data.props
+                                                    .currentApplicationDetails
+                                                    .approval
+                                                    ?.identityDocumentNumber}
+                                    ></CustomTextField>
+                                    <CustomTextField
+                                        id="name"
+                                        label="Nama Penyokong"
+                                        type="text"
+                                        bind:val={$approverFeedbackForm.name}
+                                        bind:errors={$approverFeedbackErrors.name}
+                                        disabled
                                     ></CustomTextField>
                                     <CustomTextField
                                         id="date"
                                         label="Tarikh Maklum Balas Dihantar"
                                         type="date"
-                                        val=""
+                                        bind:val={$approverFeedbackForm.identityDocumentNumber}
+                                        bind:errors={$approverFeedbackErrors.identityDocumentNumber}
+                                        disabled
                                     ></CustomTextField>
                                 </form>
                             </div>
