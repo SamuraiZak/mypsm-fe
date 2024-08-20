@@ -379,6 +379,7 @@
         onSubmit(input) {
             $postponeApprovalForm.applicationId =
                 data.props.currentApplicationDetails.applicationId;
+                $postponeApprovalForm.isDraft = false;
             _postponeApprovalSubmit($postponeApprovalForm).then((response) => {
                 if (response.status == 'success') {
                     if (
