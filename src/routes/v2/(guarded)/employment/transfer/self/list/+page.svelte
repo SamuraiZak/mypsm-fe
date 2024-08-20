@@ -46,7 +46,13 @@
             filter: true,
         },
         controls: {
-            add: false,
+            add:
+                data.props.layoutData.accountDetails.currentRoleCode ==
+                RoleConstant.kakitangan.code
+                    ? true
+                    : false,
+            pdf: true,
+            excel: true,
         },
     };
 
@@ -55,7 +61,10 @@
     }
 
     function viewDetails() {
-        goto('/v2/employment/transfer/application/self/' + selectedData.applicationId);
+        goto(
+            '/v2/employment/transfer/self/details/' +
+                selectedData.applicationId,
+        );
     }
 </script>
 
@@ -84,14 +93,6 @@
                     goto('/v2/employment/transfer');
                 }}
             ></TextIconButton>
-            <TextIconButton
-                icon="add"
-                label="Permohonan Baharu"
-                type="primary"
-                onClick={() => {
-                    goto('/v2/employment/transfer/self/new');
-                }}
-            ></TextIconButton>
         </div>
     </div>
 </section>
@@ -107,11 +108,10 @@
             bind:tableData={selfApplicationListTable}
             bind:passData={selectedData}
             detailActions={() => {
-                // showDetails();
                 viewDetails();
             }}
             addActions={() => {
-                // addApplication();
+                addApplication();
             }}
         >
             <FilterWrapper slot="filter">

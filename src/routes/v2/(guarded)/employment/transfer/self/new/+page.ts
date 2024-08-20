@@ -1,27 +1,51 @@
+import { invalidateAll } from '$app/navigation';
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant.js';
+import { RoleConstant } from '$lib/constants/core/role.constant';
+import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+import type { EmployeeLookupItemDTO } from '$lib/dto/core/employee/employee.dto';
+import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto.js';
+import type { UserRoleDTO } from '$lib/dto/core/user-role/user-role.dto.js';
 import type {
+    TransferApplicationDetailsDTO,
+    TransferApplicationDetailsRequestDTO,
     TransferApplicationPersonalDetailDTO,
     TransferApplicationServiceDetailDTO,
 } from '$lib/dto/mypsm/employment/transfer/transfer.dto';
+import { LookupHelper } from '$lib/helpers/core/lookup.helper';
 import {
+    TransferApplicationAcceptanceLetterDetailSchema,
+    TransferApplicationAssignDirectorSchema,
+    TransferApplicationAssignPostponeApproverSchema,
     TransferApplicationConfirmationSchema,
+    TransferApplicationDirectorSupportSchema,
     TransferApplicationEmployeeDetailSchema,
+    TransferApplicationEndorsementSchema,
+    TransferApplicationEndorserDetailSchema,
+    TransferApplicationMeetingResultSchema,
+    TransferApplicationPostponeDetailSchema,
+    TransferApplicationPostponeLetterDetailSchema,
     TransferApplicationServiceDetailSchema,
     TransferApplicationTransferDetailSchema,
+    TransferApplicationTransferDocumentSchema,
+    type TransferApplicationAcceptanceLetterDetailType,
+    type TransferApplicationAssignDirectorType,
+    type TransferApplicationAssignPostponeApproverType,
     type TransferApplicationConfirmationType,
+    type TransferApplicationEmployeeDetailType,
+    type TransferApplicationMeetingResultType,
+    type TransferApplicationPostponeDetailType,
+    type TransferApplicationServiceDetailType,
     type TransferApplicationTransferDetailType,
 } from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
+import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { TransferServices } from '$lib/services/implementation/mypsm/employment/transfer/transfer.service.js';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export async function load({ params, parent }) {
     const { layoutData } = await parent();
-
-    // application id
-    const currentApplicationId: number = parseInt(params.id);
 
     // ==========================================================
     // FORMS
@@ -42,18 +66,14 @@ export async function load({ params, parent }) {
         zod(TransferApplicationTransferDetailSchema),
     );
 
-    // confirmation form
-    const applicationConfirmationForm = await superValidate(
-        zod(TransferApplicationConfirmationSchema),
-    );
+    // get employee detail
+    employeeDetailForm.data = await _getCurrentEmployeeDetails();
 
-    // ==========================================================
-    // DEFAULT VALUES
-    // ==========================================================
-    if (currentApplicationId == 0) {
-        // employee detail
-        employeeDetailForm.data = await _getCurrentEmployeeDetails();
-    }
+    // get service detail
+    serviceDetailForm.data = await _getCurrentEmployeeServiceDetails();
+
+    // set default isDraft
+    transferDetailForm.data.isDraft = true;
 
     // ==========================================================
     // Lookup
@@ -88,22 +108,68 @@ export async function load({ params, parent }) {
         },
     ];
 
+    const directorFeedbackOption: DropdownDTO[] = [
+        {
+            name: 'Disokong tanpa pengganti',
+            value: 'Disokong tanpa pengganti',
+        },
+        {
+            name: 'Disokong dengan pengganti dihantar serentak',
+            value: 'Disokong dengan pengganti dihantar serentak',
+        },
+        {
+            name: 'Disokong dengan pengganti dihantar kemudian',
+            value: 'Disokong dengan pengganti dihantar kemudian',
+        },
+        {
+            name: 'Tidak disokong (sila beri ulasan)',
+            value: 'Tidak disokong (sila beri ulasan)',
+        },
+        {
+            name: 'Ada tindakan tatatertib (sila berikan senarai laporan)',
+            value: 'Ada tindakan tatatertib (sila berikan senarai laporan)',
+        },
+    ];
+
+    const placementDropdown: DropdownDTO[] = await _getPlacementDropdown();
+
+    const postponeApproverDropdown: DropdownDTO[] = [];
+    const supporterDropdown: DropdownDTO[] = [];
+    const approverDropdown: DropdownDTO[] = [];
+
     return {
         props: {
-            currentApplicationId,
             layoutData,
         },
         forms: {
             employeeDetailForm,
             serviceDetailForm,
             transferDetailForm,
-            applicationConfirmationForm,
         },
         lookup: {
             transferCategoryOption,
             transferReasonOption,
+            directorFeedbackOption,
+            postponeApproverDropdown,
+            supporterDropdown,
+            approverDropdown,
+            placementDropdown,
         },
     };
+}
+
+export async function _getPlacementDropdown() {
+    let roleOption: DropdownDTO[] = [];
+
+    const roleListResponse: CommonResponseDTO =
+        await LookupServices.getPlacementEnums();
+
+    const roleList: LookupDTO[] = roleListResponse.data
+        ?.dataList as LookupDTO[];
+
+    roleOption = LookupHelper.toDropdownDescription(roleList);
+
+    return roleOption;
 }
 
 // =====================================================================
@@ -154,7 +220,9 @@ export async function _getCurrentEmployeeServiceDetails() {
 }
 
 // 3. create application
-export async function _(params: TransferApplicationTransferDetailType) {
+export async function _applicationDetailSubmit(
+    params: TransferApplicationTransferDetailType,
+) {
     const form = await superValidate(
         params,
         zod(TransferApplicationTransferDetailSchema),
@@ -163,35 +231,7 @@ export async function _(params: TransferApplicationTransferDetailType) {
     if (form.valid) {
         const response = await TransferServices.addTransferDetail(form.data);
 
-        if (response.status == 'success') {
-            return response;
-        } else {
-            return CommonResponseConstant.httpError;
-        }
-    } else {
-        return CommonResponseConstant.httpError;
-    }
-}
-
-// add confirmation
-export async function _applicationConfirmationSubmit(
-    params: TransferApplicationConfirmationType,
-) {
-    const form = await superValidate(
-        params,
-        zod(TransferApplicationConfirmationSchema),
-    );
-
-    if (form.valid) {
-        const response = await TransferServices.addApplicationConfirmation(
-            form.data,
-        );
-
-        if (response.status == 'success') {
-            return response;
-        } else {
-            return CommonResponseConstant.httpError;
-        }
+        return response;
     } else {
         return CommonResponseConstant.httpError;
     }
