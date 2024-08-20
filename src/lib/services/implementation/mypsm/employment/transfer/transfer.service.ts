@@ -514,4 +514,34 @@ export class TransferServices {
             return CommonResponseConstant.httpError;
         }
     }
+
+    // approver feedback
+    static async getAssignedList(
+        param: CommonListRequestDTO,
+    ) {
+        try {
+            const url: Input = 'employment/self_transfer/assigned_list';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await toasterCommon(promiseResponse);
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    
 }

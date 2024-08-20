@@ -106,7 +106,7 @@
             child: [
                 {
                     moduleName: 'Lihat Senarai',
-                    url: '',
+                    url: '/v2/employment/transfer/agenda',
                     child: [],
                 },
             ],

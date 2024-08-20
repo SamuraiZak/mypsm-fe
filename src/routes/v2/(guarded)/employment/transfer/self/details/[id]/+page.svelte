@@ -583,7 +583,7 @@
 </script>
 
 <section class="flex w-full flex-col items-center justify-center">
-    <ContentHeader title="Permohonan Pertukaran - Permohonan Sendiri}">
+    <ContentHeader title="Permohonan Pertukaran - Permohonan Sendiri">
         <TextIconButton
             type="draft"
             label="Kembali"
@@ -599,7 +599,7 @@
 <section
     class="flex h-full w-full flex-col items-start justify-start overflow-y-hidden"
 >
-    <Stepper activeIndex={11}>
+    <Stepper>
         <!-- ======================================================================= -->
         <!-- PERSONAL DETAILS -->
         <!-- ======================================================================= -->
@@ -2407,7 +2407,7 @@
                                                 .identityDocumentNumber !==
                                                 data.props
                                                     .currentApplicationDetails
-                                                    .approv
+                                                    .approval
                                                     ?.identityDocumentNumber}
                                     ></CustomRadioBoolean>
                                     <CustomTextField
