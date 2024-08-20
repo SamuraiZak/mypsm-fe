@@ -379,7 +379,7 @@
         onSubmit(input) {
             $postponeApprovalForm.applicationId =
                 data.props.currentApplicationDetails.applicationId;
-                $postponeApprovalForm.isDraft = false;
+            $postponeApprovalForm.isDraft = false;
             _postponeApprovalSubmit($postponeApprovalForm).then((response) => {
                 if (response.status == 'success') {
                     if (
@@ -514,6 +514,7 @@
         onSubmit(input) {
             $supporterFeedbackForm.applicationId =
                 data.props.currentApplicationDetails.applicationId;
+            $supporterFeedbackForm.isDraft = false;
             _supporterFeedbackSubmit($supporterFeedbackForm).then(
                 (response) => {
                     if (response.status == 'success') {
@@ -548,6 +549,7 @@
         onSubmit(input) {
             $approverFeedbackForm.applicationId =
                 data.props.currentApplicationDetails.applicationId;
+            $approverFeedbackForm.isDraft = false;
             _approverFeedbackSubmit($approverFeedbackForm).then((response) => {
                 if (response.status == 'success') {
                     if (
