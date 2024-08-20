@@ -123,7 +123,7 @@
         </div>
     {/if}
 
-    {#if documents !== undefined}
+    {#if documents !== undefined || documents !== null}
         {#if documents.length > 0}
             <div
                 class="flex h-8 min-h-8 w-full flex-row items-center justify-between"
