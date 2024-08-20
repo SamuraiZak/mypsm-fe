@@ -1094,26 +1094,19 @@
                                     />
                                 {:else}
                                     <CustomTextField
-                                        disabled={data.view
-                                            .confirmationInServiceView.approver
-                                            ?.isReadonly &&
-                                            !$confirmationSetApproverIsDraft}
-                                        errors={$secretarySetApproverErrors.supporterName}
+                                        disabled
                                         id="supporterName"
                                         label="Nama Penyokong"
-                                        bind:val={$secretarySetApproverForm.supporterName}
+                                        bind:val={data.view.confirmationInServiceView.approver.supporterName}
                                     ></CustomTextField>
                                 {/if}
                             {:else}
                                 <CustomTextField
-                                    disabled={data.view
-                                        .confirmationInServiceView.approver
-                                        ?.isReadonly &&
-                                        !$confirmationSetApproverIsDraft}
+                                    disabled
                                     errors={$secretarySetApproverErrors.supporterName}
                                     id="supporterName"
                                     label="Nama Penyokong"
-                                    bind:val={$secretarySetApproverForm.supporterName}
+                                    bind:val={data.view.confirmationInServiceView.approver.supporterName}
                                 ></CustomTextField>
                             {/if}
 
