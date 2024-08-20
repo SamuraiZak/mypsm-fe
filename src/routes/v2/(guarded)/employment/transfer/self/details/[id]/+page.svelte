@@ -840,9 +840,6 @@
                         <div
                             class="flex w-full flex-col items-start justify-start gap-2"
                         >
-                            <p>
-                                {$transferDetailForm.isDraft}
-                            </p>
                             <form
                                 id="transferDetailForm"
                                 method="POST"
@@ -1587,6 +1584,13 @@
                                                 RoleConstant.urusSetiaPerjawatan
                                                     .code}
                                     ></CustomTextField>
+                                    <!-- {#if data.props.currentApplicationDetails.acceptanceLetterDetails !== null}
+                                        <DocumentInput
+                                            bind:documents={$acceptanceLetterDetailForm.documents}
+                                            label="Surat Permohonan Pertukaran"
+                                            disabled
+                                        ></DocumentInput>
+                                    {/if} -->
                                 </form>
                             </div>
                             <!-- form wrapper ends here -->

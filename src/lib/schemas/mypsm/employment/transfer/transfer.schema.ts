@@ -124,6 +124,7 @@ export const TransferApplicationAcceptanceLetterDetailSchema = z.object({
     newLocationAddress: z.string(),
     slogan: z.string(),
     isDraft: z.boolean(),
+    documents: z.array(DocumentSchema).nullish().default([]),
 });
 export type TransferApplicationAcceptanceLetterDetailType = z.infer<
     typeof TransferApplicationAcceptanceLetterDetailSchema
@@ -168,6 +169,7 @@ export const TransferApplicationPostponeLetterDetailSchema = z.object({
     newLocationAddress: z.string(),
     slogan: z.string(),
     isDraft: z.boolean(),
+    documents: z.array(DocumentSchema).nullish(),
 });
 export type TransferApplicationPostponeLetterDetailType = z.infer<
     typeof TransferApplicationPostponeLetterDetailSchema
