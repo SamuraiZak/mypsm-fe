@@ -25,7 +25,9 @@
         data: data.props.selfApplication.response.data?.dataList ?? [],
         selectedData: [],
         exportData: [],
-        hiddenColumn: [],
+        hiddenColumn: [
+            'applicationId'
+        ],
         dictionary: [
             {
                 english: 'identityCardNumber',
@@ -35,8 +37,12 @@
                 english: 'status',
                 malay: 'Status Permohonan',
             },
+            {
+                english: 'transferType',
+                malay: 'Jenis Pertukaran',
+            },
         ],
-        url: 'employment/self_transfer/list',
+        url: 'employment/self_transfer/assigned_list',
         id: 'selfApplicationListTable',
         option: {
             checkbox: false,

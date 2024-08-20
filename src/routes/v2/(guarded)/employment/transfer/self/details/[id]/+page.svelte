@@ -1821,7 +1821,7 @@
             <!-- ======================================================================= -->
             <StepperContent>
                 <StepperContentHeader title="Sokongan Permohonan Penangguhan">
-                    {#if !data.props.currentApplicationDetails.postponeApproval?.isDraft && data.props.layoutData.accountDetails.identityDocumentNumber == data.props.currentApplicationDetails.postponeApproval?.identityDocumentNumber}
+                    {#if data.props.currentApplicationDetails.postponeApproval?.isDraft && data.props.layoutData.accountDetails.identityDocumentNumber == data.props.currentApplicationDetails.postponeApproval?.identityDocumentNumber}
                         <TextIconButton
                             label="Hantar"
                             type="primary"
