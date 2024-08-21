@@ -692,7 +692,7 @@
                                             errors={$setDirectorError.identityDocumentNumber}
                                         />
                                         <TextIconButton
-                                            label="Set"
+                                            label="Pilih"
                                             icon="check"
                                             form="setDirectorForm"
                                             onClick={() =>
@@ -701,7 +701,7 @@
                                     </div>
                                 </form>
                             {/if}
-                            {#if data.interimSupportDetail.isDraft == true && data.interimSupportDetail !== undefined && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
+                            {#if data.interimSupportDetail.isDraft == true || data.interimSupportDetail.status == null && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
                                 <form
                                     class="flex w-1/2 flex-col justify-start gap-2.5"
                                     method="POST"
@@ -759,6 +759,14 @@
                                         options={supportOptions}
                                         id="status"
                                         val={data.interimSupportDetail?.status}
+                                    />
+                                    <CustomTextField
+                                        label="Tarikh Sokongan"
+                                        disabled
+                                        type= "date"
+                                        isRequired={false}
+                                        id="approvalDate"
+                                        val={data.interimSupportDetail?.approvalDate}
                                     />
                                 </div>
                             {/if}

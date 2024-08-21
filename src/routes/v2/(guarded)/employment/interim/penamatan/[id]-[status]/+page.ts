@@ -28,6 +28,7 @@ export const load = async ({ params,parent }) => {
         status: false,
         remark: "",
         approvalDate: "",
+        isDraft: false,
     }
 
     const secretaryApprovalForm = await superValidate(zod(_terminationCommonApproval));
