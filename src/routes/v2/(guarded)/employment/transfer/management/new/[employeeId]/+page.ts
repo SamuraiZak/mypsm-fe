@@ -1,43 +1,17 @@
-import { invalidateAll } from '$app/navigation';
 import { CommonResponseConstant } from '$lib/constants/core/common-response.constant.js';
-import { RoleConstant } from '$lib/constants/core/role.constant';
-import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
-import type { EmployeeLookupItemDTO } from '$lib/dto/core/employee/employee.dto';
 import type { LookupDTO } from '$lib/dto/core/lookup/lookup.dto.js';
-import type { UserRoleDTO } from '$lib/dto/core/user-role/user-role.dto.js';
 import type {
-    TransferApplicationDetailsDTO,
-    TransferApplicationDetailsRequestDTO,
     TransferApplicationEmployeeDetailsRequestDTO,
     TransferApplicationPersonalDetailDTO,
     TransferApplicationServiceDetailDTO,
 } from '$lib/dto/mypsm/employment/transfer/transfer.dto';
 import { LookupHelper } from '$lib/helpers/core/lookup.helper';
 import {
-    TransferApplicationAcceptanceLetterDetailSchema,
-    TransferApplicationAssignDirectorSchema,
-    TransferApplicationAssignPostponeApproverSchema,
-    TransferApplicationConfirmationSchema,
-    TransferApplicationDirectorSupportSchema,
     TransferApplicationEmployeeDetailSchema,
-    TransferApplicationEndorsementSchema,
-    TransferApplicationEndorserDetailSchema,
-    TransferApplicationMeetingResultSchema,
-    TransferApplicationPostponeDetailSchema,
-    TransferApplicationPostponeLetterDetailSchema,
     TransferApplicationServiceDetailSchema,
     TransferApplicationTransferDetailSchema,
-    TransferApplicationTransferDocumentSchema,
-    type TransferApplicationAcceptanceLetterDetailType,
-    type TransferApplicationAssignDirectorType,
-    type TransferApplicationAssignPostponeApproverType,
-    type TransferApplicationConfirmationType,
-    type TransferApplicationEmployeeDetailType,
-    type TransferApplicationMeetingResultType,
-    type TransferApplicationPostponeDetailType,
-    type TransferApplicationServiceDetailType,
     type TransferApplicationTransferDetailType,
 } from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';

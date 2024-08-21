@@ -1,9 +1,5 @@
 <script lang="ts">
-    import SvgXMark from '$lib/assets/svg/SvgXMark.svelte';
     import DocumentInput from '$lib/components/document-input/DocumentInput.svelte';
-    import SuratPertukaran from '$lib/components/letter/SuratPertukaran.svelte';
-    import SingleChoiceInput from '$lib/components/inputs/single-choice-input/SingleChoiceInput.svelte';
-
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import StepperContentHeader from '$lib/components/stepper/StepperContentHeader.svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
@@ -13,44 +9,18 @@
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import CustomTextField from '$lib/components/inputs/text-field/CustomTextField.svelte';
-    import CustomRadioBoolean from '$lib/components/inputs/radio-field/CustomRadioBoolean.svelte';
-    import {
-        approveAltOptions,
-        approveOptions,
-        commonOptions,
-        supportAltOptions,
-    } from '$lib/constants/core/radio-option-constants';
-    import CustomBanner from '$lib/components/banner/CustomBanner.svelte';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import { superForm } from 'sveltekit-superforms';
     import { zodClient } from 'sveltekit-superforms/adapters';
     import {
-        TransferApplicationAcceptanceLetterDetailSchema,
-        TransferApplicationAssignDirectorSchema,
-        TransferApplicationAssignPostponeApproverSchema,
-        TransferApplicationConfirmationSchema,
-        TransferApplicationDirectorSupportSchema,
         TransferApplicationEmployeeDetailSchema,
-        TransferApplicationEndorsementSchema,
-        TransferApplicationEndorserDetailSchema,
-        TransferApplicationMeetingResultSchema,
-        TransferApplicationPostponeDetailSchema,
-        TransferApplicationPostponeLetterDetailSchema,
         TransferApplicationServiceDetailSchema,
         TransferApplicationTransferDetailSchema,
-        TransferApplicationTransferDocumentSchema,
-        type EthicalIssueType,
-        type TransferApplicationAcceptanceLetterDetailType,
         type TransferApplicationTransferDetailType,
     } from '$lib/schemas/mypsm/employment/transfer/transfer.schema';
     import MultiChoiceInput from '$lib/components/inputs/multiple-choice-input/MultiChoiceInput.svelte';
-    import { RoleConstant } from '$lib/constants/core/role.constant';
-    import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
+
     import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
-    import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
-    import type { EmployeeLookupItemDTO } from '$lib/dto/core/employee/employee.dto';
-    import { LookupHelper } from '$lib/helpers/core/lookup.helper';
-    import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
     import type { PageData } from './$types';
     import { _applicationDetailSubmit } from './+page';
 
@@ -97,6 +67,7 @@
             $transferDetailForm.employeeId = data.props.employeeId;
             $transferDetailForm.applicationId = null;
             $transferDetailForm.transferType = 'Arahan Pihak Pengurusan';
+            
             _applicationDetailSubmit($transferDetailForm).then((value) => {
                 const response = value as CommonResponseDTO;
 
@@ -328,8 +299,6 @@
                     <div
                         class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
                     >
-                        
-
                         <!-- form wrapper starts here -->
                         <div
                             class="flex w-full flex-col items-start justify-start gap-2"
