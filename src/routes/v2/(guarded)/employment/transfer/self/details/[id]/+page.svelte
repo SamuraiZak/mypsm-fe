@@ -1590,13 +1590,13 @@
                                                 RoleConstant.urusSetiaPerjawatan
                                                     .code}
                                     ></CustomTextField>
-                                    <!-- {#if data.props.currentApplicationDetails.acceptanceLetterDetails !== null}
+                                    {#if data.props.currentApplicationDetails.acceptanceLetterDetails !== null}
                                         <DocumentInput
                                             bind:documents={$acceptanceLetterDetailForm.documents}
                                             label="Surat Pertukaran"
                                             disabled
                                         ></DocumentInput>
-                                    {/if} -->
+                                    {/if}
                                 </form>
                             </div>
                             <!-- form wrapper ends here -->
@@ -2147,13 +2147,13 @@
                                                             .urusSetiaPerjawatan
                                                             .code}
                                             ></CustomTextField>
-                                            <!-- {#if data.props.currentApplicationDetails.postponeLetterDetails !== null}
+                                            {#if data.props.currentApplicationDetails.postponeLetterDetails !== null}
                                                 <DocumentInput
                                                     bind:documents={$postponeLetterDetailForm.documents}
                                                     label="Surat Penangguhan Pertukaran"
                                                     disabled
                                                 ></DocumentInput>
-                                            {/if} -->
+                                            {/if}
                                         </form>
                                     </div>
                                     <!-- form wrapper ends here -->
