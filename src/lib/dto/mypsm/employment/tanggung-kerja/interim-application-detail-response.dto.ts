@@ -35,7 +35,7 @@ export interface InterimChecklist {
 
 export interface ViewAssign {
     isDraft: boolean;
-    director: string;
+    identityDocumentNumber: string;
     type: string;
 }
 
@@ -82,8 +82,9 @@ export interface InterimSkipping {
 export interface InterimSupport {
     employeeId: string;
     remark: string;
-    status?: boolean;
-    approvalDate?: string;
+    status: boolean;
+    approvalDate: string;
+    isDraft: boolean;
 }
 
 export interface InterimApplicationDetail {

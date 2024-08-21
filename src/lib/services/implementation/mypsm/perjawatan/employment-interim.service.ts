@@ -508,4 +508,30 @@ export class EmploymentInterimServices {
             return CommonResponseConstant.httpError;
         }
     }
+
+    static async editReferenceNumberApply (param: InterimReferenceNumber) {
+        try {
+            let url: Input = 'employment/interim/application/post_approval';
+
+            const promiseRes: Promise<Response> = http
+                .put(url, {
+                    body: InterimReferenceNumberConvert.toJson(param),
+                })
+                .json();
+
+            const response: Response = await getGeneralToast(promiseRes);
+            const result = CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                await invalidateAll()
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    
 }

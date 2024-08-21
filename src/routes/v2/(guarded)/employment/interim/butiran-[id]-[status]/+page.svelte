@@ -14,6 +14,7 @@
         _addDirectorSchema,
         _addInterimApprovalSchema,
         _addNewInterimApplicationSchema,
+        _referenceNumber,
     } from '$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas';
     import { Toaster } from 'svelte-french-toast';
     import {
@@ -22,6 +23,7 @@
         _submitChecklistForm,
         _submitDirectorForm,
         _submitInterimDocument,
+        _submitReferenceNumber,
         _submitSetDirector,
         _submitSkippingForm,
     } from './+page';
@@ -44,6 +46,9 @@
     let submitDirector: boolean = false;
     let submitChecklist: boolean = false;
     let submitApprover: boolean = false;
+    let submitSetDirector: boolean = false;
+    let submitReferenceNumber: boolean = false;
+
     let files: FileList;
     let files2: FileList;
     let files3: FileList;
@@ -51,12 +56,6 @@
 
     if (data.uploadedDocuments?.document?.length > 0) {
         submitDocument = true;
-    }
-    if (data.interimSupportDetail.status !== null) {
-        submitDirector = true;
-    }
-    if (data.interimApprovalDetail.employeeId !== '') {
-        submitApprover = true;
     }
 
     function uploadDocument() {
@@ -98,10 +97,10 @@
         id: 'skippingForm',
         validators: zod(_addInterimApprovalSchema),
         async onSubmit() {
-            $skippingForm.approvalDate = "";
+            $skippingForm.approvalDate = '';
             $skippingForm.interimId = data.interimId.interimId;
             if (!$skippingForm.status) {
-                $skippingForm.remark = "";
+                $skippingForm.remark = '';
             }
             const res = await _submitSkippingForm($skippingForm);
 
@@ -115,15 +114,6 @@
     if (data.interimApplicationDetail?.skipping !== null) {
         submitSkip = true;
     }
-
-    if (
-        ($skippingForm.isDraft == false &&
-            $skippingForm.isDraft !== null)
-    ) {
-        submitApprover = true;
-    }
-
-
 
     const {
         form: directorForm,
@@ -139,6 +129,7 @@
         id: 'directorForm',
         validators: zod(_addInterimApprovalSchema),
         async onSubmit() {
+            console.log('ahgsdhasd');
             $directorForm.interimId = data.interimId.interimId;
             const res = await _submitDirectorForm($directorForm);
             if (res?.response.status == 'success') {
@@ -149,13 +140,9 @@
         },
     });
 
-    if (
-        ($directorForm.isDraft == false &&
-            $directorForm.isDraft !== null)
-    ) {
+    if (data.interimSupportDetail.status !== null && !$directorForm.isDraft) {
         submitDirector = true;
     }
-
 
     const {
         form: checklistForm,
@@ -203,10 +190,8 @@
         },
     });
 
-    if (
-        ($approverForm.isDraft == false &&
-            $approverForm.isDraft !== null)
-    ) {
+    if ($approverForm.isDraft == false && $approverForm.isDraft !== null) {
+        console.log('jhghgjgj');
         submitApprover = true;
     }
 
@@ -228,9 +213,42 @@
             $setDirectorForm.interimId = data.interimId.interimId;
             $setDirectorForm.type = 'pengarah negeri';
             const res = await _submitSetDirector($setDirectorForm);
-            
+
             if (res?.response.status == 'success') {
-                submitApprover = true;
+                if ($setDirectorForm.isDraft == false) {
+                    submitSetDirector = true;
+                }
+            }
+        },
+    });
+
+    if (
+        $setDirectorForm.isDraft == false &&
+        $setDirectorForm.isDraft !== null
+    ) {
+        submitSetDirector = true;
+    }
+    // console.log($approverForm)
+
+    const {
+        form: referenceNumberForm,
+        errors: referenceNumberError,
+        enhance: referenceNumberEnhance,
+    } = superForm(data.interimReferenceNumberForm, {
+        SPA: true,
+        dataType: 'json',
+        invalidateAll: true,
+        taintedMessage: false,
+        resetForm: false,
+        id: 'referenceNumberForm',
+        validators: zod(_referenceNumber),
+        async onSubmit() {
+            $referenceNumberForm.interimId = data.interimId.interimId;
+            const res = await _submitReferenceNumber($referenceNumberForm);
+            if (res?.response.status == 'success') {
+                if ($referenceNumberForm.isDraft == true) {
+                    submitReferenceNumber = true;
+                }
             }
         },
     });
@@ -444,31 +462,31 @@
                                 val={data.interimApplicationDetail.duration?.to}
                             />
                             <div class="hidden">
-                            {#if data.interimApplicationDetail.duration?.previousInterim.length > 0}
-                                <ContentHeader
-                                    title="Tempoh Penanggungan Kerja Bagi Jawatan yang Sama Sebelum Ini (Jika Ada)"
-                                    borderClass="border-none"
-                                />
-                                <CustomTextField
-                                    label="Dari"
-                                    disabled
-                                    isRequired={false}
-                                    id="from"
-                                    type="date"
-                                    val={data.interimApplicationDetail.duration
-                                        ?.previousInterim[0]?.from}
-                                />
-                                <CustomTextField
-                                    label="Hingga"
-                                    disabled
-                                    isRequired={false}
-                                    id="date"
-                                    type="date"
-                                    val={data.interimApplicationDetail.duration
-                                        ?.previousInterim[0]?.to}
-                                />
-                            {/if}
-                        </div>
+                                {#if data.interimApplicationDetail.duration?.previousInterim.length > 0}
+                                    <ContentHeader
+                                        title="Tempoh Penanggungan Kerja Bagi Jawatan yang Sama Sebelum Ini (Jika Ada)"
+                                        borderClass="border-none"
+                                    />
+                                    <CustomTextField
+                                        label="Dari"
+                                        disabled
+                                        isRequired={false}
+                                        id="from"
+                                        type="date"
+                                        val={data.interimApplicationDetail
+                                            .duration?.previousInterim[0]?.from}
+                                    />
+                                    <CustomTextField
+                                        label="Hingga"
+                                        disabled
+                                        isRequired={false}
+                                        id="date"
+                                        type="date"
+                                        val={data.interimApplicationDetail
+                                            .duration?.previousInterim[0]?.to}
+                                    />
+                                {/if}
+                            </div>
                         </div>
                     </div>
                 </StepperContentBody>
@@ -582,14 +600,14 @@
             <StepperContent>
                 <StepperContentHeader title="Pelangkauan Dari Segi Kekananan">
                     {#if !submitSkip && data.currentRoleCode == UserRoleConstant.kakitangan.code}
-                    <TextIconButton
-                    type="neutral"
-                        label="Simpan"
-                        icon="save"
-                    form="skippingForm"
-                    onClick={() => ($skippingForm.isDraft = true)}
-                />    
-                    <TextIconButton
+                        <TextIconButton
+                            type="neutral"
+                            label="Simpan"
+                            icon="save"
+                            form="skippingForm"
+                            onClick={() => ($skippingForm.isDraft = true)}
+                        />
+                        <TextIconButton
                             label="Hantar"
                             icon="check"
                             form="skippingForm"
@@ -633,15 +651,14 @@
                         title="Sokongan dari Pengarah Bahagian/Negeri"
                     >
                         {#if !submitDirector && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
-                            
-                        <TextIconButton
-                        type="neutral"
-                        label="Simpan"
-                        icon="save"
-                        form="directorForm"
-                        onClick={() => ($directorForm.isDraft = true)}
-                    />
-                    <TextIconButton
+                            <TextIconButton
+                                type="neutral"
+                                label="Simpan"
+                                icon="save"
+                                form="directorForm"
+                                onClick={() => ($directorForm.isDraft = true)}
+                            />
+                            <TextIconButton
                                 label="Hantar"
                                 icon="check"
                                 form="directorForm"
@@ -667,12 +684,12 @@
                                     <div class="flex items-center gap-2">
                                         <CustomSelectField
                                             label="Pilih Pengarah Bahagian/Negeri"
-                                            id="director"
+                                            id="identityDocumentNumber"
                                             disabled={false}
                                             options={data.lookup
                                                 .supporterApproverLookup}
-                                            bind:val={$setDirectorForm.director}
-                                            errors={$setDirectorError.director}
+                                            bind:val={$setDirectorForm.identityDocumentNumber}
+                                            errors={$setDirectorError.identityDocumentNumber}
                                         />
                                         <TextIconButton
                                             label="Set"
@@ -684,7 +701,7 @@
                                     </div>
                                 </form>
                             {/if}
-                            {#if data.interimSupportDetail.status == null && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
+                            {#if data.interimSupportDetail.isDraft == true && data.interimSupportDetail !== undefined && (data.currentRoleCode == UserRoleConstant.pengarahBahagian.code || data.currentRoleCode == UserRoleConstant.pengarahNegeri.code)}
                                 <form
                                     class="flex w-1/2 flex-col justify-start gap-2.5"
                                     method="POST"
@@ -760,7 +777,6 @@
                                     icon="check"
                                     form="checklistForm"
                                 />
-                               
                             {/if}
                         </StepperContentHeader>
                         <StepperContentBody>
@@ -1257,14 +1273,14 @@
                             title="Kelulusan Permohonan Tanggung Kerja"
                         >
                             {#if !submitApprover && data.currentRoleCode == UserRoleConstant.pengarahKhidmatPengurusan.code}
-                            <TextIconButton
-                            type="neutral"
-                            label="Simpan"
-                            icon="save"
-                                form="approverForm"
-                                onClick={() =>
-                                    ($approverForm.isDraft = true)}
-                            />
+                                <TextIconButton
+                                    type="neutral"
+                                    label="Simpan"
+                                    icon="save"
+                                    form="approverForm"
+                                    onClick={() =>
+                                        ($approverForm.isDraft = true)}
+                                />
                                 <TextIconButton
                                     label="Hantar"
                                     icon="check"
@@ -1288,79 +1304,106 @@
                                     method="POST"
                                     use:approverEnhance
                                 >
-                                    {#if data.interimApprovalDetail.employeeId == ''}
-                                        {#if data.currentRoleCode !== UserRoleConstant.pengarahKhidmatPengurusan.code}
-                                            <div
-                                                class="flex w-full flex-col gap-10 px-3"
-                                            >
-                                                <Alert color="blue">
-                                                    <p>
-                                                        <span
-                                                            class="font-medium"
-                                                            >Tiada Maklumat!
-                                                        </span>
-                                                        Menunggu keputusan daripada
-                                                        Pengarah Khidmat Pengurusan.
-                                                    </p>
-                                                </Alert>
-                                            </div>
-                                        {:else}
-                                            <CustomTextField
-                                                label="Tindakan/Ulasan"
-                                                disabled={submitApprover}
-                                                id="remark"
-                                                isRequired={false}
-                                                bind:val={$approverForm.remark}
-                                                errors={$approverError.remark}
-                                            />
-                                            <CustomRadioBoolean
-                                                label="Keputusan"
-                                                id="status"
-                                                disabled={submitApprover}
-                                                options={approveOptions}
-                                                bind:val={$approverForm.status}
-                                            />
-                                            <CustomTextField
-                                                label="Tarikh Kelulusan"
-                                                disabled={submitApprover}
-                                                type="date"
-                                                id="approvalDate"
-                                                isRequired={false}
-                                                bind:val={$approverForm.approvalDate}
-                                                errors={$approverError.approvalDate}
-                                            />
-                                        {/if}
+                                    {#if data.currentRoleCode !== UserRoleConstant.pengarahKhidmatPengurusan.code}
+                                        <div
+                                            class="flex w-full flex-col gap-10 px-3"
+                                        >
+                                            <Alert color="blue">
+                                                <p>
+                                                    <span class="font-medium"
+                                                        >Tiada Maklumat!
+                                                    </span>
+                                                    Menunggu keputusan daripada Pengarah
+                                                    Khidmat Pengurusan.
+                                                </p>
+                                            </Alert>
+                                        </div>
                                     {:else}
-                                        <!-- <CustomTextField
-                                            label="Nama"
-                                            disabled
-                                            isRequired={false}
-                                            id="name"
-                                            bind:val={data.interimApprovalDetail
-                                                .name}
-                                        /> -->
                                         <CustomTextField
-                                            label="Ulasan"
-                                            disabled
-                                            isRequired={false}
+                                            label="Tindakan/Ulasan"
+                                            disabled={submitApprover}
                                             id="remark"
-                                            bind:val={data.interimApprovalDetail
-                                                .remark}
+                                            isRequired={false}
+                                            bind:val={$approverForm.remark}
+                                            errors={$approverError.remark}
                                         />
                                         <CustomRadioBoolean
                                             label="Keputusan"
                                             id="status"
-                                            disabled
-                                            isRequired={false}
+                                            disabled={submitApprover}
                                             options={approveOptions}
-                                            val={data.interimApprovalDetail
-                                                ?.status}
+                                            bind:val={$approverForm.status}
+                                        />
+                                        <CustomTextField
+                                            label="Tarikh Kelulusan"
+                                            disabled={submitApprover}
+                                            type="date"
+                                            id="approvalDate"
+                                            isRequired={false}
+                                            bind:val={$approverForm.approvalDate}
+                                            errors={$approverError.approvalDate}
                                         />
                                     {/if}
                                 </form>
                             </div>
                         </StepperContentBody>
                     </StepperContent>
+                    <StepperContent>
+                        <StepperContentHeader title="Tetapan Butiran Surat">
+                            {#if !submitReferenceNumber && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
+                                <TextIconButton
+                                    type="neutral"
+                                    label="Simpan"
+                                    icon="save"
+                                    form="referenceNumberForm"
+                                    onClick={() => ($referenceNumberForm.isDraft = true)}
+                                />
+                                <TextIconButton
+                                    label="Hantar"
+                                    icon="check"
+                                    form="referenceNumberForm"
+                                    onClick={() => ($referenceNumberForm.isDraft = false)}
+                                />
+                            {/if}
+                        </StepperContentHeader>
+                        <div
+                            class="flex w-full flex-col items-start justify-start pb-10"
+                        >
+                            <form
+                                class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
+                                method="POST"
+                                use:referenceNumberEnhance
+                                id="referenceNumberForm"
+                            >
+                                <CustomTextField
+                                    id="referenceNumber"
+                                    label="Nombor Rujukan"
+                                    bind:val={$referenceNumberForm.referenceNumber}
+                                    errors={$referenceNumberError.referenceNumber}
+                                />
+                                <CustomRadioBoolean
+                                    disabled={false}
+                                    id="status"
+                                    label="Status"
+                                    bind:val={$referenceNumberForm.status}
+                                    errors={$referenceNumberError.status}
+                                />
+                                <CustomTextField
+                                    id="slogan"
+                                    label="Slogan"
+                                    bind:val={$referenceNumberForm.slogan}
+                                    errors={$referenceNumberError.slogan}
+                                />
+                                <CustomTextField
+                                    id="date"
+                                    type="date"
+                                    label="Tarikh"
+                                    bind:val={$referenceNumberForm.date}
+                                    errors={$referenceNumberError.date}
+                                />
+                            </form>
+                        </div></StepperContent
+                    >
                 {/if}
             {/if}
         </Stepper>

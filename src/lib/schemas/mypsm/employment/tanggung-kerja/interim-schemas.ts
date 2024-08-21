@@ -47,7 +47,7 @@ export const _addInterimApprovalSchema = z.object({
 export const _addDirectorSchema = z.object({
     interimId: numberSchema,
     isDraft: booleanSchema,
-    director: shortTextSchema,
+    identityDocumentNumber: shortTextSchema,
     type: shortTextSchema,
 })
 

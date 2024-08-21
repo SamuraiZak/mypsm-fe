@@ -7,7 +7,8 @@ import type { DropdownDTO } from "$lib/dto/core/dropdown/dropdown.dto";
 import type { InterimApplicationDetailDTO, InterimChecklist, InterimDocument, InterimDownload, InterimSkipping, InterimSupport, ViewAssign } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-application-detail-response.dto";
 import type { InterimCommonApproval } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-common-approval.dto.js";
 import type { EmployeeInterimApplicationDetailRequestDTO } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-employee-application-detail-request.dto";
-import { _addDirectorSchema, _addInterimApprovalSchema, _addNewInterimApplicationSchema, _checklistSchema } from "$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas";
+import type { InterimReferenceNumber } from "$lib/dto/mypsm/employment/tanggung-kerja/interim-reference-number.dto";
+import { _addDirectorSchema, _addInterimApprovalSchema, _addNewInterimApplicationSchema, _checklistSchema, _referenceNumber } from "$lib/schemas/mypsm/employment/tanggung-kerja/interim-schemas";
 import { LookupServices } from "$lib/services/implementation/core/lookup/lookup.service";
 import { EmploymentInterimServices } from "$lib/services/implementation/mypsm/perjawatan/employment-interim.service";
 import { zod } from "sveltekit-superforms/adapters";
@@ -25,12 +26,14 @@ export const load = async ({ params, parent }) => {
         remark: "",
         status: false,
         approvalDate: "",
+        isDraft: true
     }
     let interimApprovalDetail: InterimSupport = {
         employeeId: "",
         remark: "",
         status: false,
         approvalDate: "",
+        isDraft: false
     }
     let uploadedDocuments: InterimDownload = {
         document: []
@@ -45,6 +48,7 @@ export const load = async ({ params, parent }) => {
     const approverForm = await superValidate(zod(_addInterimApprovalSchema))
     const directorForm = await superValidate(zod(_addInterimApprovalSchema));
     const setDirectorForm = await superValidate(zod(_addDirectorSchema));
+    const interimReferenceNumberForm = await superValidate(zod(_referenceNumber))
     let failToLoad: boolean = false;
 
 
@@ -58,8 +62,14 @@ export const load = async ({ params, parent }) => {
         if (interimApplicationDetail?.download !== null) {
             uploadedDocuments = interimApplicationDetail?.download;
         }
-        if (interimApplicationDetail?.support !== null) {
+        if (interimApplicationDetail?.support !== null && interimApplicationDetail.support.isDraft !== true) {
             interimSupportDetail = interimApplicationDetail?.support;
+            console.log(interimSupportDetail)
+        } else if (interimApplicationDetail?.support !== null && interimApplicationDetail.support.isDraft == true){
+            directorForm.data.isDraft = interimApplicationDetail.support.isDraft
+            directorForm.data.remark = interimApplicationDetail.support.remark
+            directorForm.data.status = interimApplicationDetail.support.status
+            directorForm.data.approvalDate = interimApplicationDetail.support.approvalDate
         }
         if (interimApplicationDetail?.checklist !== null) {
             checklistForm.data = interimApplicationDetail?.checklist;
@@ -68,12 +78,16 @@ export const load = async ({ params, parent }) => {
             skippingForm.data.remark = interimApplicationDetail.skipping?.remark;
             skippingForm.data.status = interimApplicationDetail.skipping?.status;
         }
-        if (interimApplicationDetail?.approval !== null) {
-            interimApprovalDetail = interimApplicationDetail?.approval;
+        if (interimApplicationDetail?.approval !== null ) {
+            approverForm.data.isDraft = interimApplicationDetail.approval.isDraft
+            approverForm.data.remark = interimApplicationDetail.approval.remark
+            approverForm.data.status = interimApplicationDetail.approval.status
+            approverForm.data.approvalDate = interimApplicationDetail.approval.approvalDate
         }
     } else {
         failToLoad = true;
     }
+    console.log(approverForm.data)
     return {
         params,
         currentRoleCode,
@@ -89,6 +103,7 @@ export const load = async ({ params, parent }) => {
         interimApprovalDetail,
         failToLoad,
         setDirectorForm,
+        interimReferenceNumberForm
     }
 }
 
@@ -144,6 +159,17 @@ export const _submitSetDirector = async (formData: ViewAssign) => {
     if (form.valid) {
         const response: CommonResponseDTO =
             await EmploymentInterimServices.addDirector(form.data as ViewAssign)
+
+        return { response }
+    }
+}
+
+export const _submitReferenceNumber = async (formData: InterimReferenceNumber) => {
+    const form = await superValidate(formData, zod(_referenceNumber))
+    console.log(form)
+    if (form.valid) {
+        const response: CommonResponseDTO =
+            await EmploymentInterimServices.editReferenceNumberApply(form.data as InterimReferenceNumber)
 
         return { response }
     }
