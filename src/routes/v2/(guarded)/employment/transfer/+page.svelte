@@ -43,7 +43,7 @@
             child: [
                 {
                     moduleName: 'Lihat Senarai',
-                    url: '',
+                    url: '/v2/employment/transfer/management/list',
                     child: [],
                 },
             ],
@@ -54,7 +54,7 @@
             child: [
                 {
                     moduleName: 'Lihat Senarai',
-                    url: '',
+                    url: '/v2/employment/transfer/history',
                     child: [],
                 },
             ],
@@ -107,7 +107,7 @@
             child: [
                 {
                     moduleName: 'Lihat Senarai',
-                    url: '',
+                    url: '/v2/employment/transfer/management/list',
                     child: [],
                 },
             ],
@@ -155,12 +155,12 @@
             child: [
                 {
                     moduleName: 'Tambah',
-                    url: '',
+                    url: '/v2/employment/transfer/management/new',
                     child: [],
                 },
                 {
                     moduleName: 'Lihat Senarai',
-                    url: '',
+                    url: '/v2/employment/transfer/management/list',
                     child: [],
                 },
             ],
@@ -171,7 +171,7 @@
             child: [
                 {
                     moduleName: 'Lihat Senarai',
-                    url: '',
+                    url: '/v2/employment/transfer/history',
                     child: [],
                 },
             ],

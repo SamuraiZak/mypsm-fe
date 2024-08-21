@@ -40,7 +40,7 @@
                 malay: 'Jenis Pertukaran',
             },
         ],
-        url: 'employment/self_transfer/approved_list',
+        url: 'employment/self_transfer/list',
         id: 'selfApplicationListTable',
         option: {
             checkbox: false,
@@ -50,40 +50,29 @@
             filter: true,
         },
         controls: {
-            add: false,
+            add:
+                data.props.layoutData.accountDetails.currentRoleCode ==
+                    RoleConstant.pengarahNegeri.code ||
+                data.props.layoutData.accountDetails.currentRoleCode ==
+                    RoleConstant.pengarahBahagian.code ||
+                data.props.layoutData.accountDetails.currentRoleCode ==
+                    RoleConstant.ketuaPengarah.code
+                    ? true
+                    : false,
             pdf: true,
             excel: true,
         },
     };
 
     function addApplication() {
-        goto('/v2/employment/transfer/self/new');
+        goto('/v2/employment/transfer/management/new');
     }
 
     function viewDetails() {
-        switch (selectedData.transferType) {
-            case 'Permohonan Sendiri':
-                goto(
-                    '/v2/employment/transfer/self/details/' +
-                        selectedData.applicationId,
-                );
-                break;
-            case 'Arahan Pengarah':
-                goto(
-                    '/v2/employment/transfer/director/details/' +
-                        selectedData.applicationId,
-                );
-                break;
-            case 'Arahan Pihak Pengurusan':
-                goto(
-                    '/v2/employment/transfer/management/details/' +
-                        selectedData.applicationId,
-                );
-                break;
-            default:
-                alert('Terdapat masalah untuk mengakses data.');
-                break;
-        }
+        goto(
+            '/v2/employment/transfer/management/details/' +
+                selectedData.applicationId,
+        );
     }
 </script>
 
@@ -94,12 +83,12 @@
             <p
                 class="w-full text-wrap text-lg font-medium leading-tight text-slate-700"
             >
-                Senarai
+                Senarai Arahan Pertukaran
             </p>
             <p
                 class="w-full text-wrap text-base font-normal leading-tight text-slate-500"
             >
-                Sejarah Pertukaran Penempatan
+                Pertukaran Atas Arahan Pihak Pengurusan
             </p>
         </div>
         <!-- trailing -->

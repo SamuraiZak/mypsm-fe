@@ -19,7 +19,7 @@ export async function load({ parent }) {
         identityDocumentNumber: null,
         employeeNumber: null,
         status: null,
-        transferType: null,
+        transferType: 'Arahan Pihak Pengurusan',
     };
 
     const selfApplicationListRequest: CommonListRequestDTO = {
@@ -31,7 +31,7 @@ export async function load({ parent }) {
     };
 
     const selfApplicationListResponse: CommonResponseDTO =
-        await TransferServices.getTransferHistory(selfApplicationListRequest);
+        await TransferServices.getApplicationList(selfApplicationListRequest);
 
     if (selfApplicationListResponse.status == 'success') {
         selfApplicationList = selfApplicationListResponse.data

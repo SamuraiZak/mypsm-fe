@@ -1,5 +1,6 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
+    import CustomBanner from '$lib/components/banner/CustomBanner.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
@@ -40,13 +41,13 @@
                 malay: 'Jenis Pertukaran',
             },
         ],
-        url: 'employment/self_transfer/approved_list',
+        url: 'employee/list',
         id: 'selfApplicationListTable',
         option: {
             checkbox: false,
-            detail: true,
+            detail: false,
             edit: false,
-            select: false,
+            select: true,
             filter: true,
         },
         controls: {
@@ -56,34 +57,8 @@
         },
     };
 
-    function addApplication() {
-        goto('/v2/employment/transfer/self/new');
-    }
-
-    function viewDetails() {
-        switch (selectedData.transferType) {
-            case 'Permohonan Sendiri':
-                goto(
-                    '/v2/employment/transfer/self/details/' +
-                        selectedData.applicationId,
-                );
-                break;
-            case 'Arahan Pengarah':
-                goto(
-                    '/v2/employment/transfer/director/details/' +
-                        selectedData.applicationId,
-                );
-                break;
-            case 'Arahan Pihak Pengurusan':
-                goto(
-                    '/v2/employment/transfer/management/details/' +
-                        selectedData.applicationId,
-                );
-                break;
-            default:
-                alert('Terdapat masalah untuk mengakses data.');
-                break;
-        }
+    function selectActions() {
+        goto('/v2/employment/transfer/management/new/' + selectedData.employeeId);
     }
 </script>
 
@@ -94,12 +69,12 @@
             <p
                 class="w-full text-wrap text-lg font-medium leading-tight text-slate-700"
             >
-                Senarai
+                Tambah Arahan Pertukaran Baharu
             </p>
             <p
                 class="w-full text-wrap text-base font-normal leading-tight text-slate-500"
             >
-                Sejarah Pertukaran Penempatan
+                Pertukaran Atas Arahan Pihak Pengurusan
             </p>
         </div>
         <!-- trailing -->
@@ -122,15 +97,15 @@
     <div
         class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto px-10"
     >
+        <CustomBanner
+            text="Sila pilih kakitangan yang terlibat dalam pertukaran ini."
+        ></CustomBanner>
         <DataTable
-            title=""
+            title="Senarai Kakitangan"
             bind:tableData={selfApplicationListTable}
             bind:passData={selectedData}
-            detailActions={() => {
-                viewDetails();
-            }}
-            addActions={() => {
-                addApplication();
+            selectActions={() => {
+                selectActions();
             }}
         >
             <FilterWrapper slot="filter">

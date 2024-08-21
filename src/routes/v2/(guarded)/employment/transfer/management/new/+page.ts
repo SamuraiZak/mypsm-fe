@@ -5,6 +5,7 @@ import type {
     TransferApplicationListItemDTO,
 } from '$lib/dto/mypsm/employment/transfer/transfer.dto';
 import { TransferServices } from '$lib/services/implementation/mypsm/employment/transfer/transfer.service';
+import { EmployeeServices } from '$lib/services/implementation/mypsm/shared/employee.service.js';
 
 export async function load({ parent }) {
     const { layoutData } = await parent();
@@ -14,12 +15,11 @@ export async function load({ parent }) {
     // =========================================================
     let selfApplicationList: TransferApplicationListItemDTO[] = [];
 
-    const selfApplicationListFilter: TransferApplicationListFilterDTO = {
+    const selfApplicationListFilter = {
         employeeName: null,
         identityDocumentNumber: null,
         employeeNumber: null,
         status: null,
-        transferType: null,
     };
 
     const selfApplicationListRequest: CommonListRequestDTO = {
@@ -31,7 +31,7 @@ export async function load({ parent }) {
     };
 
     const selfApplicationListResponse: CommonResponseDTO =
-        await TransferServices.getTransferHistory(selfApplicationListRequest);
+        await EmployeeServices.getEmployeeList(selfApplicationListRequest);
 
     if (selfApplicationListResponse.status == 'success') {
         selfApplicationList = selfApplicationListResponse.data

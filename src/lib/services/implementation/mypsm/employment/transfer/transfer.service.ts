@@ -48,6 +48,30 @@ export class TransferServices {
             return CommonResponseConstant.httpError;
         }
     }
+    
+    // get the application list submitted
+    static async getTransferHistory(param: CommonListRequestDTO) {
+        try {
+            const url: Input = 'employment/self_transfer/approved_list';
+
+            const response: Response = await http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
     // get current employee detail
     static async getCurrentEmployeeDetail() {
