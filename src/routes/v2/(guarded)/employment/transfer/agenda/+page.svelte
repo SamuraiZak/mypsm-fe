@@ -81,12 +81,12 @@
             <p
                 class="w-full text-wrap text-lg font-medium leading-tight text-slate-700"
             >
-                Senarai Permohonan
+                Senarai
             </p>
             <p
                 class="w-full text-wrap text-base font-normal leading-tight text-slate-500"
             >
-                Pertukaran Atas Permohonan Sendiri
+                Perkara-perkara Yang Memerlukan Tindakan Anda
             </p>
         </div>
         <!-- trailing -->
