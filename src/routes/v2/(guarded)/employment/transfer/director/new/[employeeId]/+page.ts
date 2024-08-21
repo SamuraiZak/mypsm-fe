@@ -103,16 +103,20 @@ export async function load({ params, parent }) {
 
     const transferReasonOption: DropdownDTO[] = [
         {
-            name: 'Mengikut Pasangan',
-            value: 'Mengikut Pasangan',
+            name: 'Peningkatan produktiviti pegawai',
+            value: 'Peningkatan produktiviti pegawai',
         },
         {
-            name: 'Menjaga Ibu/ Bapa yang uzur/sakit',
-            value: 'Menjaga Ibu/ Bapa yang uzur/sakit',
+            name: 'Menambah serta mempelbagai pengalaman, pendedahan dan proses pembelajaran di kalangan pegawai',
+            value: 'Menambah serta mempelbagai pengalaman, pendedahan dan proses pembelajaran di kalangan pegawai',
         },
         {
-            name: 'Kes Kesihatan Kronik Pemohon',
-            value: 'Kes Kesihatan Kronik Pemohon',
+            name: 'Memperluaskan lagi rangkaian (networking) pegawai',
+            value: 'Memperluaskan lagi rangkaian (networking) pegawai',
+        },
+        {
+            name: 'Mencegah sebarang kemungkinan berlakunya penyelewengan, penyalahgunaan kuasa dan rasuah',
+            value: 'Mencegah sebarang kemungkinan berlakunya penyelewengan, penyalahgunaan kuasa dan rasuah',
         },
         {
             name: 'Lain-lain (sila nyatakan)',

@@ -96,7 +96,7 @@
         onSubmit(input) {
             $transferDetailForm.employeeId = data.props.employeeId;
             $transferDetailForm.applicationId = null;
-            $transferDetailForm.transferType = 'Permohonan Sendiri';
+            $transferDetailForm.transferType = 'Arahan Pengarah';
             _applicationDetailSubmit($transferDetailForm).then((value) => {
                 const response = value as CommonResponseDTO;
 
@@ -106,7 +106,7 @@
                             ?.details as TransferApplicationTransferDetailType;
 
                     goto(
-                        '/v2/employment/transfer/self/details/' +
+                        '/v2/employment/transfer/director/details/' +
                             tempTransferDetails.applicationId,
                     );
                 }
@@ -328,46 +328,7 @@
                     <div
                         class="flex w-full flex-col items-start justify-start gap-10 xl:w-1/2"
                     >
-                        <!-- notes starts here -->
-                        <div
-                            class="flex w-full flex-col items-center justify-start bg-slate-50 p-2"
-                        >
-                            <p
-                                class="w-full text-wrap text-start text-base font-medium text-slate-500"
-                            >
-                                Sila baca keterangan yang berikut sebelum
-                                mengisi borang:
-                            </p>
-                            <ol
-                                class="w-full list-decimal px-4 text-start text-base text-slate-500"
-                            >
-                                <li class="w-full">
-                                    Borang ini hendaklah diisi dalam dua (2)
-                                    salinan.
-                                </li>
-                                <li>
-                                    Sebarang perubahan maklumat kepada
-                                    permohonan pertukaran yang telah didaftarkan
-                                    hendaklah dimaklumkan secara bertulis.
-                                </li>
-                                <li>
-                                    Bagi permohonan kerana mengikut pasangan
-                                    (suami/isteri), salinan Sijil Nikah dan
-                                    Surat Akuan Majikan pasangan hendaklah
-                                    disertakan.
-                                </li>
-                                <li>
-                                    Permohonan ini sah dan berkuatkuasa bagi
-                                    tempoh satu (1) tahun dari tarikh
-                                    permohonan. Selepas tempoh tersebut,
-                                    permohonan ini akan terbatal dengan
-                                    sendirinya dan sekiranya tuan dan puan masih
-                                    berminat untuk bertukar, sila kemukakan
-                                    permohonan baharu.
-                                </li>
-                            </ol>
-                        </div>
-                        <!-- notes ends here -->
+                        
 
                         <!-- form wrapper starts here -->
                         <div
@@ -411,45 +372,6 @@
                                         label="Sila Berikan Penjelasan Sekiranya Anda Memilih Lain-lain Sebagai Alasan Pertukaran"
                                         bind:val={$transferDetailForm.remark}
                                         bind:errors={$transferDetailErrors.remark}
-                                        disabled={$transferDetailForm.isDraft ==
-                                            false}
-                                    ></CustomTextField>
-                                {/if}
-
-                                {#if $transferDetailForm.reason.includes('Mengikut Pasangan')}
-                                    <p
-                                        class="text-base font-medium text-slate-700"
-                                    >
-                                        Sekiranya Alasan Pertukaran Pemohon
-                                        Kerana Mengikut Pasangan Sila Isikan
-                                        Maklumat Pasangan Seperti Berikut:
-                                    </p>
-
-                                    <CustomTextField
-                                        id="workPlaceDistance"
-                                        label="Jarak Tempat Kerja (KM) Pasangan Dari Penempatan Anda Sekarang"
-                                        type="number"
-                                        bind:val={$transferDetailForm.workPlaceDistance}
-                                        bind:errors={$transferDetailErrors.workPlaceDistance}
-                                        disabled={$transferDetailForm.isDraft ==
-                                            false}
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="employerName"
-                                        type="text"
-                                        label="Nama Majikan Pasangan"
-                                        bind:val={$transferDetailForm.employerName}
-                                        bind:errors={$transferDetailErrors.employerName}
-                                        disabled={$transferDetailForm.isDraft ==
-                                            false}
-                                    ></CustomTextField>
-                                    <CustomTextField
-                                        id="startDate"
-                                        type="date"
-                                        label="Tarikh Pasangan Mula Berkhidmat Di Penempatan Sekarang"
-                                        isRequired={false}
-                                        bind:val={$transferDetailForm.startDate}
-                                        bind:errors={$transferDetailErrors.startDate}
                                         disabled={$transferDetailForm.isDraft ==
                                             false}
                                     ></CustomTextField>
