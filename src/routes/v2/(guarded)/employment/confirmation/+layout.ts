@@ -90,11 +90,11 @@ export const load = async ({ parent }) => {
     } else if (isStateDirectorRole || isUnitDirectorRole) {
         confirmationInServiceListResponse =
             await ConfirmationServices.getConfirmationStateDirectorList(
-                rationalisationParam,
+                param,
             );
         confirmationInServiceExceedsThreeYearsListResponse =
             await ConfirmationServices.getConfirmationStateDirectorList(
-                rationalisationParam,
+                exceedsThreeYearsParam,
             );
         confirmationInServiceRationalisationListResponse =
             await ConfirmationServices.getConfirmationStateDirectorList(
@@ -103,11 +103,11 @@ export const load = async ({ parent }) => {
     } else if (isIntegrityDirectorRole) {
         confirmationInServiceListResponse =
             await ConfirmationServices.getConfirmationIntegrityDirectorList(
-                rationalisationParam,
+                param,
             );
         confirmationInServiceExceedsThreeYearsListResponse =
             await ConfirmationServices.getConfirmationIntegrityDirectorList(
-                rationalisationParam,
+                exceedsThreeYearsParam,
             );
         confirmationInServiceRationalisationListResponse =
             await ConfirmationServices.getConfirmationIntegrityDirectorList(
@@ -116,11 +116,11 @@ export const load = async ({ parent }) => {
     } else if (isAuditDirectorRole) {
         confirmationInServiceListResponse =
             await ConfirmationServices.getConfirmationAuditDirectorList(
-                rationalisationParam,
+                param,
             );
         confirmationInServiceExceedsThreeYearsListResponse =
             await ConfirmationServices.getConfirmationAuditDirectorList(
-                rationalisationParam,
+                exceedsThreeYearsParam,
             );
         confirmationInServiceRationalisationListResponse =
             await ConfirmationServices.getConfirmationAuditDirectorList(
