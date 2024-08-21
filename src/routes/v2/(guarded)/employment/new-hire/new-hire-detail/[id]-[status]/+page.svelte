@@ -919,7 +919,7 @@
                     placeholder="-"
                     disabled
                     isRequired={false}
-                    errors={$errors.name}
+                    bind:errors={$errors.name}
                     id="name"
                     label={'Nama Penuh'}
                     type="text"
@@ -929,7 +929,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.titleId}
+                    bind:errors={$errors.titleId}
                     id="titleId"
                     label={'Gelaran Nama'}
                     bind:val={$form.titleId}
@@ -959,7 +959,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.identityDocumentColor}
+                    bind:errors={$errors.identityDocumentColor}
                     id="identityDocumentColor"
                     label="Jenis Kad Pengenalan"
                     bind:val={$form.identityDocumentColor}
@@ -970,7 +970,7 @@
                     placeholder="-"
                     disabled
                     isRequired={false}
-                    errors={$errors.birthDate}
+                    bind:errors={$errors.birthDate}
                     type="date"
                     id="birthDate"
                     label="Tarikh Lahir"
@@ -979,7 +979,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.birthStateId}
+                    bind:errors={$errors.birthStateId}
                     id="birthStateId"
                     label="Negeri Kelahiran"
                     bind:val={$form.birthStateId}
@@ -989,7 +989,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.birthCountryId}
+                    bind:errors={$errors.birthCountryId}
                     id="birthCountryId"
                     label="Negara Kelahiran"
                     bind:val={$form.birthCountryId}
@@ -999,7 +999,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.nationalityId}
+                    bind:errors={$errors.nationalityId}
                     id="nationalityId"
                     label="Warganegara"
                     bind:val={$form.nationalityId}
@@ -1009,7 +1009,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.raceId}
+                    bind:errors={$errors.raceId}
                     id="raceId"
                     label="Bangsa"
                     bind:val={$form.raceId}
@@ -1019,7 +1019,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.ethnicId}
+                    bind:errors={$errors.ethnicId}
                     id="ethnicId"
                     label="Etnik"
                     bind:val={$form.ethnicId}
@@ -1029,7 +1029,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.religionId}
+                    bind:errors={$errors.religionId}
                     id="religionId"
                     label="Agama"
                     bind:val={$form.religionId}
@@ -1039,7 +1039,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.genderId}
+                    bind:errors={$errors.genderId}
                     id="genderId"
                     label="Jantina"
                     bind:val={$form.genderId}
@@ -1049,7 +1049,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.maritalId}
+                    bind:errors={$errors.maritalId}
                     id="maritalId"
                     label="Status Perkahwinan"
                     bind:val={$form.maritalId}
@@ -1058,7 +1058,7 @@
 
                 <CustomTextField
                     placeholder="-"
-                    errors={$errors.homeAddress}
+                    bind:errors={$errors.homeAddress}
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
                     id="homeAddress"
@@ -1069,7 +1069,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.homeCountryId}
+                    bind:errors={$errors.homeCountryId}
                     id="homeCountryId"
                     label="Negara Kediaman"
                     bind:val={$form.homeCountryId}
@@ -1079,7 +1079,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.homeStateId}
+                    bind:errors={$errors.homeStateId}
                     id="homeStateId"
                     label="Negeri Kediaman"
                     bind:val={$form.homeStateId}
@@ -1089,7 +1089,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.homeCityId}
+                    bind:errors={$errors.homeCityId}
                     id="homeCityId"
                     label="Daerah Kediaman"
                     bind:val={$form.homeCityId}
@@ -1098,7 +1098,7 @@
 
                 <CustomTextField
                     placeholder="-"
-                    errors={$errors.homePostcode}
+                    bind:errors={$errors.homePostcode}
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
                     id="homePostcode"
@@ -1108,7 +1108,7 @@
 
                 <CustomTextField
                     placeholder="-"
-                    errors={$errors.mailAddress}
+                    bind:errors={$errors.mailAddress}
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
                     id="mailAddress"
@@ -1119,7 +1119,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.mailCountryId}
+                    bind:errors={$errors.mailCountryId}
                     id="mailCountryId"
                     label="Negara Surat Menyurat"
                     bind:val={$form.mailCountryId}
@@ -1129,7 +1129,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.mailStateId}
+                    bind:errors={$errors.mailStateId}
                     id="mailStateId"
                     label="Negeri Surat Menyurat"
                     bind:val={$form.mailStateId}
@@ -1139,7 +1139,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.mailCityId}
+                    bind:errors={$errors.mailCityId}
                     id="mailCityId"
                     label="Daerah Surat Menyurat"
                     bind:val={$form.mailCityId}
@@ -1148,7 +1148,7 @@
 
                 <CustomTextField
                     placeholder="-"
-                    errors={$errors.mailPostcode}
+                    bind:errors={$errors.mailPostcode}
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
                     id="mailPostcode"
@@ -1159,7 +1159,7 @@
                 <!-- <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.retirementBenefit}
+                    bind:errors={$errors.retirementBenefit}
                     id="retirementBenefit"
                     label="Faedah Persaraan"
                     bind:val={$form.retirementBenefit}
@@ -1170,7 +1170,7 @@
                     placeholder="-"
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.bankName}
+                    bind:errors={$errors.bankName}
                     id="bankName"
                     label={'Nama Bank'}
                     options={data.selectionOptions.bankLookup}
@@ -1181,7 +1181,7 @@
                     placeholder="-"
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.bankAccount}
+                    bind:errors={$errors.bankAccount}
                     id="bankAccount"
                     label={'No. Akaun'}
                     bind:val={$form.bankAccount}
@@ -1192,7 +1192,7 @@
                     isRequired={false}
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.epfNumber}
+                    bind:errors={$errors.epfNumber}
                     id="epfNumber"
                     label={'No. KWSP'}
                     bind:val={$form.epfNumber}
@@ -1203,7 +1203,7 @@
                     isRequired={false}
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.socsoNumber}
+                    bind:errors={$errors.socsoNumber}
                     id="socsoNumber"
                     label={'No. SOCSO'}
                     bind:val={$form.socsoNumber}
@@ -1213,7 +1213,7 @@
                     isRequired={false}
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.incomeNumber}
+                    bind:errors={$errors.incomeNumber}
                     id="incomeNumber"
                     label={'No. Cukai'}
                     bind:val={$form.incomeNumber}
@@ -1222,7 +1222,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.assetDeclarationStatusId}
+                    bind:errors={$errors.assetDeclarationStatusId}
                     isRequired={false}
                     id="assetDeclarationStatusId"
                     label="Status Pengisytiharan Harta"
@@ -1233,7 +1233,7 @@
                 {#if $form.assetDeclarationStatusId === 12 || $form.assetDeclarationStatusId === 14 || $form.assetDeclarationStatusId === 15 || $form.assetDeclarationStatusId === 17 || $form.assetDeclarationStatusId === 18 || $form.assetDeclarationStatusId === 22}
                     <CustomTextField
                         placeholder="-"
-                        errors={$errors.propertyDeclarationDate}
+                        bind:errors={$errors.propertyDeclarationDate}
                         disabled={$isReadonlyPersonalFormStepper &&
                             !$personalFormStepperIsDraft}
                         id="propertyDeclarationDate"
@@ -1246,7 +1246,7 @@
                 <CustomSelectField
                     disabled={$isReadonlyPersonalFormStepper &&
                         !$personalFormStepperIsDraft}
-                    errors={$errors.isExPoliceOrSoldier}
+                    bind:errors={$errors.isExPoliceOrSoldier}
                     id="isExPoliceOrSoldier"
                     label="Bekas Polis / Tentera"
                     bind:val={$form.isExPoliceOrSoldier}
@@ -1261,7 +1261,7 @@
                     <CustomSelectField
                         disabled={$isReadonlyPersonalFormStepper &&
                             !$personalFormStepperIsDraft}
-                        errors={$errors.isInternalRelationship}
+                        bind:errors={$errors.isInternalRelationship}
                         id="isInternalRelationship"
                         label="Perhubungan Dengan Kakitangan LKIM"
                         bind:val={$form.isInternalRelationship}
@@ -1272,7 +1272,7 @@
                         <CustomSelectField
                             disabled={$isReadonlyPersonalFormStepper &&
                                 !$personalFormStepperIsDraft}
-                            errors={$errors.employeeNumber}
+                            bind:errors={$errors.employeeNumber}
                             id="employeeNumber"
                             label="Nama Pekerja LKIM"
                             bind:val={$form.employeeNumber}
@@ -1282,7 +1282,7 @@
                         {#if !!data.newHireFullDetailView.personalDetail.employeeNumber}
                             <CustomTextField
                                 disabled={true}
-                                errors={$errors.employeeNumber}
+                                bind:errors={$errors.employeeNumber}
                                 id="relationDetailPosition"
                                 label="Nombor Kakitangan LKIM"
                                 bind:val={$form.employeeNumber}
@@ -1292,7 +1292,7 @@
                         <CustomSelectField
                             disabled={$isReadonlyPersonalFormStepper &&
                                 !$personalFormStepperIsDraft}
-                            errors={$errors.relationshipId}
+                            bind:errors={$errors.relationshipId}
                             id="relationDetailRelationship"
                             label="Hubungan"
                             bind:val={$form.relationshipId}
@@ -2960,7 +2960,7 @@
                         <CustomSelectField
                             disabled={$isReadonlyServiceFormStepper &&
                                 !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.gradeId}
+                            bind:errors={$serviceInfoErrors.gradeId}
                             id="gradeId"
                             label="Gred Semasa"
                             bind:val={$serviceInfoForm.gradeId}
@@ -2969,7 +2969,7 @@
                         <CustomSelectField
                             disabled={$isReadonlyServiceFormStepper &&
                                 !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.maxGradeId}
+                            bind:errors={$serviceInfoErrors.maxGradeId}
                             id="maxGradeId"
                             label="Gred Maksimum"
                             bind:val={$serviceInfoForm.maxGradeId}
@@ -2978,7 +2978,7 @@
                         <CustomSelectField
                             disabled={$isReadonlyServiceFormStepper &&
                                 !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.placementId}
+                            bind:errors={$serviceInfoErrors.placementId}
                             id="placementId"
                             label="Penempatan"
                             bind:val={$serviceInfoForm.placementId}
@@ -2986,7 +2986,7 @@
                         ></CustomSelectField>
                         <CustomSelectField
                             disabled={true}
-                            errors={$serviceInfoErrors.serviceTypeId}
+                            bind:errors={$serviceInfoErrors.serviceTypeId}
                             id="serviceTypeId"
                             label="Taraf Perkhidmatan"
                             bind:val={$serviceInfoForm.serviceTypeId}
@@ -2996,7 +2996,7 @@
                         <CustomSelectField
                             disabled={$isReadonlyServiceFormStepper &&
                                 !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.serviceGroupId}
+                            bind:errors={$serviceInfoErrors.serviceGroupId}
                             id="serviceGroupId"
                             label="Kumpulan Perkhidmatan"
                             bind:val={$serviceInfoForm.serviceGroupId}
@@ -3006,7 +3006,7 @@
                         <CustomSelectField
                             disabled={$isReadonlyServiceFormStepper &&
                                 !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.unitId}
+                            bind:errors={$serviceInfoErrors.unitId}
                             id="unitId"
                             label="Unit Perkhidmatan"
                             bind:val={$serviceInfoForm.unitId}
@@ -3017,7 +3017,7 @@
                             type="date"
                             disabled={$isReadonlyServiceFormStepper &&
                                 !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.effectiveDate}
+                            bind:errors={$serviceInfoErrors.effectiveDate}
                             id="effectiveDate"
                             label={'Tarikh Kuatkuasa Lantikan Semasa'}
                             bind:val={$serviceInfoForm.effectiveDate}
@@ -3028,7 +3028,7 @@
                             type="date"
                             disabled={$isReadonlyServiceFormStepper &&
                                 !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.civilServiceStartDate}
+                            bind:errors={$serviceInfoErrors.civilServiceStartDate}
                             id="civilServiceStartDate"
                             label={'Mula Dilantik Perkhidmatan Kerajaan'}
                             bind:val={$serviceInfoForm.civilServiceStartDate}
@@ -3038,7 +3038,7 @@
                             type="date"
                             disabled={$isReadonlyServiceFormStepper &&
                                 !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.serviceDate}
+                            bind:errors={$serviceInfoErrors.serviceDate}
                             id="serviceDate"
                             label={'Mula Dilantik Perkhidmatan Sekarang'}
                             bind:val={$serviceInfoForm.serviceDate}
@@ -3048,7 +3048,7 @@
                             type="date"
                             disabled={$isReadonlyServiceFormStepper &&
                                 !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.newRecruitEffectiveDate}
+                            bind:errors={$serviceInfoErrors.newRecruitEffectiveDate}
                             id="newRecruitEffectiveDate"
                             label={'Tarikh Lantikan Baharu'}
                             bind:val={$serviceInfoForm.newRecruitEffectiveDate}
@@ -3059,7 +3059,7 @@
                             type="number"
                             disabled={$isReadonlyServiceFormStepper &&
                                 !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.retirementAge}
+                            bind:errors={$serviceInfoErrors.retirementAge}
                             id="retirementAge"
                             label={'Umur Bersara'}
                             bind:val={$serviceInfoForm.retirementAge}
@@ -3069,7 +3069,7 @@
                             placeholder="-"
                             type="date"
                             disabled
-                            errors={$serviceInfoErrors.retirementDate}
+                            bind:errors={$serviceInfoErrors.retirementDate}
                             id="retirementDate"
                             label={'Tarikh Bersara'}
                             bind:val={$serviceInfoForm.retirementDate}
@@ -3080,7 +3080,7 @@
                             isRequired={false}
                             disabled={$isReadonlyServiceFormStepper &&
                                 !$serviceFormStepperIsDraft}
-                            errors={$serviceInfoErrors.pensionNumber}
+                            bind:errors={$serviceInfoErrors.pensionNumber}
                             id="pensionNumber"
                             label={'Nombor Pencen'}
                             bind:val={$serviceInfoForm.pensionNumber}
@@ -3093,7 +3093,7 @@
                                 <CustomSelectField
                                     disabled={$isReadonlyServiceFormStepper &&
                                         !$serviceFormStepperIsDraft}
-                                    errors={$serviceInfoErrors.revisionMonthId}
+                                    bind:errors={$serviceInfoErrors.revisionMonthId}
                                     id="revisionMonthId"
                                     label="Bulan Berkuatkuasa (Bulan KGT)"
                                     bind:val={$serviceInfoForm.revisionMonthId}
@@ -3105,7 +3105,7 @@
                                     placeholder="-"
                                     disabled
                                     isRequired={false}
-                                    errors={$serviceInfoErrors.kgt}
+                                    bind:errors={$serviceInfoErrors.kgt}
                                     id="kgt"
                                     type="number"
                                     label={'KGT (RM)'}
@@ -3115,7 +3115,7 @@
                                     placeholder="-"
                                     disabled
                                     isRequired={false}
-                                    errors={$serviceInfoErrors.maximumSalary}
+                                    bind:errors={$serviceInfoErrors.maximumSalary}
                                     id="maximumSalary"
                                     type="number"
                                     label={'Tangga Gaji (RM)'}
@@ -3124,8 +3124,10 @@
 
                                 <CustomTextField
                                     placeholder="-"
+                                    disabled={$isReadonlyServiceFormStepper &&
+                                        !$serviceFormStepperIsDraft}
                                     isRequired={false}
-                                    errors={$serviceInfoErrors.baseSalary}
+                                    bind:errors={$serviceInfoErrors.baseSalary}
                                     id="baseSalary"
                                     label={'Gaji Pokok (RM)'}
                                     type="number"
@@ -3138,7 +3140,7 @@
                                     isRequired={false}
                                     disabled={$isReadonlyServiceFormStepper &&
                                         !$serviceFormStepperIsDraft}
-                                    errors={$serviceInfoErrors.itka}
+                                    bind:errors={$serviceInfoErrors.itka}
                                     id="itka"
                                     label={'ITKA (RM)'}
                                     type="number"
@@ -3149,7 +3151,7 @@
                                     isRequired={false}
                                     disabled={$isReadonlyServiceFormStepper &&
                                         !$serviceFormStepperIsDraft}
-                                    errors={$serviceInfoErrors.itp}
+                                    bind:errors={$serviceInfoErrors.itp}
                                     id="itp"
                                     label={'ITP (RM)'}
                                     type="number"
@@ -3160,7 +3162,7 @@
                                     isRequired={false}
                                     disabled={$isReadonlyServiceFormStepper &&
                                         !$serviceFormStepperIsDraft}
-                                    errors={$serviceInfoErrors.epw}
+                                    bind:errors={$serviceInfoErrors.epw}
                                     id="epw"
                                     label={'EPW (RM)'}
                                     type="number"
@@ -3171,7 +3173,7 @@
                                     isRequired={false}
                                     disabled={$isReadonlyServiceFormStepper &&
                                         !$serviceFormStepperIsDraft}
-                                    errors={$serviceInfoErrors.cola}
+                                    bind:errors={$serviceInfoErrors.cola}
                                     id="cola"
                                     label={'COLA (RM)'}
                                     type="number"
@@ -3232,7 +3234,7 @@
                                 placeholder="-"
                                 disabled={$isReadonlySecretaryApprovalResult &&
                                     !$secretaryApprovalResultIsDraft}
-                                errors={$secretaryApprovalInfoErrors.remark}
+                                bind:errors={$secretaryApprovalInfoErrors.remark}
                                 id="remark"
                                 label="Tindakan/Ulasan"
                                 bind:val={$secretaryApprovalInfoForm.remark}
@@ -3240,7 +3242,7 @@
                             <CustomRadioBoolean
                                 disabled={$isReadonlySecretaryApprovalResult &&
                                     !$secretaryApprovalResultIsDraft}
-                                errors={$secretaryApprovalInfoErrors.status}
+                                bind:errors={$secretaryApprovalInfoErrors.status}
                                 id="status"
                                 options={verifyOptions}
                                 label={'Keputusan'}
@@ -3299,7 +3301,7 @@
                             <CustomSelectField
                                 disabled={$isReadonlySetApproversFormStepper &&
                                     !$setApproversFormStepperIsDraft}
-                                errors={$secretarySetApproverErrors.supporterId}
+                                bind:errors={$secretarySetApproverErrors.supporterId}
                                 id="supporterId"
                                 label="Nama Penyokong"
                                 options={data.selectionOptions.employeeLookup}
@@ -3308,7 +3310,7 @@
                             <CustomSelectField
                                 disabled={$isReadonlySetApproversFormStepper &&
                                     !$setApproversFormStepperIsDraft}
-                                errors={$secretarySetApproverErrors.approverId}
+                                bind:errors={$secretarySetApproverErrors.approverId}
                                 id="approverId"
                                 label="Nama Pelulus"
                                 options={data.selectionOptions.employeeLookup}
@@ -3386,7 +3388,7 @@
                                                 placeholder="-"
                                                 disabled={$isReadonlySupporterApprovalResult &&
                                                     !$supporterApprovalResultIsDraft}
-                                                errors={$supporterApprovalErrors.remark}
+                                                bind:errors={$supporterApprovalErrors.remark}
                                                 id="supporterRemark"
                                                 label="Tindakan/Ulasan"
                                                 bind:val={$supporterApprovalForm.remark}
@@ -3394,7 +3396,7 @@
                                             <CustomRadioBoolean
                                                 disabled={$isReadonlySupporterApprovalResult &&
                                                     !$supporterApprovalResultIsDraft}
-                                                errors={$supporterApprovalErrors.status}
+                                                bind:errors={$supporterApprovalErrors.status}
                                                 id="supporterIsApproved"
                                                 options={supportOptions}
                                                 label={'Keputusan'}
@@ -3420,7 +3422,7 @@
                                                 placeholder="-"
                                                 disabled={$isReadonlyApproverApprovalResult &&
                                                     !$approverApprovalResultIsDraft}
-                                                errors={$approverApprovalErrors.remark}
+                                                bind:errors={$approverApprovalErrors.remark}
                                                 id="approverRemark"
                                                 label="Tindakan/Ulasan"
                                                 bind:val={$approverApprovalForm.remark}
@@ -3563,7 +3565,7 @@
         class="flex h-fit w-full flex-col gap-y-2"
     >
         <CustomSelectField
-            errors={$addAcademicInfoErrors.educationLevelId}
+            bind:errors={$addAcademicInfoErrors.educationLevelId}
             id="educationLevelId"
             label={'Taraf Pendidikan'}
             options={data.selectionOptions.educationLookup}
@@ -3572,14 +3574,14 @@
 
         <CustomTextField
             placeholder="-"
-            errors={$addAcademicInfoErrors.institution}
+            bind:errors={$addAcademicInfoErrors.institution}
             id="institution"
             label={'Institusi'}
             bind:val={$addAcademicInfoModal.institution}
         ></CustomTextField>
 
         <CustomSelectField
-            errors={$addAcademicInfoErrors.majorId}
+            bind:errors={$addAcademicInfoErrors.majorId}
             id="majorId"
             label={'Jenis Jurusan'}
             options={data.selectionOptions.majorMinorLookup}
@@ -3587,7 +3589,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addAcademicInfoErrors.minorId}
+            bind:errors={$addAcademicInfoErrors.minorId}
             id="minorId"
             label={'Jenis Bidang'}
             options={data.selectionOptions.majorMinorLookup}
@@ -3595,7 +3597,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addAcademicInfoErrors.countryId}
+            bind:errors={$addAcademicInfoErrors.countryId}
             id="countryId"
             label={'Negara'}
             options={data.selectionOptions.countryLookup}
@@ -3603,7 +3605,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addAcademicInfoErrors.sponsorshipId}
+            bind:errors={$addAcademicInfoErrors.sponsorshipId}
             id="sponsorshipId"
             label={'Penajaan'}
             options={data.selectionOptions.sponsorshipLookup}
@@ -3612,14 +3614,14 @@
 
         <CustomTextField
             placeholder="-"
-            errors={$addAcademicInfoErrors.name}
+            bind:errors={$addAcademicInfoErrors.name}
             id="name"
             label={'Nama Pencapaian/Sijil'}
             bind:val={$addAcademicInfoModal.name}
         ></CustomTextField>
         <CustomTextField
             placeholder="-"
-            errors={$addAcademicInfoErrors.completionDate}
+            bind:errors={$addAcademicInfoErrors.completionDate}
             id="completionDate"
             label="Tarikh Kelulusan"
             type="date"
@@ -3627,7 +3629,7 @@
         ></CustomTextField>
         <CustomTextField
             placeholder="-"
-            errors={$addAcademicInfoErrors.finalGrade}
+            bind:errors={$addAcademicInfoErrors.finalGrade}
             id="finalGrade"
             label={'Pencapaian Akhir (Gred)'}
             bind:val={$addAcademicInfoModal.finalGrade}
@@ -3635,7 +3637,7 @@
         <CustomTextField
             placeholder="-"
             isRequired={false}
-            errors={$addAcademicInfoErrors.field}
+            bind:errors={$addAcademicInfoErrors.field}
             id="field"
             label={'Catatan'}
             bind:val={$addAcademicInfoModal.field}
@@ -3658,7 +3660,7 @@
     >
         <CustomTextField
             placeholder="-"
-            errors={$addExperienceModalErrors.company}
+            bind:errors={$addExperienceModalErrors.company}
             id="company"
             label={'Nama Majikan'}
             type="text"
@@ -3668,7 +3670,7 @@
         <CustomTextField
             placeholder="-"
             isRequired={false}
-            errors={$addExperienceModalErrors.address}
+            bind:errors={$addExperienceModalErrors.address}
             id="address"
             label={'Alamat Majikan'}
             type="text"
@@ -3677,7 +3679,7 @@
 
         <CustomTextField
             placeholder="-"
-            errors={$addExperienceModalErrors.position}
+            bind:errors={$addExperienceModalErrors.position}
             id="position"
             label={'Jawatan'}
             type="text"
@@ -3687,7 +3689,7 @@
         <CustomTextField
             placeholder="-"
             isRequired={false}
-            errors={$addExperienceModalErrors.positionCode}
+            bind:errors={$addExperienceModalErrors.positionCode}
             id="positionCode"
             label={'Kod Jawatan'}
             type="text"
@@ -3697,7 +3699,7 @@
         <CustomTextField
             placeholder="-"
             type="date"
-            errors={$addExperienceModalErrors.startDate}
+            bind:errors={$addExperienceModalErrors.startDate}
             id="startDate"
             label={'Tarikh Mula Bekerja'}
             bind:val={$addExperienceModalForm.startDate}
@@ -3705,7 +3707,7 @@
         <CustomTextField
             placeholder="-"
             type="date"
-            errors={$addExperienceModalErrors.endDate}
+            bind:errors={$addExperienceModalErrors.endDate}
             id="endDate"
             label={'Tarikh Tamat Bekerja'}
             bind:val={$addExperienceModalForm.endDate}
@@ -3713,7 +3715,7 @@
 
         <CustomTextField
             placeholder="-"
-            errors={$addExperienceModalErrors.salary}
+            bind:errors={$addExperienceModalErrors.salary}
             id="salary"
             label={'Gaji'}
             type="text"
@@ -3737,7 +3739,7 @@
     >
         <CustomTextField
             placeholder="-"
-            errors={$addActivityModalErrors.name}
+            bind:errors={$addActivityModalErrors.name}
             id="name"
             label={'Nama Kegiatan'}
             type="text"
@@ -3746,7 +3748,7 @@
 
         <CustomTextField
             placeholder="-"
-            errors={$addActivityModalErrors.joinDate}
+            bind:errors={$addActivityModalErrors.joinDate}
             id="joinDate"
             type="date"
             label={'Tarikh Keahlian'}
@@ -3755,7 +3757,7 @@
 
         <CustomTextField
             placeholder="-"
-            errors={$addActivityModalErrors.position}
+            bind:errors={$addActivityModalErrors.position}
             id="position"
             label={'Jawatan'}
             type="text"
@@ -3764,7 +3766,7 @@
 
         <CustomTextField
             placeholder="-"
-            errors={$addActivityModalErrors.description}
+            bind:errors={$addActivityModalErrors.description}
             id="description"
             label={'Catatan'}
             type="text"
@@ -3791,7 +3793,7 @@
     >
         <CustomTextField
             placeholder="-"
-            errors={$addFamilyErrors.name}
+            bind:errors={$addFamilyErrors.name}
             id="nameSuamiIsteri"
             label={'Nama'}
             type="text"
@@ -3801,14 +3803,14 @@
         <CustomTextField
             placeholder="-"
             isRequired={false}
-            errors={$addFamilyErrors.alternativeName}
+            bind:errors={$addFamilyErrors.alternativeName}
             id="alternativeName"
             label={'Nama Lain'}
             type="text"
             bind:val={$addFamilyModal.alternativeName}
         ></CustomTextField>
         <CustomSelectField
-            errors={$addFamilyErrors.identityDocumentColor}
+            bind:errors={$addFamilyErrors.identityDocumentColor}
             id="identityDocumentColor"
             label={'Jenis Kad Pengenalan'}
             options={data.selectionOptions.identityCardColorLookup}
@@ -3816,7 +3818,7 @@
         ></CustomSelectField>
         <CustomTextField
             placeholder="-"
-            errors={$addFamilyErrors.identityDocumentNumber}
+            bind:errors={$addFamilyErrors.identityDocumentNumber}
             id="identityDocumentNumber"
             type="text"
             label={'Nombor Kad Pengenalan'}
@@ -3825,7 +3827,7 @@
 
         <CustomTextField
             placeholder="-"
-            errors={$addFamilyErrors.address}
+            bind:errors={$addFamilyErrors.address}
             id="address"
             label={'Alamat'}
             bind:val={$addFamilyModal.address}
@@ -3833,7 +3835,7 @@
 
         <CustomTextField
             placeholder="-"
-            errors={$addFamilyErrors.postcode}
+            bind:errors={$addFamilyErrors.postcode}
             id="postcode"
             label={'Poskod'}
             type="text"
@@ -3845,14 +3847,14 @@
             placeholder="-"
             type="date"
             isRequired={false}
-            errors={$addFamilyErrors.birthDate}
+            bind:errors={$addFamilyErrors.birthDate}
             id="birthDate"
             label={'Tarikh Lahir'}
             bind:val={$addFamilyModal.birthDate}
         ></CustomTextField>
 
         <CustomSelectField
-            errors={$addFamilyErrors.birthCountryId}
+            bind:errors={$addFamilyErrors.birthCountryId}
             id="birthCountryId"
             label={'Negara Kelahiran'}
             options={data.selectionOptions.countryLookup}
@@ -3860,7 +3862,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addFamilyErrors.birthStateId}
+            bind:errors={$addFamilyErrors.birthStateId}
             id="birthStateId"
             label={'Negeri Kelahiran'}
             options={data.selectionOptions.stateLookup}
@@ -3868,7 +3870,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addFamilyErrors.relationshipId}
+            bind:errors={$addFamilyErrors.relationshipId}
             id="relationshipId"
             label={'Hubungan'}
             options={data.selectionOptions.relationshipLookup.filter((data) => {
@@ -3878,7 +3880,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addFamilyErrors.educationLevelId}
+            bind:errors={$addFamilyErrors.educationLevelId}
             id="educationLevelId"
             label={'Taraf Pendidikan'}
             options={data.selectionOptions.educationLookup}
@@ -3886,7 +3888,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addFamilyErrors.raceId}
+            bind:errors={$addFamilyErrors.raceId}
             id="raceId"
             label={'Bangsa'}
             options={data.selectionOptions.raceLookup}
@@ -3894,7 +3896,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addFamilyErrors.nationalityId}
+            bind:errors={$addFamilyErrors.nationalityId}
             id="nationalityId"
             label={'Kewarganegaraan'}
             options={data.selectionOptions.nationalityLookup}
@@ -3902,7 +3904,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addFamilyErrors.genderId}
+            bind:errors={$addFamilyErrors.genderId}
             id="genderId"
             label={'Jantina'}
             options={data.selectionOptions.genderLookup}
@@ -3912,7 +3914,7 @@
         <CustomTextField
             placeholder="-"
             isRequired={false}
-            errors={$addFamilyErrors.workAddress}
+            bind:errors={$addFamilyErrors.workAddress}
             id="workAddress"
             label={'Alamat Majikan'}
             type="text"
@@ -3922,7 +3924,7 @@
         <CustomTextField
             placeholder="-"
             isRequired={false}
-            errors={$addFamilyErrors.workPostcode}
+            bind:errors={$addFamilyErrors.workPostcode}
             id="workPostcode"
             label={'Poskod Majikan'}
             type="text"
@@ -3931,7 +3933,7 @@
 
         <CustomTextField
             placeholder="-"
-            errors={$addFamilyErrors.phoneNumber}
+            bind:errors={$addFamilyErrors.phoneNumber}
             id="phoneNumber"
             label={'Nombor Telefon'}
             type="text"
@@ -3939,7 +3941,7 @@
         ></CustomTextField>
 
         <CustomSelectField
-            errors={$addFamilyErrors.maritalId}
+            bind:errors={$addFamilyErrors.maritalId}
             id="maritalId"
             label={'Status Perkahwinan'}
             options={data.selectionOptions.maritalLookup}
@@ -3951,7 +3953,7 @@
                 placeholder="-"
                 isRequired={false}
                 type="date"
-                errors={$addFamilyErrors.marriageDate}
+                bind:errors={$addFamilyErrors.marriageDate}
                 id="marriageDate"
                 label={'Tarikh Kahwin'}
                 bind:val={$addFamilyModal.marriageDate}
@@ -3987,7 +3989,7 @@
     >
         <CustomTextField
             placeholder="-"
-            errors={$addNonFamilyErrors.name}
+            bind:errors={$addNonFamilyErrors.name}
             id="nameSelainSuamiIsteri"
             label={'Nama'}
             type="text"
@@ -3997,14 +3999,14 @@
         <CustomTextField
             placeholder="-"
             isRequired={false}
-            errors={$addNonFamilyErrors.alternativeName}
+            bind:errors={$addNonFamilyErrors.alternativeName}
             id="alternativeName"
             label={'Nama Lain'}
             type="text"
             bind:val={$addNonFamilyModal.alternativeName}
         ></CustomTextField>
         <CustomSelectField
-            errors={$addNonFamilyErrors.identityDocumentColor}
+            bind:errors={$addNonFamilyErrors.identityDocumentColor}
             id="identityDocumentColor"
             label={'Jenis Kad Pengenalan'}
             options={data.selectionOptions.identityCardColorLookup}
@@ -4012,7 +4014,7 @@
         ></CustomSelectField>
         <CustomTextField
             placeholder="-"
-            errors={$addNonFamilyErrors.identityDocumentNumber}
+            bind:errors={$addNonFamilyErrors.identityDocumentNumber}
             id="identityDocumentNumber"
             type="text"
             label={'Nombor Kad Pengenalan'}
@@ -4021,7 +4023,7 @@
 
         <CustomTextField
             placeholder="-"
-            errors={$addNonFamilyErrors.address}
+            bind:errors={$addNonFamilyErrors.address}
             id="address"
             label={'Alamat'}
             bind:val={$addNonFamilyModal.address}
@@ -4029,7 +4031,7 @@
 
         <CustomTextField
             placeholder="-"
-            errors={$addNonFamilyErrors.postcode}
+            bind:errors={$addNonFamilyErrors.postcode}
             id="postcode"
             label={'Poskod'}
             type="text"
@@ -4041,14 +4043,14 @@
             placeholder="-"
             type="date"
             isRequired={false}
-            errors={$addNonFamilyErrors.birthDate}
+            bind:errors={$addNonFamilyErrors.birthDate}
             id="birthDate"
             label={'Tarikh Lahir'}
             bind:val={$addNonFamilyModal.birthDate}
         ></CustomTextField>
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.birthCountryId}
+            bind:errors={$addNonFamilyErrors.birthCountryId}
             id="birthCountryId"
             label={'Negara Kelahiran'}
             options={data.selectionOptions.countryLookup}
@@ -4056,7 +4058,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.birthStateId}
+            bind:errors={$addNonFamilyErrors.birthStateId}
             id="birthStateId"
             label={'Negeri Kelahiran'}
             options={data.selectionOptions.stateLookup}
@@ -4064,7 +4066,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.relationshipId}
+            bind:errors={$addNonFamilyErrors.relationshipId}
             id="relationshipId"
             label={'Hubungan'}
             options={data.selectionOptions.relationshipLookup.filter(
@@ -4076,7 +4078,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.educationLevelId}
+            bind:errors={$addNonFamilyErrors.educationLevelId}
             id="educationLevelId"
             label={'Taraf Pendidikan'}
             options={data.selectionOptions.educationLookup}
@@ -4084,7 +4086,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.raceId}
+            bind:errors={$addNonFamilyErrors.raceId}
             id="raceId"
             label={'Bangsa'}
             options={data.selectionOptions.raceLookup}
@@ -4092,7 +4094,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.nationalityId}
+            bind:errors={$addNonFamilyErrors.nationalityId}
             id="nationalityId"
             label={'Kewarganegaraan'}
             options={data.selectionOptions.nationalityLookup}
@@ -4100,7 +4102,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.genderId}
+            bind:errors={$addNonFamilyErrors.genderId}
             id="genderId"
             label={'Jantina'}
             options={data.selectionOptions.genderLookup}
@@ -4110,7 +4112,7 @@
         <CustomTextField
             placeholder="-"
             isRequired={false}
-            errors={$addNonFamilyErrors.workAddress}
+            bind:errors={$addNonFamilyErrors.workAddress}
             id="workAddress"
             label={'Alamat Majikan'}
             type="text"
@@ -4120,7 +4122,7 @@
         <CustomTextField
             placeholder="-"
             isRequired={false}
-            errors={$addNonFamilyErrors.workPostcode}
+            bind:errors={$addNonFamilyErrors.workPostcode}
             id="workPostcode"
             label={'Poskod Majikan'}
             type="text"
@@ -4129,7 +4131,7 @@
 
         <CustomTextField
             placeholder="-"
-            errors={$addNonFamilyErrors.phoneNumber}
+            bind:errors={$addNonFamilyErrors.phoneNumber}
             id="phoneNumber"
             label={'Nombor Telefon'}
             type="text"
@@ -4137,7 +4139,7 @@
         ></CustomTextField>
 
         <CustomSelectField
-            errors={$addNonFamilyErrors.maritalId}
+            bind:errors={$addNonFamilyErrors.maritalId}
             id="maritalId"
             label={'Status Perkahwinan'}
             options={data.selectionOptions.maritalLookup}
@@ -4149,7 +4151,7 @@
                 placeholder="-"
                 isRequired={false}
                 type="date"
-                errors={$addNonFamilyErrors.marriageDate}
+                bind:errors={$addNonFamilyErrors.marriageDate}
                 id="marriageDate"
                 label={'Tarikh Kahwin'}
                 bind:val={$addNonFamilyModal.marriageDate}
@@ -4185,7 +4187,7 @@
     >
         <CustomTextField
             placeholder="-"
-            errors={$addNextOfKinErrors.name}
+            bind:errors={$addNextOfKinErrors.name}
             id="name"
             label={'Nama'}
             type="text"
@@ -4195,14 +4197,14 @@
         <CustomTextField
             placeholder="-"
             isRequired={false}
-            errors={$addNextOfKinErrors.alternativeName}
+            bind:errors={$addNextOfKinErrors.alternativeName}
             id="alternativeName"
             label={'Nama Lain'}
             type="text"
             bind:val={$addNextOfKinModal.alternativeName}
         ></CustomTextField>
         <CustomSelectField
-            errors={$addNextOfKinErrors.identityDocumentColor}
+            bind:errors={$addNextOfKinErrors.identityDocumentColor}
             id="identityDocumentColor"
             label={'Jenis Kad Pengenalan'}
             options={data.selectionOptions.identityCardColorLookup}
@@ -4210,7 +4212,7 @@
         ></CustomSelectField>
         <CustomTextField
             placeholder="-"
-            errors={$addNextOfKinErrors.identityDocumentNumber}
+            bind:errors={$addNextOfKinErrors.identityDocumentNumber}
             id="identityDocumentNumber"
             type="text"
             label={'Nombor Kad Pengenalan'}
@@ -4219,7 +4221,7 @@
 
         <CustomTextField
             placeholder="-"
-            errors={$addNextOfKinErrors.address}
+            bind:errors={$addNextOfKinErrors.address}
             id="address"
             label={'Alamat'}
             bind:val={$addNextOfKinModal.address}
@@ -4227,7 +4229,7 @@
 
         <CustomTextField
             placeholder="-"
-            errors={$addNextOfKinErrors.postcode}
+            bind:errors={$addNextOfKinErrors.postcode}
             id="postcode"
             label={'Poskod'}
             type="text"
@@ -4239,14 +4241,14 @@
             placeholder="-"
             type="date"
             isRequired={false}
-            errors={$addNextOfKinErrors.birthDate}
+            bind:errors={$addNextOfKinErrors.birthDate}
             id="birthDate"
             label={'Tarikh Lahir'}
             bind:val={$addNextOfKinModal.birthDate}
         ></CustomTextField>
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.birthCountryId}
+            bind:errors={$addNextOfKinErrors.birthCountryId}
             id="birthCountryId"
             label={'Negara Kelahiran'}
             options={data.selectionOptions.countryLookup}
@@ -4254,7 +4256,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.birthStateId}
+            bind:errors={$addNextOfKinErrors.birthStateId}
             id="birthStateId"
             label={'Negeri Kelahiran'}
             options={data.selectionOptions.stateLookup}
@@ -4262,7 +4264,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.relationshipId}
+            bind:errors={$addNextOfKinErrors.relationshipId}
             id="relationshipId"
             label={'Hubungan'}
             options={data.selectionOptions.relationshipLookup}
@@ -4270,7 +4272,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.educationLevelId}
+            bind:errors={$addNextOfKinErrors.educationLevelId}
             id="educationLevelId"
             label={'Taraf Pendidikan'}
             options={data.selectionOptions.educationLookup}
@@ -4278,7 +4280,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.raceId}
+            bind:errors={$addNextOfKinErrors.raceId}
             id="raceId"
             label={'Bangsa'}
             options={data.selectionOptions.raceLookup}
@@ -4286,7 +4288,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.nationalityId}
+            bind:errors={$addNextOfKinErrors.nationalityId}
             id="nationalityId"
             label={'Kewarganegaraan'}
             options={data.selectionOptions.nationalityLookup}
@@ -4294,7 +4296,7 @@
         ></CustomSelectField>
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.genderId}
+            bind:errors={$addNextOfKinErrors.genderId}
             id="genderId"
             label={'Jantina'}
             options={data.selectionOptions.genderLookup}
@@ -4304,7 +4306,7 @@
         <CustomTextField
             placeholder="-"
             isRequired={false}
-            errors={$addNextOfKinErrors.workAddress}
+            bind:errors={$addNextOfKinErrors.workAddress}
             id="workAddress"
             label={'Alamat Majikan'}
             type="text"
@@ -4314,7 +4316,7 @@
         <CustomTextField
             placeholder="-"
             isRequired={false}
-            errors={$addNextOfKinErrors.workPostcode}
+            bind:errors={$addNextOfKinErrors.workPostcode}
             id="workPostcode"
             label={'Poskod Majikan'}
             type="text"
@@ -4323,7 +4325,7 @@
 
         <CustomTextField
             placeholder="-"
-            errors={$addNextOfKinErrors.phoneNumber}
+            bind:errors={$addNextOfKinErrors.phoneNumber}
             id="phoneNumber"
             label={'Nombor Telefon'}
             type="text"
@@ -4331,7 +4333,7 @@
         ></CustomTextField>
 
         <CustomSelectField
-            errors={$addNextOfKinErrors.maritalId}
+            bind:errors={$addNextOfKinErrors.maritalId}
             id="maritalId"
             label={'Status Perkahwinan'}
             options={data.selectionOptions.maritalLookup}
@@ -4343,7 +4345,7 @@
                 placeholder="-"
                 isRequired={false}
                 type="date"
-                errors={$addNextOfKinErrors.marriageDate}
+                bind:errors={$addNextOfKinErrors.marriageDate}
                 id="marriageDate"
                 label={'Tarikh Kahwin'}
                 bind:val={$addNextOfKinModal.marriageDate}

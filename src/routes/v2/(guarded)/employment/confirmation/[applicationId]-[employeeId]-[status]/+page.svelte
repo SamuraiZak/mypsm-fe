@@ -667,15 +667,6 @@
                 <CustomSelectField
                     disabled
                     isRequired={false}
-                    id="positionId"
-                    label="Jawatan Semasa"
-                    placeholder="-"
-                    options={data.lookups.positionLookup}
-                    bind:val={$serviceDetailForm.positionId}
-                ></CustomSelectField>
-                <CustomSelectField
-                    disabled
-                    isRequired={false}
                     id="placementId"
                     label="Penempatan"
                     placeholder="-"
