@@ -46,7 +46,6 @@
     let submitReferenceNumber: boolean = false;
     let editInterimDate: boolean = true;
 
-
     const {
         form: InterimDateForm,
         errors: InterimDateError,
@@ -117,9 +116,6 @@
         },
     });
 
-
-
-    
     const {
         form: suppAppForm,
         errors: suppAppError,
@@ -143,7 +139,7 @@
         },
     });
     if ($suppAppForm?.approver !== '' && !$suppAppForm.isDraft) {
-        console.log("SHHSHSH")
+        console.log('SHHSHSH');
         submitSuppApp = true;
     }
     const {
@@ -183,39 +179,39 @@
         validators: zod(_terminationCommonApproval),
         async onSubmit() {
             $approverApprovalForm.interimId = data.interimId.interimId;
-           const res = await _submitApproverApproval($approverApprovalForm);
-           if (res?.response.status == 'success') {
+            const res = await _submitApproverApproval($approverApprovalForm);
+            if (res?.response.status == 'success') {
                 if ($approverApprovalForm.isDraft == false) {
                     submitApprover = true;
                 }
             }
         },
     });
-    if (data.secretaryDetail.employeeId !== '' &&
+    if (
+        data.secretaryDetail.employeeId !== '' &&
         $secretaryApprovalForm.isDraft == false
     ) {
-        
         submitSecretary = true;
     }
 
     if (
-        ($supporterApprovalForm.isDraft == false &&
-            $supporterApprovalForm.status !== null)
+        $supporterApprovalForm.isDraft == false &&
+        $supporterApprovalForm.status !== null
     ) {
-        console.log($supporterApprovalForm.isDraft)
+        console.log($supporterApprovalForm.isDraft);
         submitSupporter = true;
-    } else if(data.currentRoleCode !== UserRoleConstant.timbalanKetuaSeksyen.code){
+    } else if (
+        data.currentRoleCode !== UserRoleConstant.timbalanKetuaSeksyen.code
+    ) {
         submitSupporter = true;
     }
 
     if (
-        ($approverApprovalForm.isDraft == false &&
-            $approverApprovalForm.isDraft !== null)
+        $approverApprovalForm.isDraft == false &&
+        $approverApprovalForm.isDraft !== null
     ) {
         submitApprover = true;
     }
-
-
 
     let inBetweenMonths: string = '';
 
@@ -544,7 +540,7 @@
                             >
                                 <!-- new form -->
                                 <form
-                                    class="flex w-1/2 flex-col justify-start gap-2.5 p-3"
+                                    class="flex w-full justify-start items-center gap-2.5"
                                     method="POST"
                                     id="InterimDateForm"
                                     use:InterimDateEnhance
@@ -630,18 +626,50 @@
                                     .firstMonthAllowance}"
                                 disabled
                             />
-                            <CustomTextField
-                                id="breakdownFullMonth"
-                                isRequired={false}
-                                label="Bulan Pertengahan ({inBetweenMonths})"
-                                val="({data.terminationDetail?.calculation
-                                    .breakdown.allowance} x {data
-                                    .terminationDetail?.calculation.breakdown
-                                    .MonthInBetween} bulan) = {data
-                                    .terminationDetail?.calculation.breakdown
-                                    .calculateInBetween}"
-                                disabled
-                            />
+
+                            {#if data.terminationDetail?.calculation?.breakdown?.startYearMonthInBetween}
+                                <CustomTextField
+                                    id="startYearMonthInBetween"
+                                    isRequired={false}
+                                    label="Bulan Pertengahan (Tahun Pertama)"
+                                    val="({data.terminationDetail?.calculation
+                                        .breakdown.allowance} x {data
+                                        .terminationDetail?.calculation
+                                        .breakdown
+                                        .startYearMonthInBetween} bulan) = {data
+                                        .terminationDetail?.calculation
+                                        .breakdown.startCalculateInBetween}"
+                                    disabled
+                                />
+                                <CustomTextField
+                                    id="endYearMonthInBetween"
+                                    isRequired={false}
+                                    label="Bulan Pertengahan (Tahun Kedua)"
+                                    val="({data.terminationDetail?.calculation
+                                        .breakdown.allowance} x {data
+                                        .terminationDetail?.calculation
+                                        .breakdown
+                                        .endYearMonthInBetween} bulan) = {data
+                                        .terminationDetail?.calculation
+                                        .breakdown.endCalculateInBetween}"
+                                    disabled
+                                />
+                            {:else}
+                                <CustomTextField
+                                    id="breakdownFullMonth"
+                                    isRequired={false}
+                                    label="Bulan Pertengahan ({inBetweenMonths})"
+                                    val="({data.terminationDetail?.calculation
+                                        .breakdown.allowance} x {data
+                                        .terminationDetail?.calculation
+                                        .breakdown
+                                        .MonthInBetween} bulan) = {data
+                                        .terminationDetail?.calculation
+                                        .breakdown.calculateInBetween}"
+                                    disabled
+                                />
+                            {/if}
+
                             <CustomTextField
                                 id="breakdownEndMonth"
                                 isRequired={false}

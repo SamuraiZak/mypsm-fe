@@ -42,8 +42,12 @@ export interface TerminationBreakdown {
     startDay:                  number;
     NumberOfDaysForStartMonth: number;
     firstMonthAllowance:       string;
-    MonthInBetween:            number;
-    calculateInBetween:        string;
+    MonthInBetween?:            number;
+    calculateInBetween?:        string;
+    startYearMonthInBetween?:   number;
+    startCalculateInBetween?:   string;
+    endYearMonthInBetween?:     number;
+    endCalculateInBetween?:     string;
     endDay:                    number;
     NumberOfDaysForEndMonth:   number;
     lastMonthAllowance:        string;
