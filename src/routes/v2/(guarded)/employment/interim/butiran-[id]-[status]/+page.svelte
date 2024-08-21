@@ -104,8 +104,9 @@
                 $skippingForm.remark = "";
             }
             const res = await _submitSkippingForm($skippingForm);
+
             if (res?.response.status == 'success') {
-                if (!$skippingForm.isDraft) {
+                if ($skippingForm.isDraft == false) {
                     submitSkip = true;
                 }
             }
@@ -114,6 +115,16 @@
     if (data.interimApplicationDetail?.skipping !== null) {
         submitSkip = true;
     }
+
+    if (
+        ($skippingForm.isDraft == false &&
+            $skippingForm.isDraft !== null)
+    ) {
+        submitApprover = true;
+    }
+
+
+
     const {
         form: directorForm,
         errors: directorError,
@@ -131,10 +142,21 @@
             $directorForm.interimId = data.interimId.interimId;
             const res = await _submitDirectorForm($directorForm);
             if (res?.response.status == 'success') {
-                submitDirector = true;
+                if ($directorForm.isDraft == false) {
+                    submitDirector = true;
+                }
             }
         },
     });
+
+    if (
+        ($directorForm.isDraft == false &&
+            $directorForm.isDraft !== null)
+    ) {
+        submitDirector = true;
+    }
+
+
     const {
         form: checklistForm,
         errors: checklistError,
@@ -174,10 +196,19 @@
             $approverForm.interimId = data.interimId.interimId;
             const res = await _submitApproverForm($approverForm);
             if (res?.response.status == 'success') {
-                submitApprover = true;
+                if ($approverForm.isDraft == false) {
+                    submitApprover = true;
+                }
             }
         },
     });
+
+    if (
+        ($approverForm.isDraft == false &&
+            $approverForm.isDraft !== null)
+    ) {
+        submitApprover = true;
+    }
 
     // if ($checklistForm.checker !== undefined) {
     //     submitChecklist = true;
@@ -197,6 +228,7 @@
             $setDirectorForm.interimId = data.interimId.interimId;
             $setDirectorForm.type = 'pengarah negeri';
             const res = await _submitSetDirector($setDirectorForm);
+            
             if (res?.response.status == 'success') {
                 submitApprover = true;
             }

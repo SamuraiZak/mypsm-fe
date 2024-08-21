@@ -76,7 +76,7 @@ export const _checklistSchema = z.object({
 export const _terminationCommonApproval = z.object({
     interimId: z.number(),
     status: booleanSchema,
-    remark: shortTextSchema.default(""),
+    remark:z.string().default(''),
     isDraft: booleanSchema,
     approvalDate: z.string(),
 })

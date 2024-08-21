@@ -85,6 +85,7 @@ export interface TerminationVerify {
    employeeId: string;
    status: boolean;
    remark: string;
+   isDraft: boolean;
    approvalDate: string;
 }
 
