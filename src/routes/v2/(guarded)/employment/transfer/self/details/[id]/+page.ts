@@ -182,6 +182,106 @@ export async function load({ params, parent }) {
             applicationConfirmationForm.data.applicationId =
                 currentApplicationId;
         }
+
+        // assign value assignDirector
+        if (currentApplicationDetails.assignDirector !== null) {
+            assignDirectorForm.data = currentApplicationDetails.assignDirector;
+        } else {
+            assignDirectorForm.data.applicationId = currentApplicationId;
+        }
+
+        // assign value directorSupport
+        if (currentApplicationDetails.directorSupport !== null) {
+            directorSupportForm.data =
+                currentApplicationDetails.directorSupport;
+        } else {
+            directorSupportForm.data.applicationId = currentApplicationId;
+        }
+
+        // assign value meetingResult
+        if (currentApplicationDetails.meetingResult !== null) {
+            meetingResultForm.data = currentApplicationDetails.meetingResult;
+        } else {
+            meetingResultForm.data.applicationId = currentApplicationId;
+        }
+
+        // assign value acceptanceLetterDetails
+        if (currentApplicationDetails.acceptanceLetterDetails !== null) {
+            acceptanceLetterDetailForm.data =
+                currentApplicationDetails.acceptanceLetterDetails;
+        } else {
+            acceptanceLetterDetailForm.data.applicationId =
+                currentApplicationId;
+        }
+
+        // assign value postponeDetail
+        if (currentApplicationDetails.postponeDetails !== null) {
+            postponeDetailForm.data = currentApplicationDetails.postponeDetails;
+        } else {
+            postponeDetailForm.data.applicationId = currentApplicationId;
+        }
+
+        // assign value postponeLetterDetail
+        if (currentApplicationDetails.postponeLetterDetails !== null) {
+            postponeLetterDetailForm.data =
+                currentApplicationDetails.postponeLetterDetails;
+        } else {
+            postponeLetterDetailForm.data.applicationId = currentApplicationId;
+        }
+
+        // assign value postponeApproverDetail
+        if (currentApplicationDetails.assignPostponeApprover !== null) {
+            assignPostponeApproverForm.data =
+                currentApplicationDetails.assignPostponeApprover;
+        } else {
+            assignPostponeApproverForm.data.applicationId =
+                currentApplicationId;
+        }
+
+        // assign value postponeApproval
+        if (currentApplicationDetails.postponeApproval !== null) {
+            postponeApprovalForm.data =
+                currentApplicationDetails.postponeApproval;
+        } else {
+            postponeApprovalForm.data.applicationId = currentApplicationId;
+        }
+
+        // assign value postponeLetterDetail
+        if (currentApplicationDetails.postponeLetterDetails !== null) {
+            postponeLetterDetailForm.data =
+                currentApplicationDetails.postponeLetterDetails;
+        } else {
+            postponeLetterDetailForm.data.applicationId = currentApplicationId;
+        }
+
+        // assign value postponeLetterDetail
+        if (currentApplicationDetails.transferDocuments !== null) {
+            transferDocumentForm.data =
+                currentApplicationDetails.transferDocuments;
+        } else {
+            transferDocumentForm.data.applicationId = currentApplicationId;
+        }
+
+        // assign value assignEndorser
+        if (currentApplicationDetails.assignEndorser !== null) {
+            endorserDetailForm.data = currentApplicationDetails.assignEndorser;
+        } else {
+            endorserDetailForm.data.applicationId = currentApplicationId;
+        }
+
+        // assign value support
+        if (currentApplicationDetails.support !== null) {
+            supporterFeedbackForm.data = currentApplicationDetails.support;
+        } else {
+            supporterFeedbackForm.data.applicationId = currentApplicationId;
+        }
+
+        // assign value approval
+        if (currentApplicationDetails.approval !== null) {
+            approverFeedbackForm.data = currentApplicationDetails.approval;
+        } else {
+            approverFeedbackForm.data.applicationId = currentApplicationId;
+        }
     }
 
     // ==========================================================
@@ -318,6 +418,37 @@ export async function _getDirectorDropdown() {
     directorOption = LookupHelper.employeeToDropdown(directorList);
 
     return directorOption;
+}
+
+export async function _getEndorserDropdown(roleCode: string) {
+    let options: DropdownDTO[] = [];
+
+    const filter = {
+        program: 'SEMUA',
+        employeeNumber: null,
+        name: null,
+        identityCard: null,
+        grade: null,
+        role: roleCode,
+    };
+
+    const request: CommonListRequestDTO = {
+        pageNum: 1,
+        pageSize: 3000,
+        orderBy: 'name',
+        orderType: 0,
+        filter: filter,
+    };
+
+    const response: CommonResponseDTO =
+        await LookupServices.getEndorserDropdown(request);
+
+    const dataList: EmployeeLookupItemDTO[] = response.data
+        ?.dataList as EmployeeLookupItemDTO[];
+
+    options = LookupHelper.employeeToDropdown(dataList);
+
+    return options;
 }
 
 export async function _getRoleDropdown() {

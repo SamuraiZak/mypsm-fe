@@ -5,7 +5,7 @@ import {
     CommonResponseConvert,
     type CommonResponseDTO,
 } from '$lib/dto/core/common/common-response.dto';
-import type { TransferApplicationDetailsRequestDTO } from '$lib/dto/mypsm/employment/transfer/transfer.dto';
+import type { TransferApplicationDetailsRequestDTO, TransferApplicationEmployeeDetailsRequestDTO } from '$lib/dto/mypsm/employment/transfer/transfer.dto';
 import { toasterCommon } from '$lib/helpers/core/french-toast.helper';
 import type {
     TransferApplicationAcceptanceLetterDetailType,
@@ -68,6 +68,30 @@ export class TransferServices {
             return CommonResponseConstant.httpError;
         }
     }
+    
+    // get current employee detail by employeeId
+    static async getCurrentEmployeeDetailById(param: TransferApplicationEmployeeDetailsRequestDTO) {
+        try {
+            const url: Input = 'employment/self_transfer/get_personal_detail';
+
+            const response: Response = await http
+            .post(url, {
+                body: JSON.stringify(param),
+            })
+            .json();
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
 
     // get current employee service detail
     static async getCurrentEmployeeServiceDetail() {
@@ -75,6 +99,30 @@ export class TransferServices {
             const url: Input = 'employment/self_transfer/get_service_detail';
 
             const response: Response = await http.get(url).json();
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    // get current employee service detail by employeeId
+    static async getCurrentEmployeeServiceDetailById(param: TransferApplicationEmployeeDetailsRequestDTO) {
+        try {
+            const url: Input = 'employment/self_transfer/get_service_detail';
+
+            const response: Response = await http
+            .post(url, {
+                body: JSON.stringify(param),
+            })
+            .json();
 
             const result: CommonResponseDTO =
                 CommonResponseConvert.fromResponse(response);
@@ -514,4 +562,34 @@ export class TransferServices {
             return CommonResponseConstant.httpError;
         }
     }
+
+    // approver feedback
+    static async getAssignedList(
+        param: CommonListRequestDTO,
+    ) {
+        try {
+            const url: Input = 'employment/self_transfer/assigned_list';
+
+            const promiseResponse: Promise<Response> = http
+                .post(url, {
+                    body: JSON.stringify(param),
+                })
+                .json();
+
+            const response = await toasterCommon(promiseResponse);
+
+            const result: CommonResponseDTO =
+                CommonResponseConvert.fromResponse(response);
+
+            if (result.status == 'success') {
+                return result;
+            } else {
+                return CommonResponseConstant.httpError;
+            }
+        } catch (error) {
+            return CommonResponseConstant.httpError;
+        }
+    }
+
+    
 }

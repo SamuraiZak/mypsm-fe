@@ -52,7 +52,11 @@
         controls: {
             add:
                 data.props.layoutData.accountDetails.currentRoleCode ==
-                RoleConstant.kakitangan.code
+                    RoleConstant.pengarahNegeri.code ||
+                data.props.layoutData.accountDetails.currentRoleCode ==
+                    RoleConstant.pengarahBahagian.code ||
+                data.props.layoutData.accountDetails.currentRoleCode ==
+                    RoleConstant.ketuaPengarah.code
                     ? true
                     : false,
             pdf: true,
@@ -61,12 +65,12 @@
     };
 
     function addApplication() {
-        goto('/v2/employment/transfer/self/new');
+        goto('/v2/employment/transfer/director/new');
     }
 
     function viewDetails() {
         goto(
-            '/v2/employment/transfer/self/details/' +
+            '/v2/employment/transfer/director/details/' +
                 selectedData.applicationId,
         );
     }
@@ -79,12 +83,12 @@
             <p
                 class="w-full text-wrap text-lg font-medium leading-tight text-slate-700"
             >
-                Senarai Permohonan
+                Senarai Arahan Pertukaran
             </p>
             <p
                 class="w-full text-wrap text-base font-normal leading-tight text-slate-500"
             >
-                Pertukaran Atas Permohonan Sendiri
+                Pertukaran Atas Arahan Pengarah
             </p>
         </div>
         <!-- trailing -->

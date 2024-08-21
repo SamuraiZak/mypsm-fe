@@ -7,8 +7,8 @@
     export let isRequired: boolean = true;
     export let id: string;
     export let disabled: boolean = false;
-    export let val: string = '';
-    export let errors: string[] | undefined = [] ?? undefined;
+    export let val: string | null = '';
+    export let errors: string[] | undefined  = [] ?? undefined;
 
     const dispatch = createEventDispatcher();
 
@@ -33,14 +33,16 @@
     <!-- input label ends here -->
 
     <!-- input field starts here -->
-    <div class="gap-1 flex flex-col w-full">
+    <div class="flex w-full flex-col gap-1">
         {#each choices as choice (choice.value)}
-            <div class="flex items-center flex-row h-8 justify-start">
+            <div class="flex h-8 flex-row items-center justify-start">
                 <input
                     id={choice.value}
                     name={id}
                     type="checkbox"
-                    class="h-6 w-6 border-gray-300 text-blue-600 focus:ring-0 {disabled ? 'text-gray-300' : 'text-blue-600'}"
+                    class="h-6 w-6 border-gray-300 text-blue-600 focus:ring-0 {disabled
+                        ? 'bg-gray-100 text-gray-300'
+                        : 'text-blue-600'}"
                     value={choice.value}
                     {disabled}
                     checked={val === choice.value}
@@ -48,7 +50,9 @@
                 />
                 <label
                     for={choice.value}
-                    class="ml-2 block text-base text-slate-700"
+                    class="ml-2 block text-base {disabled
+                        ? 'text-slate-500'
+                        : 'text-slate-700'}"
                 >
                     {choice.name}
                 </label>

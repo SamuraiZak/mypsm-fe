@@ -1,5 +1,6 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
+    import CustomBanner from '$lib/components/banner/CustomBanner.svelte';
     import TextIconButton from '$lib/components/button/TextIconButton.svelte';
     import ContentHeader from '$lib/components/headers/ContentHeader.svelte';
     import DataTable from '$lib/components/table/DataTable.svelte';
@@ -40,35 +41,24 @@
                 malay: 'Jenis Pertukaran',
             },
         ],
-        url: 'employment/self_transfer/list',
+        url: 'employee/list',
         id: 'selfApplicationListTable',
         option: {
             checkbox: false,
-            detail: true,
+            detail: false,
             edit: false,
-            select: false,
+            select: true,
             filter: true,
         },
         controls: {
-            add:
-                data.props.layoutData.accountDetails.currentRoleCode ==
-                RoleConstant.kakitangan.code
-                    ? true
-                    : false,
+            add: false,
             pdf: true,
             excel: true,
         },
     };
 
-    function addApplication() {
-        goto('/v2/employment/transfer/self/new');
-    }
-
-    function viewDetails() {
-        goto(
-            '/v2/employment/transfer/self/details/' +
-                selectedData.applicationId,
-        );
+    function selectActions() {
+        goto('/v2/employment/transfer/director/new/' + selectedData.employeeId);
     }
 </script>
 
@@ -79,12 +69,12 @@
             <p
                 class="w-full text-wrap text-lg font-medium leading-tight text-slate-700"
             >
-                Senarai Permohonan
+                Tambah Arahan Pertukaran Baharu
             </p>
             <p
                 class="w-full text-wrap text-base font-normal leading-tight text-slate-500"
             >
-                Pertukaran Atas Permohonan Sendiri
+                Pertukaran Atas Arahan Pengarah
             </p>
         </div>
         <!-- trailing -->
@@ -107,15 +97,15 @@
     <div
         class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto px-10"
     >
+        <CustomBanner
+            text="Sila pilih kakitangan yang terlibat dalam pertukaran ini."
+        ></CustomBanner>
         <DataTable
-            title=""
+            title="Senarai Kakitangan"
             bind:tableData={selfApplicationListTable}
             bind:passData={selectedData}
-            detailActions={() => {
-                viewDetails();
-            }}
-            addActions={() => {
-                addApplication();
+            selectActions={() => {
+                selectActions();
             }}
         >
             <FilterWrapper slot="filter">
