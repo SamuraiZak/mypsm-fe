@@ -48,16 +48,21 @@ export const load = async ({ params,parent }) => {
             status: terminationDetail.verify.status,
             remark: terminationDetail.verify.remark,
             approvalDate: terminationDetail.verify.approvalDate,
-            isDraft: false,
+            isDraft: terminationDetail.verify.isDraft,
+
         }
+        interimDateForm.data.startDate = terminationDetail.calculation.personalDetail.startEffectiveDate;
+        interimDateForm.data.endDate = terminationDetail.calculation.personalDetail.endEffectiveDate;
+      
+
     }
     if (terminationDetail?.supportApprover !== null) {
         suppAppForm.data = terminationDetail.supportApprover;
     }
-    if (terminationDetail?.support !== null) {
+    if (terminationDetail?.support !== null && terminationDetail.support.status !== null) {
         supporterApprovalForm.data = terminationDetail.support
     }
-    if (terminationDetail?.approval !== null) {
+    if (terminationDetail?.approval && terminationDetail.approval.status !== null) {
         approverApprovalForm.data = terminationDetail.approval
     }
 
@@ -120,7 +125,7 @@ export const _submitApproverApproval = async (formData: InterimCommonApproval) =
 
 export const _submitInterimDate = async (formData: InterimDateApllication) => {
     const form = await superValidate(formData, zod(_interimDate))
-
+    console.log(form)
     if (form.valid) {
         const response: CommonResponseDTO =
             await EmploymentInterimServices.editInterimDate(form.data as InterimDateApllication)
@@ -130,7 +135,7 @@ export const _submitInterimDate = async (formData: InterimDateApllication) => {
 }
 export const _submitReferenceNumber = async (formData: InterimReferenceNumber) => {
     const form = await superValidate(formData, zod(_referenceNumber))
-
+    console.log(form)
     if (form.valid) {
         const response: CommonResponseDTO =
             await EmploymentInterimServices.editReferenceNumber(form.data as InterimReferenceNumber)
