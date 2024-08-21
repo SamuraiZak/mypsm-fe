@@ -3124,6 +3124,8 @@
 
                                 <CustomTextField
                                     placeholder="-"
+                                    disabled={$isReadonlyServiceFormStepper &&
+                                        !$serviceFormStepperIsDraft}
                                     isRequired={false}
                                     bind:errors={$serviceInfoErrors.baseSalary}
                                     id="baseSalary"
