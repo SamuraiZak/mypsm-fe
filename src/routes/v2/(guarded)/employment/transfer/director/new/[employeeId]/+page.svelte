@@ -94,6 +94,7 @@
         resetForm: false,
         validators: zodClient(TransferApplicationTransferDetailSchema),
         onSubmit(input) {
+            $transferDetailForm.employeeId = data.props.employeeId;
             $transferDetailForm.applicationId = null;
             $transferDetailForm.transferType = 'Permohonan Sendiri';
             _applicationDetailSubmit($transferDetailForm).then((value) => {

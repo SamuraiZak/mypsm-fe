@@ -10,6 +10,7 @@ import type { UserRoleDTO } from '$lib/dto/core/user-role/user-role.dto.js';
 import type {
     TransferApplicationDetailsDTO,
     TransferApplicationDetailsRequestDTO,
+    TransferApplicationEmployeeDetailsRequestDTO,
     TransferApplicationPersonalDetailDTO,
     TransferApplicationServiceDetailDTO,
 } from '$lib/dto/mypsm/employment/transfer/transfer.dto';
@@ -51,6 +52,8 @@ export async function load({ params, parent }) {
     // FORMS
     // ==========================================================
 
+    const employeeId: number = parseInt(params.employeeId);
+
     // employee detail form
     const employeeDetailForm = await superValidate(
         zod(TransferApplicationEmployeeDetailSchema),
@@ -66,11 +69,20 @@ export async function load({ params, parent }) {
         zod(TransferApplicationTransferDetailSchema),
     );
 
+    const employeeDetailRequest: TransferApplicationEmployeeDetailsRequestDTO =
+        {
+            employeeId: employeeId,
+        };
+
     // get employee detail
-    employeeDetailForm.data = await _getCurrentEmployeeDetails();
+    employeeDetailForm.data = await _getCurrentEmployeeDetails(
+        employeeDetailRequest,
+    );
 
     // get service detail
-    serviceDetailForm.data = await _getCurrentEmployeeServiceDetails();
+    serviceDetailForm.data = await _getCurrentEmployeeServiceDetails(
+        employeeDetailRequest,
+    );
 
     // set default isDraft
     transferDetailForm.data.isDraft = true;
@@ -140,6 +152,7 @@ export async function load({ params, parent }) {
     return {
         props: {
             layoutData,
+            employeeId,
         },
         forms: {
             employeeDetailForm,
@@ -176,7 +189,9 @@ export async function _getPlacementDropdown() {
 // Application flows
 // =====================================================================
 // 1. get current employee detail
-export async function _getCurrentEmployeeDetails() {
+export async function _getCurrentEmployeeDetails(
+    params: TransferApplicationEmployeeDetailsRequestDTO,
+) {
     let result: TransferApplicationPersonalDetailDTO = {
         name: 'Tiada Maklumat',
         identityDocumentNumber: 'Tiada Maklumat',
@@ -188,7 +203,7 @@ export async function _getCurrentEmployeeDetails() {
     };
 
     const response: CommonResponseDTO =
-        await TransferServices.getCurrentEmployeeDetail();
+        await TransferServices.getCurrentEmployeeDetailById(params);
 
     if (response.status == 'success') {
         result = response.data?.details as TransferApplicationPersonalDetailDTO;
@@ -198,7 +213,9 @@ export async function _getCurrentEmployeeDetails() {
 }
 
 // 2. get current employee service detail
-export async function _getCurrentEmployeeServiceDetails() {
+export async function _getCurrentEmployeeServiceDetails(
+    params: TransferApplicationEmployeeDetailsRequestDTO,
+) {
     let result: TransferApplicationServiceDetailDTO = {
         position: 'Tiada Maklumat',
         grade: 'Tiada Maklumat',
@@ -210,7 +227,7 @@ export async function _getCurrentEmployeeServiceDetails() {
     };
 
     const response: CommonResponseDTO =
-        await TransferServices.getCurrentEmployeeServiceDetail();
+        await TransferServices.getCurrentEmployeeServiceDetailById(params);
 
     if (response.status == 'success') {
         result = response.data?.details as TransferApplicationServiceDetailDTO;

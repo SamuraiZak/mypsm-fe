@@ -57,8 +57,8 @@
         },
     };
 
-    function selectActions(employeeId:number) {
-        goto('/v2/employment/transfer')
+    function selectActions() {
+        goto('/v2/employment/transfer/director/new/' + selectedData.employeeId);
     }
 </script>
 
@@ -104,8 +104,8 @@
             title="Senarai Kakitangan"
             bind:tableData={selfApplicationListTable}
             bind:passData={selectedData}
-            selectActions={()=>{
-
+            selectActions={() => {
+                selectActions();
             }}
         >
             <FilterWrapper slot="filter">
