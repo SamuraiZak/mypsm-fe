@@ -7,86 +7,46 @@
 
     export let data: PageData;
 
-    let menu: ModuleDTO[] = [
+    let menu: ModuleDTO[] = [];
+
+    const employeeMenu: ModuleDTO[] = [
         {
             moduleName: 'Pertukaran Atas Permohonan Sendiri',
             url: '',
-            child:
-                data.props.layoutData.accountDetails.currentRoleCode ==
-                RoleConstant.kakitangan.code
-                    ? [
-                          {
-                              moduleName: 'Tambah Permohonan Baharu',
-                              url: '/v2/employment/transfer/self/new',
-                              child: [],
-                          },
-                          {
-                              moduleName: 'Lihat Senarai',
-                              url: '/v2/employment/transfer/self/list',
-                              child: [],
-                          },
-                      ]
-                    : [
-                          {
-                              moduleName: 'Lihat Senarai',
-                              url: '/v2/employment/transfer/self/list',
-                              child: [],
-                          },
-                      ],
+            child: [
+                {
+                    moduleName: 'Tambah Permohonan Baharu',
+                    url: '/v2/employment/transfer/self/new',
+                    child: [],
+                },
+                {
+                    moduleName: 'Lihat Senarai',
+                    url: '/v2/employment/transfer/self/list',
+                    child: [],
+                },
+            ],
         },
         {
             moduleName: 'Pertukaran Atas Arahan Pengarah',
             url: '',
-            child:
-                data.props.layoutData.accountDetails.currentRoleCode ==
-                    RoleConstant.pengarahBahagian.code ||
-                data.props.layoutData.accountDetails.currentRoleCode ==
-                    RoleConstant.pengarahNegeri.code
-                    ? [
-                          {
-                              moduleName: 'Tambah',
-                              url: '',
-                              child: [],
-                          },
-                          {
-                              moduleName: 'Lihat Senarai',
-                              url: '/v2/employment/transfer/director/list',
-                              child: [],
-                          },
-                      ]
-                    : [
-                          {
-                              moduleName: 'Lihat Senarai',
-                              url: '/v2/employment/transfer/director/list',
-                              child: [],
-                          },
-                      ],
+            child: [
+                {
+                    moduleName: 'Lihat Senarai',
+                    url: '/v2/employment/transfer/director/list',
+                    child: [],
+                },
+            ],
         },
         {
             moduleName: 'Pertukaran Atas Arahan Pihak Pengurusan',
             url: '',
-            child:
-                data.props.layoutData.accountDetails.currentRoleCode ==
-                RoleConstant.urusSetiaPerjawatan.code
-                    ? [
-                          {
-                              moduleName: 'Tambah',
-                              url: '',
-                              child: [],
-                          },
-                          {
-                              moduleName: 'Lihat Senarai',
-                              url: '',
-                              child: [],
-                          },
-                      ]
-                    : [
-                          {
-                              moduleName: 'Lihat Senarai',
-                              url: '',
-                              child: [],
-                          },
-                      ],
+            child: [
+                {
+                    moduleName: 'Lihat Senarai',
+                    url: '',
+                    child: [],
+                },
+            ],
         },
         {
             moduleName: 'Sejarah Pertukaran',
@@ -112,6 +72,133 @@
             ],
         },
     ];
+
+    const directorMenu: ModuleDTO[] = [
+        {
+            moduleName: 'Pertukaran Atas Permohonan Sendiri',
+            url: '',
+            child: [
+                {
+                    moduleName: 'Lihat Senarai',
+                    url: '/v2/employment/transfer/self/list',
+                    child: [],
+                },
+            ],
+        },
+        {
+            moduleName: 'Pertukaran Atas Arahan Pengarah',
+            url: '',
+            child: [
+                {
+                    moduleName: 'Tambah',
+                    url: '/v2/employment/transfer/director/new',
+                    child: [],
+                },
+                {
+                    moduleName: 'Lihat Senarai',
+                    url: '/v2/employment/transfer/director/list',
+                    child: [],
+                },
+            ],
+        },
+        {
+            moduleName: 'Pertukaran Atas Arahan Pihak Pengurusan',
+            url: '',
+            child: [
+                {
+                    moduleName: 'Lihat Senarai',
+                    url: '',
+                    child: [],
+                },
+            ],
+        },
+        {
+            moduleName: 'Perkara-perkara Yang Memerlukan Tindakan Anda',
+
+            url: '',
+            child: [
+                {
+                    moduleName: 'Lihat Senarai',
+                    url: '/v2/employment/transfer/agenda',
+                    child: [],
+                },
+            ],
+        },
+    ];
+
+    const managementMenu: ModuleDTO[] = [
+        {
+            moduleName: 'Pertukaran Atas Permohonan Sendiri',
+            url: '',
+            child: [
+                {
+                    moduleName: 'Lihat Senarai',
+                    url: '/v2/employment/transfer/self/list',
+                    child: [],
+                },
+            ],
+        },
+        {
+            moduleName: 'Pertukaran Atas Arahan Pengarah',
+            url: '',
+            child: [
+                {
+                    moduleName: 'Lihat Senarai',
+                    url: '/v2/employment/transfer/director/list',
+                    child: [],
+                },
+            ],
+        },
+        {
+            moduleName: 'Pertukaran Atas Arahan Pihak Pengurusan',
+            url: '',
+            child: [
+                {
+                    moduleName: 'Tambah',
+                    url: '',
+                    child: [],
+                },
+                {
+                    moduleName: 'Lihat Senarai',
+                    url: '',
+                    child: [],
+                },
+            ],
+        },
+        {
+            moduleName: 'Sejarah Pertukaran',
+            url: '',
+            child: [
+                {
+                    moduleName: 'Lihat Senarai',
+                    url: '',
+                    child: [],
+                },
+            ],
+        },
+    ];
+
+    switch (data.layoutData.accountDetails.currentRoleCode) {
+        case RoleConstant.kakitangan.code:
+            menu = employeeMenu;
+            break;
+        case RoleConstant.urusSetiaPerjawatan.code:
+            menu = managementMenu;
+            break;
+        case RoleConstant.pengarahBahagian.code:
+            menu = directorMenu;
+            break;
+        case RoleConstant.pengarahNegeri.code:
+            menu = directorMenu;
+            break;
+        case RoleConstant.ketuaPengarah.code:
+            menu = directorMenu;
+            break;
+
+        default:
+            menu = employeeMenu;
+            break;
+    }
 </script>
 
 <section
