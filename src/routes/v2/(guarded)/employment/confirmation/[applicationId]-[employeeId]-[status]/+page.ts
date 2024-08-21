@@ -280,7 +280,7 @@ export async function load({ params, parent }) {
         await LookupServices.getServiceGradeEnums();
 
     const gradeLookup: DropdownDTO[] =
-        LookupServices.setSelectOptionsNameIsCode(gradeLookupResponse);
+        LookupServices.setSelectOptionCode(gradeLookupResponse);
 
     // ===========================================================================
 
