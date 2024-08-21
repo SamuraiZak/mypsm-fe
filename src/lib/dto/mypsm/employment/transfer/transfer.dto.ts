@@ -121,3 +121,7 @@ export interface TransferApplicationDetailsDTO {
 export interface TransferApplicationDetailsRequestDTO {
     applicationId: number;
 }
+
+export interface TransferApplicationEmployeeDetailsRequestDTO {
+    employeeId: number;
+}
