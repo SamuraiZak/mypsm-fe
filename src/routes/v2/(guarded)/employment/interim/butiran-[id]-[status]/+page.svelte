@@ -1356,6 +1356,8 @@
                             </div>
                         </StepperContentBody>
                     </StepperContent>
+                    
+                    {#if data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
                     <StepperContent>
                         <StepperContentHeader title="Tetapan Butiran Surat">
                             {#if !submitReferenceNumber && data.currentRoleCode == UserRoleConstant.urusSetiaPerjawatan.code}
@@ -1412,6 +1414,7 @@
                             </form>
                         </div></StepperContent
                     >
+                    {/if}
                 {/if}
             {/if}
         </Stepper>

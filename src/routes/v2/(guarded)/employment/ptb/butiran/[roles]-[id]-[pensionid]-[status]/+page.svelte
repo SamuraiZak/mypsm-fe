@@ -957,7 +957,7 @@
             </StepperContent>
             {/if}
       
-            {#if data.pensionDetail !== null && data.assignedRoles == data.assignedRole }
+            {#if data.pensionDetail !== null && data.assignedRoles == data.assignedRoles }
         
             <StepperContent>
                 <StepperContentHeader
