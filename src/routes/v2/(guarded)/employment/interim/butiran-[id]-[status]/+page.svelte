@@ -111,9 +111,18 @@
             }
         },
     });
-    if (data.interimApplicationDetail?.skipping !== null) {
-        submitSkip = true;
+    // if (data.interimApplicationDetail?.skipping !== null) {
+    //     submitSkip = true;
+    // }
+
+    if (
+        $skippingForm.isDraft == false &&
+        $skippingForm.isDraft !== null 
+    ){
+        submitSkip= true;
     }
+
+
 
     const {
         form: directorForm,
