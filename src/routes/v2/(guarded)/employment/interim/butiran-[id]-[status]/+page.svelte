@@ -1321,7 +1321,7 @@
                                     method="POST"
                                     use:approverEnhance
                                 >
-                                    {#if data.currentRoleCode !== UserRoleConstant.pengarahKhidmatPengurusan.code}
+                                    {#if data.currentRoleCode !== UserRoleConstant.pengarahKhidmatPengurusan.code && ( $approverForm.remark ==''|| $approverForm.remark == null)}
                                         <div
                                             class="flex w-full flex-col gap-10 px-3"
                                         >
