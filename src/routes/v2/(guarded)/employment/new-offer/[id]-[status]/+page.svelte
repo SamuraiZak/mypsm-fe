@@ -390,7 +390,7 @@
     };
 </script>
 
-<ContentHeader title="Maklumat Tawaran Baru">
+<ContentHeader title="Maklumat Tawaran Baharu">
     <StatusPill status={data.params.status} slot="status" />
 
     <TextIconButton
@@ -790,7 +790,7 @@
     </StepperContent>
     {#if !$newOfferMeetingResultsAreNotApproved && !$newOfferMeetingResultIsDraft}
         <StepperContent>
-            <StepperContentHeader title="Maklumat Tawaran Baru">
+            <StepperContentHeader title="Maklumat Tawaran Baharu">
                 {#if (!$isReadOnlyNewOfferProcess || $newOfferProcessIsDraft) && data.roles.isEmploymentSecretaryRole}
                     <TextIconButton
                         label="Simpan"
@@ -918,7 +918,7 @@
                                             disabled={$isReadOnlyNewOfferProcess &&
                                                 !$newOfferProcessIsDraft}
                                             id="gradeId"
-                                            label="Gred Baru"
+                                            label="Gred Baharu"
                                             placeholder="-"
                                             options={data.lookups.gradeLookup}
                                             bind:val={$newOfferServiceDetailForm
@@ -1182,7 +1182,7 @@
             {#if $isReadOnlyNewOfferSetApprovers && !$newOfferSetApproversIsDraft}
                 <StepperContent>
                     <StepperContentHeader
-                        title="Keputusan Tawaran Baru"
+                        title="Keputusan Tawaran Baharu"
                     >
                         {#if (!data.view.newOfferDetailView.supporter.isReadonly || $newOfferSupporterResultIsDraft) && data.roles.isSupporterRole}
                             {#if data.roles.layoutData.accountDetails.identityDocumentNumber === data.view.newOfferDetailView.supporter.identityDocumentNumber}

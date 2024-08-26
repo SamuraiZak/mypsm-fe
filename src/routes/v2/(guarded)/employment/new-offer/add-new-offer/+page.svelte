@@ -140,7 +140,7 @@
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Tawaran Baru">
+    <ContentHeader title="Tawaran Baharu">
         <TextIconButton
             label="Simpan"
             type="neutral"
@@ -177,7 +177,7 @@
     >
         <div class="flex max-h-full w-full flex-col items-start justify-start">
             <DataTable
-                title="Senarai Rekod Tawaran Baru Dalam Perkhidmatan"
+                title="Senarai Rekod Tawaran Baharu Dalam Perkhidmatan"
                 bind:tableData={newOfferMeetingBatchListTable}
             >
                 <FilterWrapper slot="filter">
@@ -221,7 +221,7 @@
             <h3
                 class="mb-4 text-xl font-semibold text-gray-900 dark:text-white"
             >
-                Mesyuarat Tawaran Baru
+                Mesyuarat Tawaran Baharu
             </h3>
             <p class="text-sm">
                 Kumpulan dibawa ke mesyuarat ini akan direkodkan. Sila kemaskini

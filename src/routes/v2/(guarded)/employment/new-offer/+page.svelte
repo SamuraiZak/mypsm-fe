@@ -87,7 +87,7 @@
 
 <!-- content header starts here -->
 <section class="flex w-full flex-col items-start justify-start">
-    <ContentHeader title="Tawaran Baru Dalam Perkhidmatan"></ContentHeader>
+    <ContentHeader title="Tawaran Baharu Dalam Perkhidmatan"></ContentHeader>
 </section>
 
 <!-- content body starts here -->
@@ -100,7 +100,7 @@
     >
         <div class="flex max-h-full w-full flex-col items-start justify-start">
             <DataTable
-                title="Senarai Rekod Mesyuarat Tawaran Baru"
+                title="Senarai Rekod Mesyuarat Tawaran Baharu"
                 bind:tableData={newOfferMeetingBatchListTable}
                 bind:passData={rowData}
                 detailActions={() => {
