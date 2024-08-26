@@ -290,6 +290,18 @@
                     type="draft"
                     icon="save"
                     form="transferDetailForm"
+                    onClick={()=>{
+                        $transferDetailForm.isDraft = true;
+                    }}
+                ></TextIconButton>
+                <TextIconButton
+                    label="Hantar"
+                    type="primary"
+                    icon="check"
+                    form="transferDetailForm"
+                    onClick={()=>{
+                        $transferDetailForm.isDraft = false;
+                    }}
                 ></TextIconButton>
             </StepperContentHeader>
             <StepperContentBody>

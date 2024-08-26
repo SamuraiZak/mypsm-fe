@@ -611,8 +611,6 @@
         <!-- ======================================================================= -->
         <StepperContent>
             <StepperContentHeader title="Butiran Peribadi">
-                <TextIconButton label="Simpan" type="draft" icon="save"
-                ></TextIconButton>
             </StepperContentHeader>
             <StepperContentBody>
                 <div
@@ -699,8 +697,6 @@
         <!-- ======================================================================= -->
         <StepperContent>
             <StepperContentHeader title="Maklumat Perkhidmatan">
-                <TextIconButton label="Simpan" type="draft" icon="save"
-                ></TextIconButton>
             </StepperContentHeader>
             <StepperContentBody>
                 <div
