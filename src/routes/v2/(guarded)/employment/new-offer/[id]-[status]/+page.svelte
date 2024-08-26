@@ -83,7 +83,7 @@
         if (
             data.view.newOfferDetailView.meetingResult.employees.every(
                 (data) =>
-                    data.status !== undefined && data.remarks !== undefined,
+                    data.status !== null && data.remarks !== undefined,
             )
         ) {
             isReadOnlyNewOfferMeetingResult.set(true);
@@ -1286,7 +1286,7 @@
                                                                     .employees[
                                                                     i
                                                                 ].status !==
-                                                                    undefined)
+                                                                    null)
                                                                 ? '[DITOLAK]'
                                                                 : ''}
                                                             {$newOfferServiceDetailForm
@@ -1457,7 +1457,7 @@
                                                                     .employees[
                                                                     i
                                                                 ].status !==
-                                                                    undefined)
+                                                                    null)
                                                                 ? '[DITOLAK]'
                                                                 : ''}
                                                             {$newOfferServiceDetailForm
