@@ -1575,7 +1575,7 @@
                             >
                                 <div class="mb-5">
                                     <b class="text-base text-black"
-                                        >Rekod Keputusan peranan -peranan
+                                        >Rekod Keputusan peranan - peranan
                                         berkaitan</b
                                     >
                                 </div>
