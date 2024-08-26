@@ -12,10 +12,7 @@
     import type { TableSettingDTO } from '$lib/dto/core/table/table.dto';
     import DataTable from '$lib/components/table/DataTable.svelte';
     import type { ConfirmationListResponseDTO } from '$lib/dto/mypsm/employment/confirmation/confirmation_request_response.dto';
-    import { getErrorToast } from '$lib/helpers/core/toast.helper';
-    import type { commonIdRequestDTO } from '$lib/dto/core/common/id-request.dto';
-    import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
-    import { ConfirmationServices } from '$lib/services/implementation/mypsm/employment/confirmation-in-service/confirmation.service';
+    import { _checkIfFail } from './+layout';
 
     export let data: LayoutData;
     let rowData: ConfirmationListResponseDTO;
@@ -48,7 +45,8 @@
         url:
             data.roles.isEmploymentSecretaryRole || data.roles.isStaffRole
                 ? 'employment/confirmation/list'
-                : data.roles.isStateDirectorRole || data.roles.isUnitDirectorRole
+                : data.roles.isStateDirectorRole ||
+                    data.roles.isUnitDirectorRole
                   ? 'employment/confirmation/director/list'
                   : data.roles.isIntegrityDirectorRole
                     ? 'employment/confirmation/integrity/list'
@@ -97,7 +95,8 @@
         url:
             data.roles.isEmploymentSecretaryRole || data.roles.isStaffRole
                 ? 'employment/confirmation/list'
-                : data.roles.isStateDirectorRole || data.roles.isUnitDirectorRole
+                : data.roles.isStateDirectorRole ||
+                    data.roles.isUnitDirectorRole
                   ? 'employment/confirmation/director/list'
                   : data.roles.isIntegrityDirectorRole
                     ? 'employment/confirmation/integrity/list'
@@ -146,7 +145,8 @@
         url:
             data.roles.isEmploymentSecretaryRole || data.roles.isStaffRole
                 ? 'employment/confirmation/list'
-                : data.roles.isStateDirectorRole || data.roles.isUnitDirectorRole
+                : data.roles.isStateDirectorRole ||
+                    data.roles.isUnitDirectorRole
                   ? 'employment/confirmation/director/list'
                   : data.roles.isIntegrityDirectorRole
                     ? 'employment/confirmation/integrity/list'
@@ -162,31 +162,8 @@
             filter: true,
         },
         controls: {
-            add: false,
+            add: data.roles.isEmploymentSecretaryRole,
         },
-    };
-
-    const checkIfFail = async (applicationId: number, employeeId: number, status: string) => {
-        const idRequestBody: {applicationId: number, employeeId: number } = {
-            applicationId: Number(applicationId),
-            employeeId: Number(employeeId),
-        };
-
-        const confirmationInServiceDetailViewResponse: CommonResponseDTO =
-            await ConfirmationServices.getConfirmationFullDetail(idRequestBody);
-
-        if (confirmationInServiceDetailViewResponse.status === 'error') {
-            getErrorToast(
-                'Harap Maklum. Tiada maklumat dijumpai pada masa ini. Sila laporkan kepada admin sistem.',
-            );
-            error(500, {
-                message:
-                    confirmationInServiceDetailViewResponse.message as string,
-            });
-        }
-        const route = `./confirmation/${applicationId}-${employeeId}-${status}`;
-        console.log(route);
-        goto(route);
     };
 </script>
 
@@ -213,7 +190,11 @@
                         bind:tableData={confirmationListTable}
                         bind:passData={rowData}
                         detailActions={() => {
-                            checkIfFail(rowData.applicationId, rowData.employeeId, rowData.status);
+                            _checkIfFail(
+                                rowData.applicationId,
+                                rowData.employeeId,
+                                rowData.status,
+                            );
                         }}
                     >
                         <FilterWrapper slot="filter">
@@ -257,7 +238,11 @@
                                 bind:tableData={confirmationExceedsThreeYearsListTable}
                                 bind:passData={rowData}
                                 detailActions={() => {
-                                    checkIfFail(rowData.applicationId, rowData.employeeId, rowData.status);
+                                    _checkIfFail(
+                                        rowData.applicationId,
+                                        rowData.employeeId,
+                                        rowData.status,
+                                    );
                                 }}
                             >
                                 <FilterWrapper slot="filter">
@@ -306,7 +291,14 @@
                             bind:tableData={confirmationRationalisationListTable}
                             bind:passData={rowData}
                             detailActions={() => {
-                                checkIfFail(rowData.applicationId, rowData.employeeId, rowData.status);
+                                _checkIfFail(
+                                    rowData.applicationId,
+                                    rowData.employeeId,
+                                    rowData.status,
+                                );
+                            }}
+                            addActions={() => {
+                                goto('confirmation/add-confirmation');
                             }}
                         >
                             <FilterWrapper slot="filter">
