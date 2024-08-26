@@ -1,4 +1,5 @@
 import {
+    booleanSchema,
     codeSchema,
     dateStringSchema,
     numberIdSchema,
@@ -11,7 +12,7 @@ export const _meetingResultEmployeeSchema = z.object({
     employeeNumber: z.string(),
     employeeName: z.string(),
     remarks: z.string(),
-    status: z.boolean(),
+    status: booleanSchema,
     approvalDate: z.string().readonly().nullable(),
 });
 

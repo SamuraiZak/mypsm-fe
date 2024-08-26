@@ -1,9 +1,12 @@
+import { goto } from '$app/navigation';
 import { RoleConstant } from '$lib/constants/core/role.constant';
 import type { CommonListRequestDTO } from '$lib/dto/core/common/common-list-request.dto';
 import type { CommonResponseDTO } from '$lib/dto/core/common/common-response.dto';
 import type { DropdownDTO } from '$lib/dto/core/dropdown/dropdown.dto';
+import { getErrorToast } from '$lib/helpers/core/toast.helper';
 import { LookupServices } from '$lib/services/implementation/core/lookup/lookup.service';
 import { ConfirmationServices } from '$lib/services/implementation/mypsm/employment/confirmation-in-service/confirmation.service';
+import { error } from '@sveltejs/kit';
 
 export const load = async ({ parent }) => {
     const { layoutData } = await parent();
@@ -161,4 +164,31 @@ export const load = async ({ parent }) => {
             isIntegrityDirectorRole,
         },
     };
+};
+
+export const _checkIfFail = async (
+    applicationId: number,
+    employeeId: number,
+    status: string,
+) => {
+    const idRequestBody: { applicationId: number; employeeId: number } = {
+        applicationId: Number(applicationId),
+        employeeId: Number(employeeId),
+    };
+
+    const confirmationInServiceDetailViewResponse: CommonResponseDTO =
+        await ConfirmationServices.getConfirmationFullDetail(idRequestBody);
+
+    if (confirmationInServiceDetailViewResponse.status === 'error') {
+        getErrorToast(
+            'Harap Maklum. Tiada maklumat dijumpai pada masa ini. Sila laporkan kepada admin sistem.',
+        );
+        error(500, {
+            message:
+                confirmationInServiceDetailViewResponse.message as string,
+        });
+    }
+    const route = `./confirmation/${applicationId}-${employeeId}-${status}`;
+    console.log(route);
+    goto(route);
 };
