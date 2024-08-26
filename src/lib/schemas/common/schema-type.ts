@@ -92,7 +92,7 @@ export const maxDateSchema = z.coerce
 export const booleanSchema = z.boolean({
     required_error: 'Sila tetapkan pilihan anda.',
     invalid_type_error: 'Medan ini haruslah jenis boolean.',
-});
+}).nullable().default(null).refine((x)=> x !== null);
 
 export const numberSchema = z.coerce.number({
     required_error: 'Medan ini hendaklah diisi.',
