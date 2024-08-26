@@ -426,7 +426,7 @@
 
                                     <CustomTextField
                                         id="workPlaceDistance"
-                                        label="Jarak Tempat Kerja (KM) Pasangan Dari Penempatan Anda Sekarang"
+                                        label="Jarak Tempat Kerja Pasangan Dari Penempatan Anda Sekarang (KM)"
                                         type="number"
                                         bind:val={$transferDetailForm.workPlaceDistance}
                                         bind:errors={$transferDetailErrors.workPlaceDistance}

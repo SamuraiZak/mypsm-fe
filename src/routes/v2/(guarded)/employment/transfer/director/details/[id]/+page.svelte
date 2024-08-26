@@ -610,10 +610,9 @@
         <!-- PERSONAL DETAILS -->
         <!-- ======================================================================= -->
         <StepperContent>
-            <StepperContentHeader title="Butiran Peribadi">
-                <TextIconButton label="Simpan" type="draft" icon="save"
-                ></TextIconButton>
-            </StepperContentHeader>
+            <StepperContentHeader
+                title="Butiran Peribadi"
+            ></StepperContentHeader>
             <StepperContentBody>
                 <div
                     class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
@@ -698,10 +697,9 @@
         <!-- SERVICE DETAILS -->
         <!-- ======================================================================= -->
         <StepperContent>
-            <StepperContentHeader title="Maklumat Perkhidmatan">
-                <TextIconButton label="Simpan" type="draft" icon="save"
-                ></TextIconButton>
-            </StepperContentHeader>
+            <StepperContentHeader
+                title="Maklumat Perkhidmatan"
+            ></StepperContentHeader>
             <StepperContentBody>
                 <div
                     class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"

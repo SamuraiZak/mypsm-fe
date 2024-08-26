@@ -611,8 +611,6 @@
         <!-- ======================================================================= -->
         <StepperContent>
             <StepperContentHeader title="Butiran Peribadi">
-                <TextIconButton label="Simpan" type="draft" icon="save"
-                ></TextIconButton>
             </StepperContentHeader>
             <StepperContentBody>
                 <div
@@ -699,8 +697,6 @@
         <!-- ======================================================================= -->
         <StepperContent>
             <StepperContentHeader title="Maklumat Perkhidmatan">
-                <TextIconButton label="Simpan" type="draft" icon="save"
-                ></TextIconButton>
             </StepperContentHeader>
             <StepperContentBody>
                 <div
@@ -1061,6 +1057,10 @@
                                                         '',
                                                 );
                                         }}
+                                        disabled={data.props.layoutData
+                                            .accountDetails.currentRoleCode !==
+                                            RoleConstant.urusSetiaPerjawatan
+                                                .code}
                                     ></CustomSelectField>
                                     <CustomSelectField
                                         id="identityDocumentNumber"
@@ -1068,6 +1068,10 @@
                                         bind:val={$assignDirectorForm.identityDocumentNumber}
                                         bind:errors={$assignDirectorErrors.identityDocumentNumber}
                                         options={data.lookup.directorDrodpwon}
+                                        disabled={data.props.layoutData
+                                            .accountDetails.currentRoleCode !==
+                                            RoleConstant.urusSetiaPerjawatan
+                                                .code}
                                     ></CustomSelectField>
                                 {:else}
                                     <CustomSelectField
