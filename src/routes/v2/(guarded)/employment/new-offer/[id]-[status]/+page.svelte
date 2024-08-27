@@ -82,8 +82,7 @@
 
         if (
             data.view.newOfferDetailView.meetingResult.employees.every(
-                (data) =>
-                    data.status !== null && data.remarks !== undefined,
+                (data) => data.status !== null && data.remarks !== undefined,
             )
         ) {
             isReadOnlyNewOfferMeetingResult.set(true);
@@ -1181,9 +1180,7 @@
             </StepperContent>
             {#if $isReadOnlyNewOfferSetApprovers && !$newOfferSetApproversIsDraft}
                 <StepperContent>
-                    <StepperContentHeader
-                        title="Keputusan Tawaran Baharu"
-                    >
+                    <StepperContentHeader title="Keputusan Tawaran Baharu">
                         {#if (!data.view.newOfferDetailView.supporter.isReadonly || $newOfferSupporterResultIsDraft) && data.roles.isSupporterRole}
                             {#if data.roles.layoutData.accountDetails.identityDocumentNumber === data.view.newOfferDetailView.supporter.identityDocumentNumber}
                                 <TextIconButton
@@ -1298,12 +1295,25 @@
                                                     </span>
                                                     <div slot="arrowup">
                                                         <svg
-                                                            class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                            class="h-3 w-3 {($newOfferMeetingDetailForm
                                                                 .employees[i]
                                                                 .status &&
-                                                            $newOfferSupporterResultForm
+                                                                data.view
+                                                                    .newOfferDetailView
+                                                                    .supporter
+                                                                    .employees[
+                                                                    i
+                                                                ].status) ||
+                                                            data.view
+                                                                .newOfferDetailView
+                                                                .supporter
                                                                 .employees[i]
-                                                                .status
+                                                                .status ===
+                                                                null ||
+                                                            !data.view
+                                                                .newOfferDetailView
+                                                                .supporter
+                                                                .isReadonly
                                                                 ? 'text-blue-600'
                                                                 : 'text-red-600'}"
                                                             aria-hidden="true"
@@ -1322,12 +1332,25 @@
                                                     </div>
                                                     <div slot="arrowdown">
                                                         <svg
-                                                            class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                            class="h-3 w-3 {($newOfferMeetingDetailForm
                                                                 .employees[i]
                                                                 .status &&
-                                                            $newOfferSupporterResultForm
+                                                                data.view
+                                                                    .newOfferDetailView
+                                                                    .supporter
+                                                                    .employees[
+                                                                    i
+                                                                ].status) ||
+                                                            data.view
+                                                                .newOfferDetailView
+                                                                .supporter
                                                                 .employees[i]
-                                                                .status
+                                                                .status ===
+                                                                null ||
+                                                            !data.view
+                                                                .newOfferDetailView
+                                                                .supporter
+                                                                .isReadonly
                                                                 ? 'text-blue-600'
                                                                 : 'text-red-600'}"
                                                             aria-hidden="true"
@@ -1469,12 +1492,25 @@
                                                     </span>
                                                     <div slot="arrowup">
                                                         <svg
-                                                            class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                            class="h-3 w-3 {($newOfferMeetingDetailForm
                                                                 .employees[i]
                                                                 .status &&
-                                                            $newOfferApproverResultForm
+                                                                data.view
+                                                                    .newOfferDetailView
+                                                                    .approver
+                                                                    .employees[
+                                                                    i
+                                                                ].status) ||
+                                                            data.view
+                                                                .newOfferDetailView
+                                                                .approver
                                                                 .employees[i]
-                                                                .status
+                                                                .status ===
+                                                                null ||
+                                                            !data.view
+                                                                .newOfferDetailView
+                                                                .approver
+                                                                .isReadonly
                                                                 ? 'text-blue-600'
                                                                 : 'text-red-600'}"
                                                             aria-hidden="true"
@@ -1493,12 +1529,25 @@
                                                     </div>
                                                     <div slot="arrowdown">
                                                         <svg
-                                                            class="h-3 w-3 {$newOfferMeetingDetailForm
+                                                            class="h-3 w-3 {($newOfferMeetingDetailForm
                                                                 .employees[i]
                                                                 .status &&
-                                                            $newOfferApproverResultForm
+                                                                data.view
+                                                                    .newOfferDetailView
+                                                                    .approver
+                                                                    .employees[
+                                                                    i
+                                                                ].status) ||
+                                                            data.view
+                                                                .newOfferDetailView
+                                                                .approver
                                                                 .employees[i]
-                                                                .status
+                                                                .status ===
+                                                                null ||
+                                                            !data.view
+                                                                .newOfferDetailView
+                                                                .approver
+                                                                .isReadonly
                                                                 ? 'text-blue-600'
                                                                 : 'text-red-600'}"
                                                             aria-hidden="true"
