@@ -68,9 +68,34 @@
         document.getElementById(id)?.click();
     }
 
+    // function viewFile(base64: string) {
+    //     const fileUrl = `${base64}`;
+    //     window.open(fileUrl, '_blank');
+    // }
+
+    // Function to view the file using JavaScript
     function viewFile(base64: string) {
-        const fileUrl = `${base64}`;
-        window.open(fileUrl, '_blank');
+        // Create a new Blob object with the data from the base64 string
+        const blob = new Blob([base64ToUint8Array(base64)], {
+            type: 'application/pdf',
+        });
+        // Create an object URL from the blob
+        const blobUrl = URL.createObjectURL(blob);
+        // Open the blob URL in a new tab
+        window.open(blobUrl, '_blank');
+    }
+
+    // Helper function to convert base64 string to a Uint8Array
+    function base64ToUint8Array(base64: string) {
+        const binaryString = atob(
+            base64.replace(/^data:application\/pdf;base64,/, ''),
+        );
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes;
     }
 </script>
 
@@ -166,10 +191,10 @@
                             {document.name}
                         </p>
                     </div>
-                    <a
-                        href={document.base64}
+                    <!-- <a
+                        href={`${document.base64}`}
                         class="text-red-500 hover:text-red-700"
-                        target="_blank"
+                        target="blank"
                     >
                         <svg
                             width="20"
@@ -206,7 +231,45 @@
                                 </g>
                             </g></svg
                         >
-                    </a>
+                    </a> -->
+
+                    <button type="button" on:click={() => viewFile(document.base64)}>
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 512 512"
+                            version="1.1"
+                            xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink"
+                            fill="#000000"
+                            ><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g
+                                id="SVGRepo_tracerCarrier"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            ></g><g id="SVGRepo_iconCarrier">
+                                <title>open-external</title>
+                                <g
+                                    id="Page-1"
+                                    stroke="none"
+                                    stroke-width="1"
+                                    fill="none"
+                                    fill-rule="evenodd"
+                                >
+                                    <g
+                                        id="icon"
+                                        fill="#000000"
+                                        transform="translate(85.333333, 64.000000)"
+                                    >
+                                        <path
+                                            d="M128,63.999444 L128,106.666444 L42.6666667,106.666667 L42.6666667,320 L256,320 L256,234.666444 L298.666,234.666444 L298.666667,362.666667 L4.26325641e-14,362.666667 L4.26325641e-14,64 L128,63.999444 Z M362.666667,1.42108547e-14 L362.666667,170.666667 L320,170.666667 L320,72.835 L143.084945,249.751611 L112.915055,219.581722 L289.83,42.666 L192,42.6666667 L192,1.42108547e-14 L362.666667,1.42108547e-14 Z"
+                                            id="Combined-Shape"
+                                        >
+                                        </path>
+                                    </g>
+                                </g>
+                            </g></svg
+                        >
+                    </button>
                     {#if !disabled}
                         <button
                             type="button"
