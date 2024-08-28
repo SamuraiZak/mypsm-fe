@@ -37,7 +37,7 @@ import { superValidate } from 'sveltekit-superforms/client';
 //=============== Load Function ====================
 //==================================================
 export async function load({ params, parent }) {
-    const idRequestBody: { applicationId: number, employeeId: number } = {
+    const idRequestBody: { applicationId: number; employeeId: number } = {
         applicationId: Number(params.applicationId),
         employeeId: Number(params.employeeId),
     };
@@ -112,7 +112,11 @@ export async function load({ params, parent }) {
         zod(_confirmationExamsChecklistSchema),
     );
 
-    const generateLetterForm = await superValidate(confirmationInServiceView.document, zod(_documentsSchema), { errors: false });
+    const generateLetterForm = await superValidate(
+        confirmationInServiceView.document,
+        zod(_documentsSchema),
+        { errors: false },
+    );
     // ==========================================================================
     // Get Lookup Functions
     // ==========================================================================
@@ -346,16 +350,12 @@ export async function load({ params, parent }) {
     // ===========================================================================
 
     // fetch apc history
-    const response: CommonResponseDTO =
-        await EmployeeServices.getRoleList();
+    const response: CommonResponseDTO = await EmployeeServices.getRoleList();
 
     //convert to id number
-    const employeeLookup: DropdownDTO[] = (
-        response.data?.dataList as LookupDTO[]
-    ).map((data) => ({
-        value: String(data.code),
-        name: String(data.description),
-    }));
+    const employeeLookup: DropdownDTO[] = LookupHelper.toDropdownProper(
+        response.data?.dataList as LookupDTO[],
+    );
 
     return {
         params,
@@ -410,7 +410,9 @@ export async function load({ params, parent }) {
     };
 }
 
-export async function _getDirectorDropdown(roleCode: string): Promise<DropdownDTO[]> {
+export async function _getDirectorDropdown(
+    roleCode: string,
+): Promise<DropdownDTO[]> {
     let directorOption: DropdownDTO[] = [];
 
     const filter = {
@@ -435,7 +437,7 @@ export async function _getDirectorDropdown(roleCode: string): Promise<DropdownDT
 
     const directorList: LookupDTO[] = directorListResponse.data
         ?.dataList as LookupDTO[];
-        
+
     directorOption = LookupHelper.toDropdownSuppporterAndApprover(directorList);
 
     return directorOption;
@@ -463,7 +465,6 @@ export const _addConfirmationEmploymentSecretary = async (
 
     return { response };
 };
-
 
 export const _addSecretarySetApproverForm = async (
     id: number,
@@ -566,7 +567,7 @@ export const _addConfirmationMeetingResult = async (
 
     form.data.id = id;
 
-    console.log(form)
+    console.log(form);
     if (!form.valid) {
         getErrorToast();
         error(400, { message: 'Validation Not Passed!' });
@@ -584,13 +585,10 @@ export const _submitGenerateLetterForm = async (
     id: number,
     formData: object,
 ) => {
-    const form = await superValidate(
-        formData,
-        zod(_documentsSchema),
-    );
+    const form = await superValidate(formData, zod(_documentsSchema));
 
     form.data.id = id;
-    console.log(form)
+    console.log(form);
     if (form.valid) {
         const response: CommonResponseDTO =
             await ConfirmationServices.createGenerateLetterForm(
@@ -599,5 +597,4 @@ export const _submitGenerateLetterForm = async (
 
         return { response };
     }
-
 };

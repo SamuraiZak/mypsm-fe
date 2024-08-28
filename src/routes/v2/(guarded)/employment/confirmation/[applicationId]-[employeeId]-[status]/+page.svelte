@@ -1022,7 +1022,6 @@
             </div>
         </StepperContentBody>
     </StepperContent>
-    <!-- {#if !$isTypeConfirmationExceedsThreeYears || isExceedsThreeYearsAndIsDraft} -->
     <StepperContent>
         <StepperContentHeader
             title="Tetapan Penyokong (Pengarah Bahagian/Negeri Untuk Perakuan)"
@@ -1630,7 +1629,6 @@
             {/if}
         {/if}
     {/if}
-    <!-- {/if} -->
 </Stepper>
 
 <Toaster />
