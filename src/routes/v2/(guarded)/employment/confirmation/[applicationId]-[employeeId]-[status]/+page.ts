@@ -43,6 +43,7 @@ export async function load({ params, parent }) {
     };
 
     const { roles } = await parent();
+    const { layoutData } = await parent();
 
     const confirmationInServiceDetailViewResponse: CommonResponseDTO =
         await ConfirmationServices.getConfirmationFullDetail(idRequestBody);
@@ -407,6 +408,7 @@ export async function load({ params, parent }) {
             retirementBenefitLookup,
         },
         roles,
+        layoutData,
     };
 }
 
