@@ -32,6 +32,7 @@ export const _confirmationApprovalSchema = z.object({
     id: z.number().readonly(),
     remark: shortTextSchema,
     status: booleanSchema,
+    identityDocumentNumber: z.string().readonly(),
     approvalDate: z.string().readonly(),
     isReadonly: z.boolean().readonly(),
     isDraft: z.boolean(),
