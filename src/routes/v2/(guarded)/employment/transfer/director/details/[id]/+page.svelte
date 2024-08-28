@@ -610,8 +610,7 @@
         <!-- PERSONAL DETAILS -->
         <!-- ======================================================================= -->
         <StepperContent>
-            <StepperContentHeader
-                title="Butiran Peribadi"
+            <StepperContentHeader title="Butiran Peribadi"
             ></StepperContentHeader>
             <StepperContentBody>
                 <div
@@ -697,8 +696,7 @@
         <!-- SERVICE DETAILS -->
         <!-- ======================================================================= -->
         <StepperContent>
-            <StepperContentHeader
-                title="Maklumat Perkhidmatan"
+            <StepperContentHeader title="Maklumat Perkhidmatan"
             ></StepperContentHeader>
             <StepperContentBody>
                 <div
@@ -1256,7 +1254,7 @@
                                 ></CustomRadioBoolean>
                                 <CustomTextField
                                     id="postponeDate"
-                                    label="Nyatakan Tarikh Pertukaran Mengikut Kesusuaian Anda"
+                                    label="Nyatakan Tarikh Pertukaran Mengikut Kesesuaian Anda"
                                     type="date"
                                     isRequired={false}
                                     bind:val={$postponeDetailForm.postponeDate}

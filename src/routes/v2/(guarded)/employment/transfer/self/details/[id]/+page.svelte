@@ -610,8 +610,9 @@
         <!-- PERSONAL DETAILS -->
         <!-- ======================================================================= -->
         <StepperContent>
-            <StepperContentHeader title="Butiran Peribadi">
-            </StepperContentHeader>
+            <StepperContentHeader
+                title="Butiran Peribadi"
+            ></StepperContentHeader>
             <StepperContentBody>
                 <div
                     class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
@@ -696,8 +697,9 @@
         <!-- SERVICE DETAILS -->
         <!-- ======================================================================= -->
         <StepperContent>
-            <StepperContentHeader title="Maklumat Perkhidmatan">
-            </StepperContentHeader>
+            <StepperContentHeader
+                title="Maklumat Perkhidmatan"
+            ></StepperContentHeader>
             <StepperContentBody>
                 <div
                     class="flex h-full max-h-full w-full flex-col items-start justify-start gap-4 overflow-y-auto p-2"
@@ -1660,7 +1662,7 @@
                                     ></CustomRadioBoolean>
                                     <CustomTextField
                                         id="postponeDate"
-                                        label="Nyatakan Tarikh Pertukaran Mengikut Kesusuaian Anda"
+                                        label="Nyatakan Tarikh Pertukaran Mengikut Kesesuaian Anda"
                                         type="date"
                                         isRequired={false}
                                         bind:val={$postponeDetailForm.postponeDate}
