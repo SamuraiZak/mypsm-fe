@@ -3,7 +3,7 @@
     import { _examInfoResponseSchema } from '$lib/schemas/mypsm/course/exam-schema';
     import CustomSelectField from '$lib/components/inputs/select-field/CustomSelectField.svelte';
     import Stepper from '$lib/components/stepper/Stepper.svelte';
-    import { Badge, Checkbox } from 'flowbite-svelte';
+    import { Checkbox } from 'flowbite-svelte';
     import StepperContent from '$lib/components/stepper/StepperContent.svelte';
     import StepperContentBody from '$lib/components/stepper/StepperContentBody.svelte';
     import SvgArrowDownTray from '$lib/assets/svg/SvgArrowDownTray.svelte';
@@ -35,7 +35,6 @@
     import {
         approveOptions,
         certifyOptions,
-        commonOptions,
         confirmationContractContinuationOptions,
         confirmationMeetingOptions,
         confirmOptions,
@@ -61,7 +60,6 @@
     import { _documentsSchema } from '$lib/schemas/mypsm/employment/promotion/promotion-schemas';
     export let data: PageData;
 
-    let isContractContinuation: boolean = false;
     let confirmationEmploymentSecretaryIsApproved = writable<boolean>(false);
     let confirmationDivisionDirectorIsApproved = writable<boolean>(false);
     let confirmationIntegrityDirectorIsApproved = writable<boolean>(false);
